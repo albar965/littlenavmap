@@ -171,7 +171,8 @@ SOURCES += src/main.cpp\
     src/common/procedurequery.cpp \
     src/search/abstractsearch.cpp \
     src/search/proceduresearch.cpp \
-    src/common/proctypes.cpp
+    src/common/proctypes.cpp \
+    src/db/databaseerrors.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -246,7 +247,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/procedurequery.h \
     src/search/abstractsearch.h \
     src/search/proceduresearch.h \
-    src/common/proctypes.h
+    src/common/proctypes.h \
+    src/db/databaseerrors.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -255,7 +257,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/options/options.ui \
     src/print/printdialog.ui \
     src/route/routestringdialog.ui \
-    src/route/userwaypointdialog.ui
+    src/route/userwaypointdialog.ui \
+    src/db/databaseerrors.ui
 
 DISTFILES += \
     uncrustify.cfg \

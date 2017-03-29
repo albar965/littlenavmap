@@ -15,8 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "databasemanager.h"
+#include "db/databasemanager.h"
 
+#include "db/databaseerrors.h"
 #include "gui/application.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
@@ -55,8 +56,8 @@ using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 using atools::fs::db::DatabaseMeta;
 
-const int MAX_ERROR_BGL_MESSAGES = 2;
-const int MAX_ERROR_SCENERY_MESSAGES = 2;
+const int MAX_ERROR_BGL_MESSAGES = 400;
+const int MAX_ERROR_SCENERY_MESSAGES = 400;
 
 const QString DATABASE_META_TEXT(
   QObject::tr("<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</big></p>"));
@@ -657,9 +658,9 @@ bool DatabaseManager::loadScenery()
                       arg(atools::gui::Application::getEmailHtml()).
                       arg(atools::gui::Application::getReportPathHtml()));
 
-    errorTexts.append(tr("<hr/>Some BGL files could not be read.<br/>"
+    errorTexts.append(tr("<hr/>Some BGL files or scenery directories could not be read.<br/>"
                          "You should check if the airports of the affected sceneries display "
-                         "correctly and show the correct information."));
+                         "correctly and show the correct information.<hr/>"));
 
     int numScenery = 0;
     for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : errors.sceneryErrors)
@@ -671,7 +672,11 @@ bool DatabaseManager::loadScenery()
       }
 
       int numBgl = 0;
-      errorTexts.append(tr("<p><b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+      errorTexts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+
+      for(const QString& err : scErr.sceneryErrorsMessages)
+        errorTexts.append(err + "<br/>");
+
       for(const atools::fs::NavDatabaseErrors::BglFileError& bglErr : scErr.bglFileErrors)
       {
         if(numBgl >= MAX_ERROR_BGL_MESSAGES)
@@ -684,11 +689,13 @@ bool DatabaseManager::loadScenery()
         errorTexts.append(tr("<b>File:</b> <i>%1</i><br/><b>Error:</b> <i>%2</i><br/>").
                           arg(bglErr.bglFilepath).arg(bglErr.errorMessage));
       }
-      errorTexts.append("</p>");
+      errorTexts.append("<br/>");
       numScenery++;
     }
 
-    QMessageBox::warning(progressDialog, QApplication::applicationName(), errorTexts);
+    DatabaseErrors errorDialog(progressDialog);
+    errorDialog.setErrorMessages(errorTexts);
+    errorDialog.exec();
   }
 
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
