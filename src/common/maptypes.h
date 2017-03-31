@@ -623,6 +623,74 @@ struct MapIls
 
 };
 
+enum MapAirspaceType
+{
+  AIRSPACE_NONE = 0,
+  CENTER = 1 << 0,
+  CLASS_A = 1 << 1, // ICAO airspace - controlled - no VFR
+  CLASS_B = 1 << 2, // ICAO airspace - controlled
+  CLASS_C = 1 << 3, // ICAO airspace - controlled
+  CLASS_D = 1 << 4, // ICAO airspace - controlled
+  CLASS_E = 1 << 5, // ICAO airspace - controlled
+  CLASS_F = 1 << 6, // Open FIR - uncontrolled
+  CLASS_G = 1 << 7, // Open FIR - uncontrolled
+  TOWER = 1 << 8,
+  CLEARANCE = 1 << 9,
+  GROUND = 1 << 10,
+  DEPARTURE = 1 << 11,
+  APPROACH = 1 << 12,
+  MOA = 1 << 13,
+  RESTRICTED = 1 << 14,
+  PROHIBITED = 1 << 15,
+  WARNING = 1 << 16,
+  ALERT = 1 << 17,
+  DANGER = 1 << 18,
+  NATIONAL_PARK = 1 << 19,
+  MODEC = 1 << 20,
+  RADAR = 1 << 21,
+  TRAINING = 1 << 22,
+
+  AIRSPACE_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
+  AIRSPACE_FIR = CLASS_F | CLASS_G,
+  AIRSPACE_CENTER = CENTER,
+  AIRSPACE_RESTRICTED = RESTRICTED | PROHIBITED | MOA | DANGER,
+  AIRSPACE_SPECIAL = WARNING | ALERT | TRAINING,
+  AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK,
+
+  AIRSPACE_ALL = AIRSPACE_ICAO | AIRSPACE_FIR | AIRSPACE_CENTER | AIRSPACE_RESTRICTED | AIRSPACE_SPECIAL |
+                 AIRSPACE_OTHER
+};
+
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 22;
+
+Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
+
+struct MapAirspaceFilter
+{
+  MapAirspaceTypes types = AIRSPACE_NONE;
+  int minAltitude = -1, maxAltitude = -1;
+};
+
+/* Airspace boundary */
+struct MapAirspace
+{
+  int id;
+  int minAltitude, maxAltitude;
+  QString name, comName, comType, minAltitudeType, maxAltitudeType;
+  int comFrequency;
+  map::MapAirspaceTypes type;
+
+  atools::geo::Rect bounding;
+  atools::geo::LineString lines;
+
+  bool isValid() const
+  {
+    return bounding.isValid();
+  }
+
+};
+
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
 struct MapSearchResult
 {
@@ -647,6 +715,7 @@ struct MapSearchResult
   QList<MapIls> ils;
 
   QList<MapAirway> airways;
+  QList<MapAirspace> airspaces;
 
   /* User defined route points */
   QList<MapUserpoint> userPoints;
@@ -728,6 +797,9 @@ struct DistanceMarker
 
 };
 
+QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
+
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
@@ -736,21 +808,6 @@ struct WeatherContext
   QString asMetar, asType, vatsimMetar, noaaMetar, ident;
 
 };
-
-enum MapAirspaceType
-{
-};
-
-/* Airspace boundary */
-struct MapAirspace
-{
-  atools::geo::Rect bounding;
-
-  atools::geo::LineString line;
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
@@ -779,6 +836,13 @@ QString parkingShortName(const QString& name);
 
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);
+
+QString airspaceTypeToString(map::MapAirspaceTypes type);
+QString airspaceRemark(map::MapAirspaceTypes type);
+int airspaceDrawingOrder(map::MapAirspaceTypes type);
+
+map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
+QString airspaceTypeToDatabase(map::MapAirspaceTypes type);
 
 QString airwayTypeToShortString(map::MapAirwayType type);
 QString airwayTypeToString(map::MapAirwayType type);
@@ -822,6 +886,7 @@ Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapSearchResult, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
 
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker);

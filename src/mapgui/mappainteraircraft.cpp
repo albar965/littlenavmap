@@ -67,8 +67,6 @@ void MapPainterAircraft::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver);
 
-  setRenderHints(context->painter);
-
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     paintAircraftTrack(context);
 

@@ -1249,6 +1249,57 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     addScenery(rec, html);
 }
 
+void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& html, QColor background) const
+{
+  QIcon icon = SymbolPainter(background).createAirspaceIcon(airspace, SYMBOL_SIZE);
+  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.nbsp().nbsp();
+
+  if(airspace.name.isEmpty())
+    navaidTitle(html, tr("Airspace"));
+  else
+    navaidTitle(html, (info ? tr("Airspace: ") : QString()) + formatter::capNavString(airspace.name));
+
+  if(info)
+  {
+    // Add map link if not tooltip
+    html.nbsp().nbsp();
+    html.a(tr("Map"),
+           QString("lnm://show?id=%1&type=%2").arg(airspace.id).arg(map::AIRSPACE),
+           atools::util::html::LINK_NO_UL);
+
+  }
+
+  if(info)
+    html.p(map::airspaceRemark(airspace.type));
+
+  html.table();
+  html.row2(tr("Type:"), map::airspaceTypeToString(airspace.type));
+
+  if(airspace.minAltitudeType.isEmpty())
+    html.row2(tr("Min altitude:"), tr("Unknown"));
+  else
+    html.row2(tr("Min altitude:"), Unit::altFeet(airspace.minAltitude) + " " + airspace.minAltitudeType);
+
+  QString maxAlt;
+  if(airspace.maxAltitudeType.isEmpty())
+    maxAlt = tr("Unknown");
+  else if(airspace.maxAltitudeType == "UL")
+    maxAlt = tr("Unlimited");
+  else
+    maxAlt = Unit::altFeet(airspace.maxAltitude) + " " + airspace.maxAltitudeType;
+
+  html.row2(tr("Max altitude:"), maxAlt);
+
+  if(!airspace.comType.isEmpty())
+  {
+    html.row2(tr("COM:"), formatter::capNavString(airspace.comName));
+    html.row2(tr("COM Type:"), map::comTypeName(airspace.comType));
+    html.row2(tr("COM Frequency:"), locale.toString(airspace.comFrequency / 1000., 'f', 3) + tr(" MHz"));
+  }
+  html.tableEnd();
+}
+
 void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
 {
   navaidTitle(html, tr("Airway: ") + airway.name);

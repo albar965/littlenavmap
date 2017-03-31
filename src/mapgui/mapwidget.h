@@ -213,7 +213,11 @@ public:
 
   /* Define which airport or navaid types are shown on the map */
   void setShowMapFeatures(map::MapObjectTypes type, bool show);
-  map::MapObjectTypes getShownMapFeatures();
+  void setShowMapAirspaces(map::MapAirspaceTypes type, bool show);
+
+  map::MapObjectTypes getShownMapFeatures() const;
+  map::MapAirspaceTypes getShownAirspaces() const;
+  map::MapAirspaceTypes getShownAirspacesByLayer() const;
 
   /* Change map detail level */
   void increaseMapDetail();

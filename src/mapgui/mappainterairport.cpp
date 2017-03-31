@@ -70,13 +70,16 @@ void MapPainterAirport::render(PaintContext *context)
      (!context->mapLayerEffective->isAirportDiagram()) && airportMap.isEmpty())
     return;
 
+  atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
+
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache = nullptr;
   if(context->mapLayerEffective->isAirportDiagram())
-    airportCache = query->getAirports(curBox, context->mapLayerEffective, context->drawFast);
+    airportCache = query->getAirports(curBox, context->mapLayerEffective, context->lazyUpdate);
   else
-    airportCache = query->getAirports(curBox, context->mapLayer, context->drawFast);
+    airportCache = query->getAirports(curBox, context->mapLayer, context->lazyUpdate);
 
   for(const MapAirport& ap : *airportCache)
     airportMap.insert(ap.id, &ap);
@@ -84,8 +87,6 @@ void MapPainterAirport::render(PaintContext *context)
   if(airportMap.isEmpty())
     // Nothing found in bounding rectangle and route
     return;
-
-  setRenderHints(context->painter);
 
   // Collect all airports that are visible
   QList<const MapAirport *> visibleAirports;

@@ -210,4 +210,121 @@ const QPen aircraftTrailPen(float size)
   return QPen();
 }
 
+QColor colorForAirspaceFill(const map::MapAirspace& airspace)
+{
+  if(airspace.type == map::CENTER)
+    return Qt::transparent;
+  else
+  {
+    QColor col = mapcolors::penForAirspace(airspace).color();
+    col.setAlpha(25);
+    return col;
+  }
+}
+
+const QPen& penForAirspace(const map::MapAirspace& airspace)
+{
+  static QPen NOAIRSPACE(Qt::transparent);
+  static QPen CENTER(QColor("#808080"), 1.5);
+  static QPen CLASSA(QColor("#8d0200"), 2);
+  static QPen CLASSB(QColor("#902ece"), 2);
+  static QPen CLASSC(QColor("#8594ec"), 2);
+  static QPen CLASSD(QColor("#6c5bce"), 2);
+  static QPen CLASSE(QColor("#cc5060"), 2);
+  static QPen CLASSF(QColor("#7d8000"), 2);
+  static QPen CLASSG(QColor("#cc8040"), 2);
+  static QPen TOWER(QColor("#60808a"), 2);
+  static QPen CLEARANCE(QColor("#60808a"), 2);
+  static QPen GROUND(QColor("#60808a"), 2);
+  static QPen DEPARTURE(QColor("#60808a"), 2);
+  static QPen APPROACH(QColor("#60808a"), 2);
+  static QPen MOA(QColor("#4485b7"), 2);
+  static QPen RESTRICTED(QColor("#fd8c00"), 2);
+  static QPen PROHIBITED(QColor("#f00909"), 3);
+  static QPen WARNING(QColor("#fd8c00"), 2);
+  static QPen ALERT(QColor("#fd8c00"), 2);
+  static QPen DANGER(QColor("#dd103d"), 2);
+  static QPen NATIONALPARK(QColor("#509090"), 2);
+  static QPen MODEC(QColor("#509090"), 2);
+  static QPen RADAR(QColor("#509090"), 2);
+  static QPen TRAINING(QColor("#509090"), 2);
+
+  switch(airspace.type)
+  {
+    case map::AIRSPACE_NONE:
+      return NOAIRSPACE;
+
+    case map::CENTER:
+      return CENTER;
+
+    case map::CLASS_A:
+      return CLASSA;
+
+    case map::CLASS_B:
+      return CLASSB;
+
+    case map::CLASS_C:
+      return CLASSC;
+
+    case map::CLASS_D:
+      return CLASSD;
+
+    case map::CLASS_E:
+      return CLASSE;
+
+    case map::CLASS_F:
+      return CLASSF;
+
+    case map::CLASS_G:
+      return CLASSG;
+
+    case map::TOWER:
+      return TOWER;
+
+    case map::CLEARANCE:
+      return CLEARANCE;
+
+    case map::GROUND:
+      return GROUND;
+
+    case map::DEPARTURE:
+      return DEPARTURE;
+
+    case map::APPROACH:
+      return APPROACH;
+
+    case map::MOA:
+      return MOA;
+
+    case map::RESTRICTED:
+      return RESTRICTED;
+
+    case map::PROHIBITED:
+      return PROHIBITED;
+
+    case map::WARNING:
+      return WARNING;
+
+    case map::ALERT:
+      return ALERT;
+
+    case map::DANGER:
+      return DANGER;
+
+    case map::NATIONAL_PARK:
+      return NATIONALPARK;
+
+    case map::MODEC:
+      return MODEC;
+
+    case map::RADAR:
+      return RADAR;
+
+    case map::TRAINING:
+      return TRAINING;
+
+  }
+  return NOAIRSPACE;
+}
+
 } // namespace mapcolors

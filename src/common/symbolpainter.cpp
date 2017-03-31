@@ -114,6 +114,25 @@ QIcon SymbolPainter::createProcedurePointIcon(int size)
   return QIcon(pixmap);
 }
 
+QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setBackgroundMode(Qt::TransparentMode);
+  painter.setPen(mapcolors::penForAirspace(airspace));
+
+  QColor fill = mapcolors::colorForAirspaceFill(airspace);
+  fill.setAlpha(80); // Make fill more dense to hightlight the color
+  painter.setBrush(fill);
+
+  painter.drawEllipse(2, 2, size - 4, size - 4);
+
+  return QIcon(pixmap);
+}
+
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,
                                       float x, float y, int size, bool isAirportDiagram, bool fast)
 {

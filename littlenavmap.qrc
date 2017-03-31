@@ -139,5 +139,12 @@
         <file>resources/icons/routeactiveleg.svg</file>
         <file>resources/icons/missed.svg</file>
         <file>resources/icons/saveasflp.svg</file>
+        <file>resources/icons/airspace.svg</file>
+        <file>resources/icons/airspacectr.svg</file>
+        <file>resources/icons/airspacefir.svg</file>
+        <file>resources/icons/airspaceicao.svg</file>
+        <file>resources/icons/airspaceother.svg</file>
+        <file>resources/icons/airspacespec.svg</file>
+        <file>resources/icons/airspacerestr.svg</file>
     </qresource>
 </RCC>

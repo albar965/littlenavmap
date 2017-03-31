@@ -40,6 +40,13 @@ using map::MapHelipad;
 // Extract runway number and designator
 static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
 
+struct MapAirspaceCoordinate
+{
+  atools::geo::Pos pos;
+  float radius;
+  QString type;
+};
+
 MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb)
 {
@@ -214,6 +221,22 @@ void MapQuery::getAirwayById(map::MapAirway& airway, int airwayId)
 
 }
 
+map::MapAirspace MapQuery::getAirspaceById(int airspaceId)
+{
+  map::MapAirspace airspace;
+  getAirspaceById(airspace, airspaceId);
+  return airspace;
+}
+
+void MapQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
+{
+  airspaceByIdQuery->bindValue(":id", airspaceId);
+  airspaceByIdQuery->exec();
+  if(airspaceByIdQuery->next())
+    mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace);
+  airspaceByIdQuery->finish();
+}
+
 void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
                                    const QString& ident, const QString& region, const QString& airport,
                                    const Pos& sortByDistancePos, float maxDistance)
@@ -359,6 +382,12 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     map::MapRunwayEnd end = getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
+  }
+  else if(type == map::AIRSPACE)
+  {
+    map::MapAirspace airspace = getAirspaceById(id);
+    if(airspace.isValid())
+      result.airspaces.append(airspace);
   }
 }
 
@@ -667,8 +696,7 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
   return &markerCache.list;
 }
 
-const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                           bool lazy)
+const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
   ilsCache.updateCache(rect, mapLayer, lazy);
 
@@ -690,8 +718,7 @@ const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const M
   return &ilsCache.list;
 }
 
-const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy)
+const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
   airwayCache.updateCache(rect, mapLayer, lazy);
 
@@ -711,6 +738,123 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
   }
   airwayCache.validate();
   return &airwayCache.list;
+}
+
+const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                      map::MapAirspaceTypes types, bool lazy)
+{
+  airspaceCache.updateCache(rect, mapLayer, lazy);
+
+  if(types != lastAirspaceTypes)
+  {
+    airspaceCache.list.clear();
+    lastAirspaceTypes = types;
+  }
+
+  if(airspaceCache.list.isEmpty() && !lazy)
+  {
+
+    QStringList typeStrings;
+
+    if(types != map::AIRSPACE_NONE)
+    {
+      // Build a list of query strings based on the bitfield
+      if(types == map::AIRSPACE_ALL)
+        typeStrings.append("%");
+      else
+      {
+        for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
+        {
+          map::MapAirspaceTypes t(1 << i);
+          if(types & t)
+            typeStrings.append(map::airspaceTypeToDatabase(t));
+        }
+      }
+
+      // Get the airspace objects without geometry
+      for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+      {
+        for(const QString& typeStr : typeStrings)
+        {
+          bindCoordinatePointInRect(r, airspaceByRectQuery);
+          airspaceByRectQuery->bindValue(":type", typeStr);
+          airspaceByRectQuery->exec();
+          while(airspaceByRectQuery->next())
+          {
+            map::MapAirspace airspace;
+            mapTypesFactory->fillAirspace(airspaceByRectQuery->record(), airspace);
+            airspaceCache.list.append(airspace);
+          }
+        }
+      }
+
+      // Sort by importance
+      std::sort(airspaceCache.list.begin(), airspaceCache.list.end(),
+                [] (const map::MapAirspace & airspace1, const map::MapAirspace & airspace2)->bool
+                {
+                  return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
+                });
+
+      // Fetch geometry - lines are cached separately
+      for(map::MapAirspace& airspace : airspaceCache.list)
+      {
+        const atools::geo::LineString *lines = fetchAirspaceLines(airspace.id);
+        if(lines != nullptr)
+          airspace.lines = *lines;
+      }
+    }
+    else
+      airspaceCache.list.clear();
+  }
+  airspaceCache.validate();
+  return &airspaceCache.list;
+}
+
+const LineString *MapQuery::fetchAirspaceLines(int boundaryId)
+{
+  if(airspaceLineCache.contains(boundaryId))
+    return airspaceLineCache.object(boundaryId);
+  else
+  {
+    QList<MapAirspaceCoordinate> lines;
+
+    airspaceLinesByIdQuery->bindValue(":id", boundaryId);
+    airspaceLinesByIdQuery->exec();
+    while(airspaceLinesByIdQuery->next())
+    {
+      MapAirspaceCoordinate coord;
+
+      coord.type = airspaceLinesByIdQuery->value("type").toString();
+
+      if(coord.type == "C")
+        coord.radius = airspaceLinesByIdQuery->value("radius").toFloat();
+      else
+        coord.pos = Pos(airspaceLinesByIdQuery->value("lonx").toFloat(),
+                        airspaceLinesByIdQuery->value("laty").toFloat());
+
+      lines.append(coord);
+    }
+
+    atools::geo::LineString *processedLines = new atools::geo::LineString;
+
+    for(int i = 0; i < lines.size(); i++)
+    {
+      const MapAirspaceCoordinate& coord = lines.at(i);
+      if(coord.type == "O")
+        // Origin needed later
+        continue;
+      else if(coord.type == "C")
+        // Append line string build from circle parameters
+        processedLines->append(LineString(lines.at(i - 1).pos, atools::geo::nmToMeter(coord.radius), 36));
+      else if(coord.type == "CCW" || coord.type == "CW")
+        // Build an arc
+        processedLines->append(LineString(lines.at(i - 1).pos, lines.at(i - 2).pos, lines.at(i).pos,
+                                          coord.type == "CW", 36));
+      else
+        processedLines->append(lines.at(i).pos);
+    }
+    return processedLines;
+  }
 }
 
 /*
@@ -1160,6 +1304,10 @@ void MapQuery::initQueries()
     "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
     "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
 
+  static const QString airspaceQueryBase(
+    "boundary_id, type, name, com_type, com_frequency, com_name, "
+    "min_altitude_type, max_altitude_type, max_altitude, max_lonx, max_laty, min_altitude, min_lonx, min_laty ");
+
   static const QString waypointQueryBase(
     "waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
     "mag_var, lonx, laty ");
@@ -1345,6 +1493,9 @@ void MapQuery::initQueries()
   airwayByIdQuery = new SqlQuery(db);
   airwayByIdQuery->prepare("select " + airwayQueryBase + " from airway where airway_id = :id");
 
+  airspaceByIdQuery = new SqlQuery(db);
+  airspaceByIdQuery->prepare("select " + airspaceQueryBase + " from boundary where boundary_id = :id");
+
   airwayWaypointByIdentQuery = new SqlQuery(db);
   airwayWaypointByIdentQuery->prepare("select " + waypointQueryBase +
                                       " from waypoint w "
@@ -1362,6 +1513,16 @@ void MapQuery::initQueries()
   airwayWaypointsQuery = new SqlQuery(db);
   airwayWaypointsQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name "
                                                               " order by airway_fragment_no, sequence_no");
+
+  airspaceByRectQuery = new SqlQuery(db);
+  airspaceByRectQuery->prepare(
+    "select " + airspaceQueryBase + "from boundary "
+                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
+                                    "min_laty > :topy or max_laty < :bottomy) and type like :type");
+
+  airspaceLinesByIdQuery = new SqlQuery(db);
+  airspaceLinesByIdQuery->prepare("select type, radius, lonx, laty from boundary_line where boundary_id = :id");
+
 }
 
 void MapQuery::deInitQueries()
@@ -1373,6 +1534,8 @@ void MapQuery::deInitQueries()
   markerCache.clear();
   ilsCache.clear();
   airwayCache.clear();
+  airspaceCache.clear();
+  airspaceLineCache.clear();
   runwayCache.clear();
   runwayOverwiewCache.clear();
   apronCache.clear();
@@ -1417,6 +1580,13 @@ void MapQuery::deInitQueries()
   ilsByRectQuery = nullptr;
   delete airwayByRectQuery;
   airwayByRectQuery = nullptr;
+
+  delete airspaceByRectQuery;
+  airspaceByRectQuery = nullptr;
+  delete airspaceLinesByIdQuery;
+  airspaceLinesByIdQuery = nullptr;
+  delete airspaceByIdQuery;
+  airspaceByIdQuery = nullptr;
 
   delete airportByIdQuery;
   airportByIdQuery = nullptr;

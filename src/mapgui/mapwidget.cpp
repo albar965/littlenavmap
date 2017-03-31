@@ -236,6 +236,14 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
+  setShowMapAirspaces(map::AIRSPACE_CENTER, ui->actionAirspacesShowCenter->isChecked());
+  setShowMapAirspaces(map::AIRSPACE_FIR, ui->actionAirspacesShowFir->isChecked());
+  setShowMapAirspaces(map::AIRSPACE_ICAO, ui->actionAirspacesShowIcao->isChecked());
+  setShowMapAirspaces(map::AIRSPACE_OTHER, ui->actionAirspacesShowOther->isChecked());
+  setShowMapAirspaces(map::AIRSPACE_RESTRICTED, ui->actionAirspacesShowRestricted->isChecked());
+  setShowMapAirspaces(map::AIRSPACE_SPECIAL, ui->actionAirspacesShowSpecial->isChecked());
+  setShowMapFeatures(map::AIRSPACE, getShownAirspaces() & map::AIRSPACE_ALL);
+
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
@@ -299,6 +307,15 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 
   if(type & map::AIRWAYV || type & map::AIRWAYJ)
     screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
+
+  if(type & map::AIRSPACE)
+    screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
+}
+
+void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes type, bool show)
+{
+  paintLayer->setShowAirspaces(type, show);
+  screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
 void MapWidget::setDetailLevel(int factor)
@@ -307,11 +324,22 @@ void MapWidget::setDetailLevel(int factor)
   paintLayer->setDetailFactor(factor);
   updateVisibleObjectsStatusBar();
   screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
+  screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
-map::MapObjectTypes MapWidget::getShownMapFeatures()
+map::MapObjectTypes MapWidget::getShownMapFeatures() const
 {
   return paintLayer->getShownMapObjects();
+}
+
+map::MapAirspaceTypes MapWidget::getShownAirspaces() const
+{
+  return paintLayer->getShownAirspaces();
+}
+
+map::MapAirspaceTypes MapWidget::getShownAirspacesByLayer() const
+{
+  return paintLayer->getShownAirspacesByLayer();
 }
 
 RouteController *MapWidget::getRouteController() const
@@ -343,6 +371,7 @@ void MapWidget::postDatabaseLoad()
   databaseLoadStatus = false;
   paintLayer->postDatabaseLoad();
   screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
+  screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
   screenIndex->updateRouteScreenGeometry();
   update();
 }
@@ -2174,8 +2203,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip,
-                                          mainWindow->getRoute(),
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, mainWindow->getRoute(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
@@ -2446,6 +2474,7 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     updateVisibleObjectsStatusBar();
     screenIndex->updateRouteScreenGeometry();
     screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
+    screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
   }
 
   if(paintLayer->getOverflow() > 0)

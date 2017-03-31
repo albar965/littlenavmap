@@ -73,6 +73,7 @@ public:
   /* Update geometry after a route or scroll or map change */
   void updateRouteScreenGeometry();
   void updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
+  void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
 
   /* Save and restore distance markers and range rings */
   void saveState();
@@ -172,6 +173,7 @@ public:
 
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result);
+  void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result);
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                      QList<proc::MapProcedurePoint>& procPoints);
@@ -191,6 +193,7 @@ private:
   QList<map::DistanceMarker> distanceMarks;
   QList<std::pair<int, QLine> > routeLines;
   QList<std::pair<int, QLine> > airwayLines;
+  QList<std::pair<int, QPolygon> > airspacePolygons;
   QList<std::pair<int, QPoint> > routePoints;
 
 };

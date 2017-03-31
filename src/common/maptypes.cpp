@@ -301,6 +301,156 @@ const static QHash<QString, QString> comTypeNames(
     {"RCD", QObject::tr("Remote Clearance Delivery")}
   });
 
+const static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
+  {
+    {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
+    {map::CENTER, QObject::tr("Center")},
+    {map::CLASS_A, QObject::tr("Class A")},
+    {map::CLASS_B, QObject::tr("Class B")},
+    {map::CLASS_C, QObject::tr("Class C")},
+    {map::CLASS_D, QObject::tr("Class D")},
+    {map::CLASS_E, QObject::tr("Class E")},
+    {map::CLASS_F, QObject::tr("Class F")},
+    {map::CLASS_G, QObject::tr("Class G")},
+    {map::TOWER, QObject::tr("Tower")},
+    {map::CLEARANCE, QObject::tr("Clearance")},
+    {map::GROUND, QObject::tr("Ground")},
+    {map::DEPARTURE, QObject::tr("Departure")},
+    {map::APPROACH, QObject::tr("Approach")},
+    {map::MOA, QObject::tr("MOA")},
+    {map::RESTRICTED, QObject::tr("Restricted")},
+    {map::PROHIBITED, QObject::tr("Prohibited")},
+    {map::WARNING, QObject::tr("Warning")},
+    {map::ALERT, QObject::tr("Alert")},
+    {map::DANGER, QObject::tr("Danger")},
+    {map::NATIONAL_PARK, QObject::tr("National Park")},
+    {map::MODEC, QObject::tr("Mode-C")},
+    {map::RADAR, QObject::tr("Radar")},
+    {map::TRAINING, QObject::tr("Training")}
+  });
+
+const static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
+  {
+    {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
+    {map::CENTER, QString()},
+    {map::CLASS_A, QObject::tr("Controlled, above 18,000 ft MSL, IFR, no VFR, ATC clearance required.")},
+    {map::CLASS_B, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
+    {map::CLASS_C, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
+    {map::CLASS_D, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
+    {map::CLASS_E, QObject::tr("Controlled, IFR and VFR, ATC clearance required for IFR.")},
+    {map::CLASS_F, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
+    {map::CLASS_G, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
+    {map::TOWER, QString()},
+    {map::CLEARANCE, QString()},
+    {map::GROUND, QString()},
+    {map::DEPARTURE, QString()},
+    {map::APPROACH, QString()},
+    {map::MOA, QObject::tr("Military operations area. Needs clearance for IFR if active. Check for traffic advisories.")},
+    {map::RESTRICTED, QObject::tr("Needs authorization.")},
+    {map::PROHIBITED, QObject::tr("No flight allowed.")},
+    {map::WARNING, QObject::tr("Contains activity that may be hazardous to nonparticipating aircraft.")},
+    {map::ALERT, QObject::tr("High volume of pilot training or an unusual type of aerial activity.")},
+    {map::DANGER, QObject::tr("Proceed with caution.")},
+    {map::NATIONAL_PARK, QString()},
+    {map::MODEC, QObject::tr("Needs altitude aware transponder.")},
+    {map::RADAR, QObject::tr("Terminal radar area. Not controlled.")},
+    {map::TRAINING, QString()}
+  });
+
+const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
+  {
+    {"NONE", map::AIRSPACE_NONE},
+    {"C", map::CENTER},
+    {"CA", map::CLASS_A},
+    {"CB", map::CLASS_B},
+    {"CC", map::CLASS_C},
+    {"CD", map::CLASS_D},
+    {"CE", map::CLASS_E},
+    {"CF", map::CLASS_F},
+    {"CG", map::CLASS_G},
+    {"T", map::TOWER},
+    {"CL", map::CLEARANCE},
+    {"G", map::GROUND},
+    {"D", map::DEPARTURE},
+    {"A", map::APPROACH},
+    {"M", map::MOA},
+    {"R", map::RESTRICTED},
+    {"P", map::PROHIBITED},
+    {"W", map::WARNING},
+    {"AL", map::ALERT},
+    {"DA", map::DANGER},
+    {"NP", map::NATIONAL_PARK},
+    {"MD", map::MODEC},
+    {"RD", map::RADAR},
+    {"TR", map::TRAINING},
+  });
+
+const static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
+  {
+    {map::AIRSPACE_NONE, "NONE"},
+    {map::CENTER, "C"},
+    {map::CLASS_A, "CA"},
+    {map::CLASS_B, "CB"},
+    {map::CLASS_C, "CC"},
+    {map::CLASS_D, "CD"},
+    {map::CLASS_E, "CE"},
+    {map::CLASS_F, "CF"},
+    {map::CLASS_G, "CG"},
+    {map::TOWER, "T"},
+    {map::CLEARANCE, "CL"},
+    {map::GROUND, "G"},
+    {map::DEPARTURE, "D"},
+    {map::APPROACH, "A"},
+    {map::MOA, "M"},
+    {map::RESTRICTED, "R"},
+    {map::PROHIBITED, "P"},
+    {map::WARNING, "W"},
+    {map::ALERT, "AL"},
+    {map::DANGER, "DA"},
+    {map::NATIONAL_PARK, "NP"},
+    {map::MODEC, "MD"},
+    {map::RADAR, "RD"},
+    {map::TRAINING, "TR"},
+  });
+
+/* Defines drawing sort order - lower values are drawn first*/
+const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
+  {
+    {map::AIRSPACE_NONE, 1},
+    {map::CENTER, 1},
+
+    {map::CLASS_A, 10},
+
+    {map::CLASS_B, 11},
+    {map::CLASS_C, 12},
+    {map::CLASS_D, 13},
+
+    {map::CLASS_E, 14},
+
+    {map::CLASS_F, 20},
+    {map::CLASS_G, 21},
+
+    {map::TOWER, 51},
+    {map::CLEARANCE, 52},
+    {map::GROUND, 50},
+    {map::DEPARTURE, 53},
+    {map::APPROACH, 54},
+
+    {map::MOA, 1},
+
+    {map::RESTRICTED, 100},
+    {map::PROHIBITED, 101},
+
+    {map::WARNING, 60},
+    {map::ALERT, 61},
+    {map::DANGER, 62},
+
+    {map::NATIONAL_PARK, 2},
+    {map::MODEC, 5},
+    {map::RADAR, 6},
+    {map::TRAINING, 59},
+  });
+
 int qHash(const map::MapObjectRef& type)
 {
   return type.id ^ static_cast<int>(type.type);
@@ -853,6 +1003,31 @@ QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
   out.nospace().noquote() << flags.join("|");
 
   return out;
+}
+
+QString airspaceTypeToString(map::MapAirspaceTypes type)
+{
+  return airspaceTypeNameMap.value(type);
+}
+
+QString airspaceRemark(map::MapAirspaceTypes type)
+{
+  return airspaceRemarkMap.value(type);
+}
+
+int airspaceDrawingOrder(map::MapAirspaceTypes type)
+{
+  return airspacePriorityMap.value(type);
+}
+
+map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
+{
+  return airspaceTypeFromDatabaseMap.value(type);
+}
+
+QString airspaceTypeToDatabase(map::MapAirspaceTypes type)
+{
+  return airspaceTypeToDatabaseMap.value(type);
 }
 
 } // namespace types

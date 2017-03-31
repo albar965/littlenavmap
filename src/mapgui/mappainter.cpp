@@ -63,22 +63,6 @@ MapPainter::~MapPainter()
   delete symbolPainter;
 }
 
-void MapPainter::setRenderHints(GeoPainter *painter)
-{
-  if(mapWidget->viewContext() == Marble::Still)
-  {
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::TextAntialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-  }
-  else if(mapWidget->viewContext() == Marble::Animation)
-  {
-    painter->setRenderHint(QPainter::Antialiasing, false);
-    painter->setRenderHint(QPainter::TextAntialiasing, false);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-  }
-}
-
 void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, int radiusNm, bool fast,
                              int& xtext, int& ytext)
 {

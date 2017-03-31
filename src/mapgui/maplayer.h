@@ -128,6 +128,14 @@ public:
   MapLayer& airwayIdent(bool value = true);
   MapLayer& airwayInfo(bool value = true);
 
+  // MapLayer& airspace(bool value = true);
+  MapLayer& airspaceCenter(bool value = true);
+  MapLayer& airspaceIcao(bool value = true);
+  MapLayer& airspaceFir(bool value = true);
+  MapLayer& airspaceRestricted(bool value = true);
+  MapLayer& airspaceSpecial(bool value = true);
+  MapLayer& airspaceOther(bool value = true);
+
   bool operator<(const MapLayer& other) const;
 
   float getMaxRange() const
@@ -348,6 +356,42 @@ public:
   static const int MAX_MEDIUM_RUNWAY_FT = 4000;
   static const int MAX_LARGE_RUNWAY_FT = 8000;
 
+  bool isAirspace() const
+  {
+    return isAirspaceCenter() || isAirspaceFir() || isAirspaceIcao() || isAirspaceOther() || isAirspaceRestricted() ||
+           isAirspaceSpecial();
+  }
+
+  bool isAirspaceCenter() const
+  {
+    return layerAirspaceCenter;
+  }
+
+  bool isAirspaceIcao() const
+  {
+    return layerAirspaceIcao;
+  }
+
+  bool isAirspaceFir() const
+  {
+    return layerAirspaceFir;
+  }
+
+  bool isAirspaceRestricted() const
+  {
+    return layerAirspaceRestricted;
+  }
+
+  bool isAirspaceSpecial() const
+  {
+    return layerAirspaceSpecial;
+  }
+
+  bool isAirspaceOther() const
+  {
+    return layerAirspaceOther;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -374,6 +418,9 @@ private:
 
   int layerWaypointSymbolSize = 8, layerVorSymbolSize = 8, layerNdbSymbolSize = 8,
       layerMarkerSymbolSize = 8;
+
+  bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFir = false, layerAirspaceRestricted =
+    false, layerAirspaceSpecial = false, layerAirspaceOther = false;
 
 };
 

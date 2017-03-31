@@ -54,7 +54,9 @@ struct PaintContext
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
   bool drawFast; /* true if reduced details should be used */
+  bool lazyUpdate; /* postpone reloading until map is still */
   map::MapObjectTypes objectTypes; /* Object types that should be drawn */
+  map::MapAirspaceTypes airspaceTypes; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
@@ -144,9 +146,6 @@ public:
   virtual void render(PaintContext *context) = 0;
 
 protected:
-  /* Set render hints for anti aliasing depending on the view context (still or animation) */
-  void setRenderHints(Marble::GeoPainter *painter);
-
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,

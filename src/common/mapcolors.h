@@ -25,6 +25,8 @@
 namespace map {
 struct MapAirport;
 
+struct MapAirspace;
+
 }
 
 /* All colors and pens used on the map and profile display */
@@ -175,6 +177,9 @@ const QColor& colorForAirport(const map::MapAirport& ap);
 const QColor& alternatingRowColor(int row, bool isSort);
 
 const QPen aircraftTrailPen(float size);
+
+const QPen& penForAirspace(const map::MapAirspace& airspace);
+QColor colorForAirspaceFill(const map::MapAirspace& airspace);
 
 } // namespace mapcolors
 

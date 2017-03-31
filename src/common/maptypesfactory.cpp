@@ -358,3 +358,22 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
   start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
 }
+
+void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace)
+{
+  airspace.id = record.valueInt("boundary_id");
+
+  airspace.type = map::airspaceTypeFromDatabase(record.valueStr("type"));
+  airspace.name = record.valueStr("name");
+  airspace.comType = record.valueStr("com_type");
+  airspace.comFrequency = record.valueInt("com_frequency");
+  airspace.comName = record.valueStr("com_name");
+  airspace.minAltitudeType = record.valueStr("min_altitude_type");
+  airspace.maxAltitudeType = record.valueStr("max_altitude_type");
+  airspace.maxAltitude = record.valueInt("max_altitude");
+  airspace.minAltitude = record.valueInt("min_altitude");
+
+  // explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
+  airspace.bounding = Rect(record.valueFloat("min_lonx"), record.valueFloat("max_laty"),
+                           record.valueFloat("max_lonx"), record.valueFloat("min_laty"));
+}

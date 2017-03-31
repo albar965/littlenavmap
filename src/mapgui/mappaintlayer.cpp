@@ -23,6 +23,7 @@
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mappainteraircraft.h"
 #include "mapgui/mappainterairport.h"
+#include "mapgui/mappainterairspace.h"
 #include "mapgui/mappainterils.h"
 #include "mapgui/mappaintermark.h"
 #include "mapgui/mappainternav.h"
@@ -50,14 +51,14 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale);
   mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale);
   mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapQuery, mapScale);
   mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
   mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
 
   // Default for visible object types
-  objectTypes = map::MapObjectTypes(
-    map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER |
-    map::WAYPOINT);
+  objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
+  airspaceTypes = map::MapAirspaceTypes(map::AIRSPACE_NONE);
 }
 
 MapPaintLayer::~MapPaintLayer()
@@ -65,8 +66,10 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterIls;
   delete mapPainterNav;
   delete mapPainterAirport;
+  delete mapPainterAirspace;
   delete mapPainterMark;
   delete mapPainterRoute;
+  delete mapPainterAircraft;
 
   delete layers;
   delete mapScale;
@@ -90,10 +93,38 @@ void MapPaintLayer::setShowMapObjects(map::MapObjectTypes type, bool show)
     objectTypes &= ~type;
 }
 
+void MapPaintLayer::setShowAirspaces(map::MapAirspaceTypes type, bool show)
+{
+  if(show)
+    airspaceTypes |= type;
+  else
+    airspaceTypes &= ~type;
+}
+
 void MapPaintLayer::setDetailFactor(int factor)
 {
   detailFactor = factor;
   updateLayers();
+}
+
+map::MapAirspaceTypes MapPaintLayer::getShownAirspacesByLayer() const
+{
+  // Mask out all types that are not visible in the current layer
+  map::MapAirspaceTypes types = airspaceTypes;
+  if(!mapLayer->isAirspaceIcao())
+    types &= ~map::AIRSPACE_ICAO;
+  if(!mapLayer->isAirspaceFir())
+    types &= ~map::AIRSPACE_FIR;
+  if(!mapLayer->isAirspaceCenter())
+    types &= ~map::AIRSPACE_CENTER;
+  if(!mapLayer->isAirspaceRestricted())
+    types &= ~map::AIRSPACE_RESTRICTED;
+  if(!mapLayer->isAirspaceSpecial())
+    types &= ~map::AIRSPACE_SPECIAL;
+  if(!mapLayer->isAirspaceOther())
+    types &= ~map::AIRSPACE_OTHER;
+
+  return types;
 }
 
 /* Initialize the layer settings that define what is drawn at what zoom distance (text, size, etc.) */
@@ -106,11 +137,14 @@ void MapPaintLayer::initMapLayerSettings()
   // Create a list of map layers that define content for each zoom distance
   layers = new MapLayerSettings();
 
-  // Create a default layer
+  // Create a default layer with all features enabled
   MapLayer defLayer = MapLayer(0).airport().approach().approachText().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
                       vor().ndb().waypoint().marker().ils().airway().
+
+                      airspaceCenter().airspaceFir().airspaceOther().airspaceRestricted().airspaceSpecial().
+                      airspaceIcao().
 
                       vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName().
                       airportRouteInfo();
@@ -202,9 +236,19 @@ void MapPaintLayer::initMapLayerSettings()
          airportRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
+  append(defLayer.clone(750.f).airportSymbolSize(10).
+         airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         approachText(false).
+         airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
+
+  // airport > 8000
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
+         airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
+         airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
@@ -213,6 +257,8 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
+         airspaceCenter(false).airspaceFir(false).airspaceOther(false).
+         airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
@@ -220,6 +266,8 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(100000.f).airportSymbolSize(5).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
+         airspaceCenter(false).airspaceFir(false).airspaceOther(false).
+         airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
 
@@ -262,9 +310,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.painter = painter;
       context.viewport = viewport;
       context.objectTypes = objectTypes;
+      context.airspaceTypes = getShownAirspacesByLayer();
       context.viewContext = mapWidget->viewContext();
-      context.drawFast = mapScrollDetail == opts::FULL ? false : mapWidget->viewContext() ==
-                         Marble::Animation;
+      context.drawFast = (mapScrollDetail == opts::FULL || mapScrollDetail == opts::HIGHER) ?
+                         false : mapWidget->viewContext() == Marble::Animation;
+      context.lazyUpdate = mapScrollDetail == opts::FULL ? false : mapWidget->viewContext() == Marble::Animation;
       context.mapScrollDetail = mapScrollDetail;
 
       // Copy default font
@@ -295,8 +345,24 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
       context.dispOpts = od.getDisplayOptions();
 
+      if(mapWidget->viewContext() == Marble::Still)
+      {
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setRenderHint(QPainter::TextAntialiasing, true);
+        painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+      }
+      else if(mapWidget->viewContext() == Marble::Animation)
+      {
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setRenderHint(QPainter::TextAntialiasing, false);
+        painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+      }
+
       if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
       {
+        if(!context.isOverflow())
+          mapPainterAirspace->render(&context);
+
         if(context.mapLayerEffective->isAirportDiagram())
         {
           // Put ILS below and navaids on top of airport diagram

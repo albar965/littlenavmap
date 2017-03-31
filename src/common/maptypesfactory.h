@@ -68,6 +68,8 @@ public:
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
+  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace);
+
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);
 

@@ -390,7 +390,7 @@ void MainWindow::setupUi()
   scaleToolbar(ui->viewToolBar, 0.72f);
 #endif
 
-  ui->mapToolBarOptions->addSeparator();
+  ui->toolbarMapOptions->addSeparator();
 
   // Projection combo box
   mapProjectionComboBox = new QComboBox(this);
@@ -400,7 +400,7 @@ void MainWindow::setupUi()
   mapProjectionComboBox->setStatusTip(helpText);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
   mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
-  ui->mapToolBarOptions->addWidget(mapProjectionComboBox);
+  ui->toolbarMapOptions->addWidget(mapProjectionComboBox);
 
   // Projection menu items
   actionGroupMapProjection = new QActionGroup(ui->menuMapProjection);
@@ -421,7 +421,7 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
-  ui->mapToolBarOptions->addWidget(mapThemeComboBox);
+  ui->toolbarMapOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
@@ -526,20 +526,21 @@ void MainWindow::setupUi()
 
   // Add toobar actions to menu
   ui->menuView->insertActions(ui->actionShowStatusbar,
-                              {ui->mainToolBar->toggleViewAction(),
-                               ui->mapToolBar->toggleViewAction(),
-                               ui->mapToolBarOptions->toggleViewAction(),
-                               ui->routeToolBar->toggleViewAction(),
-                               ui->viewToolBar->toggleViewAction()});
+                              {ui->toolBarMain->toggleViewAction(),
+                               ui->toolBarMap->toggleViewAction(),
+                               ui->toolBarAirspaces->toggleViewAction(),
+                               ui->toolbarMapOptions->toggleViewAction(),
+                               ui->toolBarRoute->toggleViewAction(),
+                               ui->toolBarView->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
   // Add toobar actions to toolbar
-  ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetLegend->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetElevation->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetLegend->toggleViewAction());
 
   // Create labels for the statusbar
   connectStatusLabel = new QLabel();
@@ -755,6 +756,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+
+  connect(ui->actionAirspacesShowCenter, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionAirspacesShowFir, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionAirspacesShowIcao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionAirspacesShowOther, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionAirspacesShowRestricted, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionAirspacesShowSpecial, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1748,10 +1756,10 @@ void MainWindow::updateActionStates()
   {
     ui->actionMapShowEmptyAirports->setEnabled(true);
 
-    if(!ui->mapToolBarOptions->actions().contains(ui->actionMapShowEmptyAirports))
+    if(!ui->toolbarMapOptions->actions().contains(ui->actionMapShowEmptyAirports))
     {
-      ui->mapToolBarOptions->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
-      emptyAirportSeparator = ui->mapToolBarOptions->insertSeparator(ui->actionMapShowVor);
+      ui->toolbarMapOptions->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+      emptyAirportSeparator = ui->toolbarMapOptions->insertSeparator(ui->actionMapShowVor);
     }
 
     if(!ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
@@ -1761,12 +1769,12 @@ void MainWindow::updateActionStates()
   {
     ui->actionMapShowEmptyAirports->setDisabled(true);
 
-    if(ui->mapToolBarOptions->actions().contains(ui->actionMapShowEmptyAirports))
+    if(ui->toolbarMapOptions->actions().contains(ui->actionMapShowEmptyAirports))
     {
-      ui->mapToolBarOptions->removeAction(ui->actionMapShowEmptyAirports);
+      ui->toolbarMapOptions->removeAction(ui->actionMapShowEmptyAirports);
 
       if(emptyAirportSeparator != nullptr)
-        ui->mapToolBarOptions->removeAction(emptyAirportSeparator);
+        ui->toolbarMapOptions->removeAction(emptyAirportSeparator);
       emptyAirportSeparator = nullptr;
     }
 
@@ -1871,9 +1879,13 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                         ui->actionAirspacesShowCenter, ui->actionAirspacesShowFir, ui->actionAirspacesShowIcao,
+                         ui->actionAirspacesShowOther, ui->actionAirspacesShowRestricted,
+                         ui->actionAirspacesShowSpecial,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi,
-                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr});
+                         ui->actionMapShowAircraftTrack,
+                         ui->actionInfoApproachShowMissedAppr});
   }
 
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
@@ -1895,13 +1907,15 @@ void MainWindow::saveStateMain()
 {
   qDebug() << "writeSettings";
 
-  // QStringList hexStr;
-  // QByteArray state = saveState();
-  // for(char i : state)
-  // hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
-  // qDebug().noquote().nospace() << "\n\nconst unsigned char DEFAULT_MAINWINDOW_STATE["
-  // << state.size() << "] ="
-  // << hexStr.join(",") << "};\n";
+#ifdef DEBUG_CREATE_WINDOW_STATE
+  QStringList hexStr;
+  QByteArray state = saveState();
+  for(char i : state)
+    hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
+  qDebug().noquote().nospace() << "\n\nconst unsigned char DEFAULT_MAINWINDOW_STATE["
+                               << state.size() << "] ="
+                               << hexStr.join(",") << "};\n";
+#endif
 
   saveMainWindowStates();
 
@@ -1991,6 +2005,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAi,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                    ui->actionAirspacesShowCenter, ui->actionAirspacesShowFir, ui->actionAirspacesShowIcao,
+                    ui->actionAirspacesShowOther, ui->actionAirspacesShowRestricted, ui->actionAirspacesShowSpecial,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline});
   Settings::instance().syncSettings();

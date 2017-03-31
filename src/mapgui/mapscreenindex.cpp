@@ -31,6 +31,9 @@
 #include "common/constants.h"
 #include "settings/settings.h"
 
+using atools::geo::Pos;
+using map::MapAirway;
+
 MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapQuery *mapQueryParam, MapPaintLayer *mapPaintLayer)
   : mapWidget(parentWidget), mapQuery(mapQueryParam), paintLayer(mapPaintLayer)
 {
@@ -41,11 +44,44 @@ MapScreenIndex::~MapScreenIndex()
 
 }
 
+void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
+{
+  airspacePolygons.clear();
+
+  CoordinateConverter conv(mapWidget->viewport());
+  const MapScale *scale = paintLayer->getMapScale();
+  if(scale->isValid())
+  {
+    const QList<map::MapAirspace> *airspaces = mapQuery->getAirspaces(curBox, paintLayer->getMapLayer(),
+                                                                      mapWidget->getShownAirspacesByLayer(), false);
+    if(airspaces != nullptr)
+    {
+      for(const map::MapAirspace& airspace : *airspaces)
+      {
+        Marble::GeoDataLatLonBox airspacebox(airspace.bounding.getNorth(), airspace.bounding.getSouth(),
+                                             airspace.bounding.getEast(), airspace.bounding.getWest(),
+                                             Marble::GeoDataCoordinates::Degree);
+
+        if(airspacebox.intersects(curBox))
+        {
+          QPolygon polygon;
+          int x, y;
+          for(const Pos& pos : airspace.lines)
+          {
+            conv.wToS(pos, x, y);
+            polygon.append(QPoint(x, y));
+          }
+
+          polygon = polygon.intersected(QPolygon(mapWidget->geometry()));
+          airspacePolygons.append(std::make_pair(airspace.id, polygon));
+        }
+      }
+    }
+  }
+}
+
 void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
 {
-  using atools::geo::Pos;
-  using map::MapAirway;
-
   airwayLines.clear();
 
   CoordinateConverter conv(mapWidget->viewport());
@@ -114,8 +150,6 @@ void MapScreenIndex::restoreState()
 
 void MapScreenIndex::updateRouteScreenGeometry()
 {
-  using atools::geo::Pos;
-
   const Route& route = mapWidget->getRoute();
 
   routeLines.clear();
@@ -219,6 +253,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Airways use a screen coordinate buffer
   getNearestAirways(xs, ys, maxDistance, result);
+  getNearestAirspaces(xs, ys, result);
 
   if(paintLayer->getShownMapObjects().testFlag(map::FLIGHTPLAN))
     // Get copies from flight plan if visible
@@ -369,6 +404,27 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance)
 }
 
 /* Get all airways near cursor position */
+void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& result)
+{
+  if(!paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+    return;
+
+  for(int i = 0; i < airspacePolygons.size(); i++)
+  {
+    const std::pair<int, QPolygon>& polyPair = airspacePolygons.at(i);
+
+    const QPolygon& poly = polyPair.second;
+
+    if(poly.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
+    {
+      map::MapAirspace airspace;
+      mapQuery->getAirspaceById(airspace, polyPair.first);
+      result.airspaces.append(airspace);
+    }
+  }
+}
+
+/* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result)
 {
   if(!paintLayer->getShownMapObjects().testFlag(map::AIRWAYJ) &&
@@ -377,15 +433,15 @@ void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::Map
 
   for(int i = 0; i < airwayLines.size(); i++)
   {
-    const std::pair<int, QLine>& line = airwayLines.at(i);
+    const std::pair<int, QLine>& linePair = airwayLines.at(i);
 
-    QLine l = line.second;
+    const QLine& line = linePair.second;
 
-    if(atools::geo::distanceToLine(xs, ys, l.x1(), l.y1(), l.x2(), l.y2(),
+    if(atools::geo::distanceToLine(xs, ys, line.x1(), line.y1(), line.x2(), line.y2(),
                                    true /* no dist to points */) < maxDistance)
     {
       map::MapAirway airway;
-      mapQuery->getAirwayById(airway, line.first);
+      mapQuery->getAirwayById(airway, linePair.first);
       result.airways.append(airway);
     }
   }

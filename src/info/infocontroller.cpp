@@ -64,6 +64,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   ui->textBrowserApproachInfo->setSearchPaths(paths);
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
+  ui->textBrowserAirspaceInfo->setSearchPaths(paths);
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
@@ -75,6 +76,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserAirspaceInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this,
@@ -110,7 +112,7 @@ void InfoController::currentTabChanged(int index)
 /* User clicked on "Map" link in text browsers */
 void InfoController::anchorClicked(const QUrl& url)
 {
-  qDebug() << "InfoController::anchorClicked" << url;
+  qDebug() << Q_FUNC_INFO << url;
 
   if(url.scheme() == "lnm")
   {
@@ -129,14 +131,17 @@ void InfoController::anchorClicked(const QUrl& url)
       }
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
-        // Only airport used for id variable
-        map::MapAirport airport;
-        mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
-        emit showRect(airport.bounding, false);
+        map::MapObjectTypes type(query.queryItemValue("type").toInt());
+        int id = query.queryItemValue("id").toInt();
+
+        if(type & map::AIRPORT)
+          emit showRect(mapQuery->getAirportById(id).bounding, false);
+        if(type & map::AIRSPACE)
+          emit showRect(mapQuery->getAirspaceById(id).bounding, false);
       }
       else if(query.hasQueryItem("airport"))
       {
-        // Airport ident
+        // Airport ident from AI aircraft progress
         map::MapAirport airport;
         mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
         emit showRect(airport.bounding, false);
@@ -228,6 +233,8 @@ void InfoController::saveState()
     refs.append({waypoint.id, map::WAYPOINT});
   for(const map::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, map::AIRWAY});
+  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
+    refs.append({airspace.id, map::AIRSPACE});
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
@@ -332,6 +339,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserApproachInfo->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
+  ui->textBrowserAirspaceInfo->clear();
 }
 
 void InfoController::showInformation(map::MapSearchResult result)
@@ -350,7 +358,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 {
   qDebug() << Q_FUNC_INFO;
 
-  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundAiAircraft = false;
+  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundAiAircraft = false,
+       foundAirspace = false;
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -366,9 +375,11 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     foundAiAircraft = true;
   }
 
+  // AI aircraft ================================================================
   for(const SimConnectAircraft& ac : currentSearchResult.aiAircraft)
     qDebug() << "Show AI" << ac.getAirplaneRegistration() << "id" << ac.getObjectId();
 
+  // Airport ================================================================
   if(!result.airports.isEmpty())
   {
     qDebug() << "Found airport" << result.airports.first().ident;
@@ -404,8 +415,25 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     foundAirport = true;
   }
 
-  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
-     !result.airways.isEmpty())
+  // Airspaces ================================================================
+  if(!result.airspaces.isEmpty())
+  {
+    currentSearchResult.airspaces.clear();
+    html.clear();
+    for(const map::MapAirspace& airspace : result.airspaces)
+    {
+      qDebug() << "Found airspace" << airspace.id;
+
+      currentSearchResult.airspaces.append(airspace);
+      infoBuilder->airspaceText(airspace, html, iconBackColor);
+      html.br();
+    }
+    foundAirspace = true;
+    ui->textBrowserAirspaceInfo->setText(html.getHtml());
+  }
+
+  // Navaids ================================================================
+  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty())
   {
     // if any navaids are to be shown clear search result before
     currentSearchResult.vors.clear();
@@ -456,7 +484,6 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     qDebug() << "Found airway" << airway.name;
 
     currentSearchResult.airways.append(airway);
-
     infoBuilder->airwayText(airway, html);
     html.br();
     foundNavaid = true;
@@ -468,7 +495,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   // Show dock windows if needed
   if(showWindows)
   {
-    if(foundNavaid || foundAirport)
+    if(foundNavaid || foundAirport || foundAirspace)
     {
       mainWindow->getUi()->dockWidgetInformation->show();
       mainWindow->getUi()->dockWidgetInformation->raise();
@@ -483,37 +510,41 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
   if(showWindows)
   {
-    int idx = ui->tabWidgetInformation->currentIndex();
     if(foundNavaid)
       mainWindow->setStatusMessage(tr("Showing information for navaid."));
     else if(foundAirport)
       mainWindow->setStatusMessage(tr("Showing information for airport."));
+    else if(foundAirspace)
+      mainWindow->setStatusMessage(tr("Showing information for airspace."));
 
-    // Switch intelligently to a new tab depending on what was found
-    if(foundAirport && !foundNavaid)
+    ic::TabIndex idx = static_cast<ic::TabIndex>(ui->tabWidgetInformation->currentIndex());
+    bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
+                         idx == ic::INFO_APPROACHES || idx == ic::INFO_WEATHER;
+
+    ic::TabIndex newIdx = idx;
+    if(foundAirspace && !foundNavaid && !foundAirport)
+      // Airspace is easiest to click - activate only if nothing else was found
+      newIdx = ic::INFO_AIRSPACE;
+
+    if(foundNavaid && !foundAirport)
+      // Found only navaids
+      newIdx = ic::INFO_NAVAID;
+
+    if(foundAirport && !airportActive && !foundNavaid)
     {
+      // Found only an airport
       // If no airport related tab is shown bring airport tab to front
-      if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::APPROACHES && idx != ic::WEATHER)
-        ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
+      newIdx = ic::INFO_AIRPORT;
     }
-    else if(!foundAirport && foundNavaid)
-    {
-      // Show navaid if only navaids where found
-      ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
-    }
-    else if(foundAirport && foundNavaid)
-    {
-      // Show airport if all was found but none is active
-      if(idx == ic::MAP_LEGEND)
-        ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
-    }
+
+    ui->tabWidgetInformation->setCurrentIndex(newIdx);
 
     // Switch to a tab in aircraft window
-    idx = ui->tabWidgetAircraft->currentIndex();
+    ic::TabIndexAircraft acidx = static_cast<ic::TabIndexAircraft>(ui->tabWidgetAircraft->currentIndex());
     if(foundUserAircraft && !foundAiAircraft)
     {
       // If no user aircraft related tabs is shown bring user tab to front
-      if(idx != ic::AIRCRAFT_USER && idx != ic::AIRCRAFT_USER_PROGRESS)
+      if(acidx != ic::AIRCRAFT_USER && acidx != ic::AIRCRAFT_USER_PROGRESS)
         ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_USER);
     }
     if(!foundUserAircraft && foundAiAircraft)
@@ -693,6 +724,7 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserAirspaceInfo, infoFontPtSize, sizePercent);
 
   sizePercent = OptionData::instance().getGuiInfoSimSize();
   setTextEditFontSize(ui->textBrowserAircraftInfo, simInfoFontPtSize, sizePercent);

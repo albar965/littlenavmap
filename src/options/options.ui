@@ -117,10 +117,10 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
          <property name="toolTip">
-          <string>Restore all map display settings (airport, VOR, etc.) on startup. Otherwise goes back to default settings.</string>
+          <string>Restore all map display settings (airport, VOR, etc.) on startup. Otherwise goes back to default settings on startup.</string>
          </property>
          <property name="text">
-          <string>Restore &amp;map display settings</string>
+          <string>Restore &amp;map display settings to default after startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -470,12 +470,17 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
             </property>
             <item>
              <property name="text">
-              <string>Full - Show all airport details, navaids and texts while scrolling</string>
+              <string>Full - Show details and reload all data while scrolling or zooming</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Normal - Use limited details during scrolling</string>
+              <string>Higher - Show all details but defer reload after scrolling or zooming</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Normal - Use limited details during scrolling and reload after scrolling or zooming</string>
              </property>
             </item>
             <item>

@@ -160,6 +160,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptions);
 enum MapScrollDetail
 {
   FULL,
+  HIGHER,
   NORMAL,
   NONE
 };
@@ -561,10 +562,7 @@ private:
   // ui->listWidgetOptionsDatabaseExclude
   QStringList databaseExclude;
 
-  // ui->radioButtonOptionsMapScrollFull
-  // ui->radioButtonOptionsMapScrollNone
-  // ui->radioButtonOptionsMapScrollNormal
-  opts::MapScrollDetail mapScrollDetail = opts::NORMAL;
+  opts::MapScrollDetail mapScrollDetail = opts::HIGHER;
 
   // ui->radioButtonOptionsMapSimUpdateFast
   // ui->radioButtonOptionsMapSimUpdateLow

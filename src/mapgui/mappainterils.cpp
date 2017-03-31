@@ -51,10 +51,11 @@ void MapPainterIls::render(PaintContext *context)
   {
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
-    const QList<MapIls> *ilsList = query->getIls(curBox, context->mapLayer, context->drawFast);
+    const QList<MapIls> *ilsList = query->getIls(curBox, context->mapLayer, context->lazyUpdate);
     if(ilsList != nullptr)
     {
-      setRenderHints(context->painter);
+      atools::util::PainterContextSaver saver(context->painter);
+      Q_UNUSED(saver);
 
       for(const MapIls& ils : *ilsList)
       {

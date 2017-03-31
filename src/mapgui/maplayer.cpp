@@ -262,6 +262,42 @@ MapLayer& MapLayer::airwayInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airspaceCenter(bool value)
+{
+  layerAirspaceCenter = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceIcao(bool value)
+{
+  layerAirspaceIcao = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceFir(bool value)
+{
+  layerAirspaceFir = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceRestricted(bool value)
+{
+  layerAirspaceRestricted = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceSpecial(bool value)
+{
+  layerAirspaceSpecial = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airspaceOther(bool value)
+{
+  layerAirspaceOther = value;
+  return *this;
+}
+
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;

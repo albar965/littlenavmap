@@ -164,20 +164,6 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     numEntries++;
   }
 
-  for(const MapAirway& airway : mapSearchResult.airways)
-  {
-    if(checkText(html, numEntries))
-      return html.getHtml();
-
-    if(!html.isEmpty())
-      html.hr();
-
-    html.p();
-    info.airwayText(airway, html);
-    html.pEnd();
-    numEntries++;
-  }
-
   for(const MapMarker& m : mapSearchResult.markers)
   {
     if(checkText(html, numEntries))
@@ -245,6 +231,34 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
     html.p();
     info.userpointText(up, html);
+    html.pEnd();
+    numEntries++;
+  }
+
+  for(const MapAirway& airway : mapSearchResult.airways)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.hr();
+
+    html.p();
+    info.airwayText(airway, html);
+    html.pEnd();
+    numEntries++;
+  }
+
+  for(const MapAirspace& up : mapSearchResult.airspaces)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.hr();
+
+    html.p();
+    info.airspaceText(up, html, iconBackColor);
     html.pEnd();
     numEntries++;
   }

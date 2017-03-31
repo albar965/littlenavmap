@@ -32,13 +32,13 @@ class QTextEdit;
 namespace ic {
 enum TabIndex
 {
-  AIRPORT = 0,
-  RUNWAYS = 1,
-  COM = 2,
-  APPROACHES = 3,
-  WEATHER = 4,
-  NAVAID = 5,
-  MAP_LEGEND = 6
+  INFO_AIRPORT = 0,
+  INFO_RUNWAYS = 1,
+  INFO_COM = 2,
+  INFO_APPROACHES = 3,
+  INFO_WEATHER = 4,
+  INFO_NAVAID = 5,
+  INFO_AIRSPACE = 6
 };
 
 enum TabIndexAircraft

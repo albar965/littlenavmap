@@ -22,6 +22,7 @@
 #include "common/unit.h"
 #include "mapgui/mapwidget.h"
 #include "common/textplacement.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 
@@ -46,7 +47,8 @@ void MapPainterNav::render(PaintContext *context)
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
-  setRenderHints(context->painter);
+  atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
 
   // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
@@ -58,7 +60,8 @@ void MapPainterNav::render(PaintContext *context)
   if(drawAirway)
   {
     // Draw airway lines
-    const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer, context->drawFast);
+    const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer,
+                                                        context->viewContext == Marble::Animation);
     if(airways != nullptr)
       paintAirways(context, airways, context->drawFast);
   }
@@ -68,7 +71,7 @@ void MapPainterNav::render(PaintContext *context)
   if(drawWaypoint || drawAirway)
   {
     // If airways are drawn we also have to go through waypoints
-    const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, context->drawFast);
+    const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, context->lazyUpdate);
     if(waypoints != nullptr)
       paintWaypoints(context, waypoints, drawWaypoint, context->drawFast);
   }
@@ -76,7 +79,7 @@ void MapPainterNav::render(PaintContext *context)
   // VOR -------------------------------------------------
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR))
   {
-    const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, context->drawFast);
+    const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, context->lazyUpdate);
     if(vors != nullptr)
       paintVors(context, vors, context->drawFast);
   }
@@ -84,7 +87,7 @@ void MapPainterNav::render(PaintContext *context)
   // NDB -------------------------------------------------
   if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB))
   {
-    const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, context->drawFast);
+    const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, context->lazyUpdate);
     if(ndbs != nullptr)
       paintNdbs(context, ndbs, context->drawFast);
   }
@@ -92,7 +95,7 @@ void MapPainterNav::render(PaintContext *context)
   // Marker -------------------------------------------------
   if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS))
   {
-    const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, context->drawFast);
+    const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, context->lazyUpdate);
     if(markers != nullptr)
       paintMarkers(context, markers, context->drawFast);
   }

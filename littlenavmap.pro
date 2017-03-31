@@ -172,7 +172,8 @@ SOURCES += src/main.cpp\
     src/search/abstractsearch.cpp \
     src/search/proceduresearch.cpp \
     src/common/proctypes.cpp \
-    src/db/databaseerrors.cpp
+    src/mapgui/mappainterairspace.cpp \
+    src/db/databaseerrordialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -248,7 +249,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/abstractsearch.h \
     src/search/proceduresearch.h \
     src/common/proctypes.h \
-    src/db/databaseerrors.h
+    src/mapgui/mappainterairspace.h \
+    src/db/databaseerrordialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -258,7 +260,7 @@ FORMS    += src/gui/mainwindow.ui \
     src/print/printdialog.ui \
     src/route/routestringdialog.ui \
     src/route/userwaypointdialog.ui \
-    src/db/databaseerrors.ui
+    src/db/databaseerrordialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

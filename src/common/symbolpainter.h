@@ -43,6 +43,8 @@ struct MapNdb;
 
 struct MapMarker;
 
+struct MapAirspace;
+
 }
 
 namespace textflags {
@@ -108,6 +110,7 @@ public:
   QIcon createWaypointIcon(int size, const QColor& color = QColor());
   QIcon createUserpointIcon(int size);
   QIcon createProcedurePointIcon(int size);
+  QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,

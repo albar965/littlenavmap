@@ -145,8 +145,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(undoAction, &QAction::triggered, this, &RouteController::undoTriggered);
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->routeToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
-  ui->routeToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
+  ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, undoAction);
+  ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, redoAction);
 
   ui->menuRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
   ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);

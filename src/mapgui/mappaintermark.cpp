@@ -51,9 +51,9 @@ MapPainterMark::~MapPainterMark()
 
 void MapPainterMark::render(PaintContext *context)
 {
-  setRenderHints(context->painter);
-
   atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
+
   paintHighlights(context);
   paintMark(context);
   paintHome(context);

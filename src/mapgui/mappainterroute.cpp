@@ -54,8 +54,6 @@ void MapPainterRoute::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver);
 
-  setRenderHints(context->painter);
-
   if(context->objectTypes.testFlag(map::FLIGHTPLAN))
     paintRoute(context);
 

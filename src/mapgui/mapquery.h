@@ -73,6 +73,7 @@ public:
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
 
   void getAirwayById(map::MapAirway& airway, int airwayId);
+  void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   /* If waypoint is of type VOR get the related VOR object */
   void getVorForWaypoint(map::MapVor& vor, int waypointId);
@@ -88,6 +89,7 @@ public:
   map::MapIls getIlsById(int id);
   map::MapWaypoint getWaypointById(int id);
   map::MapRunwayEnd getRunwayEndById(int id);
+  map::MapAirspace getAirspaceById(int airspaceId);
 
   /*
    * Get a map object by type, ident and region
@@ -132,8 +134,7 @@ public:
    * @param name name like PARKING, GATE_P, etc.
    * @param number parking number
    */
-  void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name,
-                                 int number);
+  void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name, int number);
 
   /*
    * Get a start position of an airport (runway, helipad and water)
@@ -156,32 +157,28 @@ public:
    * @return pointer to airport cache. Create a copy if this is needed for a longer
    * time than for e.g. one drawing request.
    */
-  const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect,
-                                            const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect,
-                                              const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                    bool lazy);
+  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                    bool lazy);
+  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                          bool lazy);
+  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapIls> *getIls(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                   bool lazy);
+  const QList<map::MapIls> *getIls(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                          bool lazy);
+  const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+
+  const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                              map::MapAirspaceTypes types, bool lazy);
 
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
@@ -238,6 +235,8 @@ private:
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
+  const atools::geo::LineString *fetchAirspaceLines(int boundaryId);
+
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
@@ -249,6 +248,8 @@ private:
   SimpleRectCache<map::MapMarker> markerCache;
   SimpleRectCache<map::MapIls> ilsCache;
   SimpleRectCache<map::MapAirway> airwayCache;
+  SimpleRectCache<map::MapAirspace> airspaceCache;
+  map::MapAirspaceTypes lastAirspaceTypes = map::AIRSPACE_NONE;
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayCache;
@@ -258,6 +259,7 @@ private:
   QCache<int, QList<map::MapParking> > parkingCache;
   QCache<int, QList<map::MapStart> > startCache;
   QCache<int, QList<map::MapHelipad> > helipadCache;
+  QCache<int, atools::geo::LineString> airspaceLineCache;
 
   /* Inflate bounding rectangle before passing it to query */
   static Q_DECL_CONSTEXPR double RECT_INFLATION_FACTOR_DEG = 0.3;
@@ -275,7 +277,7 @@ private:
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
   *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
-  *airwayByRectQuery = nullptr;
+  *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr, *airspaceLinesByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
@@ -285,12 +287,9 @@ private:
   *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
   *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
-  atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
-  atools::sql::SqlQuery *airwayByIdQuery = nullptr;
-  atools::sql::SqlQuery *airwayWaypointByIdentQuery = nullptr;
-  atools::sql::SqlQuery *airwayWaypointsQuery = nullptr;
-  atools::sql::SqlQuery *airwayByNameQuery = nullptr;
+  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr,
+  *airwayByWaypointIdQuery = nullptr, *airwayByIdQuery = nullptr, *airspaceByIdQuery = nullptr,
+  *airwayWaypointByIdentQuery = nullptr, *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr;
 };
 
 // ---------------------------------------------------------------------------------

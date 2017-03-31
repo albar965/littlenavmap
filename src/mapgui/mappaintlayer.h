@@ -36,6 +36,7 @@ class MapWidget;
 class MapLayerSettings;
 class MapScale;
 class MapPainterAirport;
+class MapPainterAirspace;
 class MapPainterNav;
 class MapPainterIls;
 class MapPainterMark;
@@ -71,6 +72,7 @@ public:
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
   void setShowMapObjects(map::MapObjectTypes type, bool show);
+  void setShowAirspaces(map::MapAirspaceTypes type, bool show);
 
   /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
@@ -79,6 +81,14 @@ public:
   map::MapObjectTypes getShownMapObjects() const
   {
     return objectTypes;
+  }
+
+  /* Adjusted by layer visibility */
+  map::MapAirspaceTypes getShownAirspacesByLayer() const;
+
+  map::MapAirspaceTypes getShownAirspaces() const
+  {
+    return airspaceTypes;
   }
 
   /* Get the map scale that allows simple distance approximations for screen coordinates */
@@ -110,7 +120,8 @@ private:
   static Q_DECL_CONSTEXPR float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
   /* Map objects currently shown */
-  map::MapObjectTypes objectTypes;
+  map::MapObjectTypes objectTypes = map::NONE;
+  map::MapAirspaceTypes airspaceTypes = map::AIRSPACE_NONE;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;
@@ -119,6 +130,7 @@ private:
 
   /* All painters */
   MapPainterAirport *mapPainterAirport;
+  MapPainterAirspace *mapPainterAirspace;
   MapPainterNav *mapPainterNav;
   MapPainterIls *mapPainterIls;
   MapPainterMark *mapPainterMark;

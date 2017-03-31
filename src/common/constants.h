@@ -28,6 +28,8 @@
 /* Use Shift+Ctrl-Mousemove to simulate an aircraft */
 // #define DEBUG_MOVING_AIRPLANE
 
+// #define DEBUG_CREATE_WINDOW_STATE
+
 #include "geo/pos.h"
 
 const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);

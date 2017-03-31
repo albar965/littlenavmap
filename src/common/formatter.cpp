@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QLocale>
+#include <QRegularExpression>
 
 namespace formatter {
 
@@ -133,11 +134,15 @@ QString formatElapsed(const QElapsedTimer& timer)
 
 QString capNavString(const QString& str)
 {
+  if(str.contains(QRegularExpression("\\d")) && !str.contains(QRegularExpression("\\s")))
+    // Do not capitalize words that contains numbers but not spaces (airspace names)
+    return str;
+
   // Ignore aviation acronym in capitalization
   static const QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME",
                                      "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
                                      "H", "HH", "MH", "VASI", "PAPI",
-                                     "ALS"});
+                                     "ALS", "CTA", "TMA", "TRA", "CTR", "AAF", "AFB"});
   return atools::capString(str, {}, {}, ignore);
 }
 
