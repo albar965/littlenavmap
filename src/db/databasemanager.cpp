@@ -17,7 +17,7 @@
 
 #include "db/databasemanager.h"
 
-#include "db/databaseerrors.h"
+#include "db/databaseerrordialog.h"
 #include "gui/application.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
@@ -693,7 +693,7 @@ bool DatabaseManager::loadScenery()
       numScenery++;
     }
 
-    DatabaseErrors errorDialog(progressDialog);
+    DatabaseErrorDialog errorDialog(progressDialog);
     errorDialog.setErrorMessages(errorTexts);
     errorDialog.exec();
   }

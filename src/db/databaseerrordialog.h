@@ -21,22 +21,22 @@
 #include <QDialog>
 
 namespace Ui {
-class DatabaseErrors;
+class DatabaseErrorDialog;
 }
 
-class DatabaseErrors :
+class DatabaseErrorDialog :
   public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit DatabaseErrors(QWidget *parent = 0);
-  ~DatabaseErrors();
+  explicit DatabaseErrorDialog(QWidget *parent = 0);
+  ~DatabaseErrorDialog();
 
   void setErrorMessages(const QString& messages);
 
 private:
-  Ui::DatabaseErrors *ui;
+  Ui::DatabaseErrorDialog *ui;
 };
 
 #endif // LITTLENAVMAP_DATABASEERRORS_H

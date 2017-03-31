@@ -15,21 +15,21 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "db/databaseerrors.h"
-#include "ui_databaseerrors.h"
+#include "db/databaseerrordialog.h"
+#include "ui_databaseerrordialog.h"
 
-DatabaseErrors::DatabaseErrors(QWidget *parent) :
-  QDialog(parent), ui(new Ui::DatabaseErrors)
+DatabaseErrorDialog::DatabaseErrorDialog(QWidget *parent) :
+  QDialog(parent), ui(new Ui::DatabaseErrorDialog)
 {
   ui->setupUi(this);
 }
 
-DatabaseErrors::~DatabaseErrors()
+DatabaseErrorDialog::~DatabaseErrorDialog()
 {
   delete ui;
 }
 
-void DatabaseErrors::setErrorMessages(const QString& messages)
+void DatabaseErrorDialog::setErrorMessages(const QString& messages)
 {
   ui->textBrowserDatabaseErrors->setHtml(messages);
 }
