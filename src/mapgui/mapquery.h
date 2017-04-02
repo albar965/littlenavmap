@@ -178,7 +178,7 @@ public:
   const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              map::MapAirspaceTypes types, bool lazy);
+                                              map::MapAirspaceTypes types, float flightPlanAltitude, bool lazy);
 
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
@@ -250,6 +250,7 @@ private:
   SimpleRectCache<map::MapAirway> airwayCache;
   SimpleRectCache<map::MapAirspace> airspaceCache;
   map::MapAirspaceTypes lastAirspaceTypes = map::AIRSPACE_NONE;
+  float lastFlightplanAltitude = 0.f;
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayCache;
@@ -278,7 +279,7 @@ private:
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
   *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
   *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr,
-  *airspaceByRectBelowAltQuery = nullptr,*airspaceByRectAboveAltQuery = nullptr,
+  *airspaceByRectBelowAltQuery = nullptr, *airspaceByRectAboveAltQuery = nullptr, *airspaceByRectAtAltQuery = nullptr,
   *airspaceLinesByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,

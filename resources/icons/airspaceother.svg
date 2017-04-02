@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,7 +41,7 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="104.61609"
+     inkscape:cx="-9.4728955"
      inkscape:cy="86.764814"
      inkscape:window-x="38"
      inkscape:window-y="24"
@@ -273,22 +273,22 @@
        cy="130.52826"
        r="5" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#82858a;stroke-width:16.14035225;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#82858a;stroke-width:13.21561623;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4445"
-       width="281.4444"
-       height="88.85965"
-       x="10.13282"
-       y="180.2849" />
+       width="182.67421"
+       height="91.784386"
+       x="8.6704521"
+       y="182.82253" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:70px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="14.520279"
-       y="250.57913"
+       y="254.57913"
        id="text4422"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4424"
          x="14.520279"
-         y="250.57913">OTHER</tspan></text>
+         y="254.57913">OTR</tspan></text>
   </g>
 </svg>

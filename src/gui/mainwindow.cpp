@@ -626,6 +626,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showPos, mapWidget, &MapWidget::showPos);
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
   connect(routeController, &RouteController::routeChanged, mapWidget, &MapWidget::routeChanged);
+  connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
 
@@ -636,6 +637,7 @@ void MainWindow::connectAllSlots()
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
+  connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);

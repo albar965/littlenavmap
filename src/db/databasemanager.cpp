@@ -607,7 +607,7 @@ bool DatabaseManager::loadScenery()
   progressDialog->setLabelText(
     DATABASE_TIME_TEXT.arg(QString()).
     arg(QString()).
-    arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
+    arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
 
   progressDialog->show();
 

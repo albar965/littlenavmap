@@ -163,6 +163,9 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
 
+  connect(&routeAltDelayTimer, &QTimer::timeout, this, &RouteController::routeAltChangedDelayed);
+  routeAltDelayTimer.setSingleShot(true);
+
   // set up table view
   view->horizontalHeader()->setSectionsMovable(true);
   view->verticalHeader()->setSectionsMovable(false);
@@ -336,11 +339,15 @@ void RouteController::routeAltChanged()
 
   mainWindow->updateWindowTitle();
 
-  if(!route.isEmpty())
-  {
+  routeAltDelayTimer.start(1000);
 
+  if(!route.isEmpty())
     emit routeChanged(false);
-  }
+}
+
+void RouteController::routeAltChangedDelayed()
+{
+  emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
 }
 
 /* Combo box route type has value changed */

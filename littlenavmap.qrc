@@ -146,5 +146,7 @@
         <file>resources/icons/airspaceother.svg</file>
         <file>resources/icons/airspacespec.svg</file>
         <file>resources/icons/airspacerestr.svg</file>
+        <file>resources/icons/airspaceroutealt.svg</file>
+        <file>resources/icons/airspacealt.svg</file>
     </qresource>
 </RCC>

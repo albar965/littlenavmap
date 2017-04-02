@@ -172,8 +172,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   qDebug() << "RouteString::createStringForRouteInternal" << retval;
 
   if(!retval.isEmpty() && !gfpFormat)
-    retval.insert(1, createSpeedAndAltitude(
-                    speed, Unit::rev(route.getFlightplan().getCruisingAltitude(), Unit::altFeetF)));
+    retval.insert(1, createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
 
   return retval;
 }

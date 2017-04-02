@@ -418,11 +418,16 @@ float Route::getTopOfDescentFromStart() const
   return 0.f;
 }
 
+float Route::getCruisingAltitudeFeet() const
+{
+  return Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
+}
+
 float Route::getTopOfDescentFromDestination() const
 {
   if(!isEmpty())
   {
-    float cruisingAltitude = Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
+    float cruisingAltitude = getCruisingAltitudeFeet();
     float diff = (cruisingAltitude - last().getPosition().getAltitude());
 
     // Either nm per 1000 something alt or km per 1000 something alt

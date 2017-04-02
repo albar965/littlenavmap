@@ -146,7 +146,7 @@ QString capNavString(const QString& str)
                                       // Navaid and precision approach types
                                       "H", "HH", "MH", "VASI", "PAPI",
                                       // Airspace abbreviations
-                                      "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ",
+                                      "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ", "TRSA",
                                       // Military designators
                                       "AAF", "AFB"
                                     });

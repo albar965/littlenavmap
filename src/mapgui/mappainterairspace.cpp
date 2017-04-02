@@ -17,27 +17,23 @@
 
 #include "mapgui/mappainterairspace.h"
 
-#include "mapgui/mapwidget.h"
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
-#include "geo/calculations.h"
-#include "atools.h"
-#include "common/constants.h"
 #include "util/paintercontextsaver.h"
-#include "common/textplacement.h"
+#include "route/route.h"
+#include "mapgui/mapquery.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 #include <marble/GeoDataLinearRing.h>
+#include <marble/ViewportParams.h>
 
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirspace::MapPainterAirspace(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(mapWidget, mapQuery, mapScale)
+MapPainterAirspace::MapPainterAirspace(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
+                                       const Route *routeParam)
+  : MapPainter(mapWidget, mapQuery, mapScale), route(routeParam)
 {
 }
 
@@ -52,8 +48,9 @@ void MapPainterAirspace::render(PaintContext *context)
     return;
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  const QList<MapAirspace> *airspaces = query->getAirspaces(curBox, context->mapLayer, context->airspaceTypes,
-                                                            context->viewContext == Marble::Animation);
+  const QList<MapAirspace> *airspaces =
+    query->getAirspaces(curBox, context->mapLayer, context->airspaceTypes, route->getCruisingAltitudeFeet(),
+                        context->viewContext == Marble::Animation);
   if(airspaces != nullptr)
   {
     Marble::GeoPainter *painter = context->painter;

@@ -116,6 +116,9 @@ public:
     return flightplan;
   }
 
+  /* Value in flight plan is stored in local unit */
+  float getCruisingAltitudeFeet() const;
+
   void setFlightplan(const atools::fs::pln::Flightplan& value)
   {
     flightplan = value;

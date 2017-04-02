@@ -25,6 +25,7 @@ class GeoDataLineString;
 }
 
 class MapWidget;
+class Route;
 
 /*
  * Paints all airspaces/boundaries.
@@ -33,12 +34,13 @@ class MapPainterAirspace :
   public MapPainter
 {
 public:
-  MapPainterAirspace(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterAirspace(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterAirspace();
 
   virtual void render(PaintContext *context) override;
 
 private:
+  const Route *route;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRSPACE_H

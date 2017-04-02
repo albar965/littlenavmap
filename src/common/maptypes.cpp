@@ -329,6 +329,7 @@ const static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
     {map::TRAINING, QObject::tr("Training")},
 
     // Values below only for actions
+    {map::AIRSPACE_AT_FLIGHTPLAN, QObject::tr("At flight plan cruise altitude")},
     {map::AIRSPACE_BELOW_10000, QObject::tr("Below 10000 ft only")},
     {map::AIRSPACE_BELOW_18000, QObject::tr("Below 18000 ft only")},
     {map::AIRSPACE_ABOVE_10000, QObject::tr("Above 10000 ft only")},

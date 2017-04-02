@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,7 +41,7 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="104.61609"
+     inkscape:cx="-9.4728955"
      inkscape:cy="86.764814"
      inkscape:window-x="38"
      inkscape:window-y="24"
@@ -277,18 +277,18 @@
        id="rect4445"
        width="253.59709"
        height="89.614037"
-       x="23.145447"
-       y="176.00092" />
+       x="9.1454468"
+       y="184.00092" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:90px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="27.91011"
-       y="252.67235"
+       x="13.91011"
+       y="260.67236"
        id="text4422"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4424"
-         x="27.91011"
-         y="252.67235">ICAO</tspan></text>
+         x="13.91011"
+         y="260.67236">ICAO</tspan></text>
   </g>
 </svg>

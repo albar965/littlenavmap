@@ -166,9 +166,10 @@ void AirspaceToolBarHandler::createToolButtons()
                            {map::CENTER, map::TOWER, map::CLEARANCE, map::GROUND, map::DEPARTURE, map::APPROACH,
                             map::NATIONAL_PARK, map::MODEC, map::RADAR});
 
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspace.svg",
+  createAirspaceToolButton(":/littlenavmap/resources/icons/airspacealt.svg",
                            tr("Select altitude limitations for airspace display"),
                            {map::AIRSPACE_ALL_ALTITUDE,
+                            map::AIRSPACE_AT_FLIGHTPLAN,
                             map::AIRSPACE_BELOW_10000, map::AIRSPACE_BELOW_18000,
                             map::AIRSPACE_ABOVE_10000, map::AIRSPACE_ABOVE_18000}, true);
 }

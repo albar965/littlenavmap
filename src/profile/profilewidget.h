@@ -51,6 +51,7 @@ public:
 
   /* If geometry has changed the elevation calculation is started after a short delay */
   void routeChanged(bool geometryChanged);
+  void routeAltitudeChanged(int altitudeFeet);
 
   /* Update user aircraft on profile display */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);

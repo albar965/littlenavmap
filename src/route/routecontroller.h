@@ -24,6 +24,7 @@
 
 #include <QIcon>
 #include <QObject>
+#include <QTimer>
 
 namespace atools {
 namespace gui {
@@ -244,6 +245,8 @@ signals:
   /* Route has changed */
   void routeChanged(bool geometryChanged);
 
+  void routeAltitudeChanged(float altitudeFeet);
+
   /* Show information about the airports or navaids in the search result */
   void showInformation(map::MapSearchResult result);
 
@@ -305,6 +308,8 @@ private:
   void createRouteLegsFromFlightplan();
 
   void routeAltChanged();
+  void routeAltChangedDelayed();
+
   void routeTypeChanged();
 
   void clearRoute();
@@ -389,6 +394,8 @@ private:
   QIcon ndbIcon, waypointIcon, userpointIcon, invalidIcon, procedureIcon;
   SymbolPainter *symbolPainter = nullptr;
   int iconSize = 20;
+
+  QTimer routeAltDelayTimer;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

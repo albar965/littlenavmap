@@ -116,6 +116,7 @@ public:
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
+  void routeAltitudeChanged(float altitudeFeet);
 
   /* New data from simconnect has arrived. Update aircraft position and track. */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);

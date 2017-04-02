@@ -56,7 +56,7 @@ struct PaintContext
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
   map::MapObjectTypes objectTypes; /* Object types that should be drawn */
-  map::MapAirspaceTypes airspaceTypes; /* Airspaces */
+  map::MapAirspaceTypes airspaceTypesByLayer; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;

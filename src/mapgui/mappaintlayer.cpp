@@ -51,7 +51,7 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale);
   mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale);
   mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapQuery, mapScale);
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
   mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
   mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
@@ -306,7 +306,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.painter = painter;
       context.viewport = viewport;
       context.objectTypes = objectTypes;
-      context.airspaceTypes = getShownAirspacesTypesByLayer();
+      context.airspaceTypesByLayer = getShownAirspacesTypesByLayer();
       context.viewContext = mapWidget->viewContext();
       context.drawFast = (mapScrollDetail == opts::FULL || mapScrollDetail == opts::HIGHER) ?
                          false : mapWidget->viewContext() == Marble::Animation;

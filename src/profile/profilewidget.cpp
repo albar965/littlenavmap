@@ -218,10 +218,7 @@ void ProfileWidget::updateScreenCoords()
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = calcGroundBuffer(legList.maxElevationFt);
-  flightplanAltFt =
-    static_cast<float>(Unit::rev(
-                         routeController->getRoute().getFlightplan().getCruisingAltitude(),
-                         Unit::altFeetF));
+  flightplanAltFt = routeController->getRoute().getCruisingAltitudeFeet();
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getUserAircraft().getPosition().isValid() &&
@@ -628,6 +625,16 @@ void ProfileWidget::elevationUpdateAvailable()
   updateTimer->start(ELEVATION_CHANGE_UPDATE_TIMEOUT_MS);
 }
 
+void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
+{
+  if(!widgetVisible || databaseLoadStatus)
+    return;
+
+  updateScreenCoords();
+  update();
+  updateLabel();
+}
+
 void ProfileWidget::routeChanged(bool geometryChanged)
 {
   if(!widgetVisible || databaseLoadStatus)
@@ -635,21 +642,17 @@ void ProfileWidget::routeChanged(bool geometryChanged)
 
   if(geometryChanged)
   {
-    // // Terminate and wait for thread
-    // terminateThread();
-    // terminateThreadSignal = false;
-
     // Start thread after short delay to calculate new data
     updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
-  else
-  {
-    // Only update screen
-    updateScreenCoords();
-    update();
-  }
+  // else
+  // {
+  // // Only update screen
+  // updateScreenCoords();
+  // update();
+  // }
 
-  updateLabel();
+  // updateLabel();
 }
 
 /* Called by updateTimer after any route or elevation updates and starts the thread */
