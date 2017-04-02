@@ -1,3 +1,19 @@
+Version 1.3.4.devel
+
+* Added display of airspaces to map, information window and tooltips.
+* Added separate toolbar for airspaces to limit display by type, altitude or flight plan cruise level.
+* Added new map update mode in options dialog on tab "Map" that combines full details and lazy load.
+* Airspaces and airways are now always loaded lazily when scrolling or zooming.
+* Active leg sequencing is now only done for airborne aircraft. No magenta line while you are on ground.
+* Added better and more detailed error reports for scenery database loading. Report now contains missing scenery
+  directories.
+* Added delayed notification to profile window for altitude changes in flight plan to overcome laggy spin box.
+
+derived from atools:
+* Several fixes when reading airspace boundaries.
+* Added missing indexes to boundary table.
+* Now collecting errors for missing scenery directories when loading scenery library database.
+
 Version 1.3.3.devel
 
 * Disabled sequencing of active leg when aircraft is on ground
