@@ -49,7 +49,7 @@ void MapPainterAirspace::render(PaintContext *context)
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirspace> *airspaces =
-    query->getAirspaces(curBox, context->mapLayer, context->airspaceTypes, route->getCruisingAltitudeFeet(),
+    query->getAirspaces(curBox, context->mapLayer, context->airspaceTypesByLayer, route->getCruisingAltitudeFeet(),
                         context->viewContext == Marble::Animation);
   if(airspaces != nullptr)
   {
