@@ -236,12 +236,6 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
-  setShowMapAirspaces(map::AIRSPACE_CENTER, ui->actionAirspacesShowCenter->isChecked());
-  setShowMapAirspaces(map::AIRSPACE_FIR, ui->actionAirspacesShowFir->isChecked());
-  setShowMapAirspaces(map::AIRSPACE_ICAO, ui->actionAirspacesShowIcao->isChecked());
-  setShowMapAirspaces(map::AIRSPACE_OTHER, ui->actionAirspacesShowOther->isChecked());
-  setShowMapAirspaces(map::AIRSPACE_RESTRICTED, ui->actionAirspacesShowRestricted->isChecked());
-  setShowMapAirspaces(map::AIRSPACE_SPECIAL, ui->actionAirspacesShowSpecial->isChecked());
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces() & map::AIRSPACE_ALL);
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
@@ -312,9 +306,10 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
     screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
-void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes type, bool show)
+void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes types)
 {
-  paintLayer->setShowAirspaces(type, show);
+  paintLayer->setShowAirspaces(types);
+  setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
@@ -337,9 +332,9 @@ map::MapAirspaceTypes MapWidget::getShownAirspaces() const
   return paintLayer->getShownAirspaces();
 }
 
-map::MapAirspaceTypes MapWidget::getShownAirspacesByLayer() const
+map::MapAirspaceTypes MapWidget::getShownAirspaceTypesByLayer() const
 {
-  return paintLayer->getShownAirspacesByLayer();
+  return paintLayer->getShownAirspacesTypesByLayer();
 }
 
 RouteController *MapWidget::getRouteController() const
@@ -430,6 +425,7 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
 
   s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
+  s.setValue(lnm::MAP_AIRSPACES, paintLayer->getShownAirspaces());
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
@@ -479,6 +475,9 @@ void MapWidget::restoreState()
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays.values())
     state.restore(action);
+
+  paintLayer->setShowAirspaces(static_cast<map::MapAirspaceTypes>(
+                                 s.valueVar(lnm::MAP_AIRSPACES, map::AIRSPACE_DEFAULT).toInt()));
 
   restoreHistoryState();
 }

@@ -50,6 +50,7 @@
 #include "common/unit.h"
 #include "common/procedurequery.h"
 #include "search/proceduresearch.h"
+#include "gui/airspacetoolbarhandler.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -178,6 +179,10 @@ MainWindow::MainWindow()
     qDebug() << "MainWindow Creating InfoController";
     infoController = new InfoController(this, mapQuery);
 
+    qDebug() << "MainWindow Creating InfoController";
+    airspaceHandler = new AirspaceToolBarHandler(this);
+    airspaceHandler->createToolButtons();
+
     qDebug() << "MainWindow Creating PrintSupport";
     printSupport = new PrintSupport(this, mapQuery);
 
@@ -188,6 +193,7 @@ MainWindow::MainWindow()
     restoreStateMain();
 
     updateActionStates();
+    airspaceHandler->updateButtonsAndActions();
 
     qDebug() << "MainWindow Setting theme";
     mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
@@ -248,6 +254,8 @@ MainWindow::~MainWindow()
   delete infoController;
   qDebug() << Q_FUNC_INFO << "delete printSupport";
   delete printSupport;
+  qDebug() << Q_FUNC_INFO << "delete airspaceHandler";
+  delete airspaceHandler;
   qDebug() << Q_FUNC_INFO << "delete routeFileHistory";
   delete routeFileHistory;
   qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
@@ -290,6 +298,11 @@ void MainWindow::updateMap() const
 map::MapObjectTypes MainWindow::getShownMapFeatures() const
 {
   return mapWidget->getShownMapFeatures();
+}
+
+map::MapAirspaceTypes MainWindow::getShownMapAirspaces() const
+{
+  return mapWidget->getShownAirspaces();
 }
 
 const Route& MainWindow::getRoute() const
@@ -383,11 +396,12 @@ void MainWindow::setupUi()
 {
   // Reduce large icons on mac
 #if defined(Q_OS_MACOS)
-  scaleToolbar(ui->mainToolBar, 0.72f);
-  scaleToolbar(ui->mapToolBar, 0.72f);
-  scaleToolbar(ui->mapToolBarOptions, 0.72f);
-  scaleToolbar(ui->routeToolBar, 0.72f);
-  scaleToolbar(ui->viewToolBar, 0.72f);
+  scaleToolbar(ui->toolBarMain, 0.72f);
+  scaleToolbar(ui->toolBarMap, 0.72f);
+  scaleToolbar(ui->toolbarMapOptions, 0.72f);
+  scaleToolbar(ui->toolBarRoute, 0.72f);
+  scaleToolbar(ui->toolBarAirspaces, 0.72f);
+  scaleToolbar(ui->toolBarView, 0.72f);
 #endif
 
   ui->toolbarMapOptions->addSeparator();
@@ -757,13 +771,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
-  connect(ui->actionAirspacesShowCenter, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionAirspacesShowFir, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionAirspacesShowIcao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionAirspacesShowOther, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionAirspacesShowRestricted, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionAirspacesShowSpecial, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -886,6 +893,8 @@ void MainWindow::connectAllSlots()
           &RouteController::routeAttachProcedure);
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController,
           &InfoController::showInformation);
+
+  connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
 }
 
 /* Update the info weather */
@@ -1585,6 +1594,14 @@ void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
     mapWidget->changeApproachLegHighlights(nullptr);
 }
 
+void MainWindow::updateAirspaceTypes(map::MapAirspaceTypes types)
+{
+  mapWidget->setShowMapAirspaces(types);
+  mapWidget->saveState();
+  mapWidget->updateMapObjectsShown();
+  setStatusMessage(tr("Map settigs changed."));
+}
+
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
 void MainWindow::updateMapObjectsShown()
 {
@@ -1879,9 +1896,6 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                         ui->actionAirspacesShowCenter, ui->actionAirspacesShowFir, ui->actionAirspacesShowIcao,
-                         ui->actionAirspacesShowOther, ui->actionAirspacesShowRestricted,
-                         ui->actionAirspacesShowSpecial,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi,
                          ui->actionMapShowAircraftTrack,
@@ -2005,8 +2019,6 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAi,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-                    ui->actionAirspacesShowCenter, ui->actionAirspacesShowFir, ui->actionAirspacesShowIcao,
-                    ui->actionAirspacesShowOther, ui->actionAirspacesShowRestricted, ui->actionAirspacesShowSpecial,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline});
   Settings::instance().syncSettings();

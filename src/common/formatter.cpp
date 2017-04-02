@@ -139,10 +139,17 @@ QString capNavString(const QString& str)
     return str;
 
   // Ignore aviation acronym in capitalization
-  static const QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME",
-                                     "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
-                                     "H", "HH", "MH", "VASI", "PAPI",
-                                     "ALS", "CTA", "TMA", "TRA", "CTR", "AAF", "AFB"});
+  static const QSet<QString> ignore({ // Navaids
+                                      "VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME",
+                                      // Frequencies
+                                      "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
+                                      // Navaid and precision approach types
+                                      "H", "HH", "MH", "VASI", "PAPI",
+                                      // Airspace abbreviations
+                                      "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ",
+                                      // Military designators
+                                      "AAF", "AFB"
+                                    });
   return atools::capString(str, {}, {}, ignore);
 }
 

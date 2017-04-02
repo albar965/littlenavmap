@@ -31,6 +31,7 @@ class SearchController;
 class RouteController;
 class QComboBox;
 class QLabel;
+class QToolButton;
 class SearchBaseTable;
 class DatabaseManager;
 class WeatherReporter;
@@ -42,6 +43,7 @@ class QActionGroup;
 class PrintSupport;
 class ProcedureSearch;
 class Route;
+class AirspaceToolBarHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -103,6 +105,7 @@ public:
   void updateMap() const;
 
   map::MapObjectTypes getShownMapFeatures() const;
+  map::MapAirspaceTypes getShownMapAirspaces() const;
 
   RouteController *getRouteController() const
   {
@@ -250,6 +253,7 @@ private:
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
+  void updateAirspaceTypes(map::MapAirspaceTypes types);
 
   /* Original unchanged window title */
   QString mainWindowTitle;
@@ -293,6 +297,7 @@ private:
   WeatherReporter *weatherReporter = nullptr;
   ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;
+  AirspaceToolBarHandler *airspaceHandler = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr;

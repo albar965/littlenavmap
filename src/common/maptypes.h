@@ -650,6 +650,17 @@ enum MapAirspaceType
   RADAR = 1 << 21,
   TRAINING = 1 << 22,
 
+  /* Special filter flags - not airspaces */
+  AIRSPACE_BELOW_10000 = 1 << 23,
+  AIRSPACE_BELOW_18000 = 1 << 24,
+  AIRSPACE_ABOVE_10000 = 1 << 25,
+  AIRSPACE_ABOVE_18000 = 1 << 26,
+  AIRSPACE_ALL_ALTITUDE = 1 << 27,
+
+  /* Action flags - not airspaces */
+  AIRSPACE_ALL_ON = 1 << 28,
+  AIRSPACE_ALL_OFF = 1 << 29,
+
   AIRSPACE_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_FIR = CLASS_F | CLASS_G,
   AIRSPACE_CENTER = CENTER,
@@ -657,20 +668,20 @@ enum MapAirspaceType
   AIRSPACE_SPECIAL = WARNING | ALERT | TRAINING,
   AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK,
 
+  AIRSPACE_FOR_VFR = CLASS_B | CLASS_C | CLASS_D | CLASS_E | AIRSPACE_FIR,
+  AIRSPACE_FOR_IFR = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E | CENTER,
+
   AIRSPACE_ALL = AIRSPACE_ICAO | AIRSPACE_FIR | AIRSPACE_CENTER | AIRSPACE_RESTRICTED | AIRSPACE_SPECIAL |
-                 AIRSPACE_OTHER
+                 AIRSPACE_OTHER,
+
+  // Default value on first start
+  AIRSPACE_DEFAULT = AIRSPACE_ICAO | AIRSPACE_RESTRICTED | AIRSPACE_ALL_ALTITUDE
 };
 
 Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 22;
 
 Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
-
-struct MapAirspaceFilter
-{
-  MapAirspaceTypes types = AIRSPACE_NONE;
-  int minAltitude = -1, maxAltitude = -1;
-};
 
 /* Airspace boundary */
 struct MapAirspace

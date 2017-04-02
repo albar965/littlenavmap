@@ -53,7 +53,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
   if(scale->isValid())
   {
     const QList<map::MapAirspace> *airspaces = mapQuery->getAirspaces(curBox, paintLayer->getMapLayer(),
-                                                                      mapWidget->getShownAirspacesByLayer(), false);
+                                                                      mapWidget->getShownAirspaceTypesByLayer(), false);
     if(airspaces != nullptr)
     {
       for(const map::MapAirspace& airspace : *airspaces)

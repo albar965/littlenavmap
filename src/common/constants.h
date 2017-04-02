@@ -81,6 +81,7 @@ const QString MAINWINDOW_WIDGET_STATE = "MainWindow/WidgetState";
 const QString MAINWINDOW_PRINT_SIZE = "MainWindow/PrintPreviewSize";
 const QString MAP_DETAILFACTOR = "Map/DetailFactor";
 const QString MAP_DISTANCEMARKERS = "Map/DistanceMarkers";
+const QString MAP_AIRSPACES = "Map/Airspaces";
 const QString MAP_HOMEDISTANCE = "Map/HomeDistance";
 const QString MAP_HOMELATY = "Map/HomeLatY";
 const QString MAP_HOMELONX = "Map/HomeLonX";

@@ -138,6 +138,11 @@
      <addaction name="actionMapThemeAtlas"/>
      <addaction name="separator"/>
     </widget>
+    <widget class="QMenu" name="menuAirspaces">
+     <property name="title">
+      <string>Airspaces</string>
+     </property>
+    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
@@ -154,6 +159,7 @@
     <addaction name="separator"/>
     <addaction name="menuMapProjection"/>
     <addaction name="menuMapTheme"/>
+    <addaction name="menuAirspaces"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAddonAirports"/>
     <addaction name="actionMapShowAirports"/>
@@ -2633,6 +2639,9 @@
            <property name="placeholderText">
             <string>No airspace selected.</string>
            </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -3080,12 +3089,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionAirspacesShowIcao"/>
-   <addaction name="actionAirspacesShowFir"/>
-   <addaction name="actionAirspacesShowCenter"/>
-   <addaction name="actionAirspacesShowRestricted"/>
-   <addaction name="actionAirspacesShowSpecial"/>
-   <addaction name="actionAirspacesShowOther"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -5500,120 +5503,6 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as FLP file usable by the Aerosoft Airbus</string>
-   </property>
-  </action>
-  <action name="actionAirspacesShowIcao">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspaceicao.svg</normaloff>:/littlenavmap/resources/icons/airspaceicao.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show ICAO Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show ICAO airspaces class A-E </string>
-   </property>
-   <property name="statusTip">
-    <string>Show ICAO airspaces class A-E </string>
-   </property>
-  </action>
-  <action name="actionAirspacesShowFir">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspacefir.svg</normaloff>:/littlenavmap/resources/icons/airspacefir.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show FIR Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show FIR airspaces class F and G</string>
-   </property>
-   <property name="statusTip">
-    <string>Show FIR airspaces class F and G</string>
-   </property>
-  </action>
-  <action name="actionAirspacesShowCenter">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspacectr.svg</normaloff>:/littlenavmap/resources/icons/airspacectr.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Center Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show centers</string>
-   </property>
-   <property name="statusTip">
-    <string>Show centers</string>
-   </property>
-  </action>
-  <action name="actionAirspacesShowRestricted">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspacerestr.svg</normaloff>:/littlenavmap/resources/icons/airspacerestr.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Restricted Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show restricted, prohibited, military operations and danger airspaces</string>
-   </property>
-   <property name="statusTip">
-    <string>Show restricted, prohibited, military operations and danger airspaces</string>
-   </property>
-  </action>
-  <action name="actionAirspacesShowSpecial">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspacespec.svg</normaloff>:/littlenavmap/resources/icons/airspacespec.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Special Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show warning, alert and tranining airspaces</string>
-   </property>
-   <property name="statusTip">
-    <string>Show warning, alert and tranining airspaces</string>
-   </property>
-  </action>
-  <action name="actionAirspacesShowOther">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspaceother.svg</normaloff>:/littlenavmap/resources/icons/airspaceother.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Other Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show tower, clearance, ground, departure, approach, MODE-C, radar and national park airspaces</string>
-   </property>
-   <property name="statusTip">
-    <string>Show tower, clearance, ground, departure, approach, MODE-C, radar and national park airspaces</string>
    </property>
   </action>
  </widget>

@@ -326,7 +326,14 @@ const static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
     {map::NATIONAL_PARK, QObject::tr("National Park")},
     {map::MODEC, QObject::tr("Mode-C")},
     {map::RADAR, QObject::tr("Radar")},
-    {map::TRAINING, QObject::tr("Training")}
+    {map::TRAINING, QObject::tr("Training")},
+
+    // Values below only for actions
+    {map::AIRSPACE_BELOW_10000, QObject::tr("Below 10000 ft only")},
+    {map::AIRSPACE_BELOW_18000, QObject::tr("Below 18000 ft only")},
+    {map::AIRSPACE_ABOVE_10000, QObject::tr("Above 10000 ft only")},
+    {map::AIRSPACE_ABOVE_18000, QObject::tr("Above 18000 ft only")},
+    {map::AIRSPACE_ALL_ALTITUDE, QObject::tr("All Altitudes")}
   });
 
 const static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
@@ -335,9 +342,9 @@ const static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
     {map::CENTER, QString()},
     {map::CLASS_A, QObject::tr("Controlled, above 18,000 ft MSL, IFR, no VFR, ATC clearance required.")},
     {map::CLASS_B, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
-    {map::CLASS_C, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
+    {map::CLASS_C, QObject::tr("Controlled, IFR and VFR, ATC clearance required, transponder required.")},
     {map::CLASS_D, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
-    {map::CLASS_E, QObject::tr("Controlled, IFR and VFR, ATC clearance required for IFR.")},
+    {map::CLASS_E, QObject::tr("Controlled, IFR and VFR, ATC clearance required for IFR only.")},
     {map::CLASS_F, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
     {map::CLASS_G, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
     {map::TOWER, QString()},
@@ -348,9 +355,9 @@ const static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
     {map::MOA, QObject::tr("Military operations area. Needs clearance for IFR if active. Check for traffic advisories.")},
     {map::RESTRICTED, QObject::tr("Needs authorization.")},
     {map::PROHIBITED, QObject::tr("No flight allowed.")},
-    {map::WARNING, QObject::tr("Contains activity that may be hazardous to nonparticipating aircraft.")},
+    {map::WARNING, QObject::tr("Contains activity that may be hazardous to aircraft.")},
     {map::ALERT, QObject::tr("High volume of pilot training or an unusual type of aerial activity.")},
-    {map::DANGER, QObject::tr("Proceed with caution.")},
+    {map::DANGER, QObject::tr("Avoid or proceed with caution.")},
     {map::NATIONAL_PARK, QString()},
     {map::MODEC, QObject::tr("Needs altitude aware transponder.")},
     {map::RADAR, QObject::tr("Terminal radar area. Not controlled.")},

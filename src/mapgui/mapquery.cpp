@@ -751,6 +751,31 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
     lastAirspaceTypes = types;
   }
 
+  SqlQuery *query = nullptr;
+  int alt = 0;
+  if(types & map::AIRSPACE_ALL_ALTITUDE)
+    query = airspaceByRectQuery;
+  else if(types & map::AIRSPACE_BELOW_10000)
+  {
+    query = airspaceByRectBelowAltQuery;
+    alt = 10000;
+  }
+  else if(types & map::AIRSPACE_BELOW_18000)
+  {
+    query = airspaceByRectBelowAltQuery;
+    alt = 18000;
+  }
+  else if(types & map::AIRSPACE_ABOVE_10000)
+  {
+    query = airspaceByRectAboveAltQuery;
+    alt = 10000;
+  }
+  else if(types & map::AIRSPACE_ABOVE_18000)
+  {
+    query = airspaceByRectAboveAltQuery;
+    alt = 18000;
+  }
+
   if(airspaceCache.list.isEmpty() && !lazy)
   {
 
@@ -776,13 +801,17 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
       {
         for(const QString& typeStr : typeStrings)
         {
-          bindCoordinatePointInRect(r, airspaceByRectQuery);
-          airspaceByRectQuery->bindValue(":type", typeStr);
-          airspaceByRectQuery->exec();
-          while(airspaceByRectQuery->next())
+          bindCoordinatePointInRect(r, query);
+          query->bindValue(":type", typeStr);
+
+          if(alt > 0)
+            query->bindValue(":alt", alt);
+
+          query->exec();
+          while(query->next())
           {
             map::MapAirspace airspace;
-            mapTypesFactory->fillAirspace(airspaceByRectQuery->record(), airspace);
+            mapTypesFactory->fillAirspace(query->record(), airspace);
             airspaceCache.list.append(airspace);
           }
         }
@@ -1520,6 +1549,20 @@ void MapQuery::initQueries()
                                     "where not (max_lonx < :leftx or min_lonx > :rightx or "
                                     "min_laty > :topy or max_laty < :bottomy) and type like :type");
 
+  airspaceByRectBelowAltQuery = new SqlQuery(db);
+  airspaceByRectBelowAltQuery->prepare(
+    "select " + airspaceQueryBase + "from boundary "
+                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
+                                    "min_laty > :topy or max_laty < :bottomy) and type like :type and "
+                                    "min_altitude < :alt");
+
+  airspaceByRectAboveAltQuery = new SqlQuery(db);
+  airspaceByRectAboveAltQuery->prepare(
+    "select " + airspaceQueryBase + "from boundary "
+                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
+                                    "min_laty > :topy or max_laty < :bottomy) and type like :type and "
+                                    "max_altitude > :alt");
+
   airspaceLinesByIdQuery = new SqlQuery(db);
   airspaceLinesByIdQuery->prepare("select type, radius, lonx, laty from boundary_line where boundary_id = :id");
 
@@ -1583,6 +1626,10 @@ void MapQuery::deInitQueries()
 
   delete airspaceByRectQuery;
   airspaceByRectQuery = nullptr;
+  delete airspaceByRectBelowAltQuery;
+  airspaceByRectBelowAltQuery = nullptr;
+  delete airspaceByRectAboveAltQuery;
+  airspaceByRectAboveAltQuery = nullptr;
   delete airspaceLinesByIdQuery;
   airspaceLinesByIdQuery = nullptr;
   delete airspaceByIdQuery;

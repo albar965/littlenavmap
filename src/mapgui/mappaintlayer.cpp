@@ -58,7 +58,6 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
 
   // Default for visible object types
   objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
-  airspaceTypes = map::MapAirspaceTypes(map::AIRSPACE_NONE);
 }
 
 MapPaintLayer::~MapPaintLayer()
@@ -93,12 +92,9 @@ void MapPaintLayer::setShowMapObjects(map::MapObjectTypes type, bool show)
     objectTypes &= ~type;
 }
 
-void MapPaintLayer::setShowAirspaces(map::MapAirspaceTypes type, bool show)
+void MapPaintLayer::setShowAirspaces(map::MapAirspaceTypes types)
 {
-  if(show)
-    airspaceTypes |= type;
-  else
-    airspaceTypes &= ~type;
+  airspaceTypes = types;
 }
 
 void MapPaintLayer::setDetailFactor(int factor)
@@ -107,7 +103,7 @@ void MapPaintLayer::setDetailFactor(int factor)
   updateLayers();
 }
 
-map::MapAirspaceTypes MapPaintLayer::getShownAirspacesByLayer() const
+map::MapAirspaceTypes MapPaintLayer::getShownAirspacesTypesByLayer() const
 {
   // Mask out all types that are not visible in the current layer
   map::MapAirspaceTypes types = airspaceTypes;
@@ -310,7 +306,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.painter = painter;
       context.viewport = viewport;
       context.objectTypes = objectTypes;
-      context.airspaceTypes = getShownAirspacesByLayer();
+      context.airspaceTypes = getShownAirspacesTypesByLayer();
       context.viewContext = mapWidget->viewContext();
       context.drawFast = (mapScrollDetail == opts::FULL || mapScrollDetail == opts::HIGHER) ?
                          false : mapWidget->viewContext() == Marble::Animation;

@@ -277,7 +277,9 @@ private:
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
   *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
-  *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr, *airspaceLinesByIdQuery = nullptr;
+  *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr,
+  *airspaceByRectBelowAltQuery = nullptr,*airspaceByRectAboveAltQuery = nullptr,
+  *airspaceLinesByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
