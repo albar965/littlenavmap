@@ -310,6 +310,7 @@ void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes types)
 {
   paintLayer->setShowAirspaces(types);
   setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
+  updateVisibleObjectsStatusBar();
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
@@ -2273,13 +2274,12 @@ void MapWidget::updateVisibleObjectsStatusBar()
   {
     map::MapObjectTypes shown = paintLayer->getShownMapObjects();
 
-    QStringList visible;
-    atools::util::HtmlBuilder visibleTooltip(false);
-    visibleTooltip.b(tr("Currently shown on map:"));
-    visibleTooltip.table();
-    bool foundMapObjects = false;
+    QStringList airportLabel;
+    atools::util::HtmlBuilder tooltip(false);
+    tooltip.b(tr("Currently shown on map:"));
+    tooltip.table();
 
-    // qDebug() << "Visible objects" << shown;
+    // Collect airport information ==========================================================
     if(layer->isAirport() && ((shown & map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT) ||
                               (shown & map::AIRPORT_ADDON)))
     {
@@ -2324,8 +2324,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
         if(layer->getMinRunwayLength() > 0)
         {
           if(showAny)
-            apShort.append(">").append(QLocale().toString(layer->getMinRunwayLength() / 100)).
-            append(runwayShort);
+            apShort.append(">").append(QLocale().toString(layer->getMinRunwayLength() / 100)).append(runwayShort);
 
           if(showStock)
             apTooltip = tr("Airports with runway length > %1 and%2").
@@ -2378,68 +2377,107 @@ void MapWidget::updateVisibleObjectsStatusBar()
                                 arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT)));
       }
 
-      visible.append(apShort);
+      airportLabel.append(apShort);
 
       if(!apTooltip.isEmpty())
-      {
-        visibleTooltip.tr().td(apTooltip).trEnd();
-        foundMapObjects = true;
-      }
+        tooltip.tr().td(apTooltip).trEnd();
 
       if(!apTooltipAddon.isEmpty())
-      {
-        visibleTooltip.tr().td(apTooltipAddon).trEnd();
-        foundMapObjects = true;
-      }
-
-      // qDebug() << "=================== apTooltip" << apTooltip;
-      // qDebug() << "=================== apTooltipAddon" << apTooltipAddon;
+        tooltip.tr().td(apTooltipAddon).trEnd();
     }
 
+    QStringList navaidLabel, navaidsTooltip;
+    // Collect navaid information ==========================================================
     if(layer->isVor() && shown & map::VOR)
     {
-      visible.append(tr("VOR"));
-      visibleTooltip.tr().td(tr("VOR")).trEnd();
-      foundMapObjects = true;
+      navaidLabel.append(tr("V"));
+      navaidsTooltip.append(tr("VOR (V)"));
     }
     if(layer->isNdb() && shown & map::NDB)
     {
-      visible.append(tr("NDB"));
-      visibleTooltip.tr().td(tr("NDB")).trEnd();
-      foundMapObjects = true;
+      navaidLabel.append(tr("N"));
+      navaidsTooltip.append(tr("NDB (N)"));
     }
     if(layer->isIls() && shown & map::ILS)
     {
-      visible.append(tr("ILS"));
-      visibleTooltip.tr().td(tr("ILS")).trEnd();
-      foundMapObjects = true;
+      navaidLabel.append(tr("I"));
+      navaidsTooltip.append(tr("ILS (I)"));
     }
     if(layer->isWaypoint() && shown & map::WAYPOINT)
     {
-      visible.append(tr("W"));
-      visibleTooltip.tr().td(tr("Waypoints")).trEnd();
-      foundMapObjects = true;
+      navaidLabel.append(tr("W"));
+      navaidsTooltip.append(tr("Waypoints (W)"));
     }
     if(layer->isAirway() && shown & map::AIRWAYJ)
     {
-      visible.append(tr("J"));
-      visibleTooltip.tr().td(tr("Jet Airways")).trEnd();
-      foundMapObjects = true;
+      navaidLabel.append(tr("JA"));
+      navaidsTooltip.append(tr("Jet Airways (JA)"));
     }
     if(layer->isAirway() && shown & map::AIRWAYV)
     {
-      visible.append(tr("V"));
-      visibleTooltip.tr().td(tr("Victor Airways")).trEnd();
-      foundMapObjects = true;
+      navaidLabel.append(tr("VA"));
+      navaidsTooltip.append(tr("Victor Airways (VA)"));
     }
 
-    if(!foundMapObjects)
-      visibleTooltip.tr().td(tr("Nothing")).trEnd();
+    QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip;
+    map::MapAirspaceTypes airspaceTypes = paintLayer->getShownAirspacesTypesByLayer();
+    // Collect airspace information ==========================================================
+    for(int i = 0; i < map::MAP_AIRSPACE_TYPE_BITS; i++)
+    {
+      map::MapAirspaceTypes type(1 << i);
+      if(airspaceTypes & type)
+        airspacesTooltip.append(map::airspaceTypeToString(type));
+    }
+    if(airspaceTypes & map::AIRSPACE_ICAO)
+    {
+      airspaceGroupLabel.append(tr("ICAO"));
+      airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
+    }
+    if(airspaceTypes & map::AIRSPACE_FIR)
+    {
+      airspaceGroupLabel.append(tr("FIR"));
+      airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
+    }
+    if(airspaceTypes & map::AIRSPACE_RESTRICTED)
+    {
+      airspaceGroupLabel.append(tr("RSTR"));
+      airspaceGroupTooltip.append(tr("Restricted (RSTR)"));
+    }
+    if(airspaceTypes & map::AIRSPACE_SPECIAL)
+    {
+      airspaceGroupLabel.append(tr("SPEC"));
+      airspaceGroupTooltip.append(tr("Special (SPEC)"));
+    }
+    if(airspaceTypes & map::AIRSPACE_OTHER || airspaceTypes & map::AIRSPACE_CENTER)
+    {
+      airspaceGroupLabel.append(tr("OTR"));
+      airspaceGroupTooltip.append(tr("Centers and others (OTR)"));
+    }
+    if(!navaidsTooltip.isEmpty())
+      tooltip.tr().td().b(tr("Navaids: ")).text(navaidsTooltip.join(", ")).tdEnd().trEnd();
+    else
+      tooltip.tr().td(tr("No navaids")).trEnd();
 
-    visibleTooltip.tableEnd();
+    if(!airspacesTooltip.isEmpty())
+    {
+      tooltip.tr().td().b(tr("Airspace Groups: ")).text(airspaceGroupTooltip.join(", ")).tdEnd().trEnd();
+      tooltip.tr().td().b(tr("Airspaces: ")).text(airspacesTooltip.join(", ")).tdEnd().trEnd();
+    }
+    else
+      tooltip.tr().td(tr("No airspaces")).trEnd();
+
+    tooltip.tableEnd();
+
+    QStringList label;
+    if(!airportLabel.isEmpty())
+      label.append(airportLabel.join(tr(",")));
+    if(!navaidLabel.isEmpty())
+      label.append(navaidLabel.join(tr(",")));
+    if(!airspaceGroupLabel.isEmpty())
+      label.append(airspaceGroupLabel.join(tr(",")));
 
     // Update the statusbar label text and tooltip of the label
-    mainWindow->setMapObjectsShownMessageText(visible.join(","), visibleTooltip.getHtml());
+    mainWindow->setMapObjectsShownMessageText(label.join(" - "), tooltip.getHtml());
   }
 }
 
