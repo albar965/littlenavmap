@@ -1755,7 +1755,7 @@ void MainWindow::updateActionStates()
       ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);
   }
 
-#ifndef DEBUG_MOVING_AIRPLANE
+#ifdef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
 #else
