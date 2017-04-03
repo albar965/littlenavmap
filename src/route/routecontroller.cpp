@@ -1286,7 +1286,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 #ifdef DEBUG_MOVING_AIRPLANE
     ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid());
 #else
-    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && mainWindow->isConnected());
+    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
 #endif
   }
   else

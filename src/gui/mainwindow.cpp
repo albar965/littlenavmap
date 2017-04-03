@@ -1755,12 +1755,12 @@ void MainWindow::updateActionStates()
       ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);
   }
 
-#ifdef DEBUG_MOVING_AIRPLANE
+#ifndef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
 #else
-  ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
-  ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
+  ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
 #endif
 
   ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected());
