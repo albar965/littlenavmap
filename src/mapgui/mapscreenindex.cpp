@@ -17,8 +17,8 @@
 
 #include "mapgui/mapscreenindex.h"
 
+#include "navapp.h"
 #include "common/proctypes.h"
-
 #include "route/routecontroller.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
@@ -54,7 +54,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
   {
     const QList<map::MapAirspace> *airspaces = mapQuery->getAirspaces(
       curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
-      mapWidget->getRoute().getCruisingAltitudeFeet(), false);
+      NavApp::getRoute().getCruisingAltitudeFeet(), false);
 
     if(airspaces != nullptr)
     {
@@ -152,7 +152,7 @@ void MapScreenIndex::restoreState()
 
 void MapScreenIndex::updateRouteScreenGeometry()
 {
-  const Route& route = mapWidget->getRoute();
+  const Route& route = NavApp::getRoute();
 
   routeLines.clear();
   routePoints.clear();
@@ -259,7 +259,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   if(paintLayer->getShownMapObjects().testFlag(map::FLIGHTPLAN))
     // Get copies from flight plan if visible
-    mapWidget->getRoute().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
+    NavApp::getRoute().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
 
   // Get points of procedure preview
   getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);

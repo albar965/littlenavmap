@@ -18,9 +18,10 @@
 #ifndef AIRSPACETOOLBARHANDLER_H
 #define AIRSPACETOOLBARHANDLER_H
 
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 #include <QApplication>
+#include <QVector>
 
 class QAction;
 class QActionGroup;

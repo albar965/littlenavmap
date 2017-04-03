@@ -120,7 +120,7 @@
           <string>Restore all map display settings (airport, VOR, etc.) on startup. Otherwise goes back to default settings on startup.</string>
          </property>
          <property name="text">
-          <string>Restore &amp;map display settings to default after startup</string>
+          <string>Restore &amp;map display settings at startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>

@@ -18,8 +18,8 @@
 #include "search/proceduresearch.h"
 
 #include "common/unit.h"
+#include "navapp.h"
 #include "common/mapcolors.h"
-#include "gui/mainwindow.h"
 #include "common/infoquery.h"
 #include "common/procedurequery.h"
 #include "sql/sqlrecord.h"
@@ -100,9 +100,9 @@ private:
   QTreeWidget *tree;
 };
 
-ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
+ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
   : AbstractSearch(main,
-                   tabWidgetIndex), infoQuery(main->getInfoQuery()), procedureQuery(main->getApproachQuery()),
+                   tabWidgetIndex), infoQuery(NavApp::getInfoQuery()), procedureQuery(NavApp::getProcedureQuery()),
     treeWidget(treeWidgetParam), mainWindow(main)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
@@ -110,7 +110,7 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
 
   treeWidget->setItemDelegate(gridDelegate);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureSearch::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureSearch::itemDoubleClicked);
   connect(treeWidget, &QTreeWidget::itemExpanded, this, &ProcedureSearch::itemExpanded);
@@ -146,7 +146,7 @@ ProcedureSearch::~ProcedureSearch()
 
 void ProcedureSearch::resetSearch()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     // Only reset if this tab is active
@@ -205,7 +205,7 @@ void ProcedureSearch::postDatabaseLoad()
 
 void ProcedureSearch::showProcedures(map::MapAirport airport)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
   ui->tabWidgetSearch->setCurrentIndex(2);
@@ -258,15 +258,15 @@ void ProcedureSearch::updateHeaderLabel()
   }
 
   if(currentAirport.isValid())
-    mainWindow->getUi()->labelProcedureSearch->setText(
+    NavApp::getMainUi()->labelProcedureSearch->setText(
       "<b>" + map::airportTextShort(currentAirport) + "</b> " + procs);
   else
-    mainWindow->getUi()->labelProcedureSearch->setText(tr("No Airport selected."));
+    NavApp::getMainUi()->labelProcedureSearch->setText(tr("No Airport selected."));
 }
 
 void ProcedureSearch::clearRunwayFilter()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   ui->comboBoxProcedureRunwayFilter->blockSignals(true);
   ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
@@ -277,15 +277,13 @@ void ProcedureSearch::clearRunwayFilter()
 
 void ProcedureSearch::updateFilterBoxes()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
-  ui->comboBoxProcedureSearchFilter->setHidden(!mainWindow->hasCurrentSimulatorSidStarSupport());
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->comboBoxProcedureSearchFilter->setHidden(!NavApp::hasCurrentSimulatorSidStarSupport());
 
   clearRunwayFilter();
 
   if(currentAirport.isValid())
   {
-    Ui::MainWindow *ui = mainWindow->getUi();
-
     // Add a tree of transitions and approaches
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirport.id);
 
@@ -327,7 +325,7 @@ void ProcedureSearch::fillApproachTreeWidget()
 
     if(recAppVector != nullptr)
     {
-      Ui::MainWindow *ui = mainWindow->getUi();
+      Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
 
       for(const SqlRecord& recApp : *recAppVector)
@@ -406,7 +404,7 @@ void ProcedureSearch::fillApproachTreeWidget()
 
 void ProcedureSearch::saveState()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).save({ui->comboBoxProcedureSearchFilter,
                                               ui->comboBoxProcedureRunwayFilter});
 
@@ -425,10 +423,10 @@ void ProcedureSearch::saveState()
 void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  mainWindow->getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+  NavApp::getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
   updateFilterBoxes();
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter,
                                                  ui->comboBoxProcedureRunwayFilter});
 
@@ -465,7 +463,7 @@ void ProcedureSearch::updateTreeHeader()
 void ProcedureSearch::itemSelectionChanged()
 {
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
-  if(items.isEmpty() || mainWindow->getUi()->tabWidgetSearch->currentIndex() != tabIndex)
+  if(items.isEmpty() || NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
     emit procedureSelected(proc::MapProcedureRef());
 
@@ -617,7 +615,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     menuPos = treeWidget->mapToGlobal(treeWidget->rect().center());
 
   // Save text which will be changed below
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach});
   Q_UNUSED(saver);
 
@@ -629,7 +627,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
-  const Route& route = mainWindow->getRoute();
+  const Route& route = NavApp::getRoute();
 
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
@@ -713,7 +711,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     resetSearch();
     for(int i = 0; i < treeWidget->columnCount(); i++)
       treeWidget->resizeColumnToContents(i);
-    mainWindow->setStatusMessage(tr("Table view reset to defaults."));
+    NavApp::setStatusMessage(tr("Table view reset to defaults."));
   }
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();
@@ -798,7 +796,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
-  return proc::procedureType(mainWindow->getCurrentSimulator(),
+  return proc::procedureType(NavApp::getCurrentSimulator(),
                              recApp.valueStr("type"), recApp.valueStr("suffix"),
                              recApp.valueBool("has_gps_overlay"));
 }
@@ -1093,7 +1091,7 @@ void ProcedureSearch::updateUnits()
 
 void ProcedureSearch::updateTableSelection()
 {
-  if(mainWindow->getUi()->tabWidgetSearch->currentIndex() != tabIndex)
+  if(NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
     // Hide preview if another tab is activated
     emit procedureSelected(proc::MapProcedureRef());

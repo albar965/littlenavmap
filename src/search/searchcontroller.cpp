@@ -17,7 +17,7 @@
 
 #include "search/searchcontroller.h"
 
-#include "gui/mainwindow.h"
+#include "navapp.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/airportsearch.h"
@@ -33,16 +33,16 @@
 
 using atools::gui::HelpHandler;
 
-SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
+SearchController::SearchController(QMainWindow *parent,
                                    QTabWidget *tabWidgetSearch)
-  : mapQuery(mQuery), mainWindow(parent), tabWidget(tabWidgetSearch)
+  : mapQuery(NavApp::getMapQuery()), mainWindow(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
-  connect(parent->getUi()->pushButtonAirportHelpSearch, &QPushButton::clicked,
+  connect(NavApp::getMainUi()->pushButtonAirportHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
-  connect(parent->getUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
+  connect(NavApp::getMainUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
-  connect(parent->getUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
+  connect(NavApp::getMainUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedProcedure);
 }
 
@@ -124,8 +124,8 @@ void SearchController::postCreateSearch(AbstractSearch *search)
 
   SearchBaseTable *base = dynamic_cast<SearchBaseTable *>(search);
   if(base != nullptr)
-    mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
-                                        base, &SearchBaseTable::searchMarkChanged);
+    NavApp::getMapWidget()->connect(NavApp::getMapWidget(), &MapWidget::searchMarkChanged,
+                                    base, &SearchBaseTable::searchMarkChanged);
   allSearchTabs.append(search);
 }
 

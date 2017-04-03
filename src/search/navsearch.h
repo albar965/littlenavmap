@@ -27,7 +27,7 @@ class QTableView;
 class SqlController;
 class ColumnList;
 class QAction;
-class MainWindow;
+class QMainWindow;
 class Column;
 class NavIconDelegate;
 
@@ -46,7 +46,7 @@ class NavSearch :
   Q_OBJECT
 
 public:
-  NavSearch(MainWindow *parent, QTableView *tableView, MapQuery *query, int tabWidgetIndex);
+  NavSearch(QMainWindow *parent, QTableView *tableView, MapQuery *query, int tabWidgetIndex);
   virtual ~NavSearch();
 
   /* All state saving is done through the widget state */

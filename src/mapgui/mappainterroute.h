@@ -20,6 +20,8 @@
 
 #include "mapgui/mappainter.h"
 
+#include "geo/line.h"
+
 namespace Marble {
 class GeoDataLineString;
 }
@@ -32,6 +34,17 @@ namespace proc {
 struct MapProcedureLegs;
 
 struct MapProcedureLeg;
+
+}
+
+namespace map {
+struct MapAirport;
+
+struct MapVor;
+
+struct MapNdb;
+
+struct MapWaypoint;
 
 }
 
@@ -72,14 +85,15 @@ private:
   void paintVorText(const PaintContext *context, int x, int y, const map::MapVor& obj, bool drawAsRoute,
                     const QStringList *additionalText = nullptr);
   void paintAirportText(const PaintContext *context, int x, int y, bool drawAsRoute, const map::MapAirport& obj);
-  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts, bool drawAsRoute);
+  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts,
+                 bool drawAsRoute);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
   void drawSymbols(const PaintContext *context,
                    const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void drawRouteSymbolText(const PaintContext *context,
-                      const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
+                           const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void paintApproachPoints(const PaintContext *context, const proc::MapProcedureLegs& legs, int index,
                            bool preview);

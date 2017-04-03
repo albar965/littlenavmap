@@ -174,7 +174,9 @@ SOURCES += src/main.cpp\
     src/common/proctypes.cpp \
     src/mapgui/mappainterairspace.cpp \
     src/db/databaseerrordialog.cpp \
-    src/gui/airspacetoolbarhandler.cpp
+    src/gui/airspacetoolbarhandler.cpp \
+    src/navapp.cpp \
+    src/common/mapflags.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -252,7 +254,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/proctypes.h \
     src/mapgui/mappainterairspace.h \
     src/db/databaseerrordialog.h \
-    src/gui/airspacetoolbarhandler.h
+    src/gui/airspacetoolbarhandler.h \
+    src/navapp.h \
+    src/common/mapflags.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

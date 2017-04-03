@@ -19,8 +19,9 @@
 
 #include "common/constants.h"
 #include "common/unit.h"
+#include "common/maptypes.h"
 #include "search/sqlcontroller.h"
-#include "gui/mainwindow.h"
+#include "navapp.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
@@ -40,11 +41,11 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
 
-AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery *mapQuery,
+AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuery *mapQuery,
                              int tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), mapQuery, tabWidgetIndex)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // All widgets that will have their state and visibility saved and restored
   airportSearchWidgets =
@@ -241,7 +242,7 @@ void AirportSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   connectLineEdit(ui->lineEditAirportIcaoSearch);
   connectLineEdit(ui->lineEditAirportCitySearch);
   connectLineEdit(ui->lineEditAirportCountrySearch);
@@ -322,7 +323,7 @@ void AirportSearch::saveState()
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
   widgetState.save(airportSearchWidgets);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   widgetState.save(ui->horizontalLayoutAirportDistanceSearch);
   saveViewState(ui->checkBoxAirportDistSearch->isChecked());
 }
@@ -335,7 +336,7 @@ void AirportSearch::restoreState()
   // Need to block signals here to avoid unwanted behavior (will enable
   // distance search and avoid saving of wrong view widget state)
   widgetState.setBlockSignals(true);
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   widgetState.restore(ui->horizontalLayoutAirportDistanceSearch);
   restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
 
@@ -355,14 +356,14 @@ void AirportSearch::saveViewState(bool distSearchActive)
   // Save layout for normal and distance search separately
   atools::gui::WidgetState(
     distSearchActive ? lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET : lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET
-    ).save(mainWindow->getUi()->tableViewAirportSearch);
+    ).save(NavApp::getMainUi()->tableViewAirportSearch);
 }
 
 void AirportSearch::restoreViewState(bool distSearchActive)
 {
   atools::gui::WidgetState(
     distSearchActive ? lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET : lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET
-    ).restore(mainWindow->getUi()->tableViewAirportSearch);
+    ).restore(NavApp::getMainUi()->tableViewAirportSearch);
 }
 
 /* Callback for the controller. Is called for each table cell and should return a formatted value. */
@@ -443,7 +444,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
 
 void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 {
-  if(!mainWindow->getUi()->dockWidgetSearch->isVisible())
+  if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;
 
   const QString idColumnName = columns->getIdColumnName();
@@ -492,7 +493,7 @@ void AirportSearch::setCallbacks()
  * action depending on other action states */
 void AirportSearch::updateButtonMenu()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   QList<const QAction *> menus =
   {
     ui->actionAirportSearchShowExtOptions,

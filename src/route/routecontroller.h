@@ -20,7 +20,6 @@
 
 #include "route/routecommand.h"
 #include "route/route.h"
-#include "common/maptypes.h"
 
 #include <QIcon>
 #include <QObject>
@@ -43,7 +42,7 @@ class FlightplanEntry;
 }
 }
 
-class MainWindow;
+class QMainWindow;
 class QTableView;
 class QStandardItemModel;
 class QItemSelection;
@@ -65,7 +64,7 @@ class RouteController :
   Q_OBJECT
 
 public:
-  RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *tableView);
+  RouteController(QMainWindow *parent, QTableView *tableView);
   virtual ~RouteController();
 
   /* Creates a new plan and emits routeChanged */
@@ -125,21 +124,6 @@ public:
   /* Create a default filename based on departure and destination names */
   QString buildDefaultFilename() const;
   QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
-
-  /* @return true if no flight plan loaded (no departure, no destination and no waypoints) */
-  bool isFlightplanEmpty() const;
-
-  /* @return true if flight plan is not empty and first entry (departure) is an airport */
-  bool hasValidDeparture() const;
-
-  /* @return true if flight plan is not empty and last entry (destination) is an airport */
-  bool hasValidDestination() const;
-
-  /* @return true if flight plan has intermediate waypoints */
-  bool hasEntries() const;
-
-  /* @return true if flight plan has at least two waypoints */
-  bool canCalcRoute() const;
 
   /* @return true if departure is valid and departure airport has no parking or departure of flight plan
    *  has parking or helipad as start position */
@@ -380,7 +364,7 @@ private:
   QString routeFilename, fileDeparture, fileDestination;
   atools::fs::pln::FlightplanType fileIfrVfr;
 
-  MainWindow *mainWindow;
+  QMainWindow *mainWindow;
   QTableView *view;
   MapQuery *query;
   QStandardItemModel *model;

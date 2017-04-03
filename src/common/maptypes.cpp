@@ -954,65 +954,6 @@ QString ndbFullShortText(const MapNdb& ndb)
   return QObject::tr("NDB (%1)").arg(type);
 }
 
-QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
-{
-  QDebugStateSaver saver(out);
-  Q_UNUSED(saver);
-
-  QStringList flags;
-  if(type == NONE)
-    flags.append("NONE");
-  else
-  {
-    if(type & AIRPORT)
-      flags.append("AIRPORT");
-    if(type & AIRPORT_HARD)
-      flags.append("AIRPORT_HARD");
-    if(type & AIRPORT_SOFT)
-      flags.append("AIRPORT_SOFT");
-    if(type & AIRPORT_EMPTY)
-      flags.append("AIRPORT_EMPTY");
-    if(type & AIRPORT_ADDON)
-      flags.append("AIRPORT_ADDON");
-    if(type & VOR)
-      flags.append("VOR");
-    if(type & NDB)
-      flags.append("NDB");
-    if(type & ILS)
-      flags.append("ILS");
-    if(type & MARKER)
-      flags.append("MARKER");
-    if(type & WAYPOINT)
-      flags.append("WAYPOINT");
-    if(type & AIRWAY)
-      flags.append("AIRWAY");
-    if(type & AIRWAYV)
-      flags.append("AIRWAYV");
-    if(type & AIRWAYJ)
-      flags.append("AIRWAYJ");
-    if(type & FLIGHTPLAN)
-      flags.append("ROUTE");
-    if(type & AIRCRAFT)
-      flags.append("AIRCRAFT");
-    if(type & AIRCRAFT_AI)
-      flags.append("AIRCRAFT_AI");
-    if(type & AIRCRAFT_TRACK)
-      flags.append("AIRCRAFT_TRACK");
-    if(type & USER)
-      flags.append("USER");
-    if(type & PARKING)
-      flags.append("PARKING");
-    if(type & RUNWAYEND)
-      flags.append("RUNWAYEND");
-    if(type & INVALID)
-      flags.append("INVALID");
-  }
-
-  out.nospace().noquote() << flags.join("|");
-
-  return out;
-}
-
 QString airspaceTypeToString(map::MapAirspaceTypes type)
 {
   return airspaceTypeNameMap.value(type);

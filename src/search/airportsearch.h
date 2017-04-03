@@ -41,7 +41,7 @@ class AirportSearch :
   Q_OBJECT
 
 public:
-  AirportSearch(MainWindow *parent, QTableView *tableView,
+  AirportSearch(QMainWindow *parent, QTableView *tableView,
                 MapQuery *query, int tabWidgetIndex);
   virtual ~AirportSearch();
 

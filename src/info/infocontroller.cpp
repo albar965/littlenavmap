@@ -18,6 +18,7 @@
 #include "infocontroller.h"
 
 #include "atools.h"
+#include "navapp.h"
 #include "common/constants.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
@@ -47,12 +48,12 @@ using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
-InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
-  : QObject(parent), mainWindow(parent), mapQuery(mapDbQuery)
+InfoController::InfoController(MainWindow *parent)
+  : QObject(parent), mainWindow(parent), mapQuery(NavApp::getMapQuery())
 {
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
   simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
 
@@ -217,7 +218,7 @@ void InfoController::anchorClicked(const QUrl& url)
 
 void InfoController::saveState()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetInformation, ui->tabWidgetAircraft,
                                                          ui->tabWidgetLegend});
 
@@ -260,7 +261,7 @@ void InfoController::restoreState()
   infoBuilder->updateAircraftIcons(true);
   showInformationInternal(res, false);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
                                                             ui->tabWidgetLegend});
 }
@@ -273,13 +274,13 @@ void InfoController::updateAirport()
 void InfoController::updateProgress()
 {
   HtmlBuilder html(true /* has background color */);
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
   {
     // ok - scrollbars not pressed
     html.clear();
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, mainWindow->getRoute());
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRoute());
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
   }
 }
@@ -306,9 +307,9 @@ void InfoController::updateAirportInternal(bool newAirport)
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
-      infoBuilder->airportText(airport, currentWeatherContext, html, &mainWindow->getRoute(), iconBackColor);
+      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRoute(), iconBackColor);
 
-      Ui::MainWindow *ui = mainWindow->getUi();
+      Ui::MainWindow *ui = NavApp::getMainUi();
       if(newAirport)
         // scroll up for new airports
         ui->textBrowserAirportInfo->setText(html.getHtml());
@@ -331,7 +332,7 @@ void InfoController::updateAirportInternal(bool newAirport)
 
 void InfoController::clearInfoTextBrowsers()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   ui->textBrowserAirportInfo->clear();
   ui->textBrowserRunwayInfo->clear();
@@ -342,7 +343,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserAirspaceInfo->clear();
 }
 
-void InfoController::showInformation(map::MapSearchResult result)
+void InfoController::showInformation(const map::MapSearchResult& result)
 {
   showInformationInternal(result, true);
 }
@@ -354,7 +355,7 @@ void InfoController::updateAllInformation()
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
+void InfoController::showInformationInternal(const map::MapSearchResult& result, bool showWindows)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -362,7 +363,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
        foundAirspace = false;
   HtmlBuilder html(true);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   currentSearchResult.userAircraft = result.userAircraft;
   foundUserAircraft = currentSearchResult.userAircraft.getPosition().isValid();
@@ -497,14 +498,14 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   {
     if(foundNavaid || foundAirport || foundAirspace)
     {
-      mainWindow->getUi()->dockWidgetInformation->show();
-      mainWindow->getUi()->dockWidgetInformation->raise();
+      NavApp::getMainUi()->dockWidgetInformation->show();
+      NavApp::getMainUi()->dockWidgetInformation->raise();
     }
 
     if(foundUserAircraft || foundAiAircraft)
     {
-      mainWindow->getUi()->dockWidgetAircraft->show();
-      mainWindow->getUi()->dockWidgetAircraft->raise();
+      NavApp::getMainUi()->dockWidgetAircraft->show();
+      NavApp::getMainUi()->dockWidgetAircraft->raise();
     }
   }
 
@@ -521,20 +522,23 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
                          idx == ic::INFO_APPROACHES || idx == ic::INFO_WEATHER;
 
+    bool navaidActive = idx == ic::INFO_NAVAID;
+
     ic::TabIndex newIdx = idx;
+
     if(foundAirspace && !foundNavaid && !foundAirport)
-      // Airspace is easiest to click - activate only if nothing else was found
       newIdx = ic::INFO_AIRSPACE;
-
-    if(foundNavaid && !foundAirport)
-      // Found only navaids
-      newIdx = ic::INFO_NAVAID;
-
-    if(foundAirport && !airportActive && !foundNavaid)
+    else if(foundAirport && !foundNavaid)
     {
-      // Found only an airport
-      // If no airport related tab is shown bring airport tab to front
-      newIdx = ic::INFO_AIRPORT;
+      if(!airportActive)
+        newIdx = ic::INFO_AIRPORT;
+    }
+    else if(foundNavaid && !foundAirport)
+      newIdx = ic::INFO_NAVAID;
+    else if(foundNavaid && foundAirport)
+    {
+      if(!airportActive && !navaidActive)
+        newIdx = ic::INFO_AIRPORT;
     }
 
     ui->tabWidgetInformation->setCurrentIndex(newIdx);
@@ -567,7 +571,7 @@ void InfoController::postDatabaseLoad()
 
 void InfoController::updateAircraftText()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
   {
     // ok - scrollbars not pressed
@@ -580,19 +584,19 @@ void InfoController::updateAircraftText()
 
 void InfoController::updateAircraftProgressText()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
   {
     // ok - scrollbars not pressed
     HtmlBuilder html(true /* has background color */);
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, mainWindow->getRoute());
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRoute());
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
   }
 }
 
 void InfoController::updateAiAircraftText()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
   {
     // ok - scrollbars not pressed
@@ -615,7 +619,7 @@ void InfoController::updateAiAircraftText()
       int numAi = lastSimData.getAiAircraft().size();
       QString text;
 
-      if(!(mainWindow->getShownMapFeatures() & map::AIRCRAFT_AI))
+      if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
         text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
 
       text += tr("No AI or multiplayer aircraft selected.<br/>"
@@ -637,7 +641,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
     // Last update was more than 500 ms ago
     updateAiAirports(data);
 
-    Ui::MainWindow *ui = mainWindow->getUi();
+    Ui::MainWindow *ui = NavApp::getMainUi();
 
     lastSimData = data;
     if(data.getUserAircraft().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
@@ -683,7 +687,7 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
 
 void InfoController::connectedToSimulator()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->textBrowserAircraftInfo->clear();
   ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
   ui->textBrowserAircraftProgressInfo->clear();
@@ -694,7 +698,7 @@ void InfoController::connectedToSimulator()
 
 void InfoController::disconnectedFromSimulator()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   ui->textBrowserAircraftInfo->clear();
   ui->textBrowserAircraftInfo->setPlainText(tr("Disconnected."));
@@ -715,7 +719,7 @@ void InfoController::optionsChanged()
 /* Update font size in text browsers if options have changed */
 void InfoController::updateTextEditFontSizes()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   int sizePercent = OptionData::instance().getGuiInfoTextSize();
   setTextEditFontSize(ui->textBrowserAirportInfo, infoFontPtSize, sizePercent);

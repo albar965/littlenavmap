@@ -17,9 +17,10 @@
 
 #include "search/navsearch.h"
 
+#include "navapp.h"
+#include "common/maptypes.h"
 #include "common/constants.h"
 #include "search/sqlcontroller.h"
-#include "gui/mainwindow.h"
 #include "search/column.h"
 #include "search/navicondelegate.h"
 #include "ui_mainwindow.h"
@@ -32,11 +33,11 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
+NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
                      MapQuery *mapQuery, int tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), mapQuery, tabWidgetIndex)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // All widgets that will have their state and visibility saved and restored
   navSearchWidgets =
@@ -144,7 +145,7 @@ void NavSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   connectLineEdit(ui->lineEditNavIcaoSearch);
   connectLineEdit(ui->lineEditNavNameSearch);
@@ -183,7 +184,7 @@ void NavSearch::saveState()
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
   widgetState.save(navSearchWidgets);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   widgetState.save(ui->horizontalLayoutNavDistanceSearch);
   saveViewState(ui->checkBoxNavDistSearch->isChecked());
 }
@@ -196,7 +197,7 @@ void NavSearch::restoreState()
   // Need to block signals here to avoid unwanted behavior (will enable
   // distance search and avoid saving of wrong view widget state)
   widgetState.setBlockSignals(true);
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   widgetState.restore(ui->horizontalLayoutNavDistanceSearch);
   restoreViewState(ui->checkBoxNavDistSearch->isChecked());
 
@@ -216,14 +217,14 @@ void NavSearch::saveViewState(bool distSearchActive)
   // Save layout for normal and distance search separately
   atools::gui::WidgetState(
     distSearchActive ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET
-    ).save(mainWindow->getUi()->tableViewNavSearch);
+    ).save(NavApp::getMainUi()->tableViewNavSearch);
 }
 
 void NavSearch::restoreViewState(bool distSearchActive)
 {
   atools::gui::WidgetState(
     distSearchActive ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET
-    ).restore(mainWindow->getUi()->tableViewNavSearch);
+    ).restore(NavApp::getMainUi()->tableViewNavSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
@@ -299,7 +300,7 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
 
 void NavSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 {
-  if(!mainWindow->getUi()->dockWidgetSearch->isVisible())
+  if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
     return;
 
   // Build a SQL record with all available fields
@@ -360,7 +361,7 @@ void NavSearch::setCallbacks()
  * action depending on other action states */
 void NavSearch::updateButtonMenu()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Change state of show all action
   ui->actionNavSearchShowAllOptions->blockSignals(true);

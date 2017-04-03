@@ -20,6 +20,7 @@
 #include <cmath>
 #include "sql/sqlrecord.h"
 #include "geo/calculations.h"
+#include "common/maptypes.h"
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;

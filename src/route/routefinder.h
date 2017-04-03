@@ -18,10 +18,8 @@
 #ifndef LITTLENAVMAP_ROUTEFINDER_H
 #define LITTLENAVMAP_ROUTEFINDER_H
 
-#include "common/maptypes.h"
 #include "util/heap.h"
 #include "route/routenetwork.h"
-#include "geo/calculations.h"
 
 namespace rf {
 /* Used when fetching the route points after calculation. Adds airway id to node */

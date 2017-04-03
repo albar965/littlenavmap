@@ -46,7 +46,7 @@ class PrintSupport
   Q_DECLARE_TR_FUNCTIONS(PrintSupport)
 
 public:
-  PrintSupport(MainWindow *parent, MapQuery *mapQueryParam);
+  PrintSupport(MainWindow *parent);
   virtual ~PrintSupport();
 
   /* Print the current map view */

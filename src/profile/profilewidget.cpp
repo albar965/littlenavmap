@@ -18,7 +18,7 @@
 #include "profile/profilewidget.h"
 
 #include "atools.h"
-#include "gui/mainwindow.h"
+#include "navapp.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "ui_mainwindow.h"
@@ -58,14 +58,14 @@ using Marble::GeoDataLineString;
 using atools::geo::Pos;
 using atools::geo::LineString;
 
-ProfileWidget::ProfileWidget(MainWindow *parent)
+ProfileWidget::ProfileWidget(QMainWindow *parent)
   : QWidget(parent), mainWindow(parent)
 {
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
   setMinimumSize(QSize(50, 40));
 
-  elevationModel = mainWindow->getElevationModel();
-  routeController = mainWindow->getRouteController();
+  elevationModel = NavApp::getElevationModel();
+  routeController = NavApp::getRouteController();
 
   // Create single shot timer that will restart the thread after a delay
   updateTimer = new QTimer(this);
@@ -105,7 +105,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   bool updateWidget = false;
 
-  if(!routeController->isFlightplanEmpty())
+  if(!NavApp::getRoute().isFlightplanEmpty())
   {
     const Route& route = routeController->getRoute();
 
@@ -205,12 +205,12 @@ float ProfileWidget::calcGroundBuffer(float maxElevation)
 /* Update all screen coordinates and scale factors */
 void ProfileWidget::updateScreenCoords()
 {
-  MapWidget *mapWidget = mainWindow->getMapWidget();
+  MapWidget *mapWidget = NavApp::getMapWidget();
 
   // Widget drawing region width and height
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  if(!routeController->isFlightplanEmpty() && showAircraftTrack)
+  if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
     maxTrackAltitudeFt = mapWidget->getAircraftTrack().getMaxAltitude();
   else
     maxTrackAltitudeFt = 0.f;
@@ -222,7 +222,7 @@ void ProfileWidget::updateScreenCoords()
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getUserAircraft().getPosition().isValid() &&
-     (showAircraft || showAircraftTrack) && !routeController->isFlightplanEmpty())
+     (showAircraft || showAircraftTrack) && !NavApp::getRoute().isFlightplanEmpty())
     maxWindowAlt = std::max(maxWindowAlt, simData.getUserAircraft().getPosition().getAltitude());
 
   if(showAircraftTrack)
@@ -262,7 +262,7 @@ void ProfileWidget::updateScreenCoords()
   landPolygon.append(QPoint(X0 + w, h + Y0));
 
   aircraftTrackPoints.clear();
-  if(!routeController->isFlightplanEmpty() && showAircraftTrack)
+  if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
   {
     // Update aircraft track screen coordinates
     const Route& route = legList.route;
@@ -528,7 +528,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
-  if(!routeController->isFlightplanEmpty())
+  if(!NavApp::getRoute().isFlightplanEmpty())
   {
     if(todX < X0 + w)
     {
@@ -627,6 +627,8 @@ void ProfileWidget::elevationUpdateAvailable()
 
 void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
 {
+  Q_UNUSED(altitudeFeet);
+
   if(!widgetVisible || databaseLoadStatus)
     return;
 
@@ -860,7 +862,7 @@ void ProfileWidget::showEvent(QShowEvent *)
 {
   widgetVisible = true;
   // Start update immediately
-  updateTimer->start(0);
+  updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
 }
 
 void ProfileWidget::hideEvent(QHideEvent *)
@@ -984,7 +986,7 @@ void ProfileWidget::updateLabel()
   else
     fixedLabelText.clear();
 
-  mainWindow->getUi()->labelElevationInfo->setText(fixedLabelText + " " + variableLabelText);
+  NavApp::getMainUi()->labelElevationInfo->setText(fixedLabelText + " " + variableLabelText);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
@@ -1054,7 +1056,7 @@ void ProfileWidget::mainWindowShown()
 
 void ProfileWidget::updateProfileShowFeatures()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Compare own values with action values
   bool updateProfile = showAircraft != ui->actionMapShowAircraft->isChecked() ||

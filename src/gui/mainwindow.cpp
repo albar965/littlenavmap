@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "common/proctypes.h"
+#include "navapp.h"
 #include "gui/application.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -112,6 +113,8 @@ MainWindow::MainWindow()
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
 
+    currentWeatherContext = new map::WeatherContext;
+
     setupUi();
 
     qDebug() << "MainWindow Creating OptionsDialog";
@@ -126,31 +129,21 @@ MainWindow::MainWindow()
 
     // Prepare database and queries
     qDebug() << "MainWindow Creating DatabaseManager";
-    databaseManager = new DatabaseManager(this);
-    databaseManager->openDatabase();
 
-    mapQuery = new MapQuery(this, databaseManager->getDatabase());
-    mapQuery->initQueries();
-
-    infoQuery = new InfoQuery(databaseManager->getDatabase());
-    infoQuery->initQueries();
-
-    procedureQuery = new ProcedureQuery(databaseManager->getDatabase(), mapQuery);
-    procedureQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
-    procedureQuery->initQueries();
+    NavApp::init(this);
 
     // Add actions for flight simulator database switch in main menu
-    databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
+    NavApp::getDatabaseManager()->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
 
     qDebug() << "MainWindow Creating WeatherReporter";
-    weatherReporter = new WeatherReporter(this, databaseManager->getCurrentSimulator());
+    weatherReporter = new WeatherReporter(this, NavApp::getDatabaseManager()->getCurrentSimulator());
 
     qDebug() << "MainWindow Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
                                               ui->actionRecentRoutesClear);
 
     qDebug() << "MainWindow Creating RouteController";
-    routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
+    routeController = new RouteController(this, ui->tableViewRoute);
 
     qDebug() << "MainWindow Creating FileHistoryHandler for KML files";
     kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
@@ -158,7 +151,7 @@ MainWindow::MainWindow()
 
     // Create map widget and replace dummy widget in window
     qDebug() << "MainWindow Creating MapWidget";
-    mapWidget = new MapWidget(this, mapQuery);
+    mapWidget = new MapWidget(this);
     ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
 
     // Create elevation profile widget and replace dummy widget in window
@@ -168,23 +161,20 @@ MainWindow::MainWindow()
 
     // Have to create searches in the same order as the tabs
     qDebug() << "MainWindow Creating SearchController";
-    searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
+    searchController = new SearchController(this, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
     searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
 
-    qDebug() << "MainWindow Creating ConnectClient";
-    connectClient = new ConnectClient(this);
-
     qDebug() << "MainWindow Creating InfoController";
-    infoController = new InfoController(this, mapQuery);
+    infoController = new InfoController(this);
 
     qDebug() << "MainWindow Creating InfoController";
     airspaceHandler = new AirspaceToolBarHandler(this);
     airspaceHandler->createToolButtons();
 
     qDebug() << "MainWindow Creating PrintSupport";
-    printSupport = new PrintSupport(this, mapQuery);
+    printSupport = new PrintSupport(this);
 
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
@@ -232,20 +222,12 @@ MainWindow::~MainWindow()
   // Close all queries
   preDatabaseLoad();
 
-  qDebug() << Q_FUNC_INFO << "delete connectClient";
-  delete connectClient;
   qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
   qDebug() << Q_FUNC_INFO << "delete searchController";
   delete searchController;
   qDebug() << Q_FUNC_INFO << "delete weatherReporter";
   delete weatherReporter;
-  qDebug() << Q_FUNC_INFO << "delete mapQuery";
-  delete mapQuery;
-  qDebug() << Q_FUNC_INFO << "delete infoQuery";
-  delete infoQuery;
-  qDebug() << Q_FUNC_INFO << "delete approachQuery";
-  delete procedureQuery;
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
@@ -266,17 +248,20 @@ MainWindow::~MainWindow()
   delete mapWidget;
   qDebug() << Q_FUNC_INFO << "delete ui";
   delete ui;
-
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
   qDebug() << Q_FUNC_INFO << "delete errorHandler";
   delete errorHandler;
-  qDebug() << Q_FUNC_INFO << "delete databaseManager";
-  delete databaseManager;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
   delete actionGroupMapTheme;
+
+  qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
+  delete currentWeatherContext;
+
+  qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
+  NavApp::deInit();
 
   qDebug() << Q_FUNC_INFO << "Unit::deInit()";
   Unit::deInit();
@@ -293,21 +278,6 @@ MainWindow::~MainWindow()
 void MainWindow::updateMap() const
 {
   mapWidget->update();
-}
-
-map::MapObjectTypes MainWindow::getShownMapFeatures() const
-{
-  return mapWidget->getShownMapFeatures();
-}
-
-map::MapAirspaceTypes MainWindow::getShownMapAirspaces() const
-{
-  return mapWidget->getShownAirspaces();
-}
-
-const Route& MainWindow::getRoute() const
-{
-  return routeController->getRoute();
 }
 
 /* Show map legend and bring information dock to front */
@@ -667,7 +637,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::run);
+  connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
@@ -836,8 +806,8 @@ void MainWindow::connectAllSlots()
   // Messages about database query result status
   connect(mapWidget, &MapWidget::resultTruncated, this, &MainWindow::resultTruncated);
 
-  connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
-  connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
+  connect(NavApp::getDatabaseManager(), &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
+  connect(NavApp::getDatabaseManager(), &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
   // Not needed. All properties removed from legend since they are not persistent
   // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
@@ -845,6 +815,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionAboutMarble, &QAction::triggered, marbleAbout, &Marble::MarbleAboutDialog::exec);
 
+  ConnectClient *connectClient = NavApp::getConnectClient();
   connect(ui->actionConnectSimulator, &QAction::triggered, connectClient, &ConnectClient::connectToServerDialog);
 
   // Deliver first to route controller to update active leg and distances
@@ -1004,7 +975,7 @@ void MainWindow::updateLegend()
 void MainWindow::showDatabaseFiles()
 {
 
-  QUrl url = QUrl::fromLocalFile(databaseManager->getDatabaseDirectory());
+  QUrl url = QUrl::fromLocalFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 
   if(!QDesktopServices::openUrl(url))
     QMessageBox::warning(this, QApplication::applicationName(), QString(
@@ -1028,11 +999,6 @@ void MainWindow::setMapObjectsShownMessageText(const QString& text, const QStrin
 const ElevationModel *MainWindow::getElevationModel()
 {
   return mapWidget->model()->elevationModel();
-}
-
-bool MainWindow::isConnected() const
-{
-  return connectClient->isConnected();
 }
 
 /* Called after each query */
@@ -1071,7 +1037,7 @@ void MainWindow::renderStatusChanged(RenderStatus status)
 /* Route center action */
 void MainWindow::routeCenter()
 {
-  if(!routeController->isFlightplanEmpty())
+  if(!NavApp::getRoute().isFlightplanEmpty())
   {
     mapWidget->showRect(routeController->getBoundingRect(), false);
     setStatusMessage(tr("Flight plan shown on map."));
@@ -1082,7 +1048,7 @@ void MainWindow::routeCenter()
  *  @return true if route can be saved anyway */
 bool MainWindow::routeValidate(bool validateParking)
 {
-  if(!routeController->hasValidDeparture() || !routeController->hasValidDestination())
+  if(!NavApp::getRoute().hasValidDeparture() || !NavApp::getRoute().hasValidDestination())
   {
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
                                             tr("Flight Plan must have a valid airport as "
@@ -1136,7 +1102,7 @@ bool MainWindow::routeValidate(bool validateParking)
  *  @return true if route can be saved anyway */
 bool RouteController::hasValidParking() const
 {
-  if(hasValidDeparture())
+  if(route.hasValidDeparture())
   {
     const QList<map::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
 
@@ -1162,7 +1128,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  newTitle += " - " + databaseManager->getSimulatorShortName();
+  newTitle += " - " + NavApp::getDatabaseManager()->getSimulatorShortName();
 
   if(!routeController->getCurrentRouteFilename().isEmpty())
     newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
@@ -1375,7 +1341,7 @@ bool MainWindow::routeSaveAsGfp()
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
-      atools::fs::FsPaths::getBasePath(databaseManager->getCurrentSimulator()) +
+      atools::fs::FsPaths::getBasePath(NavApp::getDatabaseManager()->getCurrentSimulator()) +
       QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       routeController->buildDefaultFilenameShort("-", "gfp"));
 
@@ -1399,7 +1365,7 @@ bool MainWindow::routeSaveAsRte()
       tr("Save Flightplan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
-      atools::fs::FsPaths::getBasePath(databaseManager->getCurrentSimulator()) +
+      atools::fs::FsPaths::getBasePath(NavApp::getDatabaseManager()->getCurrentSimulator()) +
       QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       routeController->buildDefaultFilenameShort(QString(), "rte"));
 
@@ -1542,7 +1508,7 @@ void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
            << "transitionId" << approachRef.transitionId
            << "legId" << approachRef.legId;
 
-  map::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
+  map::MapAirport airport = NavApp::getMapQuery()->getAirportById(approachRef.airportId);
 
   if(approachRef.isEmpty())
     mapWidget->changeApproachHighlight(proc::MapProcedureLegs());
@@ -1550,7 +1516,8 @@ void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
   {
     if(approachRef.hasApproachAndTransitionIds())
     {
-      const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(airport, approachRef.transitionId);
+      const proc::MapProcedureLegs *legs =
+        NavApp::getProcedureQuery()->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1558,7 +1525,8 @@ void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
     }
     else if(approachRef.hasApproachOnlyIds() && !approachRef.isLeg())
     {
-      const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(airport, approachRef.approachId);
+      const proc::MapProcedureLegs *legs =
+        NavApp::getProcedureQuery()->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1579,11 +1547,11 @@ void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
   {
     const proc::MapProcedureLeg *leg;
 
-    map::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
+    map::MapAirport airport = NavApp::getMapQuery()->getAirportById(approachRef.airportId);
     if(approachRef.transitionId != -1)
-      leg = procedureQuery->getTransitionLeg(airport, approachRef.legId);
+      leg = NavApp::getProcedureQuery()->getTransitionLeg(airport, approachRef.legId);
     else
-      leg = procedureQuery->getApproachLeg(airport, approachRef.approachId, approachRef.legId);
+      leg = NavApp::getProcedureQuery()->getApproachLeg(airport, approachRef.approachId, approachRef.legId);
 
     if(leg != nullptr)
     {
@@ -1659,21 +1627,6 @@ void MainWindow::setDetailLabelText(const QString& text)
   detailLabel->setText(text);
 }
 
-atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator() const
-{
-  return databaseManager->getCurrentSimulator();
-}
-
-bool MainWindow::hasCurrentSimulatorSidStarSupport() const
-{
-  return databaseManager->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3;
-}
-
-atools::sql::SqlDatabase *MainWindow::getDatabase() const
-{
-  return databaseManager->getDatabase();
-}
-
 /* From menu: Show options dialog */
 void MainWindow::options()
 {
@@ -1702,6 +1655,7 @@ void MainWindow::mainWindowShown()
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
+    DatabaseManager *databaseManager = NavApp::getDatabaseManager();
     if(!databaseManager->hasSimulatorDatabases())
     {
       if(databaseManager->hasInstalledSimulators())
@@ -1730,7 +1684,7 @@ void MainWindow::mainWindowShown()
   }
 
   // If enabled connect to simulator without showing dialog
-  connectClient->tryConnectOnStartup();
+  NavApp::getConnectClient()->tryConnectOnStartup();
 
   weatherUpdateTimeout();
 
@@ -1753,9 +1707,9 @@ void MainWindow::updateActionStates()
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
-  ui->actionReloadScenery->setEnabled(databaseManager->hasInstalledSimulators());
+  ui->actionReloadScenery->setEnabled(NavApp::getDatabaseManager()->hasInstalledSimulators());
 
-  bool hasFlightplan = !routeController->isFlightplanEmpty();
+  bool hasFlightplan = !NavApp::getRoute().isFlightplanEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
@@ -1763,7 +1717,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
-  ui->actionRouteSelectParking->setEnabled(routeController->hasValidDeparture());
+  ui->actionRouteSelectParking->setEnabled(NavApp::getRoute().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
@@ -1809,12 +1763,12 @@ void MainWindow::updateActionStates()
   ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 #endif
 
-  ui->actionMapShowAircraftAi->setEnabled(connectClient->isConnected());
+  ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected());
   ui->actionMapShowAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
 
-  bool canCalcRoute = routeController->canCalcRoute();
-  ui->actionRouteCalcDirect->setEnabled(canCalcRoute && routeController->hasEntries());
+  bool canCalcRoute = NavApp::getRoute().canCalcRoute();
+  ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRoute().hasEntries());
   ui->actionRouteCalcRadionav->setEnabled(canCalcRoute);
   ui->actionRouteCalcHighAlt->setEnabled(canCalcRoute);
   ui->actionRouteCalcLowAlt->setEnabled(canCalcRoute);
@@ -1881,7 +1835,7 @@ void MainWindow::restoreStateMain()
   routeController->restoreState();
 
   qDebug() << "MainWindow restoring state of connectClient";
-  connectClient->restoreState();
+  NavApp::getConnectClient()->restoreState();
 
   qDebug() << "MainWindow restoring state of infoController";
   infoController->restoreState();
@@ -1948,8 +1902,8 @@ void MainWindow::saveStateMain()
     routeController->saveState();
 
   qDebug() << "connectClient";
-  if(connectClient != nullptr)
-    connectClient->saveState();
+  if(NavApp::getConnectClient() != nullptr)
+    NavApp::getConnectClient()->saveState();
 
   qDebug() << "infoController";
   if(infoController != nullptr)
@@ -1971,8 +1925,8 @@ void MainWindow::saveStateMain()
   settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
   qDebug() << "databaseManager";
-  if(databaseManager != nullptr)
-    databaseManager->saveState();
+  if(NavApp::getDatabaseManager() != nullptr)
+    NavApp::getDatabaseManager()->saveState();
 
   qDebug() << "syncSettings";
   settings.syncSettings();
@@ -2079,9 +2033,8 @@ void MainWindow::preDatabaseLoad()
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
     weatherReporter->preDatabaseLoad();
-    infoQuery->deInitQueries();
-    mapQuery->deInitQueries();
-    procedureQuery->deInitQueries();
+
+    NavApp::preDatabaseLoad();
 
     clearWeatherContext();
   }
@@ -2092,14 +2045,10 @@ void MainWindow::preDatabaseLoad()
 /* Call other other classes to reopen queries */
 void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
-  procedureQuery->setCurrentSimulator(getCurrentSimulator());
-
   qDebug() << "MainWindow::postDatabaseLoad";
   if(hasDatabaseLoadStatus)
   {
-    mapQuery->initQueries();
-    infoQuery->initQueries();
-    procedureQuery->initQueries();
+    NavApp::postDatabaseLoad();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
     mapWidget->postDatabaseLoad();
@@ -2125,35 +2074,36 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 {
   opts::Flags flags = OptionData::instance().getFlags();
   bool changed = false;
-  bool newAirport = currentWeatherContext.ident != airport.ident;
+  bool newAirport = currentWeatherContext->ident != airport.ident;
 
-  currentWeatherContext.ident = airport.ident;
+  currentWeatherContext->ident = airport.ident;
 
   if(flags & opts::WEATHER_INFO_FS)
   {
     // qDebug() << "connectClient->isConnected()" << connectClient->isConnected();
-    // qDebug() << "currentWeatherContext.fsMetar" << currentWeatherContext.fsMetar.metarForStation;
+    // qDebug() << "currentWeatherContext->fsMetar" << currentWeatherContext->fsMetar.metarForStation;
 
-    if(connectClient->isConnected())
+    if(NavApp::isConnected())
     {
       // Flight simulator fetched weather
-      atools::fs::sc::MetarResult metar = connectClient->requestWeather(airport.ident, airport.position);
+      atools::fs::sc::MetarResult metar =
+        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
 
-      if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext.fsMetar))
+      if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
       {
-        currentWeatherContext.fsMetar = metar;
+        currentWeatherContext->fsMetar = metar;
         changed = true;
         qDebug() << "FS changed";
       }
     }
     else
     {
-      // qDebug() << "currentWeatherContext.fsMetar.isEmpty()" << currentWeatherContext.fsMetar.isEmpty();
+      // qDebug() << "currentWeatherContext->fsMetar.isEmpty()" << currentWeatherContext->fsMetar.isEmpty();
 
-      if(!currentWeatherContext.fsMetar.isEmpty())
+      if(!currentWeatherContext->fsMetar.isEmpty())
       {
         // If there was a previous metar and the new one is empty we were being disconnected
-        currentWeatherContext.fsMetar = atools::fs::sc::MetarResult();
+        currentWeatherContext->fsMetar = atools::fs::sc::MetarResult();
         changed = true;
         // qDebug() << "FS changed to null";
       }
@@ -2162,14 +2112,14 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   if(flags & opts::WEATHER_INFO_ACTIVESKY)
   {
-    fillActiveSkyType(currentWeatherContext, airport.ident);
+    fillActiveSkyType(*currentWeatherContext, airport.ident);
 
     QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext.asMetar))
+    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->asMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext.asMetar;
+      // qDebug() << "old Metar" << currentWeatherContext->asMetar;
       // qDebug() << "new Metar" << metarStr;
-      currentWeatherContext.asMetar = metarStr;
+      currentWeatherContext->asMetar = metarStr;
       changed = true;
       // qDebug() << "AS changed";
     }
@@ -2178,11 +2128,11 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
   if(flags & opts::WEATHER_INFO_NOAA)
   {
     QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext.noaaMetar))
+    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->noaaMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext.noaaMetar;
+      // qDebug() << "old Metar" << currentWeatherContext->noaaMetar;
       // qDebug() << "new Metar" << metarStr;
-      currentWeatherContext.noaaMetar = metarStr;
+      currentWeatherContext->noaaMetar = metarStr;
       changed = true;
       // qDebug() << "NOAA changed";
     }
@@ -2191,17 +2141,17 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
   if(flags & opts::WEATHER_INFO_VATSIM)
   {
     QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext.vatsimMetar))
+    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->vatsimMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext.vatsimMetar;
+      // qDebug() << "old Metar" << currentWeatherContext->vatsimMetar;
       // qDebug() << "new Metar" << metarStr;
-      currentWeatherContext.vatsimMetar = metarStr;
+      currentWeatherContext->vatsimMetar = metarStr;
       changed = true;
       // qDebug() << "VATSIM changed";
     }
   }
 
-  weatherContext = currentWeatherContext;
+  weatherContext = *currentWeatherContext;
 
   // qDebug() << Q_FUNC_INFO << "changed" << changed;
 
@@ -2217,7 +2167,8 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext,
   weatherContext.ident = airport.ident;
 
   if(flags & opts::WEATHER_INFO_FS)
-    weatherContext.fsMetar = connectClient->requestWeather(airport.ident, airport.position);
+    weatherContext.fsMetar =
+      NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
 
   if(flags & opts::WEATHER_INFO_ACTIVESKY)
   {
@@ -2241,7 +2192,8 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
   weatherContext.ident = airport.ident;
 
   if(flags & opts::WEATHER_TOOLTIP_FS)
-    weatherContext.fsMetar = connectClient->requestWeather(airport.ident, airport.position);
+    weatherContext.fsMetar =
+      NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
 
   if(flags & opts::WEATHER_TOOLTIP_ACTIVESKY)
   {
@@ -2281,5 +2233,5 @@ void MainWindow::clearWeatherContext()
   qDebug() << Q_FUNC_INFO;
 
   // Clear all weather and fetch new
-  currentWeatherContext = map::WeatherContext();
+  *currentWeatherContext = map::WeatherContext();
 }

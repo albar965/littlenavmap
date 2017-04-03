@@ -17,6 +17,7 @@
 
 #include "search/airporticondelegate.h"
 
+#include "common/maptypes.h"
 #include "options/optiondata.h"
 #include "search/sqlmodel.h"
 #include "search/sqlproxymodel.h"

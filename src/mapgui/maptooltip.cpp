@@ -18,6 +18,7 @@
 #include "maptooltip.h"
 
 #include "common/maptypes.h"
+#include "navapp.h"
 #include "util/htmlbuilder.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
@@ -32,7 +33,7 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
 MapTooltip::MapTooltip(MainWindow *parentWindow)
-  : mainWindow(parentWindow), query(mainWindow->getMapQuery()), weather(mainWindow->getWeatherReporter())
+  : mainWindow(parentWindow), query(NavApp::getMapQuery()), weather(NavApp::getWeatherReporter())
 {
   qDebug() << Q_FUNC_INFO;
 }

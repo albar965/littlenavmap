@@ -17,9 +17,9 @@
 
 #include "options/optionsdialog.h"
 
+#include "navapp.h"
 #include "common/constants.h"
 #include "common/unit.h"
-#include "gui/mainwindow.h"
 #include "ui_options.h"
 #include "common/weatherreporter.h"
 #include "gui/widgetstate.h"
@@ -37,6 +37,8 @@
 #include <QColorDialog>
 #include <QStyleFactory>
 #include <QGuiApplication>
+#include <QMainWindow>
+#include <QUrl>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -107,7 +109,7 @@ bool RangeRingValidator::ringStrToVector(const QString& input) const
 
 // ------------------------------------------------------------------------
 
-OptionsDialog::OptionsDialog(MainWindow *parentWindow)
+OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
   qDebug() << Q_FUNC_INFO;
@@ -650,7 +652,7 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
 void OptionsDialog::testWeatherUrl(const QString& url)
 {
   QString result;
-  if(mainWindow->getWeatherReporter()->testUrl(url, "KORD", result))
+  if(NavApp::getWeatherReporter()->testUrl(url, "KORD", result))
     QMessageBox::information(this, QApplication::applicationName(), tr("Success. Result:\n%1").arg(result));
   else
     QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
@@ -664,7 +666,7 @@ void OptionsDialog::addDatabaseExcludePathClicked()
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Scenery Loading"),
     lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(mainWindow->getCurrentSimulator()));
+    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulator()));
 
   if(!path.isEmpty())
   {
@@ -690,7 +692,7 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Add-On Recognition"),
     lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(mainWindow->getCurrentSimulator()));
+    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulator()));
 
   if(!path.isEmpty())
     ui->listWidgetOptionsDatabaseAddon->addItem(QDir::toNativeSeparators(path));
@@ -988,7 +990,7 @@ void OptionsDialog::fromFlags(QRadioButton *radioButton, opts::Flags flag)
 
 void OptionsDialog::updateWeatherButtonState()
 {
-  WeatherReporter *wr = mainWindow->getWeatherReporter();
+  WeatherReporter *wr = NavApp::getWeatherReporter();
   bool hasAs = wr->getCurrentActiveSkyType() != WeatherReporter::NONE;
   ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAs);
   ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAs);
@@ -1024,7 +1026,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
   {
     // No manual path set
     QString text;
-    WeatherReporter *wr = mainWindow->getWeatherReporter();
+    WeatherReporter *wr = NavApp::getWeatherReporter();
     QString sim = atools::fs::FsPaths::typeToShortName(wr->getSimType());
 
     switch(wr->getCurrentActiveSkyType())
@@ -1068,8 +1070,8 @@ void OptionsDialog::selectActiveSkyPathClicked()
 void OptionsDialog::clearMemCachedClicked()
 {
   qDebug() << "OptionsDialog::clearMemCachedClicked";
-  mainWindow->getMapWidget()->clearVolatileTileCache();
-  mainWindow->setStatusMessage(tr("Memory cache cleared."));
+  NavApp::getMapWidget()->clearVolatileTileCache();
+  NavApp::setStatusMessage(tr("Memory cache cleared."));
 }
 
 void OptionsDialog::clearDiskCachedClicked()
@@ -1085,8 +1087,8 @@ void OptionsDialog::clearDiskCachedClicked()
   if(result == QMessageBox::Yes)
   {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    mainWindow->getMapWidget()->model()->clearPersistentTileCache();
-    mainWindow->setStatusMessage(tr("Disk cache cleared."));
+    NavApp::getMapWidget()->model()->clearPersistentTileCache();
+    NavApp::setStatusMessage(tr("Disk cache cleared."));
     QGuiApplication::restoreOverrideCursor();
   }
 }

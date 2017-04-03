@@ -17,11 +17,13 @@
 
 #include "gui/airspacetoolbarhandler.h"
 
-#include "gui/mainwindow.h"
+#include "navapp.h"
 #include "ui_mainwindow.h"
+#include "common/maptypes.h"
 
 #include <QAction>
 #include <QToolButton>
+#include <QDebug>
 
 AirspaceToolBarHandler::AirspaceToolBarHandler(MainWindow *parent)
   : mainWindow(parent)
@@ -36,7 +38,7 @@ AirspaceToolBarHandler::~AirspaceToolBarHandler()
 
 void AirspaceToolBarHandler::updateAirspaceToolButtons()
 {
-  map::MapAirspaceTypes types = mainWindow->getShownMapAirspaces();
+  map::MapAirspaceTypes types = NavApp::getShownMapAirspaces();
   qDebug() << Q_FUNC_INFO << types;
 
   for(int i = 0; i < airspaceToolButtons.size(); i++)
@@ -52,7 +54,7 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
 
 void AirspaceToolBarHandler::updateAirspaceToolActions()
 {
-  map::MapAirspaceTypes types = mainWindow->getShownMapAirspaces();
+  map::MapAirspaceTypes types = NavApp::getShownMapAirspaces();
   qDebug() << Q_FUNC_INFO << types;
 
   for(QAction *action : airspaceActions)
@@ -82,7 +84,7 @@ void AirspaceToolBarHandler::actionTriggered()
   if(sendAction != nullptr)
   {
     map::MapAirspaceTypes typeFromAction = static_cast<map::MapAirspaceTypes>(sendAction->data().toInt());
-    map::MapAirspaceTypes newTypes = mainWindow->getShownMapAirspaces();
+    map::MapAirspaceTypes newTypes = NavApp::getShownMapAirspaces();
 
     if(typeFromAction & map::AIRSPACE_ALL_ON)
       newTypes |= typeFromAction;
@@ -118,7 +120,7 @@ void AirspaceToolBarHandler::actionGroupTriggered(QAction *action)
 {
   qDebug() << Q_FUNC_INFO;
 
-  map::MapAirspaceTypes newTypes = mainWindow->getShownMapAirspaces();
+  map::MapAirspaceTypes newTypes = NavApp::getShownMapAirspaces();
 
   QActionGroup *group = dynamic_cast<QActionGroup *>(sender());
   if(group != nullptr)
@@ -178,7 +180,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
                                                       const std::initializer_list<map::MapAirspaceTypes>& types,
                                                       bool groupActions)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   map::MapAirspaceTypes allTypes = map::AIRSPACE_NONE;
   for(const map::MapAirspaceTypes& type : types)
     allTypes |= type;

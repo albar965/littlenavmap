@@ -27,7 +27,7 @@ class Options;
 }
 
 class QAbstractButton;
-class MainWindow;
+class QMainWindow;
 class OptionData;
 class QCheckBox;
 class QRadioButton;
@@ -44,7 +44,7 @@ class OptionsDialog :
   Q_OBJECT
 
 public:
-  OptionsDialog(MainWindow *parentWindow);
+  OptionsDialog(QMainWindow *parentWindow);
   virtual ~OptionsDialog();
 
   /* Saves the state of all widgets */
@@ -112,7 +112,7 @@ private:
   QColor flightplanColor, flightplanActiveColor, trailColor;
 
   Ui::Options *ui;
-  MainWindow *mainWindow;
+  QMainWindow *mainWindow;
   QList<QObject *> widgets;
 
   // Validates the space separated list of ring sizes

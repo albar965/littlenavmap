@@ -39,6 +39,10 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
     return atools::fs::FsPaths::FSX_SE;
   else if(contains(atools::fs::FsPaths::FSX))
     return atools::fs::FsPaths::FSX;
+  else if(contains(atools::fs::FsPaths::EXTERNAL))
+    return atools::fs::FsPaths::EXTERNAL;
+  else if(contains(atools::fs::FsPaths::EXTERNAL2))
+    return atools::fs::FsPaths::EXTERNAL2;
 
   return atools::fs::FsPaths::UNKNOWN;
 }

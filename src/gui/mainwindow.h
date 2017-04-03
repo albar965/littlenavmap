@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_MAINWINDOW_H
 
 #include "fs/fspaths.h"
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 #include <QMainWindow>
 #include <QUrl>
@@ -52,6 +52,9 @@ class ElevationModel;
 }
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -79,6 +82,13 @@ struct MapProcedureRef;
 
 }
 
+namespace map {
+struct WeatherContext;
+
+struct MapAirport;
+
+}
+
 /*
  * Main window contains all instances of controllers, widgets and managment classes.
  */
@@ -91,12 +101,6 @@ public:
   MainWindow();
   virtual ~MainWindow();
 
-  /* Get main user interface instance */
-  Ui::MainWindow *getUi() const
-  {
-    return ui;
-  }
-
   MapWidget *getMapWidget() const
   {
     return mapWidget;
@@ -104,29 +108,23 @@ public:
 
   void updateMap() const;
 
-  map::MapObjectTypes getShownMapFeatures() const;
-  map::MapAirspaceTypes getShownMapAirspaces() const;
-
   RouteController *getRouteController() const
   {
     return routeController;
   }
 
-  const Route& getRoute() const;
-
   const Marble::ElevationModel *getElevationModel();
+
+  /* Get main user interface instance */
+  Ui::MainWindow *getUi() const
+  {
+    return ui;
+  }
 
   WeatherReporter *getWeatherReporter() const
   {
     return weatherReporter;
   }
-
-  ConnectClient *getConnectClient() const
-  {
-    return connectClient;
-  }
-
-  bool isConnected() const;
 
   /* Update the window title after switching simulators, flight plan name or change status. */
   void updateWindowTitle();
@@ -143,34 +141,9 @@ public:
 
   void setDetailLabelText(const QString& text);
 
-  atools::fs::FsPaths::SimulatorType getCurrentSimulator() const;
-  bool hasCurrentSimulatorSidStarSupport() const;
-
-  atools::sql::SqlDatabase *getDatabase() const;
-
-  MapQuery *getMapQuery() const
-  {
-    return mapQuery;
-  }
-
-  InfoQuery *getInfoQuery() const
-  {
-    return infoQuery;
-  }
-
-  ProcedureQuery *getApproachQuery() const
-  {
-    return procedureQuery;
-  }
-
-  bool buildWeatherContextForInfo(map::WeatherContext& weatherContext,
-                                  const map::MapAirport& airport);
-
-  void buildWeatherContext(map::WeatherContext& weatherContext,
-                           const map::MapAirport& airport) const;
-
-  void buildWeatherContextForTooltip(map::WeatherContext& weatherContext,
-                                     const map::MapAirport& airport) const;
+  bool buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport);
+  void buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
+  void buildWeatherContextForTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
 
   /* Render status from marble widget */
   void renderStatusChanged(Marble::RenderStatus status);
@@ -293,26 +266,19 @@ private:
   QList<QAction *> customMapThemeMenuActions;
 
   /* Managment and controller classes */
-  DatabaseManager *databaseManager = nullptr;
   WeatherReporter *weatherReporter = nullptr;
-  ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;
   AirspaceToolBarHandler *airspaceHandler = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr;
 
-  /* Database query helpers and caches */
-  MapQuery *mapQuery = nullptr;
-  InfoQuery *infoQuery = nullptr;
-  ProcedureQuery *procedureQuery = nullptr;
-
   QTimer weatherUpdateTimer;
 
   bool firstStart = true /* emit window shown only once after startup */,
        firstApplicationStart = false /* first starup on a system after installation */;
 
-  map::WeatherContext currentWeatherContext;
+  map::WeatherContext *currentWeatherContext = nullptr;
 
   QAction *emptyAirportSeparator = nullptr;
 };

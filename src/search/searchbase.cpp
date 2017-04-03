@@ -17,8 +17,8 @@
 
 #include "search/searchbase.h"
 #include "gui/itemviewzoomhandler.h"
+#include "navapp.h"
 #include "search/sqlcontroller.h"
-#include "gui/mainwindow.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
@@ -107,13 +107,13 @@ private:
   SearchBaseTable *searchBase;
 };
 
-SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
                                  MapQuery *mapQuery, int tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Avoid stealing of Ctrl-C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -170,7 +170,7 @@ void SearchBaseTable::tableCopyClipboard()
     if(!csv.isEmpty())
       QApplication::clipboard()->setText(csv);
 
-    mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+    NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
   }
 }
 
@@ -180,7 +180,7 @@ void SearchBaseTable::initViewAndController()
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-  controller = new SqlController(mainWindow->getDatabase(), columns, view);
+  controller = new SqlController(NavApp::getDatabase(), columns, view);
   controller->prepareModel();
 
   csvExporter = new CsvExporter(mainWindow, controller);
@@ -235,14 +235,14 @@ void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 void SearchBaseTable::updateDistanceSearch()
 {
   if(columns->getDistanceCheckBox()->isChecked() &&
-     mainWindow->getMapWidget()->getSearchMarkPos().isValid())
+     NavApp::getMapWidget()->getSearchMarkPos().isValid())
   {
     // Currently running distance search - update result
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
     QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
     QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
 
-    controller->filterByDistance(mainWindow->getMapWidget()->getSearchMarkPos(),
+    controller->filterByDistance(NavApp::getMapWidget()->getSearchMarkPos(),
                                  static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
                                  Unit::rev(minDistanceWidget->value(), Unit::distNmF),
                                  Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
@@ -417,7 +417,7 @@ void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
     saveViewState(!checked);
 
   controller->filterByDistance(
-    checked ? mainWindow->getMapWidget()->getSearchMarkPos() : atools::geo::Pos(),
+    checked ? NavApp::getMapWidget()->getSearchMarkPos() : atools::geo::Pos(),
     static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
     Unit::rev(minDistanceWidget->value(), Unit::distNmF),
     Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
@@ -460,7 +460,7 @@ void SearchBaseTable::connectSearchSlots()
   connect(view, &QTableView::doubleClicked, this, &SearchBaseTable::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &SearchBaseTable::contextMenu);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   connect(ui->actionSearchShowAll, &QAction::triggered, this, &SearchBaseTable::loadAllRowsIntoView);
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &SearchBaseTable::resetSearch);
@@ -535,32 +535,32 @@ void SearchBaseTable::postDatabaseLoad()
 /* Reset view sort order, column width and column order back to default values */
 void SearchBaseTable::resetView()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetView();
-    mainWindow->setStatusMessage(tr("Table view reset to defaults."));
+    NavApp::setStatusMessage(tr("Table view reset to defaults."));
   }
 }
 
 void SearchBaseTable::resetSearch()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetSearch();
-    mainWindow->setStatusMessage(tr("Search filters cleared."));
+    NavApp::setStatusMessage(tr("Search filters cleared."));
   }
 }
 
 /* Loads all rows into the table view */
 void SearchBaseTable::loadAllRowsIntoView()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->loadAllRows();
-    mainWindow->setStatusMessage(tr("All entries read."));
+    NavApp::setStatusMessage(tr("All entries read."));
   }
 }
 
@@ -634,7 +634,7 @@ void SearchBaseTable::showRow(int row)
 /* Context menu in table view selected */
 void SearchBaseTable::contextMenu(const QPoint& pos)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   QPoint menuPos = QCursor::pos();
   // Use widget center if position is not inside widget
@@ -697,8 +697,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                              (airport.flags & map::AP_PROCEDURE));
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
-  ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !mainWindow->getMapWidget()->getRangeRings().isEmpty());
+  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
+                                          !NavApp::getMapWidget()->getRangeRings().isEmpty());
 
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
@@ -778,7 +778,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(controller->getGeoPos(index));
     else if(action == ui->actionMapRangeRings)
-      mainWindow->getMapWidget()->addRangeRing(position);
+      NavApp::getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapNavaidRange)
     {
       // Radio navaid range ring
@@ -787,13 +787,13 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         // Adapt scaled frequency from nav_search table to the scale used the VOR table
         frequency /= 10;
 
-      mainWindow->getMapWidget()->addNavRangeRing(position, navType,
-                                                  controller->getRawData(index.row(), "ident").toString(),
-                                                  frequency,
-                                                  controller->getRawData(index.row(), "range").toInt());
+      NavApp::getMapWidget()->addNavRangeRing(position, navType,
+                                              controller->getRawData(index.row(), "ident").toString(),
+                                              frequency,
+                                              controller->getRawData(index.row(), "range").toInt());
     }
     else if(action == ui->actionMapHideRangeRings)
-      mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
+      NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers();
     else if(action == ui->actionRouteAddPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, -1);
     else if(action == ui->actionRouteAppendPos)
@@ -818,7 +818,7 @@ void SearchBaseTable::showInformationTriggered()
 {
   qDebug() << Q_FUNC_INFO;
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     // Index covers a cell
@@ -839,7 +839,7 @@ void SearchBaseTable::showInformationTriggered()
 /* Triggered by show approaches action in context menu. Populates map search result and emits show information */
 void SearchBaseTable::showApproachesTriggered()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     // Index covers a cell
@@ -857,7 +857,7 @@ void SearchBaseTable::showApproachesTriggered()
 /* Show on map action in context menu */
 void SearchBaseTable::showOnMapTriggered()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     QModelIndex index = view->currentIndex();
@@ -873,7 +873,7 @@ void SearchBaseTable::showOnMapTriggered()
       if(!result.airports.isEmpty())
       {
         emit showRect(result.airports.first().bounding, false);
-        mainWindow->setStatusMessage(tr("Showing airport on map."));
+        NavApp::setStatusMessage(tr("Showing airport on map."));
       }
       else
       {
@@ -883,7 +883,7 @@ void SearchBaseTable::showOnMapTriggered()
           emit showPos(result.ndbs.first().getPosition(), 0.f, false);
         else if(!result.waypoints.isEmpty())
           emit showPos(result.waypoints.first().getPosition(), 0.f, false);
-        mainWindow->setStatusMessage(tr("Showing navaid on map."));
+        NavApp::setStatusMessage(tr("Showing navaid on map."));
       }
     }
   }

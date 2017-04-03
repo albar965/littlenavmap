@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_ROUTE_H
 #define LITTLENAVMAP_ROUTE_H
 
-#include "routeleg.h"
+#include "route/routeleg.h"
 
 #include "fs/pln/flightplan.h"
 

@@ -15,14 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 #include <QObject>
 
 #ifndef LITTLENAVMAP_SEARCHCONTROLLER_H
 #define LITTLENAVMAP_SEARCHCONTROLLER_H
 
-class MainWindow;
+class QMainWindow;
 class AbstractSearch;
 class AirportSearch;
 class NavSearch;
@@ -39,6 +39,10 @@ class Pos;
 }
 }
 
+namespace map {
+struct MapSearchResult;
+
+}
 /*
  * Manages all search tabs.
  */
@@ -48,7 +52,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  SearchController(MainWindow *parent, MapQuery *mQuery, QTabWidget *tabWidgetSearch);
+  SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearch);
   virtual ~SearchController();
 
   /* Create the airport search tab */
@@ -105,7 +109,7 @@ private:
   NavSearch *navSearch = nullptr;
   ProcedureSearch *procedureSearch = nullptr;
 
-  MainWindow *mainWindow;
+  QMainWindow *mainWindow;
   QTabWidget *tabWidget = nullptr;
   QList<AbstractSearch *> allSearchTabs;
 

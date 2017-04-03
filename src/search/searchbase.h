@@ -27,7 +27,7 @@
 class QTableView;
 class SqlController;
 class ColumnList;
-class MainWindow;
+class QMainWindow;
 class QItemSelection;
 class MapQuery;
 class QTimer;
@@ -36,6 +36,20 @@ class Column;
 class ViewEventFilter;
 class LineEditEventFilter;
 class QLineEdit;
+
+namespace atools {
+namespace geo {
+class Pos;
+class Rect;
+}
+}
+
+namespace map {
+struct MapAirport;
+
+struct MapSearchResult;
+
+}
 
 /*
  * Base for all search classes which reside each in its own tab, contains a result table view and a list of
@@ -48,7 +62,7 @@ class SearchBaseTable :
 
 public:
   /* Class will take ownership of columnList */
-  SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList, MapQuery *mapQuery,
+  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, MapQuery *mapQuery,
                   int tabWidgetIndex);
   virtual ~SearchBaseTable();
 
@@ -99,13 +113,13 @@ signals:
   void showInformation(map::MapSearchResult result);
 
   /* Show approaches in context menu selected */
-  void showApproaches(map::MapAirport airport);
+  void showApproaches(const map::MapAirport& airport);
 
   /* Set airport as flight plan departure (from context menu) */
-  void routeSetDeparture(map::MapAirport airport);
+  void routeSetDeparture(const map::MapAirport& airport);
 
   /* Set airport as flight plan destination (from context menu) */
-  void routeSetDestination(map::MapAirport airport);
+  void routeSetDestination(const map::MapAirport& airport);
 
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
@@ -130,7 +144,7 @@ protected:
   /* Column definitions that will be used to create the SQL queries */
   ColumnList *columns;
   QTableView *view;
-  MainWindow *mainWindow;
+  QMainWindow *mainWindow;
 
 private:
   virtual void saveViewState(bool distSearchActive) = 0;

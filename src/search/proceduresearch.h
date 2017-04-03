@@ -44,7 +44,7 @@ class Rect;
 class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
-class MainWindow;
+class QMainWindow;
 class ProcedureQuery;
 class HtmlInfoBuilder;
 class TreeEventFilter;
@@ -56,7 +56,7 @@ class ProcedureSearch :
   Q_OBJECT
 
 public:
-  ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex);
+  ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex);
   virtual ~ProcedureSearch();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
@@ -166,7 +166,7 @@ private:
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
   QTreeWidget *treeWidget = nullptr;
-  MainWindow *mainWindow = nullptr;
+  QMainWindow *mainWindow = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
   map::MapAirport currentAirport;
 

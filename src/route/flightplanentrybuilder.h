@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_FLIGHTPLANENTRYBUILDER_H
 #define LITTLENAVMAP_FLIGHTPLANENTRYBUILDER_H
 
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 namespace atools {
 namespace geo {
@@ -30,6 +30,19 @@ class Flightplan;
 class FlightplanEntry;
 }
 }
+}
+
+namespace map {
+struct MapAirport;
+
+struct MapNdb;
+
+struct MapVor;
+
+struct MapWaypoint;
+
+struct MapSearchResult;
+
 }
 
 namespace proc {

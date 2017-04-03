@@ -19,6 +19,7 @@
 #include "route/routestring.h"
 #include "route/routestringdialog.h"
 
+#include "navapp.h"
 #include "options/optiondata.h"
 #include "common/procedurequery.h"
 #include "common/constants.h"
@@ -29,7 +30,6 @@
 #include "export/csvexporter.h"
 #include "gui/actiontextsaver.h"
 #include "gui/errorhandler.h"
-#include "gui/mainwindow.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapquery.h"
@@ -109,8 +109,8 @@ using Marble::GeoDataLatLonBox;
 using Marble::GeoDataLineString;
 using Marble::GeoDataCoordinates;
 
-RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, QTableView *tableView)
-  : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
+RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
+  : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(NavApp::getMapQuery())
 {
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -126,8 +126,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
   // Create flight plan calculation caches
-  routeNetworkRadio = new RouteNetworkRadio(mainWindow->getDatabase());
-  routeNetworkAirway = new RouteNetworkAirway(mainWindow->getDatabase());
+  routeNetworkRadio = new RouteNetworkRadio(NavApp::getDatabase());
+  routeNetworkAirway = new RouteNetworkAirway(NavApp::getDatabase());
 
   // Set up undo/redo framework
   undoStack = new QUndoStack(mainWindow);
@@ -144,7 +144,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(redoAction, &QAction::triggered, this, &RouteController::redoTriggered);
   connect(undoAction, &QAction::triggered, this, &RouteController::undoTriggered);
 
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, redoAction);
 
@@ -226,12 +226,12 @@ RouteController::~RouteController()
 
 void RouteController::undoTriggered()
 {
-  mainWindow->setStatusMessage(QString(tr("Undo flight plan change.")));
+  NavApp::setStatusMessage(QString(tr("Undo flight plan change.")));
 }
 
 void RouteController::redoTriggered()
 {
-  mainWindow->setStatusMessage(QString(tr("Redo flight plan change.")));
+  NavApp::setStatusMessage(QString(tr("Redo flight plan change.")));
 }
 
 /* Ctrl-C - copy selected table contents in CSV format to clipboard */
@@ -245,7 +245,7 @@ void RouteController::tableCopyClipboard()
   if(!csv.isEmpty())
     QApplication::clipboard()->setText(csv);
 
-  mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+  NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
 QString RouteController::tableAsHtml(int iconSizePixel) const
@@ -312,7 +312,7 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << "RouteController::routeStringToClipboard";
 
-  float speedKts = Unit::rev(static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+  float speedKts = Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
 
   QString str = RouteString().createStringForRoute(route, speedKts);
 
@@ -320,7 +320,7 @@ void RouteController::routeStringToClipboard() const
   if(!str.isEmpty())
     QApplication::clipboard()->setText(str);
 
-  mainWindow->setStatusMessage(QString(tr("Flight plan string to clipboard.")));
+  NavApp::setStatusMessage(QString(tr("Flight plan string to clipboard.")));
 }
 
 /* Spin box altitude has changed value */
@@ -337,7 +337,7 @@ void RouteController::routeAltChanged()
   if(!route.isEmpty())
     postChange(undoCommand);
 
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
 
   routeAltDelayTimer.start(1000);
 
@@ -364,14 +364,14 @@ void RouteController::routeTypeChanged()
   if(!route.isEmpty())
     postChange(undoCommand);
 
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
 
   if(!route.isEmpty())
   {
 
     emit routeChanged(false);
-    Ui::MainWindow *ui = mainWindow->getUi();
-    mainWindow->setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    NavApp::setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
   }
 }
 
@@ -405,7 +405,7 @@ bool RouteController::selectDepartureParking()
 
 void RouteController::saveState()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->spinBoxRouteSpeed,
                                                   ui->comboBoxRouteType,
@@ -426,7 +426,7 @@ void RouteController::updateTableHeaders()
 
 void RouteController::restoreState()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
   atools::gui::WidgetState(lnm::ROUTE_VIEW).restore({view, ui->spinBoxRouteSpeed,
@@ -466,12 +466,12 @@ void RouteController::restoreState()
 float RouteController::getSpeedKts() const
 {
   return Unit::rev(
-           static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+           static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
 }
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 {
-  if(mainWindow->getUi()->dockWidgetRoute->isVisible())
+  if(NavApp::getMainUi()->dockWidgetRoute->isVisible())
   {
     QItemSelection sm = view->selectionModel()->selection();
     for(const QItemSelectionRange& rng : sm)
@@ -494,7 +494,7 @@ void RouteController::newFlightplan()
   route.updateAll();
 
   updateTableModel();
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   updateWindowLabel();
   emit routeChanged(true);
 }
@@ -535,10 +535,10 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   }
 
   if(speedKts > 0.f)
-    mainWindow->getUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
+    NavApp::getMainUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
 
   updateTableModel();
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   updateWindowLabel();
 
   qDebug() << route;
@@ -552,10 +552,10 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
     return;
 
   proc::MapProcedureLegs arrival, departure, star;
-  if(mainWindow->getApproachQuery()->getLegsForFlightplanProperties(route.getFlightplan().getProperties(),
-                                                                    route.first().getAirport(),
-                                                                    route.last().getAirport(),
-                                                                    arrival, star, departure))
+  if(NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplan().getProperties(),
+                                                                 route.first().getAirport(),
+                                                                 route.last().getAirport(),
+                                                                 arrival, star, departure))
   {
     route.setDepartureProcedureLegs(departure);
     route.setStarProcedureLegs(star);
@@ -636,7 +636,7 @@ bool RouteController::appendFlightplan(const QString& filename)
 
     updateTableModel();
     postChange(undoCommand);
-    mainWindow->updateWindowTitle();
+    NavApp::updateWindowTitle();
     updateWindowLabel();
     emit routeChanged(true);
   }
@@ -742,7 +742,7 @@ bool RouteController::saveFlightplan()
     QHash<QString, QString>& properties = route.getFlightplan().getProperties();
     properties.remove("speed");
     properties.insert("speed",
-                      QString::number(Unit::rev(static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()),
+                      QString::number(Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()),
                                                 Unit::speedKtsF), 'f', 0));
 
     route.getFlightplan().save(routeFilename);
@@ -751,7 +751,7 @@ bool RouteController::saveFlightplan()
     // Set clean undo state index since QUndoStack only returns weird values
     undoIndexClean = undoIndex;
     undoStack->setClean();
-    mainWindow->updateWindowTitle();
+    NavApp::updateWindowTitle();
     qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   }
   catch(atools::Exception& e)
@@ -784,9 +784,9 @@ void RouteController::calculateDirect()
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->setStatusMessage(tr("Calculated direct flight plan."));
+  NavApp::setStatusMessage(tr("Calculated direct flight plan."));
 }
 
 void RouteController::calculateRadionav()
@@ -799,9 +799,9 @@ void RouteController::calculateRadionav()
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"),
                             false /* fetch airways */, false /* Use altitude */))
-    mainWindow->setStatusMessage(tr("Calculated radio navaid flight plan."));
+    NavApp::setStatusMessage(tr("Calculated radio navaid flight plan."));
   else
-    mainWindow->setStatusMessage(tr("No route found."));
+    NavApp::setStatusMessage(tr("No route found."));
 }
 
 void RouteController::calculateHighAlt()
@@ -814,9 +814,9 @@ void RouteController::calculateHighAlt()
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALTITUDE,
                             tr("High altitude Flight Plan Calculation"),
                             true /* fetch airways */, false /* Use altitude */))
-    mainWindow->setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
+    NavApp::setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
   else
-    mainWindow->setStatusMessage(tr("No route found."));
+    NavApp::setStatusMessage(tr("No route found."));
 }
 
 void RouteController::calculateLowAlt()
@@ -829,9 +829,9 @@ void RouteController::calculateLowAlt()
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
                             tr("Low altitude Flight Plan Calculation"),
                             /* fetch airways */ true, false /* Use altitude */))
-    mainWindow->setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
+    NavApp::setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
-    mainWindow->setStatusMessage(tr("No route found."));
+    NavApp::setStatusMessage(tr("No route found."));
 }
 
 void RouteController::calculateSetAlt()
@@ -850,9 +850,9 @@ void RouteController::calculateSetAlt()
 
   if(calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"),
                             true /* fetch airways */, true /* Use altitude */))
-    mainWindow->setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
+    NavApp::setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
   else
-    mainWindow->setStatusMessage(tr("No route found."));
+    NavApp::setStatusMessage(tr("No route found."));
 }
 
 /* Calculate a flight plan to all types */
@@ -945,7 +945,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       updateTableModel();
       updateWindowLabel();
       postChange(undoCommand);
-      mainWindow->updateWindowTitle();
+      NavApp::updateWindowTitle();
       emit routeChanged(true);
     }
     else
@@ -983,12 +983,12 @@ void RouteController::adjustFlightplanAltitude()
     if(!route.isEmpty())
       postChange(undoCommand);
 
-    mainWindow->updateWindowTitle();
+    NavApp::updateWindowTitle();
 
     if(!route.isEmpty())
       emit routeChanged(false);
 
-    mainWindow->setStatusMessage(tr("Adjusted flight plan altitude."));
+    NavApp::setStatusMessage(tr("Adjusted flight plan altitude."));
   }
 }
 
@@ -1051,9 +1051,9 @@ void RouteController::reverseRoute()
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->setStatusMessage(tr("Reversed flight plan."));
+  NavApp::setStatusMessage(tr("Reversed flight plan."));
 }
 
 QString RouteController::buildDefaultFilename() const
@@ -1102,31 +1102,6 @@ QString RouteController::buildDefaultFilenameShort(const QString& sep, const QSt
   return filename;
 }
 
-bool RouteController::isFlightplanEmpty() const
-{
-  return route.isFlightplanEmpty();
-}
-
-bool RouteController::hasValidDeparture() const
-{
-  return route.hasValidDeparture();
-}
-
-bool RouteController::hasValidDestination() const
-{
-  return route.hasValidDestination();
-}
-
-bool RouteController::hasEntries() const
-{
-  return route.hasEntries();
-}
-
-bool RouteController::canCalcRoute() const
-{
-  return route.canCalcRoute();
-}
-
 void RouteController::preDatabaseLoad()
 {
   routeNetworkRadio->deInitQueries();
@@ -1153,7 +1128,7 @@ void RouteController::postDatabaseLoad()
     updateStartPositionBestRunway(false, true);
 
   updateTableModel();
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   updateWindowLabel();
 }
 
@@ -1198,7 +1173,7 @@ void RouteController::updateMoveAndDeleteActions()
     moveUpTouchesProc = rows.first() > 0 && route.at(rows.first() - 1).isAnyProcedure();
     moveDownTouchesProc = rows.first() < route.size() - 1 && route.at(rows.first() + 1).isAnyProcedure();
 
-    Ui::MainWindow *ui = mainWindow->getUi();
+    Ui::MainWindow *ui = NavApp::getMainUi();
     ui->actionRouteLegUp->setEnabled(false);
     ui->actionRouteLegDown->setEnabled(false);
     ui->actionRouteDeleteLeg->setEnabled(false);
@@ -1258,15 +1233,15 @@ void RouteController::showOnMapMenu()
       emit showPos(routeLeg.getPosition(), 0.f, false);
 
     if(routeLeg.getMapObjectType() == map::AIRPORT)
-      mainWindow->setStatusMessage(tr("Showing airport on map."));
+      NavApp::setStatusMessage(tr("Showing airport on map."));
     else
-      mainWindow->setStatusMessage(tr("Showing navaid on map."));
+      NavApp::setStatusMessage(tr("Showing navaid on map."));
   }
 }
 
 void RouteController::tableContextMenu(const QPoint& pos)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   QPoint menuPos = QCursor::pos();
   // Use widget center if position is not inside widget
@@ -1290,8 +1265,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
 
-  ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !mainWindow->getMapWidget()->getRangeRings().isEmpty());
+  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
+                                          !NavApp::getMapWidget()->getRangeRings().isEmpty());
 
   if(routeLeg != nullptr)
   {
@@ -1391,7 +1366,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         header->moveSection(header->visualIndex(i), i);
 
       view->resizeColumnsToContents();
-      mainWindow->setStatusMessage(tr("Table view reset to defaults."));
+      NavApp::setStatusMessage(tr("Table view reset to defaults."));
     }
     else if(action == ui->actionSearchTableSelectAll)
       view->selectAll();
@@ -1400,21 +1375,21 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings)
-      mainWindow->getMapWidget()->addRangeRing(routeLeg->getPosition());
+      NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
       for(int idx : selectedRouteLegIndexes)
       {
-        const RouteLeg& routeLeg = route.at(idx);
-        if(routeLeg.getMapObjectType() == map::VOR || routeLeg.getMapObjectType() == map::NDB)
-          mainWindow->getMapWidget()->addNavRangeRing(routeLeg.getPosition(), routeLeg.getMapObjectType(),
-                                                      routeLeg.getIdent(), routeLeg.getFrequency(),
-                                                      routeLeg.getRange());
+        const RouteLeg& routeLegSel = route.at(idx);
+        if(routeLegSel.getMapObjectType() == map::VOR || routeLegSel.getMapObjectType() == map::NDB)
+          NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), routeLegSel.getMapObjectType(),
+                                                  routeLegSel.getIdent(), routeLegSel.getFrequency(),
+                                                  routeLegSel.getRange());
       }
     }
     else if(action == ui->actionMapHideRangeRings)
-      mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
+      NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers();
     else if(action == ui->actionMapEditUserWaypoint)
       editUserWaypointName(index.row());
     else if(action == ui->actionRouteActivateLeg)
@@ -1513,7 +1488,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   route.updateAll();
 
   updateTableModel();
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   updateWindowLabel();
   updateMoveAndDeleteActions();
   emit routeChanged(true);
@@ -1533,8 +1508,8 @@ void RouteController::optionsChanged()
 
 void RouteController::updateSpinboxSuffices()
 {
-  mainWindow->getUi()->spinBoxRouteAlt->setSuffix(" " + Unit::getUnitAltStr());
-  mainWindow->getUi()->spinBoxRouteSpeed->setSuffix(" " + Unit::getUnitSpeedStr());
+  NavApp::getMainUi()->spinBoxRouteAlt->setSuffix(" " + Unit::getUnitAltStr());
+  NavApp::getMainUi()->spinBoxRouteSpeed->setSuffix(" " + Unit::getUnitSpeedStr());
 }
 
 bool RouteController::hasChanged() const
@@ -1644,9 +1619,9 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     updateMoveAndDeleteActions();
 
     postChange(undoCommand);
-    mainWindow->updateWindowTitle();
+    NavApp::updateWindowTitle();
     emit routeChanged(true);
-    mainWindow->setStatusMessage(tr("Moved flight plan legs."));
+    NavApp::setStatusMessage(tr("Moved flight plan legs."));
   }
 }
 
@@ -1705,9 +1680,9 @@ void RouteController::deleteSelectedLegs()
     updateMoveAndDeleteActions();
 
     postChange(undoCommand);
-    mainWindow->updateWindowTitle();
+    NavApp::updateWindowTitle();
     emit routeChanged(true);
-    mainWindow->setStatusMessage(tr("Removed flight plan legs."));
+    NavApp::setStatusMessage(tr("Removed flight plan legs."));
   }
 }
 
@@ -1773,12 +1748,12 @@ void RouteController::routeSetParking(map::MapParking parking)
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
 
   emit routeChanged(true);
 
-  mainWindow->setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.first().getIdent()).
-                               arg(map::parkingNameNumberType(parking)));
+  NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.first().getIdent()).
+                           arg(map::parkingNameNumberType(parking)));
 }
 
 /* Set start position (runway, helipad) for departure */
@@ -1810,11 +1785,11 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
 
-  mainWindow->setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.first().getIdent()).
-                               arg(start.runwayName));
+  NavApp::setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.first().getIdent()).
+                           arg(start.runwayName));
 }
 
 void RouteController::routeSetDeparture(map::MapAirport airport)
@@ -1836,9 +1811,9 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->setStatusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
+  NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
 }
 
 /* Add departure and add best runway start position */
@@ -1887,9 +1862,9 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
+  NavApp::setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
 }
 
 void RouteController::routeSetDestinationInternal(const map::MapAirport& airport)
@@ -1974,11 +1949,11 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
 
   emit routeChanged(true);
 
-  mainWindow->setStatusMessage(tr("Added procedure to flight plan."));
+  NavApp::setStatusMessage(tr("Added procedure to flight plan."));
 }
 
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex)
@@ -2028,11 +2003,11 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
 
   emit routeChanged(true);
 
-  mainWindow->setStatusMessage(tr("Added waypoint to flight plan."));
+  NavApp::setStatusMessage(tr("Added waypoint to flight plan."));
 }
 
 int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIndex)
@@ -2142,9 +2117,9 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->setStatusMessage(tr("Replaced waypoint in flight plan."));
+  NavApp::setStatusMessage(tr("Replaced waypoint in flight plan."));
 }
 
 void RouteController::routeDelete(int index)
@@ -2175,10 +2150,10 @@ void RouteController::routeDelete(int index)
   updateWindowLabel();
 
   postChange(undoCommand);
-  mainWindow->updateWindowTitle();
+  NavApp::updateWindowTitle();
   emit routeChanged(true);
 
-  mainWindow->setStatusMessage(tr("Removed waypoint from flight plan."));
+  NavApp::setStatusMessage(tr("Removed waypoint from flight plan."));
 }
 
 /* Update airway attribute in flight plan entry and return minimum altitude for this airway segment */
@@ -2264,7 +2239,7 @@ void RouteController::routeToFlightPlan()
 void RouteController::updateFlightplanFromWidgets()
 {
   Flightplan& flightplan = route.getFlightplan();
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   flightplan.setFlightplanType(
     ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
@@ -2298,7 +2273,7 @@ void RouteController::createRouteLegsFromFlightplan()
 /* Update table view model completely */
 void RouteController::updateTableModel()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   model->removeRows(0, model->rowCount());
   float totalDistance = route.getTotalDistance();
@@ -2589,7 +2564,7 @@ void RouteController::highlightProcedureItems()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2());
+  NavApp::getMainUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2());
 }
 
 QString RouteController::buildFlightplanLabel(bool html) const
@@ -2601,7 +2576,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
   if(!flightplan.isEmpty())
   {
     // Add departure to text ==============================================================
-    if(hasValidDeparture())
+    if(route.hasValidDeparture())
     {
       departure = flightplan.getDepartureAiportName() +
                   " (" + flightplan.getDepartureIdent() + ")";
@@ -2625,7 +2600,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
                   arg(flightplan.getEntries().first().getWaypointTypeAsString());
 
     // Add destination to text ==============================================================
-    if(hasValidDestination())
+    if(route.hasValidDestination())
     {
       destination = flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
       // airportId = route.last().getAirport().id;
@@ -2770,7 +2745,7 @@ float RouteController::calcTravelTime(float distance) const
 {
   float travelTime = 0.f;
   float speedKts = Unit::rev(
-    static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+    static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
   if(speedKts > 0.f)
     travelTime = distance / speedKts;
   return travelTime;

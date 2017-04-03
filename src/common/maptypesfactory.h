@@ -18,13 +18,40 @@
 #ifndef LITTLENAVMAP_MAPTYPESFACTORY_H
 #define LITTLENAVMAP_MAPTYPESFACTORY_H
 
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 namespace atools {
 namespace sql {
 
 class SqlRecord;
 }
+}
+
+namespace map {
+struct MapAirport;
+
+struct MapRunway;
+
+struct MapRunwayEnd;
+
+struct MapVor;
+
+struct MapNdb;
+
+struct MapWaypoint;
+
+struct MapAirway;
+
+struct MapIls;
+
+struct MapParking;
+
+struct MapAirspace;
+
+struct MapStart;
+
+struct MapMarker;
+
 }
 
 /*

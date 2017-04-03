@@ -17,8 +17,8 @@
 
 #include "mapgui/mappaintlayer.h"
 
+#include "navapp.h"
 #include "connect/connectclient.h"
-#include "gui/mainwindow.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mappainteraircraft.h"
@@ -50,10 +50,10 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   // Create all painters
   mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale);
   mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
   mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
 
   // Default for visible object types

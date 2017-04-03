@@ -17,9 +17,9 @@
 
 #include "search/abstractsearch.h"
 
-#include "gui/mainwindow.h"
+#include <QMainWindow>
 
-AbstractSearch::AbstractSearch(MainWindow *parent, int tabWidgetIndex)
+AbstractSearch::AbstractSearch(QMainWindow *parent, int tabWidgetIndex)
   : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent)
 {
 

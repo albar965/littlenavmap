@@ -18,6 +18,7 @@
 #include "mapgui/mapwidget.h"
 
 #include "options/optiondata.h"
+#include "navapp.h"
 #include "common/constants.h"
 #include "mapgui/mappaintlayer.h"
 #include "settings/settings.h"
@@ -80,8 +81,8 @@ using atools::geo::Pos;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
-MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
-  : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
+MapWidget::MapWidget(MainWindow *parent)
+  : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(NavApp::getMapQuery())
 {
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
   setMinimumSize(QSize(50, 50));
@@ -336,16 +337,6 @@ map::MapAirspaceTypes MapWidget::getShownAirspaces() const
 map::MapAirspaceTypes MapWidget::getShownAirspaceTypesByLayer() const
 {
   return paintLayer->getShownAirspacesTypesByLayer();
-}
-
-RouteController *MapWidget::getRouteController() const
-{
-  return mainWindow->getRouteController();
-}
-
-const Route& MapWidget::getRoute()
-{
-  return mainWindow->getRoute();
 }
 
 void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
@@ -613,9 +604,9 @@ void MapWidget::showSavedPosOnStartup()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
   {
-    qDebug() << "Show Route" << mainWindow->getRoute().getBoundingRect();
-    if(!mainWindow->getRoute().isFlightplanEmpty())
-      showRect(mainWindow->getRoute().getBoundingRect(), false);
+    qDebug() << "Show Route" << NavApp::getRoute().getBoundingRect();
+    if(!NavApp::getRoute().isFlightplanEmpty())
+      showRect(NavApp::getRoute().getBoundingRect(), false);
     else
       showHome();
   }
@@ -1457,7 +1448,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()));
 
   // Update "delete in route"
-  if(routeIndex != -1 && getRoute().canEditPoint(routeIndex))
+  if(routeIndex != -1 && NavApp::getRoute().canEditPoint(routeIndex))
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(routeText));
@@ -1615,9 +1606,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
     }
     else if(action == ui->actionRouteDeleteWaypoint)
-      mainWindow->getRouteController()->routeDelete(routeIndex);
+      NavApp::getRouteController()->routeDelete(routeIndex);
     else if(action == ui->actionMapEditUserWaypoint)
-      mainWindow->getRouteController()->editUserWaypointName(routeIndex);
+      NavApp::getRouteController()->editUserWaypointName(routeIndex);
     else if(action == ui->actionRouteAddPos || action == ui->actionRouteAppendPos ||
             action == ui->actionRouteAirportStart ||
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
@@ -1864,12 +1855,12 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-      Pos pos(lon, lat, mainWindow->getRoute().getFlightplan().getCruisingAltitude() + 200);
+      Pos pos(lon, lat, NavApp::getRoute().getFlightplan().getCruisingAltitude() + 200);
 
       atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
       data.setPacketId(packetId++);
 
-      emit mainWindow->getConnectClient()->dataPacketReceived(data);
+      emit NavApp::getConnectClient()->dataPacketReceived(data);
       lastPos = pos;
       lastPoint = event->pos();
     }
@@ -1914,7 +1905,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons() == Qt::NoButton)
     {
       // No dragging going on now - update cursor over flight plan legs or markers
-      const Route& route = mainWindow->getRoute();
+      const Route& route = NavApp::getRoute();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
@@ -2038,7 +2029,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const Route& route = mainWindow->getRoute();
+        const Route& route = NavApp::getRoute();
 
         if(route.size() > 1)
         {
@@ -2214,7 +2205,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, mainWindow->getRoute(),
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, NavApp::getRoute(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
@@ -2235,7 +2226,7 @@ const QVector<atools::fs::sc::SimConnectAircraft>& MapWidget::getAiAircraft() co
 
 bool MapWidget::isConnected() const
 {
-  return mainWindow->getConnectClient()->isConnected();
+  return NavApp::isConnected();
 }
 
 void MapWidget::deleteAircraftTrack()

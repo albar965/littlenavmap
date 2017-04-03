@@ -16,8 +16,9 @@
 *****************************************************************************/
 
 #include "print/printsupport.h"
+
+#include "navapp.h"
 #include "common/constants.h"
-#include "gui/mainwindow.h"
 #include "mapgui/mapwidget.h"
 #include "settings/settings.h"
 #include "route/routecontroller.h"
@@ -27,6 +28,7 @@
 #include "options/optiondata.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
+#include "gui/mainwindow.h"
 
 #include <QPainter>
 #include <QtPrintSupport/QPrintPreviewDialog>
@@ -40,12 +42,13 @@
 #include <QTextCursor>
 #include <QTextDocumentWriter>
 #include <QThread>
+#include <QMainWindow>
 
 using atools::settings::Settings;
 using atools::util::HtmlBuilder;
 
-PrintSupport::PrintSupport(MainWindow *parent, MapQuery *mapQueryParam)
-  : mainWindow(parent), mapQuery(mapQueryParam)
+PrintSupport::PrintSupport(MainWindow *parent)
+  : mainWindow(parent), mapQuery(NavApp::getMapQuery())
 {
   printFlightplanDialog = new PrintDialog(mainWindow);
 
@@ -66,10 +69,10 @@ void PrintSupport::printMap()
 {
   qDebug() << Q_FUNC_INFO;
 
-  mainWindow->getMapWidget()->showOverlays(false);
+  NavApp::getMapWidget()->showOverlays(false);
   delete mapScreenPrintPixmap;
-  mapScreenPrintPixmap = new QPixmap(mainWindow->getMapWidget()->mapScreenShot());
-  mainWindow->getMapWidget()->showOverlays(true);
+  mapScreenPrintPixmap = new QPixmap(NavApp::getMapWidget()->mapScreenShot());
+  NavApp::getMapWidget()->showOverlays(true);
 
   QPrintPreviewDialog *print = buildPreviewDialog(mainWindow);
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
@@ -91,7 +94,7 @@ void PrintSupport::fillWeatherCache()
 {
   qDebug() << Q_FUNC_INFO;
 
-  const Route& route = mainWindow->getRoute();
+  const Route& route = NavApp::getRoute();
 
   if(!route.isEmpty())
   {
@@ -192,7 +195,7 @@ void PrintSupport::createFlightplanDocuments()
   prt::PrintFlightPlanOpts opts = printFlightplanDialog->getPrintOptions();
   atools::util::HtmlBuilder html(false);
 
-  const Route& route = mainWindow->getRoute();
+  const Route& route = NavApp::getRoute();
 
   bool printFlightplan = opts & prt::FLIGHTPLAN;
   bool printAnyDeparture = route.hasValidDeparture() && opts & prt::DEPARTURE_ANY;
@@ -204,7 +207,7 @@ void PrintSupport::createFlightplanDocuments()
     QFontMetricsF metrics(font);
 
     // Print the flight plan table
-    html.append(mainWindow->getRouteController()->tableAsHtml(metrics.height()));
+    html.append(NavApp::getRouteController()->tableAsHtml(metrics.height()));
 
     addHeader(cursor);
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);

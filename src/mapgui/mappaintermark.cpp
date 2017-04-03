@@ -18,6 +18,7 @@
 #include "mapgui/mappaintermark.h"
 
 #include "mapgui/mapwidget.h"
+#include "navapp.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
@@ -253,7 +254,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   positions.clear();
   for(int idx : routeHighlightResults)
   {
-    const RouteLeg& routeLeg = mapWidget->getRouteController()->getRoute().at(idx);
+    const RouteLeg& routeLeg = NavApp::getRoute().at(idx);
     positions.append(routeLeg.getPosition());
   }
 

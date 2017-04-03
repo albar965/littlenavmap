@@ -79,7 +79,7 @@ class MapWidget :
   Q_OBJECT
 
 public:
-  MapWidget(MainWindow *parent, MapQuery *query);
+  MapWidget(MainWindow *parent);
   virtual ~MapWidget();
 
   /* Save and restore markers, Marble plug-in settings, loaded KML files and more */
@@ -225,9 +225,6 @@ public:
   void decreaseMapDetail();
   void defaultMapDetail();
   void setMapDetail(int factor);
-
-  RouteController *getRouteController() const;
-  const Route& getRoute();
 
   /* Update the shown map object types depending on action status (toolbar or menu) */
   void updateMapObjectsShown();

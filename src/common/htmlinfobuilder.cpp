@@ -18,6 +18,7 @@
 #include "common/htmlinfobuilder.h"
 
 #include "options/optiondata.h"
+#include "navapp.h"
 #include "atools.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
@@ -32,7 +33,6 @@
 #include "util/htmlbuilder.h"
 #include "util/morsecode.h"
 #include "common/unit.h"
-#include "gui/mainwindow.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 
@@ -61,8 +61,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
 
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
-  : mainWindow(parentWindow), mapQuery(mainWindow->getMapQuery()), infoQuery(mainWindow->getInfoQuery()),
-    info(formatInfo), print(formatPrint)
+  : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), infoQuery(NavApp::getInfoQuery()), info(formatInfo),
+    print(formatPrint)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 
@@ -687,7 +687,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
         // Build header ===============================================
         QString procType = recApp.valueStr("type");
-        proc::MapProcedureTypes type = proc::procedureType(mainWindow->getCurrentSimulator(),
+        proc::MapProcedureTypes type = proc::procedureType(NavApp::getCurrentSimulator(),
                                                            procType,
                                                            recApp.valueStr("suffix"),
                                                            recApp.valueBool("has_gps_overlay"));
@@ -1455,7 +1455,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   if(aircraft.isUser())
   {
     aircraftText = tr("User Aircraft");
-    if(info && !(mainWindow->getShownMapFeatures() & map::AIRCRAFT))
+    if(info && !(NavApp::getShownMapFeatures() & map::AIRCRAFT))
       html.p(tr("User aircraft is not shown on map."), atools::util::html::BOLD);
   }
   else
@@ -1465,7 +1465,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     else
       aircraftText = tr("AI / multiplayer aircraft");
 
-    if(info && num == 1 && !(mainWindow->getShownMapFeatures() & map::AIRCRAFT_AI))
+    if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("AI and multiplayer aircraft are not shown on map."), atools::util::html::BOLD);
   }
 
@@ -1534,7 +1534,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(info && userAircaft != nullptr)
   {
     aircraftTitle(aircraft, html);
-    if(!(mainWindow->getShownMapFeatures() & map::AIRCRAFT))
+    if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT))
       html.p(tr("User aircraft is not shown on map."), atools::util::html::BOLD);
   }
 

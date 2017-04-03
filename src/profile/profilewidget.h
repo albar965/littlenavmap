@@ -30,7 +30,7 @@ class ElevationModel;
 class GeoDataLineString;
 }
 
-class MainWindow;
+class QMainWindow;
 class RouteController;
 class QTimer;
 class QRubberBand;
@@ -46,7 +46,7 @@ class ProfileWidget :
   Q_OBJECT
 
 public:
-  ProfileWidget(MainWindow *parent);
+  ProfileWidget(QMainWindow *parent);
   virtual ~ProfileWidget();
 
   /* If geometry has changed the elevation calculation is started after a short delay */
@@ -163,7 +163,7 @@ private:
 
   const Marble::ElevationModel *elevationModel = nullptr;
   RouteController *routeController = nullptr;
-  MainWindow *mainWindow;
+  QMainWindow *mainWindow;
 
   /* Calls updateTimeout which will start the update thread in background */
   QTimer *updateTimer = nullptr;

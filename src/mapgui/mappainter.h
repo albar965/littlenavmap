@@ -19,8 +19,9 @@
 #define LITTLENAVMAP_MAPPAINTER_H
 
 #include "common/coordinateconverter.h"
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 #include "options/optiondata.h"
+#include "geo/rect.h"
 
 #include <marble/MarbleWidget.h>
 #include <QPen>
@@ -28,7 +29,7 @@
 
 namespace atools {
 namespace geo {
-class Pos;
+class LineString;
 }
 }
 

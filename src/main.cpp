@@ -24,12 +24,14 @@
 #include "gui/mapposhistory.h"
 #include "gui/application.h"
 #include "exception.h"
+#include "navapp.h"
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
 #include "common/settingsmigrate.h"
 #include "common/aircrafttrack.h"
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
+#include "common/maptypes.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -83,12 +85,7 @@ int main(int argc, char *argv[])
 
   // Set application information
   int retval = 0;
-  Application app(argc, argv);
-  Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
-  Application::setApplicationName("Little Navmap");
-  Application::setOrganizationName("ABarthel");
-  Application::setOrganizationDomain("abarthel.org");
-  Application::setApplicationVersion("1.3.4.devel");
+  NavApp app(argc, argv);
 
   // Start splash screen
   QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");

@@ -22,6 +22,11 @@
 
 class SymbolPainter;
 
+namespace map {
+struct MapIls;
+
+}
+
 /*
  * Draws the ILS feathers and text.
  */

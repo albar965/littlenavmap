@@ -20,7 +20,7 @@
 
 #include "common/coordinateconverter.h"
 #include "geo/calculations.h"
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 #include "geo/pos.h"
 
 #include <QList>
