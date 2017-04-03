@@ -477,8 +477,11 @@ void MapWidget::restoreState()
   for(QAction *action : mapOverlays.values())
     state.restore(action);
 
-  paintLayer->setShowAirspaces(static_cast<map::MapAirspaceTypes>(
-                                 s.valueVar(lnm::MAP_AIRSPACES, map::AIRSPACE_DEFAULT).toInt()));
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+    paintLayer->setShowAirspaces(static_cast<map::MapAirspaceTypes>(
+                                   s.valueVar(lnm::MAP_AIRSPACES, map::AIRSPACE_DEFAULT).toInt()));
+  else
+    paintLayer->setShowAirspaces(map::AIRSPACE_DEFAULT);
 
   restoreHistoryState();
 }
