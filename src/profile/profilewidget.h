@@ -144,8 +144,11 @@ private:
 
   /* Thread will start after this delay if route was changed */
   static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 1000;
+  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 200;
+
   /* Thread will start after this delay if an elevation update arrives */
   static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_UPDATE_TIMEOUT_MS = 5000;
+  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 200;
 
   /* Do not calculate a profile for legs longer than this value */
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
@@ -161,7 +164,6 @@ private:
   float aircraftDistanceFromStart, aircraftDistanceToDest;
   ElevationLegList legList;
 
-  const Marble::ElevationModel *elevationModel = nullptr;
   RouteController *routeController = nullptr;
   QMainWindow *mainWindow;
 

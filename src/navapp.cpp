@@ -25,6 +25,7 @@
 #include "mapgui/mapwidget.h"
 #include "gui/mainwindow.h"
 #include "route/routecontroller.h"
+#include "common/elevationprovider.h"
 
 #include "ui_mainwindow.h"
 
@@ -39,6 +40,7 @@ ProcedureQuery *NavApp::procedureQuery = nullptr;
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
 MainWindow *NavApp::mainWindow = nullptr;
+ElevationProvider *NavApp::elevationProvider = nullptr;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -79,12 +81,20 @@ void NavApp::init(MainWindow *mainWindowParam)
   connectClient = new ConnectClient(mainWindow);
 }
 
+void NavApp::initElevationModel()
+{
+  elevationProvider = new ElevationProvider(mainWindow, mainWindow->getElevationModel());
+}
+
 void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
 
   qDebug() << Q_FUNC_INFO << "delete connectClient";
   delete connectClient;
+
+  qDebug() << Q_FUNC_INFO << "delete elevationProvider";
+  delete elevationProvider;
 
   qDebug() << Q_FUNC_INFO << "delete mapQuery";
   delete NavApp::mapQuery;
@@ -168,9 +178,9 @@ atools::sql::SqlDatabase *NavApp::getDatabase()
   return getDatabaseManager()->getDatabase();
 }
 
-const Marble::ElevationModel *NavApp::getElevationModel()
+ElevationProvider *NavApp::getElevationProvider()
 {
-  return getMapWidget()->model()->elevationModel();
+  return elevationProvider;
 }
 
 WeatherReporter *NavApp::getWeatherReporter()

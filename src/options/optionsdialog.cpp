@@ -19,6 +19,7 @@
 
 #include "navapp.h"
 #include "common/constants.h"
+#include "common/elevationprovider.h"
 #include "common/unit.h"
 #include "ui_options.h"
 #include "common/weatherreporter.h"
@@ -238,8 +239,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->radioButtonOptionsStartupShowHome);
   widgets.append(ui->radioButtonOptionsStartupShowLast);
   widgets.append(ui->radioButtonOptionsStartupShowFlightplan);
+
   widgets.append(ui->spinBoxOptionsCacheDiskSize);
   widgets.append(ui->spinBoxOptionsCacheMemorySize);
+  widgets.append(ui->radioButtonCacheUseOffineElevation);
+  widgets.append(ui->radioButtonCacheUseOnlineElevation);
+  widgets.append(ui->lineEditCacheOfflineDataPath);
+
   widgets.append(ui->spinBoxOptionsGuiInfoText);
   widgets.append(ui->spinBoxOptionsGuiRouteText);
   widgets.append(ui->spinBoxOptionsGuiSearchText);
@@ -343,6 +349,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::flightplanActiveColorClicked);
   connect(ui->pushButtonOptionsDisplayTrailColor, &QPushButton::clicked,
           this, &OptionsDialog::trailColorClicked);
+
+  connect(ui->radioButtonCacheUseOffineElevation, &QRadioButton::clicked,
+          this, &OptionsDialog::updateCacheElevationStates);
+  connect(ui->radioButtonCacheUseOnlineElevation, &QRadioButton::clicked,
+          this, &OptionsDialog::updateCacheElevationStates);
+  connect(ui->lineEditCacheOfflineDataPath, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateCacheElevationStates);
+  connect(ui->pushButtonCacheOfflineDataSelect, &QPushButton::clicked,
+          this, &OptionsDialog::offlineDataSelectClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -355,6 +370,7 @@ int OptionsDialog::exec()
 {
   optionDataToWidgets();
   updateWeatherButtonState();
+  updateCacheElevationStates();
   updateWidgetUnits();
   updateDatabaseButtonState();
   updateGuiStyleSpinboxState();
@@ -638,14 +654,14 @@ void OptionsDialog::trailColorClicked()
 /* Test NOAA weather URL and show a dialog with the result */
 void OptionsDialog::testWeatherNoaaUrlClicked()
 {
-  qDebug() << "OptionsDialog::testWeatherNoaaUrlClicked";
+  qDebug() << Q_FUNC_INFO;
   testWeatherUrl(ui->lineEditOptionsWeatherNoaaUrl->text());
 }
 
 /* Test Vatsim weather URL and show a dialog with the result */
 void OptionsDialog::testWeatherVatsimUrlClicked()
 {
-  qDebug() << "OptionsDialog::testWeatherVatsimUrlClicked";
+  qDebug() << Q_FUNC_INFO;
   testWeatherUrl(ui->lineEditOptionsWeatherVatsimUrl->text());
 }
 
@@ -661,7 +677,7 @@ void OptionsDialog::testWeatherUrl(const QString& url)
 /* Show directory dialog to add exclude path */
 void OptionsDialog::addDatabaseExcludePathClicked()
 {
-  qDebug() << "OptionsDialog::addDatabaseExcludePathClicked";
+  qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Scenery Loading"),
@@ -677,7 +693,7 @@ void OptionsDialog::addDatabaseExcludePathClicked()
 
 void OptionsDialog::removeDatabaseExcludePathClicked()
 {
-  qDebug() << "OptionsDialog::removeDatabaseExcludePathClicked";
+  qDebug() << Q_FUNC_INFO;
 
   // Item removes itself from the list when deleted
   delete ui->listWidgetOptionsDatabaseExclude->currentItem();
@@ -687,7 +703,7 @@ void OptionsDialog::removeDatabaseExcludePathClicked()
 /* Show directory dialog to add add-on exclude path */
 void OptionsDialog::addDatabaseAddOnExcludePathClicked()
 {
-  qDebug() << "OptionsDialog::addDatabaseAddOnExcludePathClicked";
+  qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Add-On Recognition"),
@@ -701,7 +717,7 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
 
 void OptionsDialog::removeDatabaseAddOnExcludePathClicked()
 {
-  qDebug() << "OptionsDialog::removeDatabaseAddOnExcludePathClicked";
+  qDebug() << Q_FUNC_INFO;
 
   delete ui->listWidgetOptionsDatabaseAddon->currentItem();
   updateDatabaseButtonState();
@@ -779,6 +795,11 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
+  toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
+  toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
+
+  data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
+
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
@@ -835,8 +856,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTextSizeAirport = ui->spinBoxOptionsDisplayTextSizeAirport->value();
   data.displayThicknessTrail = ui->spinBoxOptionsDisplayThicknessTrail->value();
   data.displayThicknessRangeDistance = ui->spinBoxOptionsDisplayThicknessRangeDistance->value();
-  data.displayTrailType =
-    static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
+  data.displayTrailType = static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
 
   data.unitDist = static_cast<opts::UnitDist>(ui->comboBoxOptionsUnitDistance->currentIndex());
   data.unitShortDist = static_cast<opts::UnitShortDist>(ui->comboBoxOptionsUnitShortDistance->currentIndex());
@@ -879,6 +899,10 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
   fromFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
+
+  fromFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
+  fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
+  ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
 
   QString txt;
   for(int val : data.mapRangeRings)
@@ -988,6 +1012,51 @@ void OptionsDialog::fromFlags(QRadioButton *radioButton, opts::Flags flag)
   radioButton->setChecked(OptionData::instanceInternal().flags & flag);
 }
 
+void OptionsDialog::offlineDataSelectClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString path = atools::gui::Dialog(this).
+                 openDirectoryDialog(tr("Open GLOBE data directory"),
+                                     lnm::OPTIONS_DIALOG_GLOBE_FILE_DLG, ui->lineEditCacheOfflineDataPath->text());
+
+  if(!path.isEmpty())
+    ui->lineEditCacheOfflineDataPath->setText(QDir::toNativeSeparators(path));
+
+  updateCacheElevationStates();
+}
+
+void OptionsDialog::updateCacheElevationStates()
+{
+  ui->lineEditCacheOfflineDataPath->setDisabled(ui->radioButtonCacheUseOnlineElevation->isChecked());
+  ui->pushButtonCacheOfflineDataSelect->setDisabled(ui->radioButtonCacheUseOnlineElevation->isChecked());
+
+  if(ui->radioButtonCacheUseOffineElevation->isChecked())
+  {
+    const QString& path = ui->lineEditCacheOfflineDataPath->text();
+    if(!path.isEmpty())
+    {
+      QFileInfo fileinfo(path);
+      if(!fileinfo.exists())
+        ui->labelCacheGlobePathState->setText(
+          tr("<span style=\"font-weight: bold; color: red;\">Directory does not exist.</span>"));
+      else if(!fileinfo.isDir())
+        ui->labelCacheGlobePathState->setText(
+          tr("<span style=\"font-weight: bold; color: red;\">Is not a directory.</span>"));
+      else if(!NavApp::getElevationProvider()->isGlobeDirectoryValid(path))
+        ui->labelCacheGlobePathState->setText(
+          tr("<span style=\"font-weight: bold; color: red;\">No valid GLOBE data found.</span>"));
+      else
+        ui->labelCacheGlobePathState->setText(
+          tr("Directory and files are valid."));
+    }
+    else
+      ui->labelCacheGlobePathState->setText(tr("No directory selected."));
+  }
+  else
+    ui->labelCacheGlobePathState->clear();
+}
+
 void OptionsDialog::updateWeatherButtonState()
 {
   WeatherReporter *wr = NavApp::getWeatherReporter();
@@ -1054,7 +1123,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
 
 void OptionsDialog::selectActiveSkyPathClicked()
 {
-  qDebug() << "OptionsDialog::selectAsnPathClicked";
+  qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).openFileDialog(
     tr("Open Active Sky Weather Snapshot File"),
@@ -1069,14 +1138,16 @@ void OptionsDialog::selectActiveSkyPathClicked()
 
 void OptionsDialog::clearMemCachedClicked()
 {
-  qDebug() << "OptionsDialog::clearMemCachedClicked";
+  qDebug() << Q_FUNC_INFO;
+
   NavApp::getMapWidget()->clearVolatileTileCache();
   NavApp::setStatusMessage(tr("Memory cache cleared."));
 }
 
 void OptionsDialog::clearDiskCachedClicked()
 {
-  qDebug() << "OptionsDialog::clearDiskCachedClicked";
+  qDebug() << Q_FUNC_INFO;
+
   QMessageBox::StandardButton result =
     QMessageBox::question(this, QApplication::applicationName(),
                           tr("Clear the disk cache?\n"

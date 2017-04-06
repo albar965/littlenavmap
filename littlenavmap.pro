@@ -176,7 +176,8 @@ SOURCES += src/main.cpp\
     src/db/databaseerrordialog.cpp \
     src/gui/airspacetoolbarhandler.cpp \
     src/navapp.cpp \
-    src/common/mapflags.cpp
+    src/common/mapflags.cpp \
+    src/common/elevationprovider.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -256,7 +257,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/db/databaseerrordialog.h \
     src/gui/airspacetoolbarhandler.h \
     src/navapp.h \
-    src/common/mapflags.h
+    src/common/mapflags.h \
+    src/common/elevationprovider.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

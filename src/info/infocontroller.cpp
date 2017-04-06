@@ -343,7 +343,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserAirspaceInfo->clear();
 }
 
-void InfoController::showInformation(const map::MapSearchResult& result)
+void InfoController::showInformation(map::MapSearchResult result)
 {
   showInformationInternal(result, true);
 }
@@ -385,8 +385,9 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
   {
     qDebug() << "Found airport" << result.airports.first().ident;
 
-    // Only one airport shown
-    const map::MapAirport& airport = result.airports.first();
+    // Only one airport shown - have to make a copy here since currentSearchResult might be equal to result
+    // when updating
+    map::MapAirport airport = result.airports.first();
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();

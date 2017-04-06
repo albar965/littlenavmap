@@ -64,7 +64,7 @@ public:
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab. */
-  void showInformation(const map::MapSearchResult& result);
+  void showInformation(map::MapSearchResult result);
 
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
   void saveState();

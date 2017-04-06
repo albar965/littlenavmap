@@ -106,6 +106,8 @@ private:
   void updateGuiStyleSpinboxState();
   void applyStyle();
   void updateButtonColors();
+  void updateCacheElevationStates();
+  void offlineDataSelectClicked();
 
   QVector<int> ringStrToVector(const QString& string) const;
 
@@ -130,6 +132,7 @@ private:
   QStringList stylesheets;
 
   int lastStyleIndex = 0;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

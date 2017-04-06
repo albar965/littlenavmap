@@ -23,6 +23,7 @@
 #include "gui/application.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
+#include "common/elevationprovider.h"
 #include "db/databasemanager.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
@@ -153,6 +154,8 @@ MainWindow::MainWindow()
     qDebug() << "MainWindow Creating MapWidget";
     mapWidget = new MapWidget(this);
     ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
+
+    NavApp::initElevationModel();
 
     // Create elevation profile widget and replace dummy widget in window
     qDebug() << "MainWindow Creating ProfileWidget";
@@ -589,6 +592,8 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
@@ -1121,7 +1126,14 @@ bool RouteController::hasValidParking() const
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
-    mapPosLabel->setText(Unit::coords(pos));
+  {
+    QString text(Unit::coords(pos));
+
+    if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+      text += tr(" / ") + Unit::altMeter(pos.getAltitude());
+
+    mapPosLabel->setText(text);
+  }
   else
     mapPosLabel->setText(tr("No position"));
 }
@@ -1578,7 +1590,7 @@ void MainWindow::updateAirspaceTypes(map::MapAirspaceTypes types)
 void MainWindow::updateMapObjectsShown()
 {
   // Save to configuration
-  saveActionStates();
+  // saveActionStates();
 
   mapWidget->updateMapObjectsShown();
   profileWidget->update();

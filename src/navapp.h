@@ -34,11 +34,7 @@ class QMainWindow;
 class RouteController;
 class MapWidget;
 class WeatherReporter;
-
-namespace Marble {
-
-class ElevationModel;
-}
+class ElevationProvider;
 
 namespace atools {
 namespace sql {
@@ -62,6 +58,9 @@ public:
 
   /* Creates all aggregated objects */
   static void init(MainWindow *mainWindowParam);
+
+  /* Needs map widget first */
+  static void initElevationModel();
 
   /* Deletes all aggregated objects */
   static void deInit();
@@ -87,7 +86,7 @@ public:
 
   static atools::sql::SqlDatabase *getDatabase();
 
-  static const Marble::ElevationModel *getElevationModel();
+  static ElevationProvider *getElevationProvider();
 
   static WeatherReporter *getWeatherReporter();
 
@@ -107,7 +106,7 @@ private:
   static MapQuery *mapQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
-
+  static ElevationProvider *elevationProvider;
   /* Most important handlers */
   static ConnectClient *connectClient;
   static DatabaseManager *databaseManager;

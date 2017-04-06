@@ -22,6 +22,7 @@
 #include "common/constants.h"
 #include "mapgui/mappaintlayer.h"
 #include "settings/settings.h"
+#include "common/elevationprovider.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
 #include "geo/calculations.h"
@@ -57,6 +58,9 @@
 
 // Default zoom distance if start position was not set (usually first start after installation */
 const int DEFAULT_MAP_DISTANCE = 7000;
+
+// Get elevation when mouse is still
+const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
 // Update rates defined by delta values
 const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
@@ -124,6 +128,10 @@ MapWidget::MapWidget(MainWindow *parent)
   mapOverlays.insert("scalebar", mainWindow->getUi()->actionMapOverlayScalebar);
   mapOverlays.insert("navigation", mainWindow->getUi()->actionMapOverlayNavigation);
   mapOverlays.insert("overviewmap", mainWindow->getUi()->actionMapOverlayOverview);
+
+  elevationDisplayTimer.setInterval(ALTITUDE_UPDATE_TIMEOUT);
+  elevationDisplayTimer.setSingleShot(true);
+  connect(&elevationDisplayTimer, &QTimer::timeout, this, &MapWidget::elevationDisplayTimerTimeout);
 }
 
 MapWidget::~MapWidget()
@@ -1744,6 +1752,18 @@ void MapWidget::workOffline(bool offline)
     update();
 }
 
+void MapWidget::elevationDisplayTimerTimeout()
+{
+  qreal lon, lat;
+  QPoint point = mapFromGlobal(QCursor::pos());
+  if(geoCoordinates(point.x(), point.y(), lon, lat, GeoDataCoordinates::Degree))
+  {
+    Pos pos(lon, lat);
+    pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
+    mainWindow->updateMapPosLabel(pos);
+  }
+}
+
 bool MapWidget::eventFilter(QObject *obj, QEvent *e)
 {
   if(e->type() == QEvent::MouseButtonDblClick)
@@ -1775,7 +1795,11 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
     qreal lon, lat;
     if(geoCoordinates(mouseEvent->pos().x(), mouseEvent->pos().y(), lon, lat, GeoDataCoordinates::Degree))
-      mainWindow->updateMapPosLabel(Pos(lon, lat));
+    {
+      if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
+        elevationDisplayTimer.start();
+      mainWindow->updateMapPosLabel(Pos(lon, lat, static_cast<double>(map::INVALID_ALTITUDE_VALUE)));
+    }
     else
       mainWindow->updateMapPosLabel(Pos());
   }

@@ -28,6 +28,7 @@
 #include "common/unit.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
+#include "common/elevationprovider.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -64,7 +65,6 @@ ProfileWidget::ProfileWidget(QMainWindow *parent)
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
   setMinimumSize(QSize(50, 40));
 
-  elevationModel = NavApp::getElevationModel();
   routeController = NavApp::getRouteController();
 
   // Create single shot timer that will restart the thread after a delay
@@ -73,8 +73,8 @@ ProfileWidget::ProfileWidget(QMainWindow *parent)
   connect(updateTimer, &QTimer::timeout, this, &ProfileWidget::updateTimeout);
 
   // Marble will let us know when updates are available
-  connect(elevationModel, &Marble::ElevationModel::updateAvailable, this,
-          &ProfileWidget::elevationUpdateAvailable);
+  connect(NavApp::getElevationProvider(), &ElevationProvider::updateAvailable,
+          this, &ProfileWidget::elevationUpdateAvailable);
 
   // Notification from thread that it has finished and we can get the result from the future
   connect(&watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateThreadFinished);
@@ -622,7 +622,8 @@ void ProfileWidget::elevationUpdateAvailable()
   // Do not terminate thread here since this can lead to starving updates
 
   // Start thread after long delay to calculate new data
-  updateTimer->start(ELEVATION_CHANGE_UPDATE_TIMEOUT_MS);
+  updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
+                     ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_UPDATE_TIMEOUT_MS);
 }
 
 void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
@@ -645,7 +646,8 @@ void ProfileWidget::routeChanged(bool geometryChanged)
   if(geometryChanged)
   {
     // Start thread after short delay to calculate new data
-    updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
+    updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
+                       ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
   // else
   // {
@@ -703,6 +705,7 @@ void ProfileWidget::updateThreadFinished()
 bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
                                          const atools::geo::LineString& geometry) const
 {
+  ElevationProvider *elevationProvider = NavApp::getElevationProvider();
   for(int i = 0; i < geometry.size() - 1; i++)
   {
     // Create a line string from the two points and split it at the date line if crossing
@@ -723,28 +726,12 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
 
         const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
         const Marble::GeoDataCoordinates& c2 = ls->at(j);
+        Pos p1(c1.longitude(), c1.latitude());
+        Pos p2(c2.longitude(), c2.latitude());
 
-        // Get altitude points for the line segment
-        // The might not be complete and will be more complete on further iterations when we get a signal
-        // from the elevation model
-        QVector<GeoDataCoordinates> temp = elevationModel->heightProfile(
-          c1.longitude(GeoDataCoordinates::Degree), c1.latitude(GeoDataCoordinates::Degree),
-          c2.longitude(GeoDataCoordinates::Degree), c2.latitude(GeoDataCoordinates::Degree));
-
-        for(const GeoDataCoordinates& c : temp)
-        {
-          if(terminateThreadSignal)
-            return false;
-
-          elevations.append(Pos(c.longitude(), c.latitude(), c.altitude()).toDeg());
-        }
-
-        if(elevations.isEmpty())
-        {
-          // Workaround for invalid geometry data - add void
-          elevations.append(Pos(c1.longitude(), c1.latitude(), c1.altitude()).toDeg());
-          elevations.append(Pos(c2.longitude(), c2.latitude(), c2.altitude()).toDeg());
-        }
+        p1.toDeg();
+        p2.toDeg();
+        elevationProvider->getElevations(elevations, atools::geo::Line(p1, p2));
       }
     }
   }
@@ -790,7 +777,8 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     const RouteLeg& lastLeg = legs.route.at(i - 1);
     ElevationLeg leg;
 
-    if(routeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM)
+    // Skip for too long segments when using the marble online provider
+    if(routeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::getElevationProvider()->isGlobeOfflineProvider())
     {
       LineString geometry;
       if(routeLeg.isAnyProcedure() && routeLeg.getGeometry().size() > 2)
@@ -954,7 +942,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
     from + tr(" ► ") + to + tr(", ") +
     Unit::distNm(distance) + tr(" ► ") +
     Unit::distNm(distanceToGo) + tr(", ") +
-    tr(" Ground Elevation ") + Unit::altFeet(alt) +
+    tr(" Ground Elevation ") + Unit::altFeet(alt) + tr(", ") +
     tr(" Above Ground Altitude ") + Unit::altFeet(flightplanAltFt - alt) + tr(", ") +
     tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev);
 

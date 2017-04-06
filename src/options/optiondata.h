@@ -111,7 +111,13 @@ enum Flag
 
   /* Center flight plan after loading.
    * ui->checkBoxOptionsGuiAvoidOverwrite */
-  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 21
+  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 21,
+
+  /* radioButtonCacheUseOnlineElevation */
+  CACHE_USE_ONLINE_ELEVATION = 1 << 22,
+
+  /* radioButtonCacheUseOnlineElevation */
+  CACHE_USE_OFFLINE_ELEVATION = 1 << 23
 
 };
 
@@ -519,6 +525,11 @@ public:
     return guiStyleDark;
   }
 
+  const QString& getOfflineElevationPath() const
+  {
+    return cacheOfflineElevationPath;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -544,7 +555,8 @@ private:
     opts::WEATHER_INFO_NOAA |
     opts::WEATHER_INFO_VATSIM |
     opts::WEATHER_TOOLTIP_ACTIVESKY |
-    opts::WEATHER_TOOLTIP_NOAA
+    opts::WEATHER_TOOLTIP_NOAA |
+    opts::CACHE_USE_OFFLINE_ELEVATION
     // opts::WEATHER_TOOLTIP_VATSIM
   ;
 
@@ -555,6 +567,8 @@ private:
   QString weatherActiveSkyPath,
           weatherNoaaUrl = "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
           weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1";
+
+  QString cacheOfflineElevationPath;
 
   // ui->listWidgetOptionsDatabaseAddon
   QStringList databaseAddonExclude;

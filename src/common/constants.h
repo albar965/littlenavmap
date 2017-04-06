@@ -116,6 +116,7 @@ const QString APPROACHTREE_SELECTED_APPR = "ApproachTree/SeletedApproach";
 /* Options dialog */
 const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
 const QString OPTIONS_DIALOG_AS_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
+const QString OPTIONS_DIALOG_GLOBE_FILE_DLG = "OptionsDialog/CacheFileDialogGlobe";
 const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
 const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
 const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";

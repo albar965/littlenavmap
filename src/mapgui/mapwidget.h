@@ -23,6 +23,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "common/aircrafttrack.h"
 
+#include <QTimer>
 #include <QWidget>
 
 #include <marble/GeoDataLatLonAltBox.h>
@@ -354,6 +355,7 @@ private:
 
   void cancelDragDistance();
   void cancelDragRoute();
+  void elevationDisplayTimerTimeout();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
@@ -417,6 +419,8 @@ private:
   qint64 lastSimUpdateMs = 0;
   bool active = false;
 
+  /* Delay display of elevation display to avoid lagging mouse movements */
+  QTimer elevationDisplayTimer;
 };
 
 Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);
