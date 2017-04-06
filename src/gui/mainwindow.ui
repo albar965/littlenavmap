@@ -142,6 +142,7 @@
      <property name="title">
       <string>Airspaces</string>
      </property>
+     <addaction name="actionShowAirspaces"/>
     </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
@@ -3089,6 +3090,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionShowAirspaces"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -5503,6 +5505,24 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as FLP file usable by the Aerosoft Airbus</string>
+   </property>
+  </action>
+  <action name="actionShowAirspaces">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airspace.svg</normaloff>:/littlenavmap/resources/icons/airspace.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Airspaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide all airspaces</string>
    </property>
   </action>
  </widget>

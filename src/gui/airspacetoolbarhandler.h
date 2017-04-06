@@ -52,12 +52,14 @@ private:
                                 bool groupActions = false);
   void actionTriggered();
   void actionGroupTriggered(QAction *action);
+  void allAirspacesToggled();
 
   QVector<QAction *> airspaceActions;
   QVector<QToolButton *> airspaceToolButtons;
   QVector<map::MapAirspaceTypes> airspaceToolButtonTypes;
   QVector<QActionGroup *> airspaceToolGroups;
   MainWindow *mainWindow;
+
 };
 
 #endif // AIRSPACETOOLBARHANDLER_H

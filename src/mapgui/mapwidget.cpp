@@ -237,7 +237,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
-  setShowMapFeatures(map::AIRSPACE, getShownAirspaces() & map::AIRSPACE_ALL);
+  setShowMapFeatures(map::AIRSPACE, getShownAirspaces() & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
@@ -310,7 +310,7 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes types)
 {
   paintLayer->setShowAirspaces(types);
-  setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
+//  setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
   updateVisibleObjectsStatusBar();
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
@@ -1269,6 +1269,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapUserpoint *userpoint = nullptr;
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
+  map::MapAirspace *airspace = nullptr;
 
   // Get only one object of each type
   if(result.userAircraft.getPosition().isValid())
@@ -1289,6 +1290,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     userpoint = &result.userPoints.first();
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
+  if(!result.airspaces.isEmpty())
+    airspace = &result.airspaces.first();
 
   // Add "more" text if multiple navaids will be added to the information panel
   bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() +
@@ -1298,6 +1301,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Collect information from the search result - build text only for one object for several menu items
   QString informationText, measureText, rangeRingText, departureText, departureParkingText, destinationText,
           addRouteText, searchText;
+
+  if(airspace != nullptr)
+    informationText = tr("Airspace");
 
   if(airway != nullptr)
     informationText = map::airwayText(*airway);
@@ -1410,7 +1416,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "show in search" and "add to route" and "show information"
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || airway != nullptr)
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
+     airway != nullptr || airspace != nullptr)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));

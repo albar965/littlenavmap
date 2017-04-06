@@ -44,7 +44,7 @@ MapPainterAirspace::~MapPainterAirspace()
 
 void MapPainterAirspace::render(PaintContext *context)
 {
-  if(!context->mapLayer->isAirspace())
+  if(!context->mapLayer->isAirspace() || !context->objectTypes.testFlag(map::AIRSPACE))
     return;
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();

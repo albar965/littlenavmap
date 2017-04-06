@@ -28,12 +28,18 @@
 AirspaceToolBarHandler::AirspaceToolBarHandler(MainWindow *parent)
   : mainWindow(parent)
 {
-
+  connect(NavApp::getMainUi()->actionShowAirspaces, &QAction::toggled,
+          this, &AirspaceToolBarHandler::allAirspacesToggled);
 }
 
 AirspaceToolBarHandler::~AirspaceToolBarHandler()
 {
 
+}
+
+void AirspaceToolBarHandler::allAirspacesToggled()
+{
+  updateAirspaceToolButtons();
 }
 
 void AirspaceToolBarHandler::updateAirspaceToolButtons()
@@ -49,6 +55,8 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
     else
       // Depress button if the first is not selected in groups
       airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().first()->isChecked());
+
+    airspaceToolButtons.at(i)->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
   }
 }
 

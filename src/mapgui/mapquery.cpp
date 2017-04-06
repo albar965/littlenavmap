@@ -51,6 +51,15 @@ MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb)
 {
   mapTypesFactory = new MapTypesFactory();
+
+  runwayCache.setMaxCost(1000);
+  runwayOverwiewCache.setMaxCost(1000);
+  apronCache.setMaxCost(1000);
+  taxipathCache.setMaxCost(1000);
+  parkingCache.setMaxCost(1000);
+  startCache.setMaxCost(1000);
+  helipadCache.setMaxCost(1000);
+  airspaceLineCache.setMaxCost(4000);
 }
 
 MapQuery::~MapQuery()
@@ -752,42 +761,8 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
     lastFlightplanAltitude = flightPlanAltitude;
   }
 
-  SqlQuery *query = nullptr;
-  int alt;
-  if(types & map::AIRSPACE_AT_FLIGHTPLAN)
-  {
-    query = airspaceByRectAtAltQuery;
-    alt = atools::roundToInt(flightPlanAltitude);
-  }
-  else if(types & map::AIRSPACE_BELOW_10000)
-  {
-    query = airspaceByRectBelowAltQuery;
-    alt = 10000;
-  }
-  else if(types & map::AIRSPACE_BELOW_18000)
-  {
-    query = airspaceByRectBelowAltQuery;
-    alt = 18000;
-  }
-  else if(types & map::AIRSPACE_ABOVE_10000)
-  {
-    query = airspaceByRectAboveAltQuery;
-    alt = 10000;
-  }
-  else if(types & map::AIRSPACE_ABOVE_18000)
-  {
-    query = airspaceByRectAboveAltQuery;
-    alt = 18000;
-  }
-  else
-  {
-    query = airspaceByRectQuery;
-    alt = 0;
-  }
-
   if(airspaceCache.list.isEmpty() && !lazy)
   {
-
     QStringList typeStrings;
 
     if(types != map::AIRSPACE_NONE)
@@ -803,6 +778,38 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
           if(types & t)
             typeStrings.append(map::airspaceTypeToDatabase(t));
         }
+      }
+      SqlQuery *query = nullptr;
+      int alt;
+      if(types & map::AIRSPACE_AT_FLIGHTPLAN)
+      {
+        query = airspaceByRectAtAltQuery;
+        alt = atools::roundToInt(flightPlanAltitude);
+      }
+      else if(types & map::AIRSPACE_BELOW_10000)
+      {
+        query = airspaceByRectBelowAltQuery;
+        alt = 10000;
+      }
+      else if(types & map::AIRSPACE_BELOW_18000)
+      {
+        query = airspaceByRectBelowAltQuery;
+        alt = 18000;
+      }
+      else if(types & map::AIRSPACE_ABOVE_10000)
+      {
+        query = airspaceByRectAboveAltQuery;
+        alt = 10000;
+      }
+      else if(types & map::AIRSPACE_ABOVE_18000)
+      {
+        query = airspaceByRectAboveAltQuery;
+        alt = 18000;
+      }
+      else
+      {
+        query = airspaceByRectQuery;
+        alt = 0;
       }
 
       // Get the airspace objects without geometry
@@ -891,6 +898,9 @@ const LineString *MapQuery::fetchAirspaceLines(int boundaryId)
       else
         processedLines->append(lines.at(i).pos);
     }
+
+    airspaceLineCache.insert(boundaryId, processedLines);
+
     return processedLines;
   }
 }
