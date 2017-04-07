@@ -46,7 +46,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
          <property name="text">
-          <string>Load last Google Earth &amp;KML file after startup</string>
+          <string>Load all last used Google Earth &amp;KML files at startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -56,7 +56,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
          <property name="text">
-          <string>Load last &amp;flight plan after startup</string>
+          <string>Load last used &amp;flight plan at startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -117,10 +117,13 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
          <property name="toolTip">
-          <string>Restore all map display settings (airport, VOR, etc.) on startup. Otherwise goes back to default settings on startup.</string>
+          <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
+         </property>
+         <property name="statusTip">
+          <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
          </property>
          <property name="text">
-          <string>Restore &amp;map display settings at startup</string>
+          <string>At startup, load the map display saved settings</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -1691,6 +1694,12 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="lineEditCacheOfflineDataPath">
+            <property name="toolTip">
+             <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+            </property>
+            <property name="statusTip">
+             <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+            </property>
             <property name="placeholderText">
              <string>No elevation data directory selected.</string>
             </property>
@@ -1699,10 +1708,12 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
           <item row="0" column="0">
            <widget class="QRadioButton" name="radioButtonCacheUseOnlineElevation">
             <property name="toolTip">
-             <string>Use online elevation data to display ground in flight plan elevation profile. Updates slowly.</string>
+             <string>Use online elevation data to display ground in flight plan elevation profile. 
+Has a higher resolution than the offline data source but updates are slow 
+it has many errors.</string>
             </property>
             <property name="statusTip">
-             <string>Use online elevation data to display ground in flight plan elevation profile. Updates slowly.</string>
+             <string>Use online elevation data to display ground in flight plan elevation profile. \nHas a higher resolution than the offline data source but updates are slow \nit has many errors.</string>
             </property>
             <property name="text">
              <string>Use Online Elevation Data</string>
@@ -1714,6 +1725,15 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
           </item>
           <item row="1" column="0">
            <widget class="QRadioButton" name="radioButtonCacheUseOffineElevation">
+            <property name="toolTip">
+             <string>Recommended.
+Use Offline GLOBE Elevation Data. Can be downloaded for free. 
+Resolution is lower than the online source but updates are very fast.
+Has a 30 arc second grid (approximately 900 meter near the equator).</string>
+            </property>
+            <property name="statusTip">
+             <string>Recommended.\nUse Offline GLOBE Elevation Data. Can be downloaded for free. \nResolution is lower than the online source but updates are very fast.\nHas a 30 arc second grid (approximately 900 meter near the equator).</string>
+            </property>
             <property name="text">
              <string>Use Offline GLOBE Elevation Data</string>
             </property>

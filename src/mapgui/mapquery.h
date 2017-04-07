@@ -24,6 +24,8 @@
 #include <QCache>
 #include <QList>
 
+#include <functional>
+
 #include <marble/GeoDataLatLonBox.h>
 
 namespace atools {
@@ -207,13 +209,16 @@ private:
   template<typename TYPE>
   struct SimpleRectCache
   {
+    typedef std::function<bool (const MapLayer *curLayer, const MapLayer *mapLayer)> LayerCompareFunc;
+
     /*
      * @param rect bounding rectangle - all objects inside this rectangle are returned
      * @param mapLayer current map layer
      * @param lazy if true do not fetch new data but return the old potentially incomplete dataset
      * @return true after clearing the cache. The caller has to request new data
      */
-    bool updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+    bool updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                     LayerCompareFunc funcSameLayer);
     void clear();
     void validate();
 
@@ -297,9 +302,8 @@ private:
 
 // ---------------------------------------------------------------------------------
 template<typename TYPE>
-bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect,
-                                                  const MapLayer *mapLayer,
-                                                  bool lazy)
+bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                  bool lazy, LayerCompareFunc funcSameLayer)
 {
   if(lazy)
     // Nothing changed11
@@ -312,8 +316,7 @@ bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox
                         cur.height(Marble::GeoDataCoordinates::Degree) *
                         RECT_INFLATION_FACTOR_DEG + RECT_INFLATION_ADD_DEG);
 
-  if(curRect.isEmpty() || !cur.contains(rect) ||
-     !curMapLayer->hasSameQueryParameters(mapLayer))
+  if(curRect.isEmpty() || !cur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer))
   {
     // Rectangle not covered by loaded data or new layer selected
     list.clear();

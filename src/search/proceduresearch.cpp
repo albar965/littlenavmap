@@ -65,6 +65,7 @@ using proc::MapProcedureRef;
 using atools::gui::WidgetState;
 using atools::gui::ActionTextSaver;
 
+/* Use event filter to catch mouse click in white area and deselect all entries */
 class TreeEventFilter :
   public QObject
 {
@@ -75,10 +76,7 @@ public:
   {
   }
 
-  virtual ~TreeEventFilter()
-  {
-
-  }
+  virtual ~TreeEventFilter();
 
 private:
   bool eventFilter(QObject *object, QEvent *event)
@@ -99,6 +97,11 @@ private:
 
   QTreeWidget *tree;
 };
+
+TreeEventFilter::~TreeEventFilter()
+{
+
+}
 
 ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
   : AbstractSearch(main,

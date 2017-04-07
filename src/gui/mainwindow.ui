@@ -56,6 +56,7 @@
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteSaveAsClean"/>
     <addaction name="actionRouteSaveAsGfp"/>
     <addaction name="actionRouteSaveAsRte"/>
     <addaction name="actionRouteSaveAsFlp"/>
@@ -144,9 +145,19 @@
      </property>
      <addaction name="actionShowAirspaces"/>
     </widget>
+    <widget class="QMenu" name="menuDetails">
+     <property name="title">
+      <string>Details</string>
+     </property>
+     <addaction name="actionMapMoreDetails"/>
+     <addaction name="actionMapDefaultDetails"/>
+     <addaction name="actionMapLessDetails"/>
+    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapResetSettings"/>
     <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
@@ -154,10 +165,7 @@
     <addaction name="actionMapBack"/>
     <addaction name="actionMapNext"/>
     <addaction name="separator"/>
-    <addaction name="actionMapMoreDetails"/>
-    <addaction name="actionMapDefaultDetails"/>
-    <addaction name="actionMapLessDetails"/>
-    <addaction name="separator"/>
+    <addaction name="menuDetails"/>
     <addaction name="menuMapProjection"/>
     <addaction name="menuMapTheme"/>
     <addaction name="menuAirspaces"/>
@@ -5523,6 +5531,42 @@
    </property>
    <property name="toolTip">
     <string>Show or hide all airspaces</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+C</string>
+   </property>
+  </action>
+  <action name="actionMapResetSettings">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/cleartable.svg</normaloff>:/littlenavmap/resources/icons/cleartable.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset Display Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset the map display settings back to the default values</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset sort order, column order and column sizes to default</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+R</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsClean">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export &amp;clean Flight Plan ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FSX/P3D PLN without any additional annotations</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan without any additional annotations</string>
    </property>
   </action>
  </widget>

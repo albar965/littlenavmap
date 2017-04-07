@@ -174,6 +174,7 @@ private:
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 
   void updateMapObjectsShown();
+  void resetMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
   void approachLegSelected(const proc::MapProcedureRef& approachRef);
@@ -188,6 +189,7 @@ private:
   void routeOpenRecent(const QString& routeFile);
   bool routeSave();
   bool routeSaveAs();
+  bool routeSaveAsClean();
   bool routeSaveAsGfp();
   bool routeSaveAsRte();
   bool routeSaveAsFlp();

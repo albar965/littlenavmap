@@ -103,8 +103,7 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
                                bool *isHidden) const
 {
   bool hidden;
-  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(),
-                                                 coords.getLatY(), 0, DEG), x, y, size, &hidden);
+  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0, DEG), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
@@ -232,9 +231,9 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
   if(numPoints == 0)
     visible = viewport->screenCoordinates(coords, xordinates[0], y, hidden);
 
-  // Do not paint repetitions for the Mercator projection
-  // The fist coordinate is good enough here
-  x = xordinates[0];
+    // Do not paint repetitions for the Mercator projection
+    // The fist coordinate is good enough here
+    x = xordinates[0];
 
   if(isHidden != nullptr)
     *isHidden = hidden;

@@ -148,5 +148,6 @@
         <file>resources/icons/airspacerestr.svg</file>
         <file>resources/icons/airspaceroutealt.svg</file>
         <file>resources/icons/airspacealt.svg</file>
+        <file>resources/icons/filesaveclean.svg</file>
     </qresource>
 </RCC>

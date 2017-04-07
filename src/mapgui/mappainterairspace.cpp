@@ -27,6 +27,8 @@
 #include <marble/GeoDataLinearRing.h>
 #include <marble/ViewportParams.h>
 
+#include <QElapsedTimer>
+
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
@@ -61,16 +63,21 @@ void MapPainterAirspace::render(PaintContext *context)
 
     for(const MapAirspace& airspace : *airspaces)
     {
-      Marble::GeoDataLinearRing linearRing;
-      linearRing.setTessellate(true);
+      if(context->viewportRect.overlaps(airspace.bounding))
+      {
+        Marble::GeoDataLinearRing linearRing;
+        linearRing.setTessellate(true);
 
-      painter->setPen(mapcolors::penForAirspace(airspace));
-      painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
+        painter->setPen(mapcolors::penForAirspace(airspace));
 
-      for(const Pos& pos : airspace.lines)
-        linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+        if(!context->drawFast)
+          painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
 
-      painter->drawPolygon(linearRing);
+        for(const Pos& pos : airspace.lines)
+          linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+
+        painter->drawPolygon(linearRing);
+      }
     }
   }
 }

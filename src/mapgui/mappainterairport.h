@@ -53,7 +53,7 @@ private:
 
   void drawAirportDiagram(const PaintContext *context, const map::MapAirport& airport, bool fast);
   void drawAirportDiagramBackround(const PaintContext *context, const map::MapAirport& airport);
-  void drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap);
+  void drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap, float x, float y);
   void runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects);
 

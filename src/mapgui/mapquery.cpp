@@ -52,14 +52,14 @@ MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
 {
   mapTypesFactory = new MapTypesFactory();
 
-  runwayCache.setMaxCost(1000);
-  runwayOverwiewCache.setMaxCost(1000);
+  runwayCache.setMaxCost(2000);
+  runwayOverwiewCache.setMaxCost(2000);
   apronCache.setMaxCost(1000);
   taxipathCache.setMaxCost(1000);
   parkingCache.setMaxCost(1000);
   startCache.setMaxCost(1000);
   helipadCache.setMaxCost(1000);
-  airspaceLineCache.setMaxCost(4000);
+  airspaceLineCache.setMaxCost(10000);
 }
 
 MapQuery::~MapQuery()
@@ -593,7 +593,11 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
 const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
                                                     const MapLayer *mapLayer, bool lazy)
 {
-  airportCache.updateCache(rect, mapLayer, lazy);
+  airportCache.updateCache(rect, mapLayer, lazy,
+                           [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                           {
+                             return curLayer->hasSameQueryParametersAirport(newLayer);
+                           });
 
   switch(mapLayer->getDataSource())
   {
@@ -616,7 +620,11 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
 const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
                                                       const MapLayer *mapLayer, bool lazy)
 {
-  waypointCache.updateCache(rect, mapLayer, lazy);
+  waypointCache.updateCache(rect, mapLayer, lazy,
+                            [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                            {
+                              return curLayer->hasSameQueryParametersWaypoint(newLayer);
+                            });
 
   if(waypointCache.list.isEmpty() && !lazy)
   {
@@ -639,7 +647,11 @@ const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& re
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                             bool lazy)
 {
-  vorCache.updateCache(rect, mapLayer, lazy);
+  vorCache.updateCache(rect, mapLayer, lazy,
+                       [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                       {
+                         return curLayer->hasSameQueryParametersVor(newLayer);
+                       });
 
   if(vorCache.list.isEmpty() && !lazy)
   {
@@ -662,7 +674,11 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                             bool lazy)
 {
-  ndbCache.updateCache(rect, mapLayer, lazy);
+  ndbCache.updateCache(rect, mapLayer, lazy,
+                       [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                       {
+                         return curLayer->hasSameQueryParametersNdb(newLayer);
+                       });
 
   if(ndbCache.list.isEmpty() && !lazy)
   {
@@ -685,7 +701,11 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                   bool lazy)
 {
-  markerCache.updateCache(rect, mapLayer, lazy);
+  markerCache.updateCache(rect, mapLayer, lazy,
+                          [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                          {
+                            return curLayer->hasSameQueryParametersMarker(newLayer);
+                          });
 
   if(markerCache.list.isEmpty() && !lazy)
   {
@@ -707,7 +727,11 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
 
 const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
-  ilsCache.updateCache(rect, mapLayer, lazy);
+  ilsCache.updateCache(rect, mapLayer, lazy,
+                          [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                          {
+                            return curLayer->hasSameQueryParametersIls(newLayer);
+                          });
 
   if(ilsCache.list.isEmpty() && !lazy)
   {
@@ -729,7 +753,11 @@ const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const M
 
 const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
-  airwayCache.updateCache(rect, mapLayer, lazy);
+  airwayCache.updateCache(rect, mapLayer, lazy,
+                          [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                          {
+                            return curLayer->hasSameQueryParametersAirway(newLayer);
+                          });
 
   if(airwayCache.list.isEmpty() && !lazy)
   {
@@ -752,10 +780,15 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
 const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                       map::MapAirspaceTypes types, float flightPlanAltitude, bool lazy)
 {
-  airspaceCache.updateCache(rect, mapLayer, lazy);
+  airspaceCache.updateCache(rect, mapLayer, lazy,
+                            [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
+                            {
+                              return curLayer->hasSameQueryParametersAirspace(newLayer);
+                            });
 
   if(types != lastAirspaceTypes || atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
   {
+    // Need a few more parameters to clear the cache which is different to other map features
     airspaceCache.list.clear();
     lastAirspaceTypes = types;
     lastFlightplanAltitude = flightPlanAltitude;
@@ -848,8 +881,6 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
           airspace.lines = *lines;
       }
     }
-    else
-      airspaceCache.list.clear();
   }
   airspaceCache.validate();
   return &airspaceCache.list;
@@ -1213,9 +1244,8 @@ const QList<map::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
       map::MapTaxiPath tp;
       tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
       tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
-      tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value(
-                       "start_laty").toFloat()),
-      tp.end = Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat()),
+      tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value("start_laty").toFloat());
+      tp.end = Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat());
       tp.surface = taxiparthQuery->value("surface").toString();
       tp.name = taxiparthQuery->value("name").toString();
       tp.width = taxiparthQuery->value("width").toInt();

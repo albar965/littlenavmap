@@ -285,6 +285,10 @@ public:
 
   void restoreHistoryState();
 
+  void resetSettingsToDefault();
+
+  void resetSettingActionsToDefault();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);

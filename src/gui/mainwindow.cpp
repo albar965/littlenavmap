@@ -656,6 +656,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
+  connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeSaveAsClean);
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeSaveAsGfp);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeSaveAsRte);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
@@ -752,6 +753,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget,
           &ProfileWidget::updateProfileShowFeatures);
@@ -1319,6 +1321,32 @@ bool MainWindow::routeSave()
   return false;
 }
 
+bool MainWindow::routeSaveAsClean()
+{
+  if(routeValidate())
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Clean Flightplan without Annotations"),
+      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+      "pln", "Route/",
+      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
+      routeController->buildDefaultFilename(tr(" clean")));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->saveFlighplanAs(routeFile, true /* clean */))
+      {
+        routeFileHistory->addFile(routeFile);
+        updateActionStates();
+        setStatusMessage(tr("Flight plan exported."));
+        saveFileHistoryStates();
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 /* Called from menu or toolbar by action */
 bool MainWindow::routeSaveAs()
 {
@@ -1583,6 +1611,18 @@ void MainWindow::updateAirspaceTypes(map::MapAirspaceTypes types)
   mapWidget->setShowMapAirspaces(types);
   mapWidget->saveState();
   mapWidget->updateMapObjectsShown();
+  setStatusMessage(tr("Map settigs changed."));
+}
+
+void MainWindow::resetMapObjectsShown()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  mapWidget->resetSettingActionsToDefault();
+  mapWidget->resetSettingsToDefault();
+  mapWidget->updateMapObjectsShown();
+  airspaceHandler->updateButtonsAndActions();
+  profileWidget->update();
   setStatusMessage(tr("Map settigs changed."));
 }
 
@@ -1872,6 +1912,8 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowAircraftTrack,
                          ui->actionInfoApproachShowMissedAppr});
   }
+  else
+    mapWidget->resetSettingActionsToDefault();
 
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
                        ui->actionMapShowCities,

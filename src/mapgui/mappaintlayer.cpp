@@ -219,28 +219,28 @@ void MapPaintLayer::initMapLayerSettings()
          marker(false).ils(false)).
 
   // airport > 4000, VOR
-  append(defLayer.clone(200.f).airportSymbolSize(10).
+  append(defLayer.clone(200.f).airportSymbolSize(10).minRunwayLength(4000).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
-         vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false).airway(false)).
+         vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false)).
 
   // airport > 4000
-  append(defLayer.clone(300.f).airportSymbolSize(10).
+  append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(4000).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
-  append(defLayer.clone(750.f).airportSymbolSize(10).
+  append(defLayer.clone(750.f).airportSymbolSize(10).minRunwayLength(8000).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
-         airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
+         airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
-  append(defLayer.clone(1200.f).airportSymbolSize(10).
+  append(defLayer.clone(1200.f).airportSymbolSize(10).minRunwayLength(8000).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
          airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
@@ -250,7 +250,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // Display only points for airports until the cutoff limit
   // airport > 8000
-  append(defLayer.clone(DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
+  append(defLayer.clone(DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).minRunwayLength(8000).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
@@ -259,7 +259,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
   // Make sure that there is always an layer
-  append(defLayer.clone(100000.f).airportSymbolSize(5).
+  append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(8000).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).

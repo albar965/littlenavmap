@@ -97,6 +97,10 @@ void MapPainterAirport::render(PaintContext *context)
     if(!airport->isVisible(context->objectTypes) && !routeAirportIds.contains(airport->id))
       continue;
 
+    // Avoid drawing too many airports during animation when zooming out
+    if(airport->longestRunwayLength <= context->mapLayer->getMinRunwayLength())
+      continue;
+
     float x, y;
     bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding));
 
@@ -137,7 +141,8 @@ void MapPainterAirport::render(PaintContext *context)
 
     // Airport diagram is not influenced by detail level
     if(!context->mapLayerEffective->isAirportDiagram())
-      drawAirportSymbolOverview(context, *airport);
+      // Draw simplificated runway lines
+      drawAirportSymbolOverview(context, *airport, pt.x(), pt.y());
 
     // More detailed symbol will be drawn by the route painter - so skip here
     if(!routeAirportIds.contains(airport->id))
@@ -836,7 +841,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
-void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap)
+void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap,
+                                                  float x, float y)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -881,12 +887,14 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
         painter->resetTransform();
       }
     }
+
+    // Draw small symbol on top to find a clickspot
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, 10, false, context->drawFast);
   }
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
-void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapAirport& ap,
-                                          float x, float y)
+void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y)
 {
   if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||

@@ -29,6 +29,53 @@ MapLayer MapLayer::clone(float maximumRange) const
   return retval;
 }
 
+bool MapLayer::hasSameQueryParametersAirport(const MapLayer *other) const
+{
+  // Either the source query changes or minimum runway length which need a new query
+  return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
+}
+
+bool MapLayer::hasSameQueryParametersAirspace(const MapLayer *other) const
+{
+  // Or any airspace parameter which needs a new query
+  return layerAirspaceCenter == other->layerAirspaceCenter &&
+         layerAirspaceIcao == other->layerAirspaceIcao &&
+         layerAirspaceFir == other->layerAirspaceFir &&
+         layerAirspaceRestricted == other->layerAirspaceRestricted &&
+         layerAirspaceSpecial == other->layerAirspaceSpecial &&
+         layerAirspaceOther == other->layerAirspaceOther;
+}
+
+bool MapLayer::hasSameQueryParametersAirway(const MapLayer *other) const
+{
+  return layerAirway == other->layerAirway;
+}
+
+bool MapLayer::hasSameQueryParametersVor(const MapLayer *other) const
+{
+  return layerVor == other->layerVor;
+}
+
+bool MapLayer::hasSameQueryParametersNdb(const MapLayer *other) const
+{
+  return layerNdb == other->layerNdb;
+}
+
+bool MapLayer::hasSameQueryParametersWaypoint(const MapLayer *other) const
+{
+  return layerWaypoint == other->layerWaypoint;
+}
+
+bool MapLayer::hasSameQueryParametersMarker(const MapLayer *other) const
+{
+  return layerMarker == other->layerMarker;
+}
+
+bool MapLayer::hasSameQueryParametersIls(const MapLayer *other) const
+{
+  return layerIls == other->layerIls;
+}
+
 MapLayer& MapLayer::airport(bool value)
 {
   layerAirport = value;

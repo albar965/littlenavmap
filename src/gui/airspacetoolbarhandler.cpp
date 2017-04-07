@@ -154,7 +154,6 @@ void AirspaceToolBarHandler::actionGroupTriggered(QAction *action)
 
 void AirspaceToolBarHandler::createToolButtons()
 {
-
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceicao.svg",
                            tr("Select ICAO airspaces"),
                            {map::CLASS_A, map::CLASS_B, map::CLASS_C, map::CLASS_D, map::CLASS_E});
@@ -192,6 +191,8 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   map::MapAirspaceTypes allTypes = map::AIRSPACE_NONE;
   for(const map::MapAirspaceTypes& type : types)
     allTypes |= type;
+
+  ui->menuAirspaces->addSeparator();
 
   QToolButton *button = new QToolButton(ui->toolBarAirspaces);
   button->setIcon(QIcon(icon));

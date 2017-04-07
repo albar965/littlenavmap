@@ -71,7 +71,7 @@ public:
   int getNearestRoutePointIndex(int xs, int ys, int maxDistance);
 
   /* Update geometry after a route or scroll or map change */
-  void updateRouteScreenGeometry();
+  void updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
   void updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
   void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
 

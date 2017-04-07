@@ -81,10 +81,10 @@ public:
   bool appendFlightplan(const QString& filename);
 
   /* Saves flight plan using the given name and uses file name as new current name */
-  bool saveFlighplanAs(const QString& filename);
+  bool saveFlighplanAs(const QString& filename, bool cleanExport = false);
 
   /* Saves flight plan using current name */
-  bool saveFlightplan();
+  bool saveFlightplan(bool cleanExport = false);
   bool saveFlighplanAsGfp(const QString& filename);
   bool saveFlighplanAsRte(const QString& filename);
   bool saveFlighplanAsFlp(const QString& filename);
@@ -122,7 +122,7 @@ public:
   bool  doesFilenameMatchRoute();
 
   /* Create a default filename based on departure and destination names */
-  QString buildDefaultFilename() const;
+  QString buildDefaultFilename(const QString& extension = QString()) const;
   QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
 
   /* @return true if departure is valid and departure airport has no parking or departure of flight plan

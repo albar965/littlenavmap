@@ -318,7 +318,7 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes types)
 {
   paintLayer->setShowAirspaces(types);
-//  setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
+  // setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
   updateVisibleObjectsStatusBar();
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
@@ -367,7 +367,7 @@ void MapWidget::postDatabaseLoad()
   paintLayer->postDatabaseLoad();
   screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
-  screenIndex->updateRouteScreenGeometry();
+  screenIndex->updateRouteScreenGeometry(currentViewBoundingBox);
   update();
 }
 
@@ -435,6 +435,70 @@ void MapWidget::saveState()
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays.values())
     state.save(action);
+}
+
+void MapWidget::resetSettingActionsToDefault()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  ui->actionMapShowAirports->blockSignals(true);
+  ui->actionMapShowAirports->setChecked(true);
+  ui->actionMapShowAirports->blockSignals(false);
+  ui->actionMapShowSoftAirports->blockSignals(true);
+  ui->actionMapShowSoftAirports->setChecked(true);
+  ui->actionMapShowSoftAirports->blockSignals(false);
+  ui->actionMapShowEmptyAirports->blockSignals(true);
+  ui->actionMapShowEmptyAirports->setChecked(true);
+  ui->actionMapShowEmptyAirports->blockSignals(false);
+  ui->actionMapShowAddonAirports->blockSignals(true);
+  ui->actionMapShowAddonAirports->setChecked(true);
+  ui->actionMapShowAddonAirports->blockSignals(false);
+  ui->actionMapShowVor->blockSignals(true);
+  ui->actionMapShowVor->setChecked(true);
+  ui->actionMapShowVor->blockSignals(false);
+  ui->actionMapShowNdb->blockSignals(true);
+  ui->actionMapShowNdb->setChecked(true);
+  ui->actionMapShowNdb->blockSignals(false);
+  ui->actionMapShowWp->blockSignals(true);
+  ui->actionMapShowWp->setChecked(true);
+  ui->actionMapShowWp->blockSignals(false);
+  ui->actionMapShowIls->blockSignals(true);
+  ui->actionMapShowIls->setChecked(true);
+  ui->actionMapShowIls->blockSignals(false);
+  ui->actionMapShowVictorAirways->blockSignals(true);
+  ui->actionMapShowVictorAirways->setChecked(false);
+  ui->actionMapShowVictorAirways->blockSignals(false);
+  ui->actionMapShowJetAirways->blockSignals(true);
+  ui->actionMapShowJetAirways->setChecked(false);
+  ui->actionMapShowJetAirways->blockSignals(false);
+  ui->actionShowAirspaces->blockSignals(true);
+  ui->actionShowAirspaces->setChecked(true);
+  ui->actionShowAirspaces->blockSignals(false);
+  ui->actionMapShowRoute->blockSignals(true);
+  ui->actionMapShowRoute->setChecked(true);
+  ui->actionMapShowRoute->blockSignals(false);
+  ui->actionMapShowAircraft->blockSignals(true);
+  ui->actionMapShowAircraft->setChecked(true);
+  ui->actionMapShowAircraft->blockSignals(false);
+  ui->actionMapAircraftCenter->blockSignals(true);
+  ui->actionMapAircraftCenter->setChecked(true);
+  ui->actionMapAircraftCenter->blockSignals(false);
+  ui->actionMapShowAircraftAi->blockSignals(true);
+  ui->actionMapShowAircraftAi->setChecked(true);
+  ui->actionMapShowAircraftAi->blockSignals(false);
+  ui->actionMapShowAircraftTrack->blockSignals(true);
+  ui->actionMapShowAircraftTrack->setChecked(true);
+  ui->actionMapShowAircraftTrack->blockSignals(false);
+  ui->actionInfoApproachShowMissedAppr->blockSignals(true);
+  ui->actionInfoApproachShowMissedAppr->setChecked(true);
+  ui->actionInfoApproachShowMissedAppr->blockSignals(false);
+}
+
+void MapWidget::resetSettingsToDefault()
+{
+  paintLayer->setShowAirspaces(map::AIRSPACE_DEFAULT);
+  mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
+  setMapDetail(mapDetailLevel);
 }
 
 void MapWidget::restoreState()
@@ -526,16 +590,10 @@ void MapWidget::overlayStateToMenu()
     AbstractFloatItem *overlay = floatItem(name);
     if(overlay != nullptr)
     {
-      // qDebug() << "Float item to menu" << overlay->name() << "id" << overlay->nameId()
-      // << "visible" << overlay->visible();
-
       QAction *menuItem = mapOverlays.value(name);
       menuItem->blockSignals(true);
       menuItem->setChecked(overlay->visible());
       menuItem->blockSignals(false);
-      // mapOverlays.value(name)->blockSignals(true);
-      // mapOverlays.value(name)->setChecked(property(overlay->nameId().toLatin1().data()).toBool());
-      // mapOverlays.value(name)->blockSignals(false);
     }
   }
 }
@@ -789,7 +847,7 @@ void MapWidget::routeChanged(bool geometryChanged)
   if(geometryChanged)
   {
     cancelDragAll();
-    screenIndex->updateRouteScreenGeometry();
+    screenIndex->updateRouteScreenGeometry(currentViewBoundingBox);
     update();
   }
 }
@@ -988,7 +1046,7 @@ void MapWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
 {
   cancelDragAll();
   screenIndex->getApproachHighlight() = approach;
-  screenIndex->updateRouteScreenGeometry();
+  screenIndex->updateRouteScreenGeometry(currentViewBoundingBox);
   update();
 }
 
@@ -2542,7 +2600,7 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
   {
     // Major change - update index and visible objects
     updateVisibleObjectsStatusBar();
-    screenIndex->updateRouteScreenGeometry();
+    screenIndex->updateRouteScreenGeometry(currentViewBoundingBox);
     screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
     screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
   }

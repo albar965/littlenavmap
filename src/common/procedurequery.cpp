@@ -258,6 +258,17 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       leg.magvar = leg.navaids.ils.first().magvar;
       leg.navId = leg.navaids.ils.first().id;
     }
+    else
+    {
+      // Use a VOR or DME as fallback
+      mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, QString(), airport.ident, airport.position);
+      if(!leg.navaids.vors.isEmpty())
+      {
+        leg.fixPos = leg.navaids.vors.first().position;
+        leg.magvar = leg.navaids.vors.first().magvar;
+        leg.navId = leg.navaids.vors.first().id;
+      }
+    }
   }
   else if(leg.fixType == "R")
   {
@@ -266,6 +277,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
 
   // Load navaid information for recommended fix and set fix position
+  // Also update magvar if not already set
   map::MapSearchResult rn;
   if(leg.recFixType == "W" || leg.recFixType == "TW")
   {
@@ -314,6 +326,19 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = rn.ils.first().magvar;
+    }
+    else
+    {
+      // Use a VOR or DME as fallback
+      mapObjectByIdent(rn, map::VOR, leg.recFixIdent, QString(), airport.ident, airport.position);
+      if(!rn.vors.isEmpty())
+      {
+        leg.recFixPos = rn.vors.first().position;
+        leg.recNavId = rn.vors.first().id;
+
+        if(!(leg.magvar < map::INVALID_MAGVAR))
+          leg.magvar = rn.vors.first().magvar;
+      }
     }
   }
   else if(leg.recFixType == "R")

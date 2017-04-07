@@ -48,10 +48,14 @@ public:
   MapLayer clone(float maximumRange) const;
 
   /* @return true if a query for this layer will give the same result set */
-  bool hasSameQueryParameters(const MapLayer *other) const
-  {
-    return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
-  }
+  bool hasSameQueryParametersAirport(const MapLayer *other) const;
+  bool hasSameQueryParametersAirspace(const MapLayer *other) const;
+  bool hasSameQueryParametersAirway(const MapLayer *other) const;
+  bool hasSameQueryParametersVor(const MapLayer *other) const;
+  bool hasSameQueryParametersNdb(const MapLayer *other) const;
+  bool hasSameQueryParametersWaypoint(const MapLayer *other) const;
+  bool hasSameQueryParametersMarker(const MapLayer *other) const;
+  bool hasSameQueryParametersIls(const MapLayer *other) const;
 
   /* Show airports */
   MapLayer& airport(bool value = true);

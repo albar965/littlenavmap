@@ -31,8 +31,14 @@
 #include "common/constants.h"
 #include "settings/settings.h"
 
+#include <marble/GeoDataLineString.h>
+
 using atools::geo::Pos;
+using atools::geo::Line;
+using atools::geo::Rect;
 using map::MapAirway;
+using Marble::GeoDataLineString;
+using Marble::GeoDataCoordinates;
 
 MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapQuery *mapQueryParam, MapPaintLayer *mapPaintLayer)
   : mapWidget(parentWidget), mapQuery(mapQueryParam), paintLayer(mapPaintLayer)
@@ -47,6 +53,9 @@ MapScreenIndex::~MapScreenIndex()
 void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
 {
   airspacePolygons.clear();
+
+  if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+    return;
 
   CoordinateConverter conv(mapWidget->viewport());
   const MapScale *scale = paintLayer->getMapScale();
@@ -150,7 +159,7 @@ void MapScreenIndex::restoreState()
   rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
 }
 
-void MapScreenIndex::updateRouteScreenGeometry()
+void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
 {
   const Route& route = NavApp::getRoute();
 
@@ -173,14 +182,15 @@ void MapScreenIndex::updateRouteScreenGeometry()
 
       const Pos& p2 = routeLeg.getPosition();
       int x2, y2;
-      conv.wToS(p2, x2, y2);
-
-      map::MapObjectTypes type = routeLeg.getMapObjectType();
-      if(type == map::AIRPORT && (i == 0 || i == route.size() - 1))
-        // Departure or destination airport
-        airportPoints.append(std::make_pair(i, QPoint(x2, y2)));
-      else if(route.canEditPoint(i))
-        otherPoints.append(std::make_pair(i, QPoint(x2, y2)));
+      if(conv.wToS(p2, x2, y2))
+      {
+        map::MapObjectTypes type = routeLeg.getMapObjectType();
+        if(type == map::AIRPORT && (i == 0 || i == route.size() - 1))
+          // Departure or destination airport
+          airportPoints.append(std::make_pair(i, QPoint(x2, y2)));
+        else if(route.canEditPoint(i))
+          otherPoints.append(std::make_pair(i, QPoint(x2, y2)));
+      }
 
       if(!route.canEditLeg(i))
       {
@@ -190,26 +200,44 @@ void MapScreenIndex::updateRouteScreenGeometry()
 
       if(p1.isValid())
       {
-        float distanceMeter = p2.distanceMeterTo(p1);
-        // Approximate the needed number of line segments
-        float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 140.f, 4.f), 288.f);
-        float step = 1.f / numSegments;
+        GeoDataLineString coords;
+        coords.setTessellate(true);
+        coords << GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0., GeoDataCoordinates::Degree)
+               << GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0., GeoDataCoordinates::Degree);
 
-        // Split the legs into smaller lines and add them only if visible
-        for(int j = 0; j < numSegments; j++)
+        QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
+        for(const Marble::GeoDataLineString *ls : coordsCorrected)
         {
-          float cur = step * static_cast<float>(j);
-          int xs1, ys1, xs2, ys2;
-          conv.wToS(p1.interpolate(p2, distanceMeter, cur), xs1, ys1);
-          conv.wToS(p1.interpolate(p2, distanceMeter, cur + step), xs2, ys2);
+          if(curBox.intersects(ls->latLonAltBox()))
+          {
+            Pos pos1(ls->first().longitude(), ls->first().latitude());
+            pos1.toDeg();
 
-          QRect rect(QPoint(xs1, ys1), QPoint(xs2, ys2));
-          rect = rect.normalized();
-          // Avoid points or flat rectangles (lines)
-          rect.adjust(-1, -1, 1, 1);
+            Pos pos2(ls->last().longitude(), ls->last().latitude());
+            pos2.toDeg();
 
-          if(mapGeo.intersects(rect))
-            routeLines.append(std::make_pair(i - 1, QLine(xs1, ys1, xs2, ys2)));
+            float distanceMeter = pos2.distanceMeterTo(pos1);
+            // Approximate the needed number of line segments
+            float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 140.f, 4.f), 288.f);
+            float step = 1.f / numSegments;
+
+            // Split the legs into smaller lines and add them only if visible
+            for(int j = 0; j < numSegments; j++)
+            {
+              float cur = step * static_cast<float>(j);
+              int xs1, ys1, xs2, ys2;
+              conv.wToS(pos1.interpolate(pos2, distanceMeter, cur), xs1, ys1);
+              conv.wToS(pos1.interpolate(pos2, distanceMeter, cur + step), xs2, ys2);
+
+              QRect rect(QPoint(xs1, ys1), QPoint(xs2, ys2));
+              rect = rect.normalized();
+              // Avoid points or flat rectangles (lines)
+              rect.adjust(-1, -1, 1, 1);
+
+              if(mapGeo.intersects(rect))
+                routeLines.append(std::make_pair(i - 1, QLine(xs1, ys1, xs2, ys2)));
+            }
+          }
         }
       }
       p1 = p2;

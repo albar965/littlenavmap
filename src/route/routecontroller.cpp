@@ -653,11 +653,17 @@ bool RouteController::appendFlightplan(const QString& filename)
   return true;
 }
 
-bool RouteController::saveFlighplanAs(const QString& filename)
+bool RouteController::saveFlighplanAs(const QString& filename, bool cleanExport)
 {
   qDebug() << Q_FUNC_INFO << filename;
+  QString savedFilename = routeFilename;
   routeFilename = filename;
-  return saveFlightplan();
+  bool retval = saveFlightplan(cleanExport);
+
+  if(cleanExport)
+    // Revert back to original name
+    routeFilename = savedFilename;
+  return retval;
 }
 
 bool RouteController::saveFlighplanAsGfp(const QString& filename)
@@ -722,15 +728,19 @@ bool RouteController::saveFlighplanAsFlp(const QString& filename)
   return true;
 }
 
-bool RouteController::saveFlightplan()
+bool RouteController::saveFlightplan(bool cleanExport)
 {
+  qDebug() << Q_FUNC_INFO;
+
   try
   {
-    fileDeparture = route.getFlightplan().getDepartureIdent();
-    fileDestination = route.getFlightplan().getDestinationIdent();
-    fileIfrVfr = route.getFlightplan().getFlightplanType();
+    if(!cleanExport)
+    {
+      fileDeparture = route.getFlightplan().getDepartureIdent();
+      fileDestination = route.getFlightplan().getDestinationIdent();
+      fileIfrVfr = route.getFlightplan().getFlightplanType();
+    }
 
-    qDebug() << "saveFlighplan" << routeFilename;
     // Will throw an exception if something goes wrong
 
     // Remember altitude in local units and set to feet before saving
@@ -745,14 +755,17 @@ bool RouteController::saveFlightplan()
                       QString::number(Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()),
                                                 Unit::speedKtsF), 'f', 0));
 
-    route.getFlightplan().save(routeFilename);
+    route.getFlightplan().save(routeFilename, cleanExport);
     route.getFlightplan().setCruisingAltitude(oldCruise);
 
-    // Set clean undo state index since QUndoStack only returns weird values
-    undoIndexClean = undoIndex;
-    undoStack->setClean();
-    NavApp::updateWindowTitle();
-    qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
+    if(!cleanExport)
+    {
+      // Set clean undo state index since QUndoStack only returns weird values
+      undoIndexClean = undoIndex;
+      undoStack->setClean();
+      NavApp::updateWindowTitle();
+      qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
+    }
   }
   catch(atools::Exception& e)
   {
@@ -1056,7 +1069,7 @@ void RouteController::reverseRoute()
   NavApp::setStatusMessage(tr("Reversed flight plan."));
 }
 
-QString RouteController::buildDefaultFilename() const
+QString RouteController::buildDefaultFilename(const QString& extension) const
 {
   QString filename;
 
@@ -1078,6 +1091,8 @@ QString RouteController::buildDefaultFilename() const
     filename += flightplan.getEntries().last().getIcaoIdent();
   else
     filename += flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
+
+  filename += extension;
   filename += ".pln";
 
   // Remove characters that are note allowed in most filesystems
