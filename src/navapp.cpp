@@ -168,6 +168,16 @@ atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulator()
   return getDatabaseManager()->getCurrentSimulator();
 }
 
+QString NavApp::getCurrentSimulatorFilesPath()
+{
+  return atools::fs::FsPaths::getFilesPath(getCurrentSimulator());
+}
+
+QString NavApp::getCurrentSimulatorShortName()
+{
+  return atools::fs::FsPaths::typeToShortName(getCurrentSimulator());
+}
+
 bool NavApp::hasCurrentSimulatorSidStarSupport()
 {
   return getDatabaseManager()->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3;

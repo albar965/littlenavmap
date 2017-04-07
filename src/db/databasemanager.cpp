@@ -456,11 +456,6 @@ void DatabaseManager::closeDatabase()
   }
 }
 
-QString DatabaseManager::getSimulatorShortName() const
-{
-  return atools::fs::FsPaths::typeToShortName(currentFsType);
-}
-
 atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 {
   return db;

@@ -1144,7 +1144,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  newTitle += " - " + NavApp::getDatabaseManager()->getSimulatorShortName();
+  newTitle += " - " + NavApp::getCurrentSimulatorShortName();
 
   if(!routeController->getCurrentRouteFilename().isEmpty())
     newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
@@ -1234,8 +1234,8 @@ void MainWindow::routeOpen()
     QString routeFile = dialog->openFileDialog(
       tr("Open Flightplan"),
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
-      "Route/",
-      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX));
+      "Route/" + NavApp::getCurrentSimulatorShortName(),
+      NavApp::getCurrentSimulatorFilesPath());
 
     if(!routeFile.isEmpty())
     {
@@ -1257,8 +1257,8 @@ void MainWindow::routeAppend()
   QString routeFile = dialog->openFileDialog(
     tr("Append Flightplan"),
     tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
-    "Route/",
-    atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX));
+    "Route/" + NavApp::getCurrentSimulatorShortName(),
+    NavApp::getCurrentSimulatorFilesPath());
 
   if(!routeFile.isEmpty())
   {
@@ -1328,8 +1328,8 @@ bool MainWindow::routeSaveAsClean()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Clean Flightplan without Annotations"),
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
-      "pln", "Route/",
-      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
+      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
+      NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename(tr(" clean")));
 
     if(!routeFile.isEmpty())
@@ -1355,8 +1355,8 @@ bool MainWindow::routeSaveAs()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan"),
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
-      "pln", "Route/",
-      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
+      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
+      NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename());
 
     if(!routeFile.isEmpty())
@@ -1383,7 +1383,7 @@ bool MainWindow::routeSaveAsGfp()
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
-      atools::fs::FsPaths::getBasePath(NavApp::getDatabaseManager()->getCurrentSimulator()) +
+      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulator()) +
       QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       routeController->buildDefaultFilenameShort("-", "gfp"));
 
@@ -1407,7 +1407,7 @@ bool MainWindow::routeSaveAsRte()
       tr("Save Flightplan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
-      atools::fs::FsPaths::getBasePath(NavApp::getDatabaseManager()->getCurrentSimulator()) +
+      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulator()) +
       QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       routeController->buildDefaultFilenameShort(QString(), "rte"));
 
@@ -1495,7 +1495,7 @@ void MainWindow::mapSaveImage()
   QString imageFile = dialog->saveFileDialog(
     tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
     "jpg", "MainWindow/",
-    atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX), tr("Little Navmap Screenshot.jpg"));
+    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulator()), tr("Little Navmap Screenshot.jpg"));
 
   if(!imageFile.isEmpty())
   {

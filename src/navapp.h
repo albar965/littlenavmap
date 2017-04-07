@@ -82,6 +82,13 @@ public:
   static const Route& getRoute();
 
   static atools::fs::FsPaths::SimulatorType getCurrentSimulator();
+
+  /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
+   * etc. Returns the documents path if FS files cannot be found. */
+  static QString getCurrentSimulatorFilesPath();
+
+  /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
+  static QString getCurrentSimulatorShortName();
   static bool hasCurrentSimulatorSidStarSupport();
 
   static atools::sql::SqlDatabase *getDatabase();

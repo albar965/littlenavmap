@@ -79,9 +79,6 @@ public:
    * Will not return if an exception is caught during opening. */
   void closeDatabase();
 
-  /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
-  QString getSimulatorShortName() const;
-
   /* Get the database. Will return null if not opened before. */
   atools::sql::SqlDatabase *getDatabase();
 
