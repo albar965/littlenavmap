@@ -181,6 +181,7 @@ public:
 
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               map::MapAirspaceTypes types, float flightPlanAltitude, bool lazy);
+  const atools::geo::LineString *getAirspaceGeometry(int boundaryId);
 
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
@@ -240,8 +241,6 @@ private:
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
-  const atools::geo::LineString *fetchAirspaceLines(int boundaryId);
-
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
@@ -268,9 +267,9 @@ private:
   QCache<int, atools::geo::LineString> airspaceLineCache;
 
   /* Inflate bounding rectangle before passing it to query */
-  static Q_DECL_CONSTEXPR double RECT_INFLATION_FACTOR_DEG = 0.3;
-  static Q_DECL_CONSTEXPR double RECT_INFLATION_ADD_DEG = 0.1;
-  static Q_DECL_CONSTEXPR int QUERY_ROW_LIMIT = 5000;
+  static double queryRectInflationFactor;
+  static double queryRectInflationIncrement;
+  static int queryRowLimit;
 
   /* Database queries */
   atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
@@ -312,9 +311,9 @@ bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox
   // Store bounding rectangle and inflate it
   Marble::GeoDataLatLonBox cur(curRect);
   MapQuery::inflateRect(cur, cur.width(Marble::GeoDataCoordinates::Degree) *
-                        RECT_INFLATION_FACTOR_DEG + RECT_INFLATION_ADD_DEG,
+                        queryRectInflationFactor + queryRectInflationIncrement,
                         cur.height(Marble::GeoDataCoordinates::Degree) *
-                        RECT_INFLATION_FACTOR_DEG + RECT_INFLATION_ADD_DEG);
+                        queryRectInflationFactor + queryRectInflationIncrement);
 
   if(curRect.isEmpty() || !cur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer))
   {
@@ -330,7 +329,7 @@ bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox
 template<typename TYPE>
 void MapQuery::SimpleRectCache<TYPE>::validate()
 {
-  if(list.size() >= QUERY_ROW_LIMIT)
+  if(list.size() >= queryRowLimit)
   {
     curRect.clear();
     curMapLayer = nullptr;

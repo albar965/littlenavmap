@@ -63,6 +63,9 @@ void MapPainterAirspace::render(PaintContext *context)
 
     for(const MapAirspace& airspace : *airspaces)
     {
+      if(!(airspace.type & context->airspaceTypesByLayer))
+        continue;
+
       if(context->viewportRect.overlaps(airspace.bounding))
       {
         Marble::GeoDataLinearRing linearRing;
@@ -73,7 +76,9 @@ void MapPainterAirspace::render(PaintContext *context)
         if(!context->drawFast)
           painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
 
-        for(const Pos& pos : airspace.lines)
+        const LineString *lines = query->getAirspaceGeometry(airspace.id);
+
+        for(const Pos& pos : *lines)
           linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
 
         painter->drawPolygon(linearRing);

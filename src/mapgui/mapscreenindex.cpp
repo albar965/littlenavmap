@@ -69,6 +69,9 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
     {
       for(const map::MapAirspace& airspace : *airspaces)
       {
+        if(!(airspace.type & mapWidget->getShownAirspaceTypesByLayer()))
+          continue;
+
         Marble::GeoDataLatLonBox airspacebox(airspace.bounding.getNorth(), airspace.bounding.getSouth(),
                                              airspace.bounding.getEast(), airspace.bounding.getWest(),
                                              Marble::GeoDataCoordinates::Degree);
@@ -77,13 +80,16 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
         {
           QPolygon polygon;
           int x, y;
-          for(const Pos& pos : airspace.lines)
+
+          const atools::geo::LineString *lines = mapQuery->getAirspaceGeometry(airspace.id);
+
+          for(const Pos& pos : *lines)
           {
             conv.wToS(pos, x, y);
             polygon.append(QPoint(x, y));
           }
 
-          polygon = polygon.intersected(QPolygon(mapWidget->geometry()));
+          // polygon = polygon.intersected(QPolygon(mapWidget->geometry()));
           airspacePolygons.append(std::make_pair(airspace.id, polygon));
         }
       }

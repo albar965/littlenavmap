@@ -554,7 +554,6 @@ struct MapAirspace
   map::MapAirspaceTypes type;
 
   atools::geo::Rect bounding;
-  atools::geo::LineString lines;
 
   bool isValid() const
   {
