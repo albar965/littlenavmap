@@ -741,10 +741,16 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
                                         QMessageBox::No, QMessageBox::Yes);
 
         if(result == QMessageBox::Yes)
+        {
+          treeWidget->clearSelection();
           emit routeInsertProcedure(*procedureLegs);
+        }
       }
       else
+      {
+        treeWidget->clearSelection();
         emit routeInsertProcedure(*procedureLegs);
+      }
     }
     else
       qDebug() << Q_FUNC_INFO << "legs not found";
