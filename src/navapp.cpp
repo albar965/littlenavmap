@@ -81,7 +81,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   connectClient = new ConnectClient(mainWindow);
 }
 
-void NavApp::initElevationModel()
+void NavApp::initElevationProvider()
 {
   elevationProvider = new ElevationProvider(mainWindow, mainWindow->getElevationModel());
 }
@@ -206,6 +206,11 @@ void NavApp::updateWindowTitle()
 void NavApp::setStatusMessage(const QString& message)
 {
   mainWindow->setStatusMessage(message);
+}
+
+QWidget *NavApp::getQMainWidget()
+{
+  return mainWindow;
 }
 
 QMainWindow *NavApp::getQMainWindow()

@@ -17,6 +17,7 @@
 
 #include "common/elevationprovider.h"
 
+#include "navapp.h"
 #include "dtm/globereader.h"
 #include "options/optiondata.h"
 #include "geo/line.h"
@@ -26,6 +27,8 @@
 
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
+
+#include <QMessageBox>
 
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
@@ -149,12 +152,21 @@ void ElevationProvider::optionsChanged()
 
 void ElevationProvider::updateReader()
 {
-  if(OptionData::instance().getFlags() & opts::CACHE_USE_OFFLINE_ELEVATION &&
-     GlobeReader::isDirValid(OptionData::instance().getOfflineElevationPath()))
+  if(OptionData::instance().getFlags() & opts::CACHE_USE_OFFLINE_ELEVATION)
   {
-    delete globeReader;
-    globeReader = new GlobeReader(OptionData::instance().getOfflineElevationPath());
-    globeReader->openFiles();
+
+    const QString& path = OptionData::instance().getOfflineElevationPath();
+    if(!GlobeReader::isDirValid(path))
+      QMessageBox::warning(NavApp::getQMainWidget(), NavApp::applicationName(),
+                           tr("GLOBE elevation data directory is not valid:<br/><i>%1</i>").arg(path));
+    else
+    {
+      delete globeReader;
+      globeReader = new GlobeReader(path);
+      if(!globeReader->openFiles())
+        QMessageBox::warning(NavApp::getQMainWidget(), NavApp::applicationName(),
+                             tr("Cannot open GLOBE data in directory<br/><i>%1</i>").arg(path));
+    }
   }
   else
   {

@@ -60,7 +60,7 @@ public:
   static void init(MainWindow *mainWindowParam);
 
   /* Needs map widget first */
-  static void initElevationModel();
+  static void initElevationProvider();
 
   /* Deletes all aggregated objects */
   static void deInit();
@@ -99,8 +99,12 @@ public:
 
   static void updateWindowTitle();
   static void setStatusMessage(const QString& message);
+
+  /* Get main window in different variations to avoid including it */
+  static QWidget *getQMainWidget();
   static QMainWindow *getQMainWindow();
   static MainWindow *getMainWindow();
+
   static MapWidget *getMapWidget();
   static RouteController *getRouteController();
 

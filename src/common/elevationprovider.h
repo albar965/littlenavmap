@@ -66,6 +66,7 @@ public:
 
   /* True if directory is valid and contains at least one valid GLOBE file */
   bool isGlobeDirectoryValid(const QString& path) const;
+
   void optionsChanged();
 
 signals:

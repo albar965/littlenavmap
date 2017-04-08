@@ -155,7 +155,7 @@ MainWindow::MainWindow()
     mapWidget = new MapWidget(this);
     ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
 
-    NavApp::initElevationModel();
+    NavApp::initElevationProvider();
 
     // Create elevation profile widget and replace dummy widget in window
     qDebug() << "MainWindow Creating ProfileWidget";
