@@ -18,6 +18,8 @@
 #include "common/infoquery.h"
 
 #include "sql/sqldatabase.h"
+#include "settings/settings.h"
+#include "common/constants.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -27,7 +29,21 @@ using atools::sql::SqlRecordVector;
 InfoQuery::InfoQuery(SqlDatabase *sqlDb)
   : db(sqlDb)
 {
-
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
+  vorCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "VorCache", 100).toInt());
+  ndbCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "NdbCache", 100).toInt());
+  waypointCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
+  airwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirwayCache", 100).toInt());
+  runwayEndCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayEndCache", 100).toInt());
+  ilsCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
+  comCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ComCache", 100).toInt());
+  runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayCache", 100).toInt());
+  helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "HelipadCache", 100).toInt());
+  startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "StartCache", 100).toInt());
+  approachCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ApproachCache", 100).toInt());
+  transitionCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "TransitionCache", 100).toInt());
+  airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache", 100).toInt());
 }
 
 InfoQuery::~InfoQuery()

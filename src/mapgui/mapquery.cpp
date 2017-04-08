@@ -17,10 +17,12 @@
 
 #include "mapgui/mapquery.h"
 
+#include "common/constants.h"
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
 #include "sql/sqlquery.h"
 #include "common/maptools.h"
+#include "settings/settings.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
@@ -51,15 +53,23 @@ MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb)
 {
   mapTypesFactory = new MapTypesFactory();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  runwayCache.setMaxCost(2000);
-  runwayOverwiewCache.setMaxCost(2000);
-  apronCache.setMaxCost(1000);
-  taxipathCache.setMaxCost(1000);
-  parkingCache.setMaxCost(1000);
-  startCache.setMaxCost(1000);
-  helipadCache.setMaxCost(1000);
-  airspaceLineCache.setMaxCost(10000);
+  runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayCache", 2000).toInt());
+  runwayOverwiewCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayOverwiewCache", 1000).toInt());
+  apronCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ApronCache", 1000).toInt());
+  taxipathCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "TaxipathCache", 1000).toInt());
+  parkingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ParkingCache", 1000).toInt());
+  startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "StartCache", 1000).toInt());
+  helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "HelipadCache", 1000).toInt());
+  airspaceLineCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirspaceLineCache", 10000).toInt());
+
+  queryRectInflationFactor = settings.getAndStoreValue(
+    lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(
+    lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
+  queryRowLimit = settings.getAndStoreValue(
+    lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
 }
 
 MapQuery::~MapQuery()

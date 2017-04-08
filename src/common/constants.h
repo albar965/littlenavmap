@@ -107,6 +107,10 @@ const QString SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET = "SearchPaneAirport/WidgetDist
 const QString SEARCHTAB_NAV_VIEW_WIDGET = "SearchPaneNav/WidgetView";
 const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
 
+/* General settings in the configuration file not covered by any GUI elements */
+const QString SETTINGS_INFOQUERY = "Settings/InfoQuery";
+const QString SETTINGS_MAPQUERY = "Settings/MapQuery";
+
 const QString APPROACHTREE_WIDGET = "ApproachTree/Widget";
 const QString APPROACHTREE_SELECTED_WIDGET = "ApproachTree/WidgetSelected";
 const QString APPROACHTREE_STATE = "ApproachTree/TreeState";
