@@ -51,12 +51,11 @@ MapPainterRoute::~MapPainterRoute()
 
 void MapPainterRoute::render(PaintContext *context)
 {
-  atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver);
-
+  // Draw route including approaches
   if(context->objectTypes.testFlag(map::FLIGHTPLAN))
     paintRoute(context);
 
+  // Draw the approach preview if any selected in the search tab
   if(context->mapLayer->isApproach())
     paintApproach(context, mapWidget->getApproachHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
 
@@ -68,6 +67,9 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 {
   if(route->isEmpty())
     return;
+
+  atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
 
   context->painter->setBrush(Qt::NoBrush);
 
@@ -110,6 +112,12 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
   }
 
+  QPainter *painter = context->painter;
+
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBackground(mapcolors::routeOutlineColor);
+  painter->setBrush(Qt::NoBrush);
+
   if(!lines.isEmpty()) // Do not draw a line from airport to runway end
   {
     if(route->hasAnyArrivalProcedure())
@@ -124,14 +132,13 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
 
     // Draw outer line
-    context->painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine,
-                                  Qt::RoundCap, Qt::RoundJoin));
+    painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     for(const Line& line : lines)
       drawLine(context, line);
 
-    // Draw innner line
-    context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
-                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    // Draw inner line
+    painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
+                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     for(const Line& line : lines)
       drawLine(context, line);
 
@@ -140,8 +147,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     if(activeRouteLeg > 0 && activeRouteLeg <= lines.size())
     {
       // Draw active leg on top of all others to keep it visible
-      context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
-                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
+                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       drawLine(context, lines.at(activeRouteLeg - 1));
     }
@@ -150,17 +157,17 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   context->szFont(context->textSizeFlightplan * 1.1f);
 
   // Collect coordinates for text placement and lines first
-  TextPlacement textPlacement(context->painter, this);
+  TextPlacement textPlacement(painter, this);
   textPlacement.setDrawFast(context->drawFast);
   textPlacement.setLineWidth(outerlinewidth);
   textPlacement.calculateTextPositions(positions);
   textPlacement.calculateTextAlongLines(lines, routeTexts);
-  context->painter->save();
-  context->painter->setBackgroundMode(Qt::OpaqueMode);
-  context->painter->setBackground(mapcolors::routeTextBackgroundColor);
-  context->painter->setPen(mapcolors::routeTextColor);
+  painter->save();
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->setBackground(mapcolors::routeTextBackgroundColor);
+  painter->setPen(mapcolors::routeTextColor);
   textPlacement.drawTextAlongLines();
-  context->painter->restore();
+  painter->restore();
 
   context->szFont(context->textSizeFlightplan);
   // ================================================================================
@@ -222,6 +229,9 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 {
   if(route->size() >= 2)
   {
+    atools::util::PainterContextSaver saver(context->painter);
+    Q_UNUSED(saver);
+
     // Draw the top of descent circle and text
     QPoint pt = wToS(route->getTopOfDescent());
     if(!pt.isNull())
@@ -251,18 +261,22 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
 
+  QPainter *painter = context->painter;
+  atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
+
+  context->painter->setBackgroundMode(Qt::OpaqueMode);
+  context->painter->setBackground(Qt::white);
+
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
   QLineF lastLine, lastActiveLine;
 
-  context->painter->setPen(QPen(mapcolors::routeProcedurePreviewOutlineColor, outerlinewidth,
-                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  painter->setPen(QPen(mapcolors::routeProcedurePreviewOutlineColor, outerlinewidth,
+                       Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   for(int i = 0; i < legs.size(); i++)
     paintApproachSegment(context, legs, i, lastLine, nullptr, true /* no text */, preview);
-
-  context->painter->setBackgroundMode(Qt::OpaqueMode);
-  context->painter->setBackground(Qt::white);
 
   QPen missedPen(color, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
   QPen apprPen(color, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -288,9 +302,9 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
   for(int i = 0; i < legs.size(); i++)
   {
     if(legs.at(i).isMissed())
-      context->painter->setPen(missedPen);
+      painter->setPen(missedPen);
     else
-      context->painter->setPen(apprPen);
+      painter->setPen(apprPen);
 
     if(i == activeLeg)
       // Remember for drawing the active one
@@ -302,7 +316,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
   // Paint active leg
   if(!preview && activeLeg >= 0 && activeLeg < legs.size())
   {
-    context->painter->setPen(legs.at(activeLeg).isMissed() ? missedActivePen : apprActivePen);
+    painter->setPen(legs.at(activeLeg).isMissed() ? missedActivePen : apprActivePen);
     paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast, preview);
   }
 
@@ -340,7 +354,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
     }
 
     // Draw text along lines ====================================================
-    context->painter->setBackground(mapcolors::routeTextBackgroundColor);
+    painter->setBackground(mapcolors::routeTextBackgroundColor);
 
     QVector<Line> textLines;
     LineString positions;
@@ -351,7 +365,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
       positions.append(dt.line.getPos1());
     }
 
-    TextPlacement textPlacement(context->painter, this);
+    TextPlacement textPlacement(painter, this);
     textPlacement.setDrawFast(context->drawFast);
     textPlacement.setTextOnTopOfLine(false);
     textPlacement.setLineWidth(outerlinewidth);
