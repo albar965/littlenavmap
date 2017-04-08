@@ -2369,6 +2369,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
       QString runway, runwayShort;
       QString apShort, apTooltip, apTooltipAddon;
       bool showAddon = shown & map::AIRPORT_ADDON;
+      bool showEmpty = shown & map::AIRPORT_EMPTY;
       bool showStock = (shown & map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT);
       bool showHard = shown & map::AIRPORT_HARD;
       bool showAny = showStock | showAddon;
@@ -2377,17 +2378,17 @@ void MapWidget::updateVisibleObjectsStatusBar()
       if(!(shown & map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
       {
         runway = tr(" soft runways");
-        runwayShort = tr("/S");
+        runwayShort = tr(",S");
       }
       else if((shown & map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
       {
         runway = tr(" hard runways");
-        runwayShort = tr("/H");
+        runwayShort = tr(",H");
       }
       else if((shown & map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
       {
         runway = tr(" all runway types");
-        runwayShort = tr("/H/S");
+        runwayShort = tr(",H,S");
       }
       else if(!(shown & map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
       {
@@ -2397,9 +2398,9 @@ void MapWidget::updateVisibleObjectsStatusBar()
 
       // Prepare short airport indicator
       if(showAddon)
-        apShort = tr("AP/A");
+        apShort = showEmpty ? tr("AP,A,E") : tr("AP,A");
       else if(showStock)
-        apShort = tr("AP");
+        apShort = showEmpty ? tr("AP,E") : tr("AP");
 
       // Build the rest of the strings
       if(layer->getDataSource() == layer::ALL)
@@ -2467,6 +2468,9 @@ void MapWidget::updateVisibleObjectsStatusBar()
 
       if(!apTooltipAddon.isEmpty())
         tooltip.tr().td(apTooltipAddon).trEnd();
+
+      if(showEmpty)
+        tooltip.tr().td(tr("Empty airports with zero rating")).trEnd();
     }
 
     QStringList navaidLabel, navaidsTooltip;
@@ -2503,39 +2507,43 @@ void MapWidget::updateVisibleObjectsStatusBar()
     }
 
     QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip;
-    map::MapAirspaceTypes airspaceTypes = paintLayer->getShownAirspacesTypesByLayer();
-    // Collect airspace information ==========================================================
-    for(int i = 0; i < map::MAP_AIRSPACE_TYPE_BITS; i++)
+    if(shown & map::AIRSPACE)
     {
-      map::MapAirspaceTypes type(1 << i);
-      if(airspaceTypes & type)
-        airspacesTooltip.append(map::airspaceTypeToString(type));
+      map::MapAirspaceTypes airspaceTypes = paintLayer->getShownAirspacesTypesByLayer();
+      // Collect airspace information ==========================================================
+      for(int i = 0; i < map::MAP_AIRSPACE_TYPE_BITS; i++)
+      {
+        map::MapAirspaceTypes type(1 << i);
+        if(airspaceTypes & type)
+          airspacesTooltip.append(map::airspaceTypeToString(type));
+      }
+      if(airspaceTypes & map::AIRSPACE_ICAO)
+      {
+        airspaceGroupLabel.append(tr("ICAO"));
+        airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
+      }
+      if(airspaceTypes & map::AIRSPACE_FIR)
+      {
+        airspaceGroupLabel.append(tr("FIR"));
+        airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
+      }
+      if(airspaceTypes & map::AIRSPACE_RESTRICTED)
+      {
+        airspaceGroupLabel.append(tr("RSTR"));
+        airspaceGroupTooltip.append(tr("Restricted (RSTR)"));
+      }
+      if(airspaceTypes & map::AIRSPACE_SPECIAL)
+      {
+        airspaceGroupLabel.append(tr("SPEC"));
+        airspaceGroupTooltip.append(tr("Special (SPEC)"));
+      }
+      if(airspaceTypes & map::AIRSPACE_OTHER || airspaceTypes & map::AIRSPACE_CENTER)
+      {
+        airspaceGroupLabel.append(tr("OTR"));
+        airspaceGroupTooltip.append(tr("Centers and others (OTR)"));
+      }
     }
-    if(airspaceTypes & map::AIRSPACE_ICAO)
-    {
-      airspaceGroupLabel.append(tr("ICAO"));
-      airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
-    }
-    if(airspaceTypes & map::AIRSPACE_FIR)
-    {
-      airspaceGroupLabel.append(tr("FIR"));
-      airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
-    }
-    if(airspaceTypes & map::AIRSPACE_RESTRICTED)
-    {
-      airspaceGroupLabel.append(tr("RSTR"));
-      airspaceGroupTooltip.append(tr("Restricted (RSTR)"));
-    }
-    if(airspaceTypes & map::AIRSPACE_SPECIAL)
-    {
-      airspaceGroupLabel.append(tr("SPEC"));
-      airspaceGroupTooltip.append(tr("Special (SPEC)"));
-    }
-    if(airspaceTypes & map::AIRSPACE_OTHER || airspaceTypes & map::AIRSPACE_CENTER)
-    {
-      airspaceGroupLabel.append(tr("OTR"));
-      airspaceGroupTooltip.append(tr("Centers and others (OTR)"));
-    }
+
     if(!navaidsTooltip.isEmpty())
       tooltip.tr().td().b(tr("Navaids: ")).text(navaidsTooltip.join(", ")).tdEnd().trEnd();
     else
@@ -2560,7 +2568,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
       label.append(airspaceGroupLabel.join(tr(",")));
 
     // Update the statusbar label text and tooltip of the label
-    mainWindow->setMapObjectsShownMessageText(label.join(" - "), tooltip.getHtml());
+    mainWindow->setMapObjectsShownMessageText(label.join(" / "), tooltip.getHtml());
   }
 }
 
