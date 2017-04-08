@@ -27,6 +27,11 @@
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
 
+/* Limt altitude to this value */
+static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
+/* Point removal equality tolerance in meter */
+static Q_DECL_CONSTEXPR float SAME_ONLINE_ELEVATION_EPSILON = 1.f;
+
 using atools::geo::Pos;
 using atools::geo::Line;
 using atools::geo::LineString;
@@ -80,7 +85,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     {
       float alt = pos.getAltitude();
       if(!(alt > atools::dtm::OCEAN && alt < atools::dtm::INVALID))
-        // Reset all invalid to 0
+        // Reset all invalid and ocean indicators to 0
         pos.setAltitude(0.f);
     }
   }
@@ -92,8 +97,29 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     QVector<GeoDataCoordinates> temp = marbleModel->heightProfile(line.getPos1().getLonX(), line.getPos1().getLatY(),
                                                                   line.getPos2().getLonX(), line.getPos2().getLatY());
 
+    Pos lastDropped;
     for(const GeoDataCoordinates& c : temp)
-      elevations.append(Pos(c.longitude(), c.latitude(), c.altitude()).toDeg());
+    {
+      Pos pos(c.longitude(), c.latitude(), c.altitude());
+      pos.toDeg();
+
+      if(!elevations.isEmpty())
+      {
+        if(atools::almostEqual(elevations.last().getAltitude(), pos.getAltitude(), SAME_ONLINE_ELEVATION_EPSILON))
+        {
+          // Drop points with similar altitude
+          lastDropped = pos;
+          continue;
+        }
+        else if(lastDropped.isValid())
+        {
+          // Add last point of a stretch with similar altitude
+          elevations.append(lastDropped);
+          lastDropped = Pos();
+        }
+      }
+      elevations.append(pos);
+    }
 
     if(elevations.isEmpty())
     {
@@ -102,6 +128,10 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
       elevations.append(line.getPos2());
     }
   }
+
+  for(Pos& pos : elevations)
+    // Limit ground altitude
+    pos.setAltitude(std::min(pos.getAltitude(), ALTITUDE_LIMIT_METER));
 }
 
 bool ElevationProvider::isGlobeDirectoryValid(const QString& path) const

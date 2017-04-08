@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>920</width>
+    <width>1007</width>
     <height>440</height>
    </rect>
   </property>
@@ -1709,8 +1709,8 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
            <widget class="QRadioButton" name="radioButtonCacheUseOnlineElevation">
             <property name="toolTip">
              <string>Use online elevation data to display ground in flight plan elevation profile. 
-Has a higher resolution than the offline data source but updates are slow 
-it has many errors.</string>
+Has a higher resolution than the offline data source but updates are slow.
+Source data has many errors.</string>
             </property>
             <property name="statusTip">
              <string>Use online elevation data to display ground in flight plan elevation profile. \nHas a higher resolution than the offline data source but updates are slow \nit has many errors.</string>

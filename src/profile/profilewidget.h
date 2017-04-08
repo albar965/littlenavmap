@@ -153,9 +153,6 @@ private:
   /* Do not calculate a profile for legs longer than this value */
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
 
-  /* Limt altitude to this value */
-  const float ALTITUDE_LIMIT_FT = 30000.f;
-
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
   QPolygon aircraftTrackPoints;

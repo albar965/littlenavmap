@@ -799,14 +799,8 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
           return ElevationLegList();
 
         Pos& coord = elevations[j];
-        // Limit ground altitude to 30000 feet
-        float altFeet = std::min(meterToFeet(coord.getAltitude()), ALTITUDE_LIMIT_FT);
+        float altFeet = meterToFeet(coord.getAltitude());
         coord.setAltitude(altFeet);
-
-        // Drop points with similar altitude except the first and last one on a segment
-        if(geometry.size() == 2 && lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
-           legs.elevationLegs.size() > 2 && atools::almostEqual(altFeet, lastPos.getAltitude(), 10.f))
-          continue;
 
         // Adjust maximum
         if(altFeet > leg.maxElevation)

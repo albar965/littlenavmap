@@ -17,6 +17,7 @@
 
 #include "common/coordinateconverter.h"
 
+#include "atools.h"
 #include "geo/pos.h"
 #include "geo/line.h"
 
@@ -217,7 +218,7 @@ Pos CoordinateConverter::sToW(const QPoint& point) const
 
 Pos CoordinateConverter::sToW(const QPointF& point) const
 {
-  return sToW(point.x(), point.y());
+  return sToW(atools::roundToInt(point.x()), atools::roundToInt(point.y()));
 }
 
 bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y,
@@ -231,9 +232,9 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
   if(numPoints == 0)
     visible = viewport->screenCoordinates(coords, xordinates[0], y, hidden);
 
-    // Do not paint repetitions for the Mercator projection
-    // The fist coordinate is good enough here
-    x = xordinates[0];
+  // Do not paint repetitions for the Mercator projection
+  // The fist coordinate is good enough here
+  x = xordinates[0];
 
   if(isHidden != nullptr)
     *isHidden = hidden;
