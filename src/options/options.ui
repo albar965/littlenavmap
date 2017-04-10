@@ -2306,7 +2306,11 @@ You have to reload the scenery library so that the changes take effect.</string>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxOptions">
      <property name="toolTip">
-      <string>Restore all settings that can be done with this dialog.</string>
+      <string>Reset all settings back to default.
+Changes only settings that can be done with this dialog.</string>
+     </property>
+     <property name="statusTip">
+      <string>Reset all settings back to default.\nChanges only settings that can be done with this dialog.</string>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

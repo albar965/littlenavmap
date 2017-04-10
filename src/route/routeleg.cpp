@@ -594,12 +594,28 @@ const QString& RouteLeg::getAirway() const
     return EMPTY_STRING;
 }
 
+QString RouteLeg::getFrequencyOrChannel() const
+{
+  if(getFrequency() > 0)
+    return QString::number(getFrequency());
+  else
+    return getChannel();
+}
+
+QString RouteLeg::getChannel() const
+{
+  if(vor.isValid() && vor.tacan)
+    return vor.channel;
+  else
+    return QString();
+}
+
 int RouteLeg::getFrequency() const
 {
   if(type == map::INVALID)
     return 0;
 
-  if(vor.isValid())
+  if(vor.isValid() && !vor.tacan)
     return vor.frequency;
   else if(ndb.isValid())
     return ndb.frequency;

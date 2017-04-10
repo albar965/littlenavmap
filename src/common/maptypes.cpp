@@ -243,9 +243,9 @@ const static QHash<QString, QString> navTypeNamesVorLong(
     {"H", QObject::tr("High")},
     {"L", QObject::tr("Low")},
     {"T", QObject::tr("Terminal")},
-    {"VH", QObject::tr("High")},
-    {"VL", QObject::tr("Low")},
-    {"VT", QObject::tr("Terminal")},
+    {"VTH", QObject::tr("High")},
+    {"VTL", QObject::tr("Low")},
+    {"VTT", QObject::tr("Terminal")}
   });
 
 const static QHash<QString, QString> navTypeNamesNdb(
@@ -270,12 +270,16 @@ const static QHash<QString, QString> navTypeNamesWaypoint(
     {"N", QObject::tr("NDB")}
   });
 
-const static QHash<QString, QString> navNames(
+const static QHash<QString, QString> navTypeNames(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"VD", QObject::tr("VORDME")},
+    {"VT", QObject::tr("VORTAC")},
+    {"VTD", QObject::tr("DME only VORTAC")},
     {"V", QObject::tr("VOR")},
     {"D", QObject::tr("DME")},
+    {"TC", QObject::tr("TACAN")},
+    {"TCD", QObject::tr("DME only TACAN")},
     {"N", QObject::tr("NDB")},
     {"W", QObject::tr("Waypoint")}
   });
@@ -498,7 +502,7 @@ QString navTypeNameWaypoint(const QString& type)
 
 QString navName(const QString& type)
 {
-  return navNames.value(type);
+  return navTypeNames.value(type);
 }
 
 QString surfaceName(const QString& surface)
@@ -692,13 +696,23 @@ bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
 map::MapObjectTypes navTypeToMapObjectType(const QString& navType)
 {
   map::MapObjectTypes type = NONE;
-  if(navType == "V" || navType == "VD" || navType == "D")
+  if(navType.startsWith("V") || navType == "D" || navType.startsWith("TC"))
     type = map::VOR;
   else if(navType == "N")
     type = map::NDB;
   else if(navType == "W")
     type = map::WAYPOINT;
   return type;
+}
+
+bool navTypeTacan(const QString& navType)
+{
+  return navType == "TC" || navType == "TCD";
+}
+
+bool navTypeVortac(const QString& navType)
+{
+  return navType == "VT" || navType == "VTD";
 }
 
 QString airwayTypeToShortString(MapAirwayType type)
@@ -779,13 +793,30 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 
 QString vorType(const MapVor& vor)
 {
-  QString type;
-  if(vor.dmeOnly)
-    return QObject::tr("DME");
-  else if(vor.hasDme)
-    return QObject::tr("VORDME");
+  if(vor.vortac)
+  {
+    if(vor.dmeOnly)
+      return QObject::tr("DME only VORTAC");
+    else
+      return QObject::tr("VORTAC");
+  }
+  else if(vor.tacan)
+  {
+    if(vor.dmeOnly)
+      return QObject::tr("DME only TACAN");
+    else
+      return QObject::tr("TACAN");
+
+  }
   else
-    return QObject::tr("VOR");
+  {
+    if(vor.dmeOnly)
+      return QObject::tr("DME");
+    else if(vor.hasDme)
+      return QObject::tr("VORDME");
+    else
+      return QObject::tr("VOR");
+  }
 }
 
 QString vorText(const MapVor& vor)
@@ -938,9 +969,13 @@ QString patternDirection(const QString& type)
 
 QString vorFullShortText(const MapVor& vor)
 {
-  QString type = vor.type.at(0);
+  QString type = vor.type.startsWith("VT") ? vor.type.at(vor.type.size() - 1) : vor.type.at(0);
 
-  if(vor.dmeOnly)
+  if(vor.tacan)
+    return QObject::tr("TACAN").arg(type);
+  else if(vor.vortac)
+    return QObject::tr("VORTAC (%1)").arg(type);
+  else if(vor.dmeOnly)
     return QObject::tr("DME (%1)").arg(type);
   else if(vor.hasDme)
     return QObject::tr("VORDME (%1)").arg(type);

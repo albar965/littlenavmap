@@ -80,6 +80,8 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     map::MapVor vor;
     vor.dmeOnly = navtype == "D";
     vor.hasDme = navtype == "VD" || navtype == "D";
+    vor.tacan = map::navTypeTacan(navtype);
+    vor.vortac = map::navTypeVortac(navtype);
     symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize, false, false, 0);
   }
 }

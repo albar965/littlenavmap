@@ -208,20 +208,54 @@ void MapTypesFactory::fillVorFromNav(const SqlRecord& record, map::MapVor& vor)
   fillVorBase(record, vor);
 
   QString navType = record.valueStr("nav_type");
-  if(navType == "VD")
+  if(navType == "TC")
   {
     vor.dmeOnly = false;
     vor.hasDme = true;
+    vor.tacan = true;
+    vor.vortac = false;
+  }
+  else if(navType == "TCD")
+  {
+    vor.dmeOnly = true;
+    vor.hasDme = true;
+    vor.tacan = true;
+    vor.vortac = false;
+  }
+  else if(navType == "VT")
+  {
+    vor.dmeOnly = false;
+    vor.hasDme = true;
+    vor.tacan = false;
+    vor.vortac = true;
+  }
+  else if(navType == "VTD")
+  {
+    vor.dmeOnly = true;
+    vor.hasDme = true;
+    vor.tacan = false;
+    vor.vortac = true;
+  }
+  else if(navType == "VD")
+  {
+    vor.dmeOnly = false;
+    vor.hasDme = true;
+    vor.tacan = false;
+    vor.vortac = false;
   }
   else if(navType == "D")
   {
     vor.dmeOnly = true;
     vor.hasDme = true;
+    vor.tacan = false;
+    vor.vortac = false;
   }
   else if(navType == "V")
   {
     vor.dmeOnly = false;
     vor.hasDme = false;
+    vor.tacan = false;
+    vor.vortac = false;
   }
 
   // Adapt to nav_search table frequency scaling
@@ -234,8 +268,24 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
   vor.ident = record.valueStr("ident");
   vor.region = record.valueStr("region");
   vor.name = atools::capString(record.valueStr("name"));
-  vor.type = record.valueStr("type");
+
+  // Check also for types from the nav_search table and VORTACs
+  QString type = record.valueStr("type");
+  if(type == "VH" || type == "VTH")
+    vor.type = "H";
+  else if(type == "VL" || type == "VTL")
+    vor.type = "L";
+  else if(type == "VT" || type == "VTT")
+    vor.type = "T";
+  else
+    vor.type = type;
+
+  vor.tacan = type == "TC";
+  vor.vortac = type.startsWith("VT");
+
+  vor.channel = record.valueStr("channel");
   vor.frequency = record.valueInt("frequency");
+
   vor.range = record.valueInt("range");
   vor.magvar = record.valueFloat("mag_var");
   vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),

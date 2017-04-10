@@ -111,6 +111,8 @@ public:
 
   /* Get frequency of radio navaid. 0 if not a radio navaid. Source is always database. */
   int getFrequency() const;
+  QString getChannel() const;
+  QString getFrequencyOrChannel() const;
 
   /* Get magnetic variation. Source is always database. */
   float getMagvar() const

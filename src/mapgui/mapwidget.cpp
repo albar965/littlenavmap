@@ -1604,9 +1604,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapNavaidRange)
     {
       if(vor != nullptr)
-        addNavRangeRing(vor->position, map::VOR, vor->ident, vor->frequency, vor->range);
+        addNavRangeRing(vor->position, map::VOR, vor->ident, vor->getFrequencyOrChannel(), vor->range);
       else if(ndb != nullptr)
-        addNavRangeRing(ndb->position, map::NDB, ndb->ident, ndb->frequency, ndb->range);
+        addNavRangeRing(ndb->position, map::NDB, ndb->ident, QString::number(ndb->frequency), ndb->range);
     }
     else if(action == ui->actionMapRangeRings)
       addRangeRing(pos);
@@ -1642,7 +1642,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else if(vor != nullptr)
       {
-        dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
+        if(vor->tacan)
+          dm.text = vor->ident + " " + vor->channel;
+        else
+          dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
         dm.from = vor->position;
         dm.magvar = vor->magvar;
         dm.hasMagvar = !vor->dmeOnly;
@@ -1752,16 +1755,21 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 }
 
 void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type,
-                                const QString& ident, int frequency, int range)
+                                const QString& ident, const QString& frequency, int range)
 {
   map::RangeMarker ring;
   ring.type = type;
   ring.center = pos;
 
   if(type == map::VOR)
-    ring.text = ident + " " + QString::number(frequency / 1000., 'f', 2);
+  {
+    if(frequency.endsWith("X") || frequency.endsWith("Y"))
+      ring.text = ident + " " + frequency;
+    else
+      ring.text = ident + " " + QString::number(frequency.toFloat() / 1000., 'f', 2);
+  }
   else if(type == map::NDB)
-    ring.text = ident + " " + QString::number(frequency / 100., 'f', 2);
+    ring.text = ident + " " + QString::number(frequency.toFloat() / 100., 'f', 2);
 
   ring.ranges.append(range);
   screenIndex->getRangeMarks().append(ring);

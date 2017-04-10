@@ -1617,17 +1617,17 @@
                </item>
                <item>
                 <property name="text">
-                 <string>VOR - High</string>
+                 <string>VOR/VORTAC - High</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>VOR - Low</string>
+                 <string>VOR/VORTAC - Low</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>VOR - Terminal</string>
+                 <string>VOR/VORTAC - Terminal</string>
                 </property>
                </item>
                <item>
@@ -1687,12 +1687,12 @@
                </item>
                <item>
                 <property name="text">
-                 <string>All VOR</string>
+                 <string>All VOR/VORTAC/TACAN</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>All VOR and NDB</string>
+                 <string>All VOR/VORTAC/TACAN/NDB</string>
                 </property>
                </item>
                <item>
@@ -1708,6 +1708,16 @@
                <item>
                 <property name="text">
                  <string>Only DME</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Only VORTAC</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Only TACAN</string>
                 </property>
                </item>
                <item>

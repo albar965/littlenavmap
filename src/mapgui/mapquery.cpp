@@ -420,9 +420,7 @@ map::MapVor MapQuery::getVorById(int id)
   vorByIdQuery->bindValue(":id", id);
   vorByIdQuery->exec();
   if(vorByIdQuery->next())
-  {
     mapTypesFactory->fillVor(vorByIdQuery->record(), vor);
-  }
   vorByIdQuery->finish();
   return vor;
 }
@@ -433,9 +431,7 @@ map::MapNdb MapQuery::getNdbById(int id)
   ndbByIdQuery->bindValue(":id", id);
   ndbByIdQuery->exec();
   if(ndbByIdQuery->next())
-  {
     mapTypesFactory->fillNdb(ndbByIdQuery->record(), ndb);
-  }
   ndbByIdQuery->finish();
   return ndb;
 }
@@ -446,9 +442,7 @@ map::MapIls MapQuery::getIlsById(int id)
   ilsByIdQuery->bindValue(":id", id);
   ilsByIdQuery->exec();
   if(ilsByIdQuery->next())
-  {
     mapTypesFactory->fillIls(ilsByIdQuery->record(), ils);
-  }
   ilsByIdQuery->finish();
   return ils;
 }
@@ -459,9 +453,7 @@ map::MapWaypoint MapQuery::getWaypointById(int id)
   waypointByIdQuery->bindValue(":id", id);
   waypointByIdQuery->exec();
   if(waypointByIdQuery->next())
-  {
     mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
-  }
   waypointByIdQuery->finish();
   return wp;
 }
@@ -472,9 +464,7 @@ map::MapRunwayEnd MapQuery::getRunwayEndById(int id)
   runwayEndByIdQuery->bindValue(":id", id);
   runwayEndByIdQuery->exec();
   if(runwayEndByIdQuery->next())
-  {
     mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end);
-  }
   runwayEndByIdQuery->finish();
   return end;
 }
@@ -1381,7 +1371,7 @@ void MapQuery::initQueries()
     "mag_var, lonx, laty ");
 
   static const QString vorQueryBase(
-    "vor_id, ident, name, region, type, name, frequency, range, dme_only, dme_altitude, "
+    "vor_id, ident, name, region, type, name, frequency, channel, range, dme_only, dme_altitude, "
     "mag_var, altitude, lonx, laty ");
   static const QString ndbQueryBase(
     "ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");

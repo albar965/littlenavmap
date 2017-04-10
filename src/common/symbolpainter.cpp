@@ -363,6 +363,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
                                   bool routeFill, bool fast, int largeSize)
 {
   atools::util::PainterContextSaver saver(painter);
+  Q_UNUSED(saver);
+
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
     painter->setBrush(mapcolors::routeTextBoxColor);
@@ -383,23 +385,87 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
 
     float sizeF = static_cast<float>(size);
     float radius = sizeF / 2.f;
-    if(vor.hasDme)
-      // DME rectangle
-      painter->drawRect(QRectF(-sizeF / 2.f, -sizeF / 2.f, sizeF, sizeF));
 
-    if(!vor.dmeOnly)
+    if(vor.tacan || vor.vortac)
     {
-      // Draw VOR symbol
-      float corner = 2.f;
-      QPolygonF polygon;
-      polygon << QPointF(-radius / corner, -radius)
-              << QPointF(radius / corner, -radius)
-              << QPointF(radius, 0.f)
-              << QPointF(radius / corner, radius)
-              << QPointF(-radius / corner, radius)
-              << QPointF(-radius, 0.f);
+      // Draw TACAN symbol or VORTAC outline
+      // Coordinates take from SVG graphics
+      sizeF += 2.f;
 
+      QPolygonF polygon;
+      polygon
+      << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
+      << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
+      << QPointF((425. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.)
+      << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+      << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+      << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
+      << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
+      << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
+      << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
+      << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+      << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+      << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
+      << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
+      double tx = polygon.boundingRect().width() / 2.;
+      double ty = polygon.boundingRect().height() / 2. + 1.;
+      polygon.translate(tx, ty);
       painter->drawConvexPolygon(polygon);
+
+      if(vor.vortac)
+      {
+        // Draw the filled VORTAC blocks
+        painter->setBrush(mapcolors::vorSymbolColor);
+        painter->setPen(QPen(mapcolors::vorSymbolColor, 1, Qt::SolidLine, Qt::SquareCap));
+
+        polygon.clear();
+        polygon
+        << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+        << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
+        << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
+        << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
+        polygon.translate(tx, ty);
+        painter->drawConvexPolygon(polygon);
+
+        polygon.clear();
+        polygon
+        << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
+        << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
+        << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+        << QPointF((424. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.);
+        polygon.translate(tx, ty);
+        painter->drawConvexPolygon(polygon);
+
+        polygon.clear();
+        polygon
+        << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
+        << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+        << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+        << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.);
+        polygon.translate(tx, ty);
+        painter->drawConvexPolygon(polygon);
+      }
+    }
+    else
+    {
+      if(vor.hasDme)
+        // DME rectangle
+        painter->drawRect(QRectF(-sizeF / 2.f, -sizeF / 2.f, sizeF, sizeF));
+
+      if(!vor.dmeOnly)
+      {
+        // Draw VOR symbol
+        float corner = 2.f;
+        QPolygonF polygon;
+        polygon << QPointF(-radius / corner, -radius)
+                << QPointF(radius / corner, -radius)
+                << QPointF(radius, 0.f)
+                << QPointF(radius / corner, radius)
+                << QPointF(-radius / corner, radius)
+                << QPointF(-radius, 0.f);
+
+        painter->drawConvexPolygon(polygon);
+      }
     }
 
     if(largeSize > 0 && !vor.dmeOnly)
@@ -421,7 +487,6 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
       }
     }
     painter->resetTransform();
-
   }
 
   if(!fast)
@@ -535,7 +600,12 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x
     texts.append(vor.ident);
 
   if(flags & textflags::FREQ)
-    texts.append(QString::number(vor.frequency / 1000., 'f', 2));
+  {
+    if(!vor.tacan)
+      texts.append(QString::number(vor.frequency / 1000., 'f', 2));
+    if(vor.tacan || vor.vortac)
+      texts.append(vor.channel);
+  }
 
   textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)

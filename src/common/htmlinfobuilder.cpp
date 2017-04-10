@@ -811,8 +811,12 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
               if(!vorReg.isEmpty())
               {
                 html.row2(tr("DME Type:"), map::navTypeNameVorLong(vorReg.valueStr("type")));
-                html.row2(tr("DME Frequency:"),
-                          locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+                if(vorReg.valueInt("frequency") > 0)
+                  html.row2(tr("DME Frequency:"),
+                            locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+
+                if(!vorReg.valueStr("channel").isEmpty())
+                  html.row2(tr("DME Channel:"), vorReg.valueStr("channel"));
                 html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
                 html.row2(tr("DME Morse:"), morse->getCode(vorReg.valueStr("ident")),
                           atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
@@ -850,10 +854,29 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
     if(result.hasVor())
     {
       const MapVor& vor = result.vors.first();
-      html.row2(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
-      html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
-      html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
-      html.row2(tr("VOR Morse:"), morse->getCode(vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+
+      if(vor.tacan)
+      {
+        html.row2(tr("TACAN Channel:"), vor.channel);
+        html.row2(tr("TACAN Range:"), Unit::distNm(vor.range));
+      }
+      else if(vor.vortac)
+      {
+        html.row2(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.type));
+        html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+        html.row2(tr("VORTAC Channel:"), vor.channel);
+        html.row2(tr("VORTAC Range:"), Unit::distNm(vor.range));
+        html.row2(tr("VORTAC Morse:"), morse->getCode(
+                    vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+      }
+      else
+      {
+        html.row2(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
+        html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+        html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
+        html.row2(tr("VOR Morse:"), morse->getCode(
+                    vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+      }
     }
     else
       qWarning() << "VOR data not found";
@@ -1118,9 +1141,22 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(vor.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
 
-  html.row2(tr("Type:"), map::navTypeNameVorLong(vor.type));
+  if(vor.tacan)
+  {
+    if(vor.dmeOnly)
+      html.row2(tr("Type:"), tr("DME only"));
+  }
+  else
+    html.row2(tr("Type:"), map::navTypeNameVorLong(vor.type));
+
   html.row2(tr("Region:"), vor.region);
-  html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+
+  if(!vor.tacan)
+    html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+
+  if(vor.tacan || vor.vortac)
+    html.row2(tr("Channel:"), vor.channel);
+
   if(!vor.dmeOnly)
     html.row2(tr("Magvar:"), map::magvarText(vor.magvar));
   html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));

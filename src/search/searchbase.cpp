@@ -781,15 +781,26 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       NavApp::getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapNavaidRange)
     {
-      // Radio navaid range ring
-      int frequency = controller->getRawData(index.row(), "frequency").toInt();
+      QString freqChaStr;
       if(navType == map::VOR)
-        // Adapt scaled frequency from nav_search table to the scale used the VOR table
-        frequency /= 10;
+      {
+        int frequency = controller->getRawData(index.row(), "frequency").toInt();
+        if(frequency > 0)
+        {
+          // Use frequency for VOR and VORTAC
+          frequency /= 10;
+          freqChaStr = QString::number(frequency);
+        }
+        else
+          // Use channel for TACAN
+          freqChaStr = controller->getRawData(index.row(), "channel").toString();
+      }
+      else if(navType == map::NDB)
+        freqChaStr = controller->getRawData(index.row(), "frequency").toString();
 
       NavApp::getMapWidget()->addNavRangeRing(position, navType,
                                               controller->getRawData(index.row(), "ident").toString(),
-                                              frequency,
+                                              freqChaStr,
                                               controller->getRawData(index.row(), "range").toInt());
     }
     else if(action == ui->actionMapHideRangeRings)

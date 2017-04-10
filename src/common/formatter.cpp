@@ -138,9 +138,10 @@ QString capNavString(const QString& str)
     // Do not capitalize words that contains numbers but not spaces (airspace names)
     return str;
 
-  // Ignore aviation acronym in capitalization
+  // Ignore aviation acronyms in capitalization
   static const QSet<QString> ignore({ // Navaids
-                                      "VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME",
+                                      "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
+                                      "ILS", "NDBDME",
                                       // Frequencies
                                       "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
                                       // Navaid and precision approach types

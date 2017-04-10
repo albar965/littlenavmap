@@ -67,7 +67,7 @@ const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Airway or\nProcedure"),
                                     QObject::tr("Restriction\n%alt%"),
                                     QObject::tr("Type"),
-                                    QObject::tr("Freq.\nMHz/kHz"),
+                                    QObject::tr("Freq.\nMHz/kHz/Cha."),
                                     QObject::tr("Range\n%dist%"),
                                     QObject::tr("Course\n°M"),
                                     QObject::tr("Direct\n°M"),
@@ -1399,7 +1399,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         const RouteLeg& routeLegSel = route.at(idx);
         if(routeLegSel.getMapObjectType() == map::VOR || routeLegSel.getMapObjectType() == map::NDB)
           NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), routeLegSel.getMapObjectType(),
-                                                  routeLegSel.getIdent(), routeLegSel.getFrequency(),
+                                                  routeLegSel.getIdent(), routeLegSel.getFrequencyOrChannel(),
                                                   routeLegSel.getRange());
       }
     }
@@ -2348,13 +2348,15 @@ void RouteController::updateTableModel()
       itemRow[rc::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
 
     // VOR/NDB frequency =====================
-    if(leg.getFrequency() > 0)
+    if(leg.getVor().isValid())
     {
-      if(leg.getVor().isValid())
+      if(leg.getVor().tacan)
+        itemRow[rc::FREQ] = new QStandardItem(leg.getVor().channel);
+      else
         itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 1000.f, 'f', 2));
-      else if(leg.getNdb().isValid())
-        itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
     }
+    else if(leg.getNdb().isValid())
+      itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
 
     // VOR/NDB range =====================
     if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))

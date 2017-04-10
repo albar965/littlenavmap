@@ -86,6 +86,8 @@ typedef QVector<MapObjectRef> MapObjectRefList;
 
 /* Convert type from nav_search table to enum */
 map::MapObjectTypes navTypeToMapObjectType(const QString& navType);
+bool navTypeTacan(const QString& navType);
+bool navTypeVortac(const QString& navType);
 
 /* Check surface attributes */
 bool isHardSurface(const QString& surface);
@@ -347,9 +349,18 @@ struct MapVor
   int id; /* database id vor.vor_id*/
   float magvar;
   int frequency /* MHz * 1000 */, range /* nm */;
+  QString channel;
   atools::geo::Pos position;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
-  bool dmeOnly, hasDme;
+  bool dmeOnly, hasDme, tacan, vortac;
+
+  QString getFrequencyOrChannel() const
+  {
+    if(frequency > 0)
+      return QString::number(frequency);
+    else
+      return channel;
+  }
 
   bool isValid() const
   {

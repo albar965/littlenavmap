@@ -176,7 +176,7 @@ public:
 
   /* Add radio navaid range ring */
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type, const QString& ident,
-                       int frequency, int range);
+                       const QString& frequency, int range);
 
   /* Removes all range rings and distance measurement lines */
   void clearRangeRingsAndDistanceMarkers();

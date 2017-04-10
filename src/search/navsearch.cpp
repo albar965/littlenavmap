@@ -67,6 +67,36 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
               a->setChecked(state);
           });
 
+  // Possible VOR types
+  // H
+  // L
+  // T
+  // TC
+  // VTH
+  // VTL
+  // VTT
+
+  // Possible combinations
+  // type   nav_type
+  // N	     W
+  // NCP	   N
+  // NH	     N
+  // NHH	   N
+  // NMH	   N
+  // TC	     TC
+  // V	     W
+  // VH	     D
+  // VH	     V
+  // VH	     VD
+  // VH	     VT
+  // VL	     V
+  // VL	     VD
+  // VL	     VT
+  // VT	     V
+  // VT	     VD
+  // VT	     VT
+  // WN	     W
+  // WU	     W
   // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
@@ -84,11 +114,13 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
 
   QStringList navTypeCondMap;
   navTypeCondMap << QString()
-                 << "nav_type in ('V', 'VD', 'D')"
-                 << "nav_type in ('V', 'VD', 'D', 'N')"
-                 << "nav_type = 'VD'"
-                 << "nav_type = 'V'"
-                 << "nav_type = 'D'"
+                 << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"
+                 << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))"
+                 << "nav_type in ('VD')"
+                 << "nav_type in ('V')"
+                 << "nav_type in ('D')"
+                 << "nav_type in ('VT')"
+                 << "nav_type in ('TC', 'TCD')"
                  << "nav_type = 'N'"
                  << "nav_type = 'W'"
                  << "nav_type = 'W' and "
@@ -111,6 +143,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
   append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nICAO")).filter()).
   append(Column("frequency", tr("Frequency\nkHz/MHz"))).
+  append(Column("channel", tr("Channel"))).
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
          filter().condition(">").convertFunc(Unit::distNmF)).
   append(Column("mag_var", tr("Mag\nVar°"))).
@@ -264,25 +297,25 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
 QString NavSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
-  if(col->getColumnName() == "type")
-    return map::navTypeName(displayRoleValue.toString());
-  else if(col->getColumnName() == "nav_type")
+  if(col->getColumnName() == "nav_type")
     return map::navName(displayRoleValue.toString());
+  else if(col->getColumnName() == "type")
+    return map::navTypeName(displayRoleValue.toString());
   else if(col->getColumnName() == "name")
     return atools::capString(displayRoleValue.toString());
-  else if(col->getColumnName() == "range")
+  else if(col->getColumnName() == "range" && displayRoleValue.toFloat() > 0.f)
     return Unit::distNm(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "altitude")
     return Unit::altFeet(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "frequency" && !displayRoleValue.isNull())
   {
-    double freq = displayRoleValue.toDouble();
-
+    // VOR and/or DME
+    int freq = displayRoleValue.toInt();
     // VOR and DME are scaled up in nav_search to easily differentiate from NDB
     if(freq >= 1000000 && freq <= 1200000)
-      return QLocale().toString(displayRoleValue.toDouble() / 10000., 'f', 2);
+      return QLocale().toString(static_cast<float>(freq) / 10000.f, 'f', 2);
     else if(freq >= 10000 && freq <= 120000)
-      return QLocale().toString(displayRoleValue.toDouble() / 100., 'f', 1);
+      return QLocale().toString(static_cast<float>(freq) / 100.f, 'f', 1);
     else
       return "Invalid";
   }
