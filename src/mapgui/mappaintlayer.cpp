@@ -228,7 +228,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(4000).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
