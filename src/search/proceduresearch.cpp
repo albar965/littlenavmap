@@ -330,12 +330,11 @@ void ProcedureSearch::fillApproachTreeWidget()
     {
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
+      SqlRecordVector sorted;
 
       for(const SqlRecord& recApp : *recAppVector)
       {
         foundItems = true;
-        int runwayEndId = recApp.valueInt("runway_end_id");
-        int apprId = recApp.valueInt("approach_id");
         QString rwname(recApp.valueStr("runway_name"));
 
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
@@ -361,22 +360,30 @@ void ProcedureSearch::fillApproachTreeWidget()
         filterOk &= rwname == rwnamefilter || ui->comboBoxProcedureRunwayFilter->currentIndex() == 0;
 
         if(filterOk)
+          sorted.append(recApp);
+      }
+
+      std::sort(sorted.begin(), sorted.end(), procedureSortFunc);
+
+      for(const SqlRecord& recApp : sorted)
+      {
+        proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
+        int runwayEndId = recApp.valueInt("runway_end_id");
+        int apprId = recApp.valueInt("approach_id");
+        itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId, -1, -1, type));
+        const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+
+        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
+
+        if(recTransVector != nullptr)
         {
-          itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId, -1, -1, type));
-          const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
-
-          QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
-
-          if(recTransVector != nullptr)
+          // Transitions for this approach
+          for(const SqlRecord& recTrans : *recTransVector)
           {
-            // Transitions for this approach
-            for(const SqlRecord& recTrans : *recTransVector)
-            {
-              itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId,
-                                               recTrans.valueInt("transition_id"), -1, type));
-              buildTransitionItem(apprItem, recTrans,
-                                  type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
-            }
+            itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId,
+                                             recTrans.valueInt("transition_id"), -1, type));
+            buildTransitionItem(apprItem, recTrans,
+                                type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
           }
         }
       }
@@ -803,13 +810,6 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 }
 
-proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
-{
-  return proc::procedureType(NavApp::getCurrentSimulator(),
-                             recApp.valueStr("type"), recApp.valueStr("suffix"),
-                             recApp.valueBool("has_gps_overlay"));
-}
-
 QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
 {
   QString suffix(recApp.valueStr("suffix"));
@@ -1127,4 +1127,38 @@ void ProcedureSearch::tabDeactivated()
 {
   emit procedureSelected(proc::MapProcedureRef());
   emit procedureLegSelected(proc::MapProcedureRef());
+}
+
+proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
+{
+  return proc::procedureType(NavApp::getCurrentSimulator(),
+                             recApp.valueStr("type"), recApp.valueStr("suffix"),
+                             recApp.valueBool("has_gps_overlay"));
+}
+
+bool ProcedureSearch::procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2)
+{
+  static QHash<proc::MapProcedureTypes, int> priority(
+    {
+      {proc::PROCEDURE_SID, 0},
+      {proc::PROCEDURE_STAR, 1},
+      {proc::PROCEDURE_APPROACH, 2},
+    });
+
+  int priority1 = priority.value(buildTypeFromApproachRec(rec1));
+  int priority2 = priority.value(buildTypeFromApproachRec(rec2));
+  // First SID, then STAR and then approaches
+  if(priority1 == priority2)
+  {
+    QString rwname1(rec1.valueStr("runway_name"));
+    QString rwname2(rec2.valueStr("runway_name"));
+    // Order by runway name
+    if(rwname1 == rwname2)
+      // Order by fix_ident
+      return rec1.valueStr("fix_ident") < rec2.valueStr("fix_ident");
+    else
+      return rwname1 < rwname2;
+  }
+  else
+    return priority1 < priority2;
 }

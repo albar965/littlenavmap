@@ -146,7 +146,6 @@ private:
   QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
   QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
 
-  proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   void updateHeaderLabel();
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int index);
@@ -154,6 +153,9 @@ private:
   void updateFilterBoxes();
   void resetSearch();
   void dockVisibilityChanged(bool visible);
+
+  static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
+  static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;
