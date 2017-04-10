@@ -34,18 +34,18 @@
           <projection name="Mercator"/>
 
           <!-- Free MapTiles CDN - https://maptiles.xyz -->
-          <downloadUrl protocol="http" host="a.osm.maptiles.xyz" path="/"/>
-          <downloadUrl protocol="http" host="b.osm.maptiles.xyz" path="/"/>
-          <downloadUrl protocol="http" host="c.osm.maptiles.xyz" path="/"/>
+          <!-- <downloadUrl protocol="http" host="a.osm.maptiles.xyz" path="/"/> -->
+          <!-- <downloadUrl protocol="http" host="b.osm.maptiles.xyz" path="/"/> -->
+          <!-- <downloadUrl protocol="http" host="c.osm.maptiles.xyz" path="/"/> -->
 
           <!-- OSM tile servers according to http://wiki.openstreetmap.org/wiki/Servers -->
           <!-- <downloadUrl protocol="http" host="orm.openstreetmap.org" path="/"/> -->
           <!-- <downloadUrl protocol="http" host="yevaud.openstreetmap.org" path="/"/> -->
 
           <!-- OSM content delivery network proxy servers -->
-          <!-- <downloadUrl protocol="http" host="a.tile.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/> -->
+          <downloadUrl protocol="http" host="a.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/>
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
           <downloadPolicy usage="Browse" maximumConnections="20"/>
