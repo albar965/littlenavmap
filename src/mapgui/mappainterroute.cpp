@@ -181,7 +181,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Draw airport and navaid symbols
-  drawSymbols(context, visibleStartPoints, textPlacement.getStartPoints());
+  drawSymbols(context, visibleStartPoints, textPlacement.getStartPoints(), false /* preview */);
 
   // Draw symbol text
   drawRouteSymbolText(context, visibleStartPoints, textPlacement.getStartPoints());
@@ -379,7 +379,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
 
   // Texts and navaid icons ====================================================
   for(int i = 0; i < legs.size(); i++)
-    paintApproachPoints(context, legs, i, preview);
+    paintApproachPoints(context, legs, i, false);
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
@@ -760,7 +760,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
       texts.append(proc::altRestrictionTextNarrow(altRestriction));
       if(leg.flyover)
         paintProcedureFlyover(context, x, y);
-      paintProcedurePoint(context, x, y);
+      paintProcedurePoint(context, x, y, preview);
       if(drawText)
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
       texts.clear();
@@ -795,7 +795,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
       texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
       if(leg.flyover)
         paintProcedureFlyover(context, x, y);
-      paintProcedurePoint(context, x, y);
+      paintProcedurePoint(context, x, y, preview);
       if(drawText)
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
       texts.clear();
@@ -804,7 +804,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   else if(leg.type == proc::START_OF_PROCEDURE)
   {
     if(wToS(leg.line.getPos1(), x, y))
-      paintProcedurePoint(context, x, y);
+      paintProcedurePoint(context, x, y, preview);
   }
   else if(leg.type == proc::COURSE_TO_FIX)
   {
@@ -814,7 +814,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
       {
         if(leg.flyover)
           paintProcedureFlyover(context, x, y);
-        paintProcedurePoint(context, x, y);
+        paintProcedurePoint(context, x, y, preview);
       }
     }
     else if(leg.interceptPos.isValid())
@@ -825,7 +825,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
         texts.append(leg.displayText);
         if(leg.flyover)
           paintProcedureFlyover(context, x, y);
-        paintProcedurePoint(context, x, y);
+        paintProcedurePoint(context, x, y, preview);
         if(drawText)
           paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
         texts.clear();
@@ -855,7 +855,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   {
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintWaypoint(context, QColor(), x, y);
+    paintWaypoint(context, QColor(), x, y, preview);
     if(drawText)
       paintWaypointText(context, x, y, navaids.waypoints.first(), !preview /* draw as route */, &texts);
   }
@@ -863,7 +863,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   {
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintVor(context, x, y, navaids.vors.first());
+    paintVor(context, x, y, navaids.vors.first(), preview);
     if(drawText)
       paintVorText(context, x, y, navaids.vors.first(), !preview /* draw as route */, &texts);
   }
@@ -871,7 +871,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   {
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintNdb(context, x, y);
+    paintNdb(context, x, y, preview);
     if(drawText)
       paintNdbText(context, x, y, navaids.ndbs.first(), !preview /* draw as route */, &texts);
   }
@@ -880,7 +880,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
     texts.append(leg.fixIdent);
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintProcedurePoint(context, x, y);
+    paintProcedurePoint(context, x, y, preview);
     if(drawText)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
   }
@@ -889,7 +889,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
     texts.append(leg.fixIdent);
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintProcedurePoint(context, x, y);
+    paintProcedurePoint(context, x, y, preview);
     if(drawText)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
   }
@@ -918,11 +918,11 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
                                  context->mapLayerEffective->isAirportDiagram());
 }
 
-void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj)
+void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
-                               size, false, false,
+                               size, !preview, false,
                                context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
 }
 
@@ -945,10 +945,10 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
   symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true, additionalText);
 }
 
-void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
+void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
-  symbolPainter->drawNdbSymbol(context->painter, x, y, size, true, false);
+  symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false);
 }
 
 void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj, bool drawAsRoute,
@@ -970,10 +970,10 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
   symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true, additionalText);
 }
 
-void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y)
+void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, true, false);
+  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview, false);
 }
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
@@ -993,10 +993,10 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
 }
 
 /* paint intermediate approach point */
-void MapPainterRoute::paintProcedurePoint(const PaintContext *context, int x, int y)
+void MapPainterRoute::paintProcedurePoint(const PaintContext *context, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, true, false);
+  symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, !preview, false);
 }
 
 void MapPainterRoute::paintProcedureFlyover(const PaintContext *context, int x, int y)
@@ -1006,10 +1006,10 @@ void MapPainterRoute::paintProcedureFlyover(const PaintContext *context, int x, 
 }
 
 /* Paint user defined waypoint */
-void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
+void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawUserpointSymbol(context->painter, x, y, size, true, false);
+  symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview, false);
 }
 
 /* Draw text with light yellow background for flight plan */
@@ -1028,7 +1028,7 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
 }
 
 void MapPainterRoute::drawSymbols(const PaintContext *context,
-                                  const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
+                                  const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview)
 {
   int i = 0;
   for(const QPointF& pt : startPoints)
@@ -1043,22 +1043,22 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
       {
         case map::INVALID:
           // name and region not found in database
-          paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y);
+          paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y, preview);
           break;
         case map::USER:
-          paintUserpoint(context, x, y);
+          paintUserpoint(context, x, y, preview);
           break;
         case map::AIRPORT:
           paintAirport(context, x, y, obj.getAirport());
           break;
         case map::VOR:
-          paintVor(context, x, y, obj.getVor());
+          paintVor(context, x, y, obj.getVor(), preview);
           break;
         case map::NDB:
-          paintNdb(context, x, y);
+          paintNdb(context, x, y, preview);
           break;
         case map::WAYPOINT:
-          paintWaypoint(context, QColor(), x, y);
+          paintWaypoint(context, QColor(), x, y, preview);
           break;
       }
     }
