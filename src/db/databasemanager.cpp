@@ -386,9 +386,16 @@ void DatabaseManager::switchSimFromMainMenu()
 
 void DatabaseManager::openDatabase()
 {
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
+  bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
+
   // cache_size * 1024 bytes if value is negative
-  QStringList pragmas({"PRAGMA cache_size=-50000", "PRAGMA synchronous=OFF", "PRAGMA journal_mode=TRUNCATE",
+  QStringList pragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
+                       "PRAGMA synchronous=OFF",
+                       "PRAGMA journal_mode=TRUNCATE",
                        "PRAGMA page_size=8196"});
+
   QStringList pragmaQueries({"PRAGMA foreign_keys", "PRAGMA cache_size", "PRAGMA synchronous",
                              "PRAGMA journal_mode", "PRAGMA page_size"});
 
@@ -398,7 +405,7 @@ void DatabaseManager::openDatabase()
     db->setDatabaseName(databaseFile);
 
     // Set foreign keys only on demand because they can decrease loading performance
-    if(Settings::instance().getAndStoreValue(lnm::OPTIONS_FOREIGNKEYS, false).toBool())
+    if(foreignKeys)
       pragmas.append("PRAGMA foreign_keys = ON");
     else
       pragmas.append("PRAGMA foreign_keys = OFF");

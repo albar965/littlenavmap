@@ -92,7 +92,6 @@ const QString MAP_RANGEMARKERS = "Map/RangeMarkers";
 const QString MAP_OVERLAY_VISIBLE = "Map/OverlayVisible";
 const QString NAVCONNECT_REMOTEHOSTS = "NavConnect/RemoteHosts";
 const QString NAVCONNECT_REMOTE = "NavConnect/Remote";
-const QString OPTIONS_FOREIGNKEYS = "Options/ForeignKeys";
 const QString ROUTE_FILENAME = "Route/Filename";
 const QString ROUTE_FILENAMESRECENT = "Route/FilenamesRecent";
 const QString ROUTE_FILENAMESKMLRECENT = "Route/FilenamesKmlRecent";
@@ -110,6 +109,7 @@ const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
 /* General settings in the configuration file not covered by any GUI elements */
 const QString SETTINGS_INFOQUERY = "Settings/InfoQuery";
 const QString SETTINGS_MAPQUERY = "Settings/MapQuery";
+const QString SETTINGS_DATABASE = "Settings/Database";
 
 const QString APPROACHTREE_WIDGET = "ApproachTree/Widget";
 const QString APPROACHTREE_SELECTED_WIDGET = "ApproachTree/WidgetSelected";
