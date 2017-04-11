@@ -1,3 +1,46 @@
+Version 1.3.5.develop
+
+* The ZIP archives of Little Navmap and Little Navconnect are merged now. You can find both programs on the top level
+  directory in the archive.
+
+* Scenery database has to be reloaded due to schema change to airspace tables.
+
+* Added support for GLOBE offline elevation data as second elevation data source.
+  See dialog "Options" -> tab "Cache and Files". All explained there.
+* Elevation under cursor is now shown after a short delay on the bottom right in the status bar if offline data is used.
+
+* Added TACAN and VORTAC stations to display, search and all other VOR related functions. This fixes unusable procedures
+  around many military airports. Only for P3D with fsAerodata navdata updates.
+
+* Many optimizations and bugfixes for airspace display. Fixed memory leak in airspace geometry caching.
+* Moved FIR Class F and G airspaces one layer up in map display. Now shown earlier when zooming in.
+* Added show/hide all toolbar button for airspaces.
+* Disabling airspace semi transparent fill for certain map display performance modes now for faster scrolling.
+  See "Options" -> "Map" -> "Details while scrolling ..."
+* Increased cache size for airway geometry and other features.
+
+* Procedures are now sorted by type, runway and fix name in search tab.
+* Selection now cleared when adding procedure to flight plan to avoid preview overlapping route.
+* Fixed several problems when resolving procedure navaids resulting in unusable procedures.
+
+* Added menu item in menu "Map" to reset map settings back to default.
+* Improved statusbar display for shown map features and airspaces. Added empty airports.
+* Flight plan file paths are now remembered for each simulator separately. Fixed error that intially
+  always used the FSX files path.
+* Moved airway display one layer up for map display. Now shown on higher zoom levels.
+* Added small airport symbol in runway schema display to indicate clickspot for airport.
+* Added option for clean flight plan (PLN) export since some add-ons (EFB) are not capable
+  to read XML in the PLN files properly and cannot deal with the comments containing procedure information.
+* Now adding cache tuning parameters to settings ini file.
+
+derived from atools:
+* Removed boundary_line table and pre-calculate boundary geometry now which ist stored as binary data.
+* Bumped database version up for changed schema.
+* Added support for GLOBE offline elevation data.
+* Changed ILS to runway assignment logic to fix ILS data updates.
+* Added still unused columns in database for speed limit, airway direction and other extensions for future AIRAC support.
+* Added option for two external databases besides the real simulators.
+
 Version 1.3.4.devel
 
 * Added display of airspaces to map, information window and tooltips.

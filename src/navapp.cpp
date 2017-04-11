@@ -45,18 +45,15 @@ ElevationProvider *NavApp::elevationProvider = nullptr;
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
-  qDebug() << Q_FUNC_INFO;
-
   setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
-  setApplicationVersion("1.3.4.devel");
+  setApplicationVersion("1.3.5.develop");
 }
 
 NavApp::~NavApp()
 {
-  qDebug() << Q_FUNC_INFO;
 }
 
 void NavApp::init(MainWindow *mainWindowParam)
