@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 #include "search/sqlmodel.h"
 #include "common/unit.h"
+#include "common/mapflags.h"
 
 #include <QApplication>
 
@@ -155,7 +156,10 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
     if(role == Qt::DisplayRole)
     {
       float heading = normalizeCourse(centerPos.angleDegTo(buildPos(mapToSource(index).row())));
-      return QLocale().toString(heading, 'f', 0);
+      if(heading < map::INVALID_COURSE_VALUE)
+        return QLocale().toString(heading, 'f', 0);
+      else
+        return QVariant();
     }
     else if(role == Qt::TextAlignmentRole)
       return Qt::AlignRight;
@@ -166,6 +170,5 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
 
 Pos SqlProxyModel::buildPos(int row) const
 {
-  return Pos(sourceSqlModel->getRawData(row, "lonx").toFloat(),
-             sourceSqlModel->getRawData(row, "laty").toFloat());
+  return Pos(sourceSqlModel->getRawData(row, "lonx").toFloat(), sourceSqlModel->getRawData(row, "laty").toFloat());
 }

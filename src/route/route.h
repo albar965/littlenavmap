@@ -187,6 +187,8 @@ public:
     return !departureLegs.isEmpty();
   }
 
+  void getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const;
+
   /* Assign and update internal indexes for approach legs. Depending if legs are type SID, STAR,
    * transition or approach they are added at the end of start of the route
    *  call updateProcedureLegs after setting */

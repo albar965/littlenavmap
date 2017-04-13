@@ -33,8 +33,27 @@ class FlightplanEntry;
 }
 
 class MapQuery;
+class ProcedureQuery;
 class FlightplanEntryBuilder;
 class Route;
+
+namespace rs {
+
+enum RouteStringOption
+{
+  NONE = 0,
+  DCT = 1 << 0,
+  START_AND_DEST = 1 << 1,
+  ALT_AND_SPEED = 1 << 2,
+  SID_STAR = 1 << 3,
+  GFP = 1 << 4,
+
+  DEFAULT_OPTIONS = DCT | START_AND_DEST | ALT_AND_SPEED | SID_STAR
+};
+
+Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
+}
 
 class RouteString
 {
@@ -49,7 +68,7 @@ public:
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const Route& route, float speed);
+  QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options);
 
   /*
    * Create a route string in garming flight plan format (GFP):
@@ -79,28 +98,26 @@ private:
   void appendError(const QString& message);
 
   bool addDeparture(atools::fs::pln::Flightplan& flightplan,
-                    const QString& airportIdent);
+                    QStringList& cleanItems);
   void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
                            int nextId, int& startIndex, int& endIndex, const QString& airway);
   void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
                         int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
-  QStringList createStringForRouteInternal(const Route& route, float speed, bool gfpFormat);
+  QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
   void findWaypoints(map::MapSearchResult& result, const QString& item);
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
+  bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
+  bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet);
+  QString createSpeedAndAltitude(float speedKnots, float altFeet);
 
-  MapQuery *query = nullptr;
+  MapQuery *mapQuery = nullptr;
+  ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
-
-  bool addDestination(atools::fs::pln::Flightplan& flightplan, const QString& airportIdent);
-
-  bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet);
-
-  QString createSpeedAndAltitude(float speedKnots, float altFeet);
 
 };
 

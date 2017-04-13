@@ -132,6 +132,14 @@ bool Route::canEditPoint(int index) const
   return at(index).isRoute();
 }
 
+void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const
+{
+  sid = departureLegs.approachFixIdent;
+  sidTrans = departureLegs.transitionFixIdent;
+  star = starLegs.approachFixIdent;
+  starTrans = starLegs.transitionFixIdent;
+}
+
 void Route::updateActiveLegAndPos()
 {
   updateActiveLegAndPos(activePos);
@@ -829,8 +837,9 @@ int Route::getActiveLegIndexCorrected(bool *corrected) const
 
   int nextLeg = activeLeg + 1;
   if(nextLeg < size() && nextLeg == size() &&
-     at(nextLeg).isAnyProcedure() /* && (at(nextLeg).getProcedureLeg().type == maptypes::INITIAL_FIX ||
-                                   *    at(nextLeg).isHold())*/)
+     at(nextLeg).isAnyProcedure()
+     /*&&
+      *  (at(nextLeg).getProcedureLegType() == proc::INITIAL_FIX || at(nextLeg).getProcedureLeg().isHold())*/)
   {
     if(corrected != nullptr)
       *corrected = true;
@@ -1026,28 +1035,6 @@ const RouteLeg& Route::getDestinationBeforeProcedure() const
 
 void Route::removeDuplicateRouteLegs()
 {
-  if(hasAnyDepartureProcedure())
-  {
-    // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
-    int offset = getDepartureLegsOffset() + getDepartureLegs().size() - 1;
-    if(offset < size() - 1)
-    {
-      const RouteLeg& depLeg = at(offset);
-      const RouteLeg& routeLeg = at(offset + 1);
-
-      if(depLeg.isAnyProcedure() &&
-         routeLeg.isRoute() &&
-         atools::contains(depLeg.getProcedureLegType(),
-                          {proc::TRACK_TO_FIX, proc::COURSE_TO_FIX, proc::ARC_TO_FIX, proc::DIRECT_TO_FIX}) &&
-         depLeg.isNavaidEqualTo(routeLeg))
-      {
-        qDebug() << "removing duplicate leg at" << (offset + 1) << at(offset + 1);
-        removeAt(offset + 1);
-        flightplan.getEntries().removeAt(offset + 1);
-      }
-    }
-  }
-
   if(hasAnyStarProcedure() || hasAnyArrivalProcedure())
   {
     // remove duplicates between start of STAR, approach or transition and
@@ -1060,19 +1047,41 @@ void Route::removeDuplicateRouteLegs()
 
     if(offset != -1 && offset < size() - 1)
     {
-      const RouteLeg& depLeg = at(offset);
       const RouteLeg& routeLeg = at(offset - 1);
+      const RouteLeg& arrivalLeg = at(offset);
 
-      if(depLeg.isAnyProcedure() &&
+      if(arrivalLeg.isAnyProcedure() &&
          routeLeg.isRoute() &&
-         atools::contains(depLeg.getProcedureLegType(),
+         atools::contains(arrivalLeg.getProcedureLegType(),
                           {proc::INITIAL_FIX, proc::TRACK_FROM_FIX_FROM_DISTANCE,
                            proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::FROM_FIX_TO_MANUAL_TERMINATION}) &&
-         depLeg.isNavaidEqualTo(routeLeg))
+         arrivalLeg.isNavaidEqualTo(routeLeg))
       {
         qDebug() << "removing duplicate leg at" << (offset - 1) << at(offset - 1);
         removeAt(offset - 1);
         flightplan.getEntries().removeAt(offset - 1);
+      }
+    }
+  }
+
+  if(hasAnyDepartureProcedure())
+  {
+    // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
+    int offset = getDepartureLegsOffset() + getDepartureLegs().size() - 1;
+    if(offset < size() - 1)
+    {
+      const RouteLeg& departureLeg = at(offset);
+      const RouteLeg& routeLeg = at(offset + 1);
+
+      if(departureLeg.isAnyProcedure() &&
+         routeLeg.isRoute() &&
+         atools::contains(departureLeg.getProcedureLegType(),
+                          {proc::TRACK_TO_FIX, proc::COURSE_TO_FIX, proc::ARC_TO_FIX, proc::DIRECT_TO_FIX}) &&
+         departureLeg.isNavaidEqualTo(routeLeg))
+      {
+        qDebug() << "removing duplicate leg at" << (offset + 1) << at(offset + 1);
+        removeAt(offset + 1);
+        flightplan.getEntries().removeAt(offset + 1);
       }
     }
   }

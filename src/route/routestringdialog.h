@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_ROUTESTRINGDIALOG_H
 #define LITTLENAVMAP_ROUTESTRINGDIALOG_H
 
+#include "route/routestring.h"
+
 #include <QDialog>
 
 namespace Ui {
@@ -57,12 +59,16 @@ public:
     return speedKts;
   }
 
+  static rs::RouteStringOptions getOptionsFromSettings();
+
 private:
   void readClicked();
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
   void updateButtonState();
+  void toolButtonOptionsTriggered(QAction *action);
+  void updateButtonClicked();
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -70,6 +76,8 @@ private:
   RouteController *controller = nullptr;
   RouteString *routeString;
   float speedKts = 0.f;
+  rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

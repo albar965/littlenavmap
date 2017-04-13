@@ -1064,6 +1064,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
 
             if(result.status == atools::geo::ALONG_TRACK)
             {
+              // Intercepting the next leg
               next->intercept = true;
               next->line.setPos1(intersect);
 
@@ -1077,14 +1078,17 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
             }
             else if(result.status == atools::geo::BEFORE_START)
             {
+              // Link directly to start of next leg
               leg.line.setPos2(next->line.getPos2());
             }
             else if(result.status == atools::geo::AFTER_END)
             {
+              // Link directly to end of next leg
               next->intercept = true;
               leg.line.setPos2(next->line.getPos2());
               next->line.setPos1(next->line.getPos2());
               next->line.setPos2(next->line.getPos2());
+              leg.displayText << tr("Intercept");
             }
             else
               qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent
@@ -1302,6 +1306,85 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
   }
 }
 
+int ProcedureQuery::getSidId(const map::MapAirport& departure, const QString& sid,
+                             const QString& runway, float distance, int size)
+{
+  int sidApprId = -1;
+  // Get a SID id =================================================================
+  if(!sid.isEmpty())
+  {
+    approachIdByNameQuery->bindValue(":fixident", sid);
+    approachIdByNameQuery->bindValue(":type", "GPS");
+    approachIdByNameQuery->bindValue(":apid", departure.id);
+
+    sidApprId = findApproachLegId(departure, approachIdByNameQuery, "D", runway, distance, size);
+    if(sidApprId == -1)
+      qWarning() << "Loading of SID" << sid << "failed";
+  }
+  return sidApprId;
+}
+
+int ProcedureQuery::getSidTransitionId(const map::MapAirport& departure, const QString& sidTrans,
+                                       int sidId, float distance, int size)
+{
+  int sidTransId = -1;
+  // Get a SID transition id =================================================================
+  if(!sidTrans.isEmpty() && sidId != -1)
+  {
+    transitionIdByNameQuery->bindValue(":fixident", sidTrans);
+    transitionIdByNameQuery->bindValue(":type", "F");
+    transitionIdByNameQuery->bindValue(":apprid", sidId);
+
+    sidTransId = findTransitionLegId(departure, transitionIdByNameQuery, distance, size);
+    if(sidTransId == -1)
+      qWarning() << "Loading of SID transition" << sidTrans << "failed";
+  }
+
+  return sidTransId;
+}
+
+int ProcedureQuery::getStarId(const map::MapAirport& destination, const QString& star,
+                              float distance, int size)
+{
+  int starId = -1;
+  // Get a STAR id =================================================================
+  if(!star.isEmpty())
+  {
+    approachIdByNameQuery->bindValue(":fixident", star);
+    approachIdByNameQuery->bindValue(":type", "GPS");
+    approachIdByNameQuery->bindValue(":apid", destination.id);
+
+    starId = findApproachLegId(destination, approachIdByNameQuery,
+                               "A",
+                               QString(), // No runway
+                               distance,
+                               size);
+    if(starId == -1)
+    {
+      qWarning() << "Loading of STAR" << star << "failed";
+    }
+  }
+  return starId;
+}
+
+int ProcedureQuery::getStarTransitionId(const map::MapAirport& destination, const QString& starTrans, int starId,
+                                        float distance, int size)
+{
+  int starTransId = -1;
+  // Get a STAR transition id =================================================================
+  if(!starTrans.isEmpty() && starId != -1)
+  {
+    transitionIdByNameQuery->bindValue(":fixident", starTrans);
+    transitionIdByNameQuery->bindValue(":type", "F");
+    transitionIdByNameQuery->bindValue(":apprid", starId);
+
+    starTransId = findTransitionLegId(destination, transitionIdByNameQuery, distance, size);
+    if(starTransId == -1)
+      qWarning() << "Loading of STAR transition" << starTrans << "failed";
+  }
+  return starTransId;
+}
+
 bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                                     const map::MapAirport& departure,
                                                     const map::MapAirport& destination,
@@ -1315,39 +1398,19 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   // Get a SID id (approach and transition) =================================================================
   // Get a SID id =================================================================
   if(properties.contains("sidappr"))
-  {
-    approachIdByNameQuery->bindValue(":fixident", properties.value("sidappr"));
-    approachIdByNameQuery->bindValue(":type", "GPS");
-    approachIdByNameQuery->bindValue(":apid", departure.id);
-
-    sidApprId = findApproachLegId(departure, approachIdByNameQuery,
-                                  "D",
-                                  properties.value("sidapprrw"),
-                                  properties.value("sidapprdistance").toFloat(),
-                                  properties.value("sidapprsize").toInt());
-    if(sidApprId == -1)
-    {
-      qWarning() << "Loading of SID" << properties.value("sidappr") << "failed";
-      error = true;
-    }
-  }
+    sidApprId = getSidId(departure,
+                         properties.value("sidappr"),
+                         properties.value("sidapprrw"),
+                         properties.value("sidapprdistance").toFloat(),
+                         properties.value("sidapprsize").toInt());
 
   // Get a SID transition id =================================================================
   if(properties.contains("sidtrans") && sidApprId != -1)
-  {
-    transitionIdByNameQuery->bindValue(":fixident", properties.value("sidtrans"));
-    transitionIdByNameQuery->bindValue(":type", "F");
-    transitionIdByNameQuery->bindValue(":apprid", sidApprId);
-
-    sidTransId = findTransitionLegId(departure, transitionIdByNameQuery,
-                                     properties.value("sidtransdistance").toFloat(),
-                                     properties.value("sidtranssize").toInt());
-    if(sidTransId == -1)
-    {
-      qWarning() << "Loading of SID transition" << properties.value("sidtrans") << "failed";
-      error = true;
-    }
-  }
+    sidTransId = getSidTransitionId(departure,
+                                    properties.value("sidtrans"),
+                                    sidApprId,
+                                    properties.value("sidtransdistance").toFloat(),
+                                    properties.value("sidtranssize").toInt());
 
   // Get an approach id =================================================================
   if(properties.contains("approach"))
@@ -1387,39 +1450,18 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
   // Get a STAR id =================================================================
   if(properties.contains("star"))
-  {
-    approachIdByNameQuery->bindValue(":fixident", properties.value("star"));
-    approachIdByNameQuery->bindValue(":type", "GPS");
-    approachIdByNameQuery->bindValue(":apid", destination.id);
-
-    starId = findApproachLegId(destination, approachIdByNameQuery,
-                               "A",
-                               QString(), // No runway
-                               properties.value("stardistance").toFloat(),
-                               properties.value("starsize").toInt());
-    if(starId == -1)
-    {
-      qWarning() << "Loading of STAR" << properties.value("star") << "failed";
-      error = true;
-    }
-  }
+    starId = getStarId(destination,
+                       properties.value("star"),
+                       properties.value("stardistance").toFloat(),
+                       properties.value("starsize").toInt());
 
   // Get a STAR transition id =================================================================
   if(properties.contains("startrans") && starId != -1)
-  {
-    transitionIdByNameQuery->bindValue(":fixident", properties.value("startrans"));
-    transitionIdByNameQuery->bindValue(":type", "F");
-    transitionIdByNameQuery->bindValue(":apprid", starId);
-
-    starTransId = findTransitionLegId(destination, transitionIdByNameQuery,
+    starTransId = getStarTransitionId(destination,
+                                      properties.value("startrans"),
+                                      starId,
                                       properties.value("startransdistance").toFloat(),
                                       properties.value("startranssize").toInt());
-    if(starTransId == -1)
-    {
-      qWarning() << "Loading of STAR transition" << properties.value("startrans") << "failed";
-      error = true;
-    }
-  }
 
   if(!error) // load all or nothing in case of error
   {
@@ -1475,6 +1517,28 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
   }
   return !error;
+}
+
+QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)
+{
+  QString retval;
+  if(properties.contains("sidappr"))
+    retval += properties.value("sidappr");
+
+  if(properties.contains("sidtrans"))
+    retval += "." + properties.value("sidtrans");
+  return retval;
+}
+
+QString ProcedureQuery::getStarAndTransition(QHash<QString, QString>& properties)
+{
+  QString retval;
+  if(properties.contains("star"))
+    retval += properties.value("star");
+
+  if(properties.contains("startrans"))
+    retval += "." + properties.value("startrans");
+  return retval;
 }
 
 int ProcedureQuery::findTransitionLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,

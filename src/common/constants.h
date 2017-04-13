@@ -99,6 +99,7 @@ const QString ROUTE_VIEW = "Route/View";
 const QString ROUTE_PRINT_DIALOG = "Route/PrintWidget";
 const QString ROUTE_STRING_DIALOG_SIZE = "Route/StringDialogSize";
 const QString ROUTE_STRING_DIALOG_SPLITTER = "Route/StringDialogSplitter";
+const QString ROUTE_STRING_DIALOG_OPTIONS = "Route/StringDialogOptions";
 const QString SEARCHTAB_AIRPORT_WIDGET = "SearchPaneAirport/Widget";
 const QString SEARCHTAB_NAV_WIDGET = "SearchPaneNav/Widget";
 const QString SEARCHTAB_AIRPORT_VIEW_WIDGET = "SearchPaneAirport/WidgetView";

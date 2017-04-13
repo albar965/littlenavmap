@@ -67,6 +67,9 @@ public:
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& departureLegs);
 
+  static QString getSidAndTransition(QHash<QString, QString>& properties);
+  static QString getStarAndTransition(QHash<QString, QString>& properties);
+
   static void extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureLegs& arrivalLegs,
                                                  const proc::MapProcedureLegs& starLegs,
@@ -74,6 +77,16 @@ public:
 
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureTypes& type);
+
+  int getSidId(const map::MapAirport& departure, const QString& sid,
+               const QString& runway = QString(), float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+  int getSidTransitionId(const map::MapAirport& departure, const QString& sidTrans, int sidId,
+                         float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+
+  int getStarId(const map::MapAirport& destination, const QString& star,
+                float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+  int getStarTransitionId(const map::MapAirport& destination, const QString& starTrans, int starId,
+                          float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
 
 private:
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);

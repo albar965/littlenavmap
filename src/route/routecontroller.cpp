@@ -314,7 +314,7 @@ void RouteController::routeStringToClipboard() const
 
   float speedKts = Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
 
-  QString str = RouteString().createStringForRoute(route, speedKts);
+  QString str = RouteString().createStringForRoute(route, speedKts, RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -948,9 +948,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
         flightplan.setCruisingAltitude(minAltitude);
       }
 
-      QGuiApplication::restoreOverrideCursor();
       createRouteLegsFromFlightplan();
       loadProceduresFromFlightplan(true /* quiet */);
+      QGuiApplication::restoreOverrideCursor();
 
       route.removeDuplicateRouteLegs();
       route.updateAll();

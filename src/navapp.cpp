@@ -160,6 +160,11 @@ const Route& NavApp::getRoute()
   return mainWindow->getRouteController()->getRoute();
 }
 
+float NavApp::getSpeedKts()
+{
+  return mainWindow->getRouteController()->getSpeedKts();
+}
+
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulator()
 {
   return getDatabaseManager()->getCurrentSimulator();

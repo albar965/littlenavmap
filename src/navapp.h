@@ -80,6 +80,7 @@ public:
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRoute();
+  static float getSpeedKts();
 
   static atools::fs::FsPaths::SimulatorType getCurrentSimulator();
 

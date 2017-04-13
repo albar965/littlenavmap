@@ -80,8 +80,7 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserAirspaceInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
-  connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this,
-          &InfoController::anchorClicked);
+  connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
@@ -573,62 +572,104 @@ void InfoController::postDatabaseLoad()
 void InfoController::updateAircraftText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
+#ifdef DEBUG_MOVING_AIRPLANE
+  if( /* DISABLES CODE */ (true))
+#else
+  if(NavApp::isConnected())
+#endif
   {
-    // ok - scrollbars not pressed
-    HtmlBuilder html(true /* has background color */);
-    infoBuilder->aircraftText(lastSimData.getUserAircraft(), html);
-    infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraft(), html);
-    atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+    if(lastSimData.getUserAircraft().getPosition().isValid())
+    {
+      if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
+      {
+        // ok - scrollbars not pressed
+        HtmlBuilder html(true /* has background color */);
+        infoBuilder->aircraftText(lastSimData.getUserAircraft(), html);
+        infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraft(), html);
+        atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+      }
+    }
+    else
+      ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
   }
+  else
+    ui->textBrowserAircraftInfo->clear();
 }
 
 void InfoController::updateAircraftProgressText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+#ifdef DEBUG_MOVING_AIRPLANE
+  if( /* DISABLES CODE */ (true))
+#else
+  if(NavApp::isConnected())
+#endif
   {
-    // ok - scrollbars not pressed
-    HtmlBuilder html(true /* has background color */);
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRoute());
-    atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+    if(lastSimData.getUserAircraft().getPosition().isValid())
+    {
+      if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+      {
+        // ok - scrollbars not pressed
+        HtmlBuilder html(true /* has background color */);
+        infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRoute());
+        atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+      }
+    }
+    else
+      ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
   }
+  else
+    ui->textBrowserAircraftProgressInfo->clear();
 }
 
 void InfoController::updateAiAircraftText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
+#ifdef DEBUG_MOVING_AIRPLANE
+  if( /* DISABLES CODE */ (true))
+#else
+  if(NavApp::isConnected())
+#endif
   {
-    // ok - scrollbars not pressed
-    HtmlBuilder html(true /* has background color */);
-    html.clear();
-    if(!currentSearchResult.aiAircraft.isEmpty())
+    if(lastSimData.getUserAircraft().getPosition().isValid())
     {
-      int num = 1;
-      for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+      if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {
-        infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
-        infoBuilder->aircraftProgressText(aircraft, html, Route());
-        num++;
-      }
+        // ok - scrollbars not pressed
+        HtmlBuilder html(true /* has background color */);
+        html.clear();
+        if(!currentSearchResult.aiAircraft.isEmpty())
+        {
+          int num = 1;
+          for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+          {
+            infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
+            infoBuilder->aircraftProgressText(aircraft, html, Route());
+            num++;
+          }
 
-      atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+        }
+        else
+        {
+          int numAi = lastSimData.getAiAircraft().size();
+          QString text;
+
+          if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
+            text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
+
+          text += tr("No AI or multiplayer aircraft selected.<br/>"
+                     "Found %1 AI or multiplayer aircraft.").
+                  arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
+          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text);
+        }
+      }
     }
     else
-    {
-      int numAi = lastSimData.getAiAircraft().size();
-      QString text;
-
-      if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
-        text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
-
-      text += tr("No AI or multiplayer aircraft selected.<br/>"
-                 "Found %1 AI or multiplayer aircraft.").
-              arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
-      atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text);
-    }
+      ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update."));
   }
+  else
+    ui->textBrowserAircraftAiInfo->clear();
 }
 
 void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
@@ -688,25 +729,16 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
 
 void InfoController::connectedToSimulator()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->textBrowserAircraftInfo->clear();
-  ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
-  ui->textBrowserAircraftProgressInfo->clear();
-  ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
-  ui->textBrowserAircraftAiInfo->clear();
-  ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update."));
+  updateAircraftText();
+  updateAircraftProgressText();
+  updateAiAircraftText();
 }
 
 void InfoController::disconnectedFromSimulator()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  ui->textBrowserAircraftInfo->clear();
-  ui->textBrowserAircraftInfo->setPlainText(tr("Disconnected."));
-  ui->textBrowserAircraftProgressInfo->clear();
-  ui->textBrowserAircraftProgressInfo->setPlainText(tr("Disconnected."));
-  ui->textBrowserAircraftAiInfo->clear();
-  ui->textBrowserAircraftAiInfo->setPlainText(tr("Disconnected."));
+  updateAircraftText();
+  updateAircraftProgressText();
+  updateAiAircraftText();
 }
 
 void InfoController::optionsChanged()

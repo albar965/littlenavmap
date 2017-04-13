@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
+    <width>685</width>
     <height>344</height>
    </rect>
   </property>
@@ -42,11 +42,10 @@
           </sizepolicy>
          </property>
          <property name="toolTip">
-          <string>Format is:
-FROM[ETD] [SPEEDALT] [SID] [ENROUTE] [STAR] TO[ETA] [ALTERNATES]
+          <string>Format is: FROM[ETD] [SPEEDALT] [SID][.TRANS] [ENROUTE] [STAR][.TRANS] TO[ETA] [ALTERNATES]
 FROM and TO airports are required, everything else is optional.
 ENROUTE is a space separated list of navaids, airway/navaid combinations or user defined waypoints.
-SID, STAR, ETD and ETA are ignored.
+ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR procedure.
 </string>
          </property>
          <property name="plainText">
@@ -82,7 +81,7 @@ SID, STAR, ETD and ETA are ignored.
            </property>
           </widget>
          </item>
-         <item alignment="Qt::AlignRight">
+         <item>
           <widget class="QPushButton" name="pushButtonRouteStringFromClipboard">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -98,7 +97,20 @@ SID, STAR, ETD and ETA are ignored.
            </property>
           </widget>
          </item>
-         <item alignment="Qt::AlignRight">
+         <item>
+          <widget class="QPushButton" name="pushButtonRouteStringUpdate">
+           <property name="toolTip">
+            <string>Update the string from the current flight plan after option changes.</string>
+           </property>
+           <property name="statusTip">
+            <string>Update the string from the current flight plan after option changes.</string>
+           </property>
+           <property name="text">
+            <string>Update from Flight &amp;Plan</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="pushButtonRouteStringRead">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -111,6 +123,29 @@ SID, STAR, ETD and ETA are ignored.
            </property>
            <property name="text">
             <string>&amp;Read Route Description</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="toolButtonRouteStringOptions">
+           <property name="toolTip">
+            <string>Options for generated route string</string>
+           </property>
+           <property name="statusTip">
+            <string>Options for generated route string</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../littlenavmap.qrc">
+             <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
            </property>
           </widget>
          </item>
@@ -153,10 +188,11 @@ SID, STAR, ETD and ETA are ignored.
   <tabstop>plainTextEditRouteString</tabstop>
   <tabstop>pushButtonRouteStringToClipboard</tabstop>
   <tabstop>pushButtonRouteStringFromClipboard</tabstop>
-  <tabstop>pushButtonRouteStringRead</tabstop>
   <tabstop>textEditRouteStringErrors</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../littlenavmap.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBoxRouteString</sender>

@@ -17,7 +17,9 @@
 
 #include "route/routestringdialog.h"
 
-#include "route/routestring.h"
+#include "navapp.h"
+#include "settings/settings.h"
+#include "common/procedurequery.h"
 #include "route/routecontroller.h"
 #include "fs/pln/flightplan.h"
 #include "gui/helphandler.h"
@@ -43,8 +45,27 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   flightplan = new atools::fs::pln::Flightplan;
   routeString = new RouteString(routeController->getFlightplanEntryBuilder());
 
-  ui->plainTextEditRouteString->setPlainText(
-    routeString->createStringForRoute(routeController->getRoute(), routeController->getSpeedKts()));
+  // Build options dropdown menu
+  QAction *action;
+  action = new QAction(tr("Add departure and destination airport"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::START_AND_DEST));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
+  action = new QAction(tr("Add DCT (direct) instructions"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::DCT));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
+  action = new QAction(tr("Add cruise speed and altitude instruction"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::ALT_AND_SPEED));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
+  action = new QAction(tr("Add SID and STAR"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::SID_STAR));
+  ui->toolButtonRouteStringOptions->addAction(action);
 
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked,
           this, &RouteStringDialog::readClicked);
@@ -62,7 +83,11 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked,
           this, &RouteStringDialog::buttonBoxClicked);
 
-  updateButtonState();
+  connect(ui->toolButtonRouteStringOptions, &QToolButton::triggered,
+          this, &RouteStringDialog::toolButtonOptionsTriggered);
+
+  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked,
+          this, &RouteStringDialog::updateButtonClicked);
 }
 
 RouteStringDialog::~RouteStringDialog()
@@ -72,6 +97,27 @@ RouteStringDialog::~RouteStringDialog()
   delete flightplan;
 }
 
+void RouteStringDialog::updateButtonClicked()
+{
+  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRoute(),
+                                                                               NavApp::getSpeedKts(), options));
+}
+
+void RouteStringDialog::toolButtonOptionsTriggered(QAction *action)
+{
+  Q_UNUSED(action);
+
+  // Copy menu state for options bitfield
+  for(const QAction *act : ui->toolButtonRouteStringOptions->actions())
+  {
+    rs::RouteStringOptions opts(act->data().toInt());
+    if(act->isChecked())
+      options |= opts;
+    else
+      options &= ~opts;
+  }
+}
+
 const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
 {
   return *flightplan;
@@ -79,26 +125,34 @@ const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
 
 void RouteStringDialog::saveState()
 {
-  atools::gui::WidgetState widgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER);
-  widgetState.save({this, ui->splitterRouteString});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).save({this, ui->splitterRouteString});
+  atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS, static_cast<int>(options));
 }
 
 void RouteStringDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).
-  restore({this, ui->splitterRouteString});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore({this, ui->splitterRouteString});
+  options = getOptionsFromSettings();
   updateButtonState();
+
+  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRoute(),
+                                                                               NavApp::getSpeedKts(), options));
+}
+
+rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
+{
+  return rs::RouteStringOptions(atools::settings::Settings::instance().valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS));
 }
 
 void RouteStringDialog::readClicked()
 {
-  qDebug() << "RouteStringDialog::readClicked()";
+  qDebug() << Q_FUNC_INFO;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   flightplan->clear();
-  bool success = routeString->createRouteFromString(
-    ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts);
+  flightplan->getProperties().clear();
+  bool success = routeString->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts);
 
   ui->textEditRouteStringErrors->clear();
 
@@ -109,13 +163,22 @@ void RouteStringDialog::readClicked()
   if(success)
   {
     msg =
-      tr("<b>Found %1 waypoints. Flight plan from %3 (%4) to %5 (%6). Distance is %2.</b><br/>").
+      tr("Found %1 waypoints. Flight plan from <b>%3 (%4)</b> to <b>%5 (%6)</b>. Distance is %2.<br/>").
       arg(flightplan->getEntries().size()).
       arg(Unit::distNm(flightplan->getDistanceNm())).
       arg(flightplan->getDepartureAiportName()).
       arg(flightplan->getDepartureIdent()).
       arg(flightplan->getDestinationAiportName()).
       arg(flightplan->getDestinationIdent());
+
+    QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
+    if(!sid.isEmpty())
+      msg += tr("Found departure procedure <b>%1</b>.<br/>").arg(sid);
+
+    QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
+    if(!star.isEmpty())
+      msg += tr("Found arrival procedure <b>%1</b>.<br/>").arg(star);
+
     ui->textEditRouteStringErrors->setHtml(msg);
   }
 
@@ -154,11 +217,21 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 
 void RouteStringDialog::updateButtonState()
 {
+  ui->pushButtonRouteStringRead->setEnabled(!ui->plainTextEditRouteString->toPlainText().isEmpty());
+  ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRoute().isEmpty());
+
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
 
   ui->pushButtonRouteStringToClipboard->setDisabled(
     RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).isEmpty());
 
-  ui->pushButtonRouteStringFromClipboard->setDisabled(
-    QGuiApplication::clipboard()->text().simplified().isEmpty());
+  ui->pushButtonRouteStringFromClipboard->setDisabled(QGuiApplication::clipboard()->text().simplified().isEmpty());
+
+  // Copy option flags to dropdown menu items
+  for(QAction *act : ui->toolButtonRouteStringOptions->actions())
+  {
+    act->blockSignals(true);
+    act->setChecked(rs::RouteStringOptions(act->data().toInt()) & options);
+    act->blockSignals(false);
+  }
 }
