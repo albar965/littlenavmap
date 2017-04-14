@@ -1855,7 +1855,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
   }
 
-  if(toTod < 0)
+  if(toTod <= 0)
   {
     // Display vertical path deviation when after TOD
     float diff = aircraft.getPosition().getAltitude() - route.getDescentVerticalAltitude(distToDestNm);

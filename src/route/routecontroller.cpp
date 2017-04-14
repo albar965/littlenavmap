@@ -152,9 +152,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);
 
   connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &RouteController::updateWindowLabel);
-  connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &RouteController::updateModelRouteTime);
+          this, &RouteController::routeSpeedChanged);
+
   connect(ui->spinBoxRouteAlt, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &RouteController::routeAltChanged);
   connect(ui->comboBoxRouteType, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
@@ -310,17 +309,34 @@ QString RouteController::tableAsHtml(int iconSizePixel) const
 
 void RouteController::routeStringToClipboard() const
 {
-  qDebug() << "RouteController::routeStringToClipboard";
+  qDebug() << Q_FUNC_INFO;
 
-  float speedKts = Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
-
-  QString str = RouteString().createStringForRoute(route, speedKts, RouteStringDialog::getOptionsFromSettings());
+  QString str = RouteString().createStringForRoute(route, getSpeedKts(), RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
     QApplication::clipboard()->setText(str);
 
   NavApp::setStatusMessage(QString(tr("Flight plan string to clipboard.")));
+}
+
+/* Spin box speed has changed value */
+void RouteController::routeSpeedChanged()
+{
+  if(!route.isEmpty())
+  {
+    RouteCommand *undoCommand = preChange(tr("Change Speed"), rctype::SPEED);
+
+    // Get type, speed and cruise altitude from widgets
+    updateFlightplanFromWidgets();
+
+    updateWindowLabel();
+    updateModelRouteTime();
+    postChange(undoCommand);
+
+    NavApp::updateWindowTitle();
+    emit routeChanged(false);
+ }
 }
 
 /* Spin box altitude has changed value */
@@ -331,7 +347,7 @@ void RouteController::routeAltChanged()
   if(!route.isEmpty())
     undoCommand = preChange(tr("Change Altitude"), rctype::ALTITUDE);
 
-  // Get type and cruise altitude from widgets
+  // Get type, speed and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
   if(!route.isEmpty())
@@ -347,6 +363,7 @@ void RouteController::routeAltChanged()
 
 void RouteController::routeAltChangedDelayed()
 {
+  // Delay change to avoid hanging spin box when profile updates
   emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
 }
 
@@ -407,8 +424,7 @@ void RouteController::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->spinBoxRouteSpeed,
-                                                  ui->comboBoxRouteType,
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType,
                                                   ui->spinBoxRouteAlt});
 
   atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
@@ -429,8 +445,7 @@ void RouteController::restoreState()
   Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).restore({view, ui->spinBoxRouteSpeed,
-                                                     ui->comboBoxRouteType,
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType,
                                                      ui->spinBoxRouteAlt});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
@@ -465,8 +480,7 @@ void RouteController::restoreState()
 
 float RouteController::getSpeedKts() const
 {
-  return Unit::rev(
-           static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+  return Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
 }
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
@@ -516,6 +530,9 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   fileIfrVfr = flightplan.getFlightplanType();
 
   route.setFlightplan(flightplan);
+
+  route.getFlightplan().getProperties().insert("speed", QString::number(speedKts, 'f', 4));
+
   createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
@@ -606,7 +623,8 @@ bool RouteController::loadFlightplan(const QString& filename)
     newFlightplan.setCruisingAltitude(
       atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
 
-    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, 0.f);
+    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/,
+                   newFlightplan.getProperties().value("speed").toFloat());
   }
   catch(atools::Exception& e)
   {
@@ -770,10 +788,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
                                    Unit::altFeetF)));
 
     QHash<QString, QString>& properties = route.getFlightplan().getProperties();
-    properties.remove("speed");
-    properties.insert("speed",
-                      QString::number(Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()),
-                                                Unit::speedKtsF), 'f', 0));
+    properties.insert("speed", QString::number(getSpeedKts(), 'f', 4));
 
     route.getFlightplan().save(routeFilename, cleanExport);
     route.getFlightplan().setCruisingAltitude(oldCruise);
@@ -1353,8 +1368,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // If there are any radio navaids in the selected list enable range menu item
   for(int idx : selectedRouteLegIndexes)
   {
-    const RouteLeg& routeLeg = route.at(idx);
-    if(routeLeg.getVor().isValid() || routeLeg.getNdb().isValid())
+    const RouteLeg& leg = route.at(idx);
+    if(leg.getVor().isValid() || leg.getNdb().isValid())
     {
       ui->actionMapNavaidRange->setEnabled(true);
       break;
@@ -2294,6 +2309,8 @@ void RouteController::updateFlightplanFromWidgets()
   flightplan.setFlightplanType(
     ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
+
+  route.getFlightplan().getProperties().insert("speed", QString::number(getSpeedKts(), 'f', 4));
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
@@ -2472,6 +2489,10 @@ void RouteController::updateTableModel()
     ui->spinBoxRouteAlt->blockSignals(true);
     ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
     ui->spinBoxRouteAlt->blockSignals(false);
+
+    ui->spinBoxRouteSpeed->blockSignals(true);
+    ui->spinBoxRouteSpeed->setValue(atools::roundToInt(flightplan.getProperties().value("speed").toFloat()));
+    ui->spinBoxRouteSpeed->blockSignals(false);
 
     // Set combo box and block signals to avoid recursive call
     ui->comboBoxRouteType->blockSignals(true);

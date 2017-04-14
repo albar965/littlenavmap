@@ -603,7 +603,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x
   {
     if(!vor.tacan)
       texts.append(QString::number(vor.frequency / 1000., 'f', 2));
-    if(vor.tacan || vor.vortac)
+    if(vor.tacan /*|| vor.vortac*/)
       texts.append(vor.channel);
   }
 

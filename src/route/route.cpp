@@ -455,7 +455,7 @@ float Route::getTopOfDescentFromDestination() const
     float distNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
     float altFt = Unit::rev(1000.f, Unit::altFeetF);
 
-    return diff / altFt * distNm;
+    return std::min(diff / altFt * distNm, totalDistance);
   }
   return 0.f;
 }

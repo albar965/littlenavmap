@@ -293,6 +293,7 @@ private:
 
   void routeAltChanged();
   void routeAltChangedDelayed();
+  void routeSpeedChanged();
 
   void routeTypeChanged();
 
