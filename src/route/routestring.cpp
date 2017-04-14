@@ -232,7 +232,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     return false;
 
   if(speedKts > 0.f && altitude > 0.f)
-    appendMessage(tr("<b>Using %1 and cruise altitude %2.</b>").
+    appendMessage(tr("Using <b>%1</b> and cruise altitude <b>%2</b>.").
                   arg(Unit::speedKts(speedKts)).arg(Unit::altFeet(altitude)));
 
   int maxDistance =

@@ -379,7 +379,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
 
   // Texts and navaid icons ====================================================
   for(int i = 0; i < legs.size(); i++)
-    paintApproachPoints(context, legs, i, false);
+    paintApproachPoints(context, legs, i, preview);
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
@@ -721,6 +721,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
 #endif
 
   if(!preview && leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
+    // If missed is hidden on route do not display it
     return;
 
   if(leg.disabled)
@@ -760,9 +761,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
       texts.append(proc::altRestrictionTextNarrow(altRestriction));
       if(leg.flyover)
         paintProcedureFlyover(context, x, y);
-      paintProcedurePoint(context, x, y, preview);
+      paintProcedurePoint(context, x, y, false);
       if(drawText)
-        paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
+        paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
       texts.clear();
     }
   }
@@ -795,16 +796,16 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
       texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
       if(leg.flyover)
         paintProcedureFlyover(context, x, y);
-      paintProcedurePoint(context, x, y, preview);
+      paintProcedurePoint(context, x, y, false);
       if(drawText)
-        paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
+        paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
       texts.clear();
     }
   }
   else if(leg.type == proc::START_OF_PROCEDURE)
   {
     if(wToS(leg.line.getPos1(), x, y))
-      paintProcedurePoint(context, x, y, preview);
+      paintProcedurePoint(context, x, y, false);
   }
   else if(leg.type == proc::COURSE_TO_FIX)
   {
@@ -814,7 +815,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
       {
         if(leg.flyover)
           paintProcedureFlyover(context, x, y);
-        paintProcedurePoint(context, x, y, preview);
+        paintProcedurePoint(context, x, y, false);
       }
     }
     else if(leg.interceptPos.isValid())
@@ -825,9 +826,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
         texts.append(leg.displayText);
         if(leg.flyover)
           paintProcedureFlyover(context, x, y);
-        paintProcedurePoint(context, x, y, preview);
+        paintProcedurePoint(context, x, y, false);
         if(drawText)
-          paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
+          paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
         texts.clear();
       }
     }
@@ -855,43 +856,43 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   {
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintWaypoint(context, QColor(), x, y, preview);
+    paintWaypoint(context, QColor(), x, y, false);
     if(drawText)
-      paintWaypointText(context, x, y, navaids.waypoints.first(), !preview /* draw as route */, &texts);
+      paintWaypointText(context, x, y, navaids.waypoints.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.vors.isEmpty() && wToS(navaids.vors.first().position, x, y))
   {
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintVor(context, x, y, navaids.vors.first(), preview);
+    paintVor(context, x, y, navaids.vors.first(), false);
     if(drawText)
-      paintVorText(context, x, y, navaids.vors.first(), !preview /* draw as route */, &texts);
+      paintVorText(context, x, y, navaids.vors.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToS(navaids.ndbs.first().position, x, y))
   {
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintNdb(context, x, y, preview);
+    paintNdb(context, x, y, false);
     if(drawText)
-      paintNdbText(context, x, y, navaids.ndbs.first(), !preview /* draw as route */, &texts);
+      paintNdbText(context, x, y, navaids.ndbs.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.ils.isEmpty() && wToS(navaids.ils.first().position, x, y))
   {
     texts.append(leg.fixIdent);
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintProcedurePoint(context, x, y, preview);
+    paintProcedurePoint(context, x, y, false);
     if(drawText)
-      paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
+      paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
   else if(!navaids.runwayEnds.isEmpty() && wToS(navaids.runwayEnds.first().position, x, y))
   {
     texts.append(leg.fixIdent);
     if(leg.flyover)
       paintProcedureFlyover(context, x, y);
-    paintProcedurePoint(context, x, y, preview);
+    paintProcedurePoint(context, x, y, false);
     if(drawText)
-      paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, !preview /* draw as route */);
+      paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
 }
 
