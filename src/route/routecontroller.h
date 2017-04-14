@@ -337,6 +337,7 @@ private:
   void highlightProcedureItems();
   void loadProceduresFromFlightplan(bool quiet);
   void updateIcons();
+  void updateAirways();
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);

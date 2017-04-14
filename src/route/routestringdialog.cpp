@@ -67,6 +67,11 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   action->setData(static_cast<int>(rs::SID_STAR));
   ui->toolButtonRouteStringOptions->addAction(action);
 
+  action = new QAction(tr("Add generic SID and STAR"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked,
           this, &RouteStringDialog::readClicked);
   connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked,

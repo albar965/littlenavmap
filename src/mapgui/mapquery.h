@@ -70,6 +70,7 @@ public:
   /* Get all airways that are attached to a waypoint */
   void getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
                              const QString& waypointIdent = QString());
+  void getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1, const QString& waypoint2);
 
   /* Get all waypoints or an airway ordered by fragment an sequence number */
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
@@ -295,8 +296,9 @@ private:
   *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr,
-  *airwayByWaypointIdQuery = nullptr, *airwayByIdQuery = nullptr, *airspaceByIdQuery = nullptr,
-  *airwayWaypointByIdentQuery = nullptr, *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr;
+  *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr, *airwayByIdQuery = nullptr,
+  *airspaceByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr, *airwayWaypointsQuery = nullptr,
+  *airwayByNameQuery = nullptr;
 };
 
 // ---------------------------------------------------------------------------------

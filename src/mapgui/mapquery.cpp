@@ -244,6 +244,21 @@ void MapQuery::getAirwayById(map::MapAirway& airway, int airwayId)
 
 }
 
+void MapQuery::getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
+                                          const QString& waypoint2)
+{
+  if(airwayName.isEmpty() || waypoint1.isEmpty() || waypoint2.isEmpty())
+    return;
+
+  airwayByNameAndWaypointQuery->bindValue(":airway", airwayName);
+  airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
+  airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2);
+  airwayByNameAndWaypointQuery->exec();
+  if(airwayByNameAndWaypointQuery->next())
+    mapTypesFactory->fillAirway(airwayByNameAndWaypointQuery->record(), airway);
+  airwayByNameAndWaypointQuery->finish();
+}
+
 map::MapAirspace MapQuery::getAirspaceById(int airspaceId)
 {
   map::MapAirspace airspace;
@@ -569,26 +584,29 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(airportDiagram)
+  if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
-    // Also check parking and helipads in airport diagrams
-    for(int id : parkingCache.keys())
+    if(airportDiagram)
     {
-      QList<MapParking> *parkings = parkingCache.object(id);
-      for(const MapParking& p : *parkings)
+      // Also check parking and helipads in airport diagrams
+      for(int id : parkingCache.keys())
       {
-        if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.parkings, nullptr, xs, ys, p);
+        QList<MapParking> *parkings = parkingCache.object(id);
+        for(const MapParking& p : *parkings)
+        {
+          if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByDistance(conv, result.parkings, nullptr, xs, ys, p);
+        }
       }
-    }
 
-    for(int id : helipadCache.keys())
-    {
-      QList<MapHelipad> *helipads = helipadCache.object(id);
-      for(const MapHelipad& p : *helipads)
+      for(int id : helipadCache.keys())
       {
-        if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.helipads, nullptr, xs, ys, p);
+        QList<MapHelipad> *helipads = helipadCache.object(id);
+        for(const MapHelipad& p : *helipads)
+        {
+          if(conv.wToS(p.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByDistance(conv, result.helipads, nullptr, xs, ys, p);
+        }
       }
     }
   }
@@ -1548,6 +1566,14 @@ void MapQuery::initQueries()
   airwayByWaypointIdQuery->prepare(
     "select " + airwayQueryBase + " from airway where from_waypoint_id = :id or to_waypoint_id = :id");
 
+  airwayByNameAndWaypointQuery = new SqlQuery(db);
+  airwayByNameAndWaypointQuery->prepare(
+    "select " + airwayQueryBase +
+    " from airway a join waypoint wf on a.from_waypoint_id = wf.waypoint_id "
+    "join waypoint wt on a.to_waypoint_id = wt.waypoint_id "
+    "where a.airway_name = :airway and ((wf.ident = :ident1 and wt.ident = :ident2) or "
+    " (wt.ident = :ident1 and wf.ident = :ident2))");
+
   airwayByIdQuery = new SqlQuery(db);
   airwayByIdQuery->prepare("select " + airwayQueryBase + " from airway where airway_id = :id");
 
@@ -1681,6 +1707,8 @@ void MapQuery::deInitQueries()
 
   delete airwayByWaypointIdQuery;
   airwayByWaypointIdQuery = nullptr;
+  delete airwayByNameAndWaypointQuery;
+  airwayByNameAndWaypointQuery = nullptr;
   delete airwayByIdQuery;
   airwayByIdQuery = nullptr;
 

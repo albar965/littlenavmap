@@ -1545,223 +1545,6 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOptionsCache">
-      <attribute name="title">
-       <string>Cache and Files</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="7" column="0">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="0">
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Map Display</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_15">
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelOptionsCacheDisk">
-            <property name="text">
-             <string>Maximum size of &amp;disk cache:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsCacheDiskSize</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsCacheMemorySize">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> MB</string>
-            </property>
-            <property name="minimum">
-             <number>100</number>
-            </property>
-            <property name="maximum">
-             <number>2000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-            <property name="value">
-             <number>1000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
-            <property name="text">
-             <string>&amp;Clear Memory Cache</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
-            <property name="text">
-             <string>Items in the disk cache expire after two weeks.</string>
-            </property>
-            <property name="buddy">
-             <cstring>pushButtonOptionsCacheShow</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pushButtonOptionsCacheClearDisk">
-            <property name="toolTip">
-             <string>Clears the disk cache. This process will run in background and take some time.</string>
-            </property>
-            <property name="statusTip">
-             <string>Clears the disk cache.\nThis process will run in background and take some time.</string>
-            </property>
-            <property name="text">
-             <string>C&amp;lear Disk Cache</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="pushButtonOptionsCacheShow">
-            <property name="toolTip">
-             <string>Opens the cache directory in a file manager.</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>&amp;Show Disk Cache in File Manager</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsCacheDiskSize">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> MB</string>
-            </property>
-            <property name="minimum">
-             <number>500</number>
-            </property>
-            <property name="maximum">
-             <number>8000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-            <property name="value">
-             <number>2000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelOptionsCacheMemory">
-            <property name="text">
-             <string>&amp;Maximum size of memory cache:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsCacheMemorySize</cstring>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Flight Plan Elevation Profile</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_14">
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pushButtonCacheOfflineDataSelect">
-            <property name="text">
-             <string>&amp;Select Directory ...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEditCacheOfflineDataPath">
-            <property name="toolTip">
-             <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
-            </property>
-            <property name="statusTip">
-             <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
-            </property>
-            <property name="placeholderText">
-             <string>No elevation data directory selected.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="radioButtonCacheUseOnlineElevation">
-            <property name="toolTip">
-             <string>Use online elevation data to display ground in flight plan elevation profile. 
-Has a higher resolution than the offline data source but updates are slow.
-Source data has many errors.</string>
-            </property>
-            <property name="statusTip">
-             <string>Use online elevation data to display ground in flight plan elevation profile. \nHas a higher resolution than the offline data source but updates are slow \nit has many errors.</string>
-            </property>
-            <property name="text">
-             <string>Use Online Elevation Data</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="radioButtonCacheUseOffineElevation">
-            <property name="toolTip">
-             <string>Recommended.
-Use Offline GLOBE Elevation Data. Can be downloaded for free. 
-Resolution is lower than the online source but updates are very fast.
-Has a 30 arc second grid (approximately 900 meter near the equator).</string>
-            </property>
-            <property name="statusTip">
-             <string>Recommended.\nUse Offline GLOBE Elevation Data. Can be downloaded for free. \nResolution is lower than the online source but updates are very fast.\nHas a 30 arc second grid (approximately 900 meter near the equator).</string>
-            </property>
-            <property name="text">
-             <string>Use Offline GLOBE Elevation Data</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="labelCacheGlobePathState">
-            <property name="text">
-             <string>Valid</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="3">
-           <widget class="QLabel" name="labelCacheGlobePathDownload">
-            <property name="text">
-             <string>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Get the free GLOBE elevation data here.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
-Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitraty place.</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tabOptionsRoute">
       <attribute name="title">
        <string>Flight Plan</string>
@@ -1873,7 +1656,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
           <number>1</number>
          </property>
          <property name="minimum">
-          <double>1.000000000000000</double>
+          <double>0.200000000000000</double>
          </property>
          <property name="maximum">
           <double>10.000000000000000</double>
@@ -2155,6 +1938,223 @@ If this field is empty, the default Active Sky weather file path will be used wh
              <string>Flight Simulator</string>
             </property>
             <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOptionsCache">
+      <attribute name="title">
+       <string>Cache and Files</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="7" column="0">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Map Display</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_15">
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelOptionsCacheDisk">
+            <property name="text">
+             <string>Maximum size of &amp;disk cache:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsCacheDiskSize</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsCacheMemorySize">
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string> MB</string>
+            </property>
+            <property name="minimum">
+             <number>100</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>1000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
+            <property name="text">
+             <string>&amp;Clear Memory Cache</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
+            <property name="text">
+             <string>Items in the disk cache expire after two weeks.</string>
+            </property>
+            <property name="buddy">
+             <cstring>pushButtonOptionsCacheShow</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsCacheClearDisk">
+            <property name="toolTip">
+             <string>Clears the disk cache. This process will run in background and take some time.</string>
+            </property>
+            <property name="statusTip">
+             <string>Clears the disk cache.\nThis process will run in background and take some time.</string>
+            </property>
+            <property name="text">
+             <string>C&amp;lear Disk Cache</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsCacheShow">
+            <property name="toolTip">
+             <string>Opens the cache directory in a file manager.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>&amp;Show Disk Cache in File Manager</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsCacheDiskSize">
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string> MB</string>
+            </property>
+            <property name="minimum">
+             <number>500</number>
+            </property>
+            <property name="maximum">
+             <number>8000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>2000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelOptionsCacheMemory">
+            <property name="text">
+             <string>&amp;Maximum size of memory cache:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsCacheMemorySize</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Flight Plan Elevation Profile</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_14">
+          <item row="1" column="2">
+           <widget class="QPushButton" name="pushButtonCacheOfflineDataSelect">
+            <property name="text">
+             <string>&amp;Select GLOBE Directory ...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditCacheOfflineDataPath">
+            <property name="toolTip">
+             <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+            </property>
+            <property name="statusTip">
+             <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+            </property>
+            <property name="placeholderText">
+             <string>No elevation data directory selected.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButtonCacheUseOnlineElevation">
+            <property name="toolTip">
+             <string>Use online elevation data to display ground in flight plan elevation profile. 
+Has a higher resolution than the offline data source but updates are slow.
+Source data has many errors.</string>
+            </property>
+            <property name="statusTip">
+             <string>Use online elevation data to display ground in flight plan elevation profile. \nHas a higher resolution than the offline data source but updates are slow \nit has many errors.</string>
+            </property>
+            <property name="text">
+             <string>Use Online Elevation Data</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="radioButtonCacheUseOffineElevation">
+            <property name="toolTip">
+             <string>Recommended.
+Use Offline GLOBE Elevation Data. Can be downloaded for free. 
+Resolution is lower than the online source but updates are very fast.
+Has a 30 arc second grid (approximately 900 meter near the equator).</string>
+            </property>
+            <property name="statusTip">
+             <string>Recommended.\nUse Offline GLOBE Elevation Data. Can be downloaded for free. \nResolution is lower than the online source but updates are very fast.\nHas a 30 arc second grid (approximately 900 meter near the equator).</string>
+            </property>
+            <property name="text">
+             <string>Use Offline GLOBE Elevation Data</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="labelCacheGlobePathState">
+            <property name="text">
+             <string>Valid</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="3">
+           <widget class="QLabel" name="labelCacheGlobePathDownload">
+            <property name="text">
+             <string>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Get the free GLOBE elevation data here.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
+Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitraty place.</string>
+            </property>
+            <property name="openExternalLinks">
              <bool>true</bool>
             </property>
            </widget>

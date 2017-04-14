@@ -106,8 +106,18 @@ public:
   /* Get name of airport or navaid. Empty for waypoint or user. Source can be flight plan entry or database. */
   QString getName() const;
 
-  /* Get airway  name. */
-  const QString& getAirway() const;
+  /* Get airway  name from loaded flight plan. */
+  const QString& getAirwayName() const;
+
+  const map::MapAirway& getAirway() const
+  {
+    return airway;
+  }
+
+  void setAirway(const map::MapAirway& value)
+  {
+    airway = value;
+  }
 
   /* Get frequency of radio navaid. 0 if not a radio navaid. Source is always database. */
   int getFrequency() const;
@@ -272,6 +282,7 @@ private:
   map::MapRunwayEnd runwayEnd;
   map::MapWaypoint waypoint;
   proc::MapProcedureLeg procedureLeg;
+  map::MapAirway airway;
 
   bool valid = false;
 

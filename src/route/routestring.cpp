@@ -143,7 +143,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       // Departure but options is off
       continue;
 
-    const QString& airway = leg.getAirway();
+    const QString& airway = leg.getAirwayName();
     QString ident = leg.getIdent();
 
     if(leg.getMapObjectType() == map::INVALID || leg.getMapObjectType() == map::USER)
@@ -176,26 +176,20 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
 
   // Add SID
-  if(options & rs::SID_STAR)
-  {
-    if(sid.isEmpty() && sidTrans.isEmpty())
-      retval.insert(insertPosition, "SID");
-    else
-      retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans));
-  }
+  if(sid.isEmpty() && sidTrans.isEmpty() && options & rs::SID_STAR_GENERIC)
+    retval.insert(insertPosition, "SID");
+  else if(options & rs::SID_STAR)
+    retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans));
 
   // Add speed and altitude
   if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
     retval.insert(insertPosition, createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
 
   // Add STAR
-  if(options & rs::SID_STAR)
-  {
-    if(star.isEmpty() && starTrans.isEmpty())
-      retval.append("STAR");
-    else
-      retval.append(star + (starTrans.isEmpty() ? QString() : "." + starTrans));
-  }
+  if(star.isEmpty() && starTrans.isEmpty() && options & rs::SID_STAR_GENERIC)
+    retval.append("STAR");
+  else if(options & rs::SID_STAR)
+    retval.append(star + (starTrans.isEmpty() ? QString() : "." + starTrans));
 
   // Add destination airport
   if(options & rs::START_AND_DEST)
@@ -378,48 +372,52 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
     entryBuilder->buildFlightplanEntry(departure, entry);
     flightplan.getEntries().append(entry);
 
-    QString sidTrans = cleanItems.first();
-
-    bool foundSid = false;
-    QRegularExpressionMatch sidMatch = SID_STAR_TRANS.match(sidTrans);
-    if(sidMatch.hasMatch())
+    if(!cleanItems.isEmpty())
     {
-      QString sid = sidMatch.captured(1);
-      QString trans = sidMatch.captured(3);
+      QString sidTrans = cleanItems.first();
 
-      int sidTransId = -1;
-      int sidId = procQuery->getSidId(departure, sid);
-      if(sidId != -1 && !trans.isEmpty())
+      bool foundSid = false;
+      QRegularExpressionMatch sidMatch = SID_STAR_TRANS.match(sidTrans);
+      if(sidMatch.hasMatch())
       {
-        sidTransId = procQuery->getSidTransitionId(departure, trans, sidId);
-        foundSid = sidTransId != -1;
-      }
-      else
-        foundSid = sidId != -1;
+        QString sid = sidMatch.captured(1);
+        QString trans = sidMatch.captured(3);
 
-      if(foundSid)
-      {
-        // Consume item
-        cleanItems.removeFirst();
-
-        proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
-        if(sidId != -1 && sidTransId == -1)
+        int sidTransId = -1;
+        int sidId = procQuery->getSidId(departure, sid);
+        if(sidId != -1 && !trans.isEmpty())
         {
-          // Only SID
-          const proc::MapProcedureLegs *legs = procQuery->getApproachLegs(departure, sidId);
-          if(legs != nullptr)
-            departureLegs = *legs;
+          sidTransId = procQuery->getSidTransitionId(departure, trans, sidId);
+          foundSid = sidTransId != -1;
         }
-        else if(sidId != -1 && sidTransId != -1)
-        {
-          // SID and transition
-          const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(departure, sidTransId);
-          if(legs != nullptr)
-            departureLegs = *legs;
-        }
+        else
+          foundSid = sidId != -1;
 
-        // Add information to the flight plan property list
-        procQuery->extractLegsForFlightplanProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
+        if(foundSid)
+        {
+          // Consume item
+          cleanItems.removeFirst();
+
+          proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
+          if(sidId != -1 && sidTransId == -1)
+          {
+            // Only SID
+            const proc::MapProcedureLegs *legs = procQuery->getApproachLegs(departure, sidId);
+            if(legs != nullptr)
+              departureLegs = *legs;
+          }
+          else if(sidId != -1 && sidTransId != -1)
+          {
+            // SID and transition
+            const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(departure, sidTransId);
+            if(legs != nullptr)
+              departureLegs = *legs;
+          }
+
+          // Add information to the flight plan property list
+          procQuery->extractLegsForFlightplanProperties(
+            flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
+        }
       }
     }
     return true;
@@ -455,47 +453,51 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
     entryBuilder->buildFlightplanEntry(destination, entry);
     flightplan.getEntries().append(entry);
 
-    QString starTrans = cleanItems.last();
-
-    bool foundStar = false;
-    QRegularExpressionMatch starMatch = SID_STAR_TRANS.match(starTrans);
-    if(starMatch.hasMatch())
+    if(!cleanItems.isEmpty())
     {
-      QString star = starMatch.captured(1);
-      QString trans = starMatch.captured(3);
+      QString starTrans = cleanItems.last();
 
-      int starTransId = -1;
-      int starId = procQuery->getStarId(destination, star);
-      if(starId != -1 && !trans.isEmpty())
+      bool foundStar = false;
+      QRegularExpressionMatch starMatch = SID_STAR_TRANS.match(starTrans);
+      if(starMatch.hasMatch())
       {
-        starTransId = procQuery->getSidTransitionId(destination, trans, starId);
-        foundStar = starTransId != -1;
-      }
-      else
-        foundStar = starId != -1;
+        QString star = starMatch.captured(1);
+        QString trans = starMatch.captured(3);
 
-      if(foundStar)
-      {
-        // Consume item
-        cleanItems.removeLast();
+        int starTransId = -1;
+        int starId = procQuery->getStarId(destination, star);
+        if(starId != -1 && !trans.isEmpty())
+        {
+          starTransId = procQuery->getSidTransitionId(destination, trans, starId);
+          foundStar = starTransId != -1;
+        }
+        else
+          foundStar = starId != -1;
 
-        proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
-        if(starId != -1 && starTransId == -1)
+        if(foundStar)
         {
-          // Only STAR
-          const proc::MapProcedureLegs *legs = procQuery->getApproachLegs(destination, starId);
-          if(legs != nullptr)
-            starLegs = *legs;
+          // Consume item
+          cleanItems.removeLast();
+
+          proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
+          if(starId != -1 && starTransId == -1)
+          {
+            // Only STAR
+            const proc::MapProcedureLegs *legs = procQuery->getApproachLegs(destination, starId);
+            if(legs != nullptr)
+              starLegs = *legs;
+          }
+          else if(starId != -1 && starTransId != -1)
+          {
+            // STAR and transition
+            const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(destination, starTransId);
+            if(legs != nullptr)
+              starLegs = *legs;
+          }
+          // Add information to the flight plan property list
+          procQuery->extractLegsForFlightplanProperties(
+            flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
         }
-        else if(starId != -1 && starTransId != -1)
-        {
-          // STAR and transition
-          const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(destination, starTransId);
-          if(legs != nullptr)
-            starLegs = *legs;
-        }
-        // Add information to the flight plan property list
-        procQuery->extractLegsForFlightplanProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
       }
     }
 

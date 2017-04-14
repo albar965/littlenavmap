@@ -520,6 +520,7 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
 
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
+  updateAirways();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -544,6 +545,24 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   qDebug() << route;
 
   emit routeChanged(true);
+}
+
+void RouteController::updateAirways()
+{
+  for(int i = 1; i < route.size(); i++)
+  {
+    RouteLeg& routeLeg = route[i];
+    const RouteLeg& prevLeg = route.at(i - 1);
+
+    if(!routeLeg.getAirwayName().isEmpty())
+    {
+      map::MapAirway airway;
+      query->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
+      routeLeg.setAirway(airway);
+    }
+    else
+      routeLeg.setAirway(map::MapAirway());
+  }
 }
 
 void RouteController::loadProceduresFromFlightplan(bool quiet)
@@ -633,6 +652,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     createRouteLegsFromFlightplan();
     loadProceduresFromFlightplan(false /* quiet */);
     route.updateAll();
+    updateAirways();
 
     updateTableModel();
     postChange(undoCommand);
@@ -793,6 +813,7 @@ void RouteController::calculateDirect()
   route.removeRouteLegs();
 
   route.updateAll();
+  updateAirways();
 
   updateTableModel();
   updateWindowLabel();
@@ -954,6 +975,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       route.removeDuplicateRouteLegs();
       route.updateAll();
+      updateAirways();
 
       updateTableModel();
       updateWindowLabel();
@@ -1059,6 +1081,7 @@ void RouteController::reverseRoute()
 
   createRouteLegsFromFlightplan();
   route.updateAll();
+  updateAirways();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   updateTableModel();
@@ -1134,6 +1157,7 @@ void RouteController::postDatabaseLoad()
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
+  updateAirways();
 
   // Update runway or parking if one of these has changed due to the database switch
   Flightplan& flightplan = route.getFlightplan();
@@ -1501,6 +1525,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(true /* quiet */);
   route.updateAll();
+  updateAirways();
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -1615,6 +1640,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     }
 
     route.updateAll();
+    updateAirways();
 
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
@@ -1679,6 +1705,7 @@ void RouteController::deleteSelectedLegs()
     route.removeProcedureLegs(procs);
 
     route.updateAll();
+    updateAirways();
 
     // Force update of start if departure airport was removed
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
@@ -1755,6 +1782,7 @@ void RouteController::routeSetParking(map::MapParking parking)
   route.first().setDepartureParking(parking);
 
   route.updateAll();
+  updateAirways();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1792,6 +1820,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   route.first().setDepartureStart(start);
 
   route.updateAll();
+  updateAirways();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1818,6 +1847,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
+  updateAirways();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1869,6 +1899,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   route.updateAll();
+  updateAirways();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1955,6 +1986,7 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   }
 
   route.updateAll();
+  updateAirways();
   routeToFlightPlan();
 
   // Get type and cruise altitude from widgets
@@ -2008,6 +2040,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   route.removeProcedureLegs(procs);
 
   route.updateAll();
+  updateAirways();
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2120,6 +2153,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
+  updateAirways();
 
   // Force update of start if departure airport was changed
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
@@ -2155,6 +2189,8 @@ void RouteController::routeDelete(int index)
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
+  updateAirways();
+
   // Force update of start if departure airport was removed
   updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2327,13 +2363,20 @@ void RouteController::updateTableModel()
     ident->setFont(f);
     ident->setTextAlignment(Qt::AlignRight);
 
+    if(leg.getMapObjectType() == map::INVALID)
+      ident->setForeground(Qt::red);
+
     itemRow[rc::IDENT] = ident;
     itemRow[rc::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rc::NAME] = new QStandardItem(leg.getName());
     itemRow[rc::PROCEDURE] = new QStandardItem(proc::procedureTypeText(leg.getProcedureLeg()));
 
     if(leg.isRoute())
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(leg.getAirway());
+    {
+      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(leg.getAirwayName());
+      if(leg.getAirway().isValid() && leg.getAirway().minAltitude > 0)
+        itemRow[rc::RESTRICTION] = new QStandardItem(Unit::altFeet(leg.getAirway().minAltitude, false));
+    }
     else
     {
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
@@ -2564,13 +2607,18 @@ void RouteController::highlightProcedureItems()
       QStandardItem *item = model->item(row, col);
       if(item != nullptr)
       {
-        if(route.at(row).isAnyProcedure())
+        const RouteLeg& leg = route.at(row);
+        if(leg.isAnyProcedure())
         {
-          if(route.at(row).getProcedureLeg().isMissed())
+          if(leg.getProcedureLeg().isMissed())
             item->setForeground(OptionData::instance().isGuiStyleDark() ? Qt::darkYellow : Qt::darkRed);
           else
             item->setForeground(OptionData::instance().isGuiStyleDark() ? Qt::cyan : Qt::darkBlue);
         }
+        else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && !leg.getAirwayName().isEmpty() &&
+                 !leg.getAirway().isValid()))
+          item->setForeground(Qt::red);
         else
           item->setForeground(QApplication::palette().color(QPalette::Normal, QPalette::Text));
       }

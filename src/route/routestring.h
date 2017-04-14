@@ -46,9 +46,10 @@ enum RouteStringOption
   START_AND_DEST = 1 << 1,
   ALT_AND_SPEED = 1 << 2,
   SID_STAR = 1 << 3,
-  GFP = 1 << 4,
+  SID_STAR_GENERIC = 1 << 4,
+  GFP = 1 << 5,
 
-  DEFAULT_OPTIONS = DCT | START_AND_DEST | ALT_AND_SPEED | SID_STAR
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };
 
 Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);

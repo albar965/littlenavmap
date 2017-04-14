@@ -485,7 +485,7 @@ QString RouteLeg::getMapObjectTypeName() const
   else if(type == map::USER)
     return EMPTY_STRING;
   else
-    return tr("Unknown");
+    return EMPTY_STRING;
 }
 
 float RouteLeg::getCourseToMag() const
@@ -552,7 +552,7 @@ QString RouteLeg::getIdent() const
   else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
     return curEntry().getWaypointId();
   else if(curEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
-    return tr("Unknown Waypoint Type");
+    return EMPTY_STRING;
   else
     return EMPTY_STRING;
 }
@@ -586,7 +586,7 @@ QString RouteLeg::getName() const
     return EMPTY_STRING;
 }
 
-const QString& RouteLeg::getAirway() const
+const QString& RouteLeg::getAirwayName() const
 {
   if(isRoute())
     return curEntry().getAirway();

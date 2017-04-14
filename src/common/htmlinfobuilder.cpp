@@ -1575,6 +1575,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
+  float toTod = map::INVALID_DISTANCE_VALUE;
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
     // The corrected leg will point to an approach leg if we head to the start of a procedure
@@ -1612,21 +1613,19 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
 
       // Top of descent  ===============================================================
-      if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
-      {
-        float toTod = route.getTopOfDescentFromStart() - distFromStartNm;
-        if(toTod > 0)
-        {
-          QString timeStr;
-          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
-            timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
-
-          html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
-        }
-        else
-          html.row2(tr("To Top of Descent:"), tr("Passed"));
-      }
       html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
+
+      if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
+        toTod = route.getTopOfDescentFromStart() - distFromStartNm;
+
+      if(toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE)
+      {
+        QString timeStr;
+        if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+          timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
+
+        html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+      }
 
       html.tableEnd();
 
@@ -1764,9 +1763,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.tableEnd();
   }
 
+  // Add departure and destination for AI ==================================================
   if(userAircaft == nullptr && (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
   {
-    // Add departure and destination for AI
     if(info && userAircaft != nullptr)
       head(html, tr("Flight Plan"));
 
@@ -1854,6 +1853,19 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
     html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
+  }
+
+  if(toTod < 0)
+  {
+    // Display vertical path deviation when after TOD
+    float diff = aircraft.getPosition().getAltitude() - route.getDescentVerticalAltitude(distToDestNm);
+    QString upDown;
+    if(diff >= 100.f)
+      upDown = tr(" above <b>▼</b>");
+    else if(diff <= -100)
+      upDown = tr(" below <b>▲</b>");
+
+    html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, atools::util::html::NO_ENTITIES);
   }
   html.tableEnd();
 

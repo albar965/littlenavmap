@@ -95,6 +95,9 @@ public:
   float getTopOfDescentFromDestination() const;
   float getTopOfDescentFromStart() const;
 
+  /* Above or below planned descent */
+  float getDescentVerticalAltitude(float currentDistToDest) const;
+
   /* Total route distance in nautical miles */
   float getTotalDistance() const
   {
@@ -333,6 +336,7 @@ private:
   void nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
   void eraseProcedureLegs(proc::MapProcedureTypes type);
+  int adjustedActiveLeg() const;
 
   bool trueCourse = false;
 
@@ -348,8 +352,6 @@ private:
   map::PosCourse activePos;
   int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
       arrivalLegsOffset = map::INVALID_INDEX_VALUE;
-
-  int adjustedActiveLeg() const;
 
 };
 

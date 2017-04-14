@@ -426,6 +426,18 @@ float Route::getTopOfDescentFromStart() const
   return 0.f;
 }
 
+float Route::getDescentVerticalAltitude(float currentDistToDest) const
+{
+  if(hasValidDestination())
+  {
+    return (getCruisingAltitudeFeet() - last().getAirport().position.getAltitude()) *
+           currentDistToDest /
+           (getTopOfDescentFromDestination());
+  }
+
+  return map::INVALID_ALTITUDE_VALUE;
+}
+
 float Route::getCruisingAltitudeFeet() const
 {
   return Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
@@ -436,6 +448,7 @@ float Route::getTopOfDescentFromDestination() const
   if(!isEmpty())
   {
     float cruisingAltitude = getCruisingAltitudeFeet();
+
     float diff = (cruisingAltitude - last().getPosition().getAltitude());
 
     // Either nm per 1000 something alt or km per 1000 something alt
