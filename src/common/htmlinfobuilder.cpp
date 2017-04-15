@@ -31,7 +31,8 @@
 #include "sql/sqlrecord.h"
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
-#include "util/morsecode.h"
+#include "fs/util/morsecode.h"
+#include "fs/util/tacanfrequencies.h"
 #include "common/unit.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
@@ -44,7 +45,8 @@ using atools::sql::SqlRecordVector;
 using atools::geo::normalizeCourse;
 using atools::geo::opposedCourseDeg;
 using atools::capString;
-using atools::util::MorseCode;
+using atools::fs::util::MorseCode;
+using atools::fs::util::frequencyForTacanChannel;
 using atools::util::HtmlBuilder;
 using atools::util::html::Flags;
 using atools::fs::sc::SimConnectAircraft;
@@ -857,7 +859,9 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
 
       if(vor.tacan)
       {
-        html.row2(tr("TACAN Channel:"), vor.channel);
+        html.row2(tr("TACAN Channel:"), QString(tr("%1 (%2 MHz)")).
+                  arg(vor.channel).
+                  arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
         html.row2(tr("TACAN Range:"), Unit::distNm(vor.range));
       }
       else if(vor.vortac)
@@ -1154,8 +1158,12 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(!vor.tacan)
     html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
 
-  if(vor.tacan || vor.vortac)
+  if(vor.vortac)
     html.row2(tr("Channel:"), vor.channel);
+  else if(vor.tacan)
+    html.row2(tr("Channel:"), QString(tr("%1 (%2 MHz)")).
+              arg(vor.channel).
+              arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
 
   if(!vor.dmeOnly)
     html.row2(tr("Magvar:"), map::magvarText(vor.magvar));

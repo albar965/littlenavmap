@@ -63,6 +63,9 @@ struct MapProcedureRef;
 
 namespace atools {
 namespace fs {
+namespace util {
+class MorseCode;
+}
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;
@@ -70,10 +73,6 @@ class SimConnectAircraft;
 }
 namespace sql {
 class SqlRecord;
-}
-namespace util {
-// class HtmlBuilder;
-class MorseCode;
 }
 }
 
@@ -283,7 +282,7 @@ private:
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
-  atools::util::MorseCode *morse;
+  atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
   QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon;

@@ -22,6 +22,7 @@
 #include "connect/connectclient.h"
 #include "mapgui/mapquery.h"
 #include "db/databasemanager.h"
+#include "fs/db/databasemeta.h"
 #include "mapgui/mapwidget.h"
 #include "gui/mainwindow.h"
 #include "route/routecontroller.h"
@@ -180,9 +181,14 @@ QString NavApp::getCurrentSimulatorShortName()
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulator());
 }
 
-bool NavApp::hasCurrentSimulatorSidStarSupport()
+bool NavApp::hasSidStarInDatabase()
 {
-  return getDatabaseManager()->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3;
+  return atools::fs::db::DatabaseMeta(getDatabase()).hasSidStar();
+}
+
+bool NavApp::hasDataInDatabase()
+{
+  return atools::fs::db::DatabaseMeta(getDatabase()).hasData();
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabase()

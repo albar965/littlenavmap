@@ -281,7 +281,7 @@ void ProcedureSearch::clearRunwayFilter()
 void ProcedureSearch::updateFilterBoxes()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->comboBoxProcedureSearchFilter->setHidden(!NavApp::hasCurrentSimulatorSidStarSupport());
+  ui->comboBoxProcedureSearchFilter->setHidden(!NavApp::hasSidStarInDatabase());
 
   clearRunwayFilter();
 
@@ -433,7 +433,8 @@ void ProcedureSearch::saveState()
 void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  NavApp::getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+  if(NavApp::hasDataInDatabase())
+    NavApp::getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
   updateFilterBoxes();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -441,15 +442,19 @@ void ProcedureSearch::restoreState()
                                                  ui->comboBoxProcedureRunwayFilter});
 
   fillApproachTreeWidget();
-
-  QBitArray state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
-  recentTreeState.insert(currentAirport.id, state);
+  QBitArray state;
+  if(currentAirport.isValid())
+  {
+    state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
+    recentTreeState.insert(currentAirport.id, state);
+  }
 
   updateTreeHeader();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
   // Restoring state will emit above signal
-  restoreTreeViewState(state);
+  if(currentAirport.isValid())
+    restoreTreeViewState(state);
   updateHeaderLabel();
 }
 

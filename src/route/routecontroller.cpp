@@ -336,7 +336,7 @@ void RouteController::routeSpeedChanged()
 
     NavApp::updateWindowTitle();
     emit routeChanged(false);
- }
+  }
 }
 
 /* Spin box altitude has changed value */
@@ -1077,9 +1077,12 @@ int RouteController::adjustAltitude(const Pos& departurePos, const Pos& destinat
 
 void RouteController::reverseRoute()
 {
-  qDebug() << "reverse";
+  qDebug() << Q_FUNC_INFO;
 
   RouteCommand *undoCommand = preChange(tr("Reverse"), rctype::REVERSE);
+
+  // Remove all procedures and properties
+  route.removeProcedureLegs(proc::PROCEDURE_ALL);
 
   route.getFlightplan().reverse();
 
@@ -1090,9 +1093,6 @@ void RouteController::reverseRoute()
     for(int i = entries.size() - 2; i >= 1; i--)
       entries[i].setAirway(entries.at(i - 1).getAirway());
   }
-
-  // Remove all procedures
-  route.removeProcedureLegs(proc::PROCEDURE_ALL);
 
   createRouteLegsFromFlightplan();
   route.updateAll();

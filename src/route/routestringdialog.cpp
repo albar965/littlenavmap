@@ -62,10 +62,13 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   action->setData(static_cast<int>(rs::ALT_AND_SPEED));
   ui->toolButtonRouteStringOptions->addAction(action);
 
-  action = new QAction(tr("Add SID and STAR"), ui->toolButtonRouteStringOptions);
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::SID_STAR));
-  ui->toolButtonRouteStringOptions->addAction(action);
+  if(NavApp::hasSidStarInDatabase())
+  {
+    action = new QAction(tr("Add SID and STAR"), ui->toolButtonRouteStringOptions);
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::SID_STAR));
+    ui->toolButtonRouteStringOptions->addAction(action);
+  }
 
   action = new QAction(tr("Add generic SID and STAR"), ui->toolButtonRouteStringOptions);
   action->setCheckable(true);
@@ -146,7 +149,8 @@ void RouteStringDialog::restoreState()
 
 rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
 {
-  return rs::RouteStringOptions(atools::settings::Settings::instance().valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS));
+  return rs::RouteStringOptions(atools::settings::Settings::instance().
+                                valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS));
 }
 
 void RouteStringDialog::readClicked()

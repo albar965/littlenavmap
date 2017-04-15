@@ -90,7 +90,8 @@ public:
 
   /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
   static QString getCurrentSimulatorShortName();
-  static bool hasCurrentSimulatorSidStarSupport();
+  static bool hasSidStarInDatabase();
+  static bool hasDataInDatabase();
 
   static atools::sql::SqlDatabase *getDatabase();
 

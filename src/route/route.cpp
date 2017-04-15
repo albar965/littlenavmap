@@ -1066,7 +1066,7 @@ void Route::removeDuplicateRouteLegs()
       if(arrivalLeg.isAnyProcedure() &&
          routeLeg.isRoute() &&
          atools::contains(arrivalLeg.getProcedureLegType(),
-                          {proc::INITIAL_FIX, proc::TRACK_FROM_FIX_FROM_DISTANCE,
+                          {proc::INITIAL_FIX, proc::START_OF_PROCEDURE, proc::TRACK_FROM_FIX_FROM_DISTANCE,
                            proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::FROM_FIX_TO_MANUAL_TERMINATION}) &&
          arrivalLeg.isNavaidEqualTo(routeLeg))
       {
