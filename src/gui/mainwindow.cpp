@@ -20,6 +20,7 @@
 #include "common/constants.h"
 #include "common/proctypes.h"
 #include "navapp.h"
+#include "common/mapcolors.h"
 #include "gui/application.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -122,6 +123,9 @@ MainWindow::MainWindow()
     optionsDialog = new OptionsDialog(this);
     // Has to load the state now to options are available for all controller and manager classes
     optionsDialog->restoreState();
+
+    // Load all map feature colors
+    mapcolors::syncColors();
 
     Unit::init();
 

@@ -29,6 +29,7 @@
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
+#include "gui/palettesettings.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -40,6 +41,7 @@
 #include <QGuiApplication>
 #include <QMainWindow>
 #include <QUrl>
+#include <QSettings>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -168,7 +170,16 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   {
     ui->comboBoxOptionsGuiTheme->addItem(styleName, styleName);
     QStyle *style = QStyleFactory::create(styleName);
-    stylePalettes.append(style->standardPalette());
+
+    QPalette palette = style->standardPalette();
+    if(styleName == "Fusion")
+    {
+      // Store fusion palette settings a in a separate ini file
+      QString filename = Settings::instance().getConfigFilename("_fusionstyle.ini");
+      atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
+      paletteSettings.syncPalette(palette);
+    }
+    stylePalettes.append(palette);
     stylesheets.append(QString());
     delete style;
   }
@@ -196,6 +207,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   darkPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
   darkPalette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
   darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
+
+  // Store dark palette settings a in a separate ini file
+  QString filename = Settings::instance().getConfigFilename("_nightstyle.ini");
+  atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
+  paletteSettings.syncPalette(darkPalette);
+
   // darkPalette.setColor(QPalette::Active, QPalette::Text, QColor(100, 100, 100));
   // darkPalette.setColor(QPalette::Active, QPalette::ButtonText, QColor(100, 100, 100));
   // darkPalette.setColor(QPalette::Inactive, QPalette::Text, QColor(100, 100, 100));
@@ -345,6 +362,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->pushButtonOptionsDisplayFlightplanColor, &QPushButton::clicked,
           this, &OptionsDialog::flightplanColorClicked);
+  connect(ui->pushButtonOptionsDisplayFlightplanProcedureColor, &QPushButton::clicked,
+          this, &OptionsDialog::flightplanProcedureColorClicked);
   connect(ui->pushButtonOptionsDisplayFlightplanActiveColor, &QPushButton::clicked,
           this, &OptionsDialog::flightplanActiveColorClicked);
   connect(ui->pushButtonOptionsDisplayTrailColor, &QPushButton::clicked,
@@ -495,6 +514,7 @@ void OptionsDialog::saveState()
   settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
 
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, flightplanColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR, flightplanProcedureColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
 
@@ -515,10 +535,14 @@ void OptionsDialog::restoreState()
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
     ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
-  flightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
+  flightplanColor =
+    settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
+  flightplanProcedureColor =
+    settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR, QColor(255, 150, 0)).value<QColor>();
   flightplanActiveColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, QColor(Qt::magenta)).value<QColor>();
-  trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
+  trailColor =
+    settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
   if(settings.contains(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX))
     ui->comboBoxOptionsGuiTheme->setCurrentIndex(settings.valueInt(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX));
@@ -547,12 +571,10 @@ void OptionsDialog::restoreState()
 
 void OptionsDialog::updateButtonColors()
 {
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanColor,
-                                       flightplanColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor,
-                                       flightplanActiveColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor,
-                                       trailColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanColor, flightplanColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanProcedureColor, flightplanProcedureColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
 }
 
 void OptionsDialog::restoreDisplayOptItemStates()
@@ -619,6 +641,16 @@ QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, const QString& te
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   displayOptItemIndex.insert(type, item);
   return item;
+}
+
+void OptionsDialog::flightplanProcedureColorClicked()
+{
+  QColor col = QColorDialog::getColor(flightplanProcedureColor, mainWindow);
+  if(col.isValid())
+  {
+    flightplanProcedureColor = col;
+    updateButtonColors();
+  }
 }
 
 void OptionsDialog::flightplanColorClicked()
@@ -768,6 +800,7 @@ void OptionsDialog::widgetsToOptionData()
   OptionData& data = OptionData::instanceInternal();
 
   data.flightplanColor = flightplanColor;
+  data.flightplanProcedureColor = flightplanProcedureColor;
   data.flightplanActiveColor = flightplanActiveColor;
   data.trailColor = trailColor;
   displayOptWidgetToOptionData();
@@ -875,6 +908,7 @@ void OptionsDialog::optionDataToWidgets()
   OptionData& data = OptionData::instanceInternal();
 
   flightplanColor = data.flightplanColor;
+  flightplanProcedureColor = data.flightplanProcedureColor;
   flightplanActiveColor = data.flightplanActiveColor;
   trailColor = data.trailColor;
   displayOptDataToWidget();

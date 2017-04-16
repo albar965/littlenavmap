@@ -29,15 +29,41 @@ struct MapAirspace;
 
 }
 
-/* All colors and pens used on the map and profile display */
+class QSettings;
+
+/* All colors and pens used on the map and profile display
+ * Colors are partially loaded from a configuration file. */
 namespace mapcolors {
 
+/* Load/save colors from/to configuration file */
+void syncColors();
+
+/* Colors and pens that are updated from confguration file by syncColors */
+extern QColor airportDetailBackColor;
+extern QColor airportEmptyColor;
+extern QColor toweredAirportColor;
+extern QColor unToweredAirportColor;
+extern QColor vorSymbolColor;
+extern QColor ndbSymbolColor;
+extern QColor markerSymbolColor;
+extern QColor ilsSymbolColor;
+extern QColor ilsTextColor;
+extern QColor waypointSymbolColor;
+extern QPen airwayVictorPen;
+extern QPen airwayJetPen;
+extern QPen airwayBothPen;
+extern QColor airwayTextColor;
+extern QColor distanceRhumbColor;
+extern QColor rangeRingColor;
+extern QColor rangeRingTextColor;
+extern QColor distanceColor;
+
+// ==========================================================================
 /* General text pens */
 const QPen textBackgroundPen = QPen(QBrush(QColor(Qt::lightGray)), 1, Qt::SolidLine, Qt::FlatCap);
 const QPen textPen = QPen(QBrush(QColor(0, 0, 0)), 1, Qt::SolidLine, Qt::FlatCap);
 
 /* Airport diagram background */
-const QColor airportDetailBackColor = QColor(Qt::white);
 
 const QColor taxiwayNameColor = QColor(Qt::black);
 const QColor taxiwayNameBackgroundColor = QColor(255, 255, 120);
@@ -100,8 +126,6 @@ const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
 
 const QColor routeProcedureOutlineColor = QColor(Qt::black);
-const QColor routeProcedureColor = QColor(255, 150, 0);
-const QColor routeProcedureMissedColor = QColor(255, 150, 0);
 
 const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);
@@ -119,26 +143,6 @@ const QColor routeProcedurePointFlyoverColor = QColor(255, 255, 0);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
-
-const QColor rangeRingColor = QColor(Qt::red);
-const QColor rangeRingTextColor = QColor(Qt::black);
-
-const QColor distanceColor = QColor(Qt::black);
-const QColor distanceRhumbColor = QColor(80, 80, 80);
-
-/* Radio navaid colors */
-const QColor vorSymbolColor = QColor(Qt::darkBlue);
-const QColor ndbSymbolColor = QColor(Qt::darkRed);
-const QColor markerSymbolColor = QColor(Qt::darkMagenta);
-const QColor ilsSymbolColor = QColor(Qt::darkGreen);
-const QColor ilsTextColor = QColor(0, 30, 0);
-const QColor waypointSymbolColor = QColor(200, 0, 200);
-
-/* Airway colors */
-const QColor airwayVictorColor = QColor(150, 150, 150);
-const QColor airwayJetColor = QColor(100, 100, 100);
-const QColor airwayBothColor = QColor(100, 100, 100);
-const QColor airwayTextColor = QColor(80, 80, 80);
 
 /* Elevation profile colors and pens */
 const QColor profileSkyColor(QColor(204, 204, 255));
@@ -179,7 +183,7 @@ const QColor& alternatingRowColor(int row, bool isSort);
 const QPen aircraftTrailPen(float size);
 
 const QPen& penForAirspace(const map::MapAirspace& airspace);
-QColor colorForAirspaceFill(const map::MapAirspace& airspace);
+const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 
 } // namespace mapcolors
 

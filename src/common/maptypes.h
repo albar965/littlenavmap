@@ -693,25 +693,25 @@ struct WeatherContext
 
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
-QString navTypeNameVor(const QString& type);
-QString navTypeNameVorLong(const QString& type);
-QString navTypeNameNdb(const QString& type);
-QString navTypeNameWaypoint(const QString& type);
+const QString& navTypeNameVor(const QString& type);
+const QString& navTypeNameVorLong(const QString& type);
+const QString& navTypeNameNdb(const QString& type);
+const QString& navTypeNameWaypoint(const QString& type);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
-QString navName(const QString& type);
-QString surfaceName(const QString& surface);
-QString parkingGateName(const QString& gate);
-QString parkingRampName(const QString& ramp);
-QString parkingTypeName(const QString& type);
-QString parkingName(const QString& name);
+const QString& navName(const QString& type);
+const QString& surfaceName(const QString& surface);
+const QString& parkingGateName(const QString& gate);
+const QString& parkingRampName(const QString& ramp);
+const QString& parkingTypeName(const QString& type);
+const QString& parkingName(const QString& name);
 QString parkingNameNumberType(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
 /* Parking name from PLN to database name */
-QString parkingDatabaseName(const QString& name);
+const QString& parkingDatabaseName(const QString& name);
 
 /* Get short name for a parking spot */
 QString parkingShortName(const QString& name);
@@ -719,12 +719,12 @@ QString parkingShortName(const QString& name);
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);
 
-QString airspaceTypeToString(map::MapAirspaceTypes type);
-QString airspaceRemark(map::MapAirspaceTypes type);
+const QString& airspaceTypeToString(map::MapAirspaceTypes type);
+const QString& airspaceRemark(map::MapAirspaceTypes type);
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
-QString airspaceTypeToDatabase(map::MapAirspaceTypes type);
+const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
 
 QString airwayTypeToShortString(map::MapAirwayType type);
 QString airwayTypeToString(map::MapAirwayType type);

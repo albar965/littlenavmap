@@ -91,6 +91,7 @@ private:
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();
   void flightplanActiveColorClicked();
+  void flightplanProcedureColorClicked();
   void trailColorClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
@@ -111,7 +112,7 @@ private:
 
   QVector<int> ringStrToVector(const QString& string) const;
 
-  QColor flightplanColor, flightplanActiveColor, trailColor;
+  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;

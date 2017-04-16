@@ -124,11 +124,11 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
       continue;
 
     if(airway.type == map::VICTOR)
-      context->painter->setPen(QPen(mapcolors::airwayVictorColor, 1.5));
+      context->painter->setPen(mapcolors::airwayVictorPen);
     else if(airway.type == map::JET)
-      context->painter->setPen(QPen(mapcolors::airwayJetColor, 1.5));
+      context->painter->setPen(mapcolors::airwayJetPen);
     else if(airway.type == map::BOTH)
-      context->painter->setPen(QPen(mapcolors::airwayBothColor, 1.5));
+      context->painter->setPen(mapcolors::airwayBothPen);
 
     // Get start and end point of airway segment in screen coordinates
     int x1, y1, x2, y2;

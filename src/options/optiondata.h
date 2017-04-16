@@ -490,6 +490,11 @@ public:
     return flightplanColor;
   }
 
+  const QColor& getFlightplanProcedureColor() const
+  {
+    return flightplanProcedureColor;
+  }
+
   const QColor& getFlightplanActiveSegmentColor() const
   {
     return flightplanActiveColor;
@@ -692,7 +697,7 @@ private:
   // spinBoxOptionsDisplayThicknessRangeDistance
   int displayThicknessRangeDistance = 100;
 
-  QColor flightplanColor, flightplanActiveColor, trailColor;
+  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;

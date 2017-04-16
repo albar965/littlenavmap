@@ -19,20 +19,40 @@
 
 #include "mapgui/mapquery.h"
 #include "options/optiondata.h"
+#include "settings/settings.h"
 
 #include <QPen>
 #include <QString>
 #include <QApplication>
 #include <QPalette>
+#include <QSettings>
 
 namespace mapcolors {
 
+// Colors that are updated from confguration file
+QColor airportDetailBackColor(255, 255, 255);
+QColor airportEmptyColor(110, 110, 110);
+QColor toweredAirportColor(15, 70, 130);
+QColor unToweredAirportColor(126, 58, 91);
+QColor vorSymbolColor(Qt::darkBlue);
+QColor ndbSymbolColor(Qt::darkRed);
+QColor markerSymbolColor(Qt::darkMagenta);
+QColor ilsSymbolColor(Qt::darkGreen);
+
+QColor ilsTextColor(0, 30, 0);
+QColor waypointSymbolColor(200, 0, 200);
+QPen airwayVictorPen(QColor(150, 150, 150), 1.5);
+QPen airwayJetPen(QColor(100, 100, 100), 1.5);
+QPen airwayBothPen(QColor(100, 100, 100), 1.5);
+QColor airwayTextColor(80, 80, 80);
+
+QColor distanceRhumbColor(80, 80, 80);
+QColor rangeRingColor(Qt::red);
+QColor rangeRingTextColor(Qt::black);
+QColor distanceColor(Qt::black);
+
 const QColor& colorForAirport(const map::MapAirport& ap)
 {
-  static const QColor airportEmptyColor = QColor::fromRgb(110, 110, 110);
-  static const QColor toweredAirportColor = QColor::fromRgb(15, 70, 130);
-  static const QColor unToweredAirportColor = QColor::fromRgb(126, 58, 91);
-
   if(ap.empty() && !ap.waterOnly() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
     return airportEmptyColor;
   else if(ap.tower())
@@ -210,121 +230,184 @@ const QPen aircraftTrailPen(float size)
   return QPen();
 }
 
-QColor colorForAirspaceFill(const map::MapAirspace& airspace)
-{
-  if(airspace.type == map::CENTER)
-    return Qt::transparent;
-  else
+static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   {
-    QColor col = mapcolors::penForAirspace(airspace).color();
-    col.setAlpha(25);
-    return col;
+    {map::AIRSPACE_NONE, QColor("#00000000")},
+    {map::CENTER, QColor("#00808080")},
+    {map::CLASS_A, QColor("#308d0200")},
+    {map::CLASS_B, QColor("#30902ece")},
+    {map::CLASS_C, QColor("#308594ec")},
+    {map::CLASS_D, QColor("#306c5bce")},
+    {map::CLASS_E, QColor("#30cc5060")},
+    {map::CLASS_F, QColor("#307d8000")},
+    {map::CLASS_G, QColor("#30cc8040")},
+    {map::TOWER, QColor("#3060808a")},
+    {map::CLEARANCE, QColor("#3060808a")},
+    {map::GROUND, QColor("#3060808a")},
+    {map::DEPARTURE, QColor("#3060808a")},
+    {map::APPROACH, QColor("#3060808a")},
+    {map::MOA, QColor("#304485b7")},
+    {map::RESTRICTED, QColor("#30fd8c00")},
+    {map::PROHIBITED, QColor("#30f00909")},
+    {map::WARNING, QColor("#30fd8c00")},
+    {map::ALERT, QColor("#30fd8c00")},
+    {map::DANGER, QColor("#30dd103d")},
+    {map::NATIONAL_PARK, QColor("#30509090")},
+    {map::MODEC, QColor("#30509090")},
+    {map::RADAR, QColor("#30509090")},
+    {map::TRAINING, QColor("#30509090")}
   }
+  );
+
+static QHash<map::MapAirspaceTypes, QPen> airspacePens(
+  {
+    {map::AIRSPACE_NONE, QPen(QColor("#00000000"))},
+    {map::CENTER, QPen(QColor("#808080"), 1.5)},
+    {map::CLASS_A, QPen(QColor("#8d0200"), 2)},
+    {map::CLASS_B, QPen(QColor("#902ece"), 2)},
+    {map::CLASS_C, QPen(QColor("#8594ec"), 2)},
+    {map::CLASS_D, QPen(QColor("#6c5bce"), 2)},
+    {map::CLASS_E, QPen(QColor("#cc5060"), 2)},
+    {map::CLASS_F, QPen(QColor("#7d8000"), 2)},
+    {map::CLASS_G, QPen(QColor("#cc8040"), 2)},
+    {map::TOWER, QPen(QColor("#60808a"), 2)},
+    {map::CLEARANCE, QPen(QColor("#60808a"), 2)},
+    {map::GROUND, QPen(QColor("#60808a"), 2)},
+    {map::DEPARTURE, QPen(QColor("#60808a"), 2)},
+    {map::APPROACH, QPen(QColor("#60808a"), 2)},
+    {map::MOA, QPen(QColor("#4485b7"), 2)},
+    {map::RESTRICTED, QPen(QColor("#fd8c00"), 2)},
+    {map::PROHIBITED, QPen(QColor("#f00909"), 3)},
+    {map::WARNING, QPen(QColor("#fd8c00"), 2)},
+    {map::ALERT, QPen(QColor("#fd8c00"), 2)},
+    {map::DANGER, QPen(QColor("#dd103d"), 2)},
+    {map::NATIONAL_PARK, QPen(QColor("#509090"), 2)},
+    {map::MODEC, QPen(QColor("#509090"), 2)},
+    {map::RADAR, QPen(QColor("#509090"), 2)},
+    {map::TRAINING, QPen(QColor("#509090"), 2)}
+  }
+  );
+
+static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
+  {
+    {"Center", map::CENTER},
+    {"ClassA", map::CLASS_A},
+    {"ClassB", map::CLASS_B},
+    {"ClassC", map::CLASS_C},
+    {"ClassD", map::CLASS_D},
+    {"ClassE", map::CLASS_E},
+    {"ClassF", map::CLASS_F},
+    {"ClassG", map::CLASS_G},
+    {"Tower", map::TOWER},
+    {"Clearance", map::CLEARANCE},
+    {"Ground", map::GROUND},
+    {"Departure", map::DEPARTURE},
+    {"Approach", map::APPROACH},
+    {"Moa", map::MOA},
+    {"Restricted", map::RESTRICTED},
+    {"Prohibited", map::PROHIBITED},
+    {"Warning", map::WARNING},
+    {"Alert", map::ALERT},
+    {"Danger", map::DANGER},
+    {"NationalPark", map::NATIONAL_PARK},
+    {"Modec", map::MODEC},
+    {"Radar", map::RADAR},
+    {"Training", map::TRAINING}
+  }
+  );
+
+const QColor& colorForAirspaceFill(const map::MapAirspace& airspace)
+{
+  return airspaceFillColors[airspace.type];
 }
 
 const QPen& penForAirspace(const map::MapAirspace& airspace)
 {
-  static QPen NOAIRSPACE(Qt::transparent);
-  static QPen CENTER(QColor("#808080"), 1.5);
-  static QPen CLASSA(QColor("#8d0200"), 2);
-  static QPen CLASSB(QColor("#902ece"), 2);
-  static QPen CLASSC(QColor("#8594ec"), 2);
-  static QPen CLASSD(QColor("#6c5bce"), 2);
-  static QPen CLASSE(QColor("#cc5060"), 2);
-  static QPen CLASSF(QColor("#7d8000"), 2);
-  static QPen CLASSG(QColor("#cc8040"), 2);
-  static QPen TOWER(QColor("#60808a"), 2);
-  static QPen CLEARANCE(QColor("#60808a"), 2);
-  static QPen GROUND(QColor("#60808a"), 2);
-  static QPen DEPARTURE(QColor("#60808a"), 2);
-  static QPen APPROACH(QColor("#60808a"), 2);
-  static QPen MOA(QColor("#4485b7"), 2);
-  static QPen RESTRICTED(QColor("#fd8c00"), 2);
-  static QPen PROHIBITED(QColor("#f00909"), 3);
-  static QPen WARNING(QColor("#fd8c00"), 2);
-  static QPen ALERT(QColor("#fd8c00"), 2);
-  static QPen DANGER(QColor("#dd103d"), 2);
-  static QPen NATIONALPARK(QColor("#509090"), 2);
-  static QPen MODEC(QColor("#509090"), 2);
-  static QPen RADAR(QColor("#509090"), 2);
-  static QPen TRAINING(QColor("#509090"), 2);
+  return airspacePens[airspace.type];
+}
 
-  switch(airspace.type)
+/* Read ARGB color if value exists in settings or update in settings with given value */
+void syncColorArgb(QSettings& settings, const QString& key, QColor& color)
+{
+  if(settings.contains(key))
+    color.setNamedColor(settings.value(key).toString());
+  else
+    settings.setValue(key, color.name(QColor::HexArgb));
+}
+
+/* Read color if value exists in settings or update in settings with given value */
+void syncColor(QSettings& settings, const QString& key, QColor& color)
+{
+  if(settings.contains(key))
+    color.setNamedColor(settings.value(key).toString());
+  else
+    settings.setValue(key, color.name());
+}
+
+/* Read color and pen width if value exists in settings or update in settings with values of given pen */
+void syncPen(QSettings& settings, const QString& key, QPen& pen)
+{
+  if(settings.contains(key))
   {
-    case map::AIRSPACE_NONE:
-      return NOAIRSPACE;
+    QStringList list = settings.value(key).toStringList();
+    if(list.size() >= 1)
+    {
+      pen.setColor(QColor(list.at(0)));
 
-    case map::CENTER:
-      return CENTER;
-
-    case map::CLASS_A:
-      return CLASSA;
-
-    case map::CLASS_B:
-      return CLASSB;
-
-    case map::CLASS_C:
-      return CLASSC;
-
-    case map::CLASS_D:
-      return CLASSD;
-
-    case map::CLASS_E:
-      return CLASSE;
-
-    case map::CLASS_F:
-      return CLASSF;
-
-    case map::CLASS_G:
-      return CLASSG;
-
-    case map::TOWER:
-      return TOWER;
-
-    case map::CLEARANCE:
-      return CLEARANCE;
-
-    case map::GROUND:
-      return GROUND;
-
-    case map::DEPARTURE:
-      return DEPARTURE;
-
-    case map::APPROACH:
-      return APPROACH;
-
-    case map::MOA:
-      return MOA;
-
-    case map::RESTRICTED:
-      return RESTRICTED;
-
-    case map::PROHIBITED:
-      return PROHIBITED;
-
-    case map::WARNING:
-      return WARNING;
-
-    case map::ALERT:
-      return ALERT;
-
-    case map::DANGER:
-      return DANGER;
-
-    case map::NATIONAL_PARK:
-      return NATIONALPARK;
-
-    case map::MODEC:
-      return MODEC;
-
-    case map::RADAR:
-      return RADAR;
-
-    case map::TRAINING:
-      return TRAINING;
-
+      if(list.size() >= 2)
+        pen.setWidthF(list.at(1).toFloat());
+    }
   }
-  return NOAIRSPACE;
+  else
+    settings.setValue(key, QStringList({pen.color().name(), QString::number(pen.widthF())}));
+}
+
+void syncColors()
+{
+  QString filename = atools::settings::Settings::instance().getConfigFilename("_mapstyle.ini");
+
+  QSettings colorSettings(filename, QSettings::IniFormat);
+  colorSettings.beginGroup("Airport");
+  syncColor(colorSettings, "DiagramBackgroundColor", airportDetailBackColor);
+  syncColor(colorSettings, "EmptyColor", airportEmptyColor);
+  syncColor(colorSettings, "ToweredColor", toweredAirportColor);
+  syncColor(colorSettings, "UnToweredColor", unToweredAirportColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Navaid");
+  syncColor(colorSettings, "VorColor", vorSymbolColor);
+  syncColor(colorSettings, "NdbColor", ndbSymbolColor);
+  syncColor(colorSettings, "MarkerColor", markerSymbolColor);
+  syncColor(colorSettings, "IlsColor", ilsSymbolColor);
+  syncColor(colorSettings, "IlsTextColor", ilsTextColor);
+  syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Airway");
+  syncPen(colorSettings, "VictorPen", airwayVictorPen);
+  syncPen(colorSettings, "JetPen", airwayJetPen);
+  syncPen(colorSettings, "BothPen", airwayBothPen);
+  syncColor(colorSettings, "TextColor", airwayTextColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Marker");
+  syncColor(colorSettings, "DistanceRhumbColor", distanceRhumbColor);
+  syncColor(colorSettings, "DistanceGreatCircleColor", distanceColor);
+  syncColor(colorSettings, "RangeRingColor", rangeRingColor);
+  syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
+  colorSettings.endGroup();
+
+  // Sync airspace colors ============================================
+  colorSettings.beginGroup("Airspace");
+  for(const QString& name : airspaceConfigNames.keys())
+  {
+    map::MapAirspaceTypes type = airspaceConfigNames.value(name);
+    syncPen(colorSettings, name + "Pen", airspacePens[type]);
+    syncColorArgb(colorSettings, name + "FillColor", airspaceFillColors[type]);
+  }
+  colorSettings.endGroup();
+
+  colorSettings.sync();
 }
 
 } // namespace mapcolors

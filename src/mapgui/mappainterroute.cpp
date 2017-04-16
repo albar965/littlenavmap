@@ -187,17 +187,18 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   drawRouteSymbolText(context, visibleStartPoints, textPlacement.getStartPoints());
 
   // Draw arrival and departure procedures ============================
+  const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
   if(route->hasAnyDepartureProcedure())
     paintApproach(context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
-                  mapcolors::routeProcedureColor, false /* preview */);
+                  flightplanProcedureColor, false /* preview */);
 
   if(route->hasAnyStarProcedure())
     paintApproach(context, route->getStarLegs(), route->getStarLegsOffset(),
-                  mapcolors::routeProcedureColor, false /* preview */);
+                  flightplanProcedureColor, false /* preview */);
 
   if(route->hasAnyArrivalProcedure())
     paintApproach(context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
-                  mapcolors::routeProcedureColor, false /* preview */);
+                  flightplanProcedureColor, false /* preview */);
 
 #ifdef DEBUG_ROUTE_PAINT
   context->painter->save();

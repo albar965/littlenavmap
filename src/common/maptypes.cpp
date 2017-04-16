@@ -28,7 +28,7 @@
 
 namespace map {
 
-const static QHash<QString, QString> surfaceMap(
+static QHash<QString, QString> surfaceMap(
   {
     {"C", QObject::tr("Concrete")},
     {"G", QObject::tr("Grass")},
@@ -55,7 +55,7 @@ const static QHash<QString, QString> surfaceMap(
   });
 
 /* The higher the better */
-const static QHash<QString, int> surfaceQualityMap(
+static QHash<QString, int> surfaceQualityMap(
   {
     {"C", 20},
     {"A", 20},
@@ -82,7 +82,7 @@ const static QHash<QString, int> surfaceQualityMap(
   });
 
 /* Short size name for gate and full name for others */
-const static QHash<QString, QString> parkingMapGate(
+static QHash<QString, QString> parkingMapGate(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -102,7 +102,7 @@ const static QHash<QString, QString> parkingMapGate(
   });
 
 /* Short size name for parking and full name for others */
-const static QHash<QString, QString> parkingMapRamp(
+static QHash<QString, QString> parkingMapRamp(
   {
     {"UNKNOWN", QObject::tr("Unknown")},
     {"RGA", QObject::tr("Ramp GA")},
@@ -121,7 +121,7 @@ const static QHash<QString, QString> parkingMapRamp(
   });
 
 /* Full name for all parking including type */
-const static QHash<QString, QString> parkingTypeMap(
+static QHash<QString, QString> parkingTypeMap(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -140,7 +140,7 @@ const static QHash<QString, QString> parkingTypeMap(
     {"V", QObject::tr("Vehicles")}
   });
 
-const static QHash<QString, QString> parkingNameMap(
+static QHash<QString, QString> parkingNameMap(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -184,7 +184,7 @@ const static QHash<QString, QString> parkingNameMap(
     {"GZ", QObject::tr("Gate Z")}
   });
 
-const static QHash<QString, QString> parkingDatabaseNameMap(
+static QHash<QString, QString> parkingDatabaseNameMap(
   {
     {"NO_PARKING", QObject::tr("NONE")},
     {"PARKING", QObject::tr("P")},
@@ -226,7 +226,7 @@ const static QHash<QString, QString> parkingDatabaseNameMap(
     {"GATE_Z", QObject::tr("GZ")},
   });
 
-const static QHash<QString, QString> navTypeNamesVor(
+static QHash<QString, QString> navTypeNamesVor(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"H", QObject::tr("H")},
@@ -237,7 +237,7 @@ const static QHash<QString, QString> navTypeNamesVor(
     {"VT", QObject::tr("T")},
   });
 
-const static QHash<QString, QString> navTypeNamesVorLong(
+static QHash<QString, QString> navTypeNamesVorLong(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"H", QObject::tr("High")},
@@ -248,7 +248,7 @@ const static QHash<QString, QString> navTypeNamesVorLong(
     {"VTT", QObject::tr("Terminal")}
   });
 
-const static QHash<QString, QString> navTypeNamesNdb(
+static QHash<QString, QString> navTypeNamesNdb(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"HH", QObject::tr("HH")},
@@ -261,7 +261,7 @@ const static QHash<QString, QString> navTypeNamesNdb(
     {"NCP", QObject::tr("Compass Locator")},
   });
 
-const static QHash<QString, QString> navTypeNamesWaypoint(
+static QHash<QString, QString> navTypeNamesWaypoint(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"WN", QObject::tr("Named")},
@@ -270,7 +270,7 @@ const static QHash<QString, QString> navTypeNamesWaypoint(
     {"N", QObject::tr("NDB")}
   });
 
-const static QHash<QString, QString> navTypeNames(
+static QHash<QString, QString> navTypeNames(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"VD", QObject::tr("VORDME")},
@@ -284,7 +284,7 @@ const static QHash<QString, QString> navTypeNames(
     {"W", QObject::tr("Waypoint")}
   });
 
-const static QHash<QString, QString> comTypeNames(
+static QHash<QString, QString> comTypeNames(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"NONE", QObject::tr("None")},
@@ -305,7 +305,7 @@ const static QHash<QString, QString> comTypeNames(
     {"RCD", QObject::tr("Remote Clearance Delivery")}
   });
 
-const static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
+static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
   {
     {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
     {map::CENTER, QObject::tr("Center")},
@@ -341,7 +341,7 @@ const static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
     {map::AIRSPACE_ALL_ALTITUDE, QObject::tr("All Altitudes")}
   });
 
-const static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
+static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
   {
     {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
     {map::CENTER, QString()},
@@ -397,7 +397,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"TR", map::TRAINING},
   });
 
-const static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
+static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
   {
     {map::AIRSPACE_NONE, "NONE"},
     {map::CENTER, "C"},
@@ -480,34 +480,34 @@ QString navTypeName(const QString& type)
   return retval;
 }
 
-QString navTypeNameVor(const QString& type)
+const QString& navTypeNameVor(const QString& type)
 {
-  return navTypeNamesVor.value(type);
+  return navTypeNamesVor[type];
 }
 
-QString navTypeNameVorLong(const QString& type)
+const QString& navTypeNameVorLong(const QString& type)
 {
-  return navTypeNamesVorLong.value(type);
+  return navTypeNamesVorLong[type];
 }
 
-QString navTypeNameNdb(const QString& type)
+const QString& navTypeNameNdb(const QString& type)
 {
-  return navTypeNamesNdb.value(type);
+  return navTypeNamesNdb[type];
 }
 
-QString navTypeNameWaypoint(const QString& type)
+const QString& navTypeNameWaypoint(const QString& type)
 {
-  return navTypeNamesWaypoint.value(type);
+  return navTypeNamesWaypoint[type];
 }
 
-QString navName(const QString& type)
+const QString& navName(const QString& type)
 {
-  return navTypeNames.value(type);
+  return navTypeNames[type];
 }
 
-QString surfaceName(const QString& surface)
+const QString& surfaceName(const QString& surface)
 {
-  return surfaceMap.value(surface);
+  return surfaceMap[surface];
 }
 
 int surfaceQuality(const QString& surface)
@@ -515,29 +515,29 @@ int surfaceQuality(const QString& surface)
   return surfaceQualityMap.value(surface, 0);
 }
 
-QString parkingGateName(const QString& gate)
+const QString& parkingGateName(const QString& gate)
 {
-  return parkingMapGate.value(gate);
+  return parkingMapGate[gate];
 }
 
-QString parkingRampName(const QString& ramp)
+const QString& parkingRampName(const QString& ramp)
 {
-  return parkingMapRamp.value(ramp);
+  return parkingMapRamp[ramp];
 }
 
-QString parkingTypeName(const QString& type)
+const QString& parkingTypeName(const QString& type)
 {
-  return parkingTypeMap.value(type);
+  return parkingTypeMap[type];
 }
 
-QString parkingName(const QString& name)
+const QString& parkingName(const QString& name)
 {
-  return parkingNameMap.value(name);
+  return parkingNameMap[name];
 }
 
-QString parkingDatabaseName(const QString& name)
+const QString& parkingDatabaseName(const QString& name)
 {
-  return parkingDatabaseNameMap.value(name);
+  return parkingDatabaseNameMap[name];
 }
 
 QString parkingNameNumberType(const map::MapParking& parking)
@@ -989,14 +989,14 @@ QString ndbFullShortText(const MapNdb& ndb)
   return QObject::tr("NDB (%1)").arg(type);
 }
 
-QString airspaceTypeToString(map::MapAirspaceTypes type)
+const QString& airspaceTypeToString(map::MapAirspaceTypes type)
 {
-  return airspaceTypeNameMap.value(type);
+  return airspaceTypeNameMap[type];
 }
 
-QString airspaceRemark(map::MapAirspaceTypes type)
+const QString& airspaceRemark(map::MapAirspaceTypes type)
 {
-  return airspaceRemarkMap.value(type);
+  return airspaceRemarkMap[type];
 }
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type)
@@ -1009,9 +1009,9 @@ map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
   return airspaceTypeFromDatabaseMap.value(type);
 }
 
-QString airspaceTypeToDatabase(map::MapAirspaceTypes type)
+const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
 {
-  return airspaceTypeToDatabaseMap.value(type);
+  return airspaceTypeToDatabaseMap[type];
 }
 
 } // namespace types
