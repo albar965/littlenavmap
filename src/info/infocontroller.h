@@ -128,6 +128,7 @@ private:
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
 
+  void updateAircraftInfo();
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

@@ -567,6 +567,7 @@ void InfoController::preDatabaseLoad()
 void InfoController::postDatabaseLoad()
 {
   databaseLoadStatus = false;
+  updateAircraftInfo();
 }
 
 void InfoController::updateAircraftText()
@@ -729,12 +730,15 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
 
 void InfoController::connectedToSimulator()
 {
-  updateAircraftText();
-  updateAircraftProgressText();
-  updateAiAircraftText();
+  updateAircraftInfo();
 }
 
 void InfoController::disconnectedFromSimulator()
+{
+  updateAircraftInfo();
+}
+
+void InfoController::updateAircraftInfo()
 {
   updateAircraftText();
   updateAircraftProgressText();
