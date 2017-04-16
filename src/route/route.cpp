@@ -430,9 +430,10 @@ float Route::getDescentVerticalAltitude(float currentDistToDest) const
 {
   if(hasValidDestination())
   {
-    return (getCruisingAltitudeFeet() - last().getAirport().position.getAltitude()) *
+    float destAlt = last().getAirport().position.getAltitude();
+    return (getCruisingAltitudeFeet() - destAlt) *
            currentDistToDest /
-           (getTopOfDescentFromDestination());
+           (getTopOfDescentFromDestination()) + destAlt;
   }
 
   return map::INVALID_ALTITUDE_VALUE;

@@ -1866,14 +1866,19 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(toTod <= 0)
   {
     // Display vertical path deviation when after TOD
-    float diff = aircraft.getPosition().getAltitude() - route.getDescentVerticalAltitude(distToDestNm);
-    QString upDown;
-    if(diff >= 100.f)
-      upDown = tr(" above <b>▼</b>");
-    else if(diff <= -100)
-      upDown = tr(" below <b>▲</b>");
+    float vertAlt = route.getDescentVerticalAltitude(distToDestNm);
 
-    html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, atools::util::html::NO_ENTITIES);
+    if(vertAlt < map::INVALID_ALTITUDE_VALUE)
+    {
+      float diff = aircraft.getPosition().getAltitude() - vertAlt;
+      QString upDown;
+      if(diff >= 100.f)
+        upDown = tr(" above <b>▼</b>");
+      else if(diff <= -100)
+        upDown = tr(" below <b>▲</b>");
+
+      html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, atools::util::html::NO_ENTITIES);
+    }
   }
   html.tableEnd();
 

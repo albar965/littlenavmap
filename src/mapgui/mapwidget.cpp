@@ -1952,7 +1952,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-      Pos pos(lon, lat, NavApp::getRoute().getFlightplan().getCruisingAltitude() + 200);
+      Pos pos(lon, lat, 5000);
 
       atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
       data.setPacketId(packetId++);
