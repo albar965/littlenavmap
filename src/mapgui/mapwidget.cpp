@@ -1481,28 +1481,16 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
 
-  // Update "show in search" and "add to route" and "show information"
+  // Update "show information" for airports, navaids, airways and airspaces
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
      airway != nullptr || airspace != nullptr)
   {
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
-
-    ui->actionRouteAddPos->setEnabled(true);
-    ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(addRouteText));
-
-    ui->actionRouteAppendPos->setEnabled(true);
-    ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(addRouteText));
-
     ui->actionMapShowInformation->setEnabled(true);
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().
                                           arg(informationText + (andMore ? tr(" and more") : QString())));
   }
   else
   {
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
-    ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(tr("Position")));
-    ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(tr("Position")));
     if(isAircraft)
     {
       ui->actionMapShowInformation->setEnabled(true);
@@ -1510,6 +1498,23 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else
       ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
+  }
+
+  // Update "show in search" and "add to route" only for airports an navaids
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr)
+  {
+    ui->actionShowInSearch->setEnabled(true);
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
+    ui->actionRouteAddPos->setEnabled(true);
+    ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(addRouteText));
+    ui->actionRouteAppendPos->setEnabled(true);
+    ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(addRouteText));
+  }
+  else
+  {
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
+    ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(tr("Position")));
+    ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(tr("Position")));
   }
 
   if(airport != nullptr && (airport->flags & map::AP_PROCEDURE))
