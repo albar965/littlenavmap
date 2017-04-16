@@ -309,6 +309,8 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac,
 
   if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;
+  else if(ac.getCategory() == atools::fs::sc::BOAT)
+    key.type = AC_BOAT;
   else if(ac.getEngineType() == atools::fs::sc::JET)
     key.type = AC_JET;
   else
@@ -340,6 +342,9 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
         name += "_helicopter";
         // Make helicopter a bit bigger due to image
         size = atools::roundToInt(size * 1.2f);
+        break;
+      case AC_BOAT:
+        name += "_boat";
         break;
     }
     if(key.ground)

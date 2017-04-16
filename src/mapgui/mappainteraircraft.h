@@ -57,7 +57,8 @@ public:
   {
     AC_SMALL,
     AC_JET,
-    AC_HELICOPTER
+    AC_HELICOPTER,
+    AC_BOAT
   };
 
   struct PixmapKey

@@ -1504,10 +1504,29 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   }
   else
   {
+    QString type(tr("unknown"));
+    switch(aircraft.getCategory())
+    {
+      case atools::fs::sc::AIRPLANE:
+        type = "aircraft";
+        break;
+      case atools::fs::sc::HELICOPTER:
+        type = "helicopter";
+        break;
+      case atools::fs::sc::BOAT:
+        type = "boat";
+        break;
+      case atools::fs::sc::GROUNDVEHICLE:
+      case atools::fs::sc::CONTROLTOWER:
+      case atools::fs::sc::SIMPLEOBJECT:
+      case atools::fs::sc::VIEWER:
+        break;
+    }
+
     if(num != -1 && total != -1)
-      aircraftText = tr("AI / multiplayer aircraft %1 of %2").arg(num).arg(total);
+      aircraftText = tr("AI / multiplayer %1 - %2 of %3 vehicles").arg(type).arg(num).arg(total);
     else
-      aircraftText = tr("AI / multiplayer aircraft");
+      aircraftText = tr("AI / multiplayer %1").arg(type);
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("AI and multiplayer aircraft are not shown on map."), atools::util::html::BOLD);

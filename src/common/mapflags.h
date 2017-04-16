@@ -54,15 +54,16 @@ enum MapObjectType
   AIRWAYJ = 1 << 12,
   FLIGHTPLAN = 1 << 13, /* Flight plan */
   AIRCRAFT = 1 << 14, /* Simulator aircraft */
-  AIRCRAFT_AI = 1 << 15, /* AI or multiplayer Simulator aircraft */
-  AIRCRAFT_TRACK = 1 << 16, /* Simulator aircraft track */
-  USER = 1 << 17, /* Flight plan user waypoint */
-  PARKING = 1 << 18,
-  RUNWAYEND = 1 << 19,
-  INVALID = 1 << 20, /* Flight plan waypoint not found in database */
-  MISSED_APPROACH = 1 << 21, /* Only procedure type that can be hidden */
-  PROCEDURE = 1 << 22, /* General procedure leg */
-  AIRSPACE = 1 << 23, /* General airspace boundary */
+  AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
+  AIRCRAFT_AI_BOAT = 1 << 16, /* AI or multiplayer simulator ship */
+  AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */
+  USER = 1 << 18, /* Flight plan user waypoint */
+  PARKING = 1 << 19,
+  RUNWAYEND = 1 << 20,
+  INVALID = 1 << 21, /* Flight plan waypoint not found in database */
+  MISSED_APPROACH = 1 << 22, /* Only procedure type that can be hidden */
+  PROCEDURE = 1 << 23, /* General procedure leg */
+  AIRSPACE = 1 << 24, /* General airspace boundary */
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,

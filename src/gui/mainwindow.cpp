@@ -631,6 +631,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(
@@ -755,6 +756,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
@@ -1822,6 +1824,7 @@ void MainWindow::updateActionStates()
 #endif
 
   ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected());
+  ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected());
   ui->actionMapShowAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
 
@@ -1912,7 +1915,7 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                          ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
-                         ui->actionMapShowAircraftAi,
+                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                          ui->actionMapShowAircraftTrack,
                          ui->actionInfoApproachShowMissedAppr});
   }
@@ -2034,7 +2037,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                     ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
-                    ui->actionMapShowAircraftAi,
+                    ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,

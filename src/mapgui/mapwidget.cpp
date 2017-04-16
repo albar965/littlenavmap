@@ -251,6 +251,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
+  setShowMapFeatures(map::AIRCRAFT_AI_BOAT, ui->actionMapShowAircraftAiBoat->isChecked());
 
   setShowMapFeatures(map::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
   setShowMapFeatures(map::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
@@ -486,6 +487,9 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraftAi->blockSignals(true);
   ui->actionMapShowAircraftAi->setChecked(true);
   ui->actionMapShowAircraftAi->blockSignals(false);
+  ui->actionMapShowAircraftAiBoat->blockSignals(true);
+  ui->actionMapShowAircraftAiBoat->setChecked(false);
+  ui->actionMapShowAircraftAiBoat->blockSignals(false);
   ui->actionMapShowAircraftTrack->blockSignals(true);
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowAircraftTrack->blockSignals(false);

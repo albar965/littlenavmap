@@ -187,6 +187,7 @@
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
     <addaction name="actionMapShowAircraftAi"/>
+    <addaction name="actionMapShowAircraftAiBoat"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
     <addaction name="actionMapShowCities"/>
@@ -2716,11 +2717,13 @@
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowRoute"/>
+   <addaction name="actionInfoApproachShowMissedAppr"/>
+   <addaction name="separator"/>
    <addaction name="actionMapShowAircraft"/>
    <addaction name="actionMapShowAircraftTrack"/>
-   <addaction name="actionMapShowAircraftAi"/>
    <addaction name="separator"/>
-   <addaction name="actionInfoApproachShowMissedAppr"/>
+   <addaction name="actionMapShowAircraftAi"/>
+   <addaction name="actionMapShowAircraftAiBoat"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
@@ -5577,6 +5580,27 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan without any additional annotations</string>
+   </property>
+  </action>
+  <action name="actionMapShowAircraftAiBoat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/boatai.svg</normaloff>:/littlenavmap/resources/icons/boatai.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show AI and &amp;Multiplayer Ships</string>
+   </property>
+   <property name="toolTip">
+    <string>Show simulator AI and multiplayer ship position and data on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
    </property>
   </action>
  </widget>
