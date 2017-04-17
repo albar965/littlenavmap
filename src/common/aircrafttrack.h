@@ -70,6 +70,8 @@ public:
   using QList::last;
   using QList::size;
   using QList::at;
+  using QList::begin;
+  using QList::end;
 
 private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */

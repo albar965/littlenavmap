@@ -136,8 +136,12 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
             if(simData.getUserAircraft().getPosition().isValid())
             {
               aircraftTrackPoints.append(currentPoint);
-              maxTrackAltitudeFt = std::max(maxTrackAltitudeFt,
-                                            simData.getUserAircraft().getPosition().getAltitude());
+
+              if(aircraftTrackPoints.boundingRect().width() > MIN_AIRCRAFT_TRACK_WIDTH)
+                maxTrackAltitudeFt = std::max(maxTrackAltitudeFt,
+                                              simData.getUserAircraft().getPosition().getAltitude());
+              else
+                maxTrackAltitudeFt = 0.f;
 
               updateWidget = true;
             }
@@ -202,15 +206,46 @@ float ProfileWidget::calcGroundBuffer(float maxElevation)
   return std::ceil((maxElevation + groundBuffer) / roundBuffer) * roundBuffer;
 }
 
-/* Update all screen coordinates and scale factors */
+/* Check if the aircraft track is large enough on the screen to be shown and to alter the profile altitude */
+bool ProfileWidget::aircraftTrackValid()
+{
+  if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
+  {
+    // Check if the track size is large enough to alter the maximum height
+    int minTrackX = std::numeric_limits<int>::max(), maxTrackX = 0;
+    if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
+    {
+      for(const at::AircraftTrackPos& trackPos : NavApp::getMapWidget()->getAircraftTrack())
+      {
+        float distFromStart = legList.route.getDistanceFromStart(trackPos.pos);
+        if(distFromStart < map::INVALID_DISTANCE_VALUE)
+        {
+          int x = X0 + static_cast<int>(distFromStart * horizontalScale);
+          minTrackX = std::min(x, minTrackX);
+          maxTrackX = std::max(x, maxTrackX);
+        }
+      }
+    }
+    return maxTrackX - minTrackX > MIN_AIRCRAFT_TRACK_WIDTH;
+  }
+  return false;
+}
+
 void ProfileWidget::updateScreenCoords()
 {
-  MapWidget *mapWidget = NavApp::getMapWidget();
+  /* Update all screen coordinates and scale factors */
 
+  MapWidget *mapWidget = NavApp::getMapWidget();
   // Widget drawing region width and height
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
+  // Need scale to determine track length on screen
+  horizontalScale = w / legList.totalDistance;
+
+  // Need to check this now to get the maximum elevation
+  bool trackValid = aircraftTrackValid();
+
+  if(trackValid)
     maxTrackAltitudeFt = mapWidget->getAircraftTrack().getMaxAltitude();
   else
     maxTrackAltitudeFt = 0.f;
@@ -229,7 +264,6 @@ void ProfileWidget::updateScreenCoords()
     maxWindowAlt = std::max(maxWindowAlt, maxTrackAltitudeFt);
 
   verticalScale = h / maxWindowAlt;
-  horizontalScale = w / legList.totalDistance;
 
   // Calculate the landmass polygon
   waypointX.clear();
@@ -548,7 +582,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
 
     // Draw user aircraft track
-    if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
+    if(!aircraftTrackPoints.isEmpty() && showAircraftTrack &&
+       aircraftTrackPoints.boundingRect().width() > MIN_AIRCRAFT_TRACK_WIDTH)
     {
       painter.setPen(mapcolors::aircraftTrailPen(2.f));
       painter.drawPolyline(aircraftTrackPoints);

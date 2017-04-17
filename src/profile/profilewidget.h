@@ -133,6 +133,7 @@ private:
   void terminateThread();
   float calcGroundBuffer(float maxElevation);
   void updateLabel();
+  bool aircraftTrackValid();
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
@@ -152,6 +153,9 @@ private:
 
   /* Do not calculate a profile for legs longer than this value */
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
+
+  /* Minimum screen size of the aircraft track on the screen to be shown and to alter the profile altitude */
+  static Q_DECL_CONSTEXPR int MIN_AIRCRAFT_TRACK_WIDTH = 10;
 
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
