@@ -375,6 +375,18 @@ MapLayer& MapLayer::aiShipSmall(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::aiAircraftGroundText(bool value)
+{
+  layerAiAircraftGroundText = value;
+  return *this;
+}
+
+MapLayer& MapLayer::aiAircraftText(bool value)
+{
+  layerAiAircraftText = value;
+  return *this;
+}
+
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;

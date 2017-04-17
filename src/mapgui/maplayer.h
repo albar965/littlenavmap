@@ -155,6 +155,9 @@ public:
   MapLayer& aiShipLarge(bool value = true);
   MapLayer& aiShipSmall(bool value = true);
 
+  MapLayer& aiAircraftGroundText(bool value = true);
+  MapLayer& aiAircraftText(bool value = true);
+
   bool operator<(const MapLayer& other) const;
 
   float getMaxRange() const
@@ -436,6 +439,16 @@ public:
     return layerAiShipSmall;
   }
 
+  bool isAiAircraftGroundText() const
+  {
+    return layerAiAircraftGroundText;
+  }
+
+  bool isAiAircraftText() const
+  {
+    return layerAiAircraftText;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -467,7 +480,8 @@ private:
     false, layerAirspaceSpecial = false, layerAirspaceOther = false;
 
   bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
-       layerAiShipLarge = false, layerAiShipSmall = false;
+       layerAiShipLarge = false, layerAiShipSmall = false,
+       layerAiAircraftGroundText = false, layerAiAircraftText = false;
 
 };
 

@@ -15,23 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
-#define LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
+#ifndef LITTLENAVMAP_MAPPAINTERSHIP_H
+#define LITTLENAVMAP_MAPPAINTERSHIP_H
 
 #include "mapgui/mappaintervehicle.h"
 
 /*
- * Draws the simulator user aircraft and aircraft track
+ * Draws the simulator ships
  */
-class MapPainterAircraft :
+class MapPainterShip :
   public MapPainterVehicle
 {
+
 public:
-  MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
-  virtual ~MapPainterAircraft();
+  MapPainterShip(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  virtual ~MapPainterShip();
 
   virtual void render(PaintContext *context) override;
 
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H
+#endif // LITTLENAVMAP_MAPPAINTERSHIP_H

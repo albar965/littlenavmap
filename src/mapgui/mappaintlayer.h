@@ -42,6 +42,7 @@ class MapPainterIls;
 class MapPainterMark;
 class MapPainterRoute;
 class MapPainterAircraft;
+class MapPainterShip;
 
 /*
  * Implements the Marble layer interface that paints upon the Marble map. Contains all painter instances
@@ -133,6 +134,7 @@ private:
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
+  MapPainterShip *mapPainterShip;
 
   /* Database source */
   MapQuery *mapQuery = nullptr;

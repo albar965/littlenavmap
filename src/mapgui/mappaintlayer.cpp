@@ -22,6 +22,7 @@
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mappainteraircraft.h"
+#include "mapgui/mappaintership.h"
 #include "mapgui/mappainterairport.h"
 #include "mapgui/mappainterairspace.h"
 #include "mapgui/mappainterils.h"
@@ -55,6 +56,7 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
   mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
+  mapPainterShip = new MapPainterShip(mapWidget, mapQuery, mapScale);
 
   // Default for visible object types
   objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
@@ -69,6 +71,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterMark;
   delete mapPainterRoute;
   delete mapPainterAircraft;
+  delete mapPainterShip;
 
   delete layers;
   delete mapScale;
@@ -140,6 +143,7 @@ void MapPaintLayer::initMapLayerSettings()
                       vor().ndb().waypoint().marker().ils().airway().
 
                       aiAircraftGround().aiAircraftLarge().aiAircraftSmall().aiShipLarge().aiShipSmall().
+                      aiAircraftGroundText().aiAircraftText().
 
                       airspaceCenter().airspaceFir().airspaceOther().airspaceRestricted().airspaceSpecial().
                       airspaceIcao().
@@ -162,6 +166,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().
          airportSymbolSize(20).airportInfo().
+         aiAircraftGroundText(false).
          waypointSymbolSize(14).waypointName().
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
@@ -172,6 +177,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo().
          waypointSymbolSize(10).waypointName().
+         aiAircraftGroundText(false).
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
@@ -181,7 +187,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(10.f).airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).waypointName().
-         aiAircraftGround(false).
+         aiAircraftGround(false).aiAircraftGroundText(false).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
@@ -191,7 +197,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).
-         aiAircraftGround(false).
+         aiAircraftGround(false).aiAircraftGroundText(false).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
@@ -201,7 +207,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, airway
   append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().
          waypoint(false).
-         aiAircraftGround(false).aiShipSmall(false).
+         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(20).ndbIdent().ndbInfo().
          airwayIdent().
@@ -211,7 +217,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(100.f).airportSymbolSize(12).
          airportOverviewRunway(false).
          waypoint(false).
-         aiAircraftGround(false).aiShipSmall(false).
+         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(16).vorIdent().
          ndbSymbolSize(16).ndbIdent().
          marker(false)).
@@ -220,7 +226,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false).
          approachText(false).
-         aiAircraftGround(false).aiShipSmall(false).
+         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          waypoint(false).
          vorSymbolSize(12).
          ndbSymbolSize(12).
@@ -230,7 +236,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(200.f).airportSymbolSize(10).minRunwayLength(4000).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
-         aiAircraftGround(false).aiShipSmall(false).
+         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false)).
 
   // airport > 4000
@@ -238,6 +244,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipSmall(false).
+         aiAircraftGroundText(false).aiAircraftText(false).
          ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).waypointRouteName(false)).
 
@@ -246,6 +253,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
+         aiAircraftGroundText(false).aiAircraftText(false).
          airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
@@ -255,6 +263,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
+         aiAircraftGroundText(false).aiAircraftText(false).
          airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -266,6 +275,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
+         aiAircraftGroundText(false).aiAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -276,6 +286,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
+         aiAircraftGroundText(false).aiAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -368,6 +379,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
       }
 
+      mapPainterShip->render(&context);
+
       if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT)
       {
         if(!context.isOverflow())
@@ -397,6 +410,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
             mapPainterAirport->render(&context);
         }
       }
+
       // if(!context.isOverflow()) always paint route even if number of objets is too large
       mapPainterRoute->render(&context);
 
