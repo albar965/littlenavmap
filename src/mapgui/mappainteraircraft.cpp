@@ -60,6 +60,7 @@ void MapPainterAircraft::render(PaintContext *context)
 {
   if(!context->objectTypes.testFlag(AIRCRAFT) &&
      !context->objectTypes.testFlag(AIRCRAFT_AI) &&
+     !context->objectTypes.testFlag(AIRCRAFT_AI_SHIP) &&
      !context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     // If actions are unchecked return
     return;
@@ -72,11 +73,25 @@ void MapPainterAircraft::render(PaintContext *context)
 
   if(mapWidget->isConnected() || mapWidget->getUserAircraft().isDebug())
   {
-    if(mapWidget->distance() < DISTANCE_CUT_OFF_AI_LIMIT)
+    // Draw AI ships first
+    if(context->objectTypes & AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
     {
-      if(context->objectTypes.testFlag(AIRCRAFT_AI))
+      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
       {
-        for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+        if(ac.getCategory() == atools::fs::sc::BOAT &&
+           (ac.getModelRadius() > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
+          paintAiAircraft(context, ac);
+      }
+    }
+
+    // Draw AI aircraft
+    if(context->objectTypes & AIRCRAFT_AI && context->mapLayer->isAiAircraftLarge())
+    {
+      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+      {
+        if(ac.getCategory() != atools::fs::sc::BOAT &&
+           (ac.getModelRadius() > layer::LARGE_AIRCRAFT_SIZE || context->mapLayer->isAiAircraftSmall()) &&
+           (!ac.isOnGround() || context->mapLayer->isAiAircraftGround()))
           paintAiAircraft(context, ac);
       }
     }
@@ -102,7 +117,8 @@ void MapPainterAircraft::render(PaintContext *context)
 void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
                                          const SimConnectAircraft& aiAircraft)
 {
-  if(!context->mapLayerEffective->isAirportDiagram() && aiAircraft.isOnGround())
+  if(!context->mapLayerEffective->isAiAircraftGround() && aiAircraft.isOnGround() &&
+     !(aiAircraft.getCategory() & atools::fs::sc::BOAT))
     return;
 
   if(aiAircraft.isUser())

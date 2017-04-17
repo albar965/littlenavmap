@@ -80,6 +80,7 @@ void HtmlInfoBuilder::updateAircraftIcons(bool force)
   if(aircraftEncodedIcon.isEmpty() || force)
     aircraftEncodedIcon = HtmlBuilder::getEncodedImageHref(
       QIcon(":/littlenavmap/resources/icons/aircraft.svg"), QSize(24, 24));
+
   if(aircraftGroundEncodedIcon.isEmpty() || force)
     aircraftGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
       QIcon(":/littlenavmap/resources/icons/aircraftground.svg"), QSize(24, 24));
@@ -87,9 +88,18 @@ void HtmlInfoBuilder::updateAircraftIcons(bool force)
   if(aircraftAiEncodedIcon.isEmpty() || force)
     aircraftAiEncodedIcon = HtmlBuilder::getEncodedImageHref(
       QIcon(":/littlenavmap/resources/icons/aircraftai.svg"), QSize(24, 24));
+
   if(aircraftAiGroundEncodedIcon.isEmpty() || force)
     aircraftAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
       QIcon(":/littlenavmap/resources/icons/aircraftaiground.svg"), QSize(24, 24));
+
+  if(boatAiEncodedIcon.isEmpty() || force)
+    boatAiEncodedIcon = HtmlBuilder::getEncodedImageHref(
+      QIcon(":/littlenavmap/resources/icons/boatai.svg"), QSize(24, 24));
+
+  if(boatAiGroundEncodedIcon.isEmpty() || force)
+    boatAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
+      QIcon(":/littlenavmap/resources/icons/boataiground.svg"), QSize(24, 24));
 }
 
 void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating,
@@ -689,7 +699,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
         // Build header ===============================================
         QString procType = recApp.valueStr("type");
-        proc::MapProcedureTypes type = proc::procedureType(NavApp::getCurrentSimulator(),
+        proc::MapProcedureTypes type = proc::procedureType(NavApp::hasSidStarInDatabase(),
                                                            procType,
                                                            recApp.valueStr("suffix"),
                                                            recApp.valueBool("has_gps_overlay"));
@@ -1553,8 +1563,14 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   if(!aircraft.getAirplaneType().isEmpty())
     html.row2(tr("Type:"), aircraft.getAirplaneType());
 
-  if(info && aircraft.getWingSpan() > 0)
+  if(aircraft.getCategory() == atools::fs::sc::BOAT)
+  {
+    if(info && aircraft.getModelRadius() > 0)
+      html.row2(tr("Size:"), Unit::distShortFeet(aircraft.getModelRadius() * 2));
+  }
+  else if(info && aircraft.getWingSpan() > 0)
     html.row2(tr("Wingspan:"), Unit::distShortFeet(aircraft.getWingSpan()));
+
   html.tableEnd();
 }
 
@@ -1821,8 +1837,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     }
   }
 
-  head(html, tr("Aircraft"));
+  if(info && userAircaft != nullptr)
+    head(html, tr("Aircraft"));
   html.table();
+
   html.row2(tr("Heading:"), locale.toString(aircraft.getHeadingDegMag(), 'f', 0) + tr("°M, ") +
             locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
 
@@ -1872,17 +1890,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(info)
     head(html, tr("Altitude"));
   html.table();
-  if(info)
-    html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()));
+
+  if(aircraft.getCategory() != atools::fs::sc::BOAT)
+  {
+    if(info)
+      html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()));
+  }
   html.row2(info ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
 
-  if(userAircaft != nullptr && info)
+  if(userAircaft != nullptr && info && aircraft.getCategory() != atools::fs::sc::BOAT)
   {
     html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
     html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
   }
 
-  if(toTod <= 0)
+  if(toTod <= 0 && userAircaft != nullptr)
   {
     // Display vertical path deviation when after TOD
     float vertAlt = route.getDescentVerticalAltitude(distToDestNm);
@@ -1904,34 +1926,37 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(info)
     head(html, tr("Speed"));
   html.table();
-  if(info)
+  if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
     html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
 
   html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
-  if(info)
+  if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
     html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueSpeedKts()));
 
-  if(info)
+  if(aircraft.getCategory() != atools::fs::sc::BOAT)
   {
-    float mach = aircraft.getMachSpeed();
-    if(mach > 0.4f)
-      html.row2(tr("Mach:"), locale.toString(mach, 'f', 3));
-    else
-      html.row2(tr("Mach:"), tr("-"));
+    if(info)
+    {
+      float mach = aircraft.getMachSpeed();
+      if(mach > 0.4f)
+        html.row2(tr("Mach:"), locale.toString(mach, 'f', 3));
+      else
+        html.row2(tr("Mach:"), tr("-"));
+    }
+
+    int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
+    QString upDown;
+    if(vspeed >= 100)
+      upDown = tr(" <b>▲</b>");
+    else if(vspeed <= -100)
+      upDown = tr(" <b>▼</b>");
+
+    if(vspeed < 10.f && vspeed > -10.f)
+      vspeed = 0.f;
+
+    html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
+              atools::util::html::NO_ENTITIES);
   }
-
-  int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
-  QString upDown;
-  if(vspeed >= 100)
-    upDown = tr(" <b>▲</b>");
-  else if(vspeed <= -100)
-    upDown = tr(" <b>▼</b>");
-
-  if(vspeed < 10.f && vspeed > -10.f)
-    vspeed = 0.f;
-
-  html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
-            atools::util::html::NO_ENTITIES);
   html.tableEnd();
 
   if(userAircaft != nullptr && info)
@@ -2029,24 +2054,16 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   updateAircraftIcons(false);
 
   if(aircraft.isUser())
-  {
-    if(aircraft.isOnGround())
-      icon = &aircraftGroundEncodedIcon;
-    else
-      icon = &aircraftEncodedIcon;
-  }
+    icon = aircraft.isOnGround() ? &aircraftGroundEncodedIcon : &aircraftEncodedIcon;
+  else if(aircraft.getCategory() == atools::fs::sc::BOAT)
+    icon = aircraft.isOnGround() ? &boatAiGroundEncodedIcon : &boatAiEncodedIcon;
   else
-  {
-    if(aircraft.isOnGround())
-      icon = &aircraftAiGroundEncodedIcon;
-    else
-      icon = &aircraftAiEncodedIcon;
-  }
+    icon = aircraft.isOnGround() ? &aircraftAiGroundEncodedIcon : &aircraftAiEncodedIcon;
 
   if(aircraft.isUser())
-    html.img(*icon, tr("User Aircraft"), QString(), QSize(24, 24));
+    html.img(*icon, tr("User Vehicle"), QString(), QSize(24, 24));
   else
-    html.img(*icon, tr("AI / Multiplayer Aircraft"), QString(), QSize(24, 24));
+    html.img(*icon, tr("AI / Multiplayer Vehicle"), QString(), QSize(24, 24));
   html.nbsp().nbsp();
 
   QString title(aircraft.getAirplaneRegistration());

@@ -42,6 +42,7 @@ ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
 MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
+atools::fs::db::DatabaseMeta *NavApp::databaseMeta = nullptr;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -65,6 +66,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openDatabase();
 
+  databaseMeta = new atools::fs::db::DatabaseMeta(getDatabase());
+
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabase());
   mapQuery->initQueries();
 
@@ -72,7 +75,6 @@ void NavApp::init(MainWindow *mainWindowParam)
   infoQuery->initQueries();
 
   procedureQuery = new ProcedureQuery(databaseManager->getDatabase(), mapQuery);
-  procedureQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
   procedureQuery->initQueries();
 
   qDebug() << "MainWindow Creating ConnectClient";
@@ -90,21 +92,31 @@ void NavApp::deInit()
 
   qDebug() << Q_FUNC_INFO << "delete connectClient";
   delete connectClient;
+  connectClient = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete elevationProvider";
   delete elevationProvider;
+  elevationProvider = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete mapQuery";
-  delete NavApp::mapQuery;
+  delete mapQuery;
+  mapQuery = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
-  delete NavApp::infoQuery;
+  delete infoQuery;
+  infoQuery = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete approachQuery";
-  delete NavApp::procedureQuery;
+  delete procedureQuery;
+  procedureQuery = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete databaseManager";
   delete databaseManager;
+  databaseManager = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete databaseMeta";
+  delete databaseMeta;
+  databaseMeta = nullptr;
 }
 
 void NavApp::optionsChanged()
@@ -119,13 +131,17 @@ void NavApp::preDatabaseLoad()
   infoQuery->deInitQueries();
   mapQuery->deInitQueries();
   procedureQuery->deInitQueries();
+
+  delete databaseMeta;
+  databaseMeta = nullptr;
 }
 
 void NavApp::postDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
 
-  procedureQuery->setCurrentSimulator(getCurrentSimulator());
+  databaseMeta = new atools::fs::db::DatabaseMeta(getDatabase());
+
   mapQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
@@ -183,12 +199,12 @@ QString NavApp::getCurrentSimulatorShortName()
 
 bool NavApp::hasSidStarInDatabase()
 {
-  return atools::fs::db::DatabaseMeta(getDatabase()).hasSidStar();
+  return databaseMeta->hasSidStar();
 }
 
 bool NavApp::hasDataInDatabase()
 {
-  return atools::fs::db::DatabaseMeta(getDatabase()).hasData();
+  return databaseMeta->hasData();
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabase()
@@ -249,6 +265,11 @@ DatabaseManager *NavApp::getDatabaseManager()
 ConnectClient *NavApp::getConnectClient()
 {
   return connectClient;
+}
+
+const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMeta()
+{
+  return databaseMeta;
 }
 
 map::MapObjectTypes NavApp::getShownMapFeatures()

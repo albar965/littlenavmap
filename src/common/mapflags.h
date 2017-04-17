@@ -55,7 +55,7 @@ enum MapObjectType
   FLIGHTPLAN = 1 << 13, /* Flight plan */
   AIRCRAFT = 1 << 14, /* Simulator aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
-  AIRCRAFT_AI_BOAT = 1 << 16, /* AI or multiplayer simulator ship */
+  AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */
   USER = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,

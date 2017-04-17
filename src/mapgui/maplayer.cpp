@@ -345,6 +345,36 @@ MapLayer& MapLayer::airspaceOther(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::aiAircraftLarge(bool value)
+{
+  layerAiAircraftLarge = value;
+  return *this;
+}
+
+MapLayer& MapLayer::aiAircraftGround(bool value)
+{
+  layerAiAircraftGround = value;
+  return *this;
+}
+
+MapLayer& MapLayer::aiAircraftSmall(bool value)
+{
+  layerAiAircraftSmall = value;
+  return *this;
+}
+
+MapLayer& MapLayer::aiShipLarge(bool value)
+{
+  layerAiShipLarge = value;
+  return *this;
+}
+
+MapLayer& MapLayer::aiShipSmall(bool value)
+{
+  layerAiShipSmall = value;
+  return *this;
+}
+
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;

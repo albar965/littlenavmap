@@ -285,7 +285,8 @@ private:
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
-  QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon;
+  QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon,
+          boatAiEncodedIcon, boatAiGroundEncodedIcon;
 
 };
 

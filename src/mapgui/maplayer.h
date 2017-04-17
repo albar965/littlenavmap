@@ -29,6 +29,15 @@ enum AirportSource
   LARGE /* use airport_large table as source */
 };
 
+/* Do not show anything at all above this zoom distance */
+const float DISTANCE_CUT_OFF_LIMIT = 4000.f;
+
+/* Ships considered large above this model radius in feet */
+const int LARGE_SHIP_SIZE = 40;
+
+/* Aircraft considered large above this model radius in feet */
+const int LARGE_AIRCRAFT_SIZE = 50;
+
 }
 
 /*
@@ -139,6 +148,12 @@ public:
   MapLayer& airspaceRestricted(bool value = true);
   MapLayer& airspaceSpecial(bool value = true);
   MapLayer& airspaceOther(bool value = true);
+
+  MapLayer& aiAircraftGround(bool value = true);
+  MapLayer& aiAircraftLarge(bool value = true);
+  MapLayer& aiAircraftSmall(bool value = true);
+  MapLayer& aiShipLarge(bool value = true);
+  MapLayer& aiShipSmall(bool value = true);
 
   bool operator<(const MapLayer& other) const;
 
@@ -396,6 +411,31 @@ public:
     return layerAirspaceOther;
   }
 
+  bool isAiAircraftLarge() const
+  {
+    return layerAiAircraftLarge;
+  }
+
+  bool isAiAircraftGround() const
+  {
+    return layerAiAircraftGround;
+  }
+
+  bool isAiAircraftSmall() const
+  {
+    return layerAiAircraftSmall;
+  }
+
+  bool isAiShipLarge() const
+  {
+    return layerAiShipLarge;
+  }
+
+  bool isAiShipSmall() const
+  {
+    return layerAiShipSmall;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -425,6 +465,9 @@ private:
 
   bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFir = false, layerAirspaceRestricted =
     false, layerAirspaceSpecial = false, layerAirspaceOther = false;
+
+  bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
+       layerAiShipLarge = false, layerAiShipSmall = false;
 
 };
 

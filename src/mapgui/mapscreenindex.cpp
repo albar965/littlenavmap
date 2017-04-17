@@ -261,9 +261,11 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
+  map::MapObjectTypes shown = paintLayer->getShownMapObjects();
+
   // Check for user aircraft
   result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
-  if(paintLayer->getShownMapObjects() & map::AIRCRAFT && mapWidget->isConnected())
+  if(shown & map::AIRCRAFT && mapWidget->isConnected())
   {
     int x, y;
     if(conv.wToS(simData.getUserAircraft().getPosition(), x, y))
@@ -273,17 +275,38 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Check for AI / multiplayer aircraft
   result.aiAircraft.clear();
-  if(mapWidget->distance() < 500 && paintLayer->getShownMapObjects() & map::AIRCRAFT_AI &&
-     mapWidget->isConnected())
+  if(mapWidget->isConnected())
   {
     using maptools::insertSortedByDistance;
     int x, y;
-    for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+
+    if(shown & map::AIRCRAFT_AI_SHIP && mapLayer->isAiShipLarge())
     {
-      if(mapLayerEffective->isAirportDiagram() || !obj.isOnGround())
-        if(conv.wToS(obj.getPosition(), x, y))
-          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-            insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+      {
+        if(obj.getCategory() == atools::fs::sc::BOAT &&
+           (obj.getModelRadius() > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
+        {
+          if(conv.wToS(obj.getPosition(), x, y))
+            if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+        }
+      }
+    }
+
+    if(shown & map::AIRCRAFT_AI && mapLayer->isAiAircraftLarge())
+    {
+      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+      {
+        if(obj.getCategory() != atools::fs::sc::BOAT &&
+           (obj.getModelRadius() > layer::LARGE_AIRCRAFT_SIZE || mapLayer->isAiAircraftSmall()) &&
+           (!obj.isOnGround() || mapLayer->isAiAircraftGround()))
+        {
+          if(conv.wToS(obj.getPosition(), x, y))
+            if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+        }
+      }
     }
   }
 
@@ -291,7 +314,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
 
-  if(paintLayer->getShownMapObjects().testFlag(map::FLIGHTPLAN))
+  if(shown.testFlag(map::FLIGHTPLAN))
     // Get copies from flight plan if visible
     NavApp::getRoute().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
 
@@ -303,7 +326,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Get objects from cache - already present objects will be skipped
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
-                              paintLayer->getShownMapObjects() &
+                              shown &
                               (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT |
                                map::MARKER | map::AIRWAYJ | map::AIRWAYV),
                               xs, ys, maxDistance, result);

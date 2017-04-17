@@ -407,8 +407,7 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
 QString procedureLegDistance(const MapProcedureLeg& leg);
 QString procedureLegCourse(const MapProcedureLeg& leg);
 
-proc::MapProcedureTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
-                                      const QString& suffix, bool gpsOverlay);
+proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, const QString& suffix, bool gpsOverlay);
 
 /* Put altitude restriction texts into list */
 QString altRestrictionTextNarrow(const MapAltRestriction& altRestriction);

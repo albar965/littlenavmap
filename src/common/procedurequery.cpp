@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "common/procedurequery.h"
+#include "navapp.h"
 #include "common/proctypes.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
@@ -1190,11 +1191,6 @@ void ProcedureQuery::deInitQueries()
   transitionIdsForApproachQuery = nullptr;
 }
 
-void ProcedureQuery::setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType)
-{
-  simulatorType = simType;
-}
-
 void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                         const proc::MapProcedureTypes& type)
 {
@@ -1603,7 +1599,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
 
 void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure)
 {
-  if(simulatorType == atools::fs::FsPaths::P3D_V3 && procedure.approachType == "GPS" &&
+  if(NavApp::hasSidStarInDatabase() && procedure.approachType == "GPS" &&
      (procedure.approachSuffix == "A" || procedure.approachSuffix == "D") && procedure.gpsOverlay)
   {
     if(procedure.approachSuffix == "A")

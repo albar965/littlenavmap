@@ -28,9 +28,6 @@
 namespace atools {
 namespace fs {
 class NavDatabaseProgress;
-namespace db {
-class DatabaseMeta;
-}
 }
 }
 

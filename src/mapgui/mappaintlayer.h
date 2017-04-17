@@ -116,9 +116,6 @@ private:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
-  /* Do not show anything at all above this zoom distance */
-  static Q_DECL_CONSTEXPR float DISTANCE_CUT_OFF_LIMIT = 4000.f;
-
   /* Map objects currently shown */
   map::MapObjectTypes objectTypes = map::NONE;
   map::MapAirspaceTypes airspaceTypes;

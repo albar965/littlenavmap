@@ -101,8 +101,6 @@ private:
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 
-  static Q_DECL_CONSTEXPR int DISTANCE_CUT_OFF_AI_LIMIT = 500;
-
   static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
 
   /* Caches pixmaps generated from SVG graphics */

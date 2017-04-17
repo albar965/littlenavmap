@@ -150,5 +150,10 @@
         <file>resources/icons/airspacealt.svg</file>
         <file>resources/icons/filesaveclean.svg</file>
         <file>resources/icons/boatai.svg</file>
+        <file>resources/icons/aircraft_boat_ground.svg</file>
+        <file>resources/icons/aircraft_boat.svg</file>
+        <file>resources/icons/aircraft_boat_user_ground.svg</file>
+        <file>resources/icons/aircraft_boat_user.svg</file>
+        <file>resources/icons/boataiground.svg</file>
     </qresource>
 </RCC>

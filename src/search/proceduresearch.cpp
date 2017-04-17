@@ -1136,7 +1136,7 @@ void ProcedureSearch::tabDeactivated()
 
 proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
-  return proc::procedureType(NavApp::getCurrentSimulator(),
+  return proc::procedureType(NavApp::hasSidStarInDatabase(),
                              recApp.valueStr("type"), recApp.valueStr("suffix"),
                              recApp.valueBool("has_gps_overlay"));
 }

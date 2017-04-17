@@ -60,8 +60,6 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
-  void setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType);
-
   bool getLegsForFlightplanProperties(const QHash<QString, QString> properties, const map::MapAirport& departure,
                                       const map::MapAirport& destination,
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
@@ -154,8 +152,6 @@ private:
    * leg again */
   Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 1000000000;
   Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;
-
-  atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::UNKNOWN;
 
 };
 

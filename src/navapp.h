@@ -37,6 +37,11 @@ class WeatherReporter;
 class ElevationProvider;
 
 namespace atools {
+namespace fs {
+namespace db {
+class DatabaseMeta;
+}
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -114,6 +119,8 @@ public:
 
   static ConnectClient *getConnectClient();
 
+  static const atools::fs::db::DatabaseMeta *getDatabaseMeta();
+
 private:
   /* Database query helpers and caches */
   static MapQuery *mapQuery;
@@ -126,6 +133,7 @@ private:
 
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
+  static atools::fs::db::DatabaseMeta *databaseMeta;
 };
 
 #endif // NAVAPPLICATION_H
