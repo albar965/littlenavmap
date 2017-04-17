@@ -665,6 +665,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeSaveAsGfp);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeSaveAsRte);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
+  connect(ui->actionRouteSaveAsFms, &QAction::triggered, this, &MainWindow::routeSaveAsFms);
+  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, &MainWindow::routeSaveAsGpx);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
@@ -1336,7 +1338,7 @@ bool MainWindow::routeSaveAsClean()
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
-      routeController->buildDefaultFilename(tr(" clean")));
+      routeController->buildDefaultFilename(tr(" Clean")));
 
     if(!routeFile.isEmpty())
     {
@@ -1383,7 +1385,7 @@ bool MainWindow::routeSaveAs()
 /* Called from menu or toolbar by action */
 bool MainWindow::routeSaveAsGfp()
 {
-  if(routeValidate(false /*valideParking*/))
+  if(routeValidate(false /*validateParking*/))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan as Garmin GFP Format"),
@@ -1407,7 +1409,7 @@ bool MainWindow::routeSaveAsGfp()
 
 bool MainWindow::routeSaveAsRte()
 {
-  if(routeValidate(false /*valideParking*/))
+  if(routeValidate(false /*validateParking*/))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan as PMDG RTE Format"),
@@ -1431,7 +1433,7 @@ bool MainWindow::routeSaveAsRte()
 
 bool MainWindow::routeSaveAsFlp()
 {
-  if(routeValidate(false /*valideParking*/))
+  if(routeValidate(false /*validateParking*/))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan as Aerosoft Airbus FLP Format"),
@@ -1444,6 +1446,56 @@ bool MainWindow::routeSaveAsFlp()
       if(routeController->saveFlighplanAsFlp(routeFile))
       {
         setStatusMessage(tr("Flight plan saved as FLP."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeSaveAsFms()
+{
+  if(routeValidate(false /*validateParking*/))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as X-Plane FMS Format"),
+      tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
+      "fms", "Route/Fms", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      routeController->buildDefaultFilename(QString(), ".fms"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->saveFlighplanAsFms(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as FMS."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeSaveAsGpx()
+{
+  if(routeValidate(false /*validateParking*/))
+  {
+    QString title = NavApp::getAircraftTrack().isEmpty() ?
+                    tr("Save Flightplan as GPX Format") : tr("Save Flightplan and Track as GPX Format");
+
+    QString routeFile = dialog->saveFileDialog(
+      title,
+      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+      "gpx", "Route/Gpx", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      routeController->buildDefaultFilename(QString(), ".gpx"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->saveFlighplanAsGpx(routeFile))
+      {
+        if(NavApp::getAircraftTrack().isEmpty())
+          setStatusMessage(tr("Flight plan saved as GPX."));
+        else
+          setStatusMessage(tr("Flight plan and track saved as GPX."));
         return true;
       }
     }
@@ -1776,6 +1828,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFms->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(NavApp::getRoute().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);

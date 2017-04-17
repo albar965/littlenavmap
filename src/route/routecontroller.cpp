@@ -766,6 +766,53 @@ bool RouteController::saveFlighplanAsFlp(const QString& filename)
   return true;
 }
 
+bool RouteController::saveFlighplanAsFms(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  try
+  {
+    route.getFlightplan().saveFms(filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
+bool RouteController::saveFlighplanAsGpx(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  const AircraftTrack& aircraftTrack = NavApp::getAircraftTrack();
+  atools::geo::LineString track;
+  for(const at::AircraftTrackPos& pos : aircraftTrack)
+    track.append(pos.pos);
+
+  try
+  {
+    route.getFlightplan().saveGpx(filename, track);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
 bool RouteController::saveFlightplan(bool cleanExport)
 {
   qDebug() << Q_FUNC_INFO;
@@ -1107,7 +1154,7 @@ void RouteController::reverseRoute()
   NavApp::setStatusMessage(tr("Reversed flight plan."));
 }
 
-QString RouteController::buildDefaultFilename(const QString& extension) const
+QString RouteController::buildDefaultFilename(const QString& extension, const QString& suffix) const
 {
   QString filename;
 
@@ -1131,7 +1178,7 @@ QString RouteController::buildDefaultFilename(const QString& extension) const
     filename += flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
 
   filename += extension;
-  filename += ".pln";
+  filename += suffix;
 
   // Remove characters that are note allowed in most filesystems
   filename = atools::cleanFilename(filename);

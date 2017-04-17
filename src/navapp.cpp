@@ -272,6 +272,11 @@ const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMeta()
   return databaseMeta;
 }
 
+const AircraftTrack& NavApp::getAircraftTrack()
+{
+  return getMapWidget()->getAircraftTrack();
+}
+
 map::MapObjectTypes NavApp::getShownMapFeatures()
 {
   return mainWindow->getMapWidget()->getShownMapFeatures();

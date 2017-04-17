@@ -88,6 +88,8 @@ public:
   bool saveFlighplanAsGfp(const QString& filename);
   bool saveFlighplanAsRte(const QString& filename);
   bool saveFlighplanAsFlp(const QString& filename);
+  bool saveFlighplanAsFms(const QString& filename);
+  bool saveFlighplanAsGpx(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -122,7 +124,7 @@ public:
   bool  doesFilenameMatchRoute();
 
   /* Create a default filename based on departure and destination names */
-  QString buildDefaultFilename(const QString& extension = QString()) const;
+  QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
   QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
 
   /* @return true if departure is valid and departure airport has no parking or departure of flight plan

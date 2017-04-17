@@ -35,6 +35,7 @@ class RouteController;
 class MapWidget;
 class WeatherReporter;
 class ElevationProvider;
+class AircraftTrack;
 
 namespace atools {
 namespace fs {
@@ -120,6 +121,8 @@ public:
   static ConnectClient *getConnectClient();
 
   static const atools::fs::db::DatabaseMeta *getDatabaseMeta();
+
+  static const AircraftTrack& getAircraftTrack();
 
 private:
   /* Database query helpers and caches */

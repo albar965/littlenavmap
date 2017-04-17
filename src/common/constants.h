@@ -145,13 +145,18 @@ const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln)";
 const QString FILE_PATTERN_GFP = "(*.gfp)";
 const QString FILE_PATTERN_RTE = "(*.rte)";
 const QString FILE_PATTERN_FLP = "(*.flp)";
+const QString FILE_PATTERN_FMS = "(*.fms)";
+const QString FILE_PATTERN_GPX = "(*.gpx)";
 const QString FILE_PATTERN_KML = "(*.kml *.kmz)";
 #else
+// Use more or less case insensitive patters for Linux
 const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg *.Cfg *.CFG)";
 const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.Pln *.PLN)";
 const QString FILE_PATTERN_GFP = "(*.gfp *.Gfp *.GFP)";
 const QString FILE_PATTERN_RTE = "(*.rte *.Rte *.RTE)";
-const QString FILE_PATTERN_FLP = "(*.flp*.Flp*.FLP)";
+const QString FILE_PATTERN_FLP = "(*.flp *.Flp *.FLP)";
+const QString FILE_PATTERN_FMS = "(*.fms *.Fms *.FMS)";
+const QString FILE_PATTERN_GPX = "(*.gpx *.Gpx *.GPX)";
 const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT = "(current_wx_snapshot.txt)";

@@ -155,5 +155,7 @@
         <file>resources/icons/aircraft_boat_user_ground.svg</file>
         <file>resources/icons/aircraft_boat_user.svg</file>
         <file>resources/icons/boataiground.svg</file>
+        <file>resources/icons/saveasgpx.svg</file>
+        <file>resources/icons/saveasfms.svg</file>
     </qresource>
 </RCC>

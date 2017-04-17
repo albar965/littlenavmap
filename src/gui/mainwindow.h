@@ -187,12 +187,16 @@ private:
   void routeOpen();
   void routeAppend();
   void routeOpenRecent(const QString& routeFile);
+
   bool routeSave();
   bool routeSaveAs();
   bool routeSaveAsClean();
   bool routeSaveAsGfp();
   bool routeSaveAsRte();
   bool routeSaveAsFlp();
+  bool routeSaveAsFms();
+  bool routeSaveAsGpx();
+
   void routeCenter();
   bool routeCheckForChanges();
   bool routeValidate(bool validateParking = true);
