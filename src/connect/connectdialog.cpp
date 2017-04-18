@@ -39,6 +39,17 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
   ui->setupUi(this);
 
+  if(!atools::fs::sc::DataReaderThread::isSimconnectAvailable())
+  {
+    ui->checkBoxConnectFetchAiAircraft->hide();
+    ui->checkBoxConnectFetchAiShip->hide();
+    ui->radioButtonConnectRemote->hide();
+    ui->radioButtonConnectDirect->hide();
+    ui->spinBoxConnectUpdateRate->hide();
+    ui->labelConnectUpdateRate->hide();
+    ui->lineDirectRemote->hide();
+  }
+
   ui->comboBoxConnectHostname->setAutoCompletion(true);
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
 
@@ -61,6 +72,9 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::autoConnectToggled);
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
   connect(ui->pushButtonConnectDeleteHostname, &QPushButton::clicked, this, &ConnectDialog::deleteClicked);
+
+  connect(ui->checkBoxConnectFetchAiAircraft, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsChanged);
+  connect(ui->checkBoxConnectFetchAiShip, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsChanged);
 
   connect(ui->radioButtonConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
 
@@ -126,18 +140,10 @@ void ConnectDialog::deleteClicked()
 
 void ConnectDialog::updateButtonStates()
 {
-  bool hasSimConnect = atools::fs::sc::DataReaderThread::isSimconnectAvailable();
-
-  if(!hasSimConnect)
+  if(!atools::fs::sc::DataReaderThread::isSimconnectAvailable())
   {
     ui->radioButtonConnectRemote->setChecked(true);
     ui->radioButtonConnectDirect->setChecked(false);
-
-    ui->radioButtonConnectRemote->hide();
-    ui->radioButtonConnectDirect->hide();
-    ui->spinBoxConnectUpdateRate->hide();
-    ui->labelConnectUpdateRate->hide();
-    ui->lineDirectRemote->hide();
   }
 
   ui->pushButtonConnectDeleteHostname->setEnabled(
@@ -149,6 +155,8 @@ void ConnectDialog::updateButtonStates()
   ui->comboBoxConnectHostname->setEnabled(ui->radioButtonConnectRemote->isChecked());
   ui->spinBoxConnectPort->setEnabled(ui->radioButtonConnectRemote->isChecked());
   ui->spinBoxConnectUpdateRate->setEnabled(ui->radioButtonConnectDirect->isChecked());
+  ui->checkBoxConnectFetchAiAircraft->setEnabled(ui->radioButtonConnectDirect->isChecked());
+  ui->checkBoxConnectFetchAiShip->setEnabled(ui->radioButtonConnectDirect->isChecked());
 }
 
 void ConnectDialog::setConnected(bool connected)
@@ -167,9 +175,19 @@ bool ConnectDialog::isConnectDirect() const
   return ui->radioButtonConnectDirect->isChecked();
 }
 
+bool ConnectDialog::isFetchAiAircraft() const
+{
+  return ui->checkBoxConnectFetchAiAircraft->isChecked();
+}
+
+bool ConnectDialog::isFetchAiShip() const
+{
+  return ui->checkBoxConnectFetchAiShip->isChecked();
+}
+
 unsigned int ConnectDialog::getDirectUpdateRateMs()
 {
-  return ui->spinBoxConnectUpdateRate->value();
+  return static_cast<unsigned int>(ui->spinBoxConnectUpdateRate->value());
 }
 
 QString ConnectDialog::getHostname() const
@@ -185,8 +203,9 @@ quint16 ConnectDialog::getPort() const
 void ConnectDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
-  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRate,
-                    ui->checkBoxConnectOnStartup, ui->radioButtonConnectDirect, ui->radioButtonConnectRemote});
+  widgetState.save({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRate,
+                    ui->checkBoxConnectOnStartup, ui->radioButtonConnectDirect, ui->radioButtonConnectRemote,
+                    ui->checkBoxConnectFetchAiAircraft, ui->checkBoxConnectFetchAiShip});
 
   // Save combo entries separately
   QStringList entries;
@@ -205,12 +224,11 @@ void ConnectDialog::restoreState()
     if(!entry.isEmpty())
       ui->comboBoxConnectHostname->addItem(entry);
 
-  atools::gui::WidgetState(lnm::NAVCONNECT_REMOTE).restore({ui->comboBoxConnectHostname,
-                                                            ui->spinBoxConnectPort,
-                                                            ui->spinBoxConnectUpdateRate,
-                                                            ui->checkBoxConnectOnStartup,
-                                                            ui->radioButtonConnectDirect,
-                                                            ui->radioButtonConnectRemote});
+  atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
+
+  widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRate,
+                       ui->checkBoxConnectOnStartup, ui->radioButtonConnectDirect, ui->radioButtonConnectRemote,
+                       ui->checkBoxConnectFetchAiAircraft, ui->checkBoxConnectFetchAiShip});
 
   updateButtonStates();
 }

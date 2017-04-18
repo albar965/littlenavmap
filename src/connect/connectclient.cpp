@@ -44,17 +44,13 @@ ConnectClient::ConnectClient(MainWindow *parent)
     dataReader = new DataReaderThread(mainWindow, false);
     dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
-    connect(dataReader, &DataReaderThread::postSimConnectData, this,
-            &ConnectClient::postSimConnectData);
-    connect(dataReader, &DataReaderThread::postLogMessage, this,
-            &ConnectClient::postLogMessage);
-
-    connect(dataReader, &DataReaderThread::connectedToSimulator, this,
-            &ConnectClient::connectedToSimulatorDirect);
+    connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
+    connect(dataReader, &DataReaderThread::postLogMessage, this, &ConnectClient::postLogMessage);
+    connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
     connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
             &ConnectClient::disconnectedFromSimulatorDirect);
-    connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader,
-            &DataReaderThread::setUpdateRate);
+    connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader, &DataReaderThread::setUpdateRate);
+    connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsToDataReader);
   }
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
@@ -209,7 +205,24 @@ void ConnectClient::restoreState()
   dialog->restoreState();
 
   if(dataReader != nullptr)
+  {
     dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
+    fetchOptionsToDataReader();
+  }
+}
+
+void ConnectClient::fetchOptionsToDataReader()
+{
+  if(dataReader != nullptr)
+  {
+    atools::fs::sc::Options options = atools::fs::sc::NO_OPTION;
+    if(dialog->isFetchAiAircraft())
+      options |= atools::fs::sc::FETCH_AI_AIRCRAFT;
+    if(dialog->isFetchAiShip())
+      options |= atools::fs::sc::FETCH_AI_BOAT;
+
+    dataReader->setSimconnectOptions(options);
+  }
 }
 
 atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station,

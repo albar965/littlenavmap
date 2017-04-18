@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>481</width>
-    <height>234</height>
+    <height>286</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="labelConnectHostname">
        <property name="text">
         <string>&amp;Hostname or IP address:</string>
@@ -56,7 +56,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
+     <item row="6" column="2">
       <widget class="QPushButton" name="pushButtonConnectDeleteHostname">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -76,7 +76,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="7" column="1">
       <widget class="QSpinBox" name="spinBoxConnectPort">
        <property name="toolTip">
         <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.</string>
@@ -95,7 +95,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="7" column="0">
       <widget class="QLabel" name="labelConnectPort">
        <property name="text">
         <string>&amp;Port:</string>
@@ -108,7 +108,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="6" column="1">
       <widget class="QComboBox" name="comboBoxConnectHostname">
        <property name="toolTip">
         <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.</string>
@@ -130,14 +130,14 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="3">
+     <item row="4" column="0" colspan="3">
       <widget class="Line" name="lineDirectRemote">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="3">
+     <item row="5" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectRemote">
        <property name="toolTip">
         <string>Connect to a remote flight simulator on another computer which is runnng Little Navconnect.</string>
@@ -185,10 +185,42 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        </attribute>
       </widget>
      </item>
-     <item row="6" column="0" colspan="3">
+     <item row="8" column="0" colspan="3">
       <widget class="Line" name="lineRemoteAuto">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraft">
+       <property name="toolTip">
+        <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
+       </property>
+       <property name="statusTip">
+        <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
+       </property>
+       <property name="text">
+        <string>Fetch AI or multiplayer aircraft</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBoxConnectFetchAiShip">
+       <property name="toolTip">
+        <string>Deselect to disable fetching and transmission of AI or multiplayer ships</string>
+       </property>
+       <property name="statusTip">
+        <string>Deselect to disable fetching and transmission of AI or multiplayer ships</string>
+       </property>
+       <property name="text">
+        <string>Fetch AI or multiplayer ships</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

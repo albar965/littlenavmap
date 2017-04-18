@@ -101,6 +101,7 @@ private:
   void autoConnectToggled(bool state);
   void requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest);
   void flushQueuedRequests();
+  void fetchOptionsToDataReader();
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;

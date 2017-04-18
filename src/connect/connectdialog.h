@@ -54,6 +54,8 @@ public:
   /* true if the connect on startup checkbox was checked */
   bool isAutoConnect() const;
   bool isConnectDirect() const;
+  bool isFetchAiAircraft() const;
+  bool isFetchAiShip() const;
 
   unsigned int getDirectUpdateRateMs();
 
@@ -61,6 +63,7 @@ signals:
   void disconnectClicked();
   void autoConnectToggled(bool state);
   void directUpdateRateChanged(int value);
+  void fetchOptionsChanged();
 
 private:
   void buttonBoxClicked(QAbstractButton *button);
