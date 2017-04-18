@@ -445,8 +445,8 @@ void RouteController::restoreState()
   Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType,
-                                                     ui->spinBoxRouteAlt});
+  atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, false);
+  state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {

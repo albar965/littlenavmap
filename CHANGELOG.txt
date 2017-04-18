@@ -16,6 +16,7 @@ Version 1.3.6.develop
 * Added support for parsing SID and STAR to route string dialog.
 * Added options to customize route string (DCT on/off and others).
 
+* Added option to read also inactive scenery entries. Useful if sceneries are disable or enabled by tools for each flight.
 * Added vertical path deviation in simulator aircraft progress after passing top of descent.
 * Added option to disable display of the top of descent points and values.
 * Added airway minimum altitude to flight plan table.

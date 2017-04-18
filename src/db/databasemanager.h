@@ -161,6 +161,7 @@ private:
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;
+  bool readInactive = false;
 
   QString currentBglFilePath;
 };

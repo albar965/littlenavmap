@@ -45,6 +45,10 @@ public:
   /* Get the base path of the currently selected simulator in the combo box */
   QString getBasePath() const;
 
+  /* Load all scenery, even inactive */
+  bool isReadInactive() const;
+  void setReadInactive(bool value);
+
   /* Get the path and filename of the scenery.cfg file of the currently selected simulator in the combo box */
   QString getSceneryConfigFile() const;
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>207</height>
+    <height>213</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -149,6 +149,20 @@
        </property>
        <property name="buddy">
         <cstring>comboBoxSimulator</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBoxReadInactive">
+       <property name="toolTip">
+        <string>Will read also the inactive scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</string>
+       </property>
+       <property name="statusTip">
+        <string>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</string>
+       </property>
+       <property name="text">
+        <string>Read also &amp;inactive scenery entries</string>
        </property>
       </widget>
      </item>

@@ -859,6 +859,10 @@ void MapWidget::routeChanged(bool geometryChanged)
 void MapWidget::routeAltitudeChanged(float altitudeFeet)
 {
   Q_UNUSED(altitudeFeet);
+
+  if(databaseLoadStatus)
+    return;
+
   qDebug() << Q_FUNC_INFO;
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
   update();

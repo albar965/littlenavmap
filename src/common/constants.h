@@ -72,6 +72,7 @@ const QString DATABASE_LOADINGSIMULATOR = "Database/LoadingSimulator";
 const QString DATABASE_PATHS = "Database/Paths";
 const QString DATABASE_SCENERYCONFIG = "Database/SceneryConfig";
 const QString DATABASE_SIMULATOR = "Database/Simulator";
+const QString DATABASE_LOAD_INACTIVE = "Database/LoadInactive";
 const QString EXPORT_FILEDIALOG = "Export/FileDialog";
 const QString INFOWINDOW_CURRENTMAPOBJECTS = "InfoWindow/CurrentMapObjects";
 const QString INFOWINDOW_WIDGET = "InfoWindow/Widget";

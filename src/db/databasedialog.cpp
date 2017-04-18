@@ -162,6 +162,16 @@ QString DatabaseDialog::getBasePath() const
   return paths.value(currentFsType).basePath;
 }
 
+bool DatabaseDialog::isReadInactive() const
+{
+  return ui->checkBoxReadInactive->isChecked();
+}
+
+void DatabaseDialog::setReadInactive(bool value)
+{
+  return ui->checkBoxReadInactive->setChecked(value);
+}
+
 QString DatabaseDialog::getSceneryConfigFile() const
 {
   return paths.value(currentFsType).sceneryCfg;
