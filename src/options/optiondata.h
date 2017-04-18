@@ -117,7 +117,10 @@ enum Flag
   CACHE_USE_ONLINE_ELEVATION = 1 << 22,
 
   /* radioButtonCacheUseOnlineElevation */
-  CACHE_USE_OFFLINE_ELEVATION = 1 << 23
+  CACHE_USE_OFFLINE_ELEVATION = 1 << 23,
+
+  /* checkBoxOptionsShowTod*/
+  FLIGHT_PLAN_SHOW_TOD = 1 << 24
 
 };
 
@@ -561,7 +564,8 @@ private:
     opts::WEATHER_INFO_VATSIM |
     opts::WEATHER_TOOLTIP_ACTIVESKY |
     opts::WEATHER_TOOLTIP_NOAA |
-    opts::CACHE_USE_OFFLINE_ELEVATION
+    opts::CACHE_USE_OFFLINE_ELEVATION |
+    opts::FLIGHT_PLAN_SHOW_TOD
     // opts::WEATHER_TOOLTIP_VATSIM
   ;
 

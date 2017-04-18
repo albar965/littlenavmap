@@ -1566,27 +1566,40 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        <string>Flight Plan</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
-         <property name="toolTip">
-          <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
-when transitioning from airport to airway.</string>
-         </property>
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelOptionsRouteTodRule">
          <property name="text">
-          <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
+          <string>&amp;Rule of thumb to calculate top of descent:</string>
          </property>
-         <property name="checked">
-          <bool>false</bool>
+         <property name="buddy">
+          <cstring>doubleSpinBoxOptionsRouteTodRule</cstring>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" alignment="Qt::AlignVCenter">
-        <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
-         <property name="text">
-          <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
+       <item row="6" column="1">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="buddy">
-          <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
+         <property name="toolTip">
+          <string>Prefer nearest NDB that is part of an airway instead the nearest waypoint
+when transitioning from airport to airway.</string>
+         </property>
+         <property name="text">
+          <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -1613,51 +1626,7 @@ Note that this value does not affect flight plan calculation or saving of flight
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
-         <property name="toolTip">
-          <string>Prefer nearest NDB that is part of an airway instead the nearest waypoint
-when transitioning from airport to airway.</string>
-         </property>
-         <property name="text">
-          <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
-         <property name="toolTip">
-          <string>Rounds up flight plan cruise altitude to nearest odd thousand feet for easterly flight plans and
-nearest even thousand feet for westerly flight plans if checked.</string>
-         </property>
-         <property name="statusTip">
-          <string/>
-         </property>
-         <property name="text">
-          <string>&amp;Use simplified east/west rule to determine cruise altitude</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="1">
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="4" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsRouteTodRule">
          <property name="toolTip">
           <string/>
@@ -1685,13 +1654,60 @@ nearest even thousand feet for westerly flight plans if checked.</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="labelOptionsRouteTodRule">
+       <item row="3" column="0" alignment="Qt::AlignVCenter">
+        <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
          <property name="text">
-          <string>&amp;Rule of thumb to calculate top of descent:</string>
+          <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
          </property>
          <property name="buddy">
-          <cstring>doubleSpinBoxOptionsRouteTodRule</cstring>
+          <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
+         <property name="toolTip">
+          <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
+when transitioning from airport to airway.</string>
+         </property>
+         <property name="text">
+          <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
+         <property name="toolTip">
+          <string>Rounds up flight plan cruise altitude to nearest odd thousand feet for easterly flight plans and
+nearest even thousand feet for westerly flight plans if checked.</string>
+         </property>
+         <property name="statusTip">
+          <string/>
+         </property>
+         <property name="text">
+          <string>&amp;Use simplified east/west rule to determine cruise altitude</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsShowTod">
+         <property name="toolTip">
+          <string>Enable this option to show the top of descent point on the map, in the elevation profile and in the simulator aircraft progress window.</string>
+         </property>
+         <property name="statusTip">
+          <string>Enable this option to show the top of descent point on the map, in the elevation profile and in the information window.</string>
+         </property>
+         <property name="text">
+          <string>Draw top of descent point on map and in elevation profile</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

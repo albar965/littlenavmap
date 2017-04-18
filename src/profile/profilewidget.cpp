@@ -398,20 +398,25 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
-  int todX;
-  if(route.getTopOfDescentFromStart() > 0.f)
-    todX = X0 + atools::roundToInt(route.getTopOfDescentFromStart() * horizontalScale);
-  else
-    todX = X0;
-
-  // Draw the flightplan line
-  float destAlt = legList.route.last().getPosition().getAltitude();
+  int todX = 0;
   QPolygon line;
   line << QPoint(X0, flightplanY);
-  if(todX < X0 + w)
+  float destAlt = legList.route.last().getPosition().getAltitude();
+  if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
   {
-    line << QPoint(todX, flightplanY);
-    line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
+    if(route.getTopOfDescentFromStart() > 0.f)
+      todX = X0 + atools::roundToInt(route.getTopOfDescentFromStart() * horizontalScale);
+    else
+      todX = X0;
+
+    // Draw the flightplan line
+    if(todX < X0 + w)
+    {
+      line << QPoint(todX, flightplanY);
+      line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
+    }
+    else
+      line << QPoint(X0 + w, flightplanY);
   }
   else
     line << QPoint(X0 + w, flightplanY);
@@ -564,7 +569,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   if(!NavApp::getRoute().isFlightplanEmpty())
   {
-    if(todX < X0 + w)
+    if(todX < X0 + w && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     {
       // Draw the top of descent point and text
       painter.setBackgroundMode(Qt::TransparentMode);
@@ -993,11 +998,16 @@ void ProfileWidget::updateLabel()
       if(routeController->getRoute().isActiveMissed())
         distToDestNm = 0.f;
 
-      float toTod = routeController->getRoute().getTopOfDescentFromStart() - distFromStartNm;
+      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+      {
+        float toTod = routeController->getRoute().getTopOfDescentFromStart() - distFromStartNm;
 
-      fixedLabelText = tr("<b>To Destination %1, to Top of Descent %2.</b>&nbsp;&nbsp;").
-                       arg(Unit::distNm(distToDestNm)).
-                       arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
+        fixedLabelText = tr("<b>To Destination %1, to Top of Descent %2.</b>&nbsp;&nbsp;").
+                         arg(Unit::distNm(distToDestNm)).
+                         arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
+      }
+      else
+        fixedLabelText = tr("<b>To Destination %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
     }
   }
   else

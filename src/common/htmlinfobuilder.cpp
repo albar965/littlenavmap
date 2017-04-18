@@ -1655,21 +1655,23 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
       }
 
-      // Top of descent  ===============================================================
-      html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
-
-      if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
-        toTod = route.getTopOfDescentFromStart() - distFromStartNm;
-
-      if(toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE)
+      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
       {
-        QString timeStr;
-        if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
-          timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
+        // Top of descent  ===============================================================
+        html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
-        html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+        if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
+          toTod = route.getTopOfDescentFromStart() - distFromStartNm;
+
+        if(toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE)
+        {
+          QString timeStr;
+          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+            timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
+
+          html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+        }
       }
-
       html.tableEnd();
 
       // Next leg ====================================================
@@ -1904,7 +1906,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
   }
 
-  if(toTod <= 0 && userAircaft != nullptr)
+  if(toTod <= 0 && userAircaft != nullptr && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
   {
     // Display vertical path deviation when after TOD
     float vertAlt = route.getDescentVerticalAltitude(distToDestNm);
@@ -1997,10 +1999,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         value += tr("◄");
       else if(crossWind <= -1.f)
         value += tr("►");
-
     }
 
-    html.row2(QString(), value, atools::util::html::NO_ENTITIES);
+    if(!value.isEmpty())
+      html.row2(QString(), value, atools::util::html::NO_ENTITIES);
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
     float tat = userAircaft->getTotalAirTemperatureCelsius();

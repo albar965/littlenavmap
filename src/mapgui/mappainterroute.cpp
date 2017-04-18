@@ -59,7 +59,7 @@ void MapPainterRoute::render(PaintContext *context)
   if(context->mapLayer->isApproach())
     paintApproach(context, mapWidget->getApproachHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
 
-  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
+  if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     paintTopOfDescent(context);
 }
 

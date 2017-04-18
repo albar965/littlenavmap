@@ -325,11 +325,11 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
 {
   atools::util::PainterContextSaver saver(painter);
+  Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  painter->setPen(mapcolors::routeProcedurePointFlyoverColor);
-  painter->setBackground(mapcolors::routeProcedurePointFlyoverColor);
-  painter->setBrush(mapcolors::routeProcedurePointFlyoverColor);
+  painter->setPen(mapcolors::routeProcedurePointFlyoverPen);
+  painter->setBrush(Qt::NoBrush);
 
   int radius = size / 2;
   painter->drawEllipse(x - radius, y - radius, size, size);

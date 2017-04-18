@@ -139,7 +139,7 @@ const QColor routeProcedureMissedTextColor = QColor(90, 90, 90);
 const QColor routeProcedureTextColor = QColor(0, 0, 0);
 
 const QColor routeProcedurePointColor = QColor(90, 90, 90);
-const QColor routeProcedurePointFlyoverColor = QColor(255, 255, 0);
+const QPen routeProcedurePointFlyoverPen = QPen(QColor(0, 0, 0), 2.5);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
