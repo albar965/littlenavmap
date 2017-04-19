@@ -1011,6 +1011,7 @@ void MapWidget::disconnectedFromSimulator()
   qDebug() << Q_FUNC_INFO;
   // Clear all data on disconnect
   screenIndex->updateSimData(atools::fs::sc::SimConnectData());
+  updateVisibleObjectsStatusBar();
   update();
 }
 
@@ -2334,11 +2335,6 @@ const QVector<atools::fs::sc::SimConnectAircraft>& MapWidget::getAiAircraft() co
   return screenIndex->getAiAircraft();
 }
 
-bool MapWidget::isConnected() const
-{
-  return NavApp::isConnected();
-}
-
 void MapWidget::deleteAircraftTrack()
 {
   aircraftTrack.clearTrack();
@@ -2454,32 +2450,32 @@ void MapWidget::updateVisibleObjectsStatusBar()
       else if(layer->getDataSource() == layer::MEDIUM)
       {
         if(showAny)
-          apShort.append(tr(">%1%2").arg(Unit::distShortFeet(MapLayer::MAX_MEDIUM_RUNWAY_FT / 100, false)).
+          apShort.append(tr(">%1%2").arg(Unit::distShortFeet(layer::MAX_MEDIUM_RUNWAY_FT / 100, false)).
                          arg(runwayShort));
 
         if(showStock)
           apTooltip = tr("Airports with runway length > %1 and%2").
-                      arg(Unit::distShortFeet(MapLayer::MAX_MEDIUM_RUNWAY_FT)).
+                      arg(Unit::distShortFeet(layer::MAX_MEDIUM_RUNWAY_FT)).
                       arg(runway);
 
         if(showAddon)
           apTooltipAddon.append(tr("Add-on airports with runway length > %1").
-                                arg(Unit::distShortFeet(MapLayer::MAX_MEDIUM_RUNWAY_FT)));
+                                arg(Unit::distShortFeet(layer::MAX_MEDIUM_RUNWAY_FT)));
       }
       else if(layer->getDataSource() == layer::LARGE)
       {
         if(showAddon || showHard)
-          apShort.append(tr(">%1,H").arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT / 100, false)));
+          apShort.append(tr(">%1,H").arg(Unit::distShortFeet(layer::MAX_LARGE_RUNWAY_FT / 100, false)));
         else
           apShort.clear();
 
         if(showStock && showHard)
           apTooltip = tr("Airports with runway length > %1 and hard runways").
-                      arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT));
+                      arg(Unit::distShortFeet(layer::MAX_LARGE_RUNWAY_FT));
 
         if(showAddon)
           apTooltipAddon.append(tr("Add-on airports with runway length > %1").
-                                arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT)));
+                                arg(Unit::distShortFeet(layer::MAX_LARGE_RUNWAY_FT)));
       }
 
       airportLabel.append(apShort);
@@ -2578,6 +2574,52 @@ void MapWidget::updateVisibleObjectsStatusBar()
     else
       tooltip.tr().td(tr("No airspaces")).trEnd();
 
+    QStringList aiLabel;
+    if(NavApp::isConnected())
+    {
+      QStringList ai;
+
+      // AI vehicles
+      if(shown & map::AIRCRAFT_AI && layer->isAiAircraftLarge())
+      {
+        QString ac;
+        if(!layer->isAiAircraftSmall())
+        {
+          ac = tr("Aircraft > %1 ft").arg(layer::LARGE_AIRCRAFT_RADIUS * 2);
+          aiLabel.append("A>");
+        }
+        else
+        {
+          ac = tr("Aircraft");
+          aiLabel.append("A");
+        }
+
+        if(layer->isAiAircraftGround())
+        {
+          ac.append(tr(" on ground"));
+          aiLabel.last().append("G");
+        }
+        ai.append(ac);
+      }
+
+      if(shown & map::AIRCRAFT_AI_SHIP && layer->isAiShipLarge())
+      {
+        if(!layer->isAiShipSmall())
+        {
+          ai.append(tr("Ships > %1 ft").arg(layer::LARGE_SHIP_RADIUS * 2));
+          aiLabel.append("S>");
+        }
+        else
+        {
+          ai.append(tr("Ships"));
+          aiLabel.append("S");
+        }
+      }
+      if(!ai.isEmpty())
+        tooltip.tr().td().b(tr("AI/multiplayer: ")).text(ai.join(", ")).tdEnd().trEnd();
+      else
+        tooltip.tr().td(tr("No AI/Multiplayer")).trEnd();
+    }
     tooltip.tableEnd();
 
     QStringList label;
@@ -2587,6 +2629,8 @@ void MapWidget::updateVisibleObjectsStatusBar()
       label.append(navaidLabel.join(tr(",")));
     if(!airspaceGroupLabel.isEmpty())
       label.append(airspaceGroupLabel.join(tr(",")));
+    if(!aiLabel.isEmpty())
+      label.append(aiLabel.join(tr(",")));
 
     // Update the statusbar label text and tooltip of the label
     mainWindow->setMapObjectsShownMessageText(label.join(" / "), tooltip.getHtml());

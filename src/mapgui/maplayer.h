@@ -30,13 +30,16 @@ enum AirportSource
 };
 
 /* Do not show anything at all above this zoom distance */
-const float DISTANCE_CUT_OFF_LIMIT = 4000.f;
+constexpr float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
 /* Ships considered large above this model radius in feet */
-const int LARGE_SHIP_SIZE = 40;
+constexpr int LARGE_SHIP_RADIUS = 50;
 
 /* Aircraft considered large above this model radius in feet */
-const int LARGE_AIRCRAFT_SIZE = 50;
+constexpr int LARGE_AIRCRAFT_RADIUS = 50;
+
+constexpr int MAX_MEDIUM_RUNWAY_FT = 4000;
+constexpr int MAX_LARGE_RUNWAY_FT = 8000;
 
 }
 
@@ -374,9 +377,6 @@ public:
   {
     return layerMarkerSymbolSize;
   }
-
-  static const int MAX_MEDIUM_RUNWAY_FT = 4000;
-  static const int MAX_LARGE_RUNWAY_FT = 8000;
 
   bool isAirspace() const
   {

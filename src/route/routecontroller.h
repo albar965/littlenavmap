@@ -377,6 +377,7 @@ private:
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
+  static Q_DECL_CONSTEXPR int ROUTE_ALT_CHANGE_DELAY_MS = 1000;
   qint64 lastSimUpdate = 0;
 
   QIcon ndbIcon, waypointIcon, userpointIcon, invalidIcon, procedureIcon;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>481</width>
-    <height>286</height>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -146,7 +146,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <string>Connect to a remote flight simulator on another computer which is runnng Little Navconnect.</string>
        </property>
        <property name="text">
-        <string>Connect to a remote flight simulator</string>
+        <string>Connect to a &amp;remote flight simulator</string>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">buttonGroupConnectType</string>
@@ -175,7 +175,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <string>Connect directly to flight simulator on the same computer.</string>
        </property>
        <property name="text">
-        <string>Connect directly to a local flight simulator</string>
+        <string>Connect directly to a &amp;local flight simulator</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -201,7 +201,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
        </property>
        <property name="text">
-        <string>Fetch AI or multiplayer aircraft</string>
+        <string>Fetch AI or multiplayer &amp;aircraft</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -217,7 +217,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <string>Deselect to disable fetching and transmission of AI or multiplayer ships</string>
        </property>
        <property name="text">
-        <string>Fetch AI or multiplayer ships</string>
+        <string>Fetch AI or multiplayer &amp;ships</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -259,6 +259,8 @@ Unchecking this will stop all automatic connection attempts immediately.</string
  <tabstops>
   <tabstop>radioButtonConnectDirect</tabstop>
   <tabstop>spinBoxConnectUpdateRate</tabstop>
+  <tabstop>checkBoxConnectFetchAiAircraft</tabstop>
+  <tabstop>checkBoxConnectFetchAiShip</tabstop>
   <tabstop>radioButtonConnectRemote</tabstop>
   <tabstop>comboBoxConnectHostname</tabstop>
   <tabstop>pushButtonConnectDeleteHostname</tabstop>

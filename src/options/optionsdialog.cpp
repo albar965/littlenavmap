@@ -361,8 +361,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled,
           this, &OptionsDialog::simUpdatesConstantClicked);
-  connect(ui->checkBoxOptionsShowTod, &QCheckBox::toggled,
-          this, &OptionsDialog::showTopOfDescentClicked);
 
   connect(ui->pushButtonOptionsDisplayFlightplanColor, &QPushButton::clicked,
           this, &OptionsDialog::flightplanColorClicked);
@@ -777,12 +775,6 @@ void OptionsDialog::simUpdatesConstantClicked(bool state)
 {
   Q_UNUSED(state);
   ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
-}
-
-void OptionsDialog::showTopOfDescentClicked(bool state)
-{
-  Q_UNUSED(state);
-  ui->doubleSpinBoxOptionsRouteTodRule->setEnabled(ui->checkBoxOptionsShowTod->isChecked());
 }
 
 /* Convert the range ring string to an int vector */

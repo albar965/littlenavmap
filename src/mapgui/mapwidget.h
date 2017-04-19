@@ -243,8 +243,6 @@ public:
     return mainWindow;
   }
 
-  bool isConnected() const;
-
   const QStringList& getKmlFiles() const
   {
     return kmlFilePaths;

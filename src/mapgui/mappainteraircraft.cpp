@@ -18,6 +18,7 @@
 #include "mapgui/mappainteraircraft.h"
 
 #include "mapgui/mapwidget.h"
+#include "navapp.h"
 #include "mapgui/maplayer.h"
 #include "util/paintercontextsaver.h"
 
@@ -50,7 +51,7 @@ void MapPainterAircraft::render(PaintContext *context)
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     paintAircraftTrack(context);
 
-  if(mapWidget->isConnected() || mapWidget->getUserAircraft().isDebug())
+  if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
   {
     // Draw AI aircraft
     if(context->objectTypes & map::AIRCRAFT_AI && context->mapLayer->isAiAircraftLarge())
@@ -58,7 +59,7 @@ void MapPainterAircraft::render(PaintContext *context)
       for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
       {
         if(ac.getCategory() != atools::fs::sc::BOAT &&
-           (ac.getModelRadius() > layer::LARGE_AIRCRAFT_SIZE || context->mapLayer->isAiAircraftSmall()) &&
+           (ac.getModelRadius() > layer::LARGE_AIRCRAFT_RADIUS || context->mapLayer->isAiAircraftSmall()) &&
            (!ac.isOnGround() || context->mapLayer->isAiAircraftGround()))
           paintAiVehicle(context, ac);
       }

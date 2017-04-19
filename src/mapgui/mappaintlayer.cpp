@@ -233,14 +233,14 @@ void MapPaintLayer::initMapLayerSettings()
          marker(false).ils(false)).
 
   // airport > 4000, VOR
-  append(defLayer.clone(200.f).airportSymbolSize(10).minRunwayLength(4000).
+  append(defLayer.clone(200.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false)).
 
   // airport > 4000
-  append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(4000).
+  append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachText(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipSmall(false).
@@ -249,7 +249,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
-  append(defLayer.clone(750.f).airportSymbolSize(10).minRunwayLength(8000).
+  append(defLayer.clone(750.f).airportSymbolSize(10).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
@@ -259,7 +259,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
-  append(defLayer.clone(1200.f).airportSymbolSize(10).minRunwayLength(8000).
+  append(defLayer.clone(1200.f).airportSymbolSize(10).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          approachText(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
@@ -271,7 +271,8 @@ void MapPaintLayer::initMapLayerSettings()
 
   // Display only points for airports until the cutoff limit
   // airport > 8000
-  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).minRunwayLength(8000).
+  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
+         minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
@@ -282,7 +283,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
   // Make sure that there is always an layer
-  append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(8000).
+  append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          approach(false).approachText(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).

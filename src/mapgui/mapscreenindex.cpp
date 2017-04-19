@@ -265,7 +265,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Check for user aircraft
   result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
-  if(shown & map::AIRCRAFT && mapWidget->isConnected())
+  if(shown & map::AIRCRAFT && NavApp::isConnected())
   {
     int x, y;
     if(conv.wToS(simData.getUserAircraft().getPosition(), x, y))
@@ -275,7 +275,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Check for AI / multiplayer aircraft
   result.aiAircraft.clear();
-  if(mapWidget->isConnected())
+  if(NavApp::isConnected())
   {
     using maptools::insertSortedByDistance;
     int x, y;
@@ -285,7 +285,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
       {
         if(obj.getCategory() == atools::fs::sc::BOAT &&
-           (obj.getModelRadius() > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
+           (obj.getModelRadius() > layer::LARGE_SHIP_RADIUS || mapLayer->isAiShipSmall()))
         {
           if(conv.wToS(obj.getPosition(), x, y))
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
@@ -299,7 +299,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
       {
         if(obj.getCategory() != atools::fs::sc::BOAT &&
-           (obj.getModelRadius() > layer::LARGE_AIRCRAFT_SIZE || mapLayer->isAiAircraftSmall()) &&
+           (obj.getModelRadius() > layer::LARGE_AIRCRAFT_RADIUS || mapLayer->isAiAircraftSmall()) &&
            (!obj.isOnGround() || mapLayer->isAiAircraftGround()))
         {
           if(conv.wToS(obj.getPosition(), x, y))

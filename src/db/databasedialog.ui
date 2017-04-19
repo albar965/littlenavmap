@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>213</height>
+    <height>234</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -184,6 +184,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
   <tabstop>pushButtonDatabaseBasePath</tabstop>
   <tabstop>lineEditDatabaseSceneryFile</tabstop>
   <tabstop>pushButtonDatabaseSceneryFile</tabstop>
+  <tabstop>checkBoxReadInactive</tabstop>
  </tabstops>
  <resources/>
  <connections/>

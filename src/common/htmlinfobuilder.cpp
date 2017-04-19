@@ -1514,17 +1514,17 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   }
   else
   {
-    QString type(tr("unknown"));
+    QString type(tr("Unknown"));
     switch(aircraft.getCategory())
     {
       case atools::fs::sc::AIRPLANE:
-        type = "aircraft";
+        type = "Aircraft";
         break;
       case atools::fs::sc::HELICOPTER:
-        type = "helicopter";
+        type = "Helicopter";
         break;
       case atools::fs::sc::BOAT:
-        type = "boat";
+        type = "Ship";
         break;
       case atools::fs::sc::GROUNDVEHICLE:
       case atools::fs::sc::CONTROLTOWER:
@@ -1534,9 +1534,9 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     }
 
     if(num != -1 && total != -1)
-      aircraftText = tr("AI / multiplayer %1 - %2 of %3 vehicles").arg(type).arg(num).arg(total);
+      aircraftText = tr("AI / Multiplayer %1 - %2 of %3 Vehicles").arg(type).arg(num).arg(total);
     else
-      aircraftText = tr("AI / multiplayer %1").arg(type);
+      aircraftText = tr("AI / Multiplayer %1").arg(type);
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("AI and multiplayer aircraft are not shown on map."), atools::util::html::BOLD);
@@ -1655,7 +1655,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
       }
 
-      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+      // if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
       {
         // Top of descent  ===============================================================
         html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
@@ -1906,7 +1906,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
   }
 
-  if(toTod <= 0 && userAircaft != nullptr && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+  if(toTod <= 0 && userAircaft != nullptr /*&& OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD*/)
   {
     // Display vertical path deviation when after TOD
     float vertAlt = route.getDescentVerticalAltitude(distToDestNm);

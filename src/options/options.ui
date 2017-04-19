@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1007</width>
-    <height>440</height>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1698,10 +1698,10 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="4" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsShowTod">
          <property name="toolTip">
-          <string>Enable this option to show the top of descent point on the map, in the elevation profile and in the simulator aircraft progress window.</string>
+          <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
          </property>
          <property name="statusTip">
-          <string>Enable this option to show the top of descent point on the map, in the elevation profile and in the information window.</string>
+          <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
          </property>
          <property name="text">
           <string>Draw top of descent point on map and in elevation profile</string>
@@ -2389,6 +2389,8 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
   <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
@@ -2410,6 +2412,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsRoutePreferNdb</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
+  <tabstop>checkBoxOptionsShowTod</tabstop>
   <tabstop>doubleSpinBoxOptionsRouteTodRule</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
@@ -2425,6 +2428,15 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
   <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
   <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
+  <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
+  <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
+  <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
+  <tabstop>pushButtonOptionsCacheClearDisk</tabstop>
+  <tabstop>pushButtonOptionsCacheShow</tabstop>
+  <tabstop>radioButtonCacheUseOnlineElevation</tabstop>
+  <tabstop>radioButtonCacheUseOffineElevation</tabstop>
+  <tabstop>lineEditCacheOfflineDataPath</tabstop>
+  <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
   <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveExclude</tabstop>

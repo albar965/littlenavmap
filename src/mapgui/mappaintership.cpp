@@ -17,6 +17,7 @@
 
 #include "mapgui/mappaintership.h"
 
+#include "navapp.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayer.h"
 #include "util/paintercontextsaver.h"
@@ -41,7 +42,7 @@ void MapPainterShip::render(PaintContext *context)
     // If actions are unchecked return
     return;
 
-  if(mapWidget->isConnected() || mapWidget->getUserAircraft().isDebug())
+  if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
   {
     // Draw AI ships first
     if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
@@ -52,7 +53,7 @@ void MapPainterShip::render(PaintContext *context)
       for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
       {
         if(ac.getCategory() == atools::fs::sc::BOAT &&
-           (ac.getModelRadius() > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
+           (ac.getModelRadius() > layer::LARGE_SHIP_RADIUS || context->mapLayer->isAiShipSmall()))
           paintAiVehicle(context, ac);
       }
     }

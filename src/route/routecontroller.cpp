@@ -214,6 +214,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
 RouteController::~RouteController()
 {
+  routeAltDelayTimer.stop();
   delete entryBuilder;
   delete model;
   delete undoStack;
@@ -355,7 +356,7 @@ void RouteController::routeAltChanged()
 
   NavApp::updateWindowTitle();
 
-  routeAltDelayTimer.start(1000);
+  routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
 
   if(!route.isEmpty())
     emit routeChanged(false);
@@ -1206,6 +1207,7 @@ void RouteController::preDatabaseLoad()
 {
   routeNetworkRadio->deInitQueries();
   routeNetworkAirway->deInitQueries();
+  routeAltDelayTimer.stop();
 }
 
 void RouteController::postDatabaseLoad()
@@ -1231,6 +1233,7 @@ void RouteController::postDatabaseLoad()
   updateTableModel();
   NavApp::updateWindowTitle();
   updateWindowLabel();
+  routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
 }
 
 /* Double click into table view */
