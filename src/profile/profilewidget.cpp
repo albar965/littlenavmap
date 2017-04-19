@@ -774,6 +774,7 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
         elevationProvider->getElevations(elevations, atools::geo::Line(p1, p2));
       }
     }
+    qDeleteAll(coordsCorrected);
   }
 
   if(!elevations.isEmpty())

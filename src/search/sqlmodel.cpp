@@ -439,7 +439,6 @@ void SqlModel::buildQuery()
 QString SqlModel::buildWhere()
 {
   QString queryWhere;
-  QString queryWhereAnd;
 
   int numCond = 0;
   for(const WhereCondition& cond : whereConditionMap)

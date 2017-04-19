@@ -139,7 +139,7 @@ protected:
   void connectLineEdit(QLineEdit *lineEdit);
 
   /* Table/view controller */
-  SqlController *controller;
+  SqlController *controller = nullptr;
 
   /* Column definitions that will be used to create the SQL queries */
   ColumnList *columns;

@@ -259,6 +259,8 @@ MainWindow::~MainWindow()
   delete dialog;
   qDebug() << Q_FUNC_INFO << "delete errorHandler";
   delete errorHandler;
+  qDebug() << Q_FUNC_INFO << "delete helpHandler";
+  delete helpHandler;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";

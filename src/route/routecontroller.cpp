@@ -1476,9 +1476,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
       view->selectAll();
     else if(action == ui->actionSearchTableSelectNothing)
       view->clearSelection();
-    else if(action == ui->actionSearchSetMark)
+    else if(action == ui->actionSearchSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
-    else if(action == ui->actionMapRangeRings)
+    else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
       NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
     else if(action == ui->actionMapNavaidRange)
     {

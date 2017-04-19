@@ -245,6 +245,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox
             }
           }
         }
+        qDeleteAll(coordsCorrected);
       }
       p1 = p2;
     }

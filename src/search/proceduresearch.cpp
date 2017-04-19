@@ -657,7 +657,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     else if(ref.hasApproachAndTransitionIds())
       procedureLegs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
 
-    if(!procedureLegs->isEmpty())
+    if(procedureLegs != nullptr && !procedureLegs->isEmpty())
     {
       QTreeWidgetItem *parentAppr = parentApproachItem(item);
       QTreeWidgetItem *parentTrans = parentTransitionItem(item);

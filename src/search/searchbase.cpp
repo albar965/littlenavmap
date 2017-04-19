@@ -151,6 +151,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
 SearchBaseTable::~SearchBaseTable()
 {
   view->removeEventFilter(viewEventFilter);
+  delete controller;
   delete csvExporter;
   delete updateTimer;
   delete zoomHandler;
@@ -180,6 +181,7 @@ void SearchBaseTable::initViewAndController()
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
+  delete controller;
   controller = new SqlController(NavApp::getDatabase(), columns, view);
   controller->prepareModel();
 
