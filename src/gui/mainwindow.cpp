@@ -1874,14 +1874,16 @@ void MainWindow::updateActionStates()
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
+  ui->actionMapShowAircraftAi->setEnabled(true);
+  ui->actionMapShowAircraftAiBoat->setEnabled(true);
 #else
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
   ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
-#endif
-
   ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected());
   ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected());
-  ui->actionMapShowAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
+#endif
+
+  ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
 
   bool canCalcRoute = NavApp::getRoute().canCalcRoute();

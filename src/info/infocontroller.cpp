@@ -730,11 +730,15 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
 
 void InfoController::connectedToSimulator()
 {
+  qDebug() << Q_FUNC_INFO;
   updateAircraftInfo();
 }
 
 void InfoController::disconnectedFromSimulator()
 {
+  qDebug() << Q_FUNC_INFO;
+  lastSimData = atools::fs::sc::SimConnectData();
+  lastSimUpdate = 0;
   updateAircraftInfo();
 }
 

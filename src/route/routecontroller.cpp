@@ -57,8 +57,6 @@
 
 #include <marble/GeoDataLineString.h>
 
-const float MIN_GROUND_SPEED_FOR_SEQUENCING = 30.f;
-
 // Route table colum headings
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
@@ -510,7 +508,6 @@ void RouteController::newFlightplan()
 
   updateTableModel();
   NavApp::updateWindowTitle();
-  updateWindowLabel();
   emit routeChanged(true);
 }
 
@@ -558,7 +555,6 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
 
   updateTableModel();
   NavApp::updateWindowTitle();
-  updateWindowLabel();
 
   qDebug() << route;
 
@@ -674,9 +670,10 @@ bool RouteController::appendFlightplan(const QString& filename)
     updateAirways();
 
     updateTableModel();
+    route.updateActiveLegAndPos(true /* force update */);
+
     postChange(undoCommand);
     NavApp::updateWindowTitle();
-    updateWindowLabel();
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -879,7 +876,6 @@ void RouteController::calculateDirect()
   updateAirways();
 
   updateTableModel();
-  updateWindowLabel();
   postChange(undoCommand);
   NavApp::updateWindowTitle();
   emit routeChanged(true);
@@ -1041,7 +1037,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       updateAirways();
 
       updateTableModel();
-      updateWindowLabel();
+      route.updateActiveLegAndPos(true /* force update */);
+
       postChange(undoCommand);
       NavApp::updateWindowTitle();
       emit routeChanged(true);
@@ -1148,7 +1145,8 @@ void RouteController::reverseRoute()
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   updateTableModel();
-  updateWindowLabel();
+  route.updateActiveLegAndPos(true /* force update */);
+
   postChange(undoCommand);
   NavApp::updateWindowTitle();
   emit routeChanged(true);
@@ -1231,8 +1229,9 @@ void RouteController::postDatabaseLoad()
     updateStartPositionBestRunway(false, true);
 
   updateTableModel();
+  route.updateActiveLegAndPos(true /* force update */);
+
   NavApp::updateWindowTitle();
-  updateWindowLabel();
   routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
 }
 
@@ -1497,17 +1496,19 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapEditUserWaypoint)
       editUserWaypointName(index.row());
     else if(action == ui->actionRouteActivateLeg)
-      activateLeg(index.row());
+      activateLegManually(index.row());
 
     // Other actions emit signals directly
   }
 }
 
-void RouteController::activateLeg(int index)
+/* Activate leg manually from menu */
+void RouteController::activateLegManually(int index)
 {
   route.setActiveLeg(index);
   highlightNextWaypoint(route.getActiveLegIndex());
-  emit routeChanged(false);
+  // Use geometry changed flag to force redraw
+  emit routeChanged(true);
 }
 
 void RouteController::editUserWaypointName(int index)
@@ -1594,7 +1595,6 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 
   updateTableModel();
   NavApp::updateWindowTitle();
-  updateWindowLabel();
   updateMoveAndDeleteActions();
   emit routeChanged(true);
 }
@@ -1605,7 +1605,6 @@ void RouteController::optionsChanged()
   updateIcons();
   updateTableHeaders();
   updateTableModel();
-  updateWindowLabel();
 
   updateSpinboxSuffices();
   view->update();
@@ -1715,7 +1714,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     updateFlightplanFromWidgets();
 
     updateTableModel();
-    updateWindowLabel();
 
     // Restore current position at new moved position
     view->setCurrentIndex(model->index(curIdx.row() + direction, curIdx.column()));
@@ -1723,6 +1721,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     select(rows, direction);
 
     updateMoveAndDeleteActions();
+    route.updateActiveLegAndPos(true /* force update */);
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
@@ -1780,11 +1779,11 @@ void RouteController::deleteSelectedLegs()
     updateFlightplanFromWidgets();
 
     updateTableModel();
-    updateWindowLabel();
 
     // Update current position at the beginning of the former selection
     view->setCurrentIndex(model->index(firstRow, 0));
     updateMoveAndDeleteActions();
+    route.updateActiveLegAndPos(true /* force update */);
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
@@ -1853,7 +1852,6 @@ void RouteController::routeSetParking(map::MapParking parking)
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -1891,7 +1889,6 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -1918,7 +1915,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
+  route.updateActiveLegAndPos(true /* force update */);
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -1970,7 +1967,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
+  route.updateActiveLegAndPos(true /* force update */);
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2058,7 +2055,7 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
+  route.updateActiveLegAndPos(true /* force update */);
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2113,7 +2110,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
+  route.updateActiveLegAndPos(true /* force update */);
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2228,7 +2225,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
+  route.updateActiveLegAndPos(true /* force update */);
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2263,7 +2260,6 @@ void RouteController::routeDelete(int index)
   updateFlightplanFromWidgets();
 
   updateTableModel();
-  updateWindowLabel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2552,7 +2548,10 @@ void RouteController::updateTableModel()
       ui->comboBoxRouteType->setCurrentIndex(1);
     ui->comboBoxRouteType->blockSignals(false);
   }
+
   highlightProcedureItems();
+  highlightNextWaypoint(route.getActiveLegIndexCorrected());
+  updateWindowLabel();
 }
 
 /* Update travel times in table view model after speed change */
@@ -2587,8 +2586,8 @@ void RouteController::disconnectedFromSimulator()
 {
   qDebug() << Q_FUNC_INFO;
 
-  highlightNextWaypoint(-1);
   route.resetActive();
+  highlightNextWaypoint(-1);
   emit routeChanged(false);
 }
 
@@ -2599,12 +2598,10 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
   {
     const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
 
-    map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
-
-    // if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED_FOR_SEQUENCING)
     // Sequence only for airborne airplanes
     if(!aircraft.isOnGround())
     {
+      map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
       int previousRouteLeg = route.getActiveLegIndexCorrected();
       route.updateActiveLegAndPos(position);
       int routeLeg = route.getActiveLegIndexCorrected();

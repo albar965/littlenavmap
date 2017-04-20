@@ -1596,10 +1596,15 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
 
 void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, HtmlBuilder& html) const
 {
-  html.row2(tr("Time and Date:"), locale.toString(userAircaft->getLocalTime(), QLocale::ShortFormat) +
-            tr(" ") + userAircaft->getLocalTime().timeZoneAbbreviation() + tr(", ") +
-            locale.toString(userAircaft->getZuluTime().time(), QLocale::ShortFormat) +
-            " " + userAircaft->getZuluTime().timeZoneAbbreviation());
+  html.row2(tr("Time and Date:"),
+            locale.toString(userAircaft->getZuluTime(), QLocale::ShortFormat) +
+            tr(" ") +
+            userAircaft->getZuluTime().timeZoneAbbreviation());
+
+  html.row2(tr("Local Time:"),
+            locale.toString(userAircaft->getLocalTime().time(), QLocale::ShortFormat) +
+            tr(" ") +
+            userAircaft->getLocalTime().timeZoneAbbreviation());
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
@@ -1655,8 +1660,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
       }
 
-      // if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+      if(route.size() > 1)
       {
+        // if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
         // Top of descent  ===============================================================
         html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
@@ -1777,11 +1783,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           {
             if(crossTrackDistance < map::INVALID_DISTANCE_VALUE)
             {
+              // Positive means right of course,  negative means left of course.
               QString crossDirection;
               if(crossTrackDistance >= 0.1f)
-                crossDirection = tr("<b>►</b>");
-              else if(crossTrackDistance <= -0.1f)
                 crossDirection = tr("<b>◄</b>");
+              else if(crossTrackDistance <= -0.1f)
+                crossDirection = tr("<b>►</b>");
 
               html.row2(tr("Cross Track Distance:"),
                         Unit::distNm(std::abs(
@@ -1802,7 +1809,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
   else if(info && userAircaft != nullptr)
   {
-    head(html, tr("No Flight Plan loaded."));
+    head(html, tr("No Flight Plan."));
     html.table();
     timeAndDate(userAircaft, html);
     html.tableEnd();
@@ -2001,8 +2008,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         value += tr("►");
     }
 
-    if(!value.isEmpty())
-      html.row2(QString(), value, atools::util::html::NO_ENTITIES);
+    // if(!value.isEmpty())
+    // Keep an empty line to avoid flickering
+    html.row2(QString(), value, atools::util::html::NO_ENTITIES);
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
     float tat = userAircaft->getTotalAirTemperatureCelsius();

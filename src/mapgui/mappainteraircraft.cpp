@@ -59,7 +59,7 @@ void MapPainterAircraft::render(PaintContext *context)
       for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
       {
         if(ac.getCategory() != atools::fs::sc::BOAT &&
-           (ac.getModelRadius() > layer::LARGE_AIRCRAFT_RADIUS || context->mapLayer->isAiAircraftSmall()) &&
+           (ac.getModelRadius() * 2 > layer::LARGE_AIRCRAFT_SIZE || context->mapLayer->isAiAircraftSmall()) &&
            (!ac.isOnGround() || context->mapLayer->isAiAircraftGround()))
           paintAiVehicle(context, ac);
       }

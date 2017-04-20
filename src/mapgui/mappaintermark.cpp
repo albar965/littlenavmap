@@ -406,14 +406,17 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       painter->drawPolyline(line);
 
       // Build and draw text
-      qreal initBearing = normalizeCourse(from.bearing(to, DEG, INITBRG));
-      qreal finalBearing = normalizeCourse(from.bearing(to, DEG, FINALBRG));
-
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QString::number(atools::geo::normalizeCourse(initBearing), 'f', 0) + tr("°T ► ") +
-                   QString::number(atools::geo::normalizeCourse(finalBearing), 'f', 0) + tr("°T"));
+
+      double init = atools::geo::normalizeCourse(from.bearing(to, DEG, INITBRG));
+      double final = atools::geo::normalizeCourse(from.bearing(to, DEG, FINALBRG));
+
+      if(atools::almostEqual(init, final, 1.))
+        texts.append(QString::number(init, 'f', 0) + tr("°T"));
+      else
+        texts.append(QString::number(init, 'f', 0) + tr("°T ► ") + QString::number(final, 'f', 0) + tr("°T"));
 
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
          distanceMeter < 6000)

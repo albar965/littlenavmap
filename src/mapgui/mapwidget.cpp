@@ -2585,7 +2585,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
         QString ac;
         if(!layer->isAiAircraftSmall())
         {
-          ac = tr("Aircraft > %1 ft").arg(layer::LARGE_AIRCRAFT_RADIUS * 2);
+          ac = tr("Aircraft > %1 ft").arg(layer::LARGE_AIRCRAFT_SIZE);
           aiLabel.append("A>");
         }
         else
@@ -2606,7 +2606,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
       {
         if(!layer->isAiShipSmall())
         {
-          ai.append(tr("Ships > %1 ft").arg(layer::LARGE_SHIP_RADIUS * 2));
+          ai.append(tr("Ships > %1 ft").arg(layer::LARGE_SHIP_SIZE));
           aiLabel.append("S>");
         }
         else

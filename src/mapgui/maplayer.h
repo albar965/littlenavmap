@@ -33,10 +33,10 @@ enum AirportSource
 constexpr float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
 /* Ships considered large above this model radius in feet */
-constexpr int LARGE_SHIP_RADIUS = 50;
+constexpr int LARGE_SHIP_SIZE = 150;
 
 /* Aircraft considered large above this model radius in feet */
-constexpr int LARGE_AIRCRAFT_RADIUS = 50;
+constexpr int LARGE_AIRCRAFT_SIZE = 75;
 
 constexpr int MAX_MEDIUM_RUNWAY_FT = 4000;
 constexpr int MAX_LARGE_RUNWAY_FT = 8000;

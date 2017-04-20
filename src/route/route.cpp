@@ -60,8 +60,10 @@ Route& Route::operator=(const Route& other)
 
 void Route::resetActive()
 {
-  activeLegResult.distanceFrom1 = activeLegResult.distanceFrom2 = activeLegResult.distance =
-                                                                    map::INVALID_DISTANCE_VALUE;
+  activeLegResult.distanceFrom1 =
+    activeLegResult.distanceFrom2 =
+      activeLegResult.distance =
+        map::INVALID_DISTANCE_VALUE;
   activeLegResult.status = atools::geo::INVALID;
   activePos = map::PosCourse();
   activeLeg = map::INVALID_INDEX_VALUE;
@@ -140,8 +142,17 @@ void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QStr
   starTrans = starLegs.transitionFixIdent;
 }
 
-void Route::updateActiveLegAndPos()
+void Route::updateActiveLegAndPos(bool force)
 {
+  if(force)
+  {
+    activeLegResult.distanceFrom1 =
+      activeLegResult.distanceFrom2 =
+        activeLegResult.distance =
+          map::INVALID_DISTANCE_VALUE;
+    activeLegResult.status = atools::geo::INVALID;
+    activeLeg = map::INVALID_INDEX_VALUE;
+  }
   updateActiveLegAndPos(activePos);
 }
 
@@ -373,19 +384,24 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     if(distToDest != nullptr)
     {
-      if(!activeIsMissed)
-        *distToDest = std::max(totalDistance - fromstart, 0.f);
+      if(size() == 1)
+        *distToDest = meterToNm(activePos.pos.distanceMeterTo(first().getPosition()));
       else
       {
-        // Summarize remaining missed leg distance if on missed
-        *distToDest = 0.f;
-        for(int i = routeIndex + 1; i < size(); i++)
+        if(!activeIsMissed)
+          *distToDest = std::max(totalDistance - fromstart, 0.f);
+        else
         {
-          if(at(i).getProcedureLeg().isMissed())
-            *distToDest += at(i).getDistanceTo();
+          // Summarize remaining missed leg distance if on missed
+          *distToDest = 0.f;
+          for(int i = routeIndex + 1; i < size(); i++)
+          {
+            if(at(i).getProcedureLeg().isMissed())
+              *distToDest += at(i).getDistanceTo();
+          }
+          *distToDest += distToCurrent;
+          *distToDest = std::abs(*distToDest);
         }
-        *distToDest += distToCurrent;
-        *distToDest = std::abs(*distToDest);
       }
     }
 
