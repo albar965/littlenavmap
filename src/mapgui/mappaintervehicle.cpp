@@ -116,7 +116,7 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   paintTextLabelUser(context, x, y, size, userAircraft);
 }
 
-void MapPainterVehicle::paintAircraftTrack(const PaintContext *context)
+void MapPainterVehicle::paintTrack(const PaintContext *context)
 {
   const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
 

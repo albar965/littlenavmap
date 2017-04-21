@@ -261,7 +261,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
         // qDebug() << "HOLD DIFFER";
         // Hold point differs from next leg start - use the helping line
         if(resultHold.status == atools::geo::ALONG_TRACK && // Check if we are outside of the hold
-           resultHold.distance < nmToMeter(at(activeLeg).getProcedureLeg().turnDirection == "R" ? -0.5f : 0.5f))
+           resultHold.distance < nmToMeter(at(activeLeg).getProcedureLeg().turnDirection == "R" ? 0.5f : -0.5f))
           switchToNextLeg = true;
       }
     }

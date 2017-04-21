@@ -49,7 +49,7 @@ void MapPainterAircraft::render(PaintContext *context)
   Q_UNUSED(saver);
 
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
-    paintAircraftTrack(context);
+    paintTrack(context);
 
   if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
   {

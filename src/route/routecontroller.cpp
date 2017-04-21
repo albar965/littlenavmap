@@ -444,7 +444,7 @@ void RouteController::restoreState()
   Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
-  atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, false);
+  atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
   state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
@@ -551,7 +551,11 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   }
 
   if(speedKts > 0.f)
+  {
+    QSignalBlocker blocker(NavApp::getMainUi()->spinBoxRouteSpeed);
+    Q_UNUSED(blocker);
     NavApp::getMainUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
+  }
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -791,12 +795,17 @@ bool RouteController::saveFlighplanAsGpx(const QString& filename)
 
   const AircraftTrack& aircraftTrack = NavApp::getAircraftTrack();
   atools::geo::LineString track;
+  QVector<quint32> timestamps;
+
   for(const at::AircraftTrackPos& pos : aircraftTrack)
+  {
     track.append(pos.pos);
+    timestamps.append(pos.timestamp);
+  }
 
   try
   {
-    route.getFlightplan().saveGpx(filename, track);
+    route.getFlightplan().saveGpx(filename, track, timestamps);
   }
   catch(atools::Exception& e)
   {
@@ -962,7 +971,6 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   Flightplan& flightplan = route.getFlightplan();
 
   int cruiseFt = atools::roundToInt(Unit::rev(flightplan.getCruisingAltitude(), Unit::altFeetF));
-
   int altitude = useSetAltitude ? cruiseFt : 0;
 
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
@@ -2532,21 +2540,26 @@ void RouteController::updateTableModel()
   if(!flightplan.isEmpty())
   {
     // Set spin box and block signals to avoid recursive call
-    ui->spinBoxRouteAlt->blockSignals(true);
-    ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
-    ui->spinBoxRouteAlt->blockSignals(false);
+    {
+      QSignalBlocker blocker(ui->spinBoxRouteAlt);
+      Q_UNUSED(blocker);
+      ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
+    }
 
-    ui->spinBoxRouteSpeed->blockSignals(true);
-    ui->spinBoxRouteSpeed->setValue(atools::roundToInt(flightplan.getProperties().value("speed").toFloat()));
-    ui->spinBoxRouteSpeed->blockSignals(false);
+    {
+      QSignalBlocker blocker(ui->spinBoxRouteSpeed);
+      Q_UNUSED(blocker);
+      ui->spinBoxRouteSpeed->setValue(atools::roundToInt(flightplan.getProperties().value("speed").toFloat()));
+    }
 
-    // Set combo box and block signals to avoid recursive call
-    ui->comboBoxRouteType->blockSignals(true);
-    if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
-      ui->comboBoxRouteType->setCurrentIndex(0);
-    else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-      ui->comboBoxRouteType->setCurrentIndex(1);
-    ui->comboBoxRouteType->blockSignals(false);
+    { // Set combo box and block signals to avoid recursive call
+      QSignalBlocker blocker(ui->comboBoxRouteType);
+      Q_UNUSED(blocker);
+      if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+        ui->comboBoxRouteType->setCurrentIndex(0);
+      else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
+        ui->comboBoxRouteType->setCurrentIndex(1);
+    }
   }
 
   highlightProcedureItems();
@@ -2803,9 +2816,13 @@ QString RouteController::buildFlightplanLabel(bool html) const
 
       if(arrivalLegs.mapType & proc::PROCEDURE_APPROACH)
       {
-        boldTextFlag << false << true;
+        boldTextFlag << false;
         procedureText.append((arrivalLegs.mapType & proc::PROCEDURE_TRANSITION ||
                               !starLegs.isEmpty()) ? tr("and") : tr("Via"));
+
+        boldTextFlag << true;
+        procedureText.append(arrivalLegs.approachType);
+        boldTextFlag << true;
         procedureText.append(arrivalLegs.approachFixIdent);
 
         // Add runway for approach
@@ -2877,8 +2894,7 @@ QString RouteController::buildFlightplanLabel2() const
 float RouteController::calcTravelTime(float distance) const
 {
   float travelTime = 0.f;
-  float speedKts = Unit::rev(
-    static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+  float speedKts = Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
   if(speedKts > 0.f)
     travelTime = distance / speedKts;
   return travelTime;

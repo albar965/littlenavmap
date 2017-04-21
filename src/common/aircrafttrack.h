@@ -25,6 +25,7 @@ namespace at {
 struct AircraftTrackPos
 {
   atools::geo::Pos pos;
+  quint32 timestamp;
   bool onGround;
 };
 
@@ -60,7 +61,7 @@ public:
    * or less points skipped.
    * @return true if the track was pruned
    */
-  bool appendTrackPos(const atools::geo::Pos& pos, bool onGround);
+  bool appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround);
 
   float getMaxAltitude() const;
 
@@ -75,15 +76,21 @@ public:
 
 private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
-  static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 10000;
+  static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 20000;
   /* Number of entries to remove at once */
   static Q_DECL_CONSTEXPR int PRUNE_TRACK_ENTRIES = 200;
+
+  /* Minimum time difference between recordings */
+  static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_MS = 1000;
+  static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
 
   /* Clear track if aircraft jumps too far */
   static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_METER = 100000;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
-  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 1;
+
+  /* Version 2 to adds timstamp and single floating point precision */
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

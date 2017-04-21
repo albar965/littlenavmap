@@ -18,8 +18,10 @@
 #include "common/aircrafttrack.h"
 
 #include "settings/settings.h"
+#include "atools.h"
 
 #include <QDataStream>
+#include <QDateTime>
 #include <QFile>
 
 AircraftTrack::AircraftTrack()
@@ -34,15 +36,15 @@ AircraftTrack::~AircraftTrack()
 
 namespace at {
 
-QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& obj)
+QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
 {
-  dataStream >> obj.pos >> obj.onGround;
+  dataStream >> trackPos.pos >> trackPos.timestamp >> trackPos.onGround;
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& obj)
+QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& trackPos)
 {
-  dataStream << obj.pos << obj.onGround;
+  dataStream << trackPos.pos << trackPos.timestamp << trackPos.onGround;
   return dataStream;
 }
 
@@ -56,6 +58,7 @@ void AircraftTrack::saveState()
   {
     QDataStream out(&trackFile);
     out.setVersion(QDataStream::Qt_5_5);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     out << FILE_MAGIC_NUMBER << FILE_VERSION << *this;
     trackFile.close();
@@ -77,6 +80,7 @@ void AircraftTrack::restoreState()
       quint16 version;
       QDataStream in(&trackFile);
       in.setVersion(QDataStream::Qt_5_5);
+      in.setFloatingPointPrecision(QDataStream::SinglePrecision);
       in >> magic;
 
       if(magic == FILE_MAGIC_NUMBER)
@@ -97,30 +101,38 @@ void AircraftTrack::restoreState()
   }
 }
 
-bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
+bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround)
 {
   bool pruned = false;
   // Use a larger distance on ground before storing position
-  float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_1M : atools::geo::Pos::POS_EPSILON_100M;
+  float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_5M : atools::geo::Pos::POS_EPSILON_100M;
+  long timeDiff = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
+
   if(isEmpty())
-    append({pos, onGround});
-  else if(!pos.almostEqual(last().pos, epsilon))
+    append({pos, timestamp.toTime_t(), onGround});
+  else
   {
-    if(pos.distanceMeterTo(last().pos) > MAX_POINT_DISTANCE_METER)
+    long time = timestamp.toMSecsSinceEpoch();
+    long lastTime = last().timestamp * 1000L;
+
+    if(!pos.almostEqual(last().pos, epsilon) && !atools::almostEqual(lastTime, time, timeDiff))
     {
-      clear();
-      pruned = true;
-    }
-    else
-    {
-      if(size() > MAX_TRACK_ENTRIES)
+      if(pos.distanceMeterTo(last().pos) > MAX_POINT_DISTANCE_METER)
       {
-        for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
-          removeFirst();
+        clear();
         pruned = true;
       }
+      else
+      {
+        if(size() > MAX_TRACK_ENTRIES)
+        {
+          for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
+            removeFirst();
+          pruned = true;
+        }
+      }
+      append({pos, timestamp.toTime_t(), onGround});
     }
-    append({pos, onGround});
   }
   return pruned;
 }

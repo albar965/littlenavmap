@@ -870,21 +870,20 @@ void MapWidget::routeAltitudeChanged(float altitudeFeet)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(databaseLoadStatus || mouseState != mw::NONE || viewContext() == Marble::Animation ||
-     !simulatorData.getUserAircraft().getPosition().isValid())
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = simulatorData.getUserAircraft();
+  if(databaseLoadStatus || !userAircraft.getPosition().isValid())
     return;
 
   screenIndex->updateSimData(simulatorData);
   const atools::fs::sc::SimConnectUserAircraft& lastUserAircraft = screenIndex->getLastUserAircraft();
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = screenIndex->getUserAircraft();
 
   CoordinateConverter conv(viewport());
-  QPointF curPos = conv.wToSF(simulatorData.getUserAircraft().getPosition());
-  QPointF diff = curPos - conv.wToS(lastUserAircraft.getPosition());
+  QPointF curPos = conv.wToSF(userAircraft.getPosition());
+  QPointF diff = curPos - conv.wToSF(lastUserAircraft.getPosition());
 
   bool wasEmpty = aircraftTrack.isEmpty();
-  bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getUserAircraft().getPosition(),
-                                                  simulatorData.getUserAircraft().isOnGround());
+  bool trackPruned = aircraftTrack.appendTrackPos(userAircraft.getPosition(),
+                                                  userAircraft.getZuluTime(), userAircraft.isOnGround());
 
   if(trackPruned)
     emit aircraftTrackPruned();
@@ -893,11 +892,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // We have a track - update toolbar and menu
     emit updateActionStates();
 
-  if(paintLayer->getShownMapObjects() & map::AIRCRAFT ||
-     paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
+  if(paintLayer->getShownMapObjects() & map::AIRCRAFT || paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
   {
     // Show aircraft is enabled
-
     bool centerAircraft = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
 
     // Get delta values for update rate
@@ -950,13 +947,15 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
         QRect widgetRect = rect();
         widgetRect.adjust(dx, dy, -dx, -dy);
 
-        if((!widgetRect.contains(curPos.toPoint()) || // Aircraft out of box or ...
-            OptionData::instance().getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY) && // ... update always
-           centerAircraft) // Centering wanted
-          centerOn(userAircraft.getPosition().getLonX(),
-                   userAircraft.getPosition().getLatY(), false);
-        else
-          update();
+        if(mouseState == mw::NONE && viewContext() == Marble::Still)
+        {
+          if((!widgetRect.contains(curPos.toPoint()) || // Aircraft out of box or ...
+              OptionData::instance().getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY) && // ... update always
+             centerAircraft) // Centering wanted
+            centerOn(userAircraft.getPosition().getLonX(), userAircraft.getPosition().getLatY(), false);
+          else
+            update();
+        }
       }
     }
   }

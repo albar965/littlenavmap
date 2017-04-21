@@ -72,7 +72,7 @@ public:
   };
 
 protected:
-  void paintAircraftTrack(const PaintContext *context);
+  void paintTrack(const PaintContext *context);
 
   void paintUserAircraft(const PaintContext *context,
                          const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
