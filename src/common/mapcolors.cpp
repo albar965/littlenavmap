@@ -388,7 +388,7 @@ void syncPen(QSettings& settings, const QString& key, QPen& pen)
       if(list.size() >= 2)
         pen.setWidthF(list.at(1).toFloat());
 
-      if(list.size() >= 2)
+      if(list.size() >= 3)
         pen.setStyle(penToStyle.value(list.at(2), Qt::SolidLine));
     }
   }
