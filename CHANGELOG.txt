@@ -1,34 +1,39 @@
 Version 1.3.6.develop
 
-* Scenery database has to be reloaded due to a schema change to metadata table.
+* Scenery database has to be reloaded due to a schema change to metadata table. Aircraft tracks are silently not
+  loaded because the format has changed.
 
 * Added AI ship traffic.
 * Added options to disable SimConnect transfer of AI vehicles.
 * Improved display of AI vehicle display by dividing into large and small types.
 
-* Added flight plan export options for GPX and X-Plane FMS.
+* Added flight plan export options for GPX and X-Plane FMS. GPX export includes flown track including altitude and time.
 
-* Added configuration files for color customization for map, fusion and night styles.
-  This also allows to change the airspace line and fill colors, fill transparency and line widths.
+* Added configuration files for color customization for map, elevation profile, fusion and night styles.
+  This also allows to change the airspace line and fill colors, fill transparency, line widths and styles.
   See link for manual:
   https://albar965.gitbooks.io/little-navmap-user-manual/content/v/master/en/CUSTOMIZE.html
 
 * Added support for parsing SID and STAR to route string dialog.
 * Added options to customize route string (DCT on/off and others).
 
-* Added option to read also inactive scenery entries. Useful if sceneries are disable or enabled by tools for each flight.
+* Added manual chapter for external databases which were added earlier:
+  https://albar965.gitbooks.io/little-navmap-user-manual/content/v/master/en/APPENDIX.html#external-scenery-databases
+
+* Added option to read also inactive scenery entries. Useful if sceneries are disabled or enabled by tools for each flight.
 * Added vertical path deviation in simulator aircraft progress after passing top of descent.
 * Added option to disable display of the top of descent points and values.
-* Added airway minimum altitude to flight plan table.
+* Added airway segment minimum altitude to flight plan table.
 * Added saving of speed in PLN file. Speed change now modifies route.
 * Added frequency of TACAN DME in information window.
 
 * Fixed display issues with elevation profile and aircraft track where an invisible left over
   track could alter the scale.
 
-* Fixed errors in SID/STAR recognition. Database is now checked for the presence of SID and STAR procedures
+* Fixed errors in SID/STAR recognition. Database is now checked for actual presence of SID and STAR procedures
   independent of the selected simulator.
 
+* Fixed error in active leg sequencing going postal when aircraft travelled too far back.
 * Fixed bug where duplicate consecutive waypoints between route and procedures remained after flight plan calculation.
 * Reverse route now working correctly with procedures.
 * Fixed crash in procedure search when starting with an empty database.
@@ -36,6 +41,7 @@ Version 1.3.6.develop
 * Fixed "Unknown Waypoint" in procedures.
 * Fixed invalid course value for distance search when distance is null.
 * Added cache setting for the SQLite database in the ini file.
+* Fixed potential crashes and small memory leaks.
 
 derived from atools:
 * GLOBE data reader now opens files on demand.

@@ -366,16 +366,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw elevation scale line and texts
-  painter.setPen(mapcolors::profleElevationScalePen);
+  painter.setPen(mapcolors::profileElevationScalePen);
   for(int i = Y0 + h, alt = 0; i > Y0; i -= step * tempScale, alt += step)
   {
     painter.drawLine(X0, i, X0 + static_cast<int>(w), i);
 
     symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       mapcolors::profleElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
+                       mapcolors::profileElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
 
     symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
+                       mapcolors::profileElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
   }
 
   const Route& route = routeController->getRoute();

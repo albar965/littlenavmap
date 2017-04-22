@@ -1805,7 +1805,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.tableEnd();
     }
     else
-      html.h4(tr("No Active Flight Plan Leg found."), atools::util::html::BOLD);
+      html.h4(tr("No Active Flight Plan Leg"), atools::util::html::BOLD);
   }
   else if(info && userAircaft != nullptr)
   {

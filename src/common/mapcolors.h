@@ -38,6 +38,7 @@ namespace mapcolors {
 /* Load/save colors from/to configuration file */
 void syncColors();
 
+// ==========================================================================
 /* Colors and pens that are updated from confguration file by syncColors */
 extern QColor airportDetailBackColor;
 extern QColor airportEmptyColor;
@@ -57,6 +58,18 @@ extern QColor distanceRhumbColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
 extern QColor distanceColor;
+
+/* Elevation profile colors and pens */
+extern QColor profileSkyColor;
+extern QColor profileSkyDarkColor;
+extern QColor profileBackgroundColor;
+extern QColor profileBackgroundDarkColor;
+extern QColor profileLandColor;
+extern QColor profileLandOutlineColor;
+extern QPen profileWaypointLinePen;
+extern QPen profileElevationScalePen;
+extern QPen profileSafeAltLinePen;
+extern QPen profileSafeAltLegLinePen;
 
 // ==========================================================================
 /* General text pens */
@@ -143,21 +156,6 @@ const QPen routeProcedurePointFlyoverPen = QPen(QColor(0, 0, 0), 2.5);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
-
-/* Elevation profile colors and pens */
-const QColor profileSkyColor(QColor(204, 204, 255));
-const QColor profileSkyDarkColor(QColor(20, 20, 90));
-const QColor profileBackgroundColor(Qt::white);
-
-const QColor profileBackgroundDarkColor(QColor(20, 20, 20));
-
-const QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
-const QColor profileLandColor(Qt::darkGreen);
-const QColor profileLandOutlineColor(Qt::black);
-
-const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
-const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
-const QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
 
 const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));

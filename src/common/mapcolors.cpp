@@ -51,6 +51,20 @@ QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
 
+/* Elevation profile colors and pens */
+QColor profileSkyColor(QColor(204, 204, 255));
+QColor profileSkyDarkColor(QColor(20, 20, 90));
+QColor profileBackgroundColor(Qt::white);
+
+QColor profileBackgroundDarkColor(QColor(20, 20, 20));
+QColor profileLandColor(Qt::darkGreen);
+QColor profileLandOutlineColor(Qt::black);
+
+QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
+QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine);
+QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
+QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
+
 const QColor& colorForAirport(const map::MapAirport& ap)
 {
   if(ap.empty() && !ap.waterOnly() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
@@ -347,6 +361,23 @@ void syncColor(QSettings& settings, const QString& key, QColor& color)
 /* Read color and pen width if value exists in settings or update in settings with values of given pen */
 void syncPen(QSettings& settings, const QString& key, QPen& pen)
 {
+  static QHash<QString, Qt::PenStyle> penToStyle(
+    {
+      {"Solid", Qt::SolidLine},
+      {"Dash", Qt::DashLine},
+      {"Dot", Qt::DotLine},
+      {"DashDot", Qt::DashDotLine},
+      {"DashDotDot", Qt::DashDotDotLine},
+    });
+  static QHash<Qt::PenStyle, QString> styleToPen(
+    {
+      {Qt::SolidLine, "Solid"},
+      {Qt::DashLine, "Dash"},
+      {Qt::DotLine, "Dot"},
+      {Qt::DashDotLine, "DashDot"},
+      {Qt::DashDotDotLine, "DashDotDot"},
+    });
+
   if(settings.contains(key))
   {
     QStringList list = settings.value(key).toStringList();
@@ -356,10 +387,15 @@ void syncPen(QSettings& settings, const QString& key, QPen& pen)
 
       if(list.size() >= 2)
         pen.setWidthF(list.at(1).toFloat());
+
+      if(list.size() >= 2)
+        pen.setStyle(penToStyle.value(list.at(2), Qt::SolidLine));
     }
   }
   else
-    settings.setValue(key, QStringList({pen.color().name(), QString::number(pen.widthF())}));
+    settings.setValue(key, QStringList({pen.color().name(),
+                                        QString::number(pen.widthF()),
+                                        styleToPen.value(pen.style(), "Solid")}));
 }
 
 void syncColors()
@@ -395,6 +431,19 @@ void syncColors()
   syncColor(colorSettings, "DistanceGreatCircleColor", distanceColor);
   syncColor(colorSettings, "RangeRingColor", rangeRingColor);
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Profile");
+  syncColor(colorSettings, "SkyColor", profileSkyColor);
+  syncColor(colorSettings, "SkyDarkColor", profileSkyDarkColor);
+  syncColor(colorSettings, "BackgroundColor", profileBackgroundColor);
+  syncColor(colorSettings, "BackgroundDarkColor", profileBackgroundDarkColor);
+  syncColor(colorSettings, "LandColor", profileLandColor);
+  syncColor(colorSettings, "LandOutlineColor", profileLandOutlineColor);
+  syncPen(colorSettings, "WaypointLinePen", profileWaypointLinePen);
+  syncPen(colorSettings, "ElevationScalePen", profileElevationScalePen);
+  syncPen(colorSettings, "SafeAltLinePen", profileSafeAltLinePen);
+  syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
   colorSettings.endGroup();
 
   // Sync airspace colors ============================================
