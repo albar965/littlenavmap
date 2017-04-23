@@ -512,9 +512,9 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
-                                     bool quiet, bool changed, float speedKts)
+                                     bool quiet, bool changed, bool adjustAltitude, float speedKts)
 {
-  qDebug() << "loadFlightplan" << filename;
+  qDebug() << Q_FUNC_INFO << filename;
 
   clearRoute();
 
@@ -529,13 +529,14 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
 
   route.setFlightplan(flightplan);
 
-  route.getFlightplan().getProperties().insert("speed", QString::number(speedKts, 'f', 4));
+  if(speedKts > 0.f)
+    route.getFlightplan().getProperties().insert("speed", QString::number(speedKts, 'f', 4));
 
   createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude(adjustAltitude);
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -565,8 +566,10 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   emit routeChanged(true);
 }
 
-void RouteController::updateAirways()
+/* Fetch airways by waypoint and name and adjust route altititude if needed */
+void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
 {
+  int minAltitude = 0;
   for(int i = 1; i < route.size(); i++)
   {
     RouteLeg& routeLeg = route[i];
@@ -577,9 +580,24 @@ void RouteController::updateAirways()
       map::MapAirway airway;
       query->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
       routeLeg.setAirway(airway);
+      minAltitude = std::max(airway.minAltitude, minAltitude);
     }
     else
       routeLeg.setAirway(map::MapAirway());
+  }
+
+  if(adjustRouteAltitude && minAltitude > 0 && !route.isEmpty())
+  {
+    if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
+      // Apply simplified east/west rule
+      minAltitude = adjustAltitude(route.first().getPosition(), route.last().getPosition(),
+                                   route.getFlightplan(), minAltitude);
+    route.getFlightplan().setCruisingAltitude(minAltitude);
+
+    if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
+      route.getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+    else
+      route.getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
   }
 }
 
@@ -624,7 +642,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     newFlightplan.setCruisingAltitude(
       atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
 
-    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/,
+    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/,
                    newFlightplan.getProperties().value("speed").toFloat());
   }
   catch(atools::Exception& e)
@@ -671,7 +689,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     createRouteLegsFromFlightplan();
     loadProceduresFromFlightplan(false /* quiet */);
     route.updateAll();
-    updateAirways();
+    updateAirwaysAndAltitude();
 
     updateTableModel();
     route.updateActiveLegAndPos(true /* force update */);
@@ -874,7 +892,7 @@ void RouteController::calculateDirect()
   qDebug() << "calculateDirect";
 
   // Stop any background tasks
-  emit preRouteCalc();
+  beforeRouteCalc();
 
   RouteCommand *undoCommand = preChange(tr("Direct Calculation"));
 
@@ -882,13 +900,19 @@ void RouteController::calculateDirect()
   route.removeRouteLegs();
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
 
   updateTableModel();
   postChange(undoCommand);
   NavApp::updateWindowTitle();
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Calculated direct flight plan."));
+}
+
+void RouteController::beforeRouteCalc()
+{
+  routeAltDelayTimer.stop();
+  emit preRouteCalc();
 }
 
 void RouteController::calculateRadionav()
@@ -966,7 +990,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   // Stop any background tasks
-  emit preRouteCalc();
+  beforeRouteCalc();
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -1007,33 +1031,15 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       entries.erase(flightplan.getEntries().begin() + 1, entries.end() - 1);
 
       // Create flight plan entries - will be copied later to the route map objects
-      int minAltitude = 0;
       for(const rf::RouteEntry& routeEntry : calculatedRoute)
       {
         FlightplanEntry flightplanEntry;
         entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type,
                                            flightplanEntry, fetchAirways);
-
         if(fetchAirways && routeEntry.airwayId != -1)
-        {
-          int alt = 0;
-          updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEntry, alt);
-          minAltitude = std::max(minAltitude, alt);
-        }
-
+          // Get airway by id - needed to fetch the name first
+          updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEntry);
         entries.insert(entries.end() - 1, flightplanEntry);
-      }
-
-      minAltitude = atools::roundToInt(Unit::altFeetF(minAltitude));
-
-      if(minAltitude != 0 && !useSetAltitude)
-      {
-        if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
-          // Apply simplified east/west rule
-          minAltitude = adjustAltitude(departurePos, destinationPos, flightplan,
-                                       minAltitude);
-
-        flightplan.setCruisingAltitude(minAltitude);
       }
 
       createRouteLegsFromFlightplan();
@@ -1042,7 +1048,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       route.removeDuplicateRouteLegs();
       route.updateAll();
-      updateAirways();
+      updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */);
 
       updateTableModel();
       route.updateActiveLegAndPos(true /* force update */);
@@ -1101,30 +1107,33 @@ int RouteController::adjustAltitude(const Pos& departurePos, const Pos& destinat
 {
   float fpDir = departurePos.angleDegToRhumb(destinationPos);
 
-  qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
-
-  if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+  if(fpDir < Pos::INVALID_VALUE)
   {
-    if(fpDir >= 0.f && fpDir <= 180.f)
-      // General direction is east - round up to the next odd value
-      minAltitude =
-        static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
-    else
-      // General direction is west - round up to the next even value
-      minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
-  }
-  else
-  {
-    if(fpDir >= 0.f && fpDir <= 180.f)
-      // General direction is east - round up to the next odd value + 500
-      minAltitude =
-        static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
-    else
-      // General direction is west - round up to the next even value + 500
-      minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
-  }
+    qDebug() << Q_FUNC_INFO << "minAltitude" << minAltitude << "fp dir" << fpDir;
 
-  qDebug() << "corrected minAltitude" << minAltitude;
+    if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+    {
+      if(fpDir >= 0.f && fpDir <= 180.f)
+        // General direction is east - round up to the next odd value
+        minAltitude =
+          static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+      else
+        // General direction is west - round up to the next even value
+        minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
+    }
+    else
+    {
+      if(fpDir >= 0.f && fpDir <= 180.f)
+        // General direction is east - round up to the next odd value + 500
+        minAltitude =
+          static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
+      else
+        // General direction is west - round up to the next even value + 500
+        minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
+    }
+
+    qDebug() << "corrected minAltitude" << minAltitude;
+  }
   return minAltitude;
 }
 
@@ -1149,7 +1158,7 @@ void RouteController::reverseRoute()
 
   createRouteLegsFromFlightplan();
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   updateTableModel();
@@ -1227,7 +1236,7 @@ void RouteController::postDatabaseLoad()
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
 
   // Update runway or parking if one of these has changed due to the database switch
   Flightplan& flightplan = route.getFlightplan();
@@ -1599,7 +1608,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(true /* quiet */);
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -1712,7 +1721,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     }
 
     route.updateAll();
-    updateAirways();
+    updateAirwaysAndAltitude();
 
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
@@ -1777,7 +1786,7 @@ void RouteController::deleteSelectedLegs()
     route.removeProcedureLegs(procs);
 
     route.updateAll();
-    updateAirways();
+    updateAirwaysAndAltitude();
 
     // Force update of start if departure airport was removed
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
@@ -1854,7 +1863,7 @@ void RouteController::routeSetParking(map::MapParking parking)
   route.first().setDepartureParking(parking);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1891,7 +1900,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   route.first().setDepartureStart(start);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1917,7 +1926,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1969,7 +1978,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2056,7 +2065,7 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   }
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   routeToFlightPlan();
 
   // Get type and cruise altitude from widgets
@@ -2110,7 +2119,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   route.removeProcedureLegs(procs);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2223,7 +2232,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
 
   // Force update of start if departure airport was changed
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
@@ -2259,7 +2268,7 @@ void RouteController::routeDelete(int index)
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
-  updateAirways();
+  updateAirwaysAndAltitude();
 
   // Force update of start if departure airport was removed
   updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
@@ -2277,12 +2286,11 @@ void RouteController::routeDelete(int index)
 }
 
 /* Update airway attribute in flight plan entry and return minimum altitude for this airway segment */
-void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry, int& minAltitude)
+void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry)
 {
   map::MapAirway airway;
   query->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
-  minAltitude = airway.minAltitude;
 }
 
 /* Copy all data from route map objects and widgets to the flight plan */
@@ -2549,7 +2557,8 @@ void RouteController::updateTableModel()
     {
       QSignalBlocker blocker(ui->spinBoxRouteSpeed);
       Q_UNUSED(blocker);
-      ui->spinBoxRouteSpeed->setValue(atools::roundToInt(flightplan.getProperties().value("speed").toFloat()));
+      if(flightplan.getProperties().contains("speed"))
+        ui->spinBoxRouteSpeed->setValue(atools::roundToInt(flightplan.getProperties().value("speed").toFloat()));
     }
 
     { // Set combo box and block signals to avoid recursive call

@@ -74,7 +74,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(const atools::fs::pln::Flightplan& flightplan,
-                      const QString& filename, bool quiet, bool changed, float speedKts);
+                      const QString& filename, bool quiet, bool changed, bool adjustAltitude, float speedKts);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Emits routeChanged. */
@@ -308,8 +308,6 @@ private:
                               const QString& commandName,
                               bool fetchAirways, bool useSetAltitude);
 
-  void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry, int& minAltitude);
-
   void updateModelRouteTime();
 
   void updateFlightplanFromWidgets();
@@ -340,7 +338,9 @@ private:
   void highlightProcedureItems();
   void loadProceduresFromFlightplan(bool quiet);
   void updateIcons();
-  void updateAirways();
+  void beforeRouteCalc();
+  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
+  void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);

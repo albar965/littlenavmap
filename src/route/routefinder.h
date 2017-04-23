@@ -104,7 +104,7 @@ private:
   static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.2f;
 
   /* Distance to define a long airway segment in meter */
-  static Q_DECL_CONSTEXPR float DISTANCE_LONG_AIRWAY_METER = atools::geo::nmToMeter(1000.f);
+  static Q_DECL_CONSTEXPR float DISTANCE_LONG_AIRWAY_METER = atools::geo::nmToMeter(200.f);
 
   int altitude = 0;
 

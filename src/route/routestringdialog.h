@@ -54,20 +54,27 @@ public:
   void saveState();
   void restoreState();
 
+  /* > 0 if speed was included in the string */
   float getSpeedKts() const
   {
     return speedKts;
   }
 
+  /* True if the altitude was included in the string */
+  bool isAltitudeIncluded() const
+  {
+    return altitudeIncluded;
+  }
+
   static rs::RouteStringOptions getOptionsFromSettings();
 
 private:
-  void readClicked();
+  void readButtonClicked();
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
   void updateButtonState();
-  void toolButtonOptionsTriggered(QAction *action);
+  void toolButtonOptionTriggered(QAction *action);
   void updateButtonClicked();
 
   Ui::RouteStringDialog *ui;
@@ -76,8 +83,10 @@ private:
   RouteController *controller = nullptr;
   RouteString *routeString;
   float speedKts = 0.f;
+  bool altitudeIncluded = false;
   rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;
 
+  void updateFlightplan();
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

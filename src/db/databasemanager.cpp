@@ -395,10 +395,11 @@ void DatabaseManager::openDatabase()
   QStringList pragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
                        "PRAGMA synchronous=OFF",
                        "PRAGMA journal_mode=TRUNCATE",
-                       "PRAGMA page_size=8196"});
+                       "PRAGMA page_size=8196",
+                       "PRAGMA locking_mode=EXCLUSIVE"});
 
   QStringList pragmaQueries({"PRAGMA foreign_keys", "PRAGMA cache_size", "PRAGMA synchronous",
-                             "PRAGMA journal_mode", "PRAGMA page_size"});
+                             "PRAGMA journal_mode", "PRAGMA page_size", "PRAGMA locking_mode"});
 
   try
   {

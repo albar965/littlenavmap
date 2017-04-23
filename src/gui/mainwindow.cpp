@@ -1213,6 +1213,7 @@ void MainWindow::routeNewFromString()
       {
         routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(),
                                         true /*quiet*/, true /*changed*/,
+                                        !routeStringDialog.isAltitudeIncluded(), /*adjust alt*/
                                         routeStringDialog.getSpeedKts());
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();

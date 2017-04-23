@@ -75,27 +75,20 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
   ui->toolButtonRouteStringOptions->addAction(action);
 
-  connect(ui->pushButtonRouteStringRead, &QPushButton::clicked,
-          this, &RouteStringDialog::readClicked);
-  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked,
-          this, &RouteStringDialog::fromClipboardClicked);
-  connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked,
-          this, &RouteStringDialog::toClipboardClicked);
+  connect(ui->pushButtonRouteStringRead, &QPushButton::clicked, this, &RouteStringDialog::readButtonClicked);
+  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
+  connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
 
-  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged,
-          this, &RouteStringDialog::updateButtonState);
+  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
 
-  connect(QGuiApplication::clipboard(), &QClipboard::dataChanged,
-          this, &RouteStringDialog::updateButtonState);
+  connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
 
-  connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked,
-          this, &RouteStringDialog::buttonBoxClicked);
+  connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
 
-  connect(ui->toolButtonRouteStringOptions, &QToolButton::triggered,
-          this, &RouteStringDialog::toolButtonOptionsTriggered);
+  connect(ui->toolButtonRouteStringOptions, &QToolButton::triggered, this,
+          &RouteStringDialog::toolButtonOptionTriggered);
 
-  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked,
-          this, &RouteStringDialog::updateButtonClicked);
+  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
 }
 
 RouteStringDialog::~RouteStringDialog()
@@ -111,7 +104,7 @@ void RouteStringDialog::updateButtonClicked()
                                                                                NavApp::getSpeedKts(), options));
 }
 
-void RouteStringDialog::toolButtonOptionsTriggered(QAction *action)
+void RouteStringDialog::toolButtonOptionTriggered(QAction *action)
 {
   Q_UNUSED(action);
 
@@ -133,13 +126,15 @@ const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
 
 void RouteStringDialog::saveState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).save({this, ui->splitterRouteString});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).save(
+    {this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
   atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS, static_cast<int>(options));
 }
 
 void RouteStringDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore({this, ui->splitterRouteString});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore(
+    {this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
   options = getOptionsFromSettings();
   updateButtonState();
 
@@ -153,7 +148,7 @@ rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
                                 valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS));
 }
 
-void RouteStringDialog::readClicked()
+void RouteStringDialog::readButtonClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -161,7 +156,9 @@ void RouteStringDialog::readClicked()
 
   flightplan->clear();
   flightplan->getProperties().clear();
-  bool success = routeString->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts);
+
+  bool success = routeString->createRouteFromString(
+    ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts, altitudeIncluded);
 
   ui->textEditRouteStringErrors->clear();
 
@@ -197,8 +194,8 @@ void RouteStringDialog::readClicked()
       ui->textEditRouteStringErrors->append(err + "<br/>");
   }
 
-  ui->plainTextEditRouteString->setPlainText(
-    RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).join(" "));
+  ui->plainTextEditRouteString->setPlainText(RouteString::cleanRouteString(
+                                               ui->plainTextEditRouteString->toPlainText()).join(" "));
   updateButtonState();
 }
 
@@ -213,11 +210,48 @@ void RouteStringDialog::toClipboardClicked()
   QGuiApplication::clipboard()->setText(ui->plainTextEditRouteString->toPlainText());
 }
 
+void RouteStringDialog::updateFlightplan()
+{
+  // Update type from current combox box setting
+  // Low / high altitude is set later when resolving the airways
+
+  if(ui->comboBoxRouteStringFlightplanType->currentIndex() == 0)
+    flightplan->setFlightplanType(atools::fs::pln::IFR);
+  else
+    flightplan->setFlightplanType(atools::fs::pln::VFR);
+
+  if(flightplan->getEntries().size() == 2)
+    flightplan->setRouteType(atools::fs::pln::DIRECT);
+  else if(flightplan->getEntries().size() > 2)
+  {
+    // Check if this is a VOR / NDB only route
+    bool foundOtherThanVorOrNdb = false;
+
+    for(int i = 1; i < flightplan->getEntries().size() - 1; i++)
+    {
+      const atools::fs::pln::FlightplanEntry& entry = flightplan->getEntries().at(i);
+      if(!entry.getAirway().isEmpty() ||
+         (entry.getWaypointType() != atools::fs::pln::entry::VOR &&
+          entry.getWaypointType() != atools::fs::pln::entry::NDB))
+      {
+        foundOtherThanVorOrNdb = true;
+        break;
+      }
+    }
+
+    if(!foundOtherThanVorOrNdb)
+      flightplan->setRouteType(atools::fs::pln::VOR);
+  }
+}
+
 /* A button box button was clicked */
 void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
+  {
+    updateFlightplan();
     QDialog::accept();
+  }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrl(parentWidget(), lnm::HELP_ONLINE_URL + "ROUTEDESCR.html", lnm::helpLanguages());
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
@@ -226,13 +260,14 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 
 void RouteStringDialog::updateButtonState()
 {
-  ui->pushButtonRouteStringRead->setEnabled(!ui->plainTextEditRouteString->toPlainText().isEmpty());
+  QStringList cleanString = RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText());
+
+  ui->pushButtonRouteStringRead->setEnabled(!cleanString.isEmpty());
   ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRoute().isEmpty());
 
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
 
-  ui->pushButtonRouteStringToClipboard->setDisabled(
-    RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).isEmpty());
+  ui->pushButtonRouteStringToClipboard->setDisabled(cleanString.isEmpty());
 
   ui->pushButtonRouteStringFromClipboard->setDisabled(QGuiApplication::clipboard()->text().simplified().isEmpty());
 

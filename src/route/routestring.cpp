@@ -201,7 +201,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 }
 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                                        float& speedKts)
+                                        float& speedKts, bool& altIncluded)
 {
   qDebug() << Q_FUNC_INFO;
   messages.clear();
@@ -215,7 +215,12 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   QStringList cleanItems = cleanItemList(items, speedKts, altitude);
 
   if(altitude > 0.f)
+  {
+    altIncluded = true;
     flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(altitude)));
+  }
+  else
+    altIncluded = false;
 
   qDebug() << "clean items" << cleanItems;
 
@@ -325,9 +330,12 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
 QStringList RouteString::cleanRouteString(const QString& string)
 {
-  QString retval = string.toUpper();
-  retval.replace(QRegularExpression("[^A-Z0-9/\\.]"), " ");
-  return retval.simplified().split(" ");
+  QString cleanstr = string.toUpper();
+  cleanstr.replace(QRegularExpression("[^A-Z0-9/\\.]"), " ");
+
+  QStringList list = cleanstr.simplified().split(" ");
+  list.removeAll(QString());
+  return list;
 }
 
 void RouteString::appendMessage(const QString& message)

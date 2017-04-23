@@ -78,7 +78,7 @@ public:
   QString createGfpStringForRoute(const Route& route);
 
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                             float& speedKts);
+                             float& speedKts, bool& altIncluded);
 
   const QStringList& getMessages() const
   {
