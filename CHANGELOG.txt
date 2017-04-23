@@ -15,7 +15,10 @@ Version 1.3.6.develop
   https://albar965.gitbooks.io/little-navmap-user-manual/content/v/master/en/CUSTOMIZE.html
 
 * Added support for parsing SID and STAR to route string dialog.
+* Added IFR/VFR selector to route string dialog.
 * Added options to customize route string (DCT on/off and others).
+* Improved cruise altitude and speed assignment to flight plan when reading route string. Values are now taken from string
+or automatically determined.
 
 * Added manual chapter for external databases which were added earlier:
   https://albar965.gitbooks.io/little-navmap-user-manual/content/v/master/en/APPENDIX.html#external-scenery-databases
@@ -33,6 +36,7 @@ Version 1.3.6.develop
 * Fixed errors in SID/STAR recognition. Database is now checked for actual presence of SID and STAR procedures
   independent of the selected simulator.
 
+* Adjusted route calculation to better avoid large unrealistic airway segments.
 * Fixed error in active leg sequencing going postal when aircraft travelled too far back.
 * Fixed bug where duplicate consecutive waypoints between route and procedures remained after flight plan calculation.
 * Reverse route now working correctly with procedures.
