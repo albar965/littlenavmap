@@ -1,7 +1,5 @@
 @echo off
 
-cd "%APROJECTS%"
-
 call pull_all.cmd nopause
 IF ERRORLEVEL 1 goto :err
 
@@ -22,8 +20,6 @@ exit /b 0
 :err
 
 echo **** ERROR ****
-
-cd "%APROJECTS%"
 
 pause 
 

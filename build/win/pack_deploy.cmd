@@ -8,43 +8,27 @@ set hour=%time:~0,2%
 set min=%time:~3,2%
 set FILEDATE=%year%%month%%day%-%hour%%min%
 
-cd "%APROJECTS%\deploy"
+pushd "%APROJECTS%\deploy"
  
-del navdatareader.zip 
-rem del LittleNavconnect.zip 
 del LittleNavmap.zip
 
-7z.exe a navdatareader.zip "navdatareader"
-IF ERRORLEVEL 1 goto :err
-
-7z.exe a LittleNavmap.zip "Little Navmap"
-IF ERRORLEVEL 1 goto :err
-
-"C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\navdatareader.zip"
+"C:\Program Files\7-Zip\7z.exe" a LittleNavmap.zip "Little Navmap"
 IF ERRORLEVEL 1 goto :err
  
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavmap.zip"
-IF ERRORLEVEL 1 goto :err
-
-del \\darkon\public\navdatareader-%FILEDATE%.zip
-copy /Y /Z /B navdatareader.zip \\darkon\public\navdatareader-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 del \\darkon\public\LittleNavmap-%FILEDATE%.zip
 copy /Y /Z /B LittleNavmap.zip \\darkon\public\LittleNavmap-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\navdatareader-%FILEDATE%.zip
-copy /Y /Z /B navdatareader.zip \\frida\public\navdatareader-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
 del \\frida\public\LittleNavmap-%FILEDATE%.zip
 copy /Y /Z /B LittleNavmap.zip \\frida\public\LittleNavmap-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-echo ---- Success ----
+popd
 
-cd "%APROJECTS%"
+echo ---- Success ----
 
 if not "%1" == "nopause" pause
 
@@ -54,7 +38,7 @@ exit /b 0
 
 echo **** ERROR ****
 
-cd "%APROJECTS%"
+popd
 
 pause 
 
