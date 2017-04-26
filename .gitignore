@@ -23,3 +23,5 @@
 #*#
 *.cache/
 *.pro.user
+.DS_Store
+.qmake.stash
