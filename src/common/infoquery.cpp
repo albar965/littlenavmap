@@ -288,7 +288,7 @@ void InfoQuery::initQueries()
   vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");
 
   approachQuery = new SqlQuery(db);
-  approachQuery->prepare("select r.name as runway_name, r.runway_end_id, a.* from approach a "
+  approachQuery->prepare("select a.runway_name, r.runway_end_id, a.* from approach a "
                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
                          "where a.airport_id = :id");
 

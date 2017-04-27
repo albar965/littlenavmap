@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
 #endif
 
-    MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLEDEBUG, false).toBool());
+    MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLE_DEBUG, false).toBool());
 
     qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
     qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();

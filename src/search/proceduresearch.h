@@ -117,7 +117,7 @@ private:
   void restoreTreeViewState(const QBitArray& state);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
+  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans,
                                        bool sidOrStar);
 

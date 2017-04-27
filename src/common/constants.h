@@ -136,7 +136,9 @@ const QString OPTIONS_DIALOG_WARN_STYLE = "OptionsDialog/StyleWarning";
 
 /* Other options that are only accessible in the configuration file */
 const QString OPTIONS_LANGUAGE = "Options/Language";
-const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";
+const QString OPTIONS_MARBLE_DEBUG = "Options/MarbleDebug";
+const QString OPTIONS_CONNECTCLIENT_DEBUG = "Options/ConnectClientDebug";
+const QString OPTIONS_DATAREADER_DEBUG = "Options/DataReaderDebug";
 const QString OPTIONS_VERSION = "Options/Version";
 
 /* File dialog patterns */

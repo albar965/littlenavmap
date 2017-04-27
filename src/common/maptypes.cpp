@@ -25,6 +25,7 @@
 #include <QDataStream>
 #include <QHash>
 #include <QObject>
+#include <QRegularExpression>
 
 namespace map {
 
@@ -1012,6 +1013,81 @@ map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
 {
   return airspaceTypeToDatabaseMap[type];
+}
+
+bool runwayAlmostEqual(const QString& name1, const QString& name2)
+{
+  QString rwdesignator1, rwdesignator2;
+  int rwnum1, rwnum2;
+  map::runwayNameSplit(name1, &rwnum1, &rwdesignator1);
+  map::runwayNameSplit(name2, &rwnum2, &rwdesignator2);
+
+  return (rwnum2 == rwnum1 || rwnum2 == (rwnum1 < 36 ? rwnum1 + 1 : 1) || rwnum2 == (rwnum1 > 1 ? rwnum1 - 1 : 36)) &&
+         rwdesignator1 == rwdesignator2;
+}
+
+QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames)
+{
+  // First check for exact match
+  if(airportRunwayNames.contains(procRunwayName))
+    return procRunwayName;
+
+  QStringList variants = runwayNameVariants(procRunwayName);
+  for(const QString& runway : airportRunwayNames)
+  {
+    if(variants.contains(runway))
+      return runway;
+  }
+  return QString();
+}
+
+QStringList runwayNameVariants(const QString& name)
+{
+  QStringList retval({name});
+  QString designator;
+  int number;
+  map::runwayNameSplit(name, &number, &designator);
+
+  // Try next higher runway number
+  retval.append(map::runwayNameJoin(number < 36 ? number + 1 : 1, designator));
+
+  // Try next lower runway number
+  retval.append(map::runwayNameJoin(number > 1 ? number - 1 : 36, designator));
+
+  return retval;
+}
+
+QString runwayNameJoin(int number, const QString& designator)
+{
+  return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
+}
+
+bool runwayNameSplit(const QString& name, int *number, QString *designator)
+{
+  // Extract runway number and designator
+  static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
+
+  QRegularExpressionMatch match = NUM_DESIGNATOR.match(name);
+  if(match.hasMatch())
+  {
+    if(number != nullptr)
+      *number = match.captured(1).toInt();
+    if(designator != nullptr)
+      *designator = match.captured(2);
+    return true;
+  }
+  return false;
+}
+
+bool runwayNameSplit(const QString& name, QString *number, QString *designator)
+{
+  int num = 0;
+  bool retval = runwayNameSplit(name, &num, designator);
+
+  if(retval && number != nullptr)
+    // If it is a number with designator make sure to add a 0 prefix
+    *number = QString("%1").arg(num, 2, 10, QChar('0'));
+  return retval;
 }
 
 } // namespace types

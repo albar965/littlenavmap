@@ -702,6 +702,12 @@ void MapWidget::showSavedPosOnStartup()
 
 void MapWidget::showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick)
 {
+  if(!pos.isValid())
+  {
+    qWarning() << Q_FUNC_INFO << "Invalid position";
+    return;
+  }
+
   hideTooltip();
   showAircraft(false);
 

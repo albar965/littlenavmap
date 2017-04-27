@@ -827,6 +827,8 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
       else
         geometry << lastLeg.getPosition() << routeLeg.getPosition();
 
+      geometry.removeInvalid();
+
       LineString elevations;
       if(!fetchRouteElevations(elevations, geometry))
         return ElevationLegList();

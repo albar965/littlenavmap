@@ -25,6 +25,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
+#include "settings/settings.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -38,10 +39,13 @@ ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS)
 {
   dialog = new ConnectDialog(mainWindow);
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
   if(DataReaderThread::isSimconnectAvailable())
   {
-    dataReader = new DataReaderThread(mainWindow, false);
+    dataReader = new DataReaderThread(mainWindow,
+                                      settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
     dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
     connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
@@ -189,10 +193,8 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
 void ConnectClient::postLogMessage(QString message, bool warning)
 {
-  Q_UNUSED(message);
-  Q_UNUSED(warning);
-
-  // mainWindow->setStatusMessage(message);
+  if(warning)
+    mainWindow->setConnectionStatusMessageText(tr("Warning"), message);
 }
 
 void ConnectClient::saveState()

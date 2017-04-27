@@ -687,15 +687,17 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
     if(recAppVector != nullptr)
     {
+      QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(airport.id);
+
       for(const SqlRecord& recApp : *recAppVector)
       {
         // Approach information
         int rwEndId = recApp.valueInt("runway_end_id");
 
-        QString runway, runwayName(recApp.valueStr("runway_name"));
+        QString runway = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
 
-        if(!runwayName.isEmpty())
-          runway = tr(" - Runway ") + runwayName;
+        if(!runway.isEmpty())
+          runway = tr(" - Runway ") + runway;
 
         // Build header ===============================================
         QString procType = recApp.valueStr("type");
@@ -995,7 +997,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& airport,
                                    const atools::fs::weather::Metar& metar, bool isInterpolated) const
 {
-  using atools::fs::weather::MetarNaN;
+  using atools::fs::weather::INVALID_METAR_VALUE;
 
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
 
@@ -1027,7 +1029,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
               Unit::speedMeterPerSec(parsed.getWindSpeedMeterPerSec()));
   }
 
-  if(parsed.getGustSpeedMeterPerSec() != MetarNaN)
+  if(parsed.getGustSpeedMeterPerSec() < INVALID_METAR_VALUE)
     html.row2(tr("Wind gusts:"), Unit::speedMeterPerSec(parsed.getGustSpeedMeterPerSec()));
 
   if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
@@ -1037,29 +1039,29 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
               locale.toString(normalizeCourse(parsed.getWindRangeTo() - airport.magvar), 'f', 0) + tr("°M"));
 
   float temp = parsed.getTemperatureC();
-  if(temp != MetarNaN)
+  if(temp < INVALID_METAR_VALUE)
     html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
               locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
 
   temp = parsed.getDewpointDegC();
-  if(temp != MetarNaN)
+  if(temp < INVALID_METAR_VALUE)
     html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
               locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
 
   float slp = parsed.getPressureMbar();
-  if(slp != MetarNaN)
+  if(slp < INVALID_METAR_VALUE)
     html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
               locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
 
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
   QString visiblity;
-  if(minVis.getVisibilityMeter() != MetarNaN)
+  if(minVis.getVisibilityMeter() < INVALID_METAR_VALUE)
     visiblity.append(tr("%1 %2").
                      arg(minVis.getModifierString()).
                      arg(Unit::distMeter(minVis.getVisibilityMeter())));
 
   const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
-  if(maxVis.getVisibilityMeter() != MetarNaN)
+  if(maxVis.getVisibilityMeter() < INVALID_METAR_VALUE)
     visiblity.append(tr(" %1 %2").
                      arg(maxVis.getModifierString()).
                      arg(Unit::distMeter(maxVis.getVisibilityMeter())));
@@ -1431,15 +1433,15 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
 
 void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, HtmlBuilder& html) const
 {
-  QString heading;
+  QString header;
   if(ap.missed)
-    heading = tr("Missed Approach ");
+    header = tr("Missed Approach ");
   else if(ap.transition)
-    heading = tr("Transition ");
+    header = tr("Transition ");
   else
-    heading = tr("Approach ");
+    header = tr("Approach ");
 
-  head(html, heading);
+  head(html, header);
 
   // float time, theta, rho, magvar;
   // QString fixType, fixIdent,
@@ -1758,7 +1760,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             timeStr = formatter::formatMinutesHoursLong(nearestLegDistance / aircraft.getGroundSpeedKts());
 
           // Not for arc legs
-          if(routeLeg.isRoute() || !leg.isCircular())
+          if((routeLeg.isRoute() || !leg.isCircular()) && routeLeg.getPosition().isValid())
           {
             float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(
                                           routeLeg.getPosition()) - routeLeg.getMagvar());

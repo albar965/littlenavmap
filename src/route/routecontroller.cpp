@@ -601,6 +601,7 @@ void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
   }
 }
 
+/* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
 void RouteController::loadProceduresFromFlightplan(bool quiet)
 {
   if(route.isEmpty())
@@ -2077,6 +2078,8 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   postChange(undoCommand);
   NavApp::updateWindowTitle();
 
+  qDebug() << Q_FUNC_INFO << route.getFlightplan().getProperties();
+
   emit routeChanged(true);
 
   NavApp::setStatusMessage(tr("Added procedure to flight plan."));
@@ -3037,6 +3040,15 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
         types |= proc::PROCEDURE_ARRIVAL;
     }
   }
+
+  if(types & proc::PROCEDURE_SID_TRANSITION && route.getDepartureLegs().approachLegs.isEmpty() &&
+     !route.getDepartureLegs().approachFixIdent.isEmpty())
+    // Remove the empty SID structure too
+    types |= proc::PROCEDURE_SID;
+
+  if(types & proc::PROCEDURE_STAR_TRANSITION && route.getStarLegs().approachLegs.isEmpty())
+    // Remove the empty STAR structure too
+    types |= proc::PROCEDURE_STAR_ALL;
 
   return types;
 }

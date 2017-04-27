@@ -39,9 +39,6 @@ using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
 
-// Extract runway number and designator
-static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
-
 double MapQuery::queryRectInflationFactor = 0.3;
 double MapQuery::queryRectInflationIncrement = 0.1;
 int MapQuery::queryRowLimit = 5000;
@@ -1112,14 +1109,10 @@ void MapQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
   int number = runwayEndName.toInt();
 
   QString endName(runwayEndName);
-  QRegularExpressionMatch match = NUM_DESIGNATOR.match(runwayEndName);
-  if(match.hasMatch())
-  {
-    // If it is a number with designator make sure to add a 0 prefix
-    endName = QString("%1%2").
-              arg(match.captured(1).toInt(), 2, 10, QChar('0')).
-              arg(match.captured(2));
-  }
+  QString name, designator;
+  if(map::runwayNameSplit(runwayEndName, &name, &designator))
+    // It is a runway name - build correct name including leading zero
+    endName = name + designator;
 
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
@@ -1279,6 +1272,18 @@ const QList<map::MapRunway> *MapQuery::getRunways(int airportId)
     runwayCache.insert(airportId, rs);
     return rs;
   }
+}
+
+QStringList MapQuery::getRunwayNames(int airportId)
+{
+  const QList<map::MapRunway> *aprunways = getRunways(airportId);
+  QStringList runwayNames;
+  if(aprunways != nullptr)
+  {
+    for(const map::MapRunway& runway : *aprunways)
+      runwayNames << runway.primaryName << runway.secondaryName;
+  }
+  return runwayNames;
 }
 
 /* Compare runways to put betters ones (hard surface, longer) at the end of a list */

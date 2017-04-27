@@ -309,7 +309,6 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
 
   if(!fast)
   {
-    size = size;
     int radius = size / 2;
     painter->drawEllipse(x - radius, y - radius, size, size);
   }

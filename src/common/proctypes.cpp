@@ -324,6 +324,7 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
   << "approachFixIdent" << legs.approachFixIdent
   << "transitionType" << legs.transitionType
   << "transitionFixIdent" << legs.transitionFixIdent
+  << "procedureRunway" << legs.procedureRunway
   << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
   out << "===== Legs =====" << endl;

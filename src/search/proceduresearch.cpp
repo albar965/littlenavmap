@@ -287,6 +287,8 @@ void ProcedureSearch::updateFilterBoxes()
 
   if(currentAirport.isValid())
   {
+    QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(currentAirport.id);
+
     // Add a tree of transitions and approaches
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirport.id);
 
@@ -294,7 +296,11 @@ void ProcedureSearch::updateFilterBoxes()
     {
       QSet<QString> runways;
       for(const SqlRecord& recApp : *recAppVector)
-        runways.insert(recApp.valueStr("runway_name"));
+      {
+        QString best = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
+        if(!best.isEmpty())
+          runways.insert(best);
+      }
 
       // Sort list of runways
       QList<QString> runwaylist = runways.toList();
@@ -328,14 +334,16 @@ void ProcedureSearch::fillApproachTreeWidget()
 
     if(recAppVector != nullptr)
     {
+      QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(currentAirport.id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
       SqlRecordVector sorted;
 
-      for(const SqlRecord& recApp : *recAppVector)
+      // Collect all procedures from the database
+      for(SqlRecord recApp : *recAppVector)
       {
         foundItems = true;
-        QString rwname(recApp.valueStr("runway_name"));
+        QString rwname = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
 
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
@@ -360,7 +368,12 @@ void ProcedureSearch::fillApproachTreeWidget()
         filterOk &= rwname == rwnamefilter || ui->comboBoxProcedureRunwayFilter->currentIndex() == 0;
 
         if(filterOk)
+        {
+          // Add an extra field with the best airport runway name
+          recApp.appendField("airport_runway_name", QVariant::String);
+          recApp.setValue("airport_runway_name", rwname);
           sorted.append(recApp);
+        }
       }
 
       std::sort(sorted.begin(), sorted.end(), procedureSortFunc);
@@ -368,12 +381,14 @@ void ProcedureSearch::fillApproachTreeWidget()
       for(const SqlRecord& recApp : sorted)
       {
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
+
         int runwayEndId = recApp.valueInt("runway_end_id");
+
         int apprId = recApp.valueInt("approach_id");
         itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId, -1, -1, type));
         const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
 
-        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
+        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, type);
 
         if(recTransVector != nullptr)
         {
@@ -815,7 +830,8 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 }
 
-QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
+QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp,
+                                                    proc::MapProcedureTypes maptype)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
@@ -823,7 +839,6 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
 
   QString approachType;
 
-  proc::MapProcedureTypes maptype = buildTypeFromApproachRec(recApp);
   if(maptype == proc::PROCEDURE_SID)
     approachType += tr("SID");
   else if(maptype == proc::PROCEDURE_STAR)
@@ -839,7 +854,7 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
       approachType += tr(" (GPS Overlay)");
   }
 
-  approachType += " " + recApp.valueStr("runway_name");
+  approachType += " " + recApp.valueStr("airport_runway_name");
 
   QString altStr;
   if(recApp.valueFloat("altitude") > 0.f)
@@ -1155,8 +1170,8 @@ bool ProcedureSearch::procedureSortFunc(const atools::sql::SqlRecord& rec1, cons
   // First SID, then STAR and then approaches
   if(priority1 == priority2)
   {
-    QString rwname1(rec1.valueStr("runway_name"));
-    QString rwname2(rec2.valueStr("runway_name"));
+    QString rwname1(rec1.valueStr("airport_runway_name"));
+    QString rwname2(rec2.valueStr("airport_runway_name"));
     // Order by runway name
     if(rwname1 == rwname2)
       // Order by fix_ident

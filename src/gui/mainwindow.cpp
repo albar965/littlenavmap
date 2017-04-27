@@ -2193,8 +2193,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
 /* Update the current weather context for the information window. Returns true if any
  * weather has changed or an update is needed */
-bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
-                                            const map::MapAirport& airport)
+bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
 {
   opts::Flags flags = OptionData::instance().getFlags();
   bool changed = false;
@@ -2210,14 +2209,13 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     if(NavApp::isConnected())
     {
       // Flight simulator fetched weather
-      atools::fs::sc::MetarResult metar =
-        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+      atools::fs::sc::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
 
       if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
       {
         currentWeatherContext->fsMetar = metar;
         changed = true;
-        qDebug() << "FS changed";
+        qDebug() << Q_FUNC_INFO << "FS changed";
       }
     }
     else

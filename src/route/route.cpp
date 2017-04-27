@@ -964,8 +964,9 @@ void Route::updateBoundingRect()
   Marble::GeoDataLineString line;
 
   for(const RouteLeg& routeLeg : *this)
-    line.append(Marble::GeoDataCoordinates(routeLeg.getPosition().getLonX(),
-                                           routeLeg.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));
+    if(routeLeg.getPosition().isValid())
+      line.append(Marble::GeoDataCoordinates(routeLeg.getPosition().getLonX(),
+                                             routeLeg.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));
 
   Marble::GeoDataLatLonBox box = Marble::GeoDataLatLonBox::fromLineString(line);
   boundingRect = atools::geo::Rect(box.west(), box.north(), box.east(), box.south());

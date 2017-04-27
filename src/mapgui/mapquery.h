@@ -70,7 +70,8 @@ public:
   /* Get all airways that are attached to a waypoint */
   void getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
                              const QString& waypointIdent = QString());
-  void getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1, const QString& waypoint2);
+  void getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
+                                  const QString& waypoint2);
 
   /* Get all waypoints or an airway ordered by fragment an sequence number */
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
@@ -189,6 +190,7 @@ public:
 
   /* Get a completely filled runway list for the airport */
   const QList<map::MapRunway> *getRunways(int airportId);
+  QStringList getRunwayNames(int airportId);
 
   const QList<map::MapApron> *getAprons(int airportId);
 

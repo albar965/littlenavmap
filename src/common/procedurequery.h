@@ -127,11 +127,12 @@ private:
                         const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
 
-  int findTransitionLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, float distance, int size);
-  int findApproachLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
+  int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query, float distance, int size);
+  int findApproachId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
                         const QString& runway, float distance, int size);
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                          const QString& suffix, const QString& runway, float distance, int size, bool transition);
+  void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,

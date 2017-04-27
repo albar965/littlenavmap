@@ -79,6 +79,9 @@ float ElevationProvider::getElevation(const atools::geo::Pos& pos)
 
 void ElevationProvider::getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line)
 {
+  if(!line.isValid())
+    return;
+
   QMutexLocker locker(&mutex);
 
   if(isGlobeOfflineProvider())
