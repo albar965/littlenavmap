@@ -1026,21 +1026,12 @@ bool runwayAlmostEqual(const QString& name1, const QString& name2)
          rwdesignator1 == rwdesignator2;
 }
 
-QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames)
+QString runwayNameJoin(int number, const QString& designator)
 {
-  // First check for exact match
-  if(airportRunwayNames.contains(procRunwayName))
-    return procRunwayName;
-
-  QStringList variants = runwayNameVariants(procRunwayName);
-  for(const QString& runway : airportRunwayNames)
-  {
-    if(variants.contains(runway))
-      return runway;
-  }
-  return QString();
+  return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
 }
 
+/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
 QStringList runwayNameVariants(const QString& name)
 {
   QStringList retval({name});
@@ -1057,9 +1048,27 @@ QStringList runwayNameVariants(const QString& name)
   return retval;
 }
 
-QString runwayNameJoin(int number, const QString& designator)
+QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames)
 {
-  return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
+  bool hasPrefix = false;
+  QString rwname(procRunwayName);
+  if(rwname.startsWith("RW"))
+  {
+    hasPrefix = true;
+    rwname = rwname.mid(2);
+  }
+
+  // First check for exact match
+  if(airportRunwayNames.contains(rwname))
+    return procRunwayName;
+
+  QStringList variants = runwayNameVariants(rwname);
+  for(const QString& runway : airportRunwayNames)
+  {
+    if(variants.contains(runway))
+      return (hasPrefix ? "RW" : QString()) + runway;
+  }
+  return QString();
 }
 
 bool runwayNameSplit(const QString& name, int *number, QString *designator)
@@ -1067,7 +1076,15 @@ bool runwayNameSplit(const QString& name, int *number, QString *designator)
   // Extract runway number and designator
   static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
 
-  QRegularExpressionMatch match = NUM_DESIGNATOR.match(name);
+  bool hasPrefix = false;
+  QString rwname(name);
+  if(rwname.startsWith("RW"))
+  {
+    hasPrefix = true;
+    rwname = rwname.mid(2);
+  }
+
+  QRegularExpressionMatch match = NUM_DESIGNATOR.match(rwname);
   if(match.hasMatch())
   {
     if(number != nullptr)

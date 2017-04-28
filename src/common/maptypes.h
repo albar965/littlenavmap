@@ -713,10 +713,6 @@ QString startType(const map::MapStart& start);
 /* Split runway name into parts and return true if name matches a runway number */
 bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
 bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
-QString runwayNameJoin(int number, const QString& designator);
-
-/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
-QStringList runwayNameVariants(const QString& name);
 
 /* Get the closes matching runway name from the list of airport  runways */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
