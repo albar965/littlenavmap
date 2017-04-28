@@ -101,7 +101,7 @@ public:
     return route;
   }
 
-  float getSpeedKts() const;
+  float getSpinBoxSpeedKts() const;
 
   /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
   void getSelectedRouteLegs(QList<int>& selLegIndexes) const;

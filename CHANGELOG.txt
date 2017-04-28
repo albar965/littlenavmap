@@ -1,14 +1,16 @@
 Version 1.3.7.develop
 
-* Fixed crashes and freezes with invalid procedures containing not matching runways for add-on airports.
-* Now trying to match procedure runways to add-on airport runways.
-* Fixed freeze when trying to zoom to invalid position from procedure.
-* Fixed error when deleting SID transitions without SID legs.
-* Added verbose logging options for connect client and data reader thread.
+* Now trying to match procedure runways to add-on airport runways. Procedure is tied to airport center if
+  runway could not be found.
+* Fixed crashes and freezes with invalid procedures.
+* Fixed error when deleting SID transitions without SID legs. Invalid SID data remained in the saved PLN file.
+* Added verbose logging options for SimConnect.
 * Connect errors are now shown in the statusbar.
+* Adapted colors in procedure search to match flight plan table and adusted colors for night mode.
+* SIDs that consist of only one transition (most do) can now be easier selected and previewed.
 
 derived from atools:
-* Fixed crash on database version detection after adding has_sid_star column.
+* Fixed crash on database version detection after adding "has_sid_star" column.
 
 Version 1.3.6.develop
 

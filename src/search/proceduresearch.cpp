@@ -240,6 +240,19 @@ void ProcedureSearch::updateHeaderLabel()
 
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   for(QTreeWidgetItem *item : items)
+    procs.append(approachAndTransitionText(item));
+
+  if(currentAirport.isValid())
+    NavApp::getMainUi()->labelProcedureSearch->setText(
+      "<b>" + map::airportTextShort(currentAirport) + "</b> " + procs);
+  else
+    NavApp::getMainUi()->labelProcedureSearch->setText(tr("No Airport selected."));
+}
+
+QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)
+{
+  QString procs;
+  if(item != nullptr)
   {
     MapProcedureRef ref = itemIndex.at(item->type());
     if(ref.isLeg())
@@ -248,7 +261,19 @@ void ProcedureSearch::updateHeaderLabel()
       ref = itemIndex.at(item->type());
     }
 
-    if(item != nullptr)
+    if(ref.hasApproachOnlyIds())
+    {
+      // Only approach
+      procs.append(" " + item->text(COL_DESCRIPTION) + " " + item->text(COL_IDENT));
+      if(item->childCount() == 1)
+      {
+        // Special SID case that has only transition legs and only one transition
+        QTreeWidgetItem *child = item->child(0);
+        if(child != nullptr)
+          procs.append(" " + child->text(COL_DESCRIPTION) + " " + child->text(COL_IDENT));
+      }
+    }
+    else
     {
       if(ref.hasApproachAndTransitionIds())
       {
@@ -259,12 +284,7 @@ void ProcedureSearch::updateHeaderLabel()
       procs.append(" " + item->text(COL_DESCRIPTION) + " " + item->text(COL_IDENT));
     }
   }
-
-  if(currentAirport.isValid())
-    NavApp::getMainUi()->labelProcedureSearch->setText(
-      "<b>" + map::airportTextShort(currentAirport) + "</b> " + procs);
-  else
-    NavApp::getMainUi()->labelProcedureSearch->setText(tr("No Airport selected."));
+  return procs;
 }
 
 void ProcedureSearch::clearRunwayFilter()
@@ -490,6 +510,23 @@ void ProcedureSearch::updateTreeHeader()
   treeWidget->setHeaderItem(header);
 }
 
+/* If approach has no legs and a single transition: SID special case. get transition id from cache */
+void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
+{
+  if(ref.hasApproachOnlyIds())
+  {
+    // No transition
+    const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
+    if(legs != nullptr && legs->approachLegs.isEmpty())
+    {
+      // Special case for SID which consists only of transition legs
+      QVector<int> transitionIds = procedureQuery->getTransitionIdsForApproach(ref.approachId);
+      if(!transitionIds.isEmpty())
+        ref.transitionId = transitionIds.first();
+    }
+  }
+}
+
 void ProcedureSearch::itemSelectionChanged()
 {
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
@@ -503,16 +540,21 @@ void ProcedureSearch::itemSelectionChanged()
   {
     for(QTreeWidgetItem *item : items)
     {
-      const MapProcedureRef& ref = itemIndex.at(item->type());
+      MapProcedureRef ref = itemIndex.at(item->type());
 
       qDebug() << Q_FUNC_INFO << ref.runwayEndId << ref.approachId << ref.transitionId << ref.legId;
 
       if(ref.hasApproachOrTransitionIds())
+      {
+        fetchSingleTransitionId(ref);
         emit procedureSelected(ref);
+      }
 
       if(ref.isLeg())
+        // Highlight legs
         emit procedureLegSelected(ref);
       else
+        // Remove leg highlight
         emit procedureLegSelected(proc::MapProcedureRef());
 
       if(ref.hasApproachAndTransitionIds())
@@ -560,6 +602,7 @@ void ProcedureSearch::itemDoubleClicked(QTreeWidgetItem *item, int column)
   showEntry(item, true);
 }
 
+/* Load all approach or transition legs on demand - approaches and transitions are loaded after selecting the airport */
 void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
 {
   if(item != nullptr)
@@ -577,7 +620,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
         const MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
         if(legs != nullptr)
         {
-          QList<QTreeWidgetItem *> items = addApproachLegs(legs, -1);
+          QList<QTreeWidgetItem *> items = buildApproachLegItems(legs, -1);
           itemLoadedIndex.setBit(item->type());
 
           if(legs->mapType & proc::PROCEDURE_DEPARTURE)
@@ -593,7 +636,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
         const MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
         if(legs != nullptr)
         {
-          QList<QTreeWidgetItem *> items = addTransitionLegs(legs);
+          QList<QTreeWidgetItem *> items = buildTransitionLegItems(legs);
           item->addChildren(items);
           itemLoadedIndex.setBit(item->type());
         }
@@ -605,7 +648,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
   }
 }
 
-QList<QTreeWidgetItem *> ProcedureSearch::addApproachLegs(const MapProcedureLegs *legs, int transitionId)
+QList<QTreeWidgetItem *> ProcedureSearch::buildApproachLegItems(const MapProcedureLegs *legs, int transitionId)
 {
   QList<QTreeWidgetItem *> items;
   if(legs != nullptr)
@@ -620,7 +663,7 @@ QList<QTreeWidgetItem *> ProcedureSearch::addApproachLegs(const MapProcedureLegs
   return items;
 }
 
-QList<QTreeWidgetItem *> ProcedureSearch::addTransitionLegs(const MapProcedureLegs *legs)
+QList<QTreeWidgetItem *> ProcedureSearch::buildTransitionLegItems(const MapProcedureLegs *legs)
 {
   QList<QTreeWidgetItem *> items;
   if(legs != nullptr)
@@ -652,7 +695,11 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
   MapProcedureRef ref;
   if(item != nullptr)
+  {
     ref = itemIndex.at(item->type());
+    // Get transition id too if SID with only transition legs is selected
+    fetchSingleTransitionId(ref);
+  }
 
   ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
@@ -677,14 +724,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       QTreeWidgetItem *parentAppr = parentApproachItem(item);
       QTreeWidgetItem *parentTrans = parentTransitionItem(item);
 
-      if(ref.hasApproachAndTransitionIds())
-      {
-        text = parentAppr->text(COL_DESCRIPTION) + " " + parentAppr->text(COL_IDENT) +
-               tr(" and ") +
-               parentTrans->text(COL_DESCRIPTION) + " " + parentTrans->text(COL_IDENT);
-      }
-      else if(ref.hasApproachOnlyIds())
-        text = parentAppr->text(COL_DESCRIPTION) + " " + parentAppr->text(COL_IDENT);
+      if(ref.hasApproachOrTransitionIds())
+        text = approachAndTransitionText(parentTrans == nullptr ? parentAppr : parentTrans);
 
       if(!text.isEmpty())
         ui->actionInfoApproachShow->setEnabled(true);
@@ -796,7 +837,8 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
   if(item == nullptr)
     return;
 
-  const MapProcedureRef& ref = itemIndex.at(item->type());
+  MapProcedureRef ref = itemIndex.at(item->type());
+  fetchSingleTransitionId(ref);
 
   if(ref.legId != -1)
   {
@@ -954,7 +996,13 @@ void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg&
     {
       item->setFont(i, leg.missed ? missedLegFont : legFont);
       if(leg.missed)
-        item->setForeground(i, QColor(140, 140, 140));
+        item->setForeground(i, OptionData::instance().isGuiStyleDark() ?
+                            mapcolors::routeProcedureMissedTableColorDark :
+                            mapcolors::routeProcedureMissedTableColor);
+      else
+        item->setForeground(i, OptionData::instance().isGuiStyleDark() ?
+                            mapcolors::routeProcedureTableColorDark :
+                            mapcolors::routeProcedureTableColor);
     }
     else
     {

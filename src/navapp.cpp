@@ -179,7 +179,7 @@ const Route& NavApp::getRoute()
 
 float NavApp::getSpeedKts()
 {
-  return mainWindow->getRouteController()->getSpeedKts();
+  return mainWindow->getRouteController()->getSpinBoxSpeedKts();
 }
 
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulator()

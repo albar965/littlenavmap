@@ -1076,13 +1076,9 @@ bool runwayNameSplit(const QString& name, int *number, QString *designator)
   // Extract runway number and designator
   static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
 
-  bool hasPrefix = false;
   QString rwname(name);
   if(rwname.startsWith("RW"))
-  {
-    hasPrefix = true;
     rwname = rwname.mid(2);
-  }
 
   QRegularExpressionMatch match = NUM_DESIGNATOR.match(rwname);
   if(match.hasMatch())

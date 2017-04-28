@@ -54,11 +54,7 @@ public:
   /* Get transition and its approach */
   const proc::MapProcedureLegs *getTransitionLegs(const map::MapAirport& airport, int transitionId);
 
-  /* Create all queries */
-  void initQueries();
-
-  /* Delete all queries */
-  void deInitQueries();
+  QVector<int> getTransitionIdsForApproach(int approachId);
 
   bool getLegsForFlightplanProperties(const QHash<QString, QString> properties, const map::MapAirport& departure,
                                       const map::MapAirport& destination,
@@ -85,6 +81,12 @@ public:
                 float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
   int getStarTransitionId(const map::MapAirport& destination, const QString& starTrans, int starId,
                           float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+
+  /* Create all queries */
+  void initQueries();
+
+  /* Delete all queries */
+  void deInitQueries();
 
 private:
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
@@ -129,7 +131,7 @@ private:
 
   int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query, float distance, int size);
   int findApproachId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
-                        const QString& runway, float distance, int size);
+                     const QString& runway, float distance, int size);
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                          const QString& suffix, const QString& runway, float distance, int size, bool transition);
   void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);

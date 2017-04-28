@@ -50,6 +50,8 @@ public:
   static QString replacePlaceholders(const QString& text, QString& origtext);
   static QString replacePlaceholders(const QString& text);
 
+  /* Read all unit names (Meter, Nm, ...) in the methods as "from" values */
+
   /* Distances: Returns either nautical miles, kilometer or miles */
   static QString distMeter(float value, bool addUnit = true, int minValPrec = 20, bool narrow = false);
   static QString distNm(float value, bool addUnit = true, int minValPrec = 20, bool narrow = false);

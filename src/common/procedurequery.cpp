@@ -1431,6 +1431,18 @@ int ProcedureQuery::getStarTransitionId(const map::MapAirport& destination, cons
   return starTransId;
 }
 
+QVector<int> ProcedureQuery::getTransitionIdsForApproach(int approachId)
+{
+  QVector<int> transitionIds;
+
+  transitionIdsForApproachQuery->bindValue(":id", approachId);
+  transitionIdsForApproachQuery->exec();
+
+  while(transitionIdsForApproachQuery->next())
+    transitionIds.append(transitionIdsForApproachQuery->value("transition_id").toInt());
+  return transitionIds;
+}
+
 bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                                     const map::MapAirport& departure,
                                                     const map::MapAirport& destination,

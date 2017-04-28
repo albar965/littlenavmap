@@ -157,6 +157,11 @@ const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
 
+const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
+const QColor routeProcedureMissedTableColorDark = QColor(255, 127, 80);
+const QColor routeProcedureTableColor = QColor(Qt::darkBlue);
+const QColor routeProcedureTableColorDark = QColor(100, 149, 237);
+
 const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));
 

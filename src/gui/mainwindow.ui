@@ -2226,7 +2226,7 @@
      <item>
       <widget class="QLabel" name="labelRouteInfo">
        <property name="text">
-        <string/>
+        <string>No Flight Plan loaded</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -5341,6 +5341,9 @@
    </property>
    <property name="statusTip">
     <string>Clear selection and preview on map</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+N</string>
    </property>
   </action>
   <action name="actionInfoApproachShowMissedAppr">

@@ -117,7 +117,8 @@ private:
   void restoreTreeViewState(const QBitArray& state);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
+  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp,
+                                     proc::MapProcedureTypes maptype);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans,
                                        bool sidOrStar);
 
@@ -133,9 +134,9 @@ private:
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  QList<QTreeWidgetItem *> addApproachLegs(const proc::MapProcedureLegs *legs, int transitionId);
+  QList<QTreeWidgetItem *> buildApproachLegItems(const proc::MapProcedureLegs *legs, int transitionId);
 
-  QList<QTreeWidgetItem *> addTransitionLegs(const proc::MapProcedureLegs *legs);
+  QList<QTreeWidgetItem *> buildTransitionLegItems(const proc::MapProcedureLegs *legs);
 
   void fillApproachTreeWidget();
 
@@ -156,6 +157,8 @@ private:
 
   static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
+  void fetchSingleTransitionId(proc::MapProcedureRef& ref);
+  QString approachAndTransitionText(const QTreeWidgetItem *item);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;

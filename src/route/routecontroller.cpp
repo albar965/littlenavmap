@@ -310,7 +310,8 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString str = RouteString().createStringForRoute(route, getSpeedKts(), RouteStringDialog::getOptionsFromSettings());
+  QString str = RouteString().createStringForRoute(route,
+                                                   getSpinBoxSpeedKts(), RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -477,7 +478,7 @@ void RouteController::restoreState()
   }
 }
 
-float RouteController::getSpeedKts() const
+float RouteController::getSpinBoxSpeedKts() const
 {
   return Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
 }
@@ -529,8 +530,10 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
 
   route.setFlightplan(flightplan);
 
-  if(speedKts > 0.f)
-    route.getFlightplan().getProperties().insert("speed", QString::number(speedKts, 'f', 4));
+  if(!(speedKts > 0.f))
+    speedKts = static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value());
+
+  route.getFlightplan().getProperties().insert("speed", QString::number(speedKts, 'f', 4));
 
   createRouteLegsFromFlightplan();
 
@@ -861,7 +864,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
                                    Unit::altFeetF)));
 
     QHash<QString, QString>& properties = route.getFlightplan().getProperties();
-    properties.insert("speed", QString::number(getSpeedKts(), 'f', 4));
+    properties.insert("speed", QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
     route.getFlightplan().save(routeFilename, cleanExport);
     route.getFlightplan().setCruisingAltitude(oldCruise);
@@ -2375,7 +2378,7 @@ void RouteController::updateFlightplanFromWidgets()
     ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 
-  route.getFlightplan().getProperties().insert("speed", QString::number(getSpeedKts(), 'f', 4));
+  route.getFlightplan().getProperties().insert("speed", QString::number(getSpinBoxSpeedKts(), 'f', 4));
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
@@ -2561,7 +2564,11 @@ void RouteController::updateTableModel()
       QSignalBlocker blocker(ui->spinBoxRouteSpeed);
       Q_UNUSED(blocker);
       if(flightplan.getProperties().contains("speed"))
-        ui->spinBoxRouteSpeed->setValue(atools::roundToInt(flightplan.getProperties().value("speed").toFloat()));
+      {
+        float speed = flightplan.getProperties().value("speed").toFloat();
+        if(speed > 0.f)
+          ui->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speed)));
+      }
     }
 
     { // Set combo box and block signals to avoid recursive call
@@ -2704,9 +2711,13 @@ void RouteController::highlightProcedureItems()
         if(leg.isAnyProcedure())
         {
           if(leg.getProcedureLeg().isMissed())
-            item->setForeground(OptionData::instance().isGuiStyleDark() ? Qt::darkYellow : Qt::darkRed);
+            item->setForeground(OptionData::instance().isGuiStyleDark() ?
+                                mapcolors::routeProcedureMissedTableColorDark :
+                                mapcolors::routeProcedureMissedTableColor);
           else
-            item->setForeground(OptionData::instance().isGuiStyleDark() ? Qt::cyan : Qt::darkBlue);
+            item->setForeground(OptionData::instance().isGuiStyleDark() ?
+                                mapcolors::routeProcedureTableColorDark :
+                                mapcolors::routeProcedureTableColor);
         }
         else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
                 (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && !leg.getAirwayName().isEmpty() &&
@@ -2842,11 +2853,6 @@ QString RouteController::buildFlightplanLabel(bool html) const
         procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
         procedureText.append(arrivalLegs.runwayEnd.name);
       }
-      else
-      {
-        boldTextFlag << false;
-        procedureText.append(tr("to airport"));
-      }
 
       if(html)
       {
@@ -2860,7 +2866,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
     }
   }
 
-  QString fp(tr("No Flightplan loaded"));
+  QString fp(tr("No Flight Plan loaded"));
   if(!flightplan.isEmpty())
     fp = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
 
