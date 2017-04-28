@@ -738,12 +738,15 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
 
   if(transparency != 255)
   {
-    if(transparency == 0)
-      // Do not fill at all
+    if(transparency == 0) // Do not fill at all
+    {
+      painter->setBackgroundMode(Qt::TransparentMode);
       painter->setBrush(Qt::NoBrush);
+    }
     else
     {
       // Use an alpha channel for semi transparency
+      painter->setBackgroundMode(Qt::OpaqueMode);
       backColor.setAlpha(transparency);
       painter->setBrush(backColor);
       painter->setBackground(backColor);
@@ -751,6 +754,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   }
   else // Fill background
   {
+    painter->setBackgroundMode(Qt::OpaqueMode);
     painter->setBrush(backColor);
     painter->setBackground(backColor);
   }
@@ -766,43 +770,20 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     painter->setFont(f);
   }
 
-  QFontMetrics metrics = painter->fontMetrics();
-  float h = metrics.height();
-
-  float yoffset = 0.f;
-  if(transparency != 0)
-  {
-    // Draw filled rectangles in the background
-    painter->setPen(mapcolors::textBackgroundPen);
-    for(const QString& text : texts)
-    {
-      if(text.isEmpty())
-        continue;
-
-      QRectF rect = metrics.boundingRect(text);
-      rect.setWidth(rect.width() + 2.f);
-
-      float newx = x;
-      if(atts.testFlag(textatt::RIGHT))
-        newx -= rect.width();
-      else if(atts.testFlag(textatt::CENTER))
-        newx -= rect.width() / 2.f;
-
-      rect.moveTo(newx, y - metrics.ascent() + yoffset - 1.f);
-      painter->drawRect(rect);
-      yoffset += h;
-    }
-  }
-
   // Draw the text
-  yoffset = 0.f;
+  QFontMetricsF metrics = painter->fontMetrics();
+  float h = static_cast<float>(metrics.height()) - 1.f;
+  float yoffset = (texts.size() * h) / 2.f - static_cast<float>(metrics.descent());
   painter->setPen(textPen);
-  for(const QString& text : texts)
+
+  // Draw text in reverse order to avoid undercut
+  for(int i = texts.size() - 1; i >= 0; i--)
   {
+    const QString& text = texts.at(i);
     if(text.isEmpty())
       continue;
 
-    float w = metrics.width(text);
+    float w = static_cast<float>(metrics.width(text));
     float newx = x;
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;
@@ -810,7 +791,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
       newx -= w / 2.f;
 
     painter->drawText(QPointF(newx, y + yoffset), text);
-    yoffset += h;
+    yoffset -= h;
   }
 }
 
