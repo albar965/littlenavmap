@@ -800,9 +800,9 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
       else
         segmentLength = 3.5f;
 
-      leg.holdLine.setPos1(leg.line.getPos1());
-      leg.holdLine.setPos2(leg.line.getPos1().endpoint(nmToMeter(segmentLength),
-                                                       opposedCourseDeg(leg.calculatedTrueCourse)));
+      leg.holdLine.setPos2(leg.line.getPos1());
+      leg.holdLine.setPos1(leg.line.getPos1().endpoint(nmToMeter(segmentLength),
+                                                       opposedCourseDeg(leg.calculatedTrueCourse)).normalize());
     }
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
                             proc::HEADING_TO_DME_DISTANCE_TERMINATION,
@@ -956,7 +956,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
         // Turn left and then turn 180 deg right
         course = leg.legTrueCourse() + 45.f;
 
-      leg.procedureTurnPos = leg.fixPos.endpoint(nmToMeter(leg.distance), course);
+      leg.procedureTurnPos = leg.fixPos.endpoint(nmToMeter(leg.distance), course).normalize();
       lastPos = leg.fixPos;
       curPos = leg.procedureTurnPos;
     }
@@ -1014,7 +1014,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
       Pos start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
 
       Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
-      Line line(start, start.endpoint(nmToMeter(leg.distance * 2), leg.legTrueCourse()));
+      Line line(start, start.endpoint(nmToMeter(leg.distance * 2), leg.legTrueCourse()).normalize());
 
       if(!lastPos.isValid())
         lastPos = start;
@@ -1103,7 +1103,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
           Pos intersect;
           if(nextIsArc)
           {
-            Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()));
+            Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()).normalize());
             intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
           }
           else

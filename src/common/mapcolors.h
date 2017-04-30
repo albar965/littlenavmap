@@ -158,9 +158,9 @@ const QColor routeUserPointColor = QColor(Qt::darkYellow);
 const QColor routeInvalidPointColor = QColor(Qt::red);
 
 const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
-const QColor routeProcedureMissedTableColorDark = QColor(255, 127, 80);
+const QColor routeProcedureMissedTableColorDark = QColor(240, 170, 120);
 const QColor routeProcedureTableColor = QColor(Qt::darkBlue);
-const QColor routeProcedureTableColorDark = QColor(100, 149, 237);
+const QColor routeProcedureTableColorDark = QColor(140, 200, 240);
 
 const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));

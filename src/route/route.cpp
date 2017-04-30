@@ -198,6 +198,8 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     activePos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
   }
 
+  // qDebug() << "activePos" << activeLegResult;
+
   // Get potential next leg and course difference
   int nextLeg = activeLeg + 1;
   float courseDiff = 0.f;
@@ -259,10 +261,16 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
         // qDebug() << "NEXT HOLD" << nextLeg << resultHold;
 
         // qDebug() << "HOLD DIFFER";
+        // qDebug() << "resultHold" << resultHold;
+        // qDebug() << "holdLine" << at(activeLeg).getProcedureLeg().holdLine;
         // Hold point differs from next leg start - use the helping line
-        if(resultHold.status == atools::geo::ALONG_TRACK && // Check if we are outside of the hold
-           resultHold.distance < nmToMeter(at(activeLeg).getProcedureLeg().turnDirection == "R" ? 0.5f : -0.5f))
-          switchToNextLeg = true;
+        if(resultHold.status == atools::geo::ALONG_TRACK) // Check if we are outside of the hold
+        {
+          if(at(activeLeg).getProcedureLeg().turnDirection == "R")
+            switchToNextLeg = resultHold.distance < nmToMeter(-0.5f);
+          else
+            switchToNextLeg = resultHold.distance > nmToMeter(0.5f);
+        }
       }
     }
     else
