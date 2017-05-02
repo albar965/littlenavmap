@@ -268,6 +268,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
 
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   context->painter->setBackground(Qt::white);
+  context->painter->setBrush(Qt::NoBrush);
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
