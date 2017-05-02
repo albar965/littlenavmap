@@ -47,6 +47,12 @@
           <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/>
           <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/>
 
+          <!-- OSM content delivery network German proxy servers -->
+          <!-- <downloadUrl protocol="http" host="a.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
+          <!-- <downloadUrl protocol="http" host="b.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
+          <!-- <downloadUrl protocol="http" host="c.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
+          <!-- <downloadUrl protocol="http" host="d.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
+
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
           <downloadPolicy usage="Browse" maximumConnections="20"/>
 

@@ -346,6 +346,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw grey vertical lines for waypoints
   int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * verticalScale);
+  int flightplanTextY = flightplanY + 14;
   painter.setPen(mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
@@ -367,15 +368,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw elevation scale line and texts
   painter.setPen(mapcolors::profileElevationScalePen);
-  for(int i = Y0 + h, alt = 0; i > Y0; i -= step * tempScale, alt += step)
+  for(int y = Y0 + h, alt = 0; y > Y0; y -= step * tempScale, alt += step)
   {
-    painter.drawLine(X0, i, X0 + static_cast<int>(w), i);
+    painter.drawLine(X0, y, X0 + static_cast<int>(w), y);
+
+    int altTextY = std::min(y, Y0 + h - painter.fontMetrics().height() / 2);
+    symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
+                       mapcolors::profileElevationScalePen, X0 - 8, altTextY, textatt::BOLD | textatt::RIGHT, 0);
 
     symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       mapcolors::profileElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
-
-    symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       mapcolors::profileElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
+                       mapcolors::profileElevationScalePen, X0 + w + 4, altTextY, textatt::BOLD | textatt::LEFT, 0);
   }
 
   const Route& route = routeController->getRoute();
@@ -461,19 +463,19 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(type == map::WAYPOINT || leg.getWaypoint().isValid())
     {
       symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
-      symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 18, flags, 10, true);
+      symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 14, flags, 10, true);
     }
     else if(type == map::USER)
     {
       symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeUserPointColor,
-                         symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+                         symx - 5, flightplanTextY, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
     else if(type == map::INVALID)
     {
       symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeInvalidPointColor,
-                         symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+                         symx - 5, flightplanTextY, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
     else if(type == map::PROCEDURE)
       // Missed is not included
@@ -492,12 +494,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(type == map::NDB || leg.getNdb().isValid())
     {
       symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
-      symPainter.drawNdbText(&painter, leg.getNdb(), symx - 5, flightplanY + 18, flags, 10, true);
+      symPainter.drawNdbText(&painter, leg.getNdb(), symx - 5, flightplanTextY, flags, 10, true);
     }
     else if(type == map::VOR || leg.getVor().isValid())
     {
       symPainter.drawVorSymbol(&painter, leg.getVor(), symx, flightplanY, 12, true, false, false);
-      symPainter.drawVorText(&painter, leg.getVor(), symx - 5, flightplanY + 18, flags, 10, true);
+      symPainter.drawVorText(&painter, leg.getVor(), symx - 5, flightplanTextY, flags, 10, true);
     }
   }
 
@@ -515,7 +517,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < legList.route.size())
     {
       symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanY + 22,
+      symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanTextY,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }
@@ -527,7 +529,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(departureLeg.getMapObjectType() == map::AIRPORT)
     {
       symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), X0, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, departureLeg.getAirport(), X0 - 5, flightplanY + 22,
+      symPainter.drawAirportText(&painter, departureLeg.getAirport(), X0 - 5, flightplanTextY,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
 
@@ -536,36 +538,35 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(destinationLeg.getMapObjectType() == map::AIRPORT)
     {
       symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), X0 + w, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, destinationLeg.getAirport(), X0 + w - 5, flightplanY + 22,
+      symPainter.drawAirportText(&painter, destinationLeg.getAirport(), X0 + w - 5, flightplanTextY,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }
 
-  // Draw text labels
+  // Draw text labels ========================================================
+  // Safe altitude label
+  symPainter.textBox(&painter, {Unit::altFeet(minSafeAltitudeFt)},
+                     QPen(Qt::red), X0 - 8, maxAltY, textatt::BOLD | textatt::RIGHT, 255);
+
   // Departure altitude label
-  float startAlt = legList.route.first().getPosition().getAltitude();
-  QString startAltStr = Unit::altFeet(startAlt);
-  symPainter.textBox(&painter, {startAltStr},
-                     QPen(Qt::black), X0 - 8,
-                     Y0 + static_cast<int>(h - startAlt * verticalScale),
+  float departureAlt = legList.route.first().getPosition().getAltitude();
+  int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
+  departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
+  QString startAltStr = Unit::altFeet(departureAlt);
+  symPainter.textBox(&painter, {startAltStr}, QPen(Qt::black), X0 - 8, departureAltTextY,
                      textatt::BOLD | textatt::RIGHT, 255);
 
   // Destination altitude label
+  int destinationAltTextY = Y0 + static_cast<int>(h - destAlt * verticalScale);
+  destinationAltTextY = std::min(destinationAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
   QString destAltStr = Unit::altFeet(destAlt);
-  symPainter.textBox(&painter, {destAltStr},
-                     QPen(Qt::black), X0 + w + 4,
-                     Y0 + static_cast<int>(h - destAlt * verticalScale),
+  symPainter.textBox(&painter, {destAltStr}, QPen(Qt::black), X0 + w + 4, destinationAltTextY,
                      textatt::BOLD | textatt::LEFT, 255);
-
-  // Safe altitude label
-  symPainter.textBox(&painter, {Unit::altFeet(minSafeAltitudeFt)},
-                     QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
   // Route cruise altitude
   float routeAlt = route.getFlightplan().getCruisingAltitude();
-
   symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
-                     QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
+                     QPen(Qt::black), X0 - 8, flightplanY, textatt::BOLD | textatt::RIGHT, 255);
 
   if(!NavApp::getRoute().isFlightplanEmpty())
   {
