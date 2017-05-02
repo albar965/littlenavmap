@@ -39,7 +39,7 @@ AirspaceToolBarHandler::~AirspaceToolBarHandler()
 
 void AirspaceToolBarHandler::allAirspacesToggled()
 {
-  updateAirspaceToolButtons();
+  updateButtonsAndActions();
 }
 
 void AirspaceToolBarHandler::updateAirspaceToolButtons()
@@ -76,6 +76,9 @@ void AirspaceToolBarHandler::updateAirspaceToolActions()
       action->blockSignals(false);
     }
   }
+
+  for(QAction *action : airspaceActions)
+    action->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
 }
 
 void AirspaceToolBarHandler::updateButtonsAndActions()

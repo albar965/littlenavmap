@@ -1911,19 +1911,17 @@ void MainWindow::restoreStateMain()
 
   if(settings.contains(lnm::MAINWINDOW_WIDGET_STATE))
   {
-    restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(),
-                 lnm::MAINWINDOW_STATE_VERSION);
-    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos()).toPoint());
-    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", sizeHint()).toSize());
-    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", false).toBool())
+    restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(), lnm::MAINWINDOW_STATE_VERSION);
+    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, pos()).toPoint());
+    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, sizeHint()).toSize());
+    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
       setWindowState(windowState() | Qt::WindowMaximized);
   }
   else
   {
     // Use default state saved in application
     const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
-    restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)),
-                 lnm::MAINWINDOW_STATE_VERSION);
+    restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)), lnm::MAINWINDOW_STATE_VERSION);
   }
 
   const QRect geo = QApplication::desktop()->availableGeometry(this);
@@ -2007,7 +2005,7 @@ void MainWindow::saveStateMain()
     hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
   qDebug().noquote().nospace() << "\n\nconst unsigned char DEFAULT_MAINWINDOW_STATE["
                                << state.size() << "] ="
-                               << hexStr.join(",") << "};\n";
+                               << "{" << hexStr.join(",") << "};\n";
 #endif
 
   saveMainWindowStates();

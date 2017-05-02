@@ -32,9 +32,9 @@ namespace migrate {
 
 void checkAndMigrateSettings()
 {
-  Settings& s = Settings::instance();
+  Settings& settings = Settings::instance();
 
-  Version optionsVersion(s.valueStr(lnm::OPTIONS_VERSION));
+  Version optionsVersion(settings.valueStr(lnm::OPTIONS_VERSION));
   Version appVersion(QCoreApplication::applicationVersion());
 
   if(optionsVersion.isValid())
@@ -47,16 +47,25 @@ void checkAndMigrateSettings()
       // ------------------------------------------------------
       // Migrate/delete any settings that are not compatible right here
       // ------------------------------------------------------
+      if(optionsVersion <= Version(1, 2, 4)) // Reset main window state since a toolbar was added
+      {
+        qInfo() << Q_FUNC_INFO << "removing" << lnm::MAINWINDOW_WIDGET_STATE << lnm::MAINWINDOW_WIDGET_STATE_POS
+                << lnm::MAINWINDOW_WIDGET_STATE_SIZE << lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED;
+        settings.remove(lnm::MAINWINDOW_WIDGET_STATE);
+        settings.remove(lnm::MAINWINDOW_WIDGET_STATE_POS);
+        settings.remove(lnm::MAINWINDOW_WIDGET_STATE_SIZE);
+        settings.remove(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED);
+      }
 
-      s.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());
-      s.syncSettings();
+      settings.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());
+      settings.syncSettings();
     }
   }
   else
   {
     qWarning() << "No version information found in settings file. Updating to" << appVersion;
-    s.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());
-    s.syncSettings();
+    settings.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());
+    settings.syncSettings();
   }
 }
 
