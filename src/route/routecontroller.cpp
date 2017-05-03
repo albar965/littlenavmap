@@ -61,7 +61,7 @@
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
                                     QObject::tr("Name"),
-                                    QObject::tr("Procedure"),
+                                    QObject::tr("Procedure\nType"),
                                     QObject::tr("Airway or\nProcedure"),
                                     QObject::tr("Restriction\n%alt%"),
                                     QObject::tr("Type"),
