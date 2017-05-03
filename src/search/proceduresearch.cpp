@@ -737,8 +737,12 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
       ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
 
-      if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
-         (route.hasValidDestination() && route.last().getId() == currentAirport.id))
+      if((route.hasValidDeparture() &&
+          route.first().getId() == currentAirport.id &&
+          ref.mapType & proc::PROCEDURE_DEPARTURE) ||
+         (route.hasValidDestination() &&
+          route.last().getId() == currentAirport.id &&
+          ref.mapType & proc::PROCEDURE_ARRIVAL_ALL))
         ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
       else
       {
@@ -780,9 +784,14 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionSearchResetView)
   {
     resetSearch();
+    // Reorder columns to match model order
+    QHeaderView *header = treeWidget->header();
+    for(int i = 0; i < header->count(); i++)
+      header->moveSection(header->visualIndex(i), i);
+    treeWidget->collapseAll();
     for(int i = 0; i < treeWidget->columnCount(); i++)
       treeWidget->resizeColumnToContents(i);
-    NavApp::setStatusMessage(tr("Table view reset to defaults."));
+    NavApp::setStatusMessage(tr("Tree view reset to defaults."));
   }
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();
