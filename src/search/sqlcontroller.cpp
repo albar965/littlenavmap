@@ -86,10 +86,8 @@ atools::geo::Pos SqlController::getGeoPos(const QModelIndex& index)
 {
   if(index.isValid())
   {
-    QModelIndex localIndex = toSource(index);
-
-    QVariant lon = getRawData(localIndex.row(), "lonx");
-    QVariant lat = getRawData(localIndex.row(), "laty");
+    QVariant lon = getRawData(index.row(), "lonx");
+    QVariant lat = getRawData(index.row(), "laty");
 
     if(!lon.isNull() && !lat.isNull())
       return atools::geo::Pos(lon.toFloat(), lat.toFloat());

@@ -778,7 +778,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchTableSelectNothing)
       controller->selectNoRows();
     else if(action == ui->actionSearchSetMark)
-      emit changeSearchMark(controller->getGeoPos(index));
+      emit changeSearchMark(position);
     else if(action == ui->actionMapRangeRings)
       NavApp::getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapNavaidRange)
