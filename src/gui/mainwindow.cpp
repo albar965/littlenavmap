@@ -584,11 +584,12 @@ void MainWindow::connectAllSlots()
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
 
+  // Need to clean cache to regenerate some text if units have changed
+  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getProcedureQuery(), &ProcedureQuery::clearCache);
+
   // Reset weather context first
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearWeatherContext);
 
-  connect(optionsDialog, &OptionsDialog::optionsChanged,
-          mapWidget, static_cast<void (MapWidget::*)(void)>(&MapWidget::update));
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);

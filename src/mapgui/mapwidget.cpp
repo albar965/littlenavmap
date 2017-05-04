@@ -208,6 +208,7 @@ void MapWidget::optionsChanged()
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
 
   updateCacheSizes();
+  update();
 }
 
 void MapWidget::updateCacheSizes()

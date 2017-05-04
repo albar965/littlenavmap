@@ -1431,6 +1431,16 @@ int ProcedureQuery::getStarTransitionId(const map::MapAirport& destination, cons
   return starTransId;
 }
 
+void ProcedureQuery::clearCache()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  approachCache.clear();
+  transitionCache.clear();
+  approachLegIndex.clear();
+  transitionLegIndex.clear();
+}
+
 QVector<int> ProcedureQuery::getTransitionIdsForApproach(int approachId)
 {
   QVector<int> transitionIds;

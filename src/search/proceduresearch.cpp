@@ -183,6 +183,9 @@ void ProcedureSearch::optionsChanged()
   createFonts();
   updateTreeHeader();
   fillApproachTreeWidget();
+  emit procedureSelected(proc::MapProcedureRef());
+  emit procedureLegSelected(proc::MapProcedureRef());
+
 }
 
 void ProcedureSearch::preDatabaseLoad()

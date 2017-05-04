@@ -37,9 +37,10 @@ class MapQuery;
 
 /* Loads and caches approaches and transitions. The corresponding approach is also loaded and cached if a
  * transition is loaded since legs depend on each other.*/
-class ProcedureQuery
+class ProcedureQuery :
+  public QObject
 {
-  Q_DECLARE_TR_FUNCTIONS(ProcedureQuery)
+  Q_OBJECT
 
 public:
   ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam);
@@ -81,6 +82,9 @@ public:
                 float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
   int getStarTransitionId(const map::MapAirport& destination, const QString& starTrans, int starId,
                           float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
+
+  /* Flush the cache to update units */
+  void clearCache();
 
   /* Create all queries */
   void initQueries();
