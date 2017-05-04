@@ -162,7 +162,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <string>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</string>
        </property>
        <property name="text">
-        <string>Read also &amp;inactive scenery entries</string>
+        <string>Read &amp;inactive Scenery Entries</string>
        </property>
       </widget>
      </item>

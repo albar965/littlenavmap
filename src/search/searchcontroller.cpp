@@ -71,7 +71,7 @@ void SearchController::helpPressed()
 
 void SearchController::helpPressedProcedure()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "APPROACHES.html", lnm::helpLanguages());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHPROCS.html", lnm::helpLanguages());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */
