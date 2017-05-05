@@ -108,7 +108,7 @@ private:
   void paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
                         const proc::MapProcedureLeg& leg);
 
-  void paintProcedureFlyover(const PaintContext *context, int x, int y);
+  void paintProcedureFlyover(const PaintContext *context, int x, int y, int size);
 
   void drawStartParking(const PaintContext *context);
 
