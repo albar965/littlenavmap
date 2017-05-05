@@ -1,5 +1,7 @@
 @echo off
 
+rem === Pull, build and deploy atools, littlenavconnect and littlenavmap =============================
+
 call pull_all.cmd nopause
 IF ERRORLEVEL 1 goto :err
 
@@ -21,6 +23,6 @@ exit /b 0
 
 echo **** ERROR ****
 
-pause 
+pause
 
 exit /b 1

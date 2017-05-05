@@ -1,5 +1,10 @@
 @echo off
 
+rem === Build atools, littlenavconnect and littlenavmap =============================
+rem === Also build a simconnect-less version of littlenavmap =============================
+rem === Merge all files into one littlenavmap directory ===========================
+
+
 rem ===========================================================================
 rem First delete all deploy directories =======================================
 pushd "%APROJECTS%\deploy"
@@ -12,7 +17,7 @@ del /S /Q /F "%APROJECTS%\deploy\Little Navconnect"
 for /f %%f in ('dir /ad /b "%APROJECTS%\deploy\Little Navconnect"') do rd /s /q "%APROJECTS%\deploy\Little Navconnect\%%f"
 rd /S /Q "%APROJECTS%\deploy\Little Navconnect"
 IF ERRORLEVEL 1 goto :err
-popd 
+popd
 
 rem ===========================================================================
 rem ========================== atools
@@ -115,6 +120,6 @@ echo **** ERROR ****
 
 popd
 
-pause 
+pause
 
 exit /b 1

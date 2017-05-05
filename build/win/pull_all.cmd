@@ -1,5 +1,7 @@
 @echo off
 
+rem === Pull from atools, littlenavconnect and littlenavmap repositories =============================
+
 pushd "%APROJECTS%\atools"
 C:\Git\bin\git pull --verbose  --tags
 IF ERRORLEVEL 1 goto :err
@@ -27,6 +29,6 @@ popd
 
 echo **** ERROR ****
 
-pause 
+pause
 
 exit /b 1
