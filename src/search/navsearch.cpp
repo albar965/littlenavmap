@@ -135,7 +135,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
 
-  append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).
+  append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Navaid\nType")).
          indexCondMap(navTypeCondMap).includesName()).
 
   append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap).includesName()).

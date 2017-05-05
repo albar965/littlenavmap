@@ -137,7 +137,7 @@ void MapPaintLayer::initMapLayerSettings()
   layers = new MapLayerSettings();
 
   // Create a default layer with all features enabled
-  MapLayer defLayer = MapLayer(0).airport().approach().approachText().airportName().airportIdent().
+  MapLayer defLayer = MapLayer(0).airport().approach().approachTextAndDetail().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
                       vor().ndb().waypoint().marker().ils().airway().
@@ -225,7 +225,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, VOR, NDB, airway
   append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false).
-         approachText(false).
+         approachTextAndDetail(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          waypoint(false).
          vorSymbolSize(12).
@@ -235,14 +235,14 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 4000, VOR
   append(defLayer.clone(200.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         approachText(false).
+         approachTextAndDetail(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false)).
 
   // airport > 4000
   append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         approachText(false).
+         approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -251,7 +251,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(750.f).airportSymbolSize(10).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
-         approachText(false).
+         approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
@@ -261,7 +261,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(1200.f).airportSymbolSize(10).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
-         approachText(false).
+         approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
@@ -274,7 +274,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
          minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
-         approach(false).approachText(false).
+         approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
@@ -285,7 +285,7 @@ void MapPaintLayer::initMapLayerSettings()
   // Make sure that there is always an layer
   append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
-         approach(false).approachText(false).
+         approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
