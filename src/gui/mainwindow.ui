@@ -82,7 +82,7 @@
     </property>
     <widget class="QMenu" name="menuViewOverlays">
      <property name="title">
-      <string>Map Overlays</string>
+      <string>&amp;Map Overlays</string>
      </property>
      <addaction name="actionMapOverlayOverview"/>
      <addaction name="actionMapOverlayCompass"/>
@@ -92,6 +92,8 @@
     <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
+    <addaction name="separator"/>
+    <addaction name="actionResetLayout"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -144,7 +146,7 @@
     </widget>
     <widget class="QMenu" name="menuAirspaces">
      <property name="title">
-      <string>Airspaces</string>
+      <string>Air&amp;spaces</string>
      </property>
      <addaction name="actionShowAirspaces"/>
     </widget>
@@ -3482,7 +3484,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Statusbar</string>
+    <string>&amp;Statusbar</string>
    </property>
    <property name="toolTip">
     <string>Show the statusbar</string>
@@ -5641,6 +5643,17 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan and flown track in GPS Exchange Format usable by Google Earth and many other Programs</string>
+   </property>
+  </action>
+  <action name="actionResetLayout">
+   <property name="text">
+    <string>&amp;Reset Window Layout</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset the window layout and all dock windows back to default</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset the window layout and all dock windows back to default</string>
    </property>
   </action>
  </widget>

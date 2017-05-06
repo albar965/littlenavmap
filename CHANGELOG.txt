@@ -1,3 +1,19 @@
+Version 1.4.0.beta
+
+* Added reset window layout menu item.
+* Small drawing and GUI fixes around procedures. Fixed overfly indication hidden by navaids. Size now adapted to navaid.
+* Fixed error selecting new mark from distance search which was placed on the wrong airport.
+* Updated included legend from online version.
+* Fixed update issues when changing units.
+* Updated help links for help buttons.
+* Fixes in procedure search, reset view and context menu.
+* Fixed drawing error in procedure curves when using offline maps.
+* Added new default startup layout with correctly placed toolbars. This triggery only when last version is 1.2.4.
+* Disabling all airspace menu items is airspace display is disabled.
+* Fixed wrongly placed text in profile.
+* Fixed name of ship icon resulting in invisible icon in some cases.
+* Improved leg sequencing when exiting holds.
+
 Version 1.3.7.develop
 
 * Now trying to match procedure runways to add-on airport runways. Procedure is tied to airport center if

@@ -363,7 +363,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
         atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) // Beginning of procedure
         )
       {
-        qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
+        // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
 
         // Use course and distance from last route leg to get to this point legs
         courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));

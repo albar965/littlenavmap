@@ -706,7 +706,7 @@ void ProfileWidget::updateTimeout()
   if(!widgetVisible || databaseLoadStatus)
     return;
 
-  qDebug() << "Profile update elevation timeout";
+  // qDebug() << Q_FUNC_INFO;
 
   // Terminate and wait for thread
   terminateThread();
@@ -730,7 +730,7 @@ void ProfileWidget::updateThreadFinished()
   if(!widgetVisible || databaseLoadStatus)
     return;
 
-  qDebug() << "Profile update finished";
+  // qDebug() << Q_FUNC_INFO;
 
   if(!terminateThreadSignal)
   {

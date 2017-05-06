@@ -602,7 +602,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
 
   processLegErrors(legs);
 
-  qDebug() << legs;
+  // qDebug() << legs;
 }
 
 void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs)

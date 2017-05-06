@@ -233,6 +233,7 @@ private:
   void weatherUpdateTimeout();
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
   void updateAirspaceTypes(map::MapAirspaceTypes types);
+  void resetWindowLayout();
 
   /* Original unchanged window title */
   QString mainWindowTitle;

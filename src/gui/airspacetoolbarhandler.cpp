@@ -45,7 +45,7 @@ void AirspaceToolBarHandler::allAirspacesToggled()
 void AirspaceToolBarHandler::updateAirspaceToolButtons()
 {
   map::MapAirspaceTypes types = NavApp::getShownMapAirspaces();
-  qDebug() << Q_FUNC_INFO << types;
+  // qDebug() << Q_FUNC_INFO << types;
 
   for(int i = 0; i < airspaceToolButtons.size(); i++)
   {
@@ -63,7 +63,7 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
 void AirspaceToolBarHandler::updateAirspaceToolActions()
 {
   map::MapAirspaceTypes types = NavApp::getShownMapAirspaces();
-  qDebug() << Q_FUNC_INFO << types;
+  // qDebug() << Q_FUNC_INFO << types;
 
   for(QAction *action : airspaceActions)
   {

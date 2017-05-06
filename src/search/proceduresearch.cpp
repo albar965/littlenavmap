@@ -1062,8 +1062,8 @@ QBitArray ProcedureSearch::saveTreeViewState()
       state.setBit(itemIdx, item->isExpanded()); // Fist bit in triple: expanded or not
       state.setBit(itemIdx + 1, selected); // Second bit: selection state
 
-      qDebug() << item->text(COL_DESCRIPTION) << item->text(COL_IDENT)
-               << "expanded" << item->isExpanded() << "selected" << item->isSelected() << "child" << item->childCount();
+      // qDebug() << item->text(COL_DESCRIPTION) << item->text(COL_IDENT)
+      // << "expanded" << item->isExpanded() << "selected" << item->isSelected() << "child" << item->childCount();
 
       for(int i = 0; i < item->childCount(); ++i)
         itemStack.append(item->child(i));

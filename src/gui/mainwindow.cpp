@@ -625,12 +625,13 @@ void MainWindow::connectAllSlots()
   connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
   connect(searchController->getAirportSearch(), &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(
-    searchController->getAirportSearch(), &AirportSearch::changeSearchMark, mapWidget,
-    &MapWidget::changeSearchMark);
+    searchController->getAirportSearch(), &AirportSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
   connect(searchController->getAirportSearch(), &AirportSearch::showApproaches,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+
+  connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
@@ -1608,9 +1609,9 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
 /* Selection in approach view has changed */
 void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
 {
-  qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
-           << "transitionId" << approachRef.transitionId
-           << "legId" << approachRef.legId;
+  // qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
+  // << "transitionId" << approachRef.transitionId
+  // << "legId" << approachRef.legId;
 
   map::MapAirport airport = NavApp::getMapQuery()->getAirportById(approachRef.airportId);
 
@@ -1643,9 +1644,9 @@ void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
 /* Selection in approach view has changed */
 void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
 {
-  qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
-           << "transitionId" << approachRef.transitionId
-           << "legId" << approachRef.legId;
+  // qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
+  // << "transitionId" << approachRef.transitionId
+  // << "legId" << approachRef.legId;
 
   if(approachRef.legId != -1)
   {
@@ -1900,6 +1901,14 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
 }
 
+void MainWindow::resetWindowLayout()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
+  restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)), lnm::MAINWINDOW_STATE_VERSION);
+}
+
 /* Read settings for all windows, docks, controller and manager classes */
 void MainWindow::restoreStateMain()
 {
@@ -1919,11 +1928,8 @@ void MainWindow::restoreStateMain()
       setWindowState(windowState() | Qt::WindowMaximized);
   }
   else
-  {
     // Use default state saved in application
-    const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
-    restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)), lnm::MAINWINDOW_STATE_VERSION);
-  }
+    resetWindowLayout();
 
   const QRect geo = QApplication::desktop()->availableGeometry(this);
 

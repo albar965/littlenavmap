@@ -94,9 +94,9 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "host" << ui->comboBoxConnectHostname->currentText();
 
-  qDebug() << "host cur index" << ui->comboBoxConnectHostname->currentIndex();
-  for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
-    qDebug() << "host list" << ui->comboBoxConnectHostname->itemText(i);
+  // qDebug() << "host cur index" << ui->comboBoxConnectHostname->currentIndex();
+  // for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
+  // qDebug() << "host list" << ui->comboBoxConnectHostname->itemText(i);
 
   if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
   {

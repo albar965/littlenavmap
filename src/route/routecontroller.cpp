@@ -564,7 +564,7 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   updateTableModel();
   NavApp::updateWindowTitle();
 
-  qDebug() << route;
+  // qDebug() << route;
 
   emit routeChanged(true);
 }
@@ -640,7 +640,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     qDebug() << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     newFlightplan.load(filename);
-    qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
+    // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
 
     // Convert altitude to local unit
     newFlightplan.setCruisingAltitude(
@@ -1548,7 +1548,7 @@ void RouteController::editUserWaypointName(int index)
 
 void RouteController::shownMapFeaturesChanged(map::MapObjectTypes types)
 {
-  qDebug() << Q_FUNC_INFO;
+  // qDebug() << Q_FUNC_INFO;
   route.setShownMapFeatures(types);
   route.setShownMapFeatures(types);
 }
