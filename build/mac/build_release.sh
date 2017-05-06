@@ -20,6 +20,7 @@ cd ${APROJECTS}/build-littlenavmap-release
 
 qmake ${APROJECTS}/littlenavmap/littlenavmap.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
 make -j2
+make copydata
 make deploy -i -l
 
 
