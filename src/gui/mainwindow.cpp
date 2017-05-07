@@ -1835,6 +1835,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(NavApp::getRoute().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
