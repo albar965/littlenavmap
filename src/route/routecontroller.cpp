@@ -246,15 +246,16 @@ void RouteController::tableCopyClipboard()
   NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
-QString RouteController::tableAsHtml(int iconSizePixel) const
+QString RouteController::flightplanTableAsHtml(int iconSizePixel) const
 {
   using atools::util::HtmlBuilder;
 
   HtmlBuilder html(true);
+  int minColWidth = view->horizontalHeader()->minimumSectionSize() + 1;
 
   // Header lines
-  html.h1(buildFlightplanLabel(false));
-  html.h2(buildFlightplanLabel2());
+  html.p(buildFlightplanLabel(true), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+  html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.table();
 
   // Table header
@@ -262,8 +263,11 @@ QString RouteController::tableAsHtml(int iconSizePixel) const
   html.tr(Qt::lightGray);
   html.th(QString()); // Icon
   for(int col = 0; col < model->columnCount(); col++)
-    html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
-            toString().replace("-\n", "-").replace("\n", " "), atools::util::html::NOBR);
+  {
+    if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
+      html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
+              toString().replace("-\n", "-").replace("\n", " "), atools::util::html::NOBR);
+  }
   html.trEnd();
 
   // Table content
@@ -272,33 +276,23 @@ QString RouteController::tableAsHtml(int iconSizePixel) const
     // First column is icon
     html.tr();
     const RouteLeg& routeLeg = route.at(row);
-    QIcon icon;
-    if(routeLeg.getMapObjectType() == map::AIRPORT)
-      icon = SymbolPainter(Qt::white).createAirportIcon(routeLeg.getAirport(), iconSizePixel);
-    else if(routeLeg.getMapObjectType() == map::WAYPOINT)
-      icon = SymbolPainter(Qt::white).createWaypointIcon(iconSizePixel);
-    else if(routeLeg.getMapObjectType() == map::VOR)
-      icon = SymbolPainter(Qt::white).createVorIcon(routeLeg.getVor(), iconSizePixel);
-    else if(routeLeg.getMapObjectType() == map::NDB)
-      icon = SymbolPainter(Qt::white).createNdbIcon(iconSizePixel);
-    else if(routeLeg.getMapObjectType() == map::USER)
-      icon = SymbolPainter(Qt::white).createUserpointIcon(iconSizePixel);
-    else if(routeLeg.getMapObjectType() == map::INVALID)
-      icon = SymbolPainter(Qt::white).createWaypointIcon(iconSizePixel, mapcolors::routeInvalidPointColor);
 
     html.td();
-    html.img(icon, QString(), QString(), QSize(iconSizePixel, iconSizePixel));
+    html.img(iconForLeg(routeLeg, iconSizePixel), QString(), QString(), QSize(iconSizePixel, iconSizePixel));
     html.tdEnd();
 
     // Rest of columns
     for(int col = 0; col < model->columnCount(); col++)
     {
-      QStandardItem *item = model->item(row, header->logicalIndex(col));
+      if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
+      {
+        QStandardItem *item = model->item(row, header->logicalIndex(col));
 
-      if(item != nullptr)
-        html.td(item->text().toHtmlEscaped());
-      else
-        html.td(QString());
+        if(item != nullptr)
+          html.td(item->text().toHtmlEscaped());
+        else
+          html.td(QString());
+      }
     }
     html.trEnd();
   }
@@ -2406,6 +2400,27 @@ void RouteController::createRouteLegsFromFlightplan()
   }
 }
 
+QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
+{
+  QIcon icon;
+  if(leg.getMapObjectType() == map::AIRPORT)
+    icon = symbolPainter->createAirportIcon(leg.getAirport(), size);
+  else if(leg.getVor().isValid())
+    icon = symbolPainter->createVorIcon(leg.getVor(), size);
+  else if(leg.getNdb().isValid())
+    icon = ndbIcon;
+  else if(leg.getWaypoint().isValid())
+    icon = waypointIcon;
+  else if(leg.getMapObjectType() == map::USER)
+    icon = userpointIcon;
+  else if(leg.getMapObjectType() == map::INVALID)
+    icon = invalidIcon;
+  else if(leg.isAnyProcedure())
+    icon = procedureIcon;
+
+  return icon;
+}
+
 /* Update table view model completely */
 void RouteController::updateTableModel()
 {
@@ -2426,23 +2441,7 @@ void RouteController::updateTableModel()
     const RouteLeg& leg = route.at(i);
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
 
-    QIcon icon;
-    if(leg.getMapObjectType() == map::AIRPORT)
-      icon = symbolPainter->createAirportIcon(leg.getAirport(), iconSize);
-    else if(leg.getVor().isValid())
-      icon = symbolPainter->createVorIcon(leg.getVor(), iconSize);
-    else if(leg.getNdb().isValid())
-      icon = ndbIcon;
-    else if(leg.getWaypoint().isValid())
-      icon = waypointIcon;
-    else if(leg.getMapObjectType() == map::USER)
-      icon = userpointIcon;
-    else if(leg.getMapObjectType() == map::INVALID)
-      icon = invalidIcon;
-    else if(leg.isAnyProcedure())
-      icon = procedureIcon;
-
-    QStandardItem *ident = new QStandardItem(icon, leg.getIdent());
+    QStandardItem *ident = new QStandardItem(iconForLeg(leg, iconSize), leg.getIdent());
     QFont f = ident->font();
     f.setBold(true);
     ident->setFont(f);
@@ -2810,8 +2809,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
         boldTextFlag << true;
         procedureText.append(sid);
 
-        if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType &
-           proc::PROCEDURE_ARRIVAL_ALL)
+        if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL)
         {
           boldTextFlag << false;
           procedureText.append(tr(". "));

@@ -1,5 +1,6 @@
 Version 1.4.0.beta
 
+* Now allowing simple customization of printed flight plan table.
 * Added reset window layout menu item.
 * Small drawing and GUI fixes around procedures. Fixed overfly indication hidden by navaids. Size now adapted to navaid.
 * Fixed error selecting new mark from distance search which was placed on the wrong airport.

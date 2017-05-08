@@ -207,7 +207,7 @@ void PrintSupport::createFlightplanDocuments()
     QFontMetricsF metrics(font);
 
     // Print the flight plan table
-    html.append(NavApp::getRouteController()->tableAsHtml(metrics.height()));
+    html.append(NavApp::getRouteController()->flightplanTableAsHtml(metrics.height()));
 
     addHeader(cursor);
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
