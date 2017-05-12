@@ -1000,7 +1000,7 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
 
 void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg& leg)
 {
-  bool invalid = leg.hasInvalidRef();
+  bool invalid = leg.hasErrorRef();
 
   for(int i = 0; i < item->columnCount(); i++)
   {
