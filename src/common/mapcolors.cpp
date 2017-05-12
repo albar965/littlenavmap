@@ -54,16 +54,23 @@ QColor distanceColor(Qt::black);
 /* Elevation profile colors and pens */
 QColor profileSkyColor(QColor(204, 204, 255));
 QColor profileSkyDarkColor(QColor(20, 20, 90));
-QColor profileBackgroundColor(Qt::white);
-
+QColor profileBackgroundColor(QColor(255, 255, 255));
 QColor profileBackgroundDarkColor(QColor(20, 20, 20));
-QColor profileLandColor(Qt::darkGreen);
-QColor profileLandOutlineColor(Qt::black);
+QColor profileLandColor(QColor(0, 128, 0));
+QColor profileLandDarkColor(QColor(0, 60, 0));
+QColor profileLabelColor(QColor(0, 0, 0));
+QColor profileLabelDarkColor(QColor(0, 0, 0));
 
+QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
+QPen profileLandOutlineDarkPen(Qt::black, 1, Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
+QPen profileWaypointLineDarkPen(Qt::darkGray, 1, Qt::SolidLine);
 QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine);
+QPen profileElevationScaleDarkPen(Qt::darkGray, 1, Qt::SolidLine);
 QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
+QPen profileSafeAltLineDarkPen(Qt::darkRed, 4, Qt::SolidLine);
 QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
+QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine);
 
 const QColor& colorForAirport(const map::MapAirport& ap)
 {
@@ -439,11 +446,19 @@ void syncColors()
   syncColor(colorSettings, "BackgroundColor", profileBackgroundColor);
   syncColor(colorSettings, "BackgroundDarkColor", profileBackgroundDarkColor);
   syncColor(colorSettings, "LandColor", profileLandColor);
-  syncColor(colorSettings, "LandOutlineColor", profileLandOutlineColor);
+  syncColor(colorSettings, "LandDarkColor", profileLandDarkColor);
+  syncColor(colorSettings, "LabelColor", profileLabelColor);
+  syncColor(colorSettings, "LabelDarkColor", profileLabelDarkColor);
+  syncPen(colorSettings, "LandOutlinePen", profileLandOutlinePen);
+  syncPen(colorSettings, "LandOutlineDarkPen", profileLandOutlineDarkPen);
   syncPen(colorSettings, "WaypointLinePen", profileWaypointLinePen);
+  syncPen(colorSettings, "WaypointLineDarkPen", profileWaypointLineDarkPen);
   syncPen(colorSettings, "ElevationScalePen", profileElevationScalePen);
+  syncPen(colorSettings, "ElevationScaleDarkPen", profileElevationScaleDarkPen);
   syncPen(colorSettings, "SafeAltLinePen", profileSafeAltLinePen);
+  syncPen(colorSettings, "SafeAltLineDarkPen", profileSafeAltLineDarkPen);
   syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
+  syncPen(colorSettings, "SafeAltLegLineDarkPen", profileSafeAltLegLineDarkPen);
   colorSettings.endGroup();
 
   // Sync airspace colors ============================================

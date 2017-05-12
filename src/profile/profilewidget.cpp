@@ -340,14 +340,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw the mountains
-  painter.setBrush(mapcolors::profileLandColor);
-  painter.setPen(mapcolors::profileLandOutlineColor);
+  painter.setBrush(darkStyle ? mapcolors::profileLandDarkColor : mapcolors::profileLandColor);
+  painter.setPen(darkStyle ? mapcolors::profileLandOutlineDarkPen : mapcolors::profileLandOutlinePen);
   painter.drawPolygon(landPolygon);
 
   // Draw grey vertical lines for waypoints
   int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * verticalScale);
   int flightplanTextY = flightplanY + 14;
-  painter.setPen(mapcolors::profileWaypointLinePen);
+  painter.setPen(darkStyle ? mapcolors::profileWaypointLineDarkPen : mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
 
@@ -367,23 +367,24 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw elevation scale line and texts
-  painter.setPen(mapcolors::profileElevationScalePen);
+  QPen scalePen = darkStyle ? mapcolors::profileElevationScaleDarkPen : mapcolors::profileElevationScalePen;
+  painter.setPen(scalePen);
   for(int y = Y0 + h, alt = 0; y > Y0; y -= step * tempScale, alt += step)
   {
     painter.drawLine(X0, y, X0 + static_cast<int>(w), y);
 
     int altTextY = std::min(y, Y0 + h - painter.fontMetrics().height() / 2);
     symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       mapcolors::profileElevationScalePen, X0 - 8, altTextY, textatt::BOLD | textatt::RIGHT, 0);
+                       scalePen, X0 - 8, altTextY, textatt::BOLD | textatt::RIGHT, 0);
 
     symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       mapcolors::profileElevationScalePen, X0 + w + 4, altTextY, textatt::BOLD | textatt::LEFT, 0);
+                       scalePen, X0 + w + 4, altTextY, textatt::BOLD | textatt::LEFT, 0);
   }
 
   const Route& route = routeController->getRoute();
 
   // Draw orange minimum safe altitude lines for each segment
-  painter.setPen(mapcolors::profileSafeAltLegLinePen);
+  painter.setPen(darkStyle ? mapcolors::profileSafeAltLegLineDarkPen : mapcolors::profileSafeAltLegLinePen);
   for(int i = 0; i < legList.elevationLegs.size(); i++)
   {
     if(waypointX.at(i) == waypointX.at(i + 1))
@@ -396,7 +397,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw the red minimum safe altitude line
-  painter.setPen(mapcolors::profileSafeAltLinePen);
+  painter.setPen(darkStyle ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen);
   int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
@@ -546,27 +547,29 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw text labels ========================================================
   // Safe altitude label
   symPainter.textBox(&painter, {Unit::altFeet(minSafeAltitudeFt)},
-                     QPen(Qt::red), X0 - 8, maxAltY, textatt::BOLD | textatt::RIGHT, 255);
+                     darkStyle ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen,
+                     X0 - 8, maxAltY, textatt::BOLD | textatt::RIGHT, 255);
 
   // Departure altitude label
+  QColor labelColor = darkStyle ? mapcolors::profileLabelDarkColor : mapcolors::profileLabelColor;
   float departureAlt = legList.route.first().getPosition().getAltitude();
   int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
   departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
   QString startAltStr = Unit::altFeet(departureAlt);
-  symPainter.textBox(&painter, {startAltStr}, QPen(Qt::black), X0 - 8, departureAltTextY,
+  symPainter.textBox(&painter, {startAltStr}, labelColor, X0 - 8, departureAltTextY,
                      textatt::BOLD | textatt::RIGHT, 255);
 
   // Destination altitude label
   int destinationAltTextY = Y0 + static_cast<int>(h - destAlt * verticalScale);
   destinationAltTextY = std::min(destinationAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
   QString destAltStr = Unit::altFeet(destAlt);
-  symPainter.textBox(&painter, {destAltStr}, QPen(Qt::black), X0 + w + 4, destinationAltTextY,
+  symPainter.textBox(&painter, {destAltStr}, labelColor, X0 + w + 4, destinationAltTextY,
                      textatt::BOLD | textatt::LEFT, 255);
 
   // Route cruise altitude
   float routeAlt = route.getFlightplan().getCruisingAltitude();
   symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
-                     QPen(Qt::black), X0 - 8, flightplanY, textatt::BOLD | textatt::RIGHT, 255);
+                     labelColor, X0 - 8, flightplanY, textatt::BOLD | textatt::RIGHT, 255);
 
   if(!NavApp::getRoute().isFlightplanEmpty())
   {
@@ -645,6 +648,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
+  // Dim the whole map
   if(OptionData::instance().isGuiStyleDark())
   {
     int dim = OptionData::instance().getGuiStyleMapDimming();

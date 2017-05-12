@@ -65,11 +65,19 @@ extern QColor profileSkyDarkColor;
 extern QColor profileBackgroundColor;
 extern QColor profileBackgroundDarkColor;
 extern QColor profileLandColor;
-extern QColor profileLandOutlineColor;
+extern QColor profileLandDarkColor;
+extern QColor profileLabelColor;
+extern QColor profileLabelDarkColor;
+extern QPen profileLandOutlinePen;
+extern QPen profileLandOutlineDarkPen;
 extern QPen profileWaypointLinePen;
+extern QPen profileWaypointLineDarkPen;
 extern QPen profileElevationScalePen;
+extern QPen profileElevationScaleDarkPen;
 extern QPen profileSafeAltLinePen;
+extern QPen profileSafeAltLineDarkPen;
 extern QPen profileSafeAltLegLinePen;
+extern QPen profileSafeAltLegLineDarkPen;
 
 // ==========================================================================
 /* General text pens */
