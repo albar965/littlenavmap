@@ -600,10 +600,10 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
     remarks.append(leg.remarks);
 
   if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
-    remarks.append(QObject::tr("Data error: Fix %1/%2 type %3 not found").
+    remarks.append(QObject::tr("Error: Fix %1/%2 type %3 not found").
                    arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
   if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
-    remarks.append(QObject::tr("Data error: Recommended fix %1/%2 type %3 not found").
+    remarks.append(QObject::tr("Error: Recommended fix %1/%2 type %3 not found").
                    arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
 
   return remarks.join(", ");

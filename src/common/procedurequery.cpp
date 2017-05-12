@@ -732,10 +732,20 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
     }
     else if(contains(type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
     {
-      atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
-                                 &leg.geometry);
-      leg.calculatedDistance = meterToNm(leg.calculatedDistance);
-      leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
+      if(leg.recFixPos.isValid())
+      {
+        atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
+                                   &leg.geometry);
+        leg.calculatedDistance = meterToNm(leg.calculatedDistance);
+        leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
+      }
+      else
+      {
+        leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
+        leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+        leg.geometry << leg.line.getPos1() << leg.line.getPos2();
+        qWarning() << "ARC_TO_FIX or CONSTANT_RADIUS_ARC has invalid recommended fix" << leg;
+      }
     }
     // ===========================================================
     else if(type == proc::COURSE_TO_FIX)

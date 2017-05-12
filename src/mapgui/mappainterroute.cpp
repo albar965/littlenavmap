@@ -423,11 +423,21 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
   // ===========================================================
   if(contains(leg.type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
   {
-    if(line.length() > 2)
+    if(line.length() > 2 && leg.recFixPos.isValid())
     {
       QPointF point = wToS(leg.recFixPos, size, &hiddenDummy);
       paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
     }
+    else
+    {
+      painter->drawLine(line);
+      lastLine = line;
+
+      if(drawTextLines != nullptr)
+        // Can draw a label along the line
+        (*drawTextLines)[index] = {leg.line, showDistance, true};
+    }
+
     lastLine = line;
   }
   // ===========================================================
