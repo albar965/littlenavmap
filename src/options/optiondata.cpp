@@ -57,5 +57,3 @@ OptionData& OptionData::instanceInternal()
 
   return *optionData;
 }
-
-

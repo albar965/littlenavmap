@@ -585,10 +585,9 @@ void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
 
   if(adjustRouteAltitude && minAltitude > 0 && !route.isEmpty())
   {
-    if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
+    if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
       // Apply simplified east/west rule
-      minAltitude = adjustAltitude(route.first().getPosition(), route.last().getPosition(),
-                                   route.getFlightplan(), minAltitude);
+      minAltitude = adjustAltitude(minAltitude);
     route.getFlightplan().setCruisingAltitude(minAltitude);
 
     if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
@@ -1078,7 +1077,7 @@ void RouteController::adjustFlightplanAltitude()
     return;
 
   Flightplan& fp = route.getFlightplan();
-  int alt = adjustAltitude(fp.getDeparturePosition(), fp.getDestinationPosition(), fp, fp.getCruisingAltitude());
+  int alt = adjustAltitude(fp.getCruisingAltitude());
 
   if(alt != fp.getCruisingAltitude())
   {
@@ -1099,38 +1098,61 @@ void RouteController::adjustFlightplanAltitude()
   }
 }
 
-/* Apply simplified east/west rule */
-int RouteController::adjustAltitude(const Pos& departurePos, const Pos& destinationPos,
-                                    const Flightplan& flightplan, int minAltitude)
+/* Apply simplified east/west or north/south rule */
+int RouteController::adjustAltitude(int minAltitude)
 {
-  float fpDir = departurePos.angleDegToRhumb(destinationPos);
-
-  if(fpDir < Pos::INVALID_VALUE)
+  if(route.size() > 1)
   {
-    qDebug() << Q_FUNC_INFO << "minAltitude" << minAltitude << "fp dir" << fpDir;
+    const Pos& departurePos = route.first().getPosition();
+    const Pos& destinationPos = route.last().getPosition();
 
-    if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
-    {
-      if(fpDir >= 0.f && fpDir <= 180.f)
-        // General direction is east - round up to the next odd value
-        minAltitude =
-          static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
-      else
-        // General direction is west - round up to the next even value
-        minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
-    }
-    else
-    {
-      if(fpDir >= 0.f && fpDir <= 180.f)
-        // General direction is east - round up to the next odd value + 500
-        minAltitude =
-          static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
-      else
-        // General direction is west - round up to the next even value + 500
-        minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
-    }
+    float magvar = 0.f;
+    if(!route.isTrueCourse())
+      magvar = (route.first().getMagvar() + route.last().getMagvar()) / 2;
 
-    qDebug() << "corrected minAltitude" << minAltitude;
+    float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
+
+    if(fpDir < Pos::INVALID_VALUE)
+    {
+      qDebug() << Q_FUNC_INFO << "minAltitude" << minAltitude << "fp dir" << fpDir;
+
+      // East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans
+      // and nearest even thousand feet for westward flight plans.
+      // North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans
+      // and nearest even thousand feet for northward flight plans.
+
+      // In Italy, France and Portugal, for example, southbound traffic uses odd flight levels;
+      // in New Zealand, southbound traffic uses even flight levels.
+
+      bool odd = false;
+      if(OptionData::instance().getAltitudeRuleType() == opts::EAST_WEST)
+        odd = fpDir >= 0.f && fpDir <= 180.f;
+      else if(OptionData::instance().getAltitudeRuleType() == opts::NORTH_SOUTH)
+        odd = fpDir >= 90.f && fpDir <= 270.f;
+      else if(OptionData::instance().getAltitudeRuleType() == opts::SOUTH_NORTH)
+        odd = !(fpDir >= 90.f && fpDir <= 270.f);
+
+      if(route.getFlightplan().getFlightplanType() == atools::fs::pln::IFR)
+      {
+        if(odd)
+          // round up to the next odd value
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+        else
+          // round up to the next even value
+          minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
+      }
+      else
+      {
+        if(odd)
+          // round up to the next odd value + 500
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
+        else
+          // round up to the next even value + 500
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
+      }
+
+      qDebug() << "corrected minAltitude" << minAltitude;
+    }
   }
   return minAltitude;
 }

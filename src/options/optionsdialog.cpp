@@ -228,6 +228,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsGuiAvoidOverwrite);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
   widgets.append(ui->checkBoxOptionsRouteEastWestRule);
+  widgets.append(ui->comboBoxOptionsRouteAltitudeRuleType);
   widgets.append(ui->checkBoxOptionsRoutePreferNdb);
   widgets.append(ui->checkBoxOptionsRoutePreferVor);
   widgets.append(ui->checkBoxOptionsStartupLoadKml);
@@ -817,7 +818,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
-  toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_EAST_WEST_RULE);
+  toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
   toFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
   toFlags(ui->checkBoxOptionsRoutePreferVor, opts::ROUTE_PREFER_VOR);
   toFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
@@ -901,6 +902,7 @@ void OptionsDialog::widgetsToOptionData()
   data.unitVertSpeed = static_cast<opts::UnitVertSpeed>(ui->comboBoxOptionsUnitVertSpeed->currentIndex());
   data.unitCoords = static_cast<opts::UnitCoords>(ui->comboBoxOptionsUnitCoords->currentIndex());
   data.unitFuelWeight = static_cast<opts::UnitFuelAndWeight>(ui->comboBoxOptionsUnitFuelWeight->currentIndex());
+  data.altitudeRuleType = static_cast<opts::AltitudeRule>(ui->comboBoxOptionsRouteAltitudeRuleType->currentIndex());
 
   data.valid = true;
 }
@@ -926,7 +928,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   fromFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
-  fromFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_EAST_WEST_RULE);
+  fromFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
   fromFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
   fromFlags(ui->checkBoxOptionsRoutePreferVor, opts::ROUTE_PREFER_VOR);
   fromFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
@@ -1020,6 +1022,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->comboBoxOptionsUnitVertSpeed->setCurrentIndex(data.unitVertSpeed);
   ui->comboBoxOptionsUnitCoords->setCurrentIndex(data.unitCoords);
   ui->comboBoxOptionsUnitFuelWeight->setCurrentIndex(data.unitFuelWeight);
+  ui->comboBoxOptionsRouteAltitudeRuleType->setCurrentIndex(data.altitudeRuleType);
 }
 
 /* Add flag from checkbox to OptionData flags */

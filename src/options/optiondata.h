@@ -63,7 +63,7 @@ enum Flag
 
   /* East/west rule for flight plan calculation.
    * ui->checkBoxOptionsRouteEastWestRule */
-  ROUTE_EAST_WEST_RULE = 1 << 9,
+  ROUTE_ALTITUDE_RULE = 1 << 9,
 
   /* Start airway route at NDB.
    * ui->checkBoxOptionsRoutePreferNdb */
@@ -180,6 +180,14 @@ enum SimUpdateRate
   FAST,
   MEDIUM,
   LOW
+};
+
+/* Altitude rule for rounding up flight plan crusie altitude */
+enum AltitudeRule
+{
+  EAST_WEST,
+  NORTH_SOUTH, /* in Italy, France and Portugal, for example, southbound traffic uses odd flight levels */
+  SOUTH_NORTH /* in New Zealand, southbound traffic uses even flight levels */
 };
 
 /* comboBoxOptionsUnitDistance */
@@ -538,6 +546,11 @@ public:
     return cacheOfflineElevationPath;
   }
 
+  opts::AltitudeRule getAltitudeRuleType() const
+  {
+    return altitudeRuleType;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -558,7 +571,7 @@ private:
     opts::MAP_EMPTY_AIRPORTS |
     // opts::ROUTE_PREFER_NDB |
     // opts::ROUTE_PREFER_VOR |
-    opts::ROUTE_EAST_WEST_RULE |
+    opts::ROUTE_ALTITUDE_RULE |
     opts::WEATHER_INFO_ACTIVESKY |
     opts::WEATHER_INFO_NOAA |
     opts::WEATHER_INFO_VATSIM |
@@ -664,6 +677,9 @@ private:
 
   // comboBoxOptionsUnitVertFuel
   opts::UnitFuelAndWeight unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
+
+  // comboBoxOptionsRouteAltitudeRuleType
+  opts::AltitudeRule altitudeRuleType = opts::EAST_WEST;
 
   // spinBoxOptionsDisplayTextSizeAircraftAi
   int displayTextSizeAircraftAi = 100;

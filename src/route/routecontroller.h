@@ -301,8 +301,7 @@ private:
 
   void clearRoute();
 
-  int adjustAltitude(const atools::geo::Pos& departurePos, const atools::geo::Pos& destinationPos,
-                     const atools::fs::pln::Flightplan& flightplan, int minAltitude);
+  int adjustAltitude(int minAltitude);
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
