@@ -546,7 +546,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isAirway())
+  if(mapLayer->isAirwayWaypoint())
   {
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {

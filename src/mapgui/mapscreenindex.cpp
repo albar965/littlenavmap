@@ -118,12 +118,13 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBo
       if((airway.type == map::VICTOR && !showVictor) || (airway.type == map::JET && !showJet))
         continue;
 
-      Marble::GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
-                                         airway.bounding.getEast(), airway.bounding.getWest(),
+      const Rect& bnd = airway.bounding;
+      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(),
                                          Marble::GeoDataCoordinates::Degree);
 
       if(airwaybox.intersects(curBox))
       {
+        qDebug() << airway.name;
         // Airway segment intersects with view rectangle
         float distanceMeter = airway.from.distanceMeterTo(airway.to);
         // Approximate the needed number of line segments

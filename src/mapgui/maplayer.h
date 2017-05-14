@@ -141,6 +141,7 @@ public:
 
   /* Airway options (Jet and Victor airways are filtered out in the paint method) */
   MapLayer& airway(bool value = true);
+  MapLayer& airwayWaypoint(bool value = true);
   MapLayer& airwayIdent(bool value = true);
   MapLayer& airwayInfo(bool value = true);
 
@@ -348,6 +349,11 @@ public:
     return layerAirway;
   }
 
+  bool isAirwayWaypoint() const
+  {
+    return layerAirwayWaypoint;
+  }
+
   bool isAirwayIdent() const
   {
     return layerAirwayIdent;
@@ -466,7 +472,7 @@ private:
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
        layerMarker = false, layerMarkerInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false,
-       layerAirway = false, layerAirwayIdent = false, layerAirwayInfo = false;
+       layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false, layerAirwayInfo = false;
 
   bool layerAirportRouteInfo = false;
   bool layerVorRouteIdent = false, layerVorRouteInfo = false;

@@ -138,8 +138,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
         rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + ils.width / 2.f;
 
       // get an approximation of the ILS length
-      int featherLen =
-        static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
+      int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
 
       if(featherLen > MIN_LENGHT_FOR_TEXT)
       {

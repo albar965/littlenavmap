@@ -68,6 +68,9 @@ void MapPainterAirspace::render(PaintContext *context)
 
       if(context->viewportRect.overlaps(airspace.bounding))
       {
+        if(context->objCount())
+          return;
+
         Marble::GeoDataLinearRing linearRing;
         linearRing.setTessellate(true);
 

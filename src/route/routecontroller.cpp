@@ -999,6 +999,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
   Pos departurePos = route.getStartAfterProcedure().getPosition();
   Pos destinationPos = route.getDestinationBeforeProcedure().getPosition();
+
+
   bool found = routeFinder->calculateRoute(departurePos, destinationPos, altitude);
 
   if(found)

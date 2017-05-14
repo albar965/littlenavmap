@@ -297,6 +297,12 @@ MapLayer& MapLayer::airway(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airwayWaypoint(bool value)
+{
+  layerAirwayWaypoint = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airwayIdent(bool value)
 {
   layerAirwayIdent = value;

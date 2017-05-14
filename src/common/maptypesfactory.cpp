@@ -345,8 +345,14 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway
                     record.valueFloat("from_laty"));
   airway.to = Pos(record.valueFloat("to_lonx"),
                   record.valueFloat("to_laty"));
-  airway.bounding = Rect(airway.from);
-  airway.bounding.extend(airway.to);
+
+  float north = std::max(airway.from.getLatY(), airway.to.getLatY());
+  float south = std::min(airway.from.getLatY(), airway.to.getLatY());
+  float east = std::max(airway.from.getLonX(), airway.to.getLonX());
+  float west = std::min(airway.from.getLonX(), airway.to.getLonX());
+  if(east - west > 180.f)
+    std::swap(east, west);
+  airway.bounding = Rect(west, north, east, south);
 }
 
 void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker)

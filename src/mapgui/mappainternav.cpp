@@ -57,7 +57,7 @@ void MapPainterNav::render(PaintContext *context)
 
   context->szFont(context->textSizeNavaid);
 
-  if(drawAirway)
+  if(drawAirway && !context->isOverflow())
   {
     // Draw airway lines
     const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer,
@@ -68,7 +68,7 @@ void MapPainterNav::render(PaintContext *context)
 
   // Waypoints -------------------------------------------------
   bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
-  if(drawWaypoint || drawAirway)
+  if((drawWaypoint || drawAirway) && !context->isOverflow())
   {
     // If airways are drawn we also have to go through waypoints
     const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, context->lazyUpdate);
@@ -77,7 +77,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // VOR -------------------------------------------------
-  if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR))
+  if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isOverflow())
   {
     const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, context->lazyUpdate);
     if(vors != nullptr)
@@ -85,7 +85,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // NDB -------------------------------------------------
-  if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB))
+  if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB) && !context->isOverflow())
   {
     const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, context->lazyUpdate);
     if(ndbs != nullptr)
@@ -93,7 +93,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // Marker -------------------------------------------------
-  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS))
+  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS) && !context->isOverflow())
   {
     const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, context->lazyUpdate);
     if(markers != nullptr)
@@ -135,9 +135,16 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     bool visible1 = wToS(airway.from, x1, y1);
     bool visible2 = wToS(airway.to, x2, y2);
 
-    if(!visible1 && !visible2)
-      // Check bounding rect for visibility
-      visible1 = airway.bounding.overlaps(context->viewportRect);
+    if(!visible1 && !visible2) // Check bounding rect for visibility
+    {
+      const Rect& bnd = airway.bounding;
+      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(),
+                                         Marble::GeoDataCoordinates::Degree);
+
+      visible1 = airwaybox.intersects(context->viewport->viewLatLonAltBox());
+
+      qDebug() << airway.name;
+    }
 
     if(visible1 || visible2)
     {
@@ -231,8 +238,8 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints,
                                    bool drawWaypoint, bool drawFast)
 {
-  bool drawAirwayV = context->mapLayer->isAirway() && context->objectTypes.testFlag(map::AIRWAYV);
-  bool drawAirwayJ = context->mapLayer->isAirway() && context->objectTypes.testFlag(map::AIRWAYJ);
+  bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
+  bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
 
   for(const MapWaypoint& waypoint : *waypoints)
   {
