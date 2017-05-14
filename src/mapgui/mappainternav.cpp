@@ -142,8 +142,6 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
                                          Marble::GeoDataCoordinates::Degree);
 
       visible1 = airwaybox.intersects(context->viewport->viewLatLonAltBox());
-
-      qDebug() << airway.name;
     }
 
     if(visible1 || visible2)

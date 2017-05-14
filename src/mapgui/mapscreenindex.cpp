@@ -124,7 +124,6 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBo
 
       if(airwaybox.intersects(curBox))
       {
-        qDebug() << airway.name;
         // Airway segment intersects with view rectangle
         float distanceMeter = airway.from.distanceMeterTo(airway.to);
         // Approximate the needed number of line segments
