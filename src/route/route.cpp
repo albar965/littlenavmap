@@ -1056,20 +1056,30 @@ int Route::getNearestRouteLegResult(const atools::geo::Pos& pos,
 
 const RouteLeg& Route::getStartAfterProcedure() const
 {
-  if(hasAnyDepartureProcedure())
-    return at(departureLegsOffset + departureLegs.size() - 1);
-  else
-    return first();
+  return at(getStartIndexAfterProcedure());
 }
 
 const RouteLeg& Route::getDestinationBeforeProcedure() const
 {
-  if(hasAnyStarProcedure())
-    return at(starLegsOffset);
-  else if(hasAnyArrivalProcedure())
-    return at(arrivalLegsOffset);
+  return at(getDestinationIndexBeforeProcedure());
+}
 
-  return last();
+int Route::getStartIndexAfterProcedure() const
+{
+  if(hasAnyDepartureProcedure())
+    return departureLegsOffset + departureLegs.size() - 1;
+  else
+    return 0;
+}
+
+int Route::getDestinationIndexBeforeProcedure() const
+{
+  if(hasAnyStarProcedure())
+    return starLegsOffset;
+  else if(hasAnyArrivalProcedure())
+    return arrivalLegsOffset;
+  else
+    return size() - 1;
 }
 
 void Route::removeDuplicateRouteLegs()
@@ -1122,6 +1132,17 @@ void Route::removeDuplicateRouteLegs()
         removeAt(offset + 1);
         flightplan.getEntries().removeAt(offset + 1);
       }
+    }
+  }
+
+  for(int i = size() - 1; i > 0; i--)
+  {
+    const RouteLeg& leg1 = at(i - 1);
+    const RouteLeg& leg2 = at(i);
+    if(leg1.isRoute() && leg2.isRoute() && leg1.isNavaidEqualTo(leg2))
+    {
+      removeAt(i);
+      flightplan.getEntries().removeAt(i);
     }
   }
 }

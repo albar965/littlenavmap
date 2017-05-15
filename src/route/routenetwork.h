@@ -56,7 +56,7 @@ enum NodeType
   NONE = 0,
   VOR = 1, /* Type or subtype for an airway waypoint */
   VORDME = 2, /* Type or subtype for an airway waypoint */
-  DME = 3, /* Type or subtype for an airway waypoint */
+  // DME = 3, DME and TACAN are not part of the network
   NDB = 4, /* Type or subtype for an airway waypoint */
   WAYPOINT_VICTOR = 5, /* Airway waypoint */
   WAYPOINT_JET = 6, /* Airway waypoint */

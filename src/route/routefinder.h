@@ -94,9 +94,6 @@ private:
   /* Try to avoid VORs (no DME) */
   static Q_DECL_CONSTEXPR float COST_FACTOR_VOR = 1.2f;
 
-  /* Avoid DMEs */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_DME = 4.f;
-
   /* Avoid too long airway segments */
   static Q_DECL_CONSTEXPR float COST_FACTOR_LONG_AIRWAY = 1.2f;
 

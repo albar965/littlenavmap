@@ -171,16 +171,20 @@ public:
   void calculateDirect();
 
   /* Calculate a flight plan from radio navaid to radio navaid */
+  void calculateRadionav(int fromIndex, int toIndex);
   void calculateRadionav();
 
   /* Calculate a flight plan along high altitude (Jet) airways */
+  void calculateHighAlt(int fromIndex, int toIndex);
   void calculateHighAlt();
 
   /* Calculate a flight plan along low altitude (Victor) airways */
+  void calculateLowAlt(int fromIndex, int toIndex);
   void calculateLowAlt();
 
   /* Calculate a flight plan along low and high altitude airways that have the given altitude from
    *  the spin box as minimum altitude */
+  void calculateSetAlt(int fromIndex, int toIndex);
   void calculateSetAlt();
 
   /* Reverse order of all waypoints, swap departure and destination and automatically
@@ -305,7 +309,7 @@ private:
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
-                              bool fetchAirways, bool useSetAltitude);
+                              bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex);
 
   void updateModelRouteTime();
 

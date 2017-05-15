@@ -543,7 +543,6 @@ bool RouteNetwork::testType(nw::NodeType type)
     case nw::NDB:
     case nw::VOR:
     case nw::VORDME:
-    case nw::DME:
       return mode & ROUTE_RADIONAV;
 
     case nw::DEPARTURE:

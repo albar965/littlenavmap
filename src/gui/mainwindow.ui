@@ -5656,6 +5656,66 @@
     <string>Reset the window layout and all dock windows back to default</string>
    </property>
   </action>
+  <action name="actionRouteCalcHighAltSelected">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate &amp;high Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate a high altitude (Jet airways) between selected legs</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a high altitude (Jet airways) between selected legs</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcLowAltSelected">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate &amp;low Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate a low altitude (Victor airways) flight plan between selected legs</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a low altitude (Victor airways) flight plan between selected legs</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcRadionavSelected">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate Radio&amp;nav</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate a radio navaid (VOR and NDB) flight plan between selected legs</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a radio navaid (VOR and NDB) flight plan between selected legs</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcSetAltSelected">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Calculate based on given &amp;Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate flight plan based on given altitude using Victor or Jet airways between selected legs</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate flight plan based on given altitude using Victor or Jet airways between selected legs</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

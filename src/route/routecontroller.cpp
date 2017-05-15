@@ -912,7 +912,7 @@ void RouteController::beforeRouteCalc()
   emit preRouteCalc();
 }
 
-void RouteController::calculateRadionav()
+void RouteController::calculateRadionav(int fromIndex, int toIndex)
 {
   qDebug() << "calculateRadionav";
   // Changing mode might need a clear
@@ -921,13 +921,19 @@ void RouteController::calculateRadionav()
   RouteFinder routeFinder(routeNetworkRadio);
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"),
-                            false /* fetch airways */, false /* Use altitude */))
+                            false /* fetch airways */, false /* Use altitude */,
+                            fromIndex, toIndex))
     NavApp::setStatusMessage(tr("Calculated radio navaid flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
 }
 
-void RouteController::calculateHighAlt()
+void RouteController::calculateRadionav()
+{
+  calculateRadionav(-1, -1);
+}
+
+void RouteController::calculateHighAlt(int fromIndex, int toIndex)
 {
   qDebug() << "calculateHighAlt";
   routeNetworkAirway->setMode(nw::ROUTE_JET);
@@ -936,13 +942,19 @@ void RouteController::calculateHighAlt()
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALTITUDE,
                             tr("High altitude Flight Plan Calculation"),
-                            true /* fetch airways */, false /* Use altitude */))
+                            true /* fetch airways */, false /* Use altitude */,
+                            fromIndex, toIndex))
     NavApp::setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
 }
 
-void RouteController::calculateLowAlt()
+void RouteController::calculateHighAlt()
+{
+  calculateHighAlt(-1, -1);
+}
+
+void RouteController::calculateLowAlt(int fromIndex, int toIndex)
 {
   qDebug() << "calculateLowAlt";
   routeNetworkAirway->setMode(nw::ROUTE_VICTOR);
@@ -951,13 +963,19 @@ void RouteController::calculateLowAlt()
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
                             tr("Low altitude Flight Plan Calculation"),
-                            /* fetch airways */ true, false /* Use altitude */))
+                            /* fetch airways */ true, false /* Use altitude */,
+                            fromIndex, toIndex))
     NavApp::setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
 }
 
-void RouteController::calculateSetAlt()
+void RouteController::calculateLowAlt()
+{
+  calculateLowAlt(-1, -1);
+}
+
+void RouteController::calculateSetAlt(int fromIndex, int toIndex)
 {
   qDebug() << "calculateSetAlt";
   routeNetworkAirway->setMode(nw::ROUTE_VICTOR | nw::ROUTE_JET);
@@ -966,23 +984,31 @@ void RouteController::calculateSetAlt()
 
   // Just decide by given altiude if this is a high or low plan
   atools::fs::pln::RouteType type;
-  if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
+  if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000.f))
     type = atools::fs::pln::HIGH_ALTITUDE;
   else
     type = atools::fs::pln::LOW_ALTITUDE;
 
   if(calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"),
-                            true /* fetch airways */, true /* Use altitude */))
+                            true /* fetch airways */, true /* Use altitude */,
+                            fromIndex, toIndex))
     NavApp::setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
   else
     NavApp::setStatusMessage(tr("No route found."));
 }
 
+void RouteController::calculateSetAlt()
+{
+  calculateSetAlt(-1, -1);
+}
+
 /* Calculate a flight plan to all types */
 bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                                              const QString& commandName, bool fetchAirways,
-                                             bool useSetAltitude)
+                                             bool useSetAltitude, int fromIndex, int toIndex)
 {
+  bool calcRange = fromIndex != -1 && toIndex != -1;
+
   // Create wait cursor if calculation takes too long
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -997,10 +1023,23 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
 
-  Pos departurePos = route.getStartAfterProcedure().getPosition();
-  Pos destinationPos = route.getDestinationBeforeProcedure().getPosition();
+  Pos departurePos, destinationPos;
 
+  if(calcRange)
+  {
+    fromIndex = std::max(route.getStartIndexAfterProcedure(), fromIndex);
+    toIndex = std::min(route.getDestinationIndexBeforeProcedure(), toIndex);
 
+    departurePos = route.at(fromIndex).getPosition();
+    destinationPos = route.at(toIndex).getPosition();
+  }
+  else
+  {
+    departurePos = route.getStartAfterProcedure().getPosition();
+    destinationPos = route.getDestinationBeforeProcedure().getPosition();
+  }
+
+  // Calculate the route
   bool found = routeFinder->calculateRoute(departurePos, destinationPos, altitude);
 
   if(found)
@@ -1026,9 +1065,13 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       QList<FlightplanEntry>& entries = flightplan.getEntries();
 
       flightplan.setRouteType(type);
-      // Erase all but start and destination
-      entries.erase(flightplan.getEntries().begin() + 1, entries.end() - 1);
+      if(calcRange)
+        entries.erase(flightplan.getEntries().begin() + fromIndex + 1, flightplan.getEntries().begin() + toIndex);
+      else
+        // Erase all but start and destination
+        entries.erase(flightplan.getEntries().begin() + 1, entries.end() - 1);
 
+      int idx = 1;
       // Create flight plan entries - will be copied later to the route map objects
       for(const rf::RouteEntry& routeEntry : calculatedRoute)
       {
@@ -1038,13 +1081,25 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
         if(fetchAirways && routeEntry.airwayId != -1)
           // Get airway by id - needed to fetch the name first
           updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEntry);
-        entries.insert(entries.end() - 1, flightplanEntry);
+
+        if(calcRange)
+          entries.insert(flightplan.getEntries().begin() + fromIndex + idx, flightplanEntry);
+        else
+          entries.insert(entries.end() - 1, flightplanEntry);
+        idx++;
       }
 
+      // Remove procedure points from flight plan
+      flightplan.removeNoSaveEntries();
+
+      // Copy flight plan to route object
       createRouteLegsFromFlightplan();
+
+      // Reload procedures from properties
       loadProceduresFromFlightplan(true /* quiet */);
       QGuiApplication::restoreOverrideCursor();
 
+      // Remove duplicates in flight plan and route
       route.removeDuplicateRouteLegs();
       route.updateAll();
       updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */);
@@ -1300,7 +1355,6 @@ void RouteController::updateMoveAndDeleteActions()
   QItemSelectionModel *sm = view->selectionModel();
   if(sm->hasSelection() && model->rowCount() > 0)
   {
-
     bool containsProc = false, moveDownTouchesProc = false, moveUpTouchesProc = false;
     QList<int> rows;
     selectedRows(rows, false);
@@ -1401,7 +1455,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(index.isValid())
     routeLeg = &route.at(index.row());
 
-  // Menu above a row
+  QMenu calcMenu(tr("Calculate for &selected legs"));
+  QMenu menu;
 
   updateMoveAndDeleteActions();
 
@@ -1410,6 +1465,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
                                           !NavApp::getMapWidget()->getRangeRings().isEmpty());
 
+  // Menu above a row
   if(routeLeg != nullptr)
   {
     ui->actionRouteShowInformation->setEnabled(routeLeg->isValid() &&
@@ -1441,6 +1497,23 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionSearchSetMark->setEnabled(false);
   }
 
+  // Get selected rows in ascending order
+  QList<int> rows;
+  selectedRows(rows, false);
+
+  // Check if selected rows contain a procedure or if a procedure is between first and last selection
+  bool containsProc = false;
+  if(!rows.isEmpty())
+    containsProc = route.at(rows.first()).isAnyProcedure() || route.at(rows.last()).isAnyProcedure();
+
+  bool enableCalc = routeLeg != nullptr && rows.size() > 1 && !containsProc;
+
+  calcMenu.setEnabled(enableCalc);
+  ui->actionRouteCalcRadionavSelected->setEnabled(enableCalc);
+  ui->actionRouteCalcHighAltSelected->setEnabled(enableCalc);
+  ui->actionRouteCalcLowAltSelected->setEnabled(enableCalc);
+  ui->actionRouteCalcSetAltSelected->setEnabled(enableCalc);
+
   ui->actionMapNavaidRange->setEnabled(false);
 
   ui->actionSearchTableSelectNothing->setEnabled(view->selectionModel()->hasSelection());
@@ -1464,7 +1537,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
   }
 
-  QMenu menu;
   menu.addAction(ui->actionRouteShowInformation);
   menu.addAction(ui->actionRouteShowApproaches);
   menu.addAction(ui->actionRouteShowOnMap);
@@ -1475,6 +1547,13 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteLegDown);
   menu.addAction(ui->actionRouteDeleteLeg);
   menu.addAction(ui->actionMapEditUserWaypoint);
+  menu.addSeparator();
+
+  calcMenu.addAction(ui->actionRouteCalcRadionavSelected);
+  calcMenu.addAction(ui->actionRouteCalcHighAltSelected);
+  calcMenu.addAction(ui->actionRouteCalcLowAltSelected);
+  calcMenu.addAction(ui->actionRouteCalcSetAltSelected);
+  menu.addMenu(&calcMenu);
   menu.addSeparator();
 
   menu.addAction(ui->actionMapRangeRings);
@@ -1536,7 +1615,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
       editUserWaypointName(index.row());
     else if(action == ui->actionRouteActivateLeg)
       activateLegManually(index.row());
-
+    else if(action == ui->actionRouteCalcRadionavSelected)
+      calculateRadionav(rows.first(), rows.last());
+    else if(action == ui->actionRouteCalcHighAltSelected)
+      calculateHighAlt(rows.first(), rows.last());
+    else if(action == ui->actionRouteCalcLowAltSelected)
+      calculateLowAlt(rows.first(), rows.last());
+    else if(action == ui->actionRouteCalcSetAltSelected)
+      calculateSetAlt(rows.first(), rows.last());
     // Other actions emit signals directly
   }
 }

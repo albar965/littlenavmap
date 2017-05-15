@@ -638,8 +638,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(
-    searchController->getNavSearch(), &NavSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(searchController->getNavSearch(), &NavSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(searchController->getNavSearch(), &NavSearch::showInformation,
           infoController, &InfoController::showInformation);
 
@@ -685,10 +684,15 @@ void MainWindow::connectAllSlots()
 
   // Flight plan calculation
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
-  connect(ui->actionRouteCalcRadionav, &QAction::triggered, routeController, &RouteController::calculateRadionav);
-  connect(ui->actionRouteCalcHighAlt, &QAction::triggered, routeController, &RouteController::calculateHighAlt);
-  connect(ui->actionRouteCalcLowAlt, &QAction::triggered, routeController, &RouteController::calculateLowAlt);
-  connect(ui->actionRouteCalcSetAlt, &QAction::triggered, routeController, &RouteController::calculateSetAlt);
+
+  connect(ui->actionRouteCalcRadionav, &QAction::triggered,
+          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateRadionav));
+  connect(ui->actionRouteCalcHighAlt, &QAction::triggered,
+          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateHighAlt));
+  connect(ui->actionRouteCalcLowAlt, &QAction::triggered,
+          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateLowAlt));
+  connect(ui->actionRouteCalcSetAlt, &QAction::triggered,
+          routeController, static_cast<void (RouteController::*)()>(&RouteController::calculateSetAlt));
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
 
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
@@ -767,16 +771,12 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
 
-  connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget,
-          &ProfileWidget::updateProfileShowFeatures);
-  connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget,
-          &ProfileWidget::updateProfileShowFeatures);
+  connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
+  connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
 
   // Order is important here. First let the mapwidget delete the track then notify the profile
-  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, mapWidget,
-          &MapWidget::deleteAircraftTrack);
-  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, profileWidget,
-          &ProfileWidget::deleteAircraftTrack);
+  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, mapWidget, &MapWidget::deleteAircraftTrack);
+  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, profileWidget, &ProfileWidget::deleteAircraftTrack);
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
@@ -792,27 +792,20 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 
-  connect(routeController, &RouteController::routeSelectionChanged,
-          this, &MainWindow::routeSelectionChanged);
+  connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
   connect(searchController->getAirportSearch(), &SearchBaseTable::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
   connect(searchController->getNavSearch(), &SearchBaseTable::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
 
-  connect(ui->actionRouteSelectParking, &QAction::triggered,
-          routeController, &RouteController::selectDepartureParking);
+  connect(ui->actionRouteSelectParking, &QAction::triggered, routeController, &RouteController::selectDepartureParking);
 
   // Route editing
-  connect(mapWidget, &MapWidget::routeSetStart,
-          routeController, &RouteController::routeSetDeparture);
-  connect(mapWidget, &MapWidget::routeSetParkingStart,
-          routeController, &RouteController::routeSetParking);
-  connect(mapWidget, &MapWidget::routeSetDest,
-          routeController, &RouteController::routeSetDestination);
-  connect(mapWidget, &MapWidget::routeAdd,
-          routeController, &RouteController::routeAdd);
-  connect(mapWidget, &MapWidget::routeReplace,
-          routeController, &RouteController::routeReplace);
+  connect(mapWidget, &MapWidget::routeSetStart, routeController, &RouteController::routeSetDeparture);
+  connect(mapWidget, &MapWidget::routeSetParkingStart, routeController, &RouteController::routeSetParking);
+  connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
+  connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
+  connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
   connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDeparture,
           routeController, &RouteController::routeSetDeparture);
@@ -885,8 +878,7 @@ void MainWindow::connectAllSlots()
   connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
           &RouteController::routeAttachProcedure);
-  connect(procedureSearch, &ProcedureSearch::showInformation, infoController,
-          &InfoController::showInformation);
+  connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
 }

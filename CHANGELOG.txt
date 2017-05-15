@@ -1,3 +1,17 @@
+Version 1.4.1.beta
+
+* Fixed errors with radionavaid flight plan calculation. DME and TACAN are now excluded.
+* Added option to calculate flight plan segment between selected waypoints.
+* Fixed errors with airway display and airway tooltips appearing in the wrong position.
+* Fixed map object overflow logic for airspaces and navaids. Indication is now more reliable.
+* Added separate layer for airspaces without waypoints to get a better overview.
+* Corrected odd/even altitude rule to use magnetic course.
+* Added north/south and south/north altitude rules.
+* Autoconnect is now switched on per default.
+* Now using straight line if recommended fix is missing for arc segments to avoid crashes for invalid procedure legs.
+* Procedure legs are now only red if unusable. More tolerant for missing recommended fix now.
+* Fixed color customization for profile widget. All colors now have a dark/normal variant. More colors and styles are cutomizable now.
+
 Version 1.4.0.beta
 
 * Now allowing simple customization of printed flight plan table.

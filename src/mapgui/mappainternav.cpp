@@ -140,22 +140,16 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
       const Rect& bnd = airway.bounding;
       Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(),
                                          Marble::GeoDataCoordinates::Degree);
-
       visible1 = airwaybox.intersects(context->viewport->viewLatLonAltBox());
     }
 
+    // Draw line if both points are visible or line intersects screen coordinates
     if(visible1 || visible2)
     {
       if(context->objCount())
         return;
 
-      // Draw line if both points are visible or line intersects screen coordinates
-      GeoDataCoordinates from(airway.from.getLonX(), airway.from.getLatY(), 0, DEG);
-      GeoDataCoordinates to(airway.to.getLonX(), airway.to.getLatY(), 0, DEG);
-      GeoDataLineString line;
-      line.setTessellate(true);
-      line << from << to;
-      context->painter->drawPolyline(line);
+      drawLine(context, Line(airway.from, airway.to));
 
       if(!fast)
       {
@@ -172,8 +166,8 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 
         if(!text.isEmpty())
         {
-          QString firstStr = line.first().toString(GeoDataCoordinates::Decimal, 3);
-          QString lastStr = line.last().toString(GeoDataCoordinates::Decimal, 3);
+          QString firstStr = airway.from.toString(3, false /*altitude*/);
+          QString lastStr = airway.to.toString(3, false /*altitude*/);
 
           // Create string key for index by using the coordinates
           QString lineTextKey = firstStr + "|" + lastStr;
@@ -206,29 +200,32 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
   TextPlacement textPlacement(context->painter, this);
 
   // Draw texts ----------------------------------------
-  int i = 0;
-  context->painter->setPen(mapcolors::airwayTextColor);
-  for(const QString& text : texts)
+  if(!texts.isEmpty())
   {
-    const MapAirway& airway = airways->at(airwayIndex.at(i));
-    int xt = -1, yt = -1;
-    float textBearing;
-    if(textPlacement.findTextPos(airway.from, airway.to, metrics.width(text), metrics.height() * 2,
-                                 xt, yt, &textBearing))
+    int i = 0;
+    context->painter->setPen(mapcolors::airwayTextColor);
+    for(const QString& text : texts)
     {
-      float rotate;
-      if(textBearing > 180.f)
-        rotate = textBearing + 90.f;
-      else
-        rotate = textBearing - 90.f;
+      const MapAirway& airway = airways->at(airwayIndex.at(i));
+      int xt = -1, yt = -1;
+      float textBearing;
+      if(textPlacement.findTextPos(airway.from, airway.to, metrics.width(text), metrics.height() * 2,
+                                   xt, yt, &textBearing))
+      {
+        float rotate;
+        if(textBearing > 180.f)
+          rotate = textBearing + 90.f;
+        else
+          rotate = textBearing - 90.f;
 
-      context->painter->translate(xt, yt);
-      context->painter->rotate(rotate);
-      context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
-                                 context->painter->fontMetrics().ascent(), text);
-      context->painter->resetTransform();
+        context->painter->translate(xt, yt);
+        context->painter->rotate(rotate);
+        context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
+                                   context->painter->fontMetrics().ascent(), text);
+        context->painter->resetTransform();
+      }
+      i++;
     }
-    i++;
   }
 }
 

@@ -235,10 +235,7 @@ float RouteFinder::calculateEdgeCost(const nw::Node& currentNode, const nw::Node
       // Put higher costs on radio navaids that are not withing range
       costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
-    if(successorNode.type == nw::DME)
-      // Avoid DME
-      costs *= COST_FACTOR_DME;
-    else if(successorNode.type == nw::VOR)
+    if(successorNode.type == nw::VOR)
       // Prefer VOR before NDB
       costs *= COST_FACTOR_VOR;
     else if(successorNode.type == nw::NDB)
@@ -266,7 +263,6 @@ map::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
 
     case nw::VOR:
     case nw::VORDME:
-    case nw::DME:
       return map::VOR;
 
     case nw::NDB:

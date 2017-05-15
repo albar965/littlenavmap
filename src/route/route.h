@@ -64,7 +64,12 @@ public:
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                                bool ignoreNotEditable) const;
 
+  /* First route leg after departure procedure */
+  int getStartIndexAfterProcedure() const;
   const RouteLeg& getStartAfterProcedure() const;
+
+  /* Last route leg before STAR, transition or approach */
+  int getDestinationIndexBeforeProcedure() const;
   const RouteLeg& getDestinationBeforeProcedure() const;
 
   int getActiveLegIndex() const
@@ -109,6 +114,7 @@ public:
     totalDistance = value;
   }
 
+  /* The flight plan has dummy entries for procedure points that are flagged as no save */
   const atools::fs::pln::Flightplan& getFlightplan() const
   {
     return flightplan;
