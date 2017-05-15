@@ -110,7 +110,8 @@ enum ProcedureLegType
   HEADING_TO_RADIAL_TERMINATION,
 
   DIRECT_TO_RUNWAY, /* Artifical last segment inserted if approach does not contain a runway end */
-  START_OF_PROCEDURE /* Artifical first point if procedures do not start with an initial fix */
+  START_OF_PROCEDURE /* Artifical first point if procedures do not start with an initial fix
+                      *  or with a track, heading or course to fix having length 0 */
 };
 
 QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);

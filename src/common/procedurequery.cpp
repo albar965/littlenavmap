@@ -631,8 +631,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
     }
     else
     {
-      // if(!legs.first().line.isPoint())
-      if(!contains(legs.first().type, {proc::INITIAL_FIX}))
+      if(!contains(legs.first().type, {proc::INITIAL_FIX}) && !legs.first().line.isPoint())
       {
         // Add an artificial initial fix to keep all consistent
         proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);

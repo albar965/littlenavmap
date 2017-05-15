@@ -1652,7 +1652,7 @@ void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
 
     if(leg != nullptr)
     {
-      qDebug() << *leg;
+      // qDebug() << *leg;
 
       mapWidget->changeApproachLegHighlights(leg);
     }

@@ -357,10 +357,10 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
         (prevLeg->isRoute() || // Transition from route to procedure
          (prevLeg->getProcedureLeg().isAnyDeparture() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
          (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
-
         ) && // Direct connection between procedures
 
-        atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) // Beginning of procedure
+        (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
+         procedureLeg.line.isPoint()) // Beginning of procedure
         )
       {
         // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;

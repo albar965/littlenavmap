@@ -2135,7 +2135,7 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
 
 void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
 {
-  qDebug() << Q_FUNC_INFO << legs;
+  qDebug() << Q_FUNC_INFO /* << legs*/;
 
   RouteCommand *undoCommand = preChange(tr("Add Procedure"));
 
