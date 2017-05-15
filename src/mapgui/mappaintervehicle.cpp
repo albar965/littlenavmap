@@ -25,6 +25,7 @@
 #include "mapgui/maplayer.h"
 #include "common/unit.h"
 #include "util/paintercontextsaver.h"
+#include "settings/settings.h"
 
 #include <marble/GeoPainter.h>
 
@@ -310,6 +311,7 @@ const QPixmap *MapPainterVehicle::pixmapFromCache(const PixmapKey& key)
     if(key.user)
       name += "_user";
 
+    name = atools::settings::Settings::instance().getOverloadedPath(name + ".svg");
     QPixmap *newPx = new QPixmap(QIcon(name).pixmap(QSize(size, size)));
     aircraftPixmaps.insert(key, newPx);
     return newPx;

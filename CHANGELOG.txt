@@ -11,6 +11,7 @@ Version 1.4.1.beta
 * Now using straight line if recommended fix is missing for arc segments to avoid crashes for invalid procedure legs.
 * Procedure legs are now only red if unusable. More tolerant for missing recommended fix now.
 * Fixed color customization for profile widget. All colors now have a dark/normal variant. More colors and styles are cutomizable now.
+* Added option to overload vehicle icons.
 
 Version 1.4.0.beta
 
