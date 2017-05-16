@@ -14,7 +14,7 @@
    height="128"
    id="svg1953"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="aircraft_boat_user_ground.svg">
+   sodipodi:docname="aircraft_boat_ground_user.svg">
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -41,10 +41,10 @@
      id="namedview5"
      showgrid="true"
      inkscape:zoom="4.3119789"
-     inkscape:cx="35.357224"
+     inkscape:cx="-18.413824"
      inkscape:cy="56.670968"
-     inkscape:window-x="122"
-     inkscape:window-y="69"
+     inkscape:window-x="40"
+     inkscape:window-y="24"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg1953"
      inkscape:snap-grids="false">
@@ -55,13 +55,13 @@
   <defs
      id="defs1956" />
   <path
-     style="fill:#ffff00;fill-rule:evenodd;stroke:#808080;stroke-width:5.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+     style="fill:#ffff00;fill-rule:evenodd;stroke:#464646;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
      d="m 34.870849,44.505046 c -6.991404,22.148305 2.787872,80.470704 2.787872,80.470704 l 54.624325,0.22159 c 0,0 6.912483,-58.81016 -0.232323,-80.913884 C 86.890432,28.319176 71.2987,3.1064404 63.624868,3.0883096 57.202194,3.073135 39.875686,28.650055 34.870849,44.505046 Z"
      id="path4137"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="sccsss" />
   <rect
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:5.1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#464646;stroke-width:5.1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect4183"
      width="35.946373"
      height="20.640173"
@@ -70,7 +70,7 @@
      ry="7.6530972"
      rx="0" />
   <rect
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:5.1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#464646;stroke-width:5.1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect4183-7"
      width="35.946373"
      height="20.640173"
@@ -79,7 +79,7 @@
      ry="0"
      rx="0" />
   <ellipse
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:5.1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#464646;stroke-width:5.1;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="path3316"
      cx="63.775822"
      cy="77.90699"
