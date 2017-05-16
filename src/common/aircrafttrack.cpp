@@ -19,6 +19,7 @@
 
 #include "settings/settings.h"
 #include "atools.h"
+#include "geo/calculations.h"
 
 #include <QDataStream>
 #include <QDateTime>
@@ -117,7 +118,7 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
 
     if(!pos.almostEqual(last().pos, epsilon) && !atools::almostEqual(lastTime, time, timeDiff))
     {
-      if(pos.distanceMeterTo(last().pos) > MAX_POINT_DISTANCE_METER)
+      if(pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM))
       {
         clear();
         pruned = true;

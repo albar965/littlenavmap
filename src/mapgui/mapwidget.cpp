@@ -1008,7 +1008,7 @@ void MapWidget::highlightProfilePoint(const atools::geo::Pos& pos)
 void MapWidget::connectedToSimulator()
 {
   qDebug() << Q_FUNC_INFO;
-  aircraftTrack.clearTrack();
+  // aircraftTrack.clearTrack();
   update();
 }
 

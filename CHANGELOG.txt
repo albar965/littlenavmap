@@ -12,6 +12,8 @@ Version 1.4.1.beta
 * Procedure legs are now only red if unusable. More tolerant for missing recommended fix now.
 * Fixed color customization for profile widget. All colors now have a dark/normal variant. More colors and styles are cutomizable now.
 * Added option to overload vehicle icons.
+* Adjusted vehicle icon colors for better visibility.
+* Aircraft track is now kept when connecting to simulator. Track is only deleted when aircraft position jumps too far.
 
 Version 1.4.0.beta
 

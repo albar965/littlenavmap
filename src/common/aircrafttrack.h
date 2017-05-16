@@ -85,7 +85,7 @@ private:
   static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
 
   /* Clear track if aircraft jumps too far */
-  static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_METER = 100000;
+  static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_NM = 200;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
