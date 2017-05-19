@@ -338,6 +338,11 @@ void MainWindow::showOnlineHelp()
   HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages());
 }
 
+void MainWindow::showOnlineTutorials()
+{
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguages());
+}
+
 void MainWindow::showOfflineHelp()
 {
   HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_URL, lnm::helpLanguages());
@@ -702,6 +707,7 @@ void MainWindow::connectAllSlots()
 
   // Help menu
   connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
+  connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);

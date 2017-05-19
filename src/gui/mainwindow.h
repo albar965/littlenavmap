@@ -220,6 +220,7 @@ private:
   void updateLegend();
   void clearWeatherContext();
   void showOnlineHelp();
+  void showOnlineTutorials();
   void showOfflineHelp();
   void showNavmapLegend();
   void loadNavmapLegend();

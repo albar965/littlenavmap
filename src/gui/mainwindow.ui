@@ -100,6 +100,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpContents"/>
+    <addaction name="actionHelpTutorials"/>
     <addaction name="actionHelpContentsOffline"/>
     <addaction name="separator"/>
     <addaction name="actionHelpNavmapLegend"/>
@@ -5715,6 +5716,21 @@
    </property>
    <property name="statusTip">
     <string>Calculate flight plan based on given altitude using Victor or Jet airways between selected legs</string>
+   </property>
+  </action>
+  <action name="actionHelpTutorials">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Tutorials (Online)</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the online tutorials in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the online tutorials in a browser</string>
    </property>
   </action>
  </widget>

@@ -47,6 +47,9 @@ const QString HELP_BRANCH = "release/1.4";
 const QString HELP_ONLINE_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/");
 
+const QString HELP_ONLINE_TUTORIALS_URL(
+  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
+
 const QString HELP_LEGEND_INLINE_URL("help/legend-${LANG}.html");
 
 const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
