@@ -213,7 +213,7 @@ private:
   void legendAnchorClicked(const QUrl& url);
 
   void changeMapProjection(int index);
-  void changeMapTheme(int index);
+  void changeMapTheme();
   void scaleToolbar(QToolBar *toolbar, float scale);
   void findCustomMaps(QFileInfoList& customDgmlFiles);
   void themeMenuTriggered(bool checked);

@@ -214,6 +214,7 @@
     <addaction name="actionRouteCalcHighAlt"/>
     <addaction name="actionRouteCalcLowAlt"/>
     <addaction name="actionRouteCalcSetAlt"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteReverse"/>
     <addaction name="actionRouteAdjustAltitude"/>
    </widget>

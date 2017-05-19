@@ -53,7 +53,7 @@ QColor distanceColor(Qt::black);
 
 /* Elevation profile colors and pens */
 QColor profileSkyColor(QColor(204, 204, 255));
-QColor profileSkyDarkColor(QColor(20, 20, 90));
+QColor profileSkyDarkColor(QColor(100, 100, 160));
 QColor profileBackgroundColor(QColor(255, 255, 255));
 QColor profileBackgroundDarkColor(QColor(20, 20, 20));
 QColor profileLandColor(QColor(0, 128, 0));

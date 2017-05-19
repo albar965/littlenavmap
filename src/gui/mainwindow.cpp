@@ -193,7 +193,7 @@ MainWindow::MainWindow()
     airspaceHandler->updateButtonsAndActions();
 
     qDebug() << "MainWindow Setting theme";
-    mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
+    changeMapTheme();
 
     qDebug() << "MainWindow Setting projection";
     mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
@@ -947,23 +947,17 @@ void MainWindow::changeMapProjection(int index)
 }
 
 /* Called by the toolbar combo box */
-void MainWindow::changeMapTheme(int index)
+void MainWindow::changeMapTheme()
 {
-  Q_UNUSED(index);
-
   mapWidget->cancelDragAll();
 
   QString theme = mapThemeComboBox->currentData().toString();
+  int index = mapThemeComboBox->currentIndex();
   qDebug() << "Changing theme to" << theme << "index" << index;
   mapWidget->setTheme(theme, index);
 
-  ui->actionMapThemeOpenStreetMap->setChecked(index == MapWidget::OPENSTREETMAP);
-  ui->actionMapThemeOpenStreetMapRoads->setChecked(index == MapWidget::OPENSTREETMAPROADS);
-  ui->actionMapThemeOpenTopoMap->setChecked(index == MapWidget::OPENTOPOMAP);
-  ui->actionMapThemeStamenTerrain->setChecked(index == MapWidget::STAMENTERRAIN);
-  ui->actionMapThemeSimple->setChecked(index == MapWidget::SIMPLE);
-  ui->actionMapThemePlain->setChecked(index == MapWidget::PLAIN);
-  ui->actionMapThemeAtlas->setChecked(index == MapWidget::ATLAS);
+  for(QAction *action : actionGroupMapTheme->actions())
+    action->setChecked(action->data() == index);
 
   for(int i = 0; i < customMapThemeMenuActions.size(); i++)
     customMapThemeMenuActions.at(i)->setChecked(index == MapWidget::CUSTOM + i);
