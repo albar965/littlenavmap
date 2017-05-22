@@ -756,6 +756,8 @@ QString magvarText(float magvar);
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
+void updateUnits();
+
 } // namespace types
 
 Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);

@@ -335,10 +335,10 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
 
     // Values below only for actions
     {map::AIRSPACE_AT_FLIGHTPLAN, QObject::tr("At flight plan cruise altitude")},
-    {map::AIRSPACE_BELOW_10000, QObject::tr("Below 10000 ft only")},
-    {map::AIRSPACE_BELOW_18000, QObject::tr("Below 18000 ft only")},
-    {map::AIRSPACE_ABOVE_10000, QObject::tr("Above 10000 ft only")},
-    {map::AIRSPACE_ABOVE_18000, QObject::tr("Above 18000 ft only")},
+    {map::AIRSPACE_BELOW_10000, QObject::tr("Below 10,000 ft only")},
+    {map::AIRSPACE_BELOW_18000, QObject::tr("Below 18,000 ft only")},
+    {map::AIRSPACE_ABOVE_10000, QObject::tr("Above 10,000 ft only")},
+    {map::AIRSPACE_ABOVE_18000, QObject::tr("Above 18,000 ft only")},
     {map::AIRSPACE_ALL_ALTITUDE, QObject::tr("All Altitudes")}
   });
 
@@ -467,6 +467,14 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
 int qHash(const map::MapObjectRef& type)
 {
   return type.id ^ static_cast<int>(type.type);
+}
+
+void updateUnits()
+{
+  airspaceTypeNameMap[map::AIRSPACE_BELOW_10000] = QObject::tr("Below %1 only").arg(Unit::altFeet(10000.f));
+  airspaceTypeNameMap[map::AIRSPACE_BELOW_18000] = QObject::tr("Below %1 only").arg(Unit::altFeet(18000.f));
+  airspaceTypeNameMap[map::AIRSPACE_ABOVE_10000] = QObject::tr("Above %1 only").arg(Unit::altFeet(10000.f));
+  airspaceTypeNameMap[map::AIRSPACE_ABOVE_18000] = QObject::tr("Above %1 only").arg(Unit::altFeet(18000.f));
 }
 
 QString navTypeName(const QString& type)
