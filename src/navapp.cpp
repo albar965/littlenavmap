@@ -295,16 +295,16 @@ map::MapAirspaceTypes NavApp::getShownMapAirspaces()
 
 void NavApp::deleteSplashScreen()
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(splashScreen != nullptr)
-  {
     splashScreen->close();
-    splashScreen->deleteLater();
-    splashScreen = nullptr;
-  }
 }
 
 void NavApp::initSplashScreen()
 {
+  qDebug() << Q_FUNC_INFO;
+
   QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
   splashScreen = new QSplashScreen(pixmap);
   splashScreen->show();
@@ -320,6 +320,8 @@ void NavApp::initSplashScreen()
 
 void NavApp::finishSplashScreen()
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(splashScreen != nullptr)
     splashScreen->finish(mainWindow);
 }
