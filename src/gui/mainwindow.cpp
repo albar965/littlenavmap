@@ -733,16 +733,16 @@ void MainWindow::connectAllSlots()
 
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, [this](bool checked)
-          {
-            if(checked)
-              mapProjectionComboBox->setCurrentIndex(0);
-          });
+  {
+    if(checked)
+      mapProjectionComboBox->setCurrentIndex(0);
+  });
 
   connect(ui->actionMapProjectionSpherical, &QAction::triggered, [this](bool checked)
-          {
-            if(checked)
-              mapProjectionComboBox->setCurrentIndex(1);
-          });
+  {
+    if(checked)
+      mapProjectionComboBox->setCurrentIndex(1);
+  });
 
   // Let theme menus update combo boxes
   connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
@@ -990,7 +990,6 @@ void MainWindow::updateLegend()
 /* Menu item */
 void MainWindow::showDatabaseFiles()
 {
-
   QUrl url = QUrl::fromLocalFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 
   if(!QDesktopServices::openUrl(url))
@@ -1066,6 +1065,7 @@ bool MainWindow::routeValidate(bool validateParking)
 {
   if(!NavApp::getRoute().hasValidDeparture() || !NavApp::getRoute().hasValidDestination())
   {
+    NavApp::deleteSplashScreen();
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
                                             tr("Flight Plan must have a valid airport as "
                                                "start and destination and "
@@ -1087,12 +1087,14 @@ bool MainWindow::routeValidate(bool validateParking)
     {
       if(!routeController->hasValidParking())
       {
+        NavApp::deleteSplashScreen();
+
         // Airport has parking but no one is selected
         atools::gui::DialogButtonList buttons({
-                                                {QString(), QMessageBox::Cancel},
-                                                {tr("Select Start Position"), QMessageBox::Yes},
-                                                {QString(), QMessageBox::Save}
-                                              });
+          {QString(), QMessageBox::Cancel},
+          {tr("Select Start Position"), QMessageBox::Yes},
+          {QString(), QMessageBox::Save}
+        });
 
         int result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOWROUTEPARKINGWARNING,
@@ -1297,6 +1299,8 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     }
     else
     {
+      NavApp::deleteSplashScreen();
+
       // File not valid remove from history
       QMessageBox::warning(this, QApplication::applicationName(),
                            tr("File \"%1\" does not exist").arg(routeFile));
@@ -1775,6 +1779,8 @@ void MainWindow::mainWindowShown()
         databaseManager->run();
       else
       {
+        NavApp::deleteSplashScreen();
+
         QMessageBox msgBox(this);
         msgBox.setWindowTitle(QApplication::applicationName());
         msgBox.setTextFormat(Qt::RichText);

@@ -88,7 +88,7 @@ public:
   void insertSimSwitchActions(QAction *before, QMenu *menu);
 
   /* if false quit application */
-  bool checkIncompatibleDatabases(QSplashScreen *splash);
+  bool checkIncompatibleDatabases();
 
   /* Get the settings directory where the database is stored */
   const QString& getDatabaseDirectory() const

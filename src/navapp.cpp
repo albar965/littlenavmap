@@ -33,6 +33,7 @@
 #include <marble/MarbleModel.h>
 
 #include <QIcon>
+#include <QSplashScreen>
 
 MapQuery *NavApp::mapQuery = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
@@ -43,6 +44,7 @@ DatabaseManager *NavApp::databaseManager = nullptr;
 MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMeta = nullptr;
+QSplashScreen *NavApp::splashScreen = nullptr;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -117,6 +119,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete databaseMeta";
   delete databaseMeta;
   databaseMeta = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete splashScreen";
+  delete splashScreen;
+  splashScreen = nullptr;
 }
 
 void NavApp::optionsChanged()
@@ -285,4 +291,35 @@ map::MapObjectTypes NavApp::getShownMapFeatures()
 map::MapAirspaceTypes NavApp::getShownMapAirspaces()
 {
   return mainWindow->getMapWidget()->getShownAirspaces();
+}
+
+void NavApp::deleteSplashScreen()
+{
+  if(splashScreen != nullptr)
+  {
+    splashScreen->close();
+    splashScreen->deleteLater();
+    splashScreen = nullptr;
+  }
+}
+
+void NavApp::initSplashScreen()
+{
+  QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
+  splashScreen = new QSplashScreen(pixmap);
+  splashScreen->show();
+
+  processEvents();
+
+  splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
+                            arg(Application::applicationVersion()).arg(GIT_REVISION),
+                            Qt::AlignRight | Qt::AlignBottom, Qt::white);
+
+  processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void NavApp::finishSplashScreen()
+{
+  if(splashScreen != nullptr)
+    splashScreen->finish(mainWindow);
 }

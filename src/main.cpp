@@ -88,15 +88,7 @@ int main(int argc, char *argv[])
   NavApp app(argc, argv);
 
   // Start splash screen
-  QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
-  QSplashScreen splash(pixmap);
-  splash.show();
-  app.processEvents();
-
-  splash.showMessage(QObject::tr("Version %5 (revision %6)").
-                     arg(Application::applicationVersion()).arg(GIT_REVISION),
-                     Qt::AlignRight | Qt::AlignBottom, Qt::white);
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  NavApp::initSplashScreen();
 
   DatabaseManager *dbManager = nullptr;
 
@@ -144,7 +136,7 @@ int main(int argc, char *argv[])
     QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd"); // generated GUID
     if(!shared.create(512, QSharedMemory::ReadWrite))
     {
-      splash.close();
+      NavApp::deleteSplashScreen();
       QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
                             QObject::tr("%1 is already running.").arg(QApplication::applicationName()));
       return 1;
@@ -185,7 +177,7 @@ int main(int argc, char *argv[])
     // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application
     dbManager = new DatabaseManager(nullptr);
-    if(dbManager->checkIncompatibleDatabases(&splash))
+    if(dbManager->checkIncompatibleDatabases())
     {
       delete dbManager;
       dbManager = nullptr;
@@ -194,7 +186,7 @@ int main(int argc, char *argv[])
       mainWindow.show();
 
       // Hide splash once main window is shown
-      splash.finish(&mainWindow);
+      NavApp::finishSplashScreen();
 
       qDebug() << "Before app.exec()";
       retval = app.exec();

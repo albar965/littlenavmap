@@ -255,7 +255,7 @@ private:
 
   /* Status bar labels */
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel,
-  *connectStatusLabel;
+         *connectStatusLabel;
 
   /* List of status bar messages (currently only one) */
   QStringList statusMessages;

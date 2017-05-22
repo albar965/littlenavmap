@@ -192,7 +192,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionMapShowApproaches,
                     ui->actionRouteShowOnMap});
 
-  void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+  void (RouteController::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
     &RouteController::tableSelectionChanged;
   connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
@@ -541,11 +541,15 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   if(updateStartPositionBestRunway(false /* force */, !quiet /* undo */))
   {
     if(!quiet)
+    {
+      NavApp::deleteSplashScreen();
+
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
                                                      tr("The flight plan had no valid start position.\n"
                                                         "The start position is now set to the longest "
                                                         "primary runway of the departure airport."),
                                                      tr("Do not &show this dialog again."));
+    }
   }
 
   if(speedKts > 0.f)
@@ -617,9 +621,12 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
   else
   {
     if(!quiet)
+    {
+      NavApp::deleteSplashScreen();
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_PROC_ERROR,
                                                      tr("Cannot load procedures into flight plan."),
                                                      tr("Do not &show this dialog again."));
+    }
     return;
   }
 
@@ -1447,7 +1454,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   qDebug() << "tableContextMenu";
 
   // Save text which will be changed below
-  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint, ui->actionRouteDeleteLeg});
+  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
+                                      ui->actionRouteDeleteLeg});
   Q_UNUSED(saver);
 
   QModelIndex index = view->indexAt(pos);
@@ -2621,7 +2629,7 @@ void RouteController::updateTableModel()
         {
           float remaining = totalDistance - cumulatedDistance;
           if(remaining < 0.f)
-            remaining = 0.f;  // Catch the -0 case due to rounding errors
+            remaining = 0.f; // Catch the -0 case due to rounding errors
           itemRow[rc::REMAINING_DISTANCE] = new QStandardItem(Unit::distNm(remaining, false));
         }
       }

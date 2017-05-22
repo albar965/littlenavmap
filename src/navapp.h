@@ -36,6 +36,7 @@ class MapWidget;
 class WeatherReporter;
 class ElevationProvider;
 class AircraftTrack;
+class QSplashScreen;
 
 namespace atools {
 namespace fs {
@@ -124,6 +125,10 @@ public:
 
   static const AircraftTrack& getAircraftTrack();
 
+  static void initSplashScreen();
+  static void finishSplashScreen();
+  static void deleteSplashScreen();
+
 private:
   /* Database query helpers and caches */
   static MapQuery *mapQuery;
@@ -137,6 +142,7 @@ private:
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
   static atools::fs::db::DatabaseMeta *databaseMeta;
+  static QSplashScreen *splashScreen;
 };
 
 #endif // NAVAPPLICATION_H

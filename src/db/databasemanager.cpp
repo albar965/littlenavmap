@@ -32,6 +32,7 @@
 #include "sql/sqlutil.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
+#include "navapp.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -183,7 +184,7 @@ DatabaseManager::~DatabaseManager()
   SqlDatabase::removeDatabase(DATABASE_NAME);
 }
 
-bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
+bool DatabaseManager::checkIncompatibleDatabases()
 {
   bool ok = true;
 
@@ -249,8 +250,7 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
       }
 
       // Avoid the splash screen hiding the dialog
-      if(splash != nullptr)
-        splash->close();
+      NavApp::deleteSplashScreen();
 
       QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
                       msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),

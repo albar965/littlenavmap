@@ -159,8 +159,11 @@ void ElevationProvider::updateReader()
   {
     const QString& path = OptionData::instance().getOfflineElevationPath();
     if(!GlobeReader::isDirValid(path))
+    {
+      NavApp::deleteSplashScreen();
       QMessageBox::warning(NavApp::getQMainWidget(), NavApp::applicationName(),
                            tr("GLOBE elevation data directory is not valid:<br/><i>%1</i>").arg(path));
+    }
     else
     {
       delete globeReader;
@@ -169,9 +172,12 @@ void ElevationProvider::updateReader()
         qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
 
         if(!globeReader->openFiles())
+        {
+          NavApp::deleteSplashScreen();
           QMessageBox::warning(NavApp::getQMainWidget(), NavApp::applicationName(),
                                tr("Cannot open GLOBE data in directory<br/><i>%1</i>").arg(path));
-        qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
+          qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
+        }
       }
     }
   }
