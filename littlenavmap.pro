@@ -35,6 +35,7 @@ win32 {
 
 # Linux ==================
 unix:!macx {
+  QT_HOME=/home/alex/Qt/5.6/gcc_64
   MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
 }
 
@@ -333,7 +334,12 @@ unix:!macx {
   DEPLOY_DIR=\"$$PWD/../deploy/Little Navmap\"
 
   deploy.commands = rm -Rfv $${DEPLOY_DIR} &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR} &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR}/iconengines &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR}/platforms &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR}/platformthemes &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR}/printsupport &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR}/sqldrivers &&
   deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.so* $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/plugins $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/data $${DEPLOY_DIR} &&
@@ -344,7 +350,41 @@ unix:!macx {
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/README.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/LICENSE.txt $${DEPLOY_DIR} &&
-  deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $${DEPLOY_DIR}
+  deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/iconengines/libqsvgicon.so*  $${DEPLOY_DIR}/iconengines &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqgif.so*  $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjp2.so*  $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjpeg.so*  $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqsvg.so*  $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwbmp.so*  $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwebp.so*  $${DEPLOY_DIR}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqeglfs.so*  $${DEPLOY_DIR}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqlinuxfb.so*  $${DEPLOY_DIR}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimal.so*  $${DEPLOY_DIR}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimalegl.so*  $${DEPLOY_DIR}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqoffscreen.so*  $${DEPLOY_DIR}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqxcb.so*  $${DEPLOY_DIR}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk2.so*  $${DEPLOY_DIR}/platformthemes &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/printsupport/libcupsprintersupport.so*  $${DEPLOY_DIR}/printsupport &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/sqldrivers/libqsqlite.so*  $${DEPLOY_DIR}/sqldrivers &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libicudata.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libicui18n.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libicuuc.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Concurrent.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Core.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5DBus.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Gui.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Network.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5PrintSupport.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Qml.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Quick.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Script.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Sql.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Svg.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Widgets.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5X11Extras.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5XcbQpa.so*  $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/lib/libQt5Xml.so* $${DEPLOY_DIR}
 }
 
 # Mac specific deploy target
