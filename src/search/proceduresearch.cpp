@@ -1195,7 +1195,7 @@ void ProcedureSearch::dockVisibilityChanged(bool visible)
 {
   if(!visible)
   {
-    // Hide preview of dock is closed
+    // Hide preview if dock is closed
     emit procedureSelected(proc::MapProcedureRef());
     emit procedureLegSelected(proc::MapProcedureRef());
   }

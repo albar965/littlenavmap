@@ -57,7 +57,7 @@ void MapPainterRoute::render(PaintContext *context)
 
   // Draw the approach preview if any selected in the search tab
   if(context->mapLayer->isApproach())
-    paintApproach(context, mapWidget->getApproachHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
+    paintApproach(context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
 
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     paintTopOfDescent(context);

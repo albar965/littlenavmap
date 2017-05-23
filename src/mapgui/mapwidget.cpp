@@ -64,18 +64,18 @@ const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
 // Update rates defined by delta values
 const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
+{
+  // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta; timeDeltaMs;
   {
-    // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta; timeDeltaMs;
-    {
-      opts::FAST, {0.5f, 1.f, 1.f, 1.f, 75}
-    },
-    {
-      opts::MEDIUM, {1, 1.f, 10.f, 10.f, 250}
-    },
-    {
-      opts::LOW, {2, 4.f, 10.f, 100.f, 550}
-    }
-  });
+    opts::FAST, {0.5f, 1.f, 1.f, 1.f, 75}
+  },
+  {
+    opts::MEDIUM, {1, 1.f, 10.f, 10.f, 250}
+  },
+  {
+    opts::LOW, {2, 4.f, 10.f, 100.f, 550}
+  }
+});
 
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
@@ -1047,20 +1047,20 @@ const map::MapSearchResult& MapWidget::getSearchHighlights() const
   return screenIndex->getSearchHighlights();
 }
 
-const proc::MapProcedureLeg& MapWidget::getApproachLegHighlights() const
+const proc::MapProcedureLeg& MapWidget::getProcedureLegHighlights() const
 {
   return screenIndex->getApproachLegHighlights();
 }
 
-const proc::MapProcedureLegs& MapWidget::getApproachHighlight() const
+const proc::MapProcedureLegs& MapWidget::getProcedureHighlight() const
 {
-  return screenIndex->getApproachHighlight();
+  return screenIndex->getProcedureHighlight();
 }
 
 void MapWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
 {
   cancelDragAll();
-  screenIndex->getApproachHighlight() = approach;
+  screenIndex->getProcedureHighlight() = approach;
   screenIndex->updateRouteScreenGeometry(currentViewBoundingBox);
   update();
 }
@@ -1071,7 +1071,7 @@ void MapWidget::changeSearchHighlights(const map::MapSearchResult& positions)
   update();
 }
 
-void MapWidget::changeApproachLegHighlights(const proc::MapProcedureLeg *leg)
+void MapWidget::changeProcedureLegHighlights(const proc::MapProcedureLeg *leg)
 {
   screenIndex->setApproachLegHighlights(leg);
   update();
@@ -2386,34 +2386,34 @@ void MapWidget::updateVisibleObjectsStatusBar()
     tooltip.table();
 
     // Collect airport information ==========================================================
-    if(layer->isAirport() && ((shown & map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT) ||
+    if(layer->isAirport() && ((shown& map::AIRPORT_HARD) || (shown& map::AIRPORT_SOFT) ||
                               (shown & map::AIRPORT_ADDON)))
     {
       QString runway, runwayShort;
       QString apShort, apTooltip, apTooltipAddon;
       bool showAddon = shown & map::AIRPORT_ADDON;
       bool showEmpty = shown & map::AIRPORT_EMPTY;
-      bool showStock = (shown & map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT);
+      bool showStock = (shown& map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT);
       bool showHard = shown & map::AIRPORT_HARD;
       bool showAny = showStock | showAddon;
 
       // Prepare runway texts
-      if(!(shown & map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
+      if(!(shown& map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
       {
         runway = tr(" soft runways (S)");
         runwayShort = tr(",S");
       }
-      else if((shown & map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
+      else if((shown& map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
       {
         runway = tr(" hard runways (H)");
         runwayShort = tr(",H");
       }
-      else if((shown & map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
+      else if((shown& map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
       {
         runway = tr(" all runway types (H,S)");
         runwayShort = tr(",H,S");
       }
-      else if(!(shown & map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
+      else if(!(shown& map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
       {
         runway.clear();
         runwayShort.clear();

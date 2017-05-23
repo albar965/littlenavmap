@@ -866,7 +866,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
       curPos = leg.fixPos;
 
       leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.rho, true, 20, true) + "/" +
-      QLocale().toString(leg.theta, 'f', 0) + tr("°M");
+        QLocale().toString(leg.theta, 'f', 0) + tr("°M");
       leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
     }
     // ===========================================================
@@ -995,7 +995,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
 
       Pos intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), center, leg.theta + leg.magvar);
 
-      if(intersect.isValid())
+      if(intersect.isValid() && intersect.distanceMeterTo(start) < atools::geo::nmToMeter(200.f))
         curPos = intersect;
       else
       {
@@ -1014,7 +1014,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
       curPos = leg.fixPos.endpoint(nmToMeter(leg.distance), leg.legTrueCourse()).normalize();
 
       leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
-      QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+        QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     // ===========================================================
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
@@ -1039,7 +1039,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
       }
 
       leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
-      QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+        QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     // ===========================================================
     else if(contains(type, {proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
@@ -1116,7 +1116,8 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
             intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
           }
           else
-            intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(), next->legTrueCourse());
+            intersect =
+              Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(), next->legTrueCourse());
 
           leg.line.setPos1(start);
 

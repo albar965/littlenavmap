@@ -161,12 +161,12 @@ public:
     lastSimData = data;
   }
 
-  const proc::MapProcedureLegs& getApproachHighlight() const
+  const proc::MapProcedureLegs& getProcedureHighlight() const
   {
     return approachHighlight;
   }
 
-  proc::MapProcedureLegs& getApproachHighlight()
+  proc::MapProcedureLegs& getProcedureHighlight()
   {
     return approachHighlight;
   }

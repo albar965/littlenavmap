@@ -172,7 +172,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 
   // Draw hightlights from the approach selection ------------------------------------------
-  const proc::MapProcedureLeg& leg = mapWidget->getApproachLegHighlights();
+  const proc::MapProcedureLeg& leg = mapWidget->getProcedureLegHighlights();
 
   positions.clear();
 

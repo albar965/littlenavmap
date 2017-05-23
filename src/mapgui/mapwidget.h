@@ -111,7 +111,7 @@ public:
   /* Update hightlighted objects */
   void changeSearchHighlights(const map::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeApproachLegHighlights(const proc::MapProcedureLeg *leg);
+  void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 
   void changeApproachHighlight(const proc::MapProcedureLegs& approach);
 
@@ -149,9 +149,9 @@ public:
 
   /* Getters used by the painters */
   const map::MapSearchResult& getSearchHighlights() const;
-  const proc::MapProcedureLeg& getApproachLegHighlights() const;
+  const proc::MapProcedureLeg& getProcedureLegHighlights() const;
 
-  const proc::MapProcedureLegs& getApproachHighlight() const;
+  const proc::MapProcedureLegs& getProcedureHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 

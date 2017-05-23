@@ -177,8 +177,8 @@ private:
   void resetMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
-  void approachLegSelected(const proc::MapProcedureRef& approachRef);
-  void approachSelected(const proc::MapProcedureRef& approachRef);
+  void procedureLegSelected(const proc::MapProcedureRef& ref);
+  void procedureSelected(const proc::MapProcedureRef& ref);
 
   void routeSelectionChanged(int selected, int total);
 

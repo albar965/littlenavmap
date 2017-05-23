@@ -881,8 +881,8 @@ void MainWindow::connectAllSlots()
 
   // Approach controller ===================================================================
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
-  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::approachLegSelected);
-  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::approachSelected);
+  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
+  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
   connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
   connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
@@ -1606,66 +1606,79 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
+void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
 {
   // qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
   // << "transitionId" << approachRef.transitionId
   // << "legId" << approachRef.legId;
 
-  map::MapAirport airport = NavApp::getMapQuery()->getAirportById(approachRef.airportId);
+  map::MapAirport airport = NavApp::getMapQuery()->getAirportById(ref.airportId);
 
-  if(approachRef.isEmpty())
+  if(ref.isEmpty())
     mapWidget->changeApproachHighlight(proc::MapProcedureLegs());
   else
   {
-    if(approachRef.hasApproachAndTransitionIds())
+    if(ref.hasApproachAndTransitionIds())
     {
-      const proc::MapProcedureLegs *legs =
-        NavApp::getProcedureQuery()->getTransitionLegs(airport, approachRef.transitionId);
+      const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getTransitionLegs(airport, ref.transitionId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
-        qWarning() << "Transition not found" << approachRef.transitionId;
+        qWarning() << "Transition not found" << ref.transitionId;
     }
-    else if(approachRef.hasApproachOnlyIds() && !approachRef.isLeg())
+    else if(ref.hasApproachOnlyIds())
     {
-      const proc::MapProcedureLegs *legs =
-        NavApp::getProcedureQuery()->getApproachLegs(airport, approachRef.approachId);
-      if(legs != nullptr)
-        mapWidget->changeApproachHighlight(*legs);
+      proc::MapProcedureRef curRef = mapWidget->getProcedureHighlight().ref;
+      if(ref.isLeg() && ref.airportId == curRef.airportId && ref.approachId == curRef.approachId)
+      {
+        proc::MapProcedureRef r = ref;
+        r.transitionId = curRef.transitionId;
+        const proc::MapProcedureLegs *legs =
+          NavApp::getProcedureQuery()->getTransitionLegs(airport, r.transitionId);
+        if(legs != nullptr)
+          mapWidget->changeApproachHighlight(*legs);
+        else
+          qWarning() << "Transition not found" << r.transitionId;
+      }
       else
-        qWarning() << "Approach not found" << approachRef.transitionId;
+      {
+        const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getApproachLegs(airport, ref.approachId);
+        if(legs != nullptr)
+          mapWidget->changeApproachHighlight(*legs);
+        else
+          qWarning() << "Approach not found" << ref.transitionId;
+      }
     }
   }
   infoController->updateProgress();
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
+void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
 {
   // qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
   // << "transitionId" << approachRef.transitionId
   // << "legId" << approachRef.legId;
 
-  if(approachRef.legId != -1)
+  if(ref.legId != -1)
   {
     const proc::MapProcedureLeg *leg;
 
-    map::MapAirport airport = NavApp::getMapQuery()->getAirportById(approachRef.airportId);
-    if(approachRef.transitionId != -1)
-      leg = NavApp::getProcedureQuery()->getTransitionLeg(airport, approachRef.legId);
+    map::MapAirport airport = NavApp::getMapQuery()->getAirportById(ref.airportId);
+    if(ref.transitionId != -1)
+      leg = NavApp::getProcedureQuery()->getTransitionLeg(airport, ref.legId);
     else
-      leg = NavApp::getProcedureQuery()->getApproachLeg(airport, approachRef.approachId, approachRef.legId);
+      leg = NavApp::getProcedureQuery()->getApproachLeg(airport, ref.approachId, ref.legId);
 
     if(leg != nullptr)
     {
       // qDebug() << *leg;
 
-      mapWidget->changeApproachLegHighlights(leg);
+      mapWidget->changeProcedureLegHighlights(leg);
     }
   }
   else
-    mapWidget->changeApproachLegHighlights(nullptr);
+    mapWidget->changeProcedureLegHighlights(nullptr);
 }
 
 void MainWindow::updateAirspaceTypes(map::MapAirspaceTypes types)
