@@ -131,6 +131,7 @@ private:
   void switchSimFromMainMenu();
   void freeActions();
   void updateSimSwitchActions();
+  void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction* before, QMenu* menu, int index);
   void removeDatabaseFileBackup();
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();

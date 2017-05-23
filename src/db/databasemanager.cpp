@@ -327,25 +327,49 @@ void DatabaseManager::insertSimSwitchActions(QAction *before, QMenu *menu)
     QList<FsPaths::SimulatorType> keys = simulators.keys();
     std::sort(keys.begin(), keys.end());
 
+    // Add real simulators first
     for(atools::fs::FsPaths::SimulatorType type : keys)
     {
+      if(type == atools::fs::FsPaths::EXTERNAL || type == atools::fs::FsPaths::EXTERNAL2)
+        continue;
+
       // Create an action for each simulator installation or database found
-      QAction *action = new QAction("&" + QString::number(index++) + " " + FsPaths::typeToName(type), menu);
-      action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
-      action->setCheckable(true);
-      action->setActionGroup(group);
-
-      if(type == currentFsType)
-        action->setChecked(true);
-
-      menu->insertAction(before, action);
-
-      connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
-
-      actions.append(action);
+      insertSimSwitchAction(type, before, menu, index++);
     }
+
+    // Add external databases next
     menu->insertSeparator(before);
+    bool hasExternal = false;
+    for(atools::fs::FsPaths::SimulatorType type : keys)
+    {
+      if(type != atools::fs::FsPaths::EXTERNAL && type != atools::fs::FsPaths::EXTERNAL2)
+        continue;
+
+      // Create an action for each simulator installation or database found
+      insertSimSwitchAction(type, before, menu, index++);
+      hasExternal = true;
+    }
+    if(hasExternal)
+      menu->insertSeparator(before);
   }
+}
+
+void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu,
+                                            int index)
+{
+  QAction *action = new QAction("&" + QString::number(index) + " " + FsPaths::typeToName(type), menu);
+  action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+  action->setCheckable(true);
+  action->setActionGroup(group);
+
+  if(type == currentFsType)
+    action->setChecked(true);
+
+  menu->insertAction(before, action);
+
+  connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
+
+  actions.append(action);
 }
 
 /* Update simuator select actions in main menu */

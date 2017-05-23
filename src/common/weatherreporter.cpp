@@ -311,6 +311,8 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
     simPathComponent = activeSkyPrefix + "P3D";
   else if(simType == atools::fs::FsPaths::P3D_V3)
     simPathComponent = activeSkyPrefix + "P3D";
+  else if(simType == atools::fs::FsPaths::P3D_V4)
+    simPathComponent = activeSkyPrefix + "P3D";
 
   QString hifiPath = appdata +
                      QDir::separator() + "HiFi" +

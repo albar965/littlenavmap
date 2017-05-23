@@ -31,7 +31,9 @@ void SimulatorTypeMap::fillDefault()
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 {
-  if(contains(atools::fs::FsPaths::P3D_V3))
+  if(contains(atools::fs::FsPaths::P3D_V4))
+    return atools::fs::FsPaths::P3D_V4;
+  else if(contains(atools::fs::FsPaths::P3D_V3))
     return atools::fs::FsPaths::P3D_V3;
   else if(contains(atools::fs::FsPaths::P3D_V2))
     return atools::fs::FsPaths::P3D_V2;
@@ -49,7 +51,9 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
 {
-  if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasRegistry)
+  if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasRegistry)
+    return atools::fs::FsPaths::P3D_V4;
+  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasRegistry)
     return atools::fs::FsPaths::P3D_V3;
   else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).hasRegistry)
     return atools::fs::FsPaths::P3D_V2;
@@ -102,11 +106,11 @@ QDebug operator<<(QDebug out, const FsPathType& record)
 {
   QDebugStateSaver saver(out);
   out.nospace() << "FsPathType["
-  << "registry entry " << record.hasRegistry
-  << ", has database " << record.hasDatabase
-  << ", base path " << record.basePath
-  << ", scenery config " << record.sceneryCfg
-  << "]";
+                << "registry entry " << record.hasRegistry
+                << ", has database " << record.hasDatabase
+                << ", base path " << record.basePath
+                << ", scenery config " << record.sceneryCfg
+                << "]";
   return out;
 }
 
