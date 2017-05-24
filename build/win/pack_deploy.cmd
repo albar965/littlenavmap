@@ -2,14 +2,9 @@
 
 rem === Deploy built programs. ZIP, check with Windows Defender and copy them to network shares =============================
 
+for /f "delims=" %%# in ('powershell get-date -format "{yyyyMMdd-HHmm}"') do @set FILEDATE=%%#
 
-rem only for German locale
-set year=%date:~-4,4%
-set month=%date:~-7,2%
-set day=%date:~0,2%
-set hour=%time:~0,2%
-set min=%time:~3,2%
-set FILEDATE=%year%%month%%day%-%hour%%min%
+echo Filedate %FILEDATE%
 
 pushd "%APROJECTS%\deploy"
 
