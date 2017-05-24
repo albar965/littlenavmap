@@ -560,26 +560,33 @@ private:
   // Singleton instance
   static OptionData *optionData;
 
+  // Defines the defaults used for reset
   opts::Flags flags =
     opts::STARTUP_LOAD_KML |
     opts::STARTUP_LOAD_MAP_SETTINGS |
     opts::STARTUP_LOAD_ROUTE |
-    // opts::STARTUP_SHOW_HOME |
     opts::STARTUP_SHOW_LAST |
+
     opts::GUI_CENTER_KML |
     opts::GUI_CENTER_ROUTE |
+    opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN |
+
     opts::MAP_EMPTY_AIRPORTS |
-    // opts::ROUTE_PREFER_NDB |
-    // opts::ROUTE_PREFER_VOR |
+
     opts::ROUTE_ALTITUDE_RULE |
+
+    opts::WEATHER_INFO_FS |
     opts::WEATHER_INFO_ACTIVESKY |
     opts::WEATHER_INFO_NOAA |
     opts::WEATHER_INFO_VATSIM |
+
+    opts::WEATHER_TOOLTIP_FS |
     opts::WEATHER_TOOLTIP_ACTIVESKY |
     opts::WEATHER_TOOLTIP_NOAA |
-    opts::CACHE_USE_OFFLINE_ELEVATION |
-    opts::FLIGHT_PLAN_SHOW_TOD
-    // opts::WEATHER_TOOLTIP_VATSIM
+    opts::WEATHER_TOOLTIP_VATSIM |
+
+    opts::FLIGHT_PLAN_SHOW_TOD |
+    opts::CACHE_USE_ONLINE_ELEVATION
   ;
 
   // ui->lineEditOptionsMapRangeRings
@@ -631,10 +638,10 @@ private:
   bool guiStyleDark = false;
 
   // ui->spinBoxOptionsGuiThemeMapDimming
-  int guiStyleMapDimming = 70;
+  int guiStyleMapDimming = 50;
 
   // ui->spinBoxOptionsMapClickRect
-  int mapClickSensitivity = 16;
+  int mapClickSensitivity = 10;
 
   // ui->spinBoxOptionsMapTooltipRect
   int mapTooltipSensitivity = 10;

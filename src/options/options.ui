@@ -452,7 +452,7 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
              <string>&amp;Treat empty airports special</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -1932,7 +1932,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipFs">
             <property name="toolTip">
-             <string>Display current weather in the flight simulator when connected. </string>
+             <string>Display current weather from the flight simulator when connected. </string>
             </property>
             <property name="text">
              <string>Flight Simulator</string>
@@ -1987,7 +1987,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoFs">
             <property name="toolTip">
-             <string>Display current weather in the flight simulator when connected. </string>
+             <string>Display current weather from the flight simulator when connected. </string>
             </property>
             <property name="text">
              <string>Flight Simulator</string>

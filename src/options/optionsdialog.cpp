@@ -480,13 +480,19 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     if(result == QMessageBox::Yes)
     {
       // Reset option instance and set it to valid
+      int guiStyleIndex = OptionData::instanceInternal().guiStyleIndex;
       OptionData::instanceInternal() = OptionData();
       OptionData::instanceInternal().valid = true;
+
+      // Do not reset style
+      OptionData::instanceInternal().guiStyleIndex = guiStyleIndex;
+
       optionDataToWidgets();
       saveState();
       emit optionsChanged();
 
       updateWidgetUnits();
+      applyStyle();
       updateActiveSkyPathStatus();
       updateWeatherButtonState();
       updateDatabaseButtonState();
@@ -934,9 +940,11 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherInfoNoaa, opts::WEATHER_INFO_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherInfoVatsim, opts::WEATHER_INFO_VATSIM);
+  fromFlags(ui->checkBoxOptionsWeatherInfoFs, opts::WEATHER_INFO_FS);
   fromFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
+  fromFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   fromFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   fromFlags(ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
 
