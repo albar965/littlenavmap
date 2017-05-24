@@ -651,11 +651,13 @@ bool RouteController::loadFlightplan(const QString& filename)
   }
   catch(atools::Exception& e)
   {
+    NavApp::deleteSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::deleteSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
