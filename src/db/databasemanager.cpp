@@ -548,7 +548,9 @@ bool DatabaseManager::runInternal()
       QString err;
       if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err))
       {
-        if(atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), err))
+        QString sceneryCfgCodec = loadingFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+
+        if(atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
           if(loadScenery())
           {
@@ -656,7 +658,8 @@ bool DatabaseManager::loadScenery()
     backupDatabaseFile();
 
     atools::fs::NavDatabase nd(&bglReaderOpts, db, &errors);
-    nd.create();
+    QString sceneryCfgCodec = loadingFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+    nd.create(sceneryCfgCodec);
   }
   catch(atools::Exception& e)
   {
