@@ -25,6 +25,7 @@
 #include "mapgui/mapwidget.h"
 #include "atools.h"
 #include "gui/actiontextsaver.h"
+#include "gui/actionstatesaver.h"
 #include "export/csvexporter.h"
 #include "mapgui/mapquery.h"
 #include "options/optiondata.h"
@@ -122,6 +123,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   ui->actionSearchShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchTableSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Need extra action connected to catch the default Ctrl-C in the table view
   connect(ui->actionSearchTableCopy, &QAction::triggered, this, &SearchBaseTable::tableCopyClipboard);
@@ -130,7 +132,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
 
   tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation, ui->actionSearchShowApproaches,
-                         ui->actionSearchShowOnMap});
+                         ui->actionSearchShowOnMap, ui->actionSearchTableSelectNothing});
 
   // Update single shot timer
   updateTimer = new QTimer(this);
@@ -139,6 +141,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   connect(ui->actionSearchShowInformation, &QAction::triggered, this, &SearchBaseTable::showInformationTriggered);
   connect(ui->actionSearchShowApproaches, &QAction::triggered, this, &SearchBaseTable::showApproachesTriggered);
   connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &SearchBaseTable::showOnMapTriggered);
+  connect(ui->actionSearchTableSelectNothing, &QAction::triggered, this, &SearchBaseTable::nothingSelectedTriggered);
 
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
@@ -263,55 +266,55 @@ void SearchBaseTable::connectSearchWidgets()
   {
     if(col->getLineEditWidget() != nullptr)
     {
-      connect(col->getLineEditWidget(), &QLineEdit::textChanged, [ = ](const QString &text)
-              {
-                controller->filterByLineEdit(col, text);
-                updateButtonMenu();
-                editStartTimer();
-              });
+      connect(col->getLineEditWidget(), &QLineEdit::textChanged, [ = ](const QString& text)
+      {
+        controller->filterByLineEdit(col, text);
+        updateButtonMenu();
+        editStartTimer();
+      });
     }
     else if(col->getComboBoxWidget() != nullptr)
     {
       connect(col->getComboBoxWidget(), curIndexChangedPtr, [ = ](int index)
-              {
-                controller->filterByComboBox(col, index, index == 0);
-                updateButtonMenu();
-                editStartTimer();
-              });
+      {
+        controller->filterByComboBox(col, index, index == 0);
+        updateButtonMenu();
+        editStartTimer();
+      });
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
       connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, [ = ](int state)
-              {
-                controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
-                updateButtonMenu();
-                editStartTimer();
-              });
+      {
+        controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
+        updateButtonMenu();
+        editStartTimer();
+      });
     }
     else if(col->getSpinBoxWidget() != nullptr)
     {
       connect(col->getSpinBoxWidget(), valueChangedPtr, [ = ](int value)
-              {
-                updateFromSpinBox(value, col);
-                updateButtonMenu();
-                editStartTimer();
-              });
+      {
+        updateFromSpinBox(value, col);
+        updateButtonMenu();
+        editStartTimer();
+      });
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
       connect(col->getMinSpinBoxWidget(), valueChangedPtr, [ = ](int value)
-              {
-                updateFromMinSpinBox(value, col);
-                updateButtonMenu();
-                editStartTimer();
-              });
+      {
+        updateFromMinSpinBox(value, col);
+        updateButtonMenu();
+        editStartTimer();
+      });
 
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [ = ](int value)
-              {
-                updateFromMaxSpinBox(value, col);
-                updateButtonMenu();
-                editStartTimer();
-              });
+      {
+        updateFromMaxSpinBox(value, col);
+        updateButtonMenu();
+        editStartTimer();
+      });
     }
   }
 
@@ -327,36 +330,36 @@ void SearchBaseTable::connectSearchWidgets()
     connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
 
     connect(minDistanceWidget, valueChangedPtr, [ = ](int value)
-            {
-              controller->filterByDistanceUpdate(
-                static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-                Unit::rev(value, Unit::distNmF),
-                Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
+    {
+      controller->filterByDistanceUpdate(
+        static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+        Unit::rev(value, Unit::distNmF),
+        Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 
-              maxDistanceWidget->setMinimum(value > 10 ? value : 10);
-              updateButtonMenu();
-              editStartTimer();
-            });
+      maxDistanceWidget->setMinimum(value > 10 ? value : 10);
+      updateButtonMenu();
+      editStartTimer();
+    });
 
     connect(maxDistanceWidget, valueChangedPtr, [ = ](int value)
-            {
-              controller->filterByDistanceUpdate(
-                static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-                Unit::rev(minDistanceWidget->value(), Unit::distNmF),
-                Unit::rev(value, Unit::distNmF));
-              minDistanceWidget->setMaximum(value);
-              updateButtonMenu();
-              editStartTimer();
-            });
+    {
+      controller->filterByDistanceUpdate(
+        static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+        Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+        Unit::rev(value, Unit::distNmF));
+      minDistanceWidget->setMaximum(value);
+      updateButtonMenu();
+      editStartTimer();
+    });
 
     connect(distanceDirWidget, curIndexChangedPtr, [ = ](int index)
-            {
-              controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
-                                                 Unit::rev(minDistanceWidget->value(), Unit::distNmF),
-                                                 Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
-              updateButtonMenu();
-              editStartTimer();
-            });
+    {
+      controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
+                                         Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+                                         Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
+      updateButtonMenu();
+      editStartTimer();
+    });
   }
 }
 
@@ -487,7 +490,7 @@ void SearchBaseTable::reconnectSelectionModel()
 {
   if(view->selectionModel() != nullptr)
   {
-    void (SearchBaseTable::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+    void (SearchBaseTable::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
       &SearchBaseTable::tableSelectionChanged;
 
     connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
@@ -633,6 +636,11 @@ void SearchBaseTable::showRow(int row)
   }
 }
 
+void SearchBaseTable::nothingSelectedTriggered()
+{
+  controller->selectNoRows();
+}
+
 /* Context menu in table view selected */
 void SearchBaseTable::contextMenu(const QPoint& pos)
 {
@@ -650,6 +658,19 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
                                       ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange});
   Q_UNUSED(saver);
+
+  // Re-enable actions on exit to allow keystrokes
+  atools::gui::ActionStateSaver stateSaver(
+  {
+    ui->actionSearchShowInformation, ui->actionSearchShowApproaches, ui->actionSearchShowOnMap,
+    ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
+    ui->actionSearchResetSearch, ui->actionSearchShowAll,
+    ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
+    ui->actionRouteAirportStart, ui->actionRouteAirportDest, ui->actionRouteAddPos, ui->actionRouteAppendPos,
+    ui->actionSearchTableCopy, ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing,
+    ui->actionSearchResetView, ui->actionSearchSetMark
+  });
+  Q_UNUSED(stateSaver);
 
   bool columnCanFilter = false;
   atools::geo::Pos position;
@@ -862,7 +883,7 @@ void SearchBaseTable::showApproachesTriggered()
       map::MapObjectTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
-      emit showApproaches(query->getAirportById(id));
+      emit showProcedures(query->getAirportById(id));
     }
   }
 }

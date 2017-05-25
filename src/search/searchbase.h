@@ -113,7 +113,7 @@ signals:
   void showInformation(map::MapSearchResult result);
 
   /* Show approaches in context menu selected */
-  void showApproaches(const map::MapAirport& airport);
+  void showProcedures(const map::MapAirport& airport);
 
   /* Set airport as flight plan departure (from context menu) */
   void routeSetDeparture(const map::MapAirport& airport);
@@ -173,6 +173,7 @@ private:
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row);
+  void nothingSelectedTriggered();
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;

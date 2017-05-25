@@ -620,7 +620,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
 
-  connect(routeController, &RouteController::showApproaches, searchController->getProcedureSearch(),
+  connect(routeController, &RouteController::showProcedures, searchController->getProcedureSearch(),
           &ProcedureSearch::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
@@ -636,7 +636,7 @@ void MainWindow::connectAllSlots()
     searchController->getAirportSearch(), &AirportSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
-  connect(searchController->getAirportSearch(), &AirportSearch::showApproaches,
+  connect(searchController->getAirportSearch(), &AirportSearch::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);

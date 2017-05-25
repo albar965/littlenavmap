@@ -241,7 +241,7 @@ signals:
   void showInformation(map::MapSearchResult result);
 
   /* Show approach information about the airport */
-  void showApproaches(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport);
 
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();
@@ -321,7 +321,7 @@ private:
   void tableCopyClipboard();
 
   void showInformationMenu();
-  void showApproachesMenu();
+  void showProceduresMenu();
   void showOnMapMenu();
 
   void undoTriggered();
@@ -349,6 +349,8 @@ private:
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
+  void nothingSelectedTriggered();
+  void activateLegTriggered();
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

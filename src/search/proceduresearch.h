@@ -94,6 +94,8 @@ signals:
   void showInformation(map::MapSearchResult result);
 
 private:
+  friend class TreeEventFilter;
+
   enum FilterIndex
   {
     FILTER_ALL_PROCEDURES,
@@ -159,6 +161,7 @@ private:
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
   void fetchSingleTransitionId(proc::MapProcedureRef& ref);
   QString approachAndTransitionText(const QTreeWidgetItem *item);
+  void clearSelectionTriggered();
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;

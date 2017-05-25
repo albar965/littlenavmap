@@ -3295,7 +3295,7 @@
     <string>Load all entries into the view</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+A</string>
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
   <action name="actionRouteOpen">
@@ -5347,7 +5347,7 @@
     <string>Clear selection and preview on map</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+N</string>
+    <string>Ctrl+Shift+A</string>
    </property>
   </action>
   <action name="actionInfoApproachShowMissedAppr">
@@ -5430,6 +5430,9 @@
    <property name="statusTip">
     <string>Show procedures for this airport</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
   </action>
   <action name="actionSearchShowApproaches">
    <property name="icon">
@@ -5444,6 +5447,9 @@
    </property>
    <property name="statusTip">
     <string>Show procedures for this airport</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
   <action name="actionInfoApproachAttach">
@@ -5478,20 +5484,8 @@
    <property name="statusTip">
     <string>Calculate a direct flight plan</string>
    </property>
-  </action>
-  <action name="actionInfoApproachActivateLeg">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Activate &amp;Flight Plan Leg</string>
-   </property>
-   <property name="toolTip">
-    <string>Activate Flight Plan Leg</string>
-   </property>
-   <property name="statusTip">
-    <string>Activate Flight Plan Leg</string>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="actionRouteAppendPos">
@@ -5524,7 +5518,43 @@
     <string>Unselect all entries in the table</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+N</string>
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionRouteTableSelectNothing">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Clear &amp;Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Unselect all entries in the table</string>
+   </property>
+   <property name="statusTip">
+    <string>Unselect all entries in the table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionSearchProcedureSelectNothing">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Clear &amp;Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Unselect all entries in the table</string>
+   </property>
+   <property name="statusTip">
+    <string>Unselect all entries in the table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
    </property>
   </action>
   <action name="actionRouteSaveAsFlp">

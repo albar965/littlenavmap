@@ -25,6 +25,7 @@
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
+#include "gui/actionstatesaver.h"
 #include "common/constants.h"
 #include "settings/settings.h"
 #include "gui/widgetstate.h"
@@ -64,6 +65,7 @@ using proc::MapProcedureLegs;
 using proc::MapProcedureRef;
 using atools::gui::WidgetState;
 using atools::gui::ActionTextSaver;
+using atools::gui::ActionStateSaver;
 
 /* Use event filter to catch mouse click in white area and deselect all entries */
 class TreeEventFilter :
@@ -71,8 +73,8 @@ class TreeEventFilter :
 {
 
 public:
-  TreeEventFilter(QTreeWidget *parent)
-    : QObject(parent), tree(parent)
+  TreeEventFilter(QTreeWidget *parent /*, ProcedureSearch *procedureSearch*/)
+    : QObject(parent), tree(parent) /*, search(procedureSearch)*/
   {
   }
 
@@ -90,12 +92,28 @@ private:
         if(item == nullptr)
           tree->clearSelection();
       }
+
     }
+
+    // if(event->type() == QEvent::KeyPress)
+    // {
+    // QKeyEvent *pKeyEvent = static_cast<QKeyEvent *>(event);
+    // switch(pKeyEvent->key())
+    // {
+    // case Qt::Key_Return:
+    // if(!tree->selectedItems().isEmpty())
+    // {
+    // search->showEntry(tree->selectedItems().first(), true);
+    // return true;
+    // }
+    // }
+    // }
 
     return QObject::eventFilter(object, event);
   }
 
   QTreeWidget *tree;
+  // ProcedureSearch *search;
 };
 
 TreeEventFilter::~TreeEventFilter()
@@ -106,7 +124,7 @@ TreeEventFilter::~TreeEventFilter()
 ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
   : AbstractSearch(main,
                    tabWidgetIndex), infoQuery(NavApp::getInfoQuery()), procedureQuery(NavApp::getProcedureQuery()),
-    treeWidget(treeWidgetParam), mainWindow(main)
+  treeWidget(treeWidgetParam), mainWindow(main)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
@@ -114,6 +132,10 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   treeWidget->setItemDelegate(gridDelegate);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionSearchProcedureSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  treeWidget->addActions({ui->actionSearchProcedureSelectNothing});
+
+  connect(ui->actionSearchProcedureSelectNothing, &QAction::triggered, this, &ProcedureSearch::clearSelectionTriggered);
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureSearch::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureSearch::itemDoubleClicked);
   connect(treeWidget, &QTreeWidget::itemExpanded, this, &ProcedureSearch::itemExpanded);
@@ -211,6 +233,9 @@ void ProcedureSearch::postDatabaseLoad()
 
 void ProcedureSearch::showProcedures(map::MapAirport airport)
 {
+  if(!(airport.flags & map::AP_PROCEDURE))
+    return;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
@@ -681,6 +706,13 @@ QList<QTreeWidgetItem *> ProcedureSearch::buildTransitionLegItems(const MapProce
   return items;
 }
 
+void ProcedureSearch::clearSelectionTriggered()
+{
+  treeWidget->clearSelection();
+  emit procedureLegSelected(proc::MapProcedureRef());
+  emit procedureSelected(proc::MapProcedureRef());
+}
+
 void ProcedureSearch::contextMenu(const QPoint& pos)
 {
   qDebug() << Q_FUNC_INFO;
@@ -694,6 +726,13 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   Ui::MainWindow *ui = NavApp::getMainUi();
   ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach});
   Q_UNUSED(saver);
+
+  ActionStateSaver stateSaver({
+    ui->actionInfoApproachShow, ui->actionInfoApproachAttach, ui->actionInfoApproachExpandAll,
+    ui->actionInfoApproachCollapseAll, ui->actionSearchResetSearch, ui->actionInfoApproachClear,
+    ui->actionSearchResetView
+  });
+  Q_UNUSED(stateSaver);
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
   MapProcedureRef ref;
@@ -751,6 +790,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
           ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
+
+
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
           ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
       }
@@ -799,11 +840,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();
   else if(action == ui->actionInfoApproachClear)
-  {
-    treeWidget->clearSelection();
-    emit procedureLegSelected(proc::MapProcedureRef());
-    emit procedureSelected(proc::MapProcedureRef());
-  }
+    clearSelectionTriggered();
   else if(action == ui->actionInfoApproachShow)
     showEntry(item, false);
   else if(action == ui->actionInfoApproachAttach)
@@ -915,10 +952,10 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
     altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
 
   QTreeWidgetItem *item = new QTreeWidgetItem({
-                                                approachType,
-                                                recApp.valueStr("fix_ident"),
-                                                altStr
-                                              }, itemIndex.size() - 1);
+    approachType,
+    recApp.valueStr("fix_ident"),
+    altStr
+  }, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_ALTITUDE, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
@@ -950,10 +987,10 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *apprItem,
   }
 
   QTreeWidgetItem *item = new QTreeWidgetItem({
-                                                name,
-                                                recTrans.valueStr("fix_ident"),
-                                                altStr
-                                              },
+    name,
+    recTrans.valueStr("fix_ident"),
+    altStr
+  },
                                               itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_ALTITUDE, Qt::AlignRight);
@@ -1219,11 +1256,11 @@ proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecor
 bool ProcedureSearch::procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2)
 {
   static QHash<proc::MapProcedureTypes, int> priority(
-    {
-      {proc::PROCEDURE_SID, 0},
-      {proc::PROCEDURE_STAR, 1},
-      {proc::PROCEDURE_APPROACH, 2},
-    });
+  {
+    {proc::PROCEDURE_SID, 0},
+    {proc::PROCEDURE_STAR, 1},
+    {proc::PROCEDURE_APPROACH, 2},
+  });
 
   int priority1 = priority.value(buildTypeFromApproachRec(rec1));
   int priority2 = priority.value(buildTypeFromApproachRec(rec2));
