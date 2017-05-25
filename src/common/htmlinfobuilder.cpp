@@ -64,7 +64,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
   : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), infoQuery(NavApp::getInfoQuery()), info(formatInfo),
-    print(formatPrint)
+  print(formatPrint)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 
@@ -176,7 +176,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.row2(tr("Magvar:"), map::magvarText(airport.magvar));
 
   // if(rec != nullptr)
-  // // Add rating and coordinates for info panel
+  //// Add rating and coordinates for info panel
   // html.row2(tr("Rating:"), atools::ratingString(rec->valueInt("rating"), 5));
 
   if(info)
@@ -722,7 +722,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         // Fill table ==========================================================
         html.table();
 
-        if(!(type & proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
+        if(!(type& proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
         {
           rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
           html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
@@ -913,7 +913,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
       html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" MHz"));
       html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
-      html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+      html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident),
+                atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
       qWarning() << "NDB data not found";
@@ -1002,42 +1003,45 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
 
   bool hasClouds = !parsed.getClouds().isEmpty() &&
-                   parsed.getClouds().first().getCoverage() !=
-                   atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
+                   parsed.getClouds().first().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
 
   html.table();
 
+  // Time and date =============================================================
   if(!isInterpolated)
   {
     QDateTime time;
     time.setOffsetFromUtc(0);
     time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
     time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
-    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) +
-              " " + time.timeZoneAbbreviation());
+    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) + " " + time.timeZoneAbbreviation());
   }
 
   if(!parsed.getReportTypeString().isEmpty())
     html.row2(tr("Report type: "), parsed.getReportTypeString());
 
-  // int getWindDir()
-  if(parsed.getWindDir() > 0.f)
+  // Wind =============================================================
+  if(parsed.getWindSpeedMeterPerSec() > 0.f)
   {
-    html.row2(tr("Wind:"),
-              locale.toString(
-                normalizeCourse(parsed.getWindDir() - airport.magvar), 'f', 0) + tr("°M") + tr(", ") +
-              Unit::speedMeterPerSec(parsed.getWindSpeedMeterPerSec()));
+    QString windDir, windVar;
+
+    if(parsed.getWindDir() >= 0.f)
+      windDir = locale.toString(normalizeCourse(parsed.getWindDir() - airport.magvar), 'f', 0) + tr("°M") + tr(", ");
+    else if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
+      windVar = tr(", variable ") +
+                locale.toString(normalizeCourse(parsed.getWindRangeFrom() - airport.magvar), 'f', 0) +
+                tr(" to ") +
+                locale.toString(normalizeCourse(parsed.getWindRangeTo() - airport.magvar), 'f', 0) + tr("°M");
+    else
+      windDir = tr("Variable, ");
+
+    html.row2(tr("Wind:"), windDir + Unit::speedMeterPerSec(parsed.getWindSpeedMeterPerSec()) + windVar);
   }
 
   if(parsed.getGustSpeedMeterPerSec() < INVALID_METAR_VALUE)
     html.row2(tr("Wind gusts:"), Unit::speedMeterPerSec(parsed.getGustSpeedMeterPerSec()));
 
-  if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
-    html.row2(tr("Wind variable:"),
-              locale.toString(normalizeCourse(parsed.getWindRangeFrom() - airport.magvar), 'f', 0) +
-              tr(" to ") +
-              locale.toString(normalizeCourse(parsed.getWindRangeTo() - airport.magvar), 'f', 0) + tr("°M"));
-
+  // Temperature  =============================================================
   float temp = parsed.getTemperatureC();
   if(temp < INVALID_METAR_VALUE)
     html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
@@ -1048,11 +1052,13 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
               locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
 
+  // Pressure  =============================================================
   float slp = parsed.getPressureMbar();
   if(slp < INVALID_METAR_VALUE)
     html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
               locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
 
+  // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
   QString visiblity;
   if(minVis.getVisibilityMeter() < INVALID_METAR_VALUE)
@@ -1074,6 +1080,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!hasClouds)
     html.row2(tr("No clouds"));
 
+  // Other conditions =============================================================
   const QStringList& weather = parsed.getWeather();
   if(!weather.isEmpty())
   {
@@ -1281,10 +1288,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     {
       // Sort airways by name
       std::sort(airwayTexts.begin(), airwayTexts.end(),
-                [] (const std::pair<QString, QString> &item1, const std::pair<QString, QString> &item2)
-                {
-                  return item1.first < item2.first;
-                });
+                [](const std::pair<QString, QString>& item1, const std::pair<QString, QString>& item2)
+      {
+        return item1.first < item2.first;
+      });
 
       // Remove duplicates
       airwayTexts.erase(std::unique(airwayTexts.begin(), airwayTexts.end()), airwayTexts.end());
@@ -1992,9 +1999,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       value += Unit::speedKts(std::abs(headWind));
 
       if(headWind <= -1.f)
-        value += tr("▲");  // Tailwind
+        value += tr("▲"); // Tailwind
       else
-        value += tr("▼");  // Headwind
+        value += tr("▼"); // Headwind
     }
 
     if(std::abs(crossWind) >= 1.0f)
