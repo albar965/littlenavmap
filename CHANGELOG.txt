@@ -1,3 +1,28 @@
+Version 1.4.2.beta
+
+* Added support for P3D version 4:
+ * Added new simulator type
+ * Now using UTF-8 encoding for reading P3D V4 scenery.cfg. Others are read with default encoding.
+* Fixed wind display in information windows. Variable winds are now displayed correctly.
+* Fixed behavior when changing away from procedure search tab. No more disappearing procedures.
+* Removed inconsistencies in options dialog when using reset function:
+ * Default settings are now equal to reset result.
+ * Weather settings are now properly reset.
+ * GUI style is now unaffected when using reset instead of swiching to old windows style.
+* Fixed wrong theme selection on startup in menu.
+* Added tutorial links in help menu.
+* Fixed unit update for airspace altitude filter. Now also uses metric units if set in options dialog.
+* Increased jump distance when aircraft track is removed if simulator position changes.
+* Added workaround for not intersecting procedure legs in "course to fix" leg.
+* Fixed problems with actions disabled in background resulting in shortcut keys being unavailable.
+* Added shortcut key combinations for "show procedures" and "activate leg".
+* Changed and enabled shortcut key combination for clear selection.
+* Fixed problem where splash screen could hide dialogs on startup.
+
+derived from atools:
+* Added support for P3D version 4.
+* Fixed METAR parsing for reports with missing humidity.
+
 Version 1.4.1.beta
 
 * Fixed errors with radionavaid flight plan calculation. DME and TACAN are now excluded.
