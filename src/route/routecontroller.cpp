@@ -702,8 +702,8 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.updateAll();
     updateAirwaysAndAltitude();
 
-    updateTableModel();
     route.updateActiveLegAndPos(true /* force update */);
+    updateTableModel();
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
@@ -1118,8 +1118,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       route.updateAll();
       updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */);
 
-      updateTableModel();
       route.updateActiveLegAndPos(true /* force update */);
+      updateTableModel();
 
       postChange(undoCommand);
       NavApp::updateWindowTitle();
@@ -1252,8 +1252,8 @@ void RouteController::reverseRoute()
   updateAirwaysAndAltitude();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -1336,8 +1336,8 @@ void RouteController::postDatabaseLoad()
      flightplan.getDepartureParkingName().isEmpty())
     updateStartPositionBestRunway(false, true);
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   NavApp::updateWindowTitle();
   routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
@@ -1882,6 +1882,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
+    route.updateActiveLegAndPos(true /* force update */);
     updateTableModel();
 
     // Restore current position at new moved position
@@ -1890,7 +1891,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     select(rows, direction);
 
     updateMoveAndDeleteActions();
-    route.updateActiveLegAndPos(true /* force update */);
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
@@ -1947,12 +1947,12 @@ void RouteController::deleteSelectedLegs()
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
+    route.updateActiveLegAndPos(true /* force update */);
     updateTableModel();
 
     // Update current position at the beginning of the former selection
     view->setCurrentIndex(model->index(firstRow, 0));
     updateMoveAndDeleteActions();
-    route.updateActiveLegAndPos(true /* force update */);
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
@@ -2083,8 +2083,8 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2135,8 +2135,8 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2223,8 +2223,8 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2280,8 +2280,8 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
@@ -2395,8 +2395,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateTableModel();
   route.updateActiveLegAndPos(true /* force update */);
+  updateTableModel();
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
