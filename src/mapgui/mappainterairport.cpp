@@ -98,20 +98,20 @@ void MapPainterAirport::render(PaintContext *context)
       continue;
 
     // Avoid drawing too many airports during animation when zooming out
-    if(airport->longestRunwayLength <= context->mapLayer->getMinRunwayLength())
-      continue;
-
-    float x, y;
-    bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding));
-
-    if(!visible)
-      // Check bounding rect for visibility
-      visible = airport->bounding.overlaps(context->viewportRect);
-
-    if(visible)
+    if(airport->longestRunwayLength >= context->mapLayer->getMinRunwayLength())
     {
-      visibleAirports.append(airport);
-      visiblePoints.append(QPointF(x, y));
+      float x, y;
+      bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding));
+
+      if(!visible)
+        // Check bounding rect for visibility
+        visible = airport->bounding.overlaps(context->viewportRect);
+
+      if(visible)
+      {
+        visibleAirports.append(airport);
+        visiblePoints.append(QPointF(x, y));
+      }
     }
   }
 
