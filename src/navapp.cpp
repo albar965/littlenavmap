@@ -46,6 +46,8 @@ ElevationProvider *NavApp::elevationProvider = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMeta = nullptr;
 QSplashScreen *NavApp::splashScreen = nullptr;
 
+bool NavApp::shuttingDown = false;
+
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
@@ -299,6 +301,18 @@ void NavApp::deleteSplashScreen()
 
   if(splashScreen != nullptr)
     splashScreen->close();
+}
+
+bool NavApp::isShuttingDown()
+{
+  return shuttingDown;
+}
+
+void NavApp::setShuttingDown(bool value)
+{
+  qDebug() << Q_FUNC_INFO << value;
+
+  shuttingDown = value;
 }
 
 void NavApp::initSplashScreen()

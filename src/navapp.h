@@ -129,6 +129,9 @@ public:
   static void finishSplashScreen();
   static void deleteSplashScreen();
 
+  static bool isShuttingDown();
+  static void setShuttingDown(bool value);
+
 private:
   /* Database query helpers and caches */
   static MapQuery *mapQuery;
@@ -143,6 +146,8 @@ private:
   static MainWindow *mainWindow;
   static atools::fs::db::DatabaseMeta *databaseMeta;
   static QSplashScreen *splashScreen;
+
+  static bool shuttingDown;
 };
 
 #endif // NAVAPPLICATION_H

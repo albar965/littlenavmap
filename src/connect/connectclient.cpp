@@ -17,6 +17,7 @@
 
 #include "connect/connectclient.h"
 
+#include "navapp.h"
 #include "common/constants.h"
 #include "connect/connectdialog.h"
 #include "fs/sc/simconnectreply.h"
@@ -156,8 +157,11 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   outstandingReplies.clear();
   queuedRequests.clear();
 
-  emit disconnectedFromSimulator();
-  emit weatherUpdated();
+  if(!NavApp::isShuttingDown())
+  {
+    emit disconnectedFromSimulator();
+    emit weatherUpdated();
+  }
 
   manualDisconnect = false;
 }
@@ -455,8 +459,12 @@ void ConnectClient::closeSocket(bool allowRestart)
   if(socketConnected)
   {
     qDebug() << Q_FUNC_INFO << "emit disconnectedFromSimulator();";
-    emit disconnectedFromSimulator();
-    emit weatherUpdated();
+
+    if(!NavApp::isShuttingDown())
+    {
+      emit disconnectedFromSimulator();
+      emit weatherUpdated();
+    }
     socketConnected = false;
   }
 

@@ -226,6 +226,8 @@ MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
 
+  NavApp::setShuttingDown(true);
+
   weatherUpdateTimer.stop();
 
   // Close all queries
@@ -1833,6 +1835,9 @@ void MainWindow::mainWindowShown()
 void MainWindow::updateActionStates()
 {
   qDebug() << Q_FUNC_INFO;
+
+  if(NavApp::isShuttingDown())
+    return;
 
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
