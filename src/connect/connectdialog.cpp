@@ -230,5 +230,9 @@ void ConnectDialog::restoreState()
                        ui->checkBoxConnectOnStartup, ui->radioButtonConnectDirect, ui->radioButtonConnectRemote,
                        ui->checkBoxConnectFetchAiAircraft, ui->checkBoxConnectFetchAiShip});
 
+  if(!atools::fs::sc::DataReaderThread::isSimconnectAvailable() && ui->comboBoxConnectHostname->currentText().isEmpty())
+    // Disable autoconnect if no host is given and this is not a windows client
+    ui->checkBoxConnectOnStartup->setChecked(false);
+
   updateButtonStates();
 }
