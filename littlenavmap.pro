@@ -26,8 +26,8 @@ CONFIG(release, debug|release):CONF_TYPE=release
 
 # Windows ==================
 win32 {
-  QT_HOME=C:\\Qt\\5.6\\mingw49_32
-  QT_TOOL_HOME=C:\\Projekte\\Qt
+  QT_HOME=C:\\Qt\\5.9\\mingw53_32
+  QT_TOOL_HOME=C:\\Qt\\5.9
   OPENSSL=C:\\OpenSSL-Win32
   GIT_BIN='C:\\Git\\bin\\git'
   MARBLE_BASE="c:\\Projekte\\marble-$${CONF_TYPE}"
@@ -35,7 +35,7 @@ win32 {
 
 # Linux ==================
 unix:!macx {
-  QT_HOME=/home/alex/Qt/5.6/gcc_64
+  QT_HOME=/home/alex/Qt/5.9/gcc_64
   MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
 }
 
@@ -366,7 +366,7 @@ unix:!macx {
   deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimalegl.so*  $${DEPLOY_DIR}/platforms &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqoffscreen.so*  $${DEPLOY_DIR}/platforms &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqxcb.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk2.so*  $${DEPLOY_DIR}/platformthemes &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk*.so*  $${DEPLOY_DIR}/platformthemes &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/printsupport/libcupsprintersupport.so*  $${DEPLOY_DIR}/printsupport &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/sqldrivers/libqsqlite.so*  $${DEPLOY_DIR}/sqldrivers &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicudata.so*  $${DEPLOY_DIR_LIB} &&

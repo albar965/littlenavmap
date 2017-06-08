@@ -427,7 +427,7 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
 
   s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
-  s.setValue(lnm::MAP_AIRSPACES, paintLayer->getShownAirspaces());
+  s.setValue(lnm::MAP_AIRSPACES, static_cast<int>(paintLayer->getShownAirspaces()));
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
