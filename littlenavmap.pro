@@ -27,7 +27,6 @@ CONFIG(release, debug|release):CONF_TYPE=release
 # Windows ==================
 win32 {
   QT_HOME=C:\\Qt\\5.9\\mingw53_32
-  QT_TOOL_HOME=C:\\Qt\\5.9
   OPENSSL=C:\\OpenSSL-Win32
   GIT_BIN='C:\\Git\\bin\\git'
   MARBLE_BASE="c:\\Projekte\\marble-$${CONF_TYPE}"
@@ -472,23 +471,20 @@ win32 {
   deploy.commands += xcopy $${QT_HOME}\\bin\\libgcc*.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_HOME}\\bin\\libstdc*.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_HOME}\\bin\\libwinpthread*.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_HOME}\\bin\\icudt54.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_HOME}\\bin\\icuin54.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_HOME}\\bin\\icuuc54.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${OPENSSL}\\bin\\libeay32.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${OPENSSL}\\bin\\ssleay32.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${OPENSSL}\\libssl32.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5DBus$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Network$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5PrintSupport$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Qml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Quick$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Script$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Multimedia$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += $${QT_TOOL_HOME}\\bin\\windeployqt --compiler-runtime $${DEPLOY_DIR_WIN}
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5DBus$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Network$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5PrintSupport$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Qml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Quick$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Script$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Multimedia$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += $${QT_HOME}\\bin\\windeployqt --compiler-runtime $${DEPLOY_DIR_WIN}
 }
 
 QMAKE_EXTRA_TARGETS += deploy
