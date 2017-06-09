@@ -35,8 +35,6 @@
 
 #include <QDebug>
 #include <QSplashScreen>
-#include <QSslSocket>
-#include <QStyleFactory>
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>
@@ -120,8 +118,6 @@ int main(int argc, char *argv[])
             << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
     atools::fs::FsPaths::logAllPaths();
-
-    qInfo() << "Available styles" << QStyleFactory::keys();
 
     migrate::checkAndMigrateSettings();
 
