@@ -64,7 +64,7 @@ popd
 rem Copy navconnect =======================================================
 xcopy "%APROJECTS%\deploy\Little Navconnect\littlenavconnect.exe" "%APROJECTS%\deploy\Little Navmap\"
 IF ERRORLEVEL 1 goto :err
-xcopy "%APROJECTS%\deploy\Little Navconnect\littlenavconnect.exe.manifest" "%APROJECTS%\deploy\Little Navmap\"
+xcopy "%APROJECTS%\deploy\Little Navconnect\littlenavconnect.exe.simconnect" "%APROJECTS%\deploy\Little Navmap\"
 IF ERRORLEVEL 1 goto :err
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navconnect\help" "%APROJECTS%\deploy\Little Navmap\help"
 IF ERRORLEVEL 1 goto :err
