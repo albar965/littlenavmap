@@ -341,10 +341,12 @@ void ConnectClient::connectInternal()
     qDebug() << "Starting direct connection";
     // Datareader has its own reconnect mechanism
     if(dataReader != nullptr)
+    {
       dataReader->start();
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
-                                               tr("Trying to connect to local flight simulator."));
+      mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
+                                                 tr("Trying to connect to local flight simulator."));
+    }
   }
   else if(socket == nullptr)
   {

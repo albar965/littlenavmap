@@ -47,8 +47,14 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
     ui->radioButtonConnectDirect->hide();
     ui->spinBoxConnectUpdateRate->hide();
     ui->labelConnectUpdateRate->hide();
+
+#if !defined(Q_OS_WIN32)
     ui->lineDirectRemote->hide();
+    ui->labelConnectHeader->hide();
+#endif
   }
+  else
+    ui->labelConnectHeader->hide();
 
   ui->comboBoxConnectHostname->setAutoCompletion(true);
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
