@@ -40,7 +40,7 @@
 #include <QDir>
 #include <QTabWidget>
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
@@ -148,7 +148,7 @@ void InfoController::anchorClicked(const QUrl& url)
       }
       else if(query.hasQueryItem("filepath"))
       {
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN32
         QFileInfo fp(query.queryItemValue("filepath"));
         fp.makeAbsolute();
 
