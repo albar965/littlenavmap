@@ -32,14 +32,14 @@
 using atools::settings::Settings;
 using atools::gui::HelpHandler;
 
-ConnectDialog::ConnectDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::ConnectDialog)
+ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
+  : QDialog(parent), ui(new Ui::ConnectDialog), simConnect(simConnectAvailable)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
   ui->setupUi(this);
 
-  if(!atools::fs::sc::DataReaderThread::isSimconnectAvailable())
+  if(!simConnect)
   {
     ui->checkBoxConnectFetchAiAircraft->hide();
     ui->checkBoxConnectFetchAiShip->hide();
@@ -140,7 +140,7 @@ void ConnectDialog::deleteClicked()
 
 void ConnectDialog::updateButtonStates()
 {
-  if(!atools::fs::sc::DataReaderThread::isSimconnectAvailable())
+  if(!simConnect)
   {
     ui->radioButtonConnectRemote->setChecked(true);
     ui->radioButtonConnectDirect->setChecked(false);
@@ -230,7 +230,7 @@ void ConnectDialog::restoreState()
                        ui->checkBoxConnectOnStartup, ui->radioButtonConnectDirect, ui->radioButtonConnectRemote,
                        ui->checkBoxConnectFetchAiAircraft, ui->checkBoxConnectFetchAiShip});
 
-  if(!atools::fs::sc::DataReaderThread::isSimconnectAvailable() && ui->comboBoxConnectHostname->currentText().isEmpty())
+  if(!simConnect && ui->comboBoxConnectHostname->currentText().isEmpty())
     // Disable autoconnect if no host is given and this is not a windows client
     ui->checkBoxConnectOnStartup->setChecked(false);
 

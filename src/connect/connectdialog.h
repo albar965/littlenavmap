@@ -35,7 +35,7 @@ class ConnectDialog :
   Q_OBJECT
 
 public:
-  ConnectDialog(QWidget *parent);
+  ConnectDialog(QWidget *parent, bool simConnectAvailable);
   ~ConnectDialog();
 
   /* Get hostname as entered in the edit field */
@@ -71,7 +71,7 @@ private:
   void updateButtonStates();
 
   Ui::ConnectDialog *ui;
-
+  bool simConnect = false;
 };
 
 #endif // LITTLENAVMAP_CONNECTDIALOG_H

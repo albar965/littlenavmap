@@ -79,6 +79,7 @@ public:
   static Ui::MainWindow *getMainUi();
 
   static bool isConnected();
+  static bool isSimConnectAvailable();
 
   static map::MapObjectTypes getShownMapFeatures();
   static map::MapAirspaceTypes getShownMapAirspaces();

@@ -1,7 +1,6 @@
 @echo off
 
 rem === Build atools, littlenavconnect and littlenavmap =============================
-rem === Also build a simconnect-less version of littlenavmap =============================
 rem === Merge all files into one littlenavmap directory ===========================
 
 
@@ -61,40 +60,6 @@ IF ERRORLEVEL 1 goto :err
 mingw32-make.exe deploy
 IF ERRORLEVEL 1 goto :err
 popd
-
-rem ===========================================================================
-rem ========================== atools no SimConnect
-pushd "%APROJECTS%\build-atools-release"
-del /S /Q /F "%APROJECTS%\build-atools-release"
-for /f %%f in ('dir /ad /b "%APROJECTS%\build-atools-release"') do rd /s /q "%APROJECTS%\build-atools-release\%%f"
-IF ERRORLEVEL 1 goto :err
-
-qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=release DEFINES-=SIMCONNECT_REAL DEFINES+=SIMCONNECT_DUMMY
-IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
-IF ERRORLEVEL 1 goto :err
-popd
-
-rem ===========================================================================
-rem ========================== littlenavmap no SimConnect
-pushd "%APROJECTS%\build-littlenavmap-release"
-del /S /Q /F "%APROJECTS%\build-littlenavmap-release"
-for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlenavmap-release"') do rd /s /q "%APROJECTS%\build-littlenavmap-release\%%f"
-IF ERRORLEVEL 1 goto :err
-
-qmake.exe "%APROJECTS%\littlenavmap\littlenavmap.pro" -spec win32-g++ CONFIG+=release DEFINES-=SIMCONNECT_REAL DEFINES+=SIMCONNECT_DUMMY
-IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
-IF ERRORLEVEL 1 goto :err
-mingw32-make.exe
-IF ERRORLEVEL 1 goto :err
-popd
-
-rem Copy nosimconnect =======================================================
-rename "%APROJECTS%\build-littlenavmap-release\release\littlenavmap.exe" littlenavmap-nosimconnect.exe
-IF ERRORLEVEL 1 goto :err
-xcopy "%APROJECTS%\build-littlenavmap-release\release\littlenavmap-nosimconnect.exe" "%APROJECTS%\deploy\Little Navmap\"
-IF ERRORLEVEL 1 goto :err
 
 rem Copy navconnect =======================================================
 xcopy "%APROJECTS%\deploy\Little Navconnect\littlenavconnect.exe" "%APROJECTS%\deploy\Little Navmap\"

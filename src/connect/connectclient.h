@@ -62,6 +62,7 @@ public:
 
   /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
+  bool isSimConnectAvailable() const;
 
   /* Just saves and restores the state of the dialog */
   void saveState();

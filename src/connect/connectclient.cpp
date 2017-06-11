@@ -39,14 +39,15 @@ using atools::fs::sc::DataReaderThread;
 ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS)
 {
-  dialog = new ConnectDialog(mainWindow);
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
-  if(DataReaderThread::isSimconnectAvailable())
+  DataReaderThread *dr =
+    new DataReaderThread(mainWindow, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+
+  if(dr->isSimconnectAvailable())
   {
-    dataReader = new DataReaderThread(mainWindow,
-                                      settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+    dataReader = dr;
     dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
     connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
@@ -57,6 +58,10 @@ ConnectClient::ConnectClient(MainWindow *parent)
     connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader, &DataReaderThread::setUpdateRate);
     connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsToDataReader);
   }
+  else
+    delete dr;
+
+  dialog = new ConnectDialog(mainWindow, dataReader != nullptr);
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
   connect(dialog, &ConnectDialog::autoConnectToggled, this, &ConnectClient::autoConnectToggled);
@@ -369,6 +374,14 @@ bool ConnectClient::isConnected() const
     return (socket != nullptr && socket->isOpen()) || dataReader->isConnected();
   else
     return socket != nullptr && socket->isOpen();
+}
+
+bool ConnectClient::isSimConnectAvailable() const
+{
+  if(dataReader != nullptr)
+    return dataReader->isSimconnectAvailable();
+  else
+    return false;
 }
 
 /* Called by signal QAbstractSocket::error */

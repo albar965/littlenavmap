@@ -165,6 +165,11 @@ bool NavApp::isConnected()
   return NavApp::getConnectClient()->isConnected();
 }
 
+bool NavApp::isSimConnectAvailable()
+{
+  return NavApp::getConnectClient()->isSimConnectAvailable();
+}
+
 MapQuery *NavApp::getMapQuery()
 {
   return mapQuery;
