@@ -35,6 +35,8 @@
 
 #include <QDebug>
 #include <QSplashScreen>
+#include <QSslSocket>
+#include <QStyleFactory>
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>
@@ -113,6 +115,12 @@ int main(int argc, char *argv[])
     LoggingUtil::logSystemInformation();
     LoggingUtil::logStandardPaths();
     Settings::logSettingsInformation();
+
+    qInfo() << "SSL supported" << QSslSocket::supportsSsl()
+            << "build library" << QSslSocket::sslLibraryBuildVersionString()
+            << "library" << QSslSocket::sslLibraryVersionString();
+
+    qInfo() << "Available styles" << QStyleFactory::keys();
 
     qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
             << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();

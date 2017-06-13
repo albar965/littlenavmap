@@ -601,15 +601,16 @@ bool DatabaseManager::loadScenery()
 
   QSettings settings(config, QSettings::IniFormat);
 
-  NavDatabaseOptions bglReaderOpts;
-  bglReaderOpts.loadFromSettings(settings);
+  NavDatabaseOptions navDatabaseOpts;
+  navDatabaseOpts.loadFromSettings(settings);
 
-  bglReaderOpts.setReadInactive(readInactive);
+  navDatabaseOpts.setReadInactive(readInactive);
 
   // Add exclude paths from option dialog
   const OptionData& optionData = OptionData::instance();
-  bglReaderOpts.addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
-  bglReaderOpts.addToDirectoryExcludes(optionData.getDatabaseExclude());
+  navDatabaseOpts.addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
+  navDatabaseOpts.addToDirectoryExcludes(optionData.getDatabaseExclude());
+  navDatabaseOpts.setSimulatorType(loadingFsType);
 
   delete progressDialog;
   progressDialog = new QProgressDialog(databaseDialog);
@@ -632,8 +633,8 @@ bool DatabaseManager::loadScenery()
   progressDialog->setAutoReset(false);
   progressDialog->setMinimumDuration(0);
 
-  bglReaderOpts.setSceneryFile(simulators.value(loadingFsType).sceneryCfg);
-  bglReaderOpts.setBasepath(simulators.value(loadingFsType).basePath);
+  navDatabaseOpts.setSceneryFile(simulators.value(loadingFsType).sceneryCfg);
+  navDatabaseOpts.setBasepath(simulators.value(loadingFsType).basePath);
 
   QElapsedTimer timer;
   progressTimerElapsed = 0L;
@@ -645,8 +646,8 @@ bool DatabaseManager::loadScenery()
 
   progressDialog->show();
 
-  bglReaderOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
-                                              std::placeholders::_1, timer));
+  navDatabaseOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
+                                                std::placeholders::_1, timer));
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -657,7 +658,7 @@ bool DatabaseManager::loadScenery()
     // Create a backup of the database and delete the original file
     backupDatabaseFile();
 
-    atools::fs::NavDatabase nd(&bglReaderOpts, db, &errors);
+    atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors);
     QString sceneryCfgCodec = loadingFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
     nd.create(sceneryCfgCodec);
   }
