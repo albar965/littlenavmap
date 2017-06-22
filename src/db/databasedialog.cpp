@@ -71,18 +71,13 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   connect(ui->comboBoxSimulator, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &DatabaseDialog::simComboChanged);
-  connect(ui->pushButtonDatabaseBasePath, &QPushButton::clicked,
-          this, &DatabaseDialog::selectBasePathClicked);
-  connect(ui->pushButtonDatabaseSceneryFile, &QPushButton::clicked,
-          this, &DatabaseDialog::selectSceneryConfigClicked);
-  connect(ui->pushButtonDatabaseResetPaths, &QPushButton::clicked,
-          this, &DatabaseDialog::resetPathsClicked);
+  connect(ui->pushButtonDatabaseBasePath, &QPushButton::clicked, this, &DatabaseDialog::selectBasePathClicked);
+  connect(ui->pushButtonDatabaseSceneryFile, &QPushButton::clicked, this, &DatabaseDialog::selectSceneryConfigClicked);
+  connect(ui->pushButtonDatabaseResetPaths, &QPushButton::clicked, this, &DatabaseDialog::resetPathsClicked);
 
-  connect(ui->lineEditDatabaseBasePath, &QLineEdit::textEdited,
-          this, &DatabaseDialog::basePathEdited);
+  connect(ui->lineEditDatabaseBasePath, &QLineEdit::textEdited, this, &DatabaseDialog::basePathEdited);
 
-  connect(ui->lineEditDatabaseSceneryFile, &QLineEdit::textEdited,
-          this, &DatabaseDialog::sceneryConfigFileEdited);
+  connect(ui->lineEditDatabaseSceneryFile, &QLineEdit::textEdited, this, &DatabaseDialog::sceneryConfigFileEdited);
 }
 
 DatabaseDialog::~DatabaseDialog()
@@ -200,6 +195,11 @@ void DatabaseDialog::updateComboBox()
 
 void DatabaseDialog::updateLineEdits()
 {
+  ui->lineEditDatabaseSceneryFile->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
+  ui->pushButtonDatabaseSceneryFile->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
+  ui->checkBoxReadInactive->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
+  ui->labelDatabaseSceneryFile->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
+
   ui->lineEditDatabaseSceneryFile->blockSignals(true);
   ui->lineEditDatabaseSceneryFile->setText(paths.value(currentFsType).sceneryCfg);
   ui->lineEditDatabaseSceneryFile->blockSignals(false);

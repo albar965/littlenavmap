@@ -83,10 +83,10 @@
      <item row="2" column="1">
       <widget class="QLineEdit" name="lineEditDatabaseBasePath">
        <property name="toolTip">
-        <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.</string>
+        <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</string>
        </property>
        <property name="statusTip">
-        <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.</string>
+        <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>

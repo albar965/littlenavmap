@@ -998,8 +998,7 @@ void DatabaseManager::restoreState()
 {
   Settings& s = Settings::instance();
   simulators = s.valueVar(lnm::DATABASE_PATHS).value<SimulatorTypeMap>();
-  currentFsType =
-    atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_SIMULATOR, QString()));
+  currentFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_SIMULATOR, QString()));
   loadingFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
 }
