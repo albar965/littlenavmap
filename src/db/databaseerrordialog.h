@@ -36,7 +36,10 @@ public:
   void setErrorMessages(const QString& messages);
 
 private:
+  void anchorClicked(const QUrl& url);
+
   Ui::DatabaseErrorDialog *ui;
+
 };
 
 #endif // LITTLENAVMAP_DATABASEERRORS_H

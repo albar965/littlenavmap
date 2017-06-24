@@ -18,10 +18,15 @@
 #include "db/databaseerrordialog.h"
 #include "ui_databaseerrordialog.h"
 
+#include <QDesktopServices>
+#include <QMessageBox>
+#include <QDebug>
+
 DatabaseErrorDialog::DatabaseErrorDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::DatabaseErrorDialog)
 {
   ui->setupUi(this);
+  connect(ui->textBrowserDatabaseErrors, &QTextBrowser::anchorClicked, this, &DatabaseErrorDialog::anchorClicked);
 }
 
 DatabaseErrorDialog::~DatabaseErrorDialog()
@@ -32,4 +37,13 @@ DatabaseErrorDialog::~DatabaseErrorDialog()
 void DatabaseErrorDialog::setErrorMessages(const QString& messages)
 {
   ui->textBrowserDatabaseErrors->setHtml(messages);
+}
+
+void DatabaseErrorDialog::anchorClicked(const QUrl& url)
+{
+  qDebug() << Q_FUNC_INFO << url;
+
+  if(!QDesktopServices::openUrl(url))
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         QString(tr("Error opening URL <i>%1</i>")).arg(url.toDisplayString()));
 }

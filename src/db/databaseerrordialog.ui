@@ -20,7 +20,10 @@
       <set>Qt::TextBrowserInteraction</set>
      </property>
      <property name="openExternalLinks">
-      <bool>true</bool>
+      <bool>false</bool>
+     </property>
+     <property name="openLinks">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
