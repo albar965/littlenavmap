@@ -38,6 +38,7 @@
 #include "fs/weather/metarparser.h"
 
 #include <QSize>
+#include <QFileInfo>
 
 using namespace map;
 using atools::sql::SqlRecord;
@@ -554,6 +555,28 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
       else
         html.p(tr("Airport has no helipads."));
 
+      const SqlRecordVector *startVector = infoQuery->getStartInformation(airport.id);
+
+      if(startVector != nullptr && !startVector->isEmpty())
+      {
+        html.h3(tr("Start Positions"));
+
+        QStringList starts;
+        for(const SqlRecord& startRec: *startVector)
+        {
+          QString type = startRec.valueStr("type");
+          QString name = startRec.valueStr("runway_name");
+          if(type == "R")
+            starts.append(tr("Runway %1").arg(name));
+          else if(type == "H")
+            starts.append(tr("Helipad %1").arg(startRec.valueInt("runway_name")));
+          else if(type == "W")
+            starts.append(tr("Water %1").arg(name));
+        }
+        html.text(starts.join(tr(", ")));
+      }
+      else
+        html.p(tr("Airport has no start positions."));
     }
   }
 }
@@ -1814,11 +1837,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.tableEnd();
     }
     else
-      html.h4(tr("No Active Flight Plan Leg"), atools::util::html::BOLD);
+    {
+      head(html, tr("No Active Flight Plan Leg"));
+      html.table();
+      timeAndDate(userAircaft, html);
+      html.tableEnd();
+    }
   }
   else if(info && userAircaft != nullptr)
   {
-    head(html, tr("No Flight Plan."));
+    head(html, tr("No Flight Plan"));
     html.table();
     timeAndDate(userAircaft, html);
     html.tableEnd();
@@ -2112,12 +2140,8 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
 {
   head(html, tr("Scenery"));
   html.table();
-  HtmlBuilder link(true);
-  link.a(rec->valueStr("filepath"),
-         QString("lnm://show?filepath=%1").arg(rec->valueStr("filepath")),
-         atools::util::html::LINK_NO_UL);
 
-  html.row2(rec->valueStr("title"), link.getHtml(),
+  html.row2(rec->valueStr("title"), filepathText(rec->valueStr("filepath")),
             atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
   html.tableEnd();
 }
@@ -2132,18 +2156,22 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
   if(sceneryInfo != nullptr)
   {
     for(const SqlRecord& rec : *sceneryInfo)
-    {
-      HtmlBuilder link(true);
-      link.a(rec.valueStr("filepath"),
-             QString("lnm://show?filepath=%1").arg(rec.valueStr("filepath")),
-             atools::util::html::LINK_NO_UL);
-
-      html.row2(rec.valueStr("title"), link.getHtml(),
+      html.row2(rec.valueStr("title"), filepathText(rec.valueStr("filepath")),
                 atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-    }
   }
 
   html.tableEnd();
+}
+
+QString HtmlInfoBuilder::filepathText(const QString& filepath) const
+{
+  HtmlBuilder link(true);
+
+  if(QFileInfo::exists(filepath))
+    link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), atools::util::html::LINK_NO_UL);
+  else
+    link.text(filepath);
+  return link.getHtml();
 }
 
 void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const

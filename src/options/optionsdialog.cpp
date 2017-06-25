@@ -422,8 +422,14 @@ void OptionsDialog::applyStyle()
   qDebug() << Q_FUNC_INFO << "index" << idx;
 
   QApplication::setStyle(QStyleFactory::create(ui->comboBoxOptionsGuiTheme->currentData().toString()));
-  qApp->setPalette(stylePalettes.at(idx));
-  qApp->setStyleSheet(stylesheets.at(idx));
+
+  if(idx >= 0 && idx < stylePalettes.size())
+  {
+    qApp->setPalette(stylePalettes.at(idx));
+    qApp->setStyleSheet(stylesheets.at(idx));
+  }
+  else
+    qWarning() << "Invalid style index" << idx;
 }
 
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
@@ -554,7 +560,13 @@ void OptionsDialog::restoreState()
     settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
   if(settings.contains(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX))
-    ui->comboBoxOptionsGuiTheme->setCurrentIndex(settings.valueInt(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX));
+  {
+    int idx = settings.valueInt(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX);
+    if(idx >= 0 && idx < ui->comboBoxOptionsGuiTheme->count())
+      ui->comboBoxOptionsGuiTheme->setCurrentIndex(idx);
+    else
+      qWarning() << "Invalid style index" << idx;
+  }
   else
   {
     int index = 0;

@@ -278,6 +278,7 @@ private:
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
+  QString filepathText(const QString& filepath) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
