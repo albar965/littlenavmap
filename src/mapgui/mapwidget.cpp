@@ -241,6 +241,8 @@ void MapWidget::updateMapObjectsShown()
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    (currentComboIndex == MapWidget::OPENSTREETMAP ||
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
+                    currentComboIndex == MapWidget::CARTODARK ||
+                    currentComboIndex == MapWidget::CARTOLIGHT ||
                     currentComboIndex >= MapWidget::CUSTOM));
 
   setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
