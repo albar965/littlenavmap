@@ -179,6 +179,8 @@ void MapWidget::setTheme(const QString& theme, int index)
         break;
       case MapWidget::OPENSTREETMAPROADS:
       case MapWidget::OPENSTREETMAP:
+      case MapWidget::CARTODARK:
+      case MapWidget::CARTOLIGHT:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(true);
         break;
