@@ -420,6 +420,8 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("OpenMapSurfer"), "earth/openstreetmaproads/openstreetmaproads.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"), "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
+  mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
+  mapThemeComboBox->addItem(tr("CARTO Dark"), "earth/cartodark/cartodark.dgml");
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
@@ -438,6 +440,12 @@ void MainWindow::setupUi()
 
   ui->actionMapThemeStamenTerrain->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeStamenTerrain->setData(MapWidget::STAMENTERRAIN);
+
+  ui->actionMapThemeCartoLight->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeCartoLight->setData(MapWidget::CARTOLIGHT);
+
+  ui->actionMapThemeCartoDark->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeCartoDark->setData(MapWidget::CARTODARK);
 
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeSimple->setData(MapWidget::SIMPLE);
@@ -751,6 +759,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapThemeOpenStreetMapRoads, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeCartoLight, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeCartoDark, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeSimple, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemePlain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeAtlas, &QAction::triggered, this, &MainWindow::themeMenuTriggered);

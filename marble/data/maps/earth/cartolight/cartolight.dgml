@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     This xml file is free software licensed under the GNU LGPL. You can
+     find a copy of this license in LICENSE.txt in the top directory of
+     the source code.
+-->
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <document>
+    <head>
+      <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+      <!-- The content that this license refers to is not distributed with this package -->
+      <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <name>CARTO Light (Positron)</name>
+      <target>earth</target>
+      <theme>cartolight</theme>
+      <icon pixmap="cartolight-preview.png"/>
+      <visible>true</visible>
+      <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
+      <zoom>
+        <minimum>   900  </minimum>
+        <maximum>  3328  </maximum>
+        <discrete> true </discrete>
+      </zoom>
+    </head>
+    <map bgcolor="#000000">
+      <canvas/>
+      <target/>
+      <layer name="cartolight" backend="texture">
+        <!-- Tiles expire after 14 days -->
+        <texture name="mapnik_data" expire="1209600">
+          <sourcedir format="PNG"> earth/cartolight </sourcedir>
+          <tileSize width="256" height="256"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <projection name="Mercator"/>
+          <downloadUrl protocol="https" host="cartodb-basemaps-a.global.ssl.fastly.net" path="/light_all/"/>
+          <downloadUrl protocol="https" host="cartodb-basemaps-b.global.ssl.fastly.net" path="/light_all/"/>
+          <downloadUrl protocol="https" host="cartodb-basemaps-c.global.ssl.fastly.net" path="/light_all/"/>
+          <downloadPolicy usage="Browse" maximumConnections="2"/>
+          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+        </texture>
+       <texture name="hillshading" expire="31536000">
+          <sourcedir format="PNG"> earth/hillshading </sourcedir>
+          <tileSize width="256" height="256"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="17" mode="OpenStreetMap"/>
+          <projection name="Mercator"/>
+          <downloadUrl protocol="http" host="a.tiles.wmflabs.org" path="/hillshading/"/>
+          <downloadUrl protocol="http" host="b.tiles.wmflabs.org" path="/hillshading/"/>
+          <downloadUrl protocol="http" host="c.tiles.wmflabs.org" path="/hillshading/"/>
+          <blending name="AlphaBlending"/>
+        </texture>
+        </layer>
+    </map>
+    <settings>
+      <property name="coordinate-grid">
+        <value>false</value>
+        <available>true</available>
+      </property>
+      <group name="Texture Layers">
+        <property name="hillshading">
+          <value>false</value>
+          <available>true</available>
+        </property>
+      </group>
+    </settings>
+  </document>
+</dgml>
