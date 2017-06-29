@@ -903,7 +903,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       {
         html.row2(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.type));
         html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
-        html.row2(tr("VORTAC Channel:"), vor.channel);
+        if(!vor.channel.isEmpty())
+          html.row2(tr("VORTAC Channel:"), vor.channel);
         html.row2(tr("VORTAC Range:"), Unit::distNm(vor.range));
         html.row2(tr("VORTAC Morse:"), morse->getCode(
                     vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
@@ -1200,7 +1201,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(!vor.tacan)
     html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
 
-  if(vor.vortac)
+  if(vor.vortac && !vor.channel.isEmpty())
     html.row2(tr("Channel:"), vor.channel);
   else if(vor.tacan)
     html.row2(tr("Channel:"), QString(tr("%1 (%2 MHz)")).

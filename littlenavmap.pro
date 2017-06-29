@@ -67,6 +67,7 @@ DEFINES += _USE_MATH_DEFINES
   LIBS += -L $$PWD/../build-atools-$${CONF_TYPE}/$${CONF_TYPE} -l atools
   LIBS += -lz
   PRE_TARGETDEPS += $$PWD/../build-atools-$${CONF_TYPE}/$${CONF_TYPE}/libatools.a
+  WINDEPLOY_FLAGS = --compiler-runtime
 }
 
 unix {
@@ -482,7 +483,7 @@ win32 {
   deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_HOME}\\bin\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += $${QT_HOME}\\bin\\windeployqt --compiler-runtime $${DEPLOY_DIR_WIN}
+  deploy.commands += $${QT_HOME}\\bin\\windeployqt $${WINDEPLOY_FLAGS} $${DEPLOY_DIR_WIN}
 }
 
 QMAKE_EXTRA_TARGETS += deploy
