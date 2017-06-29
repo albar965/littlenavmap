@@ -546,11 +546,12 @@ bool DatabaseManager::runInternal()
     if(retval == QDialog::Accepted)
     {
       QString err;
-      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err))
+      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, loadingFsType))
       {
         QString sceneryCfgCodec = loadingFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
 
-        if(atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
+        if(loadingFsType == atools::fs::FsPaths::XPLANE11 ||
+           atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
           if(loadScenery())
           {
