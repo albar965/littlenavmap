@@ -49,6 +49,10 @@ public:
   bool isReadInactive() const;
   void setReadInactive(bool value);
 
+  /* Read P3D add-on.xml packages */
+  bool isReadAddOnXml() const;
+  void setReadAddOnXml(bool value);
+
   /* Get the path and filename of the scenery.cfg file of the currently selected simulator in the combo box */
   QString getSceneryConfigFile() const;
 

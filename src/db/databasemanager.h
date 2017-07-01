@@ -131,7 +131,7 @@ private:
   void switchSimFromMainMenu();
   void freeActions();
   void updateSimSwitchActions();
-  void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction* before, QMenu* menu, int index);
+  void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
   void removeDatabaseFileBackup();
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
@@ -162,7 +162,7 @@ private:
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;
-  bool readInactive = false;
+  bool readInactive = false, readAddOnXml = true;
 
   QString currentBglFilePath;
 };

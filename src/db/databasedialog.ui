@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>234</height>
+    <height>215</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -152,7 +152,14 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item>
       <widget class="QCheckBox" name="checkBoxReadInactive">
        <property name="toolTip">
         <string>Will read also the inactive scenery entries when checked. 
@@ -163,6 +170,19 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
        </property>
        <property name="text">
         <string>Read &amp;inactive Scenery Entries</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxReadAddOnXml">
+       <property name="toolTip">
+        <string>Read add-on.xml scenery packages of Prepar3D v3 and v4.</string>
+       </property>
+       <property name="statusTip">
+        <string>Read add-on.xml scenery packages of Prepar3D v3 and v4.</string>
+       </property>
+       <property name="text">
+        <string>Read Prepar3D add-on.xml packages</string>
        </property>
       </widget>
      </item>
@@ -184,7 +204,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
   <tabstop>pushButtonDatabaseBasePath</tabstop>
   <tabstop>lineEditDatabaseSceneryFile</tabstop>
   <tabstop>pushButtonDatabaseSceneryFile</tabstop>
-  <tabstop>checkBoxReadInactive</tabstop>
  </tabstops>
  <resources/>
  <connections/>

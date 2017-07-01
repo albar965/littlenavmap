@@ -161,6 +161,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   {
     databaseDialog = new DatabaseDialog(mainWindow, simulators);
     databaseDialog->setReadInactive(readInactive);
+    databaseDialog->setReadAddOnXml(readAddOnXml);
 
     connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
             &DatabaseManager::simulatorChangedFromComboBox);
@@ -509,6 +510,7 @@ void DatabaseManager::run()
 
   databaseDialog->setCurrentFsType(loadingFsType);
   databaseDialog->setReadInactive(readInactive);
+  databaseDialog->setReadAddOnXml(readAddOnXml);
 
   updateDialogInfo();
 
@@ -542,6 +544,7 @@ bool DatabaseManager::runInternal()
     // Get the simulator database we'll update/load
     loadingFsType = databaseDialog->getCurrentFsType();
     readInactive = databaseDialog->isReadInactive();
+    readAddOnXml = databaseDialog->isReadAddOnXml();
 
     if(retval == QDialog::Accepted)
     {
@@ -605,6 +608,7 @@ bool DatabaseManager::loadScenery()
   navDatabaseOpts.loadFromSettings(settings);
 
   navDatabaseOpts.setReadInactive(readInactive);
+  navDatabaseOpts.setReadAddOnXml(readAddOnXml);
 
   // Add exclude paths from option dialog
   const OptionData& optionData = OptionData::instance();
@@ -992,6 +996,7 @@ void DatabaseManager::saveState()
   s.setValue(lnm::DATABASE_SIMULATOR, atools::fs::FsPaths::typeToShortName(currentFsType));
   s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(loadingFsType));
   s.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
+  s.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
 }
 
 void DatabaseManager::restoreState()
@@ -1002,6 +1007,7 @@ void DatabaseManager::restoreState()
     atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_SIMULATOR, QString()));
   loadingFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
+  readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */
