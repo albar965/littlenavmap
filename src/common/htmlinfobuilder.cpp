@@ -56,6 +56,7 @@ using atools::fs::weather::Metar;
 
 const int SYMBOL_SIZE = 20;
 const float HELIPAD_ZOOM_METER = 200.f;
+const float STARTPOS_ZOOM_METER = 500.f;
 
 const float MIN_GROUND_SPEED = 30.f;
 
@@ -68,7 +69,6 @@ HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
   print(formatPrint)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
-
 }
 
 HtmlInfoBuilder::~HtmlInfoBuilder()
@@ -561,19 +561,28 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
       {
         html.h3(tr("Start Positions"));
 
-        QStringList starts;
+        int i = 0;
         for(const SqlRecord& startRec: *startVector)
         {
           QString type = startRec.valueStr("type");
           QString name = startRec.valueStr("runway_name");
+          QString startText;
           if(type == "R")
-            starts.append(tr("Runway %1").arg(name));
+            startText = tr("Runway %1").arg(name);
           else if(type == "H")
-            starts.append(tr("Helipad %1").arg(startRec.valueInt("runway_name")));
+            startText = tr("Helipad %1").arg(startRec.valueInt("runway_name"));
           else if(type == "W")
-            starts.append(tr("Water %1").arg(name));
+            startText = tr("Water %1").arg(name);
+
+          atools::geo::Pos pos(startRec.valueFloat("lonx"), startRec.valueFloat("laty"));
+
+          if(i > 0)
+            html.text(tr(", "));
+          html.a(startText, QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
+                 arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(STARTPOS_ZOOM_METER)),
+                 atools::util::html::LINK_NO_UL);
+          i++;
         }
-        html.text(starts.join(tr(", ")));
       }
       else
         html.p(tr("Airport has no start positions."));
