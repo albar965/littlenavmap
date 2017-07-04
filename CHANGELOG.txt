@@ -1,3 +1,23 @@
+Version 1.4.4
+
+* Added light and dark maps from CARTO.
+* Improved aircraft progress display and fixed multiple omissions.
+* Removing file link now if unavailable in information window. This happens on remote computers with copied databases.
+* Added start positions to runway information.
+* Fixed potential crashes when a style is unavailable.
+* Half transparent aircraft icon fixed.
+* Fixed problem with links in scenery database error dialog opening inline.
+* Renamed manifest file. #110
+* Added notification message if SimConnect was not found in connect dialog. #110
+* SimConnect is now loaded dynamically. The file "littlenavmap-nosimconnect.exe" was removed. #110
+* Changed to Qt 5.9
+
+derived from atools:
+
+* P3D v4 runways, aprons and taxiways are now read correctly. This affects all BGL files that are created using the v4 SDK compiler.
+* Fixed crash with P3D v4 BGL files.
+* Added support for P3D v4 add-on.xml packages. #111
+
 Version 1.4.3
 
 * Updated PDF manual.

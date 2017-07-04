@@ -167,6 +167,16 @@ void DatabaseDialog::setReadInactive(bool value)
   return ui->checkBoxReadInactive->setChecked(value);
 }
 
+bool DatabaseDialog::isReadAddOnXml() const
+{
+  return ui->checkBoxReadAddOnXml->isChecked();
+}
+
+void DatabaseDialog::setReadAddOnXml(bool value)
+{
+  return ui->checkBoxReadAddOnXml->setChecked(value);
+}
+
 QString DatabaseDialog::getSceneryConfigFile() const
 {
   return paths.value(currentFsType).sceneryCfg;
@@ -207,4 +217,7 @@ void DatabaseDialog::updateLineEdits()
   ui->lineEditDatabaseBasePath->blockSignals(true);
   ui->lineEditDatabaseBasePath->setText(paths.value(currentFsType).basePath);
   ui->lineEditDatabaseBasePath->blockSignals(false);
+
+  ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 ||
+                                       currentFsType == atools::fs::FsPaths::P3D_V4);
 }

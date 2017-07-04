@@ -87,7 +87,7 @@ static const QString ABOUT_MESSAGE =
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
                                            "openstreetmaproadshs", "opentopomap", "plain", "political",
-                                           "srtm", "srtm2", "stamenterrain"});
+                                           "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
 
 using namespace Marble;
 using atools::settings::Settings;
