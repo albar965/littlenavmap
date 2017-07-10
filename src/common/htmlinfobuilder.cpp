@@ -60,9 +60,6 @@ const float STARTPOS_ZOOM_METER = 500.f;
 
 const float MIN_GROUND_SPEED = 30.f;
 
-Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
-Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
-
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
   : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), infoQuery(NavApp::getInfoQuery()), info(formatInfo),
@@ -458,7 +455,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         rowForBool(html, &rec, "has_center_red", tr("Has red Center Lights"), false);
 
         // Add a list of runway markings
-        RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
+        atools::fs::bgl::rw::RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
         QStringList markings;
         if(flags & atools::fs::bgl::rw::EDGES)
           markings.append(tr("Edges"));

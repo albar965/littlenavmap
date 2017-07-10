@@ -16,6 +16,9 @@
 *****************************************************************************/
 
 #include "common/formatter.h"
+
+#include "fs/util/fsutil.h"
+
 #include "atools.h"
 
 #include <QDateTime>
@@ -134,24 +137,7 @@ QString formatElapsed(const QElapsedTimer& timer)
 
 QString capNavString(const QString& str)
 {
-  if(str.contains(QRegularExpression("\\d")) && !str.contains(QRegularExpression("\\s")))
-    // Do not capitalize words that contains numbers but not spaces (airspace names)
-    return str;
-
-  // Ignore aviation acronyms in capitalization
-  static const QSet<QString> ignore({ // Navaids
-                                      "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
-                                      "ILS", "NDBDME",
-                                      // Frequencies
-                                      "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
-                                      // Navaid and precision approach types
-                                      "H", "HH", "MH", "VASI", "PAPI",
-                                      // Airspace abbreviations
-                                      "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ", "TRSA",
-                                      // Military designators
-                                      "AAF", "AFB"
-                                    });
-  return atools::capString(str, {}, {}, ignore);
+  return atools::fs::util::capNavString(str);
 }
 
 } // namespace formatter

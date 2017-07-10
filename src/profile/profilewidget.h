@@ -186,11 +186,11 @@ private:
   bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
   QVector<int> waypointX; /* Flight plan waypoint screen coordinates */
   QPolygon landPolygon; /* Green landmass polygon */
-  float minSafeAltitudeFt /* Red line */,
-        flightplanAltFt /* Cruise altitude */,
-        maxWindowAlt /* Maximum altitude at top of widget */,
-        verticalScale /* Factor to convert altitude in feet to screen coordinates*/,
-        horizontalScale /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
+  float minSafeAltitudeFt = 0.f /* Red line */,
+        flightplanAltFt = 0.f /* Cruise altitude */,
+        maxWindowAlt = 1.f /* Maximum altitude at top of widget */,
+        verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
+        horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
 
 };
 
