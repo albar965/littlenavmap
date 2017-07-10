@@ -1,3 +1,9 @@
+Version 1.5.1.develop
+
+derived from atools:
+* Fixed excessive logging of warnings in invalid airport records and waypoints.
+* Now skipping airports where the first record is already invalid.
+
 Version 1.4.4
 
 * Added light and dark maps from CARTO.
