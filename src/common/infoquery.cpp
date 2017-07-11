@@ -229,7 +229,7 @@ void InfoQuery::initQueries()
   airportSceneryQuery->prepare("select * from airport_file f "
                                "join bgl_file b on f.file_id = b.bgl_file_id  "
                                "join scenery_area s on b.scenery_area_id = s.scenery_area_id "
-                               "where f.ident = :id");
+                               "where f.ident = :id order by f.airport_file_id");
 
   comQuery = new SqlQuery(db);
   comQuery->prepare("select * from com where airport_id = :id order by type, frequency");

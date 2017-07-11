@@ -444,7 +444,9 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
                   Unit::distShortFeet(rec.valueFloat("width")));
 
         html.row2(tr("Surface:"), map::surfaceName(rec.valueStr("surface")));
-        html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));
+
+        if(rec.valueFloat("pattern_altitude") > 0)
+          html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));
 
         // Lights information
         if(!rec.isNull("edge_light"))
@@ -619,14 +621,23 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
   // rowForBool(html, rec, "is_takeoff", tr("Closed for Takeoff"), true);
   // rowForBool(html, rec, "is_landing", tr("Closed for Landing"), true);
 
-  if(!rec->isNull("is_pattern"))
+  if(!rec->isNull("is_pattern") && rec->valueStr("is_pattern") != "N" /* none X-Plane */)
     html.row2(tr("Pattern:"), map::patternDirection(rec->valueStr("is_pattern")));
 
   // Approach indicators
-  rowForStr(html, rec, "left_vasi_type", tr("Left VASI Type:"), tr("%1"));
-  rowForFloat(html, rec, "left_vasi_pitch", tr("Left VASI Pitch:"), tr("%1°"), 1);
-  rowForStr(html, rec, "right_vasi_type", tr("Right VASI Type:"), tr("%1"));
-  rowForFloat(html, rec, "right_vasi_pitch", tr("Right VASI Pitch:"), tr("%1°"), 1);
+  if(rec->valueStr("right_vasi_type") == "UNKN")
+  {
+    // X-Plane - side is unknown
+    rowForStr(html, rec, "left_vasi_type", tr("VASI Type:"), tr("%1"));
+    rowForFloat(html, rec, "left_vasi_pitch", tr("VASI Pitch:"), tr("%1°"), 1);
+  }
+  else
+  {
+    rowForStr(html, rec, "left_vasi_type", tr("Left VASI Type:"), tr("%1"));
+    rowForFloat(html, rec, "left_vasi_pitch", tr("Left VASI Pitch:"), tr("%1°"), 1);
+    rowForStr(html, rec, "right_vasi_type", tr("Right VASI Type:"), tr("%1"));
+    rowForFloat(html, rec, "right_vasi_pitch", tr("Right VASI Pitch:"), tr("%1°"), 1);
+  }
 
   rowForStr(html, rec, "app_light_system_type", tr("ALS Type:"), tr("%1"));
 
