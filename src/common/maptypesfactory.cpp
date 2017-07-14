@@ -72,6 +72,8 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   if(!overview)
   {
     runway.surface = record.valueStr("surface");
+    if(record.contains("shoulder")) // Optional X-Plane field
+      runway.shoulder = record.valueStr("shoulder");
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
     runway.primaryEndId = record.valueInt("primary_end_id");

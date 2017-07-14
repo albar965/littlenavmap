@@ -26,6 +26,7 @@
 #include "geo/linestring.h"
 #include "fs/sc/simconnectaircraft.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "fs/common/xpgeometry.h"
 
 #include <QColor>
 #include <QString>
@@ -159,7 +160,7 @@ struct MapAirport
 /* Airport runway. All dimensions are feet */
 struct MapRunway
 {
-  QString surface, primaryName, secondaryName, edgeLight;
+  QString surface, shoulder, primaryName, secondaryName, edgeLight;
   int length, primaryEndId, secondaryEndId;
   float heading;
   int width,
@@ -229,7 +230,11 @@ struct MapRunwayEnd
 /* Apron including full geometry */
 struct MapApron
 {
+  /* FSX/P3D simple geometry */
   atools::geo::LineString vertices;
+
+  /* X-Plane complex geometry including curves and holes */
+  atools::fs::common::XpGeo geometry;
 
   QString surface;
   bool drawSurface;

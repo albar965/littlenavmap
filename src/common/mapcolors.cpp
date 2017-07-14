@@ -187,6 +187,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor shale("#F5DEB3");
   static const QColor tarmac("#909090");
   static const QColor unknown("#ffffff");
+  static const QColor transparent("#ffffff");
 
   if(surface == "C")
     return concrete;
@@ -228,8 +229,10 @@ const QColor& colorForSurface(const QString& surface)
     return shale;
   else if(surface == "T")
     return tarmac;
+  else if(surface == "TR")
+    return transparent;
 
-  // else if(surface == "NONE" || surface == "UNKNOWN" || surface == "INVALID")
+  // else if(surface == "NONE" || surface == "UNKNOWN" || surface == "INVALID") || TR
   return unknown;
 }
 

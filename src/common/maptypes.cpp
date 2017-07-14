@@ -51,8 +51,9 @@ static QHash<QString, QString> surfaceMap(
     {"S", QObject::tr("Sand")},
     {"SH", QObject::tr("Shale")},
     {"T", QObject::tr("Tarmac")},
+    {"TR", QObject::tr("Transparent")},
     {"UNKNOWN", QObject::tr("Unknown")},
-    {"INVALID", QString()}
+    {"INVALID", QString("Invalid")}
   });
 
 /* The higher the better */
@@ -78,6 +79,7 @@ static QHash<QString, int> surfaceQualityMap(
     {"SN", 5},
     {"I", 5},
     {"W", 1},
+    {"TR", 1},
     {"UNKNOWN", 0},
     {"INVALID", 0}
   });

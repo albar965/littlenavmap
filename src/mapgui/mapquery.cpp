@@ -20,9 +20,11 @@
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
+#include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
+#include "fs/common/xpgeometry.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
@@ -57,7 +59,8 @@ MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayCache", 2000).toInt());
-  runwayOverwiewCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayOverwiewCache", 1000).toInt());
+  runwayOverwiewCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayOverwiewCache",
+                                                           1000).toInt());
   apronCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ApronCache", 1000).toInt());
   taxipathCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "TaxipathCache", 1000).toInt());
   parkingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ParkingCache", 1000).toInt());
@@ -613,10 +616,10 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
                                                     const MapLayer *mapLayer, bool lazy)
 {
   airportCache.updateCache(rect, mapLayer, lazy,
-                           [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                           {
-                             return curLayer->hasSameQueryParametersAirport(newLayer);
-                           });
+                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersAirport(newLayer);
+  });
 
   switch(mapLayer->getDataSource())
   {
@@ -640,10 +643,10 @@ const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& re
                                                       const MapLayer *mapLayer, bool lazy)
 {
   waypointCache.updateCache(rect, mapLayer, lazy,
-                            [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                            {
-                              return curLayer->hasSameQueryParametersWaypoint(newLayer);
-                            });
+                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersWaypoint(newLayer);
+  });
 
   if(waypointCache.list.isEmpty() && !lazy)
   {
@@ -667,10 +670,10 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
                                             bool lazy)
 {
   vorCache.updateCache(rect, mapLayer, lazy,
-                       [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                       {
-                         return curLayer->hasSameQueryParametersVor(newLayer);
-                       });
+                       [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersVor(newLayer);
+  });
 
   if(vorCache.list.isEmpty() && !lazy)
   {
@@ -694,10 +697,10 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
                                             bool lazy)
 {
   ndbCache.updateCache(rect, mapLayer, lazy,
-                       [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                       {
-                         return curLayer->hasSameQueryParametersNdb(newLayer);
-                       });
+                       [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersNdb(newLayer);
+  });
 
   if(ndbCache.list.isEmpty() && !lazy)
   {
@@ -721,10 +724,10 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
                                                   bool lazy)
 {
   markerCache.updateCache(rect, mapLayer, lazy,
-                          [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                          {
-                            return curLayer->hasSameQueryParametersMarker(newLayer);
-                          });
+                          [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersMarker(newLayer);
+  });
 
   if(markerCache.list.isEmpty() && !lazy)
   {
@@ -747,10 +750,10 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
 const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
   ilsCache.updateCache(rect, mapLayer, lazy,
-                       [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                       {
-                         return curLayer->hasSameQueryParametersIls(newLayer);
-                       });
+                       [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersIls(newLayer);
+  });
 
   if(ilsCache.list.isEmpty() && !lazy)
   {
@@ -773,10 +776,10 @@ const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const M
 const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
   airwayCache.updateCache(rect, mapLayer, lazy,
-                          [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                          {
-                            return curLayer->hasSameQueryParametersAirway(newLayer);
-                          });
+                          [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersAirway(newLayer);
+  });
 
   if(airwayCache.list.isEmpty() && !lazy)
   {
@@ -800,10 +803,10 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
                                                       map::MapAirspaceTypes types, float flightPlanAltitude, bool lazy)
 {
   airspaceCache.updateCache(rect, mapLayer, lazy,
-                            [] (const MapLayer * curLayer, const MapLayer * newLayer)->bool
-                            {
-                              return curLayer->hasSameQueryParametersAirspace(newLayer);
-                            });
+                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersAirspace(newLayer);
+  });
 
   if(types != lastAirspaceTypes || atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
   {
@@ -888,10 +891,10 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
 
       // Sort by importance
       std::sort(airspaceCache.list.begin(), airspaceCache.list.end(),
-                [] (const map::MapAirspace & airspace1, const map::MapAirspace & airspace2)->bool
-                {
-                  return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
-                });
+                [](const map::MapAirspace& airspace1, const map::MapAirspace& airspace2) -> bool
+      {
+        return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
+      });
     }
   }
   airspaceCache.validate();
@@ -910,19 +913,8 @@ const LineString *MapQuery::getAirspaceGeometry(int boundaryId)
     airspaceLinesByIdQuery->exec();
     if(airspaceLinesByIdQuery->next())
     {
-      QByteArray vertices = airspaceLinesByIdQuery->value("geometry").toByteArray();
-      QDataStream in(&vertices, QIODevice::ReadOnly);
-      in.setVersion(QDataStream::Qt_5_5);
-      in.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
-      quint32 size;
-      float lonx, laty;
-      in >> size;
-      for(unsigned int i = 0; i < size; i++)
-      {
-        in >> lonx >> laty;
-        lines->append(lonx, laty);
-      }
+      atools::fs::common::BinaryGeometry geometry(airspaceLinesByIdQuery->value("geometry").toByteArray());
+      geometry.swapGeometry(*lines);
     }
 
     airspaceLineCache.insert(boundaryId, lines);
@@ -1008,20 +1000,20 @@ const QList<map::MapApron> *MapQuery::getAprons(int airportId)
       ap.surface = apronQuery->value("surface").toString();
       ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
-      // Decode vertices into a position list
-
-      QByteArray vertices = apronQuery->value("vertices").toByteArray();
-      QDataStream in(&vertices, QIODevice::ReadOnly);
-      in.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
-      quint32 size;
-      float lonx, laty;
-      in >> size;
-      for(unsigned int i = 0; i < size; i++)
+      if(apronQuery->hasField("geometry"))
       {
-        in >> lonx >> laty;
-        ap.vertices.append(lonx, laty);
+        // X-Plane specific - contains bezier points for apron and taxiways.
+        atools::fs::common::XpGeometry geo(apronQuery->value("geometry").toByteArray());
+        ap.geometry = geo.getGeometry();
       }
+
+      // Decode vertices into a position list - FSX/P3D
+      if(!apronQuery->isNull("vertices"))
+      {
+        atools::fs::common::BinaryGeometry geo(apronQuery->value("vertices").toByteArray());
+        geo.swapGeometry(ap.vertices);
+      }
+
       aprons->append(ap);
     }
     apronCache.insert(airportId, aprons);
@@ -1427,7 +1419,8 @@ void MapQuery::initQueries()
   waypointByIdentQuery->prepare("select " + waypointQueryBase + " from waypoint where " + whereIdentRegion);
 
   ilsByIdentQuery = new SqlQuery(db);
-  ilsByIdentQuery->prepare("select " + ilsQueryBase + " from ils where ident = :ident and loc_airport_ident = :airport");
+  ilsByIdentQuery->prepare("select " + ilsQueryBase +
+                           " from ils where ident = :ident and loc_airport_ident = :airport");
 
   vorByIdQuery = new SqlQuery(db);
   vorByIdQuery->prepare("select " + vorQueryBase + " from vor where vor_id = :id");
@@ -1495,8 +1488,7 @@ void MapQuery::initQueries()
 
   apronQuery = new SqlQuery(db);
   apronQuery->prepare(
-    "select surface, is_draw_surface, vertices "
-    "from apron where airport_id = :airportId");
+    "select * from apron where airport_id = :airportId");
 
   parkingQuery = new SqlQuery(db);
   parkingQuery->prepare("select " + parkingQueryBase + " from parking where airport_id = :airportId");
@@ -1529,7 +1521,7 @@ void MapQuery::initQueries()
   // Runway joined with both runway ends
   runwaysQuery = new SqlQuery(db);
   runwaysQuery->prepare(
-    "select r.length, r.heading, r.width, r.surface, r.lonx, r.laty, p.name as primary_name, s.name as secondary_name, "
+    "select r.*, p.name as primary_name, s.name as secondary_name, "
     "p.name as primary_name, s.name as secondary_name, "
     "r.primary_end_id, r.secondary_end_id, "
     "r.edge_light, "
