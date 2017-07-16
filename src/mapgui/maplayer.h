@@ -85,6 +85,7 @@ public:
   MapLayer& airportDiagram(bool value = true);
   MapLayer& airportDiagramDetail(bool value = true);
   MapLayer& airportDiagramDetail2(bool value = true);
+  MapLayer& airportDiagramDetail3(bool value = true);
 
   /* Show airports having only soft runways */
   MapLayer& airportSoft(bool value = true);
@@ -202,6 +203,11 @@ public:
   bool isAirportDiagramDetail2() const
   {
     return layerAirportDiagramDetail2;
+  }
+
+  bool isAirportDiagramDetail3() const
+  {
+    return layerAirportDiagramDetail3;
   }
 
   bool isAirportSoft() const
@@ -462,7 +468,8 @@ private:
 
   layer::AirportSource src;
   bool layerAirport = false, layerAirportOverviewRunway = false,
-       layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
+       layerAirportDiagram = false,
+       layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false, layerAirportDiagramDetail3 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false;
   int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;

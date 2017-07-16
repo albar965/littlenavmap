@@ -124,6 +124,12 @@ MapLayer& MapLayer::airportDiagramDetail2(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airportDiagramDetail3(bool value)
+{
+  layerAirportDiagramDetail3 = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportSoft(bool value)
 {
   layerAirportSoft = value;

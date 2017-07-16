@@ -1463,7 +1463,8 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) co
 
 void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) const
 {
-  head(html, map::parkingName(parking.name) + " " + locale.toString(parking.number));
+  head(html, map::parkingName(parking.name) +
+       (parking.number != -1 ? " " + locale.toString(parking.number) : QString()));
   html.brText(map::parkingTypeName(parking.type));
   html.brText(Unit::distShortFeet(parking.radius * 2.f));
   if(parking.jetway)

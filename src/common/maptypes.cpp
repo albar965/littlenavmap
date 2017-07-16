@@ -94,8 +94,12 @@ static QHash<QString, QString> parkingMapGate(
     {"RGAM", QObject::tr("Ramp GA Medium")},
     {"RGAL", QObject::tr("Ramp GA Large")},
     {"RC", QObject::tr("Ramp Cargo")},
+    {"RM", QObject::tr("Ramp Mil")},
     {"RMC", QObject::tr("Ramp Mil Cargo")},
     {"RMCB", QObject::tr("Ramp Mil Combat")},
+    {"T", QObject::tr("Tie down")},
+    {"H", QObject::tr("Hangar")},
+    {"G", QString()},
     {"GS", QObject::tr("Small")},
     {"GM", QObject::tr("Medium")},
     {"GH", QObject::tr("Heavy")},
@@ -113,8 +117,12 @@ static QHash<QString, QString> parkingMapRamp(
     {"RGAM", QObject::tr("Medium")},
     {"RGAL", QObject::tr("Large")},
     {"RC", QObject::tr("Ramp Cargo")},
+    {"RM", QObject::tr("Ramp Mil")},
     {"RMC", QObject::tr("Ramp Mil Cargo")},
     {"RMCB", QObject::tr("Ramp Mil Combat")},
+    {"T", QObject::tr("Tie down")},
+    {"H", QObject::tr("Hangar")},
+    {"G", QObject::tr("Gate")},
     {"GS", QObject::tr("Gate Small")},
     {"GM", QObject::tr("Gate Medium")},
     {"GH", QObject::tr("Gate Heavy")},
@@ -133,8 +141,12 @@ static QHash<QString, QString> parkingTypeMap(
     {"RGAM", QObject::tr("Ramp GA Medium")},
     {"RGAL", QObject::tr("Ramp GA Large")},
     {"RC", QObject::tr("Ramp Cargo")},
+    {"RM", QObject::tr("Ramp Mil")},
     {"RMC", QObject::tr("Ramp Mil Cargo")},
     {"RMCB", QObject::tr("Ramp Mil Combat")},
+    {"T", QObject::tr("Tie down")},
+    {"H", QObject::tr("Hangar")},
+    {"G", QObject::tr("Gate")},
     {"GS", QObject::tr("Gate Small")},
     {"GM", QObject::tr("Gate Medium")},
     {"GH", QObject::tr("Gate Heavy")},
@@ -543,7 +555,10 @@ const QString& parkingTypeName(const QString& type)
 
 const QString& parkingName(const QString& name)
 {
-  return parkingNameMap[name];
+  if(parkingNameMap.contains(name))
+    return parkingNameMap[name];
+  else
+    return name;
 }
 
 const QString& parkingDatabaseName(const QString& name)
@@ -553,8 +568,11 @@ const QString& parkingDatabaseName(const QString& name)
 
 QString parkingNameNumberType(const map::MapParking& parking)
 {
-  return map::parkingName(parking.name) + " " + QLocale().toString(parking.number) +
-         ", " + map::parkingTypeName(parking.type);
+  if(parking.number != -1)
+    return map::parkingName(parking.name) + " " + QLocale().toString(parking.number) +
+           ", " + map::parkingTypeName(parking.type);
+  else
+    return map::parkingName(parking.name) + ", " + map::parkingTypeName(parking.type);
 }
 
 QString startType(const map::MapStart& start)

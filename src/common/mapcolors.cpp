@@ -106,7 +106,7 @@ const QColor& colorForParkingType(const QString& type)
   static const QColor rampGa(0, 200, 0);
   static const QColor rampCargo(Qt::darkGreen);
   static const QColor fuel(Qt::yellow);
-  static const QColor unknown;
+  static const QColor unknown("#505050");
 
   if(type == "RMCB")
     return rampMilCombat;
@@ -122,6 +122,24 @@ const QColor& colorForParkingType(const QString& type)
     return fuel;
   else
     return unknown;
+}
+
+const QColor& colorTextForParkingType(const QString& type)
+{
+  if(type == "RMCB")
+    return mapcolors::brightParkingTextColor;
+  else if(type == "RMC")
+    return mapcolors::brightParkingTextColor;
+  else if(type.startsWith("G"))
+    return mapcolors::brightParkingTextColor;
+  else if(type.startsWith("RGA") || type.startsWith("DGA"))
+    return mapcolors::brightParkingTextColor;
+  else if(type.startsWith("RC"))
+    return mapcolors::brightParkingTextColor;
+  else if(type.startsWith("FUEL"))
+    return mapcolors::darkParkingTextColor;
+  else
+    return mapcolors::brightParkingTextColor;
 }
 
 const QIcon& iconForStartType(const QString& type)

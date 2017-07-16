@@ -28,6 +28,7 @@
 #include "mapgui/mapwidget.h"
 #include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
+#include "atools.h"
 
 #include <QElapsedTimer>
 
@@ -356,8 +357,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         painter->translate(runwayCenters.at(i));
         painter->rotate(runways->at(i).heading);
         painter->setBrush(mapcolors::colorForSurface(runways->at(i).shoulder));
-        painter->drawRect(runwayRects.at(i).marginsAdded(
-                            QMargins(runwayRects.at(i).width() / 4, 0, runwayRects.at(i).width() / 4, 0)));
+        float width = static_cast<float>(runwayRects.at(i).width()) / 4.f;
+        painter->drawRect(QRectF(runwayRects.at(i)).marginsAdded(QMarginsF(width, 0.f, width, 0.f)));
         painter->resetTransform();
       }
     }
@@ -403,42 +404,62 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     // Do not do any clipping here
     startPts.append(wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible));
     endPts.append(wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible));
-    pathThickness.append(std::max(2, scale->getPixelIntForFeet(taxipath.width)));
+
+    if(taxipath.width == 0)
+      // Special X-Plane case - width is not given for path
+      pathThickness.append(0);
+    else
+      pathThickness.append(std::max(2, scale->getPixelIntForFeet(taxipath.width)));
   }
 
-  // Draw closed and others first to have real taxiways on top
+  // Draw closed and other taxi paths first to have real taxiways on top
   for(int i = 0; i < taxipaths->size(); i++)
   {
     const MapTaxiPath& taxipath = taxipaths->at(i);
     int thickness = pathThickness.at(i);
-    QColor col = mapcolors::colorForSurface(taxipath.surface);
 
-    const QPoint& start = startPts.at(i);
-    const QPoint& end = endPts.at(i);
-
-    if(taxipath.closed)
+    if(thickness > 0)
     {
-      painter->setPen(QPen(col, thickness, Qt::SolidLine, Qt::RoundCap));
-      painter->drawLine(start, end);
+      QColor col = mapcolors::colorForSurface(taxipath.surface);
 
-      painter->setPen(QPen(mapcolors::taxiwayClosedBrush, thickness, Qt::SolidLine, Qt::RoundCap));
-      painter->drawLine(start, end);
+      const QPoint& start = startPts.at(i);
+      const QPoint& end = endPts.at(i);
 
-    }
-    else if(!taxipath.drawSurface)
-    {
-      painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), thickness, Qt::SolidLine, Qt::RoundCap));
-      painter->drawLine(start, end);
+      if(taxipath.closed)
+      {
+        painter->setPen(QPen(col, thickness, Qt::SolidLine, Qt::RoundCap));
+        painter->drawLine(start, end);
+
+        painter->setPen(QPen(mapcolors::taxiwayClosedBrush, thickness, Qt::SolidLine, Qt::RoundCap));
+        painter->drawLine(start, end);
+
+      }
+      else if(!taxipath.drawSurface)
+      {
+        painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), thickness, Qt::SolidLine, Qt::RoundCap));
+        painter->drawLine(start, end);
+      }
     }
   }
 
+  // Draw real taxiways
   for(int i = 0; i < taxipaths->size(); i++)
   {
     const MapTaxiPath& taxipath = taxipaths->at(i);
-    if(!taxipath.closed && taxipath.drawSurface)
+    if(!taxipath.closed && taxipath.drawSurface && pathThickness.at(i) > 0)
     {
       painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface),
                            pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
+      painter->drawLine(startPts.at(i), endPts.at(i));
+    }
+  }
+
+  // Draw center lines - also for X-Plane on the pavement
+  if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
+  {
+    for(int i = 0; i < taxipaths->size(); i++)
+    {
+      painter->setPen(QPen(mapcolors::taxiwayNameBackgroundColor, 1, Qt::DashLine, Qt::RoundCap));
       painter->drawLine(startPts.at(i), endPts.at(i));
     }
   }
@@ -744,6 +765,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
   {
     for(const MapParking& parking : *parkings)
+    {
       if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
       {
         bool visible;
@@ -751,17 +773,38 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         if(visible)
         {
           // Use different text pen for better readability depending on background
-          if(parking.type.startsWith("RAMP_GA") || parking.type.startsWith("DOCK_GA") ||
-             parking.type.startsWith("FUEL"))
-            painter->setPen(QPen(mapcolors::darkParkingTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-          else
-            painter->setPen(QPen(mapcolors::brightParkingTextColor, 2, Qt::SolidLine, Qt::FlatCap));
+          painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
 
           QString text;
-          if(parking.type.startsWith("FUEL"))
-            text = tr("F");
+          if(parking.number != -1)
+          {
+            // FSX/P3D style names
+            QString name;
+
+            if(context->mapLayerEffective->isAirportDiagramDetail3())
+              name = map::parkingName(parking.name) +
+                     (parking.number != -1 ? " " + QLocale().toString(parking.number) : QString());
+            else if(context->mapLayerEffective->isAirportDiagramDetail2())
+              name = map::parkingName(parking.name) +
+                     (parking.number != -1 ? " " + QLocale().toString(parking.number) : QString());
+            else
+              name = QLocale().toString(parking.number);
+
+            if(parking.type.startsWith("FUEL"))
+              text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
+            else
+              text = name;
+          }
           else
-            text = QString::number(parking.number) + " " + parkingTypeName(parking.name);
+          {
+            // X-Plane style names
+            if(parking.type.startsWith("FUEL"))
+              text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
+            else if(parking.name.size() <= 4 || context->mapLayerEffective->isAirportDiagramDetail3())
+              text = parking.name;
+            else
+              text = parking.name.at(0);
+          }
 
           pt.setY(pt.y() + metrics.ascent() / 2);
           pt.setX(pt.x() - metrics.width(text) / 2);
@@ -769,6 +812,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
           painter->drawText(pt, text);
         }
       }
+    }
   }
 
   // Draw tower T -----------------------------
@@ -778,10 +822,11 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     QPoint pt = wToS(airport.towerCoords, DEFAULT_WTOS_SIZE, &visible);
     if(visible)
     {
+      QString text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T");
       pt.setY(pt.y() + metrics.ascent() / 2);
-      pt.setX(pt.x() - metrics.width(tr("T")) / 2);
+      pt.setX(pt.x() - metrics.width(text) / 2);
       painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-      painter->drawText(pt, tr("T"));
+      painter->drawText(pt, text);
     }
   }
 
@@ -812,7 +857,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       if(!runway.edgeLight.isEmpty())
         text += tr(" / L");
 
-      if(runway.surface != "TR" && runway.surface != "UNKNOWN" && runway.surface != "INVALID")
+      if(!runway.surface.isEmpty() && runway.surface != "TR" && runway.surface != "UNKNOWN" &&
+         runway.surface != "INVALID")
       {
         // Draw only if valid
         QString surface = map::surfaceName(runway.surface);

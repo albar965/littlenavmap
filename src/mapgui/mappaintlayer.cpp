@@ -154,6 +154,15 @@ void MapPaintLayer::initMapLayerSettings()
   // Lowest layer including everything (airport diagram and details)
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   layers->
+  append(defLayer.clone(0.2f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().airportDiagramDetail3().
+         airportSymbolSize(20).airportInfo().
+         waypointSymbolSize(14).waypointName().
+         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(24).ndbIdent().ndbInfo().
+         ilsIdent().ilsInfo().
+         airwayIdent().airwayInfo().airwayWaypoint().
+         markerSymbolSize(24).markerInfo()).
+
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo().
          waypointSymbolSize(14).waypointName().

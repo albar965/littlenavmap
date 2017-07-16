@@ -184,6 +184,7 @@ const QColor& colorForSurface(const QString& surface);
 
 /* Color for detailed parking symbol in airport diagram (RAMP_MIL_*, GATE_*, RAMP_GA_* or RAMP_CARGO */
 const QColor& colorForParkingType(const QString& type);
+const QColor& colorTextForParkingType(const QString& type);
 
 /* Color for airport symbol */
 const QColor& colorForAirport(const map::MapAirport& ap);
