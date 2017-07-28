@@ -57,7 +57,8 @@ void MapPainterRoute::render(PaintContext *context)
 
   // Draw the approach preview if any selected in the search tab
   if(context->mapLayer->isApproach())
-    paintApproach(context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
+    paintApproach(context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
+                  true /* preview */);
 
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     paintTopOfDescent(context);
@@ -755,7 +756,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   // if(index > 0 && legs.isApproach(index) &&
   // legs.isTransition(index - 1) && context->objectTypes & proctypes::APPROACH &&
   // context->objectTypes & proctypes::APPROACH_TRANSITION)
-  // // Merge display text to get any text from a preceding transition point
+  //// Merge display text to get any text from a preceding transition point
   // texts.append(legs.at(index - 1).displayText);
 
   int x = 0, y = 0;
@@ -808,6 +809,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
     {
       texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
+      texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
       if(leg.flyover && drawTextDetail)
         paintProcedureFlyover(context, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
@@ -853,6 +855,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
 
       texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
+      texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
     }
   }
   else
@@ -862,6 +865,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
 
     texts.append(leg.displayText);
     texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
+    texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
   }
 
   const map::MapSearchResult& navaids = leg.navaids;
@@ -870,7 +874,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
   {
     if(leg.flyover && drawTextDetail)
       paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize()));
+                            context->sz(context->symbolSizeNavaid,
+                                        context->mapLayerEffective->getWaypointSymbolSize()));
     paintWaypoint(context, QColor(), x, y, false);
     if(drawTextDetail)
       paintWaypointText(context, x, y, navaids.waypoints.first(), true /* draw as route */, &texts);
@@ -898,7 +903,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
     texts.append(leg.fixIdent);
     if(leg.flyover && drawTextDetail)
       paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize()));
+                            context->sz(context->symbolSizeNavaid,
+                                        context->mapLayerEffective->getWaypointSymbolSize()));
     paintProcedurePoint(context, x, y, false);
     if(drawTextDetail)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -908,7 +914,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const pro
     texts.append(leg.fixIdent);
     if(leg.flyover && drawTextDetail)
       paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize()));
+                            context->sz(context->symbolSizeNavaid,
+                                        context->mapLayerEffective->getWaypointSymbolSize()));
     paintProcedurePoint(context, x, y, false);
     if(drawTextDetail)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);

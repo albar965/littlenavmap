@@ -39,6 +39,7 @@ using atools::geo::normalizeCourse;
 using proc::MapProcedureLegs;
 using proc::MapProcedureLeg;
 using proc::MapAltRestriction;
+using proc::MapSpeedRestriction;
 
 ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
   : db(sqlDb), mapQuery(mapQueryParam)
@@ -214,6 +215,30 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     leg.altRestriction.descriptor = MapAltRestriction::NONE;
     leg.altRestriction.alt1 = 0.f;
     leg.altRestriction.alt2 = 0.f;
+  }
+
+  if(query->hasField("speed_limit"))
+  {
+    float speedLimit = query->value("speed_limit").toFloat();
+
+    if(speedLimit > 1.f)
+    {
+      QString type = query->value("speed_limit_type").toString();
+
+      leg.speedRestriction.speed = speedLimit;
+
+      if(type == "+") // Minimum speed
+        leg.speedRestriction.descriptor = MapSpeedRestriction::MIN;
+      else if(type == "-") // Maximum speed
+        leg.speedRestriction.descriptor = MapSpeedRestriction::MAX;
+      else
+        leg.speedRestriction.descriptor = MapSpeedRestriction::AT;
+    }
+  }
+  else
+  {
+    leg.speedRestriction.descriptor = MapSpeedRestriction::NONE;
+    leg.speedRestriction.speed = 0.f;
   }
 
   leg.magvar = map::INVALID_MAGVAR;

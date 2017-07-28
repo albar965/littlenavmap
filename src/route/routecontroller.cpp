@@ -64,7 +64,7 @@ const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Name"),
                                     QObject::tr("Procedure\nType"),
                                     QObject::tr("Airway or\nProcedure"),
-                                    QObject::tr("Restriction\n%alt%"),
+                                    QObject::tr("Restriction\n%alt%/%speed%"),
                                     QObject::tr("Type"),
                                     QObject::tr("Freq.\nMHz/kHz/Cha."),
                                     QObject::tr("Range\n%dist%"),
@@ -2618,8 +2618,14 @@ void RouteController::updateTableModel()
     else
     {
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
-      itemRow[rc::RESTRICTION] =
-        new QStandardItem(proc::altRestrictionTextShort(leg.getProcedureLeg().altRestriction));
+
+      QStringList restrictions;
+      if(leg.getProcedureLeg().altRestriction.isValid())
+        restrictions.append(proc::altRestrictionTextShort(leg.getProcedureLeg().altRestriction));
+      if(leg.getProcedureLeg().speedRestriction.isValid())
+        restrictions.append(proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
+
+      itemRow[rc::RESTRICTION] = new QStandardItem(restrictions.join(", "));
     }
 
     // VOR/NDB type ===========================

@@ -1552,8 +1552,11 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
   if(!ap.remarks.isEmpty())
     html.row2(ap.remarks.join(", "));
 
-  if(ap.altRestriction.descriptor != proc::MapAltRestriction::NONE)
+  if(ap.altRestriction.isValid())
     html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(ap.altRestriction));
+
+  if(ap.speedRestriction.isValid())
+    html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(ap.speedRestriction));
 
   if(ap.calculatedDistance > 0.f)
     html.row2(tr("Distance:"), Unit::distNm(ap.calculatedDistance /*, true, 20, true*/));
@@ -1839,8 +1842,20 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Related Navaid:"), tr("%1").arg(leg.recFixIdent));
         }
 
-        if(routeLegCorrected.isAnyProcedure() && leg.altRestriction.isValid())
-          html.row2(tr("Restriction:"), proc::altRestrictionText(leg.altRestriction));
+        if(routeLegCorrected.isAnyProcedure())
+        {
+          QStringList restrictions;
+
+          if(leg.altRestriction.isValid())
+            restrictions.append(proc::altRestrictionText(leg.altRestriction));
+          if(leg.speedRestriction.isValid())
+            restrictions.append(proc::speedRestrictionText(leg.speedRestriction));
+
+          if(restrictions.size() > 1)
+            html.row2(tr("Restrictions:"), restrictions.join(tr(", ")));
+          else if(restrictions.size() == 1)
+            html.row2(tr("Restriction:"), restrictions.first());
+        }
 
         if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
         {

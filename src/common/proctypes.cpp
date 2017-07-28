@@ -313,6 +313,63 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction)
   return retval;
 }
 
+QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction)
+{
+  switch(speedRestriction.descriptor)
+  {
+    case proc::MapSpeedRestriction::NONE:
+      break;
+
+    case proc::MapSpeedRestriction::AT:
+      return Unit::speedKts(speedRestriction.speed, false);
+
+    case proc::MapSpeedRestriction::MIN:
+      return QObject::tr("A ") + Unit::speedKts(speedRestriction.speed, false);
+
+    case proc::MapSpeedRestriction::MAX:
+      return QObject::tr("B ") + Unit::speedKts(speedRestriction.speed, false);
+  }
+  return QString();
+}
+
+QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction)
+{
+  switch(speedRestriction.descriptor)
+  {
+    case proc::MapSpeedRestriction::NONE:
+      break;
+
+    case proc::MapSpeedRestriction::AT:
+      return QObject::tr("At ") + Unit::speedKts(speedRestriction.speed);
+
+    case proc::MapSpeedRestriction::MIN:
+      return QObject::tr("Above ") + Unit::speedKts(speedRestriction.speed);
+
+    case proc::MapSpeedRestriction::MAX:
+      return QObject::tr("Below ") + Unit::speedKts(speedRestriction.speed);
+  }
+  return QString();
+}
+
+QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestriction)
+{
+  switch(speedRestriction.descriptor)
+  {
+    case proc::MapSpeedRestriction::NONE:
+      break;
+
+    case proc::MapSpeedRestriction::AT:
+      return Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+
+    case proc::MapSpeedRestriction::MIN:
+      return QObject::tr("A") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+
+    case proc::MapSpeedRestriction::MAX:
+      return QObject::tr("B") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+  }
+  return QString();
+}
+
 QDebug operator<<(QDebug out, const ProcedureLegType& type)
 {
   out << proc::procedureLegTypeFullStr(type);

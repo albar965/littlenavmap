@@ -51,7 +51,7 @@ enum TreeColumnIndex
   /* Column order for approch overview (tree view) */
   COL_DESCRIPTION = 0,
   COL_IDENT = 1,
-  COL_ALTITUDE = 2,
+  COL_RESTR = 2,
   COL_COURSE = 3,
   COL_DISTANCE = 4,
   COL_REMARKS = 5,
@@ -527,7 +527,7 @@ void ProcedureSearch::updateTreeHeader()
 
   header->setText(COL_DESCRIPTION, tr("Description"));
   header->setText(COL_IDENT, tr("Ident"));
-  header->setText(COL_ALTITUDE, tr("Restriction\n%1").arg(Unit::getUnitAltStr()));
+  header->setText(COL_RESTR, tr("Restriction\n%1/%2").arg(Unit::getUnitAltStr()).arg(Unit::getUnitSpeedStr()));
   header->setText(COL_COURSE, tr("Course\n°M"));
   header->setText(COL_DISTANCE, tr("Dist./Time\n%1/min").arg(Unit::getUnitDistStr()));
   header->setText(COL_REMARKS, tr("Remarks"));
@@ -955,7 +955,7 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
     altStr
   }, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-  item->setTextAlignment(COL_ALTITUDE, Qt::AlignRight);
+  item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
 
@@ -991,7 +991,7 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *apprItem,
   },
                                               itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-  item->setTextAlignment(COL_ALTITUDE, Qt::AlignRight);
+  item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
 
@@ -1010,8 +1010,14 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   int fontHeight = treeWidget->fontMetrics().height();
   texts << proc::procedureLegTypeStr(leg.type) << leg.fixIdent;
 
+  QStringList restrictions;
+  if(leg.altRestriction.isValid())
+    restrictions.append(proc::altRestrictionTextShort(leg.altRestriction));
+  if(leg.speedRestriction.isValid())
+    restrictions.append(proc::speedRestrictionTextShort(leg.speedRestriction));
+
   QString remarkStr = proc::procedureLegRemark(leg);
-  texts << proc::altRestrictionTextShort(leg.altRestriction)
+  texts << restrictions.join(tr(", "))
         << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
   texts << remarkStr;
@@ -1025,7 +1031,7 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
 
   item->setToolTip(COL_REMARKS, remarkStr);
 
-  item->setTextAlignment(COL_ALTITUDE, Qt::AlignRight);
+  item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
 

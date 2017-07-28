@@ -82,6 +82,26 @@ struct MapAltRestriction
 
 };
 
+struct MapSpeedRestriction
+{
+  enum Descriptor
+  {
+    NONE,
+    AT,
+    MIN,
+    MAX
+  };
+
+  Descriptor descriptor = NONE;
+  float speed;
+
+  bool isValid() const
+  {
+    return descriptor != NONE && speed > 0.f;
+  }
+
+};
+
 enum ProcedureLegType
 {
   INVALID_LEG_TYPE,
@@ -128,6 +148,7 @@ struct MapProcedurePoint
 
   QStringList displayText, remarks;
   MapAltRestriction altRestriction;
+  MapSpeedRestriction speedRestriction;
 
   proc::ProcedureLegType type;
 
@@ -226,6 +247,7 @@ struct MapProcedureLeg
   map::MapSearchResult navaids;
 
   MapAltRestriction altRestriction;
+  MapSpeedRestriction speedRestriction;
 
   proc::ProcedureLegType type = INVALID_LEG_TYPE;
   proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Any of the PROCEDURE_* types*/
@@ -424,6 +446,10 @@ proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, cons
 /* Put altitude restriction texts into list */
 QString altRestrictionTextNarrow(const MapAltRestriction& altRestriction);
 QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction);
+
+QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestriction);
+QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction);
+QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction);
 
 } // namespace types
 

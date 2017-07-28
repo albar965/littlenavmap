@@ -468,6 +468,7 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
     {
       if(db->isReadonly())
       {
+        // Reopen database read/write
         db->close();
         db->setReadonly(false);
         db->open(pragmas);
@@ -479,6 +480,7 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
 
     if(readonly && !db->isReadonly())
     {
+      // Readonly requested - reopen database
       db->close();
       db->setReadonly();
       db->open(pragmas);
@@ -580,8 +582,13 @@ bool DatabaseManager::runInternal()
         if(selectedFsType == atools::fs::FsPaths::XPLANE11 ||
            atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
+          // Compile into a temporary database file
           QString selectedFilename = buildDatabaseFileName(selectedFsType);
           QString tempFilename = buildCompilingDatabaseFileName();
+
+          if(QFile::remove(tempFilename))
+            qInfo() << "Removed" << tempFilename;
+
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
           openDatabaseFile(&tempDb, tempFilename, false /* readonly */);
 
@@ -597,9 +604,11 @@ bool DatabaseManager::runInternal()
             emit preDatabaseLoad();
             closeDatabase();
 
+            // Remove old database
             if(!QFile::remove(selectedFilename))
               qWarning() << "Removing" << selectedFilename << "failed";
 
+            // Rename temporary file to new database
             if(!QFile::rename(tempFilename, selectedFilename))
               qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
 
