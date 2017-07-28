@@ -31,19 +31,21 @@ void SimulatorTypeMap::fillDefault()
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 {
-  if(contains(atools::fs::FsPaths::P3D_V4))
+  if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasDatabase)
     return atools::fs::FsPaths::P3D_V4;
-  else if(contains(atools::fs::FsPaths::P3D_V3))
+  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasDatabase)
     return atools::fs::FsPaths::P3D_V3;
-  else if(contains(atools::fs::FsPaths::P3D_V2))
+  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).hasDatabase)
     return atools::fs::FsPaths::P3D_V2;
-  else if(contains(atools::fs::FsPaths::FSX_SE))
+  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).hasDatabase)
     return atools::fs::FsPaths::FSX_SE;
-  else if(contains(atools::fs::FsPaths::FSX))
+  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).hasDatabase)
     return atools::fs::FsPaths::FSX;
-  else if(contains(atools::fs::FsPaths::EXTERNAL))
+  else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).hasDatabase)
+    return atools::fs::FsPaths::XPLANE11;
+  else if(contains(atools::fs::FsPaths::EXTERNAL) && value(atools::fs::FsPaths::EXTERNAL).hasDatabase)
     return atools::fs::FsPaths::EXTERNAL;
-  else if(contains(atools::fs::FsPaths::EXTERNAL2))
+  else if(contains(atools::fs::FsPaths::EXTERNAL2) && value(atools::fs::FsPaths::EXTERNAL2).hasDatabase)
     return atools::fs::FsPaths::EXTERNAL2;
 
   return atools::fs::FsPaths::UNKNOWN;
@@ -51,15 +53,17 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
 {
-  if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).hasRegistry)
+  if(contains(atools::fs::FsPaths::P3D_V4) && value(atools::fs::FsPaths::P3D_V4).isInstalled)
     return atools::fs::FsPaths::P3D_V4;
-  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasRegistry)
+  else if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).isInstalled)
     return atools::fs::FsPaths::P3D_V3;
-  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).hasRegistry)
+  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).isInstalled)
     return atools::fs::FsPaths::P3D_V2;
-  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).hasRegistry)
+  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).isInstalled)
     return atools::fs::FsPaths::FSX_SE;
-  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).hasRegistry)
+  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).isInstalled)
+    return atools::fs::FsPaths::FSX;
+  else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).isInstalled)
     return atools::fs::FsPaths::FSX;
 
   return atools::fs::FsPaths::UNKNOWN;
@@ -69,7 +73,7 @@ QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllInstalled() co
 {
   QList<atools::fs::FsPaths::SimulatorType> retval;
   for(atools::fs::FsPaths::SimulatorType simType : keys())
-    if(value(simType).hasRegistry)
+    if(value(simType).isInstalled)
       retval.append(simType);
   return retval;
 }
@@ -85,28 +89,25 @@ QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase
 
 void SimulatorTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
 {
-  if(FsPaths::hasSim(type))
-  {
-    // Simulator is installed - create a new entry or update the present one
-    FsPathType& path = (*this)[type];
-    if(path.basePath.isEmpty())
-      path.basePath = FsPaths::getBasePath(type);
-    if(path.sceneryCfg.isEmpty())
-      path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
+  // Simulator is installed - create a new entry or update the present one
+  FsPathType& path = (*this)[type];
+  if(path.basePath.isEmpty())
+    path.basePath = FsPaths::getBasePath(type);
+  if(path.sceneryCfg.isEmpty())
+    path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
 
-    // If already present or not - this one has a registry entry
-    path.hasRegistry = true;
-  }
+  if(type == FsPaths::XPLANE11)
+    path.isInstalled = !path.basePath.isEmpty();
   else
-    // Not in the list anymore - remove it - can be adder later again if database is found
-    remove(type);
+    // If already present or not - this one has a registry entry
+    path.isInstalled = FsPaths::hasSim(type);
 }
 
 QDebug operator<<(QDebug out, const FsPathType& record)
 {
   QDebugStateSaver saver(out);
   out.nospace() << "FsPathType["
-                << "registry entry " << record.hasRegistry
+                << "registry entry " << record.isInstalled
                 << ", has database " << record.hasDatabase
                 << ", base path " << record.basePath
                 << ", scenery config " << record.sceneryCfg

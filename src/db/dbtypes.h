@@ -30,7 +30,7 @@ struct FsPathType
   QString basePath /* Base path where fsx.exe or prepar3d.exe can be found */,
           sceneryCfg /* full path and name of scenery.cfg file */;
   bool hasDatabase = false, /* true if a database was found in the configuration direcory */
-       hasRegistry = false /* True if the simulator is installed on the system */;
+       isInstalled = false /* True if the simulator is installed on the system */;
 };
 
 QDebug operator<<(QDebug out, const FsPathType& record);

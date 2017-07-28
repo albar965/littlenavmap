@@ -59,7 +59,7 @@ public:
   /* Get the paths which might be modified (changed paths and more) */
   const SimulatorTypeMap& getPaths() const
   {
-    return paths;
+    return simulators;
   }
 
   /* Set the databast information into the header */
@@ -87,13 +87,13 @@ private:
   void selectSceneryConfigClicked();
   void simComboChanged(int index);
   void updateComboBox();
-  void updateLineEdits();
+  void updateWidgets();
 
   Ui::DatabaseDialog *ui;
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
 
   // Copy of the FS path map which can be used or not (in case of cancel)
-  SimulatorTypeMap paths;
+  SimulatorTypeMap simulators;
 
 };
 

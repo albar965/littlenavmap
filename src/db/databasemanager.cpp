@@ -32,6 +32,7 @@
 #include "sql/sqlutil.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
+#include "ui_mainwindow.h"
 #include "navapp.h"
 
 #include <QDebug>
@@ -139,23 +140,16 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Find simulators by default registry entries
   simulators.fillDefault();
 
-  // Find any stale databases that do not belong to a simulator
+  // Find any stale databases that do not belong to a simulator and update installed and has database flags
   updateSimulatorFlags();
 
   for(atools::fs::FsPaths::SimulatorType t : simulators.keys())
     qDebug() << t << simulators.value(t);
 
   // Correct if current simulator is invalid
-  if(currentFsType == atools::fs::FsPaths::UNKNOWN || !simulators.contains(currentFsType))
-    currentFsType = simulators.getBest();
+  correctSimulatorType();
 
-  // Correct if loading simulator is invalid - get the best installed
-  if(loadingFsType == atools::fs::FsPaths::UNKNOWN || !simulators.getAllInstalled().contains(loadingFsType))
-    loadingFsType = simulators.getBestInstalled();
-
-  databaseFile = buildDatabaseFileName(currentFsType);
-
-  qDebug() << "fs type" << currentFsType << "db file" << databaseFile;
+  qDebug() << "fs type" << currentFsType;
 
   if(mainWindow != nullptr)
   {
@@ -163,13 +157,14 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     databaseDialog->setReadInactive(readInactive);
     databaseDialog->setReadAddOnXml(readAddOnXml);
 
-    connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
-            &DatabaseManager::simulatorChangedFromComboBox);
+    connect(databaseDialog, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChangedFromComboBox);
   }
 
-  if(!SqlDatabase::contains(DATABASE_NAME))
-    // Add database driver if not already done
-    db = new SqlDatabase(SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME));
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
+
+  database = new SqlDatabase(DATABASE_NAME);
 }
 
 DatabaseManager::~DatabaseManager()
@@ -181,8 +176,10 @@ DatabaseManager::~DatabaseManager()
   delete progressDialog;
 
   closeDatabase();
-  delete db;
+  delete database;
   SqlDatabase::removeDatabase(DATABASE_NAME);
+  SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
+  SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
 }
 
 bool DatabaseManager::checkIncompatibleDatabases()
@@ -192,7 +189,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
   // Need empty block to delete sqlDb before removing driver
   {
     // Create a temporary database
-    SqlDatabase sqlDb = SqlDatabase::addDatabase(DATABASE_TYPE, "tempdb");
+    SqlDatabase sqlDb(DATABASE_NAME_TEMP);
     QStringList databaseNames, databaseFiles;
 
     // Collect all incompatible databases
@@ -310,48 +307,65 @@ bool DatabaseManager::checkIncompatibleDatabases()
       }
     }
   }
-  SqlDatabase::removeDatabase("tempdb");
   return ok;
 }
 
-void DatabaseManager::insertSimSwitchActions(QAction *before, QMenu *menu)
+void DatabaseManager::insertSimSwitchActions()
 {
+  qDebug() << Q_FUNC_INFO;
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
   freeActions();
 
-  if(simulators.size() > 1)
+  // Create group to get radio button like behavior
+  group = new QActionGroup(ui->menuDatabase);
+
+  // Sort keys to avoid random order
+  QList<FsPaths::SimulatorType> keys = simulators.keys();
+  QList<FsPaths::SimulatorType> sims, external;
+  std::sort(keys.begin(), keys.end());
+
+  // Add real simulators first
+  for(atools::fs::FsPaths::SimulatorType type : keys)
   {
-    // Create group to get radio button like behavior
-    group = new QActionGroup(menu);
+    if(type == atools::fs::FsPaths::EXTERNAL || type == atools::fs::FsPaths::EXTERNAL2)
+      continue;
+
+    const FsPathType& pathType = simulators.value(type);
+
+    if(type == FsPaths::XPLANE11)
+    {
+      if(!pathType.basePath.isEmpty() || pathType.hasDatabase)
+        sims.append(type);
+    }
+    else if(pathType.isInstalled || pathType.hasDatabase)
+      // Create an action for each simulator installation or database found
+      sims.append(type);
+  }
+
+  // Add external databases next
+  menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+  for(atools::fs::FsPaths::SimulatorType type : keys)
+  {
+    if(type != atools::fs::FsPaths::EXTERNAL && type != atools::fs::FsPaths::EXTERNAL2)
+      continue;
+
+    // Create an action for each simulator installation or database found
+    if(simulators.value(type).hasDatabase)
+      external.append(type);
+  }
+
+  if(sims.size() + external.size() > 1)
+  {
     int index = 1;
+    for(atools::fs::FsPaths::SimulatorType type : sims)
+      insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
 
-    // Sort keys to avoid random order
-    QList<FsPaths::SimulatorType> keys = simulators.keys();
-    std::sort(keys.begin(), keys.end());
+    for(atools::fs::FsPaths::SimulatorType type : external)
+      insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
 
-    // Add real simulators first
-    for(atools::fs::FsPaths::SimulatorType type : keys)
-    {
-      if(type == atools::fs::FsPaths::EXTERNAL || type == atools::fs::FsPaths::EXTERNAL2)
-        continue;
-
-      // Create an action for each simulator installation or database found
-      insertSimSwitchAction(type, before, menu, index++);
-    }
-
-    // Add external databases next
-    menu->insertSeparator(before);
-    bool hasExternal = false;
-    for(atools::fs::FsPaths::SimulatorType type : keys)
-    {
-      if(type != atools::fs::FsPaths::EXTERNAL && type != atools::fs::FsPaths::EXTERNAL2)
-        continue;
-
-      // Create an action for each simulator installation or database found
-      insertSimSwitchAction(type, before, menu, index++);
-      hasExternal = true;
-    }
-    if(hasExternal)
-      menu->insertSeparator(before);
+    if(!external.isEmpty())
+      menuExternDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
   }
 }
 
@@ -364,23 +378,17 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
   action->setActionGroup(group);
 
   if(type == currentFsType)
+  {
+    QSignalBlocker blocker(action);
+    Q_UNUSED(blocker);
     action->setChecked(true);
+  }
 
   menu->insertAction(before, action);
 
   connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
 
   actions.append(action);
-}
-
-/* Update simuator select actions in main menu */
-void DatabaseManager::updateSimSwitchActions()
-{
-  for(QAction *action : actions)
-  {
-    atools::fs::FsPaths::SimulatorType type = action->data().value<atools::fs::FsPaths::SimulatorType>();
-    action->setChecked(type == currentFsType);
-  }
 }
 
 /* User changed simulator in main menu */
@@ -399,7 +407,6 @@ void DatabaseManager::switchSimFromMainMenu()
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
-    databaseFile = buildDatabaseFileName(currentFsType);
     openDatabase();
 
     // Reopen all with new database
@@ -411,6 +418,11 @@ void DatabaseManager::switchSimFromMainMenu()
 }
 
 void DatabaseManager::openDatabase()
+{
+  openDatabaseFile(database, buildDatabaseFileName(currentFsType), true /* readonly */);
+}
+
+void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
@@ -428,8 +440,8 @@ void DatabaseManager::openDatabase()
 
   try
   {
-    qDebug() << "Opening database" << databaseFile;
-    db->setDatabaseName(databaseFile);
+    qDebug() << "Opening database" << file;
+    db->setDatabaseName(file);
 
     // Set foreign keys only on demand because they can decrease loading performance
     if(foreignKeys)
@@ -452,8 +464,25 @@ void DatabaseManager::openDatabase()
 
     db->setAutocommit(autocommit);
 
-    if(!hasSchema())
+    if(!hasSchema(db))
+    {
+      if(db->isReadonly())
+      {
+        db->close();
+        db->setReadonly(false);
+        db->open(pragmas);
+      }
+
       createEmptySchema(db);
+      db->commit();
+    }
+
+    if(readonly && !db->isReadonly())
+    {
+      db->close();
+      db->setReadonly();
+      db->open(pragmas);
+    }
 
     DatabaseMeta dbmeta(db);
     qInfo().nospace() << "Database version "
@@ -474,9 +503,14 @@ void DatabaseManager::openDatabase()
 
 void DatabaseManager::closeDatabase()
 {
+  closeDatabaseFile(database);
+}
+
+void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
+{
   try
   {
-    qDebug() << "Closing database" << databaseFile;
+    qDebug() << "Closing database" << db->databaseName();
     if(db->isOpen())
       db->close();
   }
@@ -492,38 +526,27 @@ void DatabaseManager::closeDatabase()
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 {
-  return db;
+  return database;
 }
 
 void DatabaseManager::run()
 {
-  if(simulators.contains(currentFsType) && simulators.value(currentFsType).hasRegistry)
+  if(simulators.value(currentFsType).isInstalled)
     // Use what is currently displayed on the map
-    loadingFsType = currentFsType;
+    selectedFsType = currentFsType;
 
-  // Disconnect all queries
-  emit preDatabaseLoad();
-
-  closeDatabase();
-  databaseFile = buildDatabaseFileName(loadingFsType);
-  openDatabase();
-
-  databaseDialog->setCurrentFsType(loadingFsType);
+  databaseDialog->setCurrentFsType(selectedFsType);
   databaseDialog->setReadInactive(readInactive);
   databaseDialog->setReadAddOnXml(readAddOnXml);
 
-  updateDialogInfo();
+  updateDialogInfo(selectedFsType);
 
   // try until user hits cancel or the database was loaded successfully
   while(runInternal())
     ;
 
-  closeDatabase();
-  databaseFile = buildDatabaseFileName(currentFsType);
-  openDatabase();
-
-  // Reconnect all queries
-  emit postDatabaseLoad(currentFsType);
+  updateSimulatorFlags();
+  insertSimSwitchActions();
 
   saveState();
 }
@@ -542,40 +565,64 @@ bool DatabaseManager::runInternal()
     updateSimulatorPathsFromDialog();
 
     // Get the simulator database we'll update/load
-    loadingFsType = databaseDialog->getCurrentFsType();
+    selectedFsType = databaseDialog->getCurrentFsType();
+
     readInactive = databaseDialog->isReadInactive();
     readAddOnXml = databaseDialog->isReadAddOnXml();
 
     if(retval == QDialog::Accepted)
     {
       QString err;
-      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, loadingFsType))
+      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
       {
-        QString sceneryCfgCodec = loadingFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+        QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
 
-        if(loadingFsType == atools::fs::FsPaths::XPLANE11 ||
+        if(selectedFsType == atools::fs::FsPaths::XPLANE11 ||
            atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
-          if(loadScenery())
+          QString selectedFilename = buildDatabaseFileName(selectedFsType);
+          QString tempFilename = buildCompilingDatabaseFileName();
+          SqlDatabase tempDb(DATABASE_NAME_TEMP);
+          openDatabaseFile(&tempDb, tempFilename, false /* readonly */);
+
+          if(loadScenery(&tempDb))
           {
             // Successfully loaded
-            DatabaseMeta dbmeta(db);
+            DatabaseMeta dbmeta(tempDb);
             dbmeta.updateAll();
             reopenDialog = false;
 
+            closeDatabaseFile(&tempDb);
+
+            emit preDatabaseLoad();
+            closeDatabase();
+
+            if(!QFile::remove(selectedFilename))
+              qWarning() << "Removing" << selectedFilename << "failed";
+
+            if(!QFile::rename(tempFilename, selectedFilename))
+              qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
+
             // Syncronize display with loaded database
-            currentFsType = loadingFsType;
-            updateSimSwitchActions();
+            currentFsType = selectedFsType;
+
+            openDatabase();
+            emit postDatabaseLoad(currentFsType);
+          }
+          else
+          {
+            closeDatabaseFile(&tempDb);
+            if(!QFile::remove(tempFilename))
+              qWarning() << "Removing" << tempFilename << "failed";
           }
         }
         else
-          QMessageBox::warning(databaseDialog, QApplication::applicationName(),
-                               tr("Cannot read \"%1\". Reason: %2.").arg(databaseDialog->getSceneryConfigFile(
-                                                                           )).arg(err));
+          QMessageBox::warning(databaseDialog, QApplication::applicationName(), tr("Cannot read \"%1\". Reason: %2.").
+                               arg(databaseDialog->getSceneryConfigFile()).arg(err));
       }
       else
-        QMessageBox::warning(databaseDialog, QApplication::applicationName(),
-                             tr("Cannot read \"%1\". Reason: %2.").arg(databaseDialog->getBasePath()).arg(err));
+        QMessageBox::warning(databaseDialog, QApplication::applicationName(), tr("Cannot read \"%1\". Reason: %2.").
+                             arg(databaseDialog->getBasePath()).arg(err));
     }
     else
       // User hit close
@@ -594,7 +641,7 @@ bool DatabaseManager::runInternal()
 
 /* Opens progress dialog and loads scenery
  * @return true if loading was successfull. false if cancelled or an error occured */
-bool DatabaseManager::loadScenery()
+bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 {
   using atools::fs::NavDatabaseOptions;
 
@@ -615,7 +662,7 @@ bool DatabaseManager::loadScenery()
   const OptionData& optionData = OptionData::instance();
   navDatabaseOpts.addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
   navDatabaseOpts.addToDirectoryExcludes(optionData.getDatabaseExclude());
-  navDatabaseOpts.setSimulatorType(loadingFsType);
+  navDatabaseOpts.setSimulatorType(selectedFsType);
 
   delete progressDialog;
   progressDialog = new QProgressDialog(databaseDialog);
@@ -623,7 +670,7 @@ bool DatabaseManager::loadScenery()
 
   progressDialog->setWindowTitle(tr("%1 - Loading %2").
                                  arg(QApplication::applicationName()).
-                                 arg(atools::fs::FsPaths::typeToShortName(loadingFsType)));
+                                 arg(atools::fs::FsPaths::typeToShortName(selectedFsType)));
 
   // Label will be owned by progress
   QLabel *label = new QLabel(progressDialog);
@@ -638,8 +685,8 @@ bool DatabaseManager::loadScenery()
   progressDialog->setAutoReset(false);
   progressDialog->setMinimumDuration(0);
 
-  navDatabaseOpts.setSceneryFile(simulators.value(loadingFsType).sceneryCfg);
-  navDatabaseOpts.setBasepath(simulators.value(loadingFsType).basePath);
+  navDatabaseOpts.setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
+  navDatabaseOpts.setBasepath(simulators.value(selectedFsType).basePath);
 
   QElapsedTimer timer;
   progressTimerElapsed = 0L;
@@ -660,11 +707,8 @@ bool DatabaseManager::loadScenery()
 
   try
   {
-    // Create a backup of the database and delete the original file
-    backupDatabaseFile();
-
     atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors);
-    QString sceneryCfgCodec = loadingFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
+    QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
     nd.create(sceneryCfgCodec);
   }
   catch(atools::Exception& e)
@@ -754,12 +798,8 @@ bool DatabaseManager::loadScenery()
   {
     // Something went wrong of loading was cancelled - restore backup
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    restoreDatabaseFileBackup();
     QGuiApplication::restoreOverrideCursor();
   }
-
-  // Delete backup file anyway after success of restore
-  removeDatabaseFileBackup();
 
   delete progressDialog;
   progressDialog = nullptr;
@@ -770,64 +810,12 @@ bool DatabaseManager::loadScenery()
 /* Simulator was changed in scenery database loading dialog */
 void DatabaseManager::simulatorChangedFromComboBox(FsPaths::SimulatorType value)
 {
-  // Close and reopen database to show statistics - but do not let the rest of the program know about it (no emit)
-  closeDatabase();
-  loadingFsType = value;
-  databaseFile = buildDatabaseFileName(loadingFsType);
-  openDatabase();
-  updateDialogInfo();
-}
-
-/* Closes database, creates a database backup and reopens the database.
- * Result is a fresh database without schema. */
-void DatabaseManager::backupDatabaseFile()
-{
-  qDebug() << "Creating database backup";
-  db->close();
-
-  QString backupName(db->databaseName() + lnm::DATABASE_BACKUP_SUFFIX);
-  QFile backupFile(backupName);
-  bool removed = backupFile.remove();
-  qDebug() << "removed database backup" << backupFile.fileName() << removed;
-
-  QFile dbFile(db->databaseName());
-  bool renamed = dbFile.rename(backupName);
-  qDebug() << "renamed database from" << db->databaseName() << "to" << backupName << renamed;
-
-  db->open();
-}
-
-/* Closes database, restores the database backup and reopens the database. */
-void DatabaseManager::restoreDatabaseFileBackup()
-{
-  qDebug() << "Restoring database backup";
-  db->close();
-
-  QFile dbFile(db->databaseName());
-  bool removed = dbFile.remove();
-  qDebug() << "removed database" << dbFile.fileName() << removed;
-
-  QString backupName(db->databaseName() + lnm::DATABASE_BACKUP_SUFFIX);
-  QFile backupFile(backupName);
-  bool copied = backupFile.copy(db->databaseName());
-  qDebug() << "copied database from" << backupName << "to" << db->databaseName() << copied;
-
-  db->open();
-}
-
-/* Removes the database backup */
-void DatabaseManager::removeDatabaseFileBackup()
-{
-  qDebug() << "Removing database backup";
-  QString backupName(db->databaseName() + lnm::DATABASE_BACKUP_SUFFIX);
-  QFile backupFile(backupName);
-  bool removed = backupFile.remove();
-  qDebug() << "removed database" << backupFile.fileName() << removed;
+  selectedFsType = value;
+  updateDialogInfo(selectedFsType);
 }
 
 /* Called by atools::fs::NavDatabase. Updates progress bar and statistics */
-bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& progress,
-                                       QElapsedTimer& timer)
+bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer)
 {
   if(progress.isFirstCall())
   {
@@ -911,7 +899,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 }
 
 /* Checks if the current database has a schema. Exits program if this fails */
-bool DatabaseManager::hasSchema()
+bool DatabaseManager::hasSchema(atools::sql::SqlDatabase *db)
 {
   try
   {
@@ -928,7 +916,7 @@ bool DatabaseManager::hasSchema()
 }
 
 /* Checks if the current database contains data. Exits program if this fails */
-bool DatabaseManager::hasData()
+bool DatabaseManager::hasData(atools::sql::SqlDatabase *db)
 {
   try
   {
@@ -945,7 +933,7 @@ bool DatabaseManager::hasData()
 }
 
 /* Checks if the current database is compatible with this program. Exits program if this fails */
-bool DatabaseManager::isDatabaseCompatible()
+bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db)
 {
   try
   {
@@ -962,13 +950,13 @@ bool DatabaseManager::isDatabaseCompatible()
 }
 
 /* Create an empty database schema. */
-void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
+void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db)
 {
   try
   {
     NavDatabaseOptions opts;
-    NavDatabase(&opts, sqlDatabase, nullptr).createSchema();
-    DatabaseMeta(sqlDatabase).updateVersion();
+    NavDatabase(&opts, db, nullptr).createSchema();
+    DatabaseMeta(db).updateVersion();
   }
   catch(atools::Exception& e)
   {
@@ -995,7 +983,7 @@ void DatabaseManager::saveState()
   Settings& s = Settings::instance();
   s.setValueVar(lnm::DATABASE_PATHS, QVariant::fromValue(simulators));
   s.setValue(lnm::DATABASE_SIMULATOR, atools::fs::FsPaths::typeToShortName(currentFsType));
-  s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(loadingFsType));
+  s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
   s.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
   s.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
 }
@@ -1005,34 +993,48 @@ void DatabaseManager::restoreState()
   Settings& s = Settings::instance();
   simulators = s.valueVar(lnm::DATABASE_PATHS).value<SimulatorTypeMap>();
   currentFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_SIMULATOR, QString()));
-  loadingFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
+  selectedFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */
-void DatabaseManager::updateDialogInfo()
+void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 {
   QString metaText;
-  DatabaseMeta dbmeta(db);
-  if(!dbmeta.isValid())
-    metaText = DATABASE_META_TEXT.arg(tr("None")).
-               arg(tr("None")).
-               arg(tr("None")).
-               arg(DatabaseMeta::DB_VERSION_MAJOR).
-               arg(DatabaseMeta::DB_VERSION_MINOR);
+
+  QString databaseFile = buildDatabaseFileName(value);
+  SqlDatabase tempDb(DATABASE_NAME_DLG_INFO_TEMP);
+
+  if(QFileInfo::exists(databaseFile))
+  { // Open temp database to show statistics
+    tempDb.setDatabaseName(databaseFile);
+    tempDb.setReadonly();
+    tempDb.open();
+  }
+
+  if(tempDb.isOpen())
+  {
+    DatabaseMeta dbmeta(tempDb);
+    if(!dbmeta.isValid())
+      metaText = DATABASE_META_TEXT.arg(tr("None")).arg(tr("None")).arg(tr("None")).
+                 arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR);
+    else
+      metaText = DATABASE_META_TEXT.
+                 arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
+                 arg(dbmeta.getMajorVersion()).
+                 arg(dbmeta.getMinorVersion()).
+                 arg(DatabaseMeta::DB_VERSION_MAJOR).
+                 arg(DatabaseMeta::DB_VERSION_MINOR);
+  }
   else
-    metaText = DATABASE_META_TEXT.
-               arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
-               arg(dbmeta.getMajorVersion()).
-               arg(dbmeta.getMinorVersion()).
-               arg(DatabaseMeta::DB_VERSION_MAJOR).
-               arg(DatabaseMeta::DB_VERSION_MINOR);
+    metaText = DATABASE_META_TEXT.arg(tr("None")).arg(tr("None")).arg(tr("None")).
+               arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR);
 
   QString tableText;
-  if(hasSchema())
+  if(tempDb.isOpen() && hasSchema(&tempDb))
   {
-    atools::sql::SqlUtil util(db);
+    atools::sql::SqlUtil util(tempDb);
 
     // Get row counts for the dialog
     tableText = DATABASE_INFO_TEXT.arg(util.rowCount("bgl_file")).
@@ -1048,6 +1050,9 @@ void DatabaseManager::updateDialogInfo()
     tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
   databaseDialog->setHeader(metaText + tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
+
+  if(tempDb.isOpen())
+    tempDb.close();
 }
 
 /* Create database name including simulator short name */
@@ -1057,8 +1062,25 @@ QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorTyp
          atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
 }
 
+QString DatabaseManager::buildCompilingDatabaseFileName()
+{
+  return databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX + "compiling" + lnm::DATABASE_SUFFIX;
+}
+
 void DatabaseManager::freeActions()
 {
+  if(menuDbSeparator != nullptr)
+  {
+    menuDbSeparator->deleteLater();
+    menuDbSeparator = nullptr;
+  }
+
+  if(menuExternDbSeparator != nullptr)
+  {
+    menuExternDbSeparator->deleteLater();
+    menuExternDbSeparator = nullptr;
+  }
+
   if(group != nullptr)
   {
     group->deleteLater();
@@ -1090,20 +1112,17 @@ void DatabaseManager::updateSimulatorPathsFromDialog()
 void DatabaseManager::updateSimulatorFlags()
 {
   for(atools::fs::FsPaths::SimulatorType type : FsPaths::ALL_SIMULATOR_TYPES)
-  {
-    if(QFile::exists(buildDatabaseFileName(type)))
-      // Already present or not - update database status since file exists
-      simulators[type].hasDatabase = true;
-    else
-    {
-      if(simulators.contains(type))
-      {
-        // No database found and no registry entry - remove
-        const FsPathType& path = simulators.value(type);
-        if(!path.hasRegistry)
-          simulators.remove(type);
-      }
-      // else no database but simulator install - leave alone
-    }
-  }
+    // Already present or not - update database status since file exists
+    simulators[type].hasDatabase = QFile::exists(buildDatabaseFileName(type));
+}
+
+void DatabaseManager::correctSimulatorType()
+{
+  if(currentFsType == atools::fs::FsPaths::UNKNOWN ||
+     (!simulators.value(currentFsType).hasDatabase && !simulators.value(currentFsType).isInstalled))
+    currentFsType = simulators.getBest();
+
+  // Correct if loading simulator is invalid - get the best installed
+  if(selectedFsType == atools::fs::FsPaths::UNKNOWN || !simulators.getAllInstalled().contains(selectedFsType))
+    selectedFsType = simulators.getBestInstalled();
 }

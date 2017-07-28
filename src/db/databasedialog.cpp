@@ -33,7 +33,7 @@ using atools::fs::FsPaths;
 using atools::gui::HelpHandler;
 
 DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
-  : QDialog(parent), ui(new Ui::DatabaseDialog), paths(pathMap)
+  : QDialog(parent), ui(new Ui::DatabaseDialog), simulators(pathMap)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -41,29 +41,25 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load"));
 
-  bool hasInstalled = !paths.getAllInstalled().isEmpty();
-
   // Sort keys to avoid random order
-  QList<FsPaths::SimulatorType> keys = paths.getAllInstalled();
+  QList<FsPaths::SimulatorType> keys = simulators.getAllInstalled();
+
+  // No registry key for X-Plane - add always
+  if(!keys.contains(FsPaths::XPLANE11))
+    keys.append(FsPaths::XPLANE11);
+
   std::sort(keys.begin(), keys.end());
 
   // Add an item to the combo box for each installed simulator
   for(atools::fs::FsPaths::SimulatorType type : keys)
-    ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
-                                   QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+  {
+    if(simulators.value(type).isInstalled || type == FsPaths::XPLANE11)
+      ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
+                                     QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+  }
 
-  if(paths.isEmpty())
+  if(simulators.isEmpty())
     ui->labelDatabaseInformation->setText(tr("<b>No Simulator Found and no database found.</b>"));
-
-  // Disable everything if no installed simulators are found
-  // (normally not needed since the action is already disabled)
-  ui->comboBoxSimulator->setEnabled(hasInstalled);
-  ui->pushButtonDatabaseBasePath->setEnabled(hasInstalled);
-  ui->pushButtonDatabaseSceneryFile->setEnabled(hasInstalled);
-  ui->pushButtonDatabaseResetPaths->setEnabled(hasInstalled);
-  ui->lineEditDatabaseBasePath->setEnabled(hasInstalled);
-  ui->lineEditDatabaseSceneryFile->setEnabled(hasInstalled);
-  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setEnabled(hasInstalled);
 
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -87,12 +83,12 @@ DatabaseDialog::~DatabaseDialog()
 
 void DatabaseDialog::basePathEdited(const QString& text)
 {
-  paths[currentFsType].basePath = QDir::toNativeSeparators(text);
+  simulators[currentFsType].basePath = QDir::toNativeSeparators(text);
 }
 
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
 {
-  paths[currentFsType].sceneryCfg = QDir::toNativeSeparators(text);
+  simulators[currentFsType].sceneryCfg = QDir::toNativeSeparators(text);
 }
 
 /* Show help in browser */
@@ -104,9 +100,9 @@ void DatabaseDialog::helpClicked()
 /* Reset paths of the current simulator back to default */
 void DatabaseDialog::resetPathsClicked()
 {
-  paths[currentFsType].basePath = FsPaths::getBasePath(currentFsType);
-  paths[currentFsType].sceneryCfg = FsPaths::getSceneryLibraryPath(currentFsType);
-  updateLineEdits();
+  simulators[currentFsType].basePath = FsPaths::getBasePath(currentFsType);
+  simulators[currentFsType].sceneryCfg = FsPaths::getSceneryLibraryPath(currentFsType);
+  updateWidgets();
 }
 
 void DatabaseDialog::simComboChanged(int index)
@@ -116,7 +112,7 @@ void DatabaseDialog::simComboChanged(int index)
 
   qDebug() << currentFsType << "index" << index;
 
-  updateLineEdits();
+  updateWidgets();
 
   emit simulatorChanged(currentFsType);
 }
@@ -128,8 +124,8 @@ void DatabaseDialog::selectBasePathClicked()
 
   if(!path.isEmpty())
   {
-    paths[currentFsType].basePath = QDir::toNativeSeparators(path);
-    updateLineEdits();
+    simulators[currentFsType].basePath = QDir::toNativeSeparators(path);
+    updateWidgets();
   }
 }
 
@@ -142,8 +138,8 @@ void DatabaseDialog::selectSceneryConfigClicked()
 
   if(!path.isEmpty())
   {
-    paths[currentFsType].sceneryCfg = QDir::toNativeSeparators(path);
-    updateLineEdits();
+    simulators[currentFsType].sceneryCfg = QDir::toNativeSeparators(path);
+    updateWidgets();
   }
 }
 
@@ -154,7 +150,7 @@ void DatabaseDialog::setHeader(const QString& header)
 
 QString DatabaseDialog::getBasePath() const
 {
-  return paths.value(currentFsType).basePath;
+  return simulators.value(currentFsType).basePath;
 }
 
 bool DatabaseDialog::isReadInactive() const
@@ -179,14 +175,17 @@ void DatabaseDialog::setReadAddOnXml(bool value)
 
 QString DatabaseDialog::getSceneryConfigFile() const
 {
-  return paths.value(currentFsType).sceneryCfg;
+  return simulators.value(currentFsType).sceneryCfg;
 }
 
 void DatabaseDialog::setCurrentFsType(atools::fs::FsPaths::SimulatorType value)
 {
-  currentFsType = value;
+  if(value == FsPaths::UNKNOWN)
+    currentFsType = FsPaths::XPLANE11;
+  else
+    currentFsType = value;
   updateComboBox();
-  updateLineEdits();
+  updateWidgets();
 }
 
 void DatabaseDialog::updateComboBox()
@@ -203,21 +202,28 @@ void DatabaseDialog::updateComboBox()
   }
 }
 
-void DatabaseDialog::updateLineEdits()
+void DatabaseDialog::updateWidgets()
 {
-  ui->lineEditDatabaseSceneryFile->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
-  ui->pushButtonDatabaseSceneryFile->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
-  ui->checkBoxReadInactive->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
-  ui->labelDatabaseSceneryFile->setDisabled(currentFsType == atools::fs::FsPaths::XPLANE11);
+  bool showXplane = currentFsType == atools::fs::FsPaths::XPLANE11 || currentFsType == atools::fs::FsPaths::UNKNOWN;
+
+  ui->lineEditDatabaseSceneryFile->setDisabled(showXplane);
+  ui->checkBoxReadInactive->setDisabled(showXplane);
+  ui->labelDatabaseSceneryFile->setDisabled(showXplane);
 
   ui->lineEditDatabaseSceneryFile->blockSignals(true);
-  ui->lineEditDatabaseSceneryFile->setText(paths.value(currentFsType).sceneryCfg);
+  ui->lineEditDatabaseSceneryFile->setText(simulators.value(currentFsType).sceneryCfg);
   ui->lineEditDatabaseSceneryFile->blockSignals(false);
 
   ui->lineEditDatabaseBasePath->blockSignals(true);
-  ui->lineEditDatabaseBasePath->setText(paths.value(currentFsType).basePath);
+  ui->lineEditDatabaseBasePath->setText(simulators.value(currentFsType).basePath);
   ui->lineEditDatabaseBasePath->blockSignals(false);
 
   ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 ||
                                        currentFsType == atools::fs::FsPaths::P3D_V4);
+
+  // Disable everything if no installed simulators are found
+  // (normally not needed since the action is already disabled)
+  ui->pushButtonDatabaseSceneryFile->setEnabled(!showXplane);
+  ui->lineEditDatabaseSceneryFile->setEnabled(!showXplane);
+  ui->pushButtonDatabaseResetPaths->setEnabled(!showXplane);
 }

@@ -60,7 +60,6 @@ public:
 
   /* Save and restore all paths and current simulator settings */
   void saveState();
-  void restoreState();
 
   /* Returns true if there are any flight simulator installations found in the registry */
   bool hasInstalledSimulators() const;
@@ -85,7 +84,7 @@ public:
    * @param before Actions will be added to menu before this one
    * @param menu Add actions to this menu
    */
-  void insertSimSwitchActions(QAction *before, QMenu *menu);
+  void insertSimSwitchActions();
 
   /* if false quit application */
   bool checkIncompatibleDatabases();
@@ -114,38 +113,45 @@ signals:
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
-  void createEmptySchema(atools::sql::SqlDatabase *sqlDatabase);
-  bool isDatabaseCompatible();
-  bool hasSchema();
-  bool hasData();
+  void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly);
+  void closeDatabaseFile(atools::sql::SqlDatabase *db);
+
+  void restoreState();
+
+  void createEmptySchema(atools::sql::SqlDatabase *db);
+  bool isDatabaseCompatible(atools::sql::SqlDatabase *db);
+  bool hasSchema(atools::sql::SqlDatabase *db);
+  bool hasData(atools::sql::SqlDatabase *db);
 
   bool progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer);
 
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
   bool runInternal();
-  void backupDatabaseFile();
-  void restoreDatabaseFileBackup();
+  void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
+
   QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
-  void updateDialogInfo();
+  QString buildTempDatabaseFileName();
+  QString buildCompilingDatabaseFileName();
 
   void switchSimFromMainMenu();
   void freeActions();
-  void updateSimSwitchActions();
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
-  void removeDatabaseFileBackup();
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
-  bool loadScenery();
+  bool loadScenery(atools::sql::SqlDatabase *db);
+  void correctSimulatorType();
 
   const QString DATABASE_NAME = "LNMDB";
+  const QString DATABASE_NAME_TEMP = "LNMTEMPDB";
+  const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
   const QString DATABASE_TYPE = "QSQLITE";
 
   DatabaseDialog *databaseDialog = nullptr;
-  QString databaseFile, databaseDirectory;
+  QString databaseDirectory;
   qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
-  atools::sql::SqlDatabase *db = nullptr;
+  atools::sql::SqlDatabase *database = nullptr;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
@@ -153,18 +159,20 @@ private:
   /* Switch simulator actions */
   QActionGroup *group = nullptr;
   QList<QAction *> actions;
+  QAction *menuDbSeparator = nullptr, *menuExternDbSeparator = nullptr;
 
   atools::fs::FsPaths::SimulatorType
   /* Currently selected simulator which will be used in the map, search, etc. */
     currentFsType = atools::fs::FsPaths::UNKNOWN,
   /* Currently selected simulator in the load scenery database dialog */
-    loadingFsType = atools::fs::FsPaths::UNKNOWN;
+    selectedFsType = atools::fs::FsPaths::UNKNOWN;
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;
   bool readInactive = false, readAddOnXml = true;
 
   QString currentBglFilePath;
+
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H

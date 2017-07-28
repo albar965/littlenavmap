@@ -140,7 +140,7 @@ MainWindow::MainWindow()
     NavApp::init(this);
 
     // Add actions for flight simulator database switch in main menu
-    NavApp::getDatabaseManager()->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
+    NavApp::getDatabaseManager()->insertSimSwitchActions();
 
     qDebug() << "MainWindow Creating WeatherReporter";
     weatherReporter = new WeatherReporter(this, NavApp::getDatabaseManager()->getCurrentSimulator());
@@ -1620,9 +1620,9 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
 /* Selection in approach view has changed */
 void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
 {
-  // qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
-  // << "transitionId" << approachRef.transitionId
-  // << "legId" << approachRef.legId;
+  // qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId
+  // << "transitionId" << ref.transitionId
+  // << "legId" << ref.legId;
 
   map::MapAirport airport = NavApp::getMapQuery()->getAirportById(ref.airportId);
 
@@ -1632,6 +1632,7 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
   {
     if(ref.hasApproachAndTransitionIds())
     {
+      // Load transition including approach
       const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getTransitionLegs(airport, ref.transitionId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
@@ -1641,12 +1642,13 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
     else if(ref.hasApproachOnlyIds())
     {
       proc::MapProcedureRef curRef = mapWidget->getProcedureHighlight().ref;
-      if(ref.isLeg() && ref.airportId == curRef.airportId && ref.approachId == curRef.approachId)
+      if(ref.airportId == curRef.airportId && ref.approachId == curRef.approachId &&
+         !ref.hasTransitionId() && curRef.hasTransitionId() && ref.isLeg())
       {
+        // Approach leg selected - keep preview of current transition
         proc::MapProcedureRef r = ref;
         r.transitionId = curRef.transitionId;
-        const proc::MapProcedureLegs *legs =
-          NavApp::getProcedureQuery()->getTransitionLegs(airport, r.transitionId);
+        const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getTransitionLegs(airport, r.transitionId);
         if(legs != nullptr)
           mapWidget->changeApproachHighlight(*legs);
         else
@@ -1668,9 +1670,9 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
 /* Selection in approach view has changed */
 void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
 {
-  // qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
-  // << "transitionId" << approachRef.transitionId
-  // << "legId" << approachRef.legId;
+  // qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId
+  // << "transitionId" << ref.transitionId
+  // << "legId" << ref.legId;
 
   if(ref.legId != -1)
   {
@@ -1810,16 +1812,21 @@ void MainWindow::mainWindowShown()
         msgBox.setWindowTitle(QApplication::applicationName());
         msgBox.setTextFormat(Qt::RichText);
         msgBox.setText(
-          tr("No Flight Simulator installations and no scenery library databases found.<br/>"
-             "You can copy a Little Navmap scenery library database from another computer.<br/><br/>"
-             "Press the help button for more information about this.")
+          tr("No Microsoft Flight Simulator or Prepar3D installations and no scenery library databases found.<br/>"
+             "You can copy a Little Navmap scenery library database from another computer.<br/>"
+             "Press the help button for more information on this.<br/><br/>"
+             "If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.<br/><br/>"
+             )
           );
-        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Help);
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Open | QMessageBox::Help);
+        msgBox.setButtonText(QMessageBox::Open, tr("X-Plane"));
         msgBox.setDefaultButton(QMessageBox::Ok);
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
           HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguages());
+        else if(result == QMessageBox::Open)
+          databaseManager->run();
       }
     }
 
@@ -1852,8 +1859,6 @@ void MainWindow::updateActionStates()
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
-
-  ui->actionReloadScenery->setEnabled(NavApp::getDatabaseManager()->hasInstalledSimulators());
 
   bool hasFlightplan = !NavApp::getRoute().isFlightplanEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
@@ -2214,6 +2219,10 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();
     weatherReporter->postDatabaseLoad(type);
+
+    // U actions for flight simulator database switch in main menu
+    NavApp::getDatabaseManager()->insertSimSwitchActions();
+
     hasDatabaseLoadStatus = false;
   }
   else
