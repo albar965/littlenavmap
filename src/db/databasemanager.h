@@ -130,7 +130,6 @@ private:
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
   QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
-  QString buildTempDatabaseFileName();
   QString buildCompilingDatabaseFileName();
 
   void switchSimFromMainMenu();
