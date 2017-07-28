@@ -652,8 +652,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
   // Draw parking --------------------------------
   const QList<MapParking> *parkings = query->getParkingsForAirport(airport.id);
-  if(!parkings->isEmpty())
-    painter->setPen(QPen(mapcolors::parkingOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
   for(const MapParking& parking : *parkings)
   {
     bool visible;
@@ -664,6 +662,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       int w = scale->getPixelIntForFeet(parking.radius, 90);
       int h = scale->getPixelIntForFeet(parking.radius, 0);
 
+      painter->setPen(QPen(mapcolors::colorOutlineForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
       painter->setBrush(mapcolors::colorForParkingType(parking.type));
       painter->drawEllipse(pt, w, h);
 

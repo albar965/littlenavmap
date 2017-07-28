@@ -277,6 +277,16 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     leg.fixPos = leg.navaids.runwayEnds.isEmpty() ? airport.position : leg.navaids.runwayEnds.first().position;
     leg.navId = -1;
   }
+  else if(leg.fixType == "A")
+  {
+    mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent, QString(), airport.ident, airport.position);
+    if(!leg.navaids.airports.isEmpty())
+    {
+      leg.fixPos = leg.navaids.airports.first().position;
+      leg.magvar = leg.navaids.airports.first().magvar;
+      leg.navId = leg.navaids.airports.first().id;
+    }
+  }
 
   // Load navaid information for recommended fix and set fix position
   // Also update magvar if not already set

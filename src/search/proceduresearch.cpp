@@ -780,10 +780,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
 
       if((route.hasValidDeparture() &&
-          route.first().getId() == currentAirport.id &&
-          ref.mapType & proc::PROCEDURE_DEPARTURE) ||
-         (route.hasValidDestination() &&
-          route.last().getId() == currentAirport.id &&
+          route.first().getId() == currentAirport.id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
+         (route.hasValidDestination() && route.last().getId() == currentAirport.id &&
           ref.mapType & proc::PROCEDURE_ARRIVAL_ALL))
         ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
       else
@@ -948,8 +946,8 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
   approachType += " " + recApp.valueStr("airport_runway_name");
 
   QString altStr;
-  if(recApp.valueFloat("altitude") > 0.f)
-    altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
+  // if(recApp.valueFloat("altitude") > 0.f)
+  // altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
 
   QTreeWidgetItem *item = new QTreeWidgetItem({
     approachType,
@@ -973,8 +971,8 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *apprItem,
                                                       bool sidOrStar)
 {
   QString altStr;
-  if(recTrans.valueFloat("altitude") > 0.f)
-    altStr = Unit::altFeet(recTrans.valueFloat("altitude"), false);
+  // if(recTrans.valueFloat("altitude") > 0.f)
+  // altStr = Unit::altFeet(recTrans.valueFloat("altitude"), false);
 
   QString name(tr("Transition"));
 

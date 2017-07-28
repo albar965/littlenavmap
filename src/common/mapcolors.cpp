@@ -98,15 +98,26 @@ const QColor& alternatingRowColor(int row, bool isSort)
     return isSort ? rowSortAltBgColor : rowAltBgColor;
 }
 
+const QColor& colorOutlineForParkingType(const QString& type)
+{
+  if(type == "RMCB" || type == "RMC" || type.startsWith("G") || type.startsWith("RGA") || type.startsWith("DGA") ||
+     type.startsWith("RC") || type.startsWith("FUEL") || type == ("H") || type == ("T"))
+    return parkingOutlineColor;
+  else
+    return parkingUnknownOutlineColor;
+}
+
 const QColor& colorForParkingType(const QString& type)
 {
   static const QColor rampMilCargo(180, 0, 0);
   static const QColor rampMilCombat(Qt::red);
   static const QColor gate(100, 100, 255);
   static const QColor rampGa(0, 200, 0);
+  static const QColor tiedown(0, 150, 0);
+  static const QColor hangar(Qt::darkYellow);
   static const QColor rampCargo(Qt::darkGreen);
   static const QColor fuel(Qt::yellow);
-  static const QColor unknown("#505050");
+  static const QColor unknown("#808080");
 
   if(type == "RMCB")
     return rampMilCombat;
@@ -120,6 +131,10 @@ const QColor& colorForParkingType(const QString& type)
     return rampCargo;
   else if(type.startsWith("FUEL"))
     return fuel;
+  else if(type == ("H"))
+    return hangar;
+  else if(type == ("T"))
+    return tiedown;
   else
     return unknown;
 }
@@ -138,8 +153,12 @@ const QColor& colorTextForParkingType(const QString& type)
     return mapcolors::brightParkingTextColor;
   else if(type.startsWith("FUEL"))
     return mapcolors::darkParkingTextColor;
+  else if(type == ("H"))
+    return brightParkingTextColor;
+  else if(type == ("T"))
+    return brightParkingTextColor;
   else
-    return mapcolors::brightParkingTextColor;
+    return brightParkingTextColor;
 }
 
 const QIcon& iconForStartType(const QString& type)
@@ -166,7 +185,9 @@ const QIcon& iconForParkingType(const QString& type)
   static const QIcon mil(":/littlenavmap/resources/icons/parkingrampmil.svg");
   static const QIcon gate(":/littlenavmap/resources/icons/parkinggate.svg");
   static const QIcon fuel(":/littlenavmap/resources/icons/parkingfuel.svg");
-  static const QIcon empty;
+  static const QIcon hangar(":/littlenavmap/resources/icons/parkinghangar.svg");
+  static const QIcon tiedown(":/littlenavmap/resources/icons/parkingtiedown.svg");
+  static const QIcon unknown(":/littlenavmap/resources/icons/parkingunknown.svg");
 
   if(type.startsWith("RM"))
     return mil;
@@ -178,8 +199,12 @@ const QIcon& iconForParkingType(const QString& type)
     return cargo;
   else if(type.startsWith("FUEL"))
     return fuel;
-
-  return empty;
+  else if(type == ("H"))
+    return hangar;
+  else if(type == ("T"))
+    return tiedown;
+  else
+    return unknown;
 }
 
 const QColor& colorForSurface(const QString& surface)

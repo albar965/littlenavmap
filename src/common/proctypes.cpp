@@ -52,7 +52,16 @@ const static QHash<QString, QString> approachTypeToStr(
     {"VORDME", QObject::tr("VORDME")},
     {"NDBDME", QObject::tr("NDBDME")},
     {"RNAV", QObject::tr("RNAV")},
-    {"LOCB", QObject::tr("Localizer Backcourse")}
+    {"LOCB", QObject::tr("Localizer Backcourse")},
+
+    // Additional types from X-Plane
+    {"FMS", QObject::tr("FMS")},
+    {"IGS", QObject::tr("IGS")},
+    {"GNSS", QObject::tr("GNSS")},
+    {"TCN", QObject::tr("TACAN")},
+    {"CTL", QObject::tr("Circle to Land")},
+    {"MLS", QObject::tr("MLS")}
+
   });
 
 const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
@@ -250,8 +259,8 @@ QString altRestrictionText(const MapAltRestriction& restriction)
 
     case proc::MapAltRestriction::BETWEEN:
       return QObject::tr("At or above %1 and at or below %2").
-             arg(Unit::altFeet(restriction.alt1)).
-             arg(Unit::altFeet(restriction.alt2));
+             arg(Unit::altFeet(restriction.alt2)).
+             arg(Unit::altFeet(restriction.alt1));
   }
   return QString();
 }
@@ -273,8 +282,8 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
       retval = QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
     case proc::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, false, true) +
-               QObject::tr("B") + Unit::altFeet(altRestriction.alt2, true, true);
+      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt2, false, true) +
+               QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
   }
   return retval;
@@ -297,8 +306,8 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction)
       retval = QObject::tr("B ") + Unit::altFeet(altRestriction.alt1, false, false);
       break;
     case proc::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A ") + Unit::altFeet(altRestriction.alt1, false, false) + QObject::tr(", B ") +
-               Unit::altFeet(altRestriction.alt2, false, false);
+      retval = QObject::tr("A ") + Unit::altFeet(altRestriction.alt2, false, false) + QObject::tr(", B ") +
+               Unit::altFeet(altRestriction.alt1, false, false);
       break;
   }
   return retval;
@@ -316,16 +325,16 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
   out << "maptype" << legs.mapType << endl;
 
   out << "approachDistance" << legs.approachDistance
-  << "transitionDistance" << legs.transitionDistance
-  << "missedDistance" << legs.missedDistance << endl;
+      << "transitionDistance" << legs.transitionDistance
+      << "missedDistance" << legs.missedDistance << endl;
 
   out << "approachType" << legs.approachType
-  << "approachSuffix" << legs.approachSuffix
-  << "approachFixIdent" << legs.approachFixIdent
-  << "transitionType" << legs.transitionType
-  << "transitionFixIdent" << legs.transitionFixIdent
-  << "procedureRunway" << legs.procedureRunway
-  << "runwayEnd.name" << legs.runwayEnd.name << endl;
+      << "approachSuffix" << legs.approachSuffix
+      << "approachFixIdent" << legs.approachFixIdent
+      << "transitionType" << legs.transitionType
+      << "transitionFixIdent" << legs.transitionFixIdent
+      << "procedureRunway" << legs.procedureRunway
+      << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
   out << "===== Legs =====" << endl;
   for(int i = 0; i < legs.size(); i++)
@@ -338,15 +347,15 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
   out << "ProcedureLeg =============" << endl;
   out << "approachId" << leg.approachId
-  << "transitionId" << leg.transitionId
-  << "legId" << leg.legId << endl
-  << "type" << leg.type
-  << "maptype" << leg.mapType
-  << "missed" << leg.missed
-  << "line" << leg.line << endl;
+      << "transitionId" << leg.transitionId
+      << "legId" << leg.legId << endl
+      << "type" << leg.type
+      << "maptype" << leg.mapType
+      << "missed" << leg.missed
+      << "line" << leg.line << endl;
 
   out << "displayText" << leg.displayText
-  << "remarks" << leg.remarks;
+      << "remarks" << leg.remarks;
 
   out << "navId" << leg.navId << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
 
@@ -356,23 +365,23 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << "geometry" << leg.geometry << endl;
 
   out << "turnDirection" << leg.turnDirection
-  << "flyover" << leg.flyover
-  << "trueCourse" << leg.trueCourse
-  << "disabled" << leg.disabled
-  << "course" << leg.course << endl;
+      << "flyover" << leg.flyover
+      << "trueCourse" << leg.trueCourse
+      << "disabled" << leg.disabled
+      << "course" << leg.course << endl;
 
   out << "calculatedDistance" << leg.calculatedDistance
-  << "calculatedTrueCourse" << leg.calculatedTrueCourse << endl;
+      << "calculatedTrueCourse" << leg.calculatedTrueCourse << endl;
 
   out << "magvar" << leg.magvar
-  << "theta" << leg.theta
-  << "rho" << leg.rho
-  << "dist" << leg.distance
-  << "time" << leg.time << endl;
+      << "theta" << leg.theta
+      << "rho" << leg.rho
+      << "dist" << leg.distance
+      << "time" << leg.time << endl;
 
   out << "altDescriptor" << leg.altRestriction.descriptor
-  << "alt1" << leg.altRestriction.alt1
-  << "alt2" << leg.altRestriction.alt2 << endl;
+      << "alt1" << leg.altRestriction.alt1
+      << "alt2" << leg.altRestriction.alt2 << endl;
   return out;
 }
 

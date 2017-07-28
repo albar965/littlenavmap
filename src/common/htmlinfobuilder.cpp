@@ -374,6 +374,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(info && !print)
     addAirportScenery(airport, html);
+
+#ifdef DEBUG_OBJECT_ID
+  html.p().b(QString("Database: airport_id = %1").arg(airport.getId())).pEnd();
+#endif
 }
 
 void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
@@ -500,10 +504,20 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
         html.tableEnd();
 
+#ifdef DEBUG_OBJECT_ID
+        html.p().b(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).pEnd();
+#endif
+
         if(details)
         {
           runwayEndText(html, recPrim, hdgPrim, rec.valueFloat("length"));
+#ifdef DEBUG_OBJECT_ID
+          html.p().b(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).pEnd();
+#endif
           runwayEndText(html, recSec, hdgSec, rec.valueFloat("length"));
+#ifdef DEBUG_OBJECT_ID
+          html.p().b(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).pEnd();
+#endif
         }
       }
     }
@@ -765,13 +779,13 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         if(!(type& proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
         {
           rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
-          html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
-                    recApp.valueStr("fix_region"));
+          // html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
+          // recApp.valueStr("fix_region"));
 
-          float hdg = recApp.valueFloat("heading") - airport.magvar;
-          hdg = normalizeCourse(hdg);
-          html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
-                    arg(locale.toString(recApp.valueFloat("heading"), 'f', 0)));
+          // float hdg = recApp.valueFloat("heading") - airport.magvar;
+          // hdg = normalizeCourse(hdg);
+          // html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
+          // arg(locale.toString(recApp.valueFloat("heading"), 'f', 0)));
         }
 
         // html.row2(tr("Altitude:"), Unit::altFeet(recApp.valueFloat("altitude")));
@@ -822,6 +836,9 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           }
         }
         html.tableEnd();
+#ifdef DEBUG_OBJECT_ID
+        html.p().b(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).pEnd();
+#endif
 
         const SqlRecordVector *recTransVector =
           infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
@@ -843,8 +860,8 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                 html.row2(tr("Type:"), tr("DME"));
             }
 
-            html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
-                      recTrans.valueStr("fix_region"));
+            // html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
+            // recTrans.valueStr("fix_region"));
 
             // html.row2(tr("Altitude:"), Unit::altFeet(recTrans.valueFloat("altitude")));
 
@@ -853,7 +870,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
               html.row2(tr("DME Ident and Region:"), recTrans.valueStr("dme_ident") + tr(", ") +
                         recTrans.valueStr("dme_region"));
 
-              rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
+              // rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
               float dist = recTrans.valueFloat("dme_distance");
               if(dist > 1.f)
                 html.row2(tr("DME Distance:"), Unit::distNm(dist, true /*addunit*/, 5));
@@ -882,6 +899,9 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
             addRadionavFixType(html, recTrans);
             html.tableEnd();
+#ifdef DEBUG_OBJECT_ID
+            html.p().b(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).pEnd();
+#endif
           }
         }
       }
@@ -1236,6 +1256,10 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
 
   if(rec != nullptr)
     addScenery(rec, html);
+
+#ifdef DEBUG_OBJECT_ID
+  html.p().b(QString("Database: vor_id = %1").arg(vor.getId())).pEnd();
+#endif
 }
 
 void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor background) const
@@ -1274,6 +1298,10 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
 
   if(rec != nullptr)
     addScenery(rec, html);
+
+#ifdef DEBUG_OBJECT_ID
+  html.p().b(QString("Database: ndb_id = %1").arg(ndb.getId())).pEnd();
+#endif
 }
 
 void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background) const
@@ -1351,6 +1379,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(rec != nullptr)
     addScenery(rec, html);
+
+#ifdef DEBUG_OBJECT_ID
+  html.p().b(QString("Database: waypoint_id = %1").arg(waypoint.getId())).pEnd();
+#endif
 }
 
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& html, QColor background) const
@@ -1402,6 +1434,10 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
     html.row2(tr("COM Frequency:"), locale.toString(airspace.comFrequency / 1000., 'f', 3) + tr(" MHz"));
   }
   html.tableEnd();
+
+#ifdef DEBUG_OBJECT_ID
+  html.p().b(QString("Database: boundary_id = %1").arg(airspace.getId())).pEnd();
+#endif
 }
 
 void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
@@ -1446,6 +1482,10 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     }
   }
   html.tableEnd();
+
+#ifdef DEBUG_OBJECT_ID
+  html.p().b(QString("Database: airway_id = %1").arg(airway.getId())).pEnd();
+#endif
 }
 
 void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html) const

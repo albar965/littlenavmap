@@ -156,7 +156,7 @@ struct MapProcedureRef
 {
   MapProcedureRef(int airport, int runwayEnd, int approach, int transition, int leg, proc::MapProcedureTypes type)
     : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg),
-      mapType(type)
+    mapType(type)
   {
   }
 
@@ -176,6 +176,16 @@ struct MapProcedureRef
   bool hasApproachOnlyIds() const
   {
     return approachId != -1 && transitionId == -1;
+  }
+
+  bool hasTransitionId() const
+  {
+    return transitionId != -1;
+  }
+
+  bool hasApproachId() const
+  {
+    return approachId != -1;
   }
 
   bool hasApproachAndTransitionIds() const

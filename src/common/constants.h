@@ -30,6 +30,8 @@
 
 // #define DEBUG_CREATE_WINDOW_STATE
 
+// #ifdef DEBUG_OBJECT_ID
+
 #include "geo/pos.h"
 
 const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);

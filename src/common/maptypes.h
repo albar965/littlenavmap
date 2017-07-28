@@ -576,6 +576,11 @@ struct MapAirspace
     return bounding.isValid();
   }
 
+  int getId() const
+  {
+    return id;
+  }
+
 };
 
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */

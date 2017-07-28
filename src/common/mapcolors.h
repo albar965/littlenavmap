@@ -95,13 +95,15 @@ const QColor runwayOffsetColor = QColor(Qt::white);
 const QBrush runwayBlastpadBrush = QBrush(Qt::yellow, Qt::DiagCrossPattern);
 const QBrush runwayOverrunBrush = QBrush(QColor(180, 180, 0), Qt::DiagCrossPattern);
 
-const QColor parkingOutlineColor = QColor(80, 80, 80);
 const QColor helipadOutlineColor = QColor(Qt::black);
 const QColor helipadMedicalOutlineColor = QColor(200, 0, 0);
 const QColor activeTowerColor = QColor(Qt::red);
 const QColor activeTowerOutlineColor = QColor(Qt::black);
 const QColor inactiveTowerColor = QColor(Qt::lightGray);
 const QColor inactiveTowerOutlineColor = QColor(Qt::darkGray);
+
+const QColor parkingUnknownOutlineColor = QColor(40, 40, 40);
+const QColor parkingOutlineColor = QColor(80, 80, 80);
 
 const QColor darkParkingTextColor = QColor(Qt::black);
 const QColor brightParkingTextColor = QColor(Qt::white);
@@ -185,6 +187,7 @@ const QColor& colorForSurface(const QString& surface);
 /* Color for detailed parking symbol in airport diagram (RAMP_MIL_*, GATE_*, RAMP_GA_* or RAMP_CARGO */
 const QColor& colorForParkingType(const QString& type);
 const QColor& colorTextForParkingType(const QString& type);
+const QColor& colorOutlineForParkingType(const QString& type);
 
 /* Color for airport symbol */
 const QColor& colorForAirport(const map::MapAirport& ap);
