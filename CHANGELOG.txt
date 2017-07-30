@@ -1,3 +1,9 @@
+Version 1.5.2.develop
+
+derived from atools:
+* Fixed missing encoding in PLN XML files since changing to Qt 5.9.
+* Now generating scenery names if missing from add-on.xml files.
+
 Version 1.5.1.develop
 
 derived from atools:
