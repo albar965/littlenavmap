@@ -22,6 +22,7 @@
 #include "common/unit.h"
 #include "route/flightplanentrybuilder.h"
 #include "common/procedurequery.h"
+#include "navapp.h"
 
 #include <QRegularExpression>
 
@@ -79,7 +80,6 @@ void Route::copy(const Route& other)
   shownTypes = other.shownTypes;
   boundingRect = other.boundingRect;
   activePos = other.activePos;
-  trueCourse = other.trueCourse;
 
   arrivalLegs = other.arrivalLegs;
   starLegs = other.starLegs;
@@ -305,7 +305,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
       // qDebug() << "Switching to next leg";
       // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes & map::MISSED_APPROACH) && at(nextLeg).getProcedureLeg().isMissed()))
+      if(!(!(shownTypes& map::MISSED_APPROACH) && at(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
         activeLeg = nextLeg;
@@ -586,6 +586,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         up.routeIndex = i;
         up.name = leg.getIdent() + " (not found)";
         up.position = leg.getPosition();
+        up.magvar = NavApp::getMagVar(leg.getPosition());
         mapobjects.userPoints.append(up);
       }
 
@@ -596,6 +597,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         up.routeIndex = i;
         up.name = leg.getIdent();
         up.position = leg.getPosition();
+        up.magvar = NavApp::getMagVar(leg.getPosition());
         mapobjects.userPoints.append(up);
       }
 
@@ -947,23 +949,6 @@ void Route::updateMagvar()
   // get magvar from internal database objects (waypoints, VOR and others)
   for(int i = 0; i < size(); i++)
     (*this)[i].updateMagvar();
-
-  // Update missing magvar values using neighbour entries
-  for(int i = 0; i < size(); i++)
-    (*this)[i].updateInvalidMagvar(i, this);
-
-  trueCourse = true;
-  // Check if there is any magnetic variance on the route
-  // If not (all user waypoints) use true heading
-  for(const RouteLeg& obj : *this)
-  {
-    // Route contains correct magvar if any of these objects were found
-    if(obj.getMapObjectType() & map::NAV_MAGVAR)
-    {
-      trueCourse = false;
-      break;
-    }
-  }
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
@@ -975,6 +960,7 @@ void Route::updateBoundingRect()
     if(routeLeg.getPosition().isValid())
       line.append(Marble::GeoDataCoordinates(routeLeg.getPosition().getLonX(),
                                              routeLeg.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));
+
 
   Marble::GeoDataLatLonBox box = Marble::GeoDataLatLonBox::fromLineString(line);
   boundingRect = atools::geo::Rect(box.west(), box.north(), box.east(), box.south());

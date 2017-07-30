@@ -101,8 +101,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       )
     {
       routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
-                        QString::number(leg.getCourseToRhumbMag(), 'f', 0) +
-                        (route->isTrueCourse() ? tr("°T") : tr("°M")));
+                        QString::number(leg.getCourseToRhumbMag(), 'f', 0) + tr("°M"));
       lines.append(Line(last.getPosition(), leg.getPosition()));
     }
     else

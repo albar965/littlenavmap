@@ -21,6 +21,7 @@
 #include "fs/pln/flightplan.h"
 #include "atools.h"
 #include "route/route.h"
+#include "navapp.h"
 
 #include <QRegularExpression>
 
@@ -305,42 +306,7 @@ void RouteLeg::updateMagvar()
   else if(airport.isValid())
     magvar = airport.magvar;
   else
-    magvar = 0.f;
-}
-
-void RouteLeg::updateInvalidMagvar(int entryIndex, const Route *routeList)
-{
-  if(type == map::USER || type == map::INVALID)
-  {
-    magvar = 0.f;
-    // Get magnetic variance from one of the next and previous waypoints if not set
-    float magvarnext = 0.f, magvarprev = 0.f;
-    for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
-    {
-      if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
-      {
-        magvarnext = routeList->at(i).getMagvar();
-        break;
-      }
-    }
-
-    for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
-    {
-      if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
-      {
-        magvarprev = routeList->at(i).getMagvar();
-        break;
-      }
-    }
-
-    // Use average of previous and next or one valid value
-    if(std::abs(magvarnext) > 0.f && std::abs(magvarprev) > 0.f)
-      magvar = (magvarnext + magvarprev) / 2.f;
-    else if(std::abs(magvarnext) > 0.f)
-      magvar = magvarnext;
-    else if(std::abs(magvarprev) > 0.f)
-      magvar = magvarprev;
-  }
+    magvar = NavApp::getMagVar(getPosition());
 }
 
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
@@ -651,9 +617,9 @@ bool RouteLeg::isApproachPoint() const
 QDebug operator<<(QDebug out, const RouteLeg& leg)
 {
   out << "RouteLeg[id" << leg.getId() << leg.getPosition()
-  << "magvar" << leg.getMagvar() << "distance" << leg.getDistanceTo()
-  << "course mag" << leg.getCourseToMag() << "course true" << leg.getCourseToTrue()
-  << leg.getIdent() << leg.getMapObjectTypeName()
-  << proc::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
+      << "magvar" << leg.getMagvar() << "distance" << leg.getDistanceTo()
+      << "course mag" << leg.getCourseToMag() << "course true" << leg.getCourseToTrue()
+      << leg.getIdent() << leg.getMapObjectTypeName()
+      << proc::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
   return out;
 }

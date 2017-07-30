@@ -55,8 +55,7 @@ public:
    * @param query Database query object
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                 const RouteLeg *prevLeg);
+  void createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteLeg *prevLeg);
 
   /*
    * Creates a route map object from an airport database object.
@@ -64,11 +63,9 @@ public:
    * @param newAirport
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromAirport(int entryIndex, const map::MapAirport& newAirport,
-                         const RouteLeg *prevLeg);
+  void createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg);
 
-  void createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs,
-                             const RouteLeg *prevLeg);
+  void createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
@@ -78,9 +75,6 @@ public:
 
   /* Get magvar from all known objects */
   void updateMagvar();
-
-  /* Update for user and invalid. Needs all others updated before */
-  void updateInvalidMagvar(int entryIndex, const Route *routeList);
 
   /* Change user defined waypoint name */
   void updateUserName(const QString& name);

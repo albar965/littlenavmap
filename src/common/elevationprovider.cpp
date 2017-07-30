@@ -18,7 +18,7 @@
 #include "common/elevationprovider.h"
 
 #include "navapp.h"
-#include "dtm/globereader.h"
+#include "fs/common/globereader.h"
 #include "options/optiondata.h"
 #include "geo/line.h"
 #include "geo/linestring.h"
@@ -38,7 +38,7 @@ static Q_DECL_CONSTEXPR float SAME_ONLINE_ELEVATION_EPSILON = 1.f;
 using atools::geo::Pos;
 using atools::geo::Line;
 using atools::geo::LineString;
-using atools::dtm::GlobeReader;
+using atools::fs::common::GlobeReader;
 
 using namespace Marble;
 
@@ -68,7 +68,7 @@ float ElevationProvider::getElevation(const atools::geo::Pos& pos)
   if(isGlobeOfflineProvider())
   {
     float elevation = globeReader->getElevation(pos);
-    if(!(elevation > atools::dtm::OCEAN && elevation < atools::dtm::INVALID))
+    if(!(elevation > atools::fs::common::OCEAN && elevation < atools::fs::common::INVALID))
       return 0.f;
     else
       return elevation;
@@ -90,7 +90,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     for(Pos& pos : elevations)
     {
       float alt = pos.getAltitude();
-      if(!(alt > atools::dtm::OCEAN && alt < atools::dtm::INVALID))
+      if(!(alt > atools::fs::common::OCEAN && alt < atools::fs::common::INVALID))
         // Reset all invalid and ocean indicators to 0
         pos.setAltitude(0.f);
     }

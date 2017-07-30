@@ -450,6 +450,7 @@ struct MapUserpoint
 {
   QString name;
   int id; /* Sequence number as it was added to the flight plan */
+  float magvar;
   atools::geo::Pos position;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 

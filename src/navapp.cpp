@@ -27,6 +27,7 @@
 #include "gui/mainwindow.h"
 #include "route/routecontroller.h"
 #include "common/elevationprovider.h"
+#include "fs/common/magdecreader.h"
 
 #include "ui_mainwindow.h"
 
@@ -45,6 +46,8 @@ MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMeta = nullptr;
 QSplashScreen *NavApp::splashScreen = nullptr;
+
+atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -71,6 +74,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseManager->openDatabase();
 
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabase());
+  magDecReader = new atools::fs::common::MagDecReader();
+  magDecReader->readFromTable(*databaseManager->getDatabase());
 
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabase());
   mapQuery->initQueries();
@@ -122,6 +127,10 @@ void NavApp::deInit()
   delete databaseMeta;
   databaseMeta = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete magDecReader";
+  delete magDecReader;
+  magDecReader = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete splashScreen";
   delete splashScreen;
   splashScreen = nullptr;
@@ -150,6 +159,7 @@ void NavApp::postDatabaseLoad()
 
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabase());
 
+  magDecReader->readFromTable(*getDatabase());
   mapQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
@@ -318,6 +328,14 @@ void NavApp::setShuttingDown(bool value)
   qDebug() << Q_FUNC_INFO << value;
 
   shuttingDown = value;
+}
+
+float NavApp::getMagVar(const atools::geo::Pos& pos, float defaultValue)
+{
+  if(magDecReader != nullptr && magDecReader->isValid())
+    return magDecReader->getMagVar(pos);
+  else
+    return defaultValue;
 }
 
 void NavApp::initSplashScreen()

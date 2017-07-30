@@ -1245,8 +1245,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
               arg(vor.channel).
               arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
 
-  if(!vor.dmeOnly)
-    html.row2(tr("Magvar:"), map::magvarText(vor.magvar));
+  html.row2(tr("Magvar:"), map::magvarText(vor.magvar));
   html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
   html.row2(tr("Morse:"), morse->getCode(vor.ident),
@@ -1801,7 +1800,6 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                    route.at(activeLeg) : routeLegCorrected;
 
         const proc::MapProcedureLeg& leg = routeLegCorrected.getProcedureLeg();
-        bool routeTrueCourse = route.isTrueCourse();
 
         // Next leg - approach data ====================================================
         if(routeLegCorrected.isAnyProcedure())
@@ -1869,8 +1867,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(
                                           routeLeg.getPosition()) - routeLeg.getMagvar());
             html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
-                      locale.toString(crs, 'f', 0) +
-                      (routeTrueCourse ? tr("°T, ") : tr("°M, ")) + timeStr);
+                      locale.toString(crs, 'f', 0) + tr("°M, ") + timeStr);
           }
           else // if(!leg.noDistanceDisplay())
                // Only distance and time for arc legs
@@ -1882,8 +1879,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         {
           // No course for arcs
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
-            html.row2(tr("Leg Course:"), locale.toString(routeLeg.getCourseToRhumbMag(), 'f', 0) +
-                      (routeTrueCourse ? tr("°T") : tr("°M")));
+            html.row2(tr("Leg Course:"), locale.toString(routeLeg.getCourseToRhumbMag(), 'f', 0) + tr("°M"));
 
           if(!routeLeg.getProcedureLeg().isHold())
           {

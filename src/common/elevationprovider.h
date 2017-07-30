@@ -26,9 +26,12 @@ class ElevationModel;
 }
 
 namespace atools {
-namespace dtm {
+namespace fs {
+namespace common {
 class GlobeReader;
 }
+}
+
 namespace geo {
 class Pos;
 class LineString;
@@ -79,7 +82,7 @@ private:
   void updateReader();
 
   const Marble::ElevationModel *marbleModel = nullptr;
-  atools::dtm::GlobeReader *globeReader = nullptr;
+  atools::fs::common::GlobeReader *globeReader = nullptr;
 
   /* Need to synchronize here since it is called from profile widget thread */
   mutable QMutex mutex;

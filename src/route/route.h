@@ -257,12 +257,6 @@ public:
   /* Set to no active leg */
   void resetActive();
 
-  /* All couse values in the route are true since no navaid having magvar was found */
-  bool isTrueCourse() const
-  {
-    return trueCourse;
-  }
-
   /* true if type is airport at the given index and is after an arrival procedure (approach and transition) */
   bool isAirportAfterArrival(int index);
 
@@ -343,8 +337,6 @@ private:
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
   void eraseProcedureLegs(proc::MapProcedureTypes type);
   int adjustedActiveLeg() const;
-
-  bool trueCourse = false;
 
   atools::geo::Rect boundingRect;
   /* Nautical miles not including missed approach */

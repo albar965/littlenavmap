@@ -589,6 +589,9 @@ bool DatabaseManager::runInternal()
           if(QFile::remove(tempFilename))
             qInfo() << "Removed" << tempFilename;
 
+          if(QFile::remove(tempFilename + "-journal"))
+            qInfo() << "Removed" << (tempFilename + "-journal");
+
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
           openDatabaseFile(&tempDb, tempFilename, false /* readonly */);
 
@@ -621,8 +624,11 @@ bool DatabaseManager::runInternal()
           else
           {
             closeDatabaseFile(&tempDb);
-            if(!QFile::remove(tempFilename))
-              qWarning() << "Removing" << tempFilename << "failed";
+            if(QFile::remove(tempFilename))
+              qInfo() << "Removed" << tempFilename;
+
+            if(QFile::remove(tempFilename + "-journal"))
+              qInfo() << "Removed" << (tempFilename + "-journal");
           }
         }
         else

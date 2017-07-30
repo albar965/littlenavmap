@@ -1177,9 +1177,7 @@ int RouteController::adjustAltitude(int minAltitude)
     const Pos& departurePos = route.first().getPosition();
     const Pos& destinationPos = route.last().getPosition();
 
-    float magvar = 0.f;
-    if(!route.isTrueCourse())
-      magvar = (route.first().getMagvar() + route.last().getMagvar()) / 2;
+    float magvar = (route.first().getMagvar() + route.last().getMagvar()) / 2;
 
     float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
 
@@ -2652,12 +2650,10 @@ void RouteController::updateTableModel()
     // Course =====================
     if(row > 0 && !afterArrivalAirport)
     {
-      QString trueCourse = route.isTrueCourse() ? tr("(°T)") : QString();
-
       if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
-        itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0) + trueCourse);
+        itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
       if(leg.getCourseToRhumbMag() < map::INVALID_COURSE_VALUE)
-        itemRow[rc::DIRECT] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbMag(), 'f', 0) + trueCourse);
+        itemRow[rc::DIRECT] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbMag(), 'f', 0));
     }
 
     if(!afterArrivalAirport)

@@ -39,11 +39,22 @@ class AircraftTrack;
 class QSplashScreen;
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
+
 namespace fs {
+
+namespace common {
+class MagDecReader;
+}
+
 namespace db {
 class DatabaseMeta;
 }
 }
+
 namespace sql {
 class SqlDatabase;
 }
@@ -133,6 +144,8 @@ public:
   static bool isShuttingDown();
   static void setShuttingDown(bool value);
 
+  static float getMagVar(const atools::geo::Pos& pos, float defaultValue = 0.f);
+
 private:
   /* Database query helpers and caches */
   static MapQuery *mapQuery;
@@ -142,6 +155,7 @@ private:
   /* Most important handlers */
   static ConnectClient *connectClient;
   static DatabaseManager *databaseManager;
+  static atools::fs::common::MagDecReader *magDecReader;
 
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
