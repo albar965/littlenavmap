@@ -236,8 +236,7 @@ void ConnectClient::fetchOptionsToDataReader()
   }
 }
 
-atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station,
-                                                          const atools::geo::Pos& pos)
+atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos)
 {
   static atools::fs::sc::MetarResult EMPTY;
 

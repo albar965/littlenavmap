@@ -310,6 +310,11 @@ bool DatabaseManager::checkIncompatibleDatabases()
   return ok;
 }
 
+QString DatabaseManager::getCurrentSimulatorBasePath() const
+{
+  return simulators.value(currentFsType).basePath;
+}
+
 void DatabaseManager::insertSimSwitchActions()
 {
   qDebug() << Q_FUNC_INFO;

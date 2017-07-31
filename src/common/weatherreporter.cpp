@@ -20,6 +20,8 @@
 #include "gui/mainwindow.h"
 #include "settings/settings.h"
 #include "options/optiondata.h"
+#include "fs/common/xpweatherreader.h"
+#include "navapp.h"
 
 #include <QDebug>
 #include <QDir>
@@ -42,10 +44,14 @@ using atools::fs::FsPaths;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), noaaCache(WEATHER_TIMEOUT_SECS), vatsimCache(WEATHER_TIMEOUT_SECS), simType(type),
-    mainWindow(parentWindow)
+  mainWindow(parentWindow)
 {
+  xpWeatherReader = new atools::fs::common::XpWeatherReader(this);
   initActiveSkyNext();
+  initXplane();
 
+  connect(xpWeatherReader, &atools::fs::common::XpWeatherReader::weatherUpdated,
+          this, &WeatherReporter::xplaneWeatherFileChanged);
   connect(&flushQueueTimer, &QTimer::timeout, this, &WeatherReporter::flushRequestQueue);
 
   flushQueueTimer.setInterval(1000);
@@ -61,6 +67,8 @@ WeatherReporter::~WeatherReporter()
   cancelVatsimReply();
 
   deleteFsWatcher();
+
+  delete xpWeatherReader;
 }
 
 void WeatherReporter::flushRequestQueue()
@@ -99,6 +107,12 @@ void WeatherReporter::createFsWatcher()
 
   if(!fsWatcher->addPath(asFlightplanPath))
     qWarning() << "cannot watch" << asFlightplanPath;
+}
+
+void WeatherReporter::initXplane()
+{
+  if(simType == atools::fs::FsPaths::XPLANE11)
+    xpWeatherReader->readWeatherFile(NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx");
 }
 
 void WeatherReporter::initActiveSkyNext()
@@ -505,6 +519,11 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
     return activeSkyMetars.value(airportIcao, QString());
 }
 
+QString WeatherReporter::getXplaneMetar(const QString& airportIcao)
+{
+  return xpWeatherReader->getMetar(airportIcao);
+}
+
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
   // qDebug() << Q_FUNC_INFO << airportIcao;
@@ -544,11 +563,14 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     simType = type;
     initActiveSkyNext();
   }
+
+  initXplane();
 }
 
 void WeatherReporter::optionsChanged()
 {
   initActiveSkyNext();
+  initXplane();
 }
 
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
@@ -558,6 +580,13 @@ void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
   mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
+
+  emit weatherUpdated();
+}
+
+void WeatherReporter::xplaneWeatherFileChanged()
+{
+  mainWindow->setStatusMessage(tr("X-Plane weather information updated."));
 
   emit weatherUpdated();
 }

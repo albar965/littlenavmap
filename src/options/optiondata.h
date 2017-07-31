@@ -85,8 +85,8 @@ enum Flag
    * ui->checkBoxOptionsWeatherInfoVatsim */
   WEATHER_INFO_VATSIM = 1 << 14,
 
-  /* Show Vatsim weather in info panel.
-  * ui->checkBoxOptionsWeatherInfoFs */
+  /* Show FSX/P3D or X-Plane weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoFs */
   WEATHER_INFO_FS = 1 << 15,
 
   /* Show ASN weather in tooltip.
@@ -101,7 +101,7 @@ enum Flag
    * ui->checkBoxOptionsWeatherTooltipVatsim */
   WEATHER_TOOLTIP_VATSIM = 1 << 18,
 
-  /* Show Vatsim weather in tooltip.
+  /* Show FSX/P3D or X-Plane weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipFs */
   WEATHER_TOOLTIP_FS = 1 << 19,
 

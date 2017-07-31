@@ -273,12 +273,14 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     html.table();
 
     const atools::fs::sc::MetarResult& fsMetar = weatherContext.fsMetar;
-    addMetarLine(html, tr("Station"), fsMetar.metarForStation,
-                 fsMetar.requestIdent, fsMetar.timestamp, true);
-    addMetarLine(html, tr("Nearest"), fsMetar.metarForNearest,
-                 fsMetar.requestIdent, fsMetar.timestamp, true);
-    addMetarLine(html, tr("Interpolated"), fsMetar.metarForInterpolated,
-                 fsMetar.requestIdent, fsMetar.timestamp, true);
+    if(!fsMetar.isEmpty())
+    {
+      QString sim = tr(" (%1)").arg(NavApp::getCurrentSimulatorShortName());
+      addMetarLine(html, tr("Station") + sim, fsMetar.metarForStation, fsMetar.requestIdent, fsMetar.timestamp, true);
+      addMetarLine(html, tr("Nearest") + sim, fsMetar.metarForNearest, fsMetar.requestIdent, fsMetar.timestamp, true);
+      addMetarLine(html, tr("Interpolated") + sim,
+                   fsMetar.metarForInterpolated, fsMetar.requestIdent, fsMetar.timestamp, true);
+    }
 
     addMetarLine(html, weatherContext.asType, weatherContext.asMetar);
 

@@ -215,6 +215,11 @@ QString NavApp::getCurrentSimulatorFilesPath()
   return atools::fs::FsPaths::getFilesPath(getCurrentSimulator());
 }
 
+QString NavApp::getCurrentSimulatorBasePath()
+{
+  return databaseManager->getCurrentSimulatorBasePath();
+}
+
 QString NavApp::getCurrentSimulatorShortName()
 {
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulator());

@@ -2235,6 +2235,14 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateActionStates();
 }
 
+void MainWindow::fillWeatherContextXplane(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
+{
+  weatherContext.fsMetar.metarForStation = weatherReporter->getXplaneMetar(airport.ident);
+  weatherContext.fsMetar.requestIdent = airport.ident;
+  weatherContext.fsMetar.requestPos = airport.position;
+  weatherContext.fsMetar.timestamp = QDateTime::currentDateTime().toUTC();
+}
+
 /* Update the current weather context for the information window. Returns true if any
  * weather has changed or an update is needed */
 bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
@@ -2249,10 +2257,14 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
   {
     // qDebug() << "connectClient->isConnected()" << connectClient->isConnected();
     // qDebug() << "currentWeatherContext->fsMetar" << currentWeatherContext->fsMetar.metarForStation;
-
-    if(NavApp::isConnected())
+    if(NavApp::getCurrentSimulator() == atools::fs::FsPaths::XPLANE11)
     {
-      // Flight simulator fetched weather
+      fillWeatherContextXplane(*currentWeatherContext, airport);
+      changed = true;
+    }
+    else if(NavApp::isConnected())
+    {
+      // FSX/P3D - Flight simulator fetched weather
       atools::fs::sc::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
 
       if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
@@ -2276,7 +2288,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY)
+  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulator() != atools::fs::FsPaths::XPLANE11)
   {
     fillActiveSkyType(*currentWeatherContext, airport.ident);
 
@@ -2325,18 +2337,21 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 }
 
 /* Build a normal weather context - used by printing */
-void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext,
-                                     const map::MapAirport& airport) const
+void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
 {
   opts::Flags flags = OptionData::instance().getFlags();
 
   weatherContext.ident = airport.ident;
 
   if(flags & opts::WEATHER_INFO_FS)
-    weatherContext.fsMetar =
-      NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+  {
+    if(NavApp::getCurrentSimulator() == atools::fs::FsPaths::XPLANE11)
+      fillWeatherContextXplane(weatherContext, airport);
+    else
+      weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+  }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY)
+  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulator() != atools::fs::FsPaths::XPLANE11)
   {
     weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
     fillActiveSkyType(weatherContext, airport.ident);
@@ -2358,8 +2373,12 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
   weatherContext.ident = airport.ident;
 
   if(flags & opts::WEATHER_TOOLTIP_FS)
-    weatherContext.fsMetar =
-      NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+  {
+    if(NavApp::getCurrentSimulator() == atools::fs::FsPaths::XPLANE11)
+      fillWeatherContextXplane(weatherContext, airport);
+    else
+      weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+  }
 
   if(flags & opts::WEATHER_TOOLTIP_ACTIVESKY)
   {
@@ -2375,8 +2394,7 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
 }
 
 /* Fill active sky information into the weather context */
-void MainWindow::fillActiveSkyType(map::WeatherContext& weatherContext,
-                                   const QString& airportIdent) const
+void MainWindow::fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const
 {
   if(weatherReporter->getCurrentActiveSkyType() == WeatherReporter::AS16)
     weatherContext.asType = tr("AS16");

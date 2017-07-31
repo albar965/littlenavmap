@@ -26,6 +26,14 @@
 #include <QObject>
 #include <QTimer>
 
+namespace atools {
+namespace fs {
+namespace common {
+class XpWeatherReader;
+}
+}
+}
+
 class QFileSystemWatcher;
 class MainWindow;
 
@@ -54,6 +62,11 @@ public:
    * @return Active Sky metar or empty if Active Sky was not found or the airport has no weather report
    */
   QString getActiveSkyMetar(const QString& airportIcao);
+
+  /*
+   * @return X-Plane metar or empty if file not found or X-Plane base directory not found
+   */
+  QString getXplaneMetar(const QString& airportIcao);
 
   /*
    * @return NOAA metar from cache or empty if not entry was found in the cache. Once the request was
@@ -118,7 +131,7 @@ public:
   }
 
 signals:
-  /* Emitted when Active Sky file changes or a request to weather was fullfilled */
+  /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */
   void weatherUpdated();
 
 private:
@@ -126,6 +139,7 @@ private:
   static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 600;
 
   void activeSkyWeatherFileChanged(const QString& path);
+  void xplaneWeatherFileChanged();
 
   void loadActiveSkySnapshot(const QString& path);
   void loadActiveSkyFlightplanSnapshot(const QString& path);
@@ -146,8 +160,9 @@ private:
   bool validateActiveSkyFlightplanFile(const QString& path);
   void deleteFsWatcher();
   void createFsWatcher();
+  void initXplane();
 
-  QHash<QString, QString> activeSkyMetars;
+  QHash<QString, QString> activeSkyMetars, xplaneMetars;
   QString activeSkyDepartureMetar, activeSkyDestinationMetar,
           activeSkyDepartureIdent, activeSkyDestinationIdent;
 
@@ -157,6 +172,8 @@ private:
   QFileSystemWatcher *fsWatcher = nullptr;
   QNetworkAccessManager networkManager;
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
+
+  atools::fs::common::XpWeatherReader *xpWeatherReader = nullptr;
 
   // Stores the request ICAO so we can send it to httpFinished()
   QString noaaRequestIcao, vatsimRequestIcao;
