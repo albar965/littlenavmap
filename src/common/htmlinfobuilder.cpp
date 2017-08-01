@@ -166,10 +166,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   // Administrative information
-  html.row2(tr("City:"), city);
+  if(!city.isEmpty())
+    html.row2(tr("City:"), city);
   if(!state.isEmpty())
     html.row2(tr("State or Province:"), state);
-  html.row2(tr("Country:"), country);
+  if(!country.isEmpty())
+    html.row2(tr("Country:"), country);
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magvar:"), map::magvarText(airport.magvar));
 
@@ -1247,7 +1249,9 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
               arg(vor.channel).
               arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
 
-  html.row2(tr("Magvar:"), map::magvarText(vor.magvar));
+  if(!vor.tacan && !vor.dmeOnly)
+    html.row2(tr("Magvar:"), map::magvarText(vor.magvar));
+
   html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
   html.row2(tr("Morse:"), morse->getCode(vor.ident),
