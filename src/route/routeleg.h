@@ -55,7 +55,7 @@ public:
    * @param query Database query object
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteLeg *prevLeg);
+  void createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, const RouteLeg *prevLeg);
 
   /*
    * Creates a route map object from an airport database object.
@@ -261,6 +261,13 @@ public:
 private:
   const atools::fs::pln::FlightplanEntry& curEntry() const;
 
+  void assignIntersection(const map::MapSearchResult& mapobjectResult,
+                          atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, MapQuery *mapQuery,
+                       const atools::geo::Pos& last, float maxDistance);
+
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;
   /* Associated flight plan entry or approach leg entry */
@@ -287,6 +294,7 @@ private:
         groundAltitude = 0.f,
         magvar = 0.f; /* Either taken from navaid or average across the route */
   atools::geo::LineString geometry;
+
 };
 
 QDebug operator<<(QDebug out, const RouteLeg& leg);

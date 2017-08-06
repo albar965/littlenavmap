@@ -19,6 +19,7 @@
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
+#include "common/maptools.h"
 #include "atools.h"
 #include "route/route.h"
 #include "navapp.h"
@@ -33,6 +34,9 @@ const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 /* If region is not set search within this distance (not the read GC distance) for navaids with the same name */
 const int MAX_WAYPOINT_DISTANCE_METER = 10000.f;
 
+/* Maximum distance to the predecessor waypoint if position is invalid */
+const int MAX_WAYPOINT_DISTANCE_INVALID_METER = 10000000.f;
+
 const static QString EMPTY_STRING;
 const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 
@@ -45,33 +49,6 @@ RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
 RouteLeg::~RouteLeg()
 {
 
-}
-
-/* Find the nearest navaid object to position pos */
-template<typename TYPE>
-TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bool& found)
-{
-  if(!waypoints.isEmpty())
-  {
-    TYPE nearest = waypoints.first();
-    if(waypoints.size() > 1)
-    {
-      float distance = map::INVALID_DISTANCE_VALUE;
-      for(const TYPE& obj : waypoints)
-      {
-        float d = pos.distanceSimpleTo(obj.position);
-        if(d < distance)
-        {
-          distance = d;
-          nearest = obj;
-        }
-      }
-    }
-    found = true;
-    return nearest;
-  }
-  found = false;
-  return TYPE();
 }
 
 void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirport,
@@ -111,7 +88,32 @@ void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLeg
   valid = true;
 }
 
-void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteLeg *prevLeg)
+void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, MapQuery *mapQuery,
+                               const atools::geo::Pos& last, float maxDistance)
+{
+  map::MapSearchResult mapobjectResult;
+  mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
+                                flightplanEntry->getIcaoIdent(), flightplanEntry->getIcaoRegion(), QString(),
+                                last, maxDistance);
+
+  if(mapobjectResult.hasVor())
+  {
+    assignVor(mapobjectResult, flightplanEntry);
+    valid = true;
+  }
+  else if(mapobjectResult.hasNdb())
+  {
+    assignNdb(mapobjectResult, flightplanEntry);
+    valid = true;
+  }
+  else if(mapobjectResult.hasWaypoints())
+  {
+    assignIntersection(mapobjectResult, flightplanEntry);
+    valid = true;
+  }
+}
+
+void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
@@ -119,22 +121,63 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
 
   QString region = flightplanEntry->getIcaoRegion();
 
-  if(region == "KK") // Invalid route finder region
+  if(region == "KK" || region == "ZZ") // Invalid route finder region
     region.clear();
 
-  bool found;
   map::MapSearchResult mapobjectResult;
   switch(flightplanEntry->getWaypointType())
   {
+    // ====================== Create by totally unknown type with probably invalid position
     case atools::fs::pln::entry::UNKNOWN:
+      {
+        // Use either the given position or the last point for nearest search of duplicate navaids
+        Pos last = flightplanEntry->getPosition();
+        float maxDistance = MAX_WAYPOINT_DISTANCE_METER;
+        if(!last.isValid() && prevLeg != nullptr)
+        {
+          last = prevLeg->getPosition();
+          maxDistance = MAX_WAYPOINT_DISTANCE_INVALID_METER;
+        }
+
+        if(flightplanEntry->getAirway().isEmpty())
+          // Look for an arbitrary navaid
+          assignAnyNavaid(flightplanEntry, mapQuery, last, maxDistance);
+        else if(prevLeg != nullptr && !flightplanEntry->getAirway().isEmpty())
+        {
+          // Look for navaid at an airway
+          mapQuery->getWaypointsForAirway(mapobjectResult.waypoints,
+                                          flightplanEntry->getAirway(), flightplanEntry->getIcaoIdent());
+          maptools::sortByDistance(mapobjectResult.waypoints, prevLeg->getPosition());
+          if(mapobjectResult.hasWaypoints())
+          {
+            // Use navaid at airway
+            assignIntersection(mapobjectResult, flightplanEntry);
+            valid = true;
+          }
+          else
+          {
+            // Not found at airway search for any navaid with the given name nearby
+            assignAnyNavaid(flightplanEntry, mapQuery, last, maxDistance);
+            qWarning() << "No waypoints for" << flightplanEntry->getIcaoIdent() << flightplanEntry->getAirway();
+          }
+        }
+        else
+          qWarning() << "Cannot resolve unknwon flight plan entry" << flightplanEntry->getIcaoIdent();
+      }
       break;
+
+    // ====================== Create for airport and assign parking position
     case atools::fs::pln::entry::AIRPORT:
-      query->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIcaoIdent());
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIcaoIdent());
       if(!mapobjectResult.airports.isEmpty())
       {
         type = map::AIRPORT;
+        flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
+
         airport = mapobjectResult.airports.first();
         valid = true;
+        if(!flightplanEntry->getPosition().isValid())
+          flightplanEntry->setPosition(airport.position);
 
         QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && prevLeg == nullptr)
@@ -152,8 +195,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
               // Seems to be a parking position
               int number = QString(match.captured(2)).toInt();
               QList<map::MapParking> parkings;
-              query->getParkingByNameAndNumber(parkings, airport.id,
-                                               map::parkingDatabaseName(parkingName), number);
+              mapQuery->getParkingByNameAndNumber(parkings, airport.id,
+                                                  map::parkingDatabaseName(parkingName), number);
 
               if(parkings.isEmpty())
               {
@@ -173,7 +216,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
             else
             {
               // Runway or helipad
-              query->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
+              mapQuery->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
 
               if(!start.isValid())
               {
@@ -201,69 +244,41 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
         }
       }
       break;
+
+    // =============================== Navaid waypoint
     case atools::fs::pln::entry::INTERSECTION:
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT, flightplanEntry->getIcaoIdent(), region,
+                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+      if(!mapobjectResult.waypoints.isEmpty())
       {
-        // Navaid waypoint
-        query->getMapObjectByIdent(mapobjectResult, map::WAYPOINT,
-                                   flightplanEntry->getIcaoIdent(), region);
-        const map::MapWaypoint& obj = findMapObject(mapobjectResult.waypoints,
-                                                    flightplanEntry->getPosition(), found);
-        if(found)
-        {
-          type = map::WAYPOINT;
-          waypoint = obj;
-          valid = waypoint.position.distanceMeterTo(flightplanEntry->getPosition()) <
-                  MAX_WAYPOINT_DISTANCE_METER;
-          if(valid)
-          {
-            // Update all fields in entry if found - otherwise leave as is
-            flightplanEntry->setIcaoRegion(waypoint.region);
-            flightplanEntry->setIcaoIdent(waypoint.ident);
-            flightplanEntry->setPosition(waypoint.position);
-          }
-        }
-        break;
+        assignIntersection(mapobjectResult, flightplanEntry);
+        valid = true;
       }
+      break;
+
+    // =============================== Navaid VOR
     case atools::fs::pln::entry::VOR:
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIcaoIdent(), region,
+                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+      if(!mapobjectResult.vors.isEmpty())
       {
-        query->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIcaoIdent(), region);
-        const map::MapVor& obj = findMapObject(mapobjectResult.vors,
-                                               flightplanEntry->getPosition(), found);
-        if(found)
-        {
-          type = map::VOR;
-          vor = obj;
-          valid = vor.position.distanceMeterTo(flightplanEntry->getPosition()) < MAX_WAYPOINT_DISTANCE_METER;
-          if(valid)
-          {
-            // Update all fields in entry if found - otherwise leave as is
-            flightplanEntry->setIcaoRegion(vor.region);
-            flightplanEntry->setIcaoIdent(vor.ident);
-            flightplanEntry->setPosition(vor.position);
-          }
-        }
-        break;
+        assignVor(mapobjectResult, flightplanEntry);
+        valid = true;
       }
+      break;
+
+    // =============================== Navaid NDB
     case atools::fs::pln::entry::NDB:
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIcaoIdent(), region,
+                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+      if(!mapobjectResult.ndbs.isEmpty())
       {
-        query->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIcaoIdent(), region);
-        const map::MapNdb& obj = findMapObject(mapobjectResult.ndbs,
-                                               flightplanEntry->getPosition(), found);
-        if(found)
-        {
-          type = map::NDB;
-          ndb = obj;
-          valid = ndb.position.distanceMeterTo(flightplanEntry->getPosition()) < MAX_WAYPOINT_DISTANCE_METER;
-          if(valid)
-          {
-            // Update all fields in entry if found - otherwise leave as is
-            flightplanEntry->setIcaoRegion(ndb.region);
-            flightplanEntry->setIcaoIdent(ndb.ident);
-            flightplanEntry->setPosition(ndb.position);
-          }
-        }
-        break;
+        assignNdb(mapobjectResult, flightplanEntry);
+        valid = true;
       }
+      break;
+
+    // =============================== Navaid user coordinates
     case atools::fs::pln::entry::USER:
       valid = true;
       type = map::USER;
@@ -274,6 +289,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
   }
 
   if(!valid)
+    // Leave the flight plan type as is and change internal type only
     type = map::INVALID;
 
   updateMagvar();
@@ -612,6 +628,43 @@ bool RouteLeg::isApproachPoint() const
                             proc::HOLD_TO_MANUAL_TERMINATION}) &&
          (procedureLeg.geometry.isPoint() || procedureLeg.type == proc::INITIAL_FIX ||
           procedureLeg.type == proc::START_OF_PROCEDURE);
+}
+
+void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
+                                  atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::WAYPOINT;
+  waypoint = mapobjectResult.waypoints.first();
+
+  // Update all fields in entry if found - otherwise leave as is
+  flightplanEntry->setIcaoRegion(waypoint.region);
+  flightplanEntry->setIcaoIdent(waypoint.ident);
+  flightplanEntry->setPosition(waypoint.position);
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::INTERSECTION);
+}
+
+void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::VOR;
+  vor = mapobjectResult.vors.first();
+
+  // Update all fields in entry if found - otherwise leave as is
+  flightplanEntry->setIcaoRegion(vor.region);
+  flightplanEntry->setIcaoIdent(vor.ident);
+  flightplanEntry->setPosition(vor.position);
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::VOR);
+}
+
+void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::NDB;
+  ndb = mapobjectResult.ndbs.first();
+
+  // Update all fields in entry if found - otherwise leave as is
+  flightplanEntry->setIcaoRegion(ndb.region);
+  flightplanEntry->setIcaoIdent(ndb.ident);
+  flightplanEntry->setPosition(ndb.position);
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
 }
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)

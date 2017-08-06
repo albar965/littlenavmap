@@ -67,7 +67,7 @@ public:
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
 
-  /* Get all airways that are attached to a waypoint */
+  /* Get all waypoints of an airway */
   void getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
                              const QString& waypointIdent = QString());
   void getAirwayByNameAndWaypoint(map::MapAirway& airway, const QString& airwayName, const QString& waypoint1,
@@ -164,7 +164,8 @@ public:
   const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                              bool lazy);
 
   /* Similar to getAirports */
   const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
@@ -276,31 +277,34 @@ private:
 
   /* Database queries */
   atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
-  *airportLargeByRectQuery = nullptr;
+                        *airportLargeByRectQuery = nullptr;
 
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
-  *parkingQuery = nullptr, *startQuery = nullptr, *helipadQuery = nullptr,
-  *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-  *parkingTypeAndNumberQuery = nullptr;
+                        *parkingQuery = nullptr, *startQuery = nullptr, *helipadQuery = nullptr,
+                        *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
+                        *parkingTypeAndNumberQuery = nullptr;
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
-  *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
-  *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr,
-  *airspaceByRectBelowAltQuery = nullptr, *airspaceByRectAboveAltQuery = nullptr, *airspaceByRectAtAltQuery = nullptr,
-  *airspaceLinesByIdQuery = nullptr;
+                        *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
+                        *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr,
+                        *airspaceByRectBelowAltQuery = nullptr, *airspaceByRectAboveAltQuery = nullptr,
+                        *airspaceByRectAtAltQuery = nullptr,
+                        *airspaceLinesByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
-  *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
+                        *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
-  *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
-  *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
-  *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+                        *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
+                        *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
+                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr,
-  *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr, *airwayByIdQuery = nullptr,
-  *airspaceByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr, *airwayWaypointsQuery = nullptr,
-  *airwayByNameQuery = nullptr;
+                        *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
+                        *airwayByIdQuery = nullptr,
+                        *airspaceByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,
+                        *airwayWaypointsQuery = nullptr,
+                        *airwayByNameQuery = nullptr;
 };
 
 // ---------------------------------------------------------------------------------

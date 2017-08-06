@@ -220,6 +220,11 @@ QString NavApp::getCurrentSimulatorBasePath()
   return databaseManager->getCurrentSimulatorBasePath();
 }
 
+QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
+{
+  return databaseManager->getSimulatorBasePath(type);
+}
+
 QString NavApp::getCurrentSimulatorShortName()
 {
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulator());

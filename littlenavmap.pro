@@ -161,7 +161,6 @@ SOURCES += src/main.cpp\
     src/route/routestringdialog.cpp \
     src/route/flightplanentrybuilder.cpp \
     src/common/unit.cpp \
-    src/common/coordinates.cpp \
     src/route/userwaypointdialog.cpp \
     src/common/infoquery.cpp \
     src/common/textplacement.cpp \
@@ -244,7 +243,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routestringdialog.h \
     src/route/flightplanentrybuilder.h \
     src/common/unit.h \
-    src/common/coordinates.h \
     src/route/userwaypointdialog.h \
     src/common/infoquery.h \
     src/common/textplacement.h \

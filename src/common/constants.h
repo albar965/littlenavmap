@@ -18,6 +18,9 @@
 #ifndef LITTLENAVMAP_CONSTANTS_H
 #define LITTLENAVMAP_CONSTANTS_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+
 /* Define to skip caching of approaches when loading */
 // #define DEBUG_APPROACH_NO_CACHE
 
@@ -61,125 +64,128 @@ const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
 const QStringList helpLanguages();
 
 /* State of "do not show again" dialog buttons */
-const QString ACTIONS_SHOWDISCONNECTINFO = "Actions/ShowDisconnectInfo";
-const QString ACTIONS_SHOWQUIT = "Actions/ShowQuit";
-const QString ACTIONS_SHOW_INVALID_PROC_WARNING = "Actions/ShowInvalidProcedure";
-const QString ACTIONS_SHOWRESETVIEW = "Actions/ShowResetView";
-const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning";
-const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";
-const QString ACTIONS_SHOWROUTE_ERROR = "Actions/ShowRouteError";
-const QString ACTIONS_SHOWROUTE_PROC_ERROR = "Actions/ShowRouteProcedureError";
-const QString ACTIONS_SHOWROUTE_START_CHANGED = "Actions/ShowRouteStartChanged";
+const QLatin1Literal ACTIONS_SHOWDISCONNECTINFO("Actions/ShowDisconnectInfo");
+const QLatin1Literal ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
+const QLatin1Literal ACTIONS_SHOWQUIT("Actions/ShowQuit");
+const QLatin1Literal ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
+const QLatin1Literal ACTIONS_SHOWRESETVIEW("Actions/ShowResetView");
+const QLatin1Literal ACTIONS_SHOWROUTEPARKINGWARNING("Actions/ShowRouteParkingWarning");
+const QLatin1Literal ACTIONS_SHOWROUTEWARNING("Actions/ShowRouteWarning");
+const QLatin1Literal ACTIONS_SHOWROUTE_ERROR("Actions/ShowRouteError");
+const QLatin1Literal ACTIONS_SHOWROUTE_PROC_ERROR("Actions/ShowRouteProcedureError");
+const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChanged");
 
 /* Other setting key names */
-const QString DATABASE_BASEPATH = "Database/BasePath";
-const QString DATABASE_LOADINGSIMULATOR = "Database/LoadingSimulator";
-const QString DATABASE_PATHS = "Database/Paths";
-const QString DATABASE_SCENERYCONFIG = "Database/SceneryConfig";
-const QString DATABASE_SIMULATOR = "Database/Simulator";
-const QString DATABASE_LOAD_INACTIVE = "Database/LoadInactive";
-const QString DATABASE_LOAD_ADDONXML = "Database/LoadAddOnXml";
-const QString EXPORT_FILEDIALOG = "Export/FileDialog";
-const QString INFOWINDOW_CURRENTMAPOBJECTS = "InfoWindow/CurrentMapObjects";
-const QString INFOWINDOW_WIDGET = "InfoWindow/Widget";
-const QString MAINWINDOW_FIRSTAPPLICATIONSTART = "MainWindow/FirstApplicationStart";
-const QString MAINWINDOW_WIDGET = "MainWindow/Widget";
-const QString MAINWINDOW_WIDGET_STATE = "MainWindow/WidgetState";
-const QString MAINWINDOW_WIDGET_STATE_POS = "MainWindow/WidgetStatePosition";
-const QString MAINWINDOW_WIDGET_STATE_SIZE = "MainWindow/WidgetStateSize";
-const QString MAINWINDOW_WIDGET_STATE_MAXIMIZED = "MainWindow/WidgetStateMaximized";
-const QString MAINWINDOW_PRINT_SIZE = "MainWindow/PrintPreviewSize";
-const QString MAP_DETAILFACTOR = "Map/DetailFactor";
-const QString MAP_DISTANCEMARKERS = "Map/DistanceMarkers";
-const QString MAP_AIRSPACES = "Map/Airspaces";
-const QString MAP_HOMEDISTANCE = "Map/HomeDistance";
-const QString MAP_HOMELATY = "Map/HomeLatY";
-const QString MAP_HOMELONX = "Map/HomeLonX";
-const QString MAP_KMLFILES = "Map/KmlFiles";
-const QString MAP_MARKLATY = "Map/MarkLatY";
-const QString MAP_MARKLONX = "Map/MarkLonX";
-const QString MAP_RANGEMARKERS = "Map/RangeMarkers";
-const QString MAP_OVERLAY_VISIBLE = "Map/OverlayVisible";
-const QString NAVCONNECT_REMOTEHOSTS = "NavConnect/RemoteHosts";
-const QString NAVCONNECT_REMOTE = "NavConnect/Remote";
-const QString ROUTE_FILENAME = "Route/Filename";
-const QString ROUTE_FILENAMESRECENT = "Route/FilenamesRecent";
-const QString ROUTE_FILENAMESKMLRECENT = "Route/FilenamesKmlRecent";
-const QString ROUTE_VIEW = "Route/View";
-const QString ROUTE_PRINT_DIALOG = "Route/PrintWidget";
-const QString ROUTE_STRING_DIALOG_SIZE = "Route/StringDialogSize";
-const QString ROUTE_STRING_DIALOG_SPLITTER = "Route/StringDialogSplitter";
-const QString ROUTE_STRING_DIALOG_OPTIONS = "Route/StringDialogOptions";
-const QString SEARCHTAB_AIRPORT_WIDGET = "SearchPaneAirport/Widget";
-const QString SEARCHTAB_NAV_WIDGET = "SearchPaneNav/Widget";
-const QString SEARCHTAB_AIRPORT_VIEW_WIDGET = "SearchPaneAirport/WidgetView";
-const QString SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET = "SearchPaneAirport/WidgetDistView";
-const QString SEARCHTAB_NAV_VIEW_WIDGET = "SearchPaneNav/WidgetView";
-const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
+const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");
+const QLatin1Literal DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");
+const QLatin1Literal DATABASE_PATHS("Database/Paths");
+const QLatin1Literal DATABASE_SCENERYCONFIG("Database/SceneryConfig");
+const QLatin1Literal DATABASE_SIMULATOR("Database/Simulator");
+const QLatin1Literal DATABASE_LOAD_INACTIVE("Database/LoadInactive");
+const QLatin1Literal DATABASE_LOAD_ADDONXML("Database/LoadAddOnXml");
+const QLatin1Literal EXPORT_FILEDIALOG("Export/FileDialog");
+const QLatin1Literal INFOWINDOW_CURRENTMAPOBJECTS("InfoWindow/CurrentMapObjects");
+const QLatin1Literal INFOWINDOW_WIDGET("InfoWindow/Widget");
+const QLatin1Literal MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicationStart");
+const QLatin1Literal MAINWINDOW_WIDGET("MainWindow/Widget");
+const QLatin1Literal MAINWINDOW_WIDGET_STATE("MainWindow/WidgetState");
+const QLatin1Literal MAINWINDOW_WIDGET_STATE_POS("MainWindow/WidgetStatePosition");
+const QLatin1Literal MAINWINDOW_WIDGET_STATE_SIZE("MainWindow/WidgetStateSize");
+const QLatin1Literal MAINWINDOW_WIDGET_STATE_MAXIMIZED("MainWindow/WidgetStateMaximized");
+const QLatin1Literal MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
+const QLatin1Literal MAP_DETAILFACTOR("Map/DetailFactor");
+const QLatin1Literal MAP_DISTANCEMARKERS("Map/DistanceMarkers");
+const QLatin1Literal MAP_AIRSPACES("Map/Airspaces");
+const QLatin1Literal MAP_HOMEDISTANCE("Map/HomeDistance");
+const QLatin1Literal MAP_HOMELATY("Map/HomeLatY");
+const QLatin1Literal MAP_HOMELONX("Map/HomeLonX");
+const QLatin1Literal MAP_KMLFILES("Map/KmlFiles");
+const QLatin1Literal MAP_MARKLATY("Map/MarkLatY");
+const QLatin1Literal MAP_MARKLONX("Map/MarkLonX");
+const QLatin1Literal MAP_RANGEMARKERS("Map/RangeMarkers");
+const QLatin1Literal MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
+const QLatin1Literal NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
+const QLatin1Literal NAVCONNECT_REMOTE("NavConnect/Remote");
+const QLatin1Literal ROUTE_FILENAME("Route/Filename");
+const QLatin1Literal ROUTE_FILENAMESRECENT("Route/FilenamesRecent");
+const QLatin1Literal ROUTE_FILENAMESKMLRECENT("Route/FilenamesKmlRecent");
+const QLatin1Literal ROUTE_VIEW("Route/View");
+const QLatin1Literal ROUTE_PRINT_DIALOG("Route/PrintWidget");
+const QLatin1Literal ROUTE_STRING_DIALOG_SIZE("Route/StringDialogSize");
+const QLatin1Literal ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter");
+const QLatin1Literal ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
+const QLatin1Literal SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
+const QLatin1Literal SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");
+const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView");
+const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
+const QLatin1Literal SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
+const QLatin1Literal SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 
 /* General settings in the configuration file not covered by any GUI elements */
-const QString SETTINGS_INFOQUERY = "Settings/InfoQuery";
-const QString SETTINGS_MAPQUERY = "Settings/MapQuery";
-const QString SETTINGS_DATABASE = "Settings/Database";
+const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");
+const QLatin1Literal SETTINGS_MAPQUERY("Settings/MapQuery");
+const QLatin1Literal SETTINGS_DATABASE("Settings/Database");
 
-const QString APPROACHTREE_WIDGET = "ApproachTree/Widget";
-const QString APPROACHTREE_SELECTED_WIDGET = "ApproachTree/WidgetSelected";
-const QString APPROACHTREE_STATE = "ApproachTree/TreeState";
-const QString APPROACHTREE_AIRPORT = "ApproachTree/Airport";
-const QString APPROACHTREE_SELECTED_APPR = "ApproachTree/SeletedApproach";
+const QLatin1Literal APPROACHTREE_WIDGET("ApproachTree/Widget");
+const QLatin1Literal APPROACHTREE_SELECTED_WIDGET("ApproachTree/WidgetSelected");
+const QLatin1Literal APPROACHTREE_STATE("ApproachTree/TreeState");
+const QLatin1Literal APPROACHTREE_AIRPORT("ApproachTree/Airport");
+const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
 /* Options dialog */
-const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
-const QString OPTIONS_DIALOG_AS_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
-const QString OPTIONS_DIALOG_GLOBE_FILE_DLG = "OptionsDialog/CacheFileDialogGlobe";
-const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
-const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
-const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";
-const QString OPTIONS_DIALOG_FLIGHTPLAN_COLOR = "OptionsDialog/FlightplanColor";
-const QString OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR = "OptionsDialog/FlightplanProcedureColor";
-const QString OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR = "OptionsDialog/FlightplanActiveColor";
-const QString OPTIONS_DIALOG_TRAIL_COLOR = "OptionsDialog/TrailColor";
-const QString OPTIONS_DIALOG_DISPLAY_OPTIONS = "OptionsDialog/DisplayOptions";
-const QString OPTIONS_DIALOG_GUI_STYLE_INDEX = "OptionsDialog/GuiStyleIndex";
-const QString OPTIONS_DIALOG_WARN_STYLE = "OptionsDialog/StyleWarning";
+const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
+const QLatin1Literal OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
+const QLatin1Literal OPTIONS_DIALOG_GLOBE_FILE_DLG("OptionsDialog/CacheFileDialogGlobe");
+const QLatin1Literal OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFileDialog");
+const QLatin1Literal OPTIONS_DIALOG_DB_EXCLUDE("OptionsDialog/DatabaseExclude");
+const QLatin1Literal OPTIONS_DIALOG_DB_ADDON_EXCLUDE("OptionsDialog/DatabaseAddonExclude");
+const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_COLOR("OptionsDialog/FlightplanColor");
+const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR("OptionsDialog/FlightplanProcedureColor");
+const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR("OptionsDialog/FlightplanActiveColor");
+const QLatin1Literal OPTIONS_DIALOG_TRAIL_COLOR("OptionsDialog/TrailColor");
+const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS("OptionsDialog/DisplayOptions");
+const QLatin1Literal OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
+const QLatin1Literal OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 
 /* Other options that are only accessible in the configuration file */
-const QString OPTIONS_LANGUAGE = "Options/Language";
-const QString OPTIONS_MARBLE_DEBUG = "Options/MarbleDebug";
-const QString OPTIONS_CONNECTCLIENT_DEBUG = "Options/ConnectClientDebug";
-const QString OPTIONS_DATAREADER_DEBUG = "Options/DataReaderDebug";
-const QString OPTIONS_VERSION = "Options/Version";
+const QLatin1Literal OPTIONS_LANGUAGE("Options/Language");
+const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
+const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
+const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
+const QLatin1Literal OPTIONS_VERSION("Options/Version");
 
 /* File dialog patterns */
 #if defined(Q_OS_WIN32)
-const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg)";
-const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln)";
-const QString FILE_PATTERN_GFP = "(*.gfp)";
-const QString FILE_PATTERN_RTE = "(*.rte)";
-const QString FILE_PATTERN_FLP = "(*.flp)";
-const QString FILE_PATTERN_FMS = "(*.fms)";
-const QString FILE_PATTERN_GPX = "(*.gpx)";
-const QString FILE_PATTERN_KML = "(*.kml *.kmz)";
+const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.pln *.flp *.fms)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln)");
+const QLatin1Literal FILE_PATTERN_GFP("(*.gfp)");
+const QLatin1Literal FILE_PATTERN_RTE("(*.rte)");
+const QLatin1Literal FILE_PATTERN_FLP("(*.flp)");
+const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
+const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
+const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
 #else
 // Use more or less case insensitive patters for Linux
-const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg *.Cfg *.CFG)";
-const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.Pln *.PLN)";
-const QString FILE_PATTERN_GFP = "(*.gfp *.Gfp *.GFP)";
-const QString FILE_PATTERN_RTE = "(*.rte *.Rte *.RTE)";
-const QString FILE_PATTERN_FLP = "(*.flp *.Flp *.FLP)";
-const QString FILE_PATTERN_FMS = "(*.fms *.Fms *.FMS)";
-const QString FILE_PATTERN_GPX = "(*.gpx *.Gpx *.GPX)";
-const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
+const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln *.Pln *.PLN)");
+const QLatin1Literal FILE_PATTERN_GFP("(*.gfp *.Gfp *.GFP)");
+const QLatin1Literal FILE_PATTERN_RTE("(*.rte *.Rte *.RTE)");
+const QLatin1Literal FILE_PATTERN_FLP("(*.flp *.Flp *.FLP)");
+const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
+const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
+const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
 #endif
-const QString FILE_PATTERN_AS_SNAPSHOT = "(current_wx_snapshot.txt)";
+const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 
-const QString FILE_PATTERN_IMAGE = "(*.jpg *.jpeg *.png *.bmp)";
+const QString FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
 
 /* Sqlite database names */
-const QString DATABASE_DIR = "little_navmap_db";
-const QString DATABASE_PREFIX = "little_navmap_";
-const QString DATABASE_SUFFIX = ".sqlite";
-const QString DATABASE_BACKUP_SUFFIX = "-backup";
+const QLatin1Literal DATABASE_DIR("little_navmap_db");
+const QLatin1Literal DATABASE_PREFIX("little_navmap_");
+const QLatin1Literal DATABASE_SUFFIX(".sqlite");
+const QLatin1Literal DATABASE_BACKUP_SUFFIX("-backup");
 
 /* This is the default configuration file for reading the scenery library.
  * It can be overridden by placing a  file with the same name into
@@ -233,5 +239,7 @@ const unsigned char DEFAULT_MAINWINDOW_STATE[841] =
   0x0
 };
 } // namespace lnm
+
+#pragma GCC diagnostic pop
 
 #endif // LITTLENAVMAP_CONSTANTS_H

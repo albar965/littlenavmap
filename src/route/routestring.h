@@ -42,12 +42,13 @@ namespace rs {
 enum RouteStringOption
 {
   NONE = 0,
-  DCT = 1 << 0,
-  START_AND_DEST = 1 << 1,
-  ALT_AND_SPEED = 1 << 2,
-  SID_STAR = 1 << 3,
-  SID_STAR_GENERIC = 1 << 4,
-  GFP = 1 << 5,
+  DCT = 1 << 0, /* Add DCT */
+  START_AND_DEST = 1 << 1, /* Add departure and/or destination ident */
+  ALT_AND_SPEED = 1 << 2, /* Add altitude and speed restriction */
+  SID_STAR = 1 << 3, /* Add sid, star and transition names if selected */
+  SID_STAR_GENERIC = 1 << 4, /* Always add SID and STAR keyword */
+  GFP = 1 << 5, /* Produce Garmin flight plan format */
+  NO_AIRWAYS = 1 << 6, /* Add all waypoints instead of from/airway/to triplet */
 
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };
@@ -77,6 +78,7 @@ public:
    */
   QString createGfpStringForRoute(const Route& route);
 
+  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
                              float& speedKts, bool& altIncluded);
 
@@ -87,6 +89,11 @@ public:
 
   static QStringList cleanRouteString(const QString& string);
 
+  void setPlaintextMessages(bool value)
+  {
+    plaintextMessages = value;
+  }
+
 private:
   struct ParseEntry
   {
@@ -94,17 +101,17 @@ private:
     map::MapSearchResult result;
   };
 
+  /* Add messages to log */
   void appendMessage(const QString& message);
   void appendWarning(const QString& message);
   void appendError(const QString& message);
 
-  bool addDeparture(atools::fs::pln::Flightplan& flightplan,
-                    QStringList& cleanItems);
+  bool addDeparture(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
   void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
                            int nextId, int& startIndex, int& endIndex, const QString& airway);
-  void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
-                        int startIndex, int endIndex,
+  void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
+
   QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
   void findWaypoints(map::MapSearchResult& result, const QString& item);
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
@@ -119,7 +126,7 @@ private:
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
-
+  bool plaintextMessages = false;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H

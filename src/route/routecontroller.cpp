@@ -102,11 +102,14 @@ enum RouteColumns
 
 }
 
-using namespace atools::fs::pln;
+using atools::fs::pln::Flightplan;
+using atools::fs::pln::FlightplanEntry;
 using namespace atools::geo;
 using Marble::GeoDataLatLonBox;
 using Marble::GeoDataLineString;
 using Marble::GeoDataCoordinates;
+
+namespace pln = atools::fs::pln;
 
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(NavApp::getMapQuery())
@@ -461,7 +464,7 @@ void RouteController::restoreState()
           routeFilename.clear();
           fileDeparture.clear();
           fileDestination.clear();
-          fileIfrVfr = VFR;
+          fileIfrVfr = pln::VFR;
           route.clear();
         }
       }
@@ -470,7 +473,7 @@ void RouteController::restoreState()
         routeFilename.clear();
         fileDeparture.clear();
         fileDestination.clear();
-        fileIfrVfr = VFR;
+        fileIfrVfr = pln::VFR;
         route.clear();
       }
     }
@@ -511,28 +514,70 @@ void RouteController::newFlightplan()
   emit routeChanged(true);
 }
 
-void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
+void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, const QString& filename,
                                      bool quiet, bool changed, bool adjustAltitude, float speedKts)
 {
   qDebug() << Q_FUNC_INFO << filename;
+
+  if(flightplan.getSource() == atools::fs::pln::FLP)
+  {
+    // FLP is nothing more than a sort of route string
+    // New waypoints along airways have to be inserted and waypoints have to be resolved without coordinate backup
+
+    // Create a route string
+    QStringList routeString;
+    for(int i = 0; i < flightplan.getEntries().size(); i++)
+    {
+      const FlightplanEntry& entry = flightplan.at(i);
+      if(!entry.getAirway().isEmpty())
+        routeString.append(entry.getAirway());
+      routeString.append(entry.getIcaoIdent());
+    }
+    qInfo() << "FLP generated route string" << routeString;
+
+    // All is valid except the waypoint entries
+    flightplan.getEntries().clear();
+
+    // Use route string to overwrite the current incomplete flight plan object
+    RouteString rs(entryBuilder);
+    rs.setPlaintextMessages(true);
+    bool ok = rs.createRouteFromString(routeString.join(" "), flightplan);
+    qInfo() << "Cannot create flight plan" << rs.getMessages();
+
+    if(!ok)
+    {
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("Loading of FLP flight plan failed:<br/><br/>") + rs.getMessages().join("<br/>"));
+      return;
+
+    }
+    else if(!rs.getMessages().isEmpty())
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FLP_WARN,
+                                                     tr("Warnings while loading FLP flight plan file:<br/><br/>") +
+                                                     rs.getMessages().join("<br/>"),
+                                                     tr("Do not &show this dialog again."));
+  }
 
   clearRoute();
 
   if(changed)
     undoIndexClean = -1;
 
-  routeFilename = filename;
+  route.setFlightplan(flightplan);
 
+  if(flightplan.getSource() == atools::fs::pln::FLP || flightplan.getSource() == atools::fs::pln::FMS)
+    // Set type cruise altitude and speed since these formats do not support this
+    updateFlightplanFromWidgets();
+
+  routeFilename = filename;
   fileDeparture = flightplan.getDepartureIdent();
   fileDestination = flightplan.getDestinationIdent();
   fileIfrVfr = flightplan.getFlightplanType();
 
-  route.setFlightplan(flightplan);
-
   if(!(speedKts > 0.f))
     speedKts = static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value());
 
-  route.getFlightplan().getProperties().insert("speed", QString::number(speedKts, 'f', 4));
+  route.getFlightplan().getProperties().insert(pln::SPEED, QString::number(speedKts, 'f', 4));
 
   createRouteLegsFromFlightplan();
 
@@ -543,9 +588,15 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
-  if(updateStartPositionBestRunway(false /* force */, !quiet /* undo */))
+  // Update start position for other formats than FSX/P3D
+  bool forceUpdate = flightplan.getSource() != atools::fs::pln::FSX_P3D;
+
+  // Do not create an entry on the undo stack since this plan will be saved using save as
+  bool quietUpdate = flightplan.getSource() != atools::fs::pln::FSX_P3D ? false : !quiet;
+
+  if(updateStartPositionBestRunway(forceUpdate /* force */, quietUpdate /* undo */))
   {
-    if(!quiet)
+    if(quietUpdate)
     {
       NavApp::deleteSplashScreen();
 
@@ -648,11 +699,10 @@ bool RouteController::loadFlightplan(const QString& filename)
     // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
 
     // Convert altitude to local unit
-    newFlightplan.setCruisingAltitude(
-      atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
+    newFlightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
 
     loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/,
-                   newFlightplan.getProperties().value("speed").toFloat());
+                   newFlightplan.getProperties().value(pln::SPEED).toFloat());
   }
   catch(atools::Exception& e)
   {
@@ -679,8 +729,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     // Will throw an exception if something goes wrong
     flightplan.load(filename);
     // Convert altitude to local unit
-    flightplan.setCruisingAltitude(
-      atools::roundToInt(Unit::altFeetF(flightplan.getCruisingAltitude())));
+    flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(flightplan.getCruisingAltitude())));
 
     RouteCommand *undoCommand = preChange(tr("Append"));
 
@@ -782,7 +831,7 @@ bool RouteController::saveFlighplanAsFlp(const QString& filename)
 
   try
   {
-    route.getFlightplan().saveFlp(filename);
+    route.getFlightplan().saveFlp(filename, true /* save procedures */);
   }
   catch(atools::Exception& e)
   {
@@ -871,7 +920,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
                                    Unit::altFeetF)));
 
     QHash<QString, QString>& properties = route.getFlightplan().getProperties();
-    properties.insert("speed", QString::number(getSpinBoxSpeedKts(), 'f', 4));
+    properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
     route.getFlightplan().save(routeFilename, cleanExport);
     route.getFlightplan().setCruisingAltitude(oldCruise);
@@ -2100,7 +2149,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
   if(!flightplan.isEmpty())
   {
     const FlightplanEntry& first = flightplan.getEntries().first();
-    if(first.getWaypointType() == entry::AIRPORT &&
+    if(first.getWaypointType() == pln::entry::AIRPORT &&
        flightplan.getDepartureIdent() == first.getIcaoIdent() && flightplan.getEntries().size() > 1)
     {
       flightplan.getEntries().removeAt(0);
@@ -2152,7 +2201,7 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
   {
     // Remove current destination
     const FlightplanEntry& last = flightplan.getEntries().last();
-    if(last.getWaypointType() == entry::AIRPORT &&
+    if(last.getWaypointType() == pln::entry::AIRPORT &&
        flightplan.getDestinationIdent() == last.getIcaoIdent() && flightplan.getEntries().size() > 1)
     {
       // Remove the last airport if it is set as destination
@@ -2520,14 +2569,15 @@ void RouteController::updateFlightplanFromWidgets()
 {
   Flightplan& flightplan = route.getFlightplan();
   Ui::MainWindow *ui = NavApp::getMainUi();
-  flightplan.setFlightplanType(
-    ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
+  flightplan.setFlightplanType(ui->comboBoxRouteType->currentIndex() ==
+                               0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 
-  route.getFlightplan().getProperties().insert("speed", QString::number(getSpinBoxSpeedKts(), 'f', 4));
+  route.getFlightplan().getProperties().insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 }
 
-/* Loads navaids from database and create all route map objects from flight plan.  */
+/* Loads navaids from database and create all route map objects from flight plan.
+ * Flight plan will be corrected if needed. */
 void RouteController::createRouteLegsFromFlightplan()
 {
   route.clear();
@@ -2549,6 +2599,20 @@ void RouteController::createRouteLegsFromFlightplan()
 
     route.append(mapobj);
     last = &route.last();
+  }
+
+  if(!route.isEmpty())
+  {
+    // Correct departure and destination values if missing - can happen after import of FLP or FMS plans
+    if(flightplan.getDepartureAiportName().isEmpty())
+      flightplan.setDepartureAiportName(route.first().getName());
+    if(!flightplan.getDeparturePosition().isValid())
+      flightplan.setDeparturePosition(route.first().getPosition());
+
+    if(flightplan.getDestinationAiportName().isEmpty())
+      flightplan.setDestinationAiportName(route.last().getName());
+    if(!flightplan.getDestinationPosition().isValid())
+      flightplan.setDestinationPosition(route.first().getPosition());
   }
 }
 
@@ -2718,9 +2782,9 @@ void RouteController::updateTableModel()
     {
       QSignalBlocker blocker(ui->spinBoxRouteSpeed);
       Q_UNUSED(blocker);
-      if(flightplan.getProperties().contains("speed"))
+      if(flightplan.getProperties().contains(pln::SPEED))
       {
-        float speed = flightplan.getProperties().value("speed").toFloat();
+        float speed = flightplan.getProperties().value(pln::SPEED).toFloat();
         if(speed > 0.f)
           ui->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speed)));
       }
@@ -3041,14 +3105,21 @@ QString RouteController::buildFlightplanLabel2() const
       case atools::fs::pln::LOW_ALTITUDE:
         routeType = tr("Low Altitude");
         break;
+
       case atools::fs::pln::HIGH_ALTITUDE:
         routeType = tr("High Altitude");
         break;
+
       case atools::fs::pln::VOR:
         routeType = tr("Radionav");
         break;
+
       case atools::fs::pln::DIRECT:
         routeType = tr("Direct");
+        break;
+
+      case atools::fs::pln::UNKNOWN:
+        routeType = tr("Unknown");
         break;
     }
 
@@ -3085,7 +3156,7 @@ void RouteController::clearRoute()
   routeFilename.clear();
   fileDeparture.clear();
   fileDestination.clear();
-  fileIfrVfr = VFR;
+  fileIfrVfr = pln::VFR;
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;

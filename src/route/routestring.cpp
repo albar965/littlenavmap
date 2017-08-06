@@ -18,7 +18,7 @@
 #include "route/routestring.h"
 
 #include "navapp.h"
-#include "common/coordinates.h"
+#include "fs/util/coordinates.h"
 #include "common/procedurequery.h"
 #include "route/route.h"
 #include "mapgui/mapquery.h"
@@ -31,6 +31,7 @@
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using map::MapSearchResult;
+namespace coords = atools::fs::util;
 
 const static int MAX_WAYPOINT_DISTANCE_NM = 1000;
 
@@ -44,7 +45,7 @@ const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT |
                                              map::AIRWAY);
 
 const static QString SPANERR("<span style=\"color: #ff0000; font-weight:600\">");
-const static QString SPANWARN("<span style=\"color: #ff5000\">");
+const static QString SPANWARN("<span style=\"color: #ff3000\">");
 const static QString SPANEND("</span>");
 
 RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
@@ -148,9 +149,9 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
     if(leg.getMapObjectType() == map::INVALID || leg.getMapObjectType() == map::USER)
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      ident = (options & rs::GFP) ? coords::toGfpFormat(leg.getPosition()) : coords::toDegMinFormat(leg.getPosition());
+      ident = (options& rs::GFP) ? coords::toGfpFormat(leg.getPosition()) : coords::toDegMinFormat(leg.getPosition());
 
-    if(airway.isEmpty())
+    if(airway.isEmpty() || options & rs::NO_AIRWAYS)
     {
       if(!lastId.isEmpty())
         retval.append(lastId);
@@ -198,6 +199,13 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   qDebug() << Q_FUNC_INFO << retval;
 
   return retval;
+}
+
+bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan)
+{
+  float fdummy;
+  bool bdummy;
+  return createRouteFromString(routeString, flightplan, fdummy, bdummy);
 }
 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
@@ -346,13 +354,19 @@ void RouteString::appendMessage(const QString& message)
 
 void RouteString::appendWarning(const QString& message)
 {
-  messages.append(SPANWARN + message + SPANEND);
+  if(plaintextMessages)
+    messages.append(message);
+  else
+    messages.append(SPANWARN + message + SPANEND);
   qWarning() << "Warning:" << message;
 }
 
 void RouteString::appendError(const QString& message)
 {
-  messages.append(SPANERR + message + SPANEND);
+  if(plaintextMessages)
+    messages.append(message);
+  else
+    messages.append(SPANERR + message + SPANEND);
   qWarning() << "Error:" << message;
 }
 
@@ -621,21 +635,19 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
     if(lastResult.waypoints.isEmpty())
     {
-      appendWarning(tr("No waypoint before airway %1. Ignoring flight plan segment.").
-                    arg(airwayName));
+      appendWarning(tr("No waypoint before airway %1. Ignoring flight plan segment.").arg(airwayName));
       result.airways.clear();
       return;
     }
 
     if(nextResult.waypoints.isEmpty())
     {
-      appendWarning(tr("No waypoint after airway %1. Ignoring flight plan segment.").
-                    arg(airwayName));
+      appendWarning(tr("No waypoint after airway %1. Ignoring flight plan segment.").arg(airwayName));
       result.airways.clear();
       return;
     }
 
-    // Get all airways that match name and waypoint - normally only one
+    // Get all waypoints
     mapQuery->getWaypointsForAirway(waypoints, airwayName, waypointStart);
 
     if(!waypoints.isEmpty())
@@ -788,10 +800,10 @@ QStringList RouteString::cleanItemList(const QStringList& items, float& speedKno
 void RouteString::removeEmptyResults(QList<ParseEntry>& resultList)
 {
   auto it = std::remove_if(resultList.begin(), resultList.end(),
-                           [] (const ParseEntry &type)->bool
-                           {
-                             return type.result.isEmpty(ROUTE_TYPES);
-                           });
+                           [](const ParseEntry& type) -> bool
+  {
+    return type.result.isEmpty(ROUTE_TYPES);
+  });
 
   if(it != resultList.end())
     resultList.erase(it, resultList.end());

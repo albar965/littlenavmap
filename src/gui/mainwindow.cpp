@@ -20,6 +20,7 @@
 #include "common/constants.h"
 #include "common/proctypes.h"
 #include "navapp.h"
+#include "atools.h"
 #include "common/mapcolors.h"
 #include "gui/application.h"
 #include "common/weatherreporter.h"
@@ -1255,7 +1256,7 @@ void MainWindow::routeOpen()
   {
     QString routeFile = dialog->openFileDialog(
       tr("Open Flightplan"),
-      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
       "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath());
 
@@ -1278,7 +1279,7 @@ void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(
     tr("Append Flightplan"),
-    tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+    tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
     "Route/" + NavApp::getCurrentSimulatorShortName(),
     NavApp::getCurrentSimulatorFilesPath());
 
@@ -1326,6 +1327,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
 bool MainWindow::routeSave()
 {
   if(routeController->getCurrentRouteFilename().isEmpty() ||
+     NavApp::getRoute().getFlightplan().getSource() != atools::fs::pln::FSX_P3D ||
      !routeController->doesFilenameMatchRoute())
     return routeSaveAs();
   else
@@ -1351,7 +1353,7 @@ bool MainWindow::routeSaveAsClean()
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Clean Flightplan without Annotations"),
-      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename(tr(" Clean")));
@@ -1378,7 +1380,7 @@ bool MainWindow::routeSaveAs()
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan"),
-      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename());
@@ -1473,11 +1475,17 @@ bool MainWindow::routeSaveAsFms()
 {
   if(routeValidate(false /*validateParking*/))
   {
+    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
+    if(xpBasePath.isEmpty())
+      xpBasePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+    else
+      xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
+
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan as X-Plane FMS Format"),
       tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
-      "fms", "Route/Fms", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeController->buildDefaultFilename(QString(), ".fms"));
+      "fms", "Route/Fms", xpBasePath,
+      routeController->buildDefaultFilenameShort(QString(), ".fms"));
 
     if(!routeFile.isEmpty())
     {
@@ -1741,6 +1749,7 @@ void MainWindow::resetMessages()
 
   // Show all message dialogs again
   s.setValue(lnm::ACTIONS_SHOWDISCONNECTINFO, true);
+  s.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
   s.setValue(lnm::ACTIONS_SHOWQUIT, true);
   s.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWRESETVIEW, true);

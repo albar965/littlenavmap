@@ -102,6 +102,7 @@ public:
   }
 
   QString getCurrentSimulatorBasePath() const;
+  QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.

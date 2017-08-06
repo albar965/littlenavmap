@@ -75,8 +75,14 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
   ui->toolButtonRouteStringOptions->addAction(action);
 
+  action = new QAction(tr("Add Waypoints instead of Airways"), ui->toolButtonRouteStringOptions);
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::NO_AIRWAYS));
+  ui->toolButtonRouteStringOptions->addAction(action);
+
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked, this, &RouteStringDialog::readButtonClicked);
-  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
+  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this,
+          &RouteStringDialog::fromClipboardClicked);
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
 
   connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);

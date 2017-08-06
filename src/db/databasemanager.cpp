@@ -312,7 +312,12 @@ bool DatabaseManager::checkIncompatibleDatabases()
 
 QString DatabaseManager::getCurrentSimulatorBasePath() const
 {
-  return simulators.value(currentFsType).basePath;
+  return getSimulatorBasePath(currentFsType);
+}
+
+QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const
+{
+  return simulators.value(type).basePath;
 }
 
 void DatabaseManager::insertSimSwitchActions()

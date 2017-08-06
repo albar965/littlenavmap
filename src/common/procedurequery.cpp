@@ -23,6 +23,7 @@
 #include "common/unit.h"
 #include "common/constants.h"
 #include "geo/line.h"
+#include "fs/pln/flightplan.h"
 
 #include "sql/sqlquery.h"
 
@@ -40,6 +41,8 @@ using proc::MapProcedureLegs;
 using proc::MapProcedureLeg;
 using proc::MapAltRestriction;
 using proc::MapSpeedRestriction;
+
+namespace pln = atools::fs::pln;
 
 ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
   : db(sqlDb), mapQuery(mapQueryParam)
@@ -1295,49 +1298,49 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
 {
   if(type & proc::PROCEDURE_SID)
   {
-    properties.remove("sidappr");
-    properties.remove("sidapprrw");
-    properties.remove("sidapprdistance");
-    properties.remove("sidapprsize");
+    properties.remove(pln::SIDAPPR);
+    properties.remove(pln::SIDAPPRRW);
+    properties.remove(pln::SIDAPPRDISTANCE);
+    properties.remove(pln::SIDAPPRSIZE);
   }
 
   if(type & proc::PROCEDURE_SID_TRANSITION)
   {
-    properties.remove("sidtrans");
-    properties.remove("sidtransdistance");
-    properties.remove("sidtranssize");
+    properties.remove(pln::SIDTRANS);
+    properties.remove(pln::SIDTRANSDISTANCE);
+    properties.remove(pln::SIDTRANSSIZE);
   }
 
   if(type & proc::PROCEDURE_STAR)
   {
-    properties.remove("star");
-    properties.remove("stardistance");
-    properties.remove("starsize");
+    properties.remove(pln::STAR);
+    properties.remove(pln::STARDISTANCE);
+    properties.remove(pln::STARSIZE);
   }
 
   if(type & proc::PROCEDURE_STAR_TRANSITION)
   {
-    properties.remove("startrans");
-    properties.remove("startransdistance");
-    properties.remove("startranssize");
+    properties.remove(pln::STARTRANS);
+    properties.remove(pln::STARTRANSDISTANCE);
+    properties.remove(pln::STARTRANSSIZE);
   }
 
   if(type & proc::PROCEDURE_TRANSITION)
   {
-    properties.remove("transition");
-    properties.remove("transitiontype");
-    properties.remove("transitiondistance");
-    properties.remove("transitionsize");
+    properties.remove(pln::TRANSITION);
+    properties.remove(pln::TRANSITIONTYPE);
+    properties.remove(pln::TRANSITIONDISTANCE);
+    properties.remove(pln::TRANSITIONSIZE);
   }
 
   if(type & proc::PROCEDURE_APPROACH)
   {
-    properties.remove("approach");
-    properties.remove("approachtype");
-    properties.remove("approachrw");
-    properties.remove("approachsuffix");
-    properties.remove("approachdistance");
-    properties.remove("approachsize");
+    properties.remove(pln::APPROACH);
+    properties.remove(pln::APPROACHTYPE);
+    properties.remove(pln::APPROACHRW);
+    properties.remove(pln::APPROACHSUFFIX);
+    properties.remove(pln::APPROACHDISTANCE);
+    properties.remove(pln::APPROACHSIZE);
   }
 }
 
@@ -1350,16 +1353,16 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
   {
     if(!departureLegs.transitionFixIdent.isEmpty())
     {
-      properties.insert("sidtrans", departureLegs.transitionFixIdent);
-      properties.insert("sidtransdistance", QString::number(departureLegs.transitionDistance, 'f', 1));
-      properties.insert("sidtranssize", QString::number(departureLegs.transitionLegs.size()));
+      properties.insert(pln::SIDTRANS, departureLegs.transitionFixIdent);
+      properties.insert(pln::SIDTRANSDISTANCE, QString::number(departureLegs.transitionDistance, 'f', 1));
+      properties.insert(pln::SIDTRANSSIZE, QString::number(departureLegs.transitionLegs.size()));
     }
     if(!departureLegs.approachFixIdent.isEmpty())
     {
-      properties.insert("sidappr", departureLegs.approachFixIdent);
-      properties.insert("sidapprrw", departureLegs.procedureRunway);
-      properties.insert("sidapprdistance", QString::number(departureLegs.approachDistance, 'f', 1));
-      properties.insert("sidapprsize", QString::number(departureLegs.approachLegs.size()));
+      properties.insert(pln::SIDAPPR, departureLegs.approachFixIdent);
+      properties.insert(pln::SIDAPPRRW, departureLegs.procedureRunway);
+      properties.insert(pln::SIDAPPRDISTANCE, QString::number(departureLegs.approachDistance, 'f', 1));
+      properties.insert(pln::SIDAPPRSIZE, QString::number(departureLegs.approachLegs.size()));
     }
   }
 
@@ -1367,15 +1370,15 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
   {
     if(!starLegs.transitionFixIdent.isEmpty())
     {
-      properties.insert("startrans", starLegs.transitionFixIdent);
-      properties.insert("startransdistance", QString::number(starLegs.transitionDistance, 'f', 1));
-      properties.insert("startranssize", QString::number(starLegs.transitionLegs.size()));
+      properties.insert(pln::STARTRANS, starLegs.transitionFixIdent);
+      properties.insert(pln::STARTRANSDISTANCE, QString::number(starLegs.transitionDistance, 'f', 1));
+      properties.insert(pln::STARTRANSSIZE, QString::number(starLegs.transitionLegs.size()));
     }
     if(!starLegs.isEmpty() && !starLegs.approachFixIdent.isEmpty())
     {
-      properties.insert("star", starLegs.approachFixIdent);
-      properties.insert("stardistance", QString::number(starLegs.approachDistance, 'f', 1));
-      properties.insert("starsize", QString::number(starLegs.approachLegs.size()));
+      properties.insert(pln::STAR, starLegs.approachFixIdent);
+      properties.insert(pln::STARDISTANCE, QString::number(starLegs.approachDistance, 'f', 1));
+      properties.insert(pln::STARSIZE, QString::number(starLegs.approachLegs.size()));
     }
   }
 
@@ -1383,20 +1386,20 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
   {
     if(!arrivalLegs.transitionFixIdent.isEmpty())
     {
-      properties.insert("transition", arrivalLegs.transitionFixIdent);
-      properties.insert("transitiontype", arrivalLegs.transitionType);
-      properties.insert("transitiondistance", QString::number(arrivalLegs.transitionDistance, 'f', 1));
-      properties.insert("transitionsize", QString::number(arrivalLegs.transitionLegs.size()));
+      properties.insert(pln::TRANSITION, arrivalLegs.transitionFixIdent);
+      properties.insert(pln::TRANSITIONTYPE, arrivalLegs.transitionType);
+      properties.insert(pln::TRANSITIONDISTANCE, QString::number(arrivalLegs.transitionDistance, 'f', 1));
+      properties.insert(pln::TRANSITIONSIZE, QString::number(arrivalLegs.transitionLegs.size()));
     }
 
     if(!arrivalLegs.approachFixIdent.isEmpty())
     {
-      properties.insert("approach", arrivalLegs.approachFixIdent);
-      properties.insert("approachtype", arrivalLegs.approachType);
-      properties.insert("approachrw", arrivalLegs.procedureRunway);
-      properties.insert("approachsuffix", arrivalLegs.approachSuffix);
-      properties.insert("approachdistance", QString::number(arrivalLegs.approachDistance, 'f', 1));
-      properties.insert("approachsize", QString::number(arrivalLegs.approachLegs.size()));
+      properties.insert(pln::APPROACH, arrivalLegs.approachFixIdent);
+      properties.insert(pln::APPROACHTYPE, arrivalLegs.approachType);
+      properties.insert(pln::APPROACHRW, arrivalLegs.procedureRunway);
+      properties.insert(pln::APPROACHSUFFIX, arrivalLegs.approachSuffix);
+      properties.insert(pln::APPROACHDISTANCE, QString::number(arrivalLegs.approachDistance, 'f', 1));
+      properties.insert(pln::APPROACHSIZE, QString::number(arrivalLegs.approachLegs.size()));
     }
   }
 }
@@ -1510,85 +1513,85 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   int sidApprId = -1, sidTransId = -1, approachId = -1, starId = -1, starTransId = -1, transitionId = -1;
   // Get a SID id (approach and transition) =================================================================
   // Get a SID id =================================================================
-  if(properties.contains("sidappr"))
+  if(properties.contains(pln::SIDAPPR))
   {
     sidApprId = getSidId(departure,
-                         properties.value("sidappr"),
-                         properties.value("sidapprrw"),
-                         properties.value("sidapprdistance").toFloat(),
-                         properties.value("sidapprsize").toInt());
+                         properties.value(pln::SIDAPPR),
+                         properties.value(pln::SIDAPPRRW),
+                         properties.value(pln::SIDAPPRDISTANCE).toFloat(),
+                         properties.value(pln::SIDAPPRSIZE).toInt());
     if(sidApprId == -1)
     {
-      qWarning() << "Loading of approach" << properties.value("sidappr") << "failed";
+      qWarning() << "Loading of approach" << properties.value(pln::SIDAPPR) << "failed";
       error = true;
     }
   }
 
   // Get a SID transition id =================================================================
-  if(properties.contains("sidtrans") && sidApprId != -1)
+  if(properties.contains(pln::SIDTRANS) && sidApprId != -1)
   {
     sidTransId = getSidTransitionId(departure,
-                                    properties.value("sidtrans"),
+                                    properties.value(pln::SIDTRANS),
                                     sidApprId,
-                                    properties.value("sidtransdistance").toFloat(),
-                                    properties.value("sidtranssize").toInt());
+                                    properties.value(pln::SIDTRANSDISTANCE).toFloat(),
+                                    properties.value(pln::SIDTRANSSIZE).toInt());
     if(sidTransId == -1)
     {
-      qWarning() << "Loading of approach" << properties.value("sidtrans") << "failed";
+      qWarning() << "Loading of approach" << properties.value(pln::SIDTRANS) << "failed";
       error = true;
     }
   }
 
   // Get an approach id =================================================================
-  if(properties.contains("approach"))
+  if(properties.contains(pln::APPROACH))
   {
-    approachIdByNameQuery->bindValue(":fixident", properties.value("approach"));
-    approachIdByNameQuery->bindValue(":type", properties.value("approachtype"));
+    approachIdByNameQuery->bindValue(":fixident", properties.value(pln::APPROACH));
+    approachIdByNameQuery->bindValue(":type", properties.value(pln::APPROACHTYPE));
     approachIdByNameQuery->bindValue(":apid", destination.id);
 
     approachId = findApproachId(destination, approachIdByNameQuery,
-                                properties.value("approachsuffix"),
-                                properties.value("approachrw"),
-                                properties.value("approachdistance").toFloat(),
-                                properties.value("approachsize").toInt());
+                                properties.value(pln::APPROACHSUFFIX),
+                                properties.value(pln::APPROACHRW),
+                                properties.value(pln::APPROACHDISTANCE).toFloat(),
+                                properties.value(pln::APPROACHSIZE).toInt());
     if(approachId == -1)
     {
-      qWarning() << "Loading of approach" << properties.value("approach") << "failed";
+      qWarning() << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
       error = true;
     }
   }
 
   // Get a transition id =================================================================
-  if(properties.contains("transition") && approachId != -1)
+  if(properties.contains(pln::TRANSITION) && approachId != -1)
   {
-    transitionIdByNameQuery->bindValue(":fixident", properties.value("transition"));
-    transitionIdByNameQuery->bindValue(":type", properties.value("transitiontype"));
+    transitionIdByNameQuery->bindValue(":fixident", properties.value(pln::TRANSITION));
+    transitionIdByNameQuery->bindValue(":type", properties.value(pln::TRANSITIONTYPE));
     transitionIdByNameQuery->bindValue(":apprid", approachId);
 
     transitionId = findTransitionId(destination, transitionIdByNameQuery,
-                                    properties.value("transitiondistance").toFloat(),
-                                    properties.value("transitionsize").toInt());
+                                    properties.value(pln::TRANSITIONDISTANCE).toFloat(),
+                                    properties.value(pln::TRANSITIONSIZE).toInt());
     if(transitionId == -1)
     {
-      qWarning() << "Loading of transition" << properties.value("transition") << "failed";
+      qWarning() << "Loading of transition" << properties.value(pln::TRANSITION) << "failed";
       error = true;
     }
   }
 
   // Get a STAR id =================================================================
-  if(properties.contains("star"))
+  if(properties.contains(pln::STAR))
     starId = getStarId(destination,
-                       properties.value("star"),
-                       properties.value("stardistance").toFloat(),
-                       properties.value("starsize").toInt());
+                       properties.value(pln::STAR),
+                       properties.value(pln::STARDISTANCE).toFloat(),
+                       properties.value(pln::STARSIZE).toInt());
 
   // Get a STAR transition id =================================================================
-  if(properties.contains("startrans") && starId != -1)
+  if(properties.contains(pln::STARTRANS) && starId != -1)
     starTransId = getStarTransitionId(destination,
-                                      properties.value("startrans"),
+                                      properties.value(pln::STARTRANS),
                                       starId,
-                                      properties.value("startransdistance").toFloat(),
-                                      properties.value("startranssize").toInt());
+                                      properties.value(pln::STARTRANSDISTANCE).toFloat(),
+                                      properties.value(pln::STARTRANSSIZE).toInt());
 
   if(!error) // load all or nothing in case of error
   {
@@ -1649,22 +1652,22 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)
 {
   QString retval;
-  if(properties.contains("sidappr"))
-    retval += properties.value("sidappr");
+  if(properties.contains(pln::SIDAPPR))
+    retval += properties.value(pln::SIDAPPR);
 
-  if(properties.contains("sidtrans"))
-    retval += "." + properties.value("sidtrans");
+  if(properties.contains(pln::SIDTRANS))
+    retval += "." + properties.value(pln::SIDTRANS);
   return retval;
 }
 
 QString ProcedureQuery::getStarAndTransition(QHash<QString, QString>& properties)
 {
   QString retval;
-  if(properties.contains("star"))
-    retval += properties.value("star");
+  if(properties.contains(pln::STAR))
+    retval += properties.value(pln::STAR);
 
-  if(properties.contains("startrans"))
-    retval += "." + properties.value("startrans");
+  if(properties.contains(pln::STARTRANS))
+    retval += "." + properties.value(pln::STARTRANS);
   return retval;
 }
 

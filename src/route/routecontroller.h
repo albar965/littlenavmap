@@ -73,7 +73,7 @@ public:
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
-  void loadFlightplan(const atools::fs::pln::Flightplan& flightplan,
+  void loadFlightplan(atools::fs::pln::Flightplan flightplan,
                       const QString& filename, bool quiet, bool changed, bool adjustAltitude, float speedKts);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.

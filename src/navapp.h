@@ -103,6 +103,7 @@ public:
 
   static atools::fs::FsPaths::SimulatorType getCurrentSimulator();
   static QString getCurrentSimulatorBasePath();
+  static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
    * etc. Returns the documents path if FS files cannot be found. */
