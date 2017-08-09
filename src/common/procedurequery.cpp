@@ -1245,11 +1245,11 @@ void ProcedureQuery::initQueries()
 
   approachIdByNameQuery = new SqlQuery(db);
   approachIdByNameQuery->prepare("select approach_id, suffix , runway_name from approach "
-                                 "where fix_ident = :fixident and type = :type and airport_id = :apid");
+                                 "where fix_ident like :fixident and type like :type and airport_id = :apid");
 
   transitionIdByNameQuery = new SqlQuery(db);
-  transitionIdByNameQuery->prepare("select transition_id from transition where fix_ident = :fixident and "
-                                   "type = :type and approach_id = :apprid");
+  transitionIdByNameQuery->prepare("select transition_id from transition where fix_ident like :fixident and "
+                                   "type like :type and approach_id = :apprid");
 
   transitionIdsForApproachQuery = new SqlQuery(db);
   transitionIdsForApproachQuery->prepare("select transition_id from transition where approach_id = :id");
@@ -1545,8 +1545,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   // Get an approach id =================================================================
   if(properties.contains(pln::APPROACH))
   {
+    QString type = properties.value(pln::APPROACHTYPE);
+    if(type.isEmpty())
+      type = "%";
     approachIdByNameQuery->bindValue(":fixident", properties.value(pln::APPROACH));
-    approachIdByNameQuery->bindValue(":type", properties.value(pln::APPROACHTYPE));
+    approachIdByNameQuery->bindValue(":type", type);
     approachIdByNameQuery->bindValue(":apid", destination.id);
 
     approachId = findApproachId(destination, approachIdByNameQuery,
@@ -1564,8 +1567,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   // Get a transition id =================================================================
   if(properties.contains(pln::TRANSITION) && approachId != -1)
   {
+    QString type = properties.value(pln::TRANSITIONTYPE);
+    if(type.isEmpty())
+      type = "%";
     transitionIdByNameQuery->bindValue(":fixident", properties.value(pln::TRANSITION));
-    transitionIdByNameQuery->bindValue(":type", properties.value(pln::TRANSITIONTYPE));
+    transitionIdByNameQuery->bindValue(":type", type);
     transitionIdByNameQuery->bindValue(":apprid", approachId);
 
     transitionId = findTransitionId(destination, transitionIdByNameQuery,
@@ -1728,6 +1734,10 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
       }
     }
   }
+
+  // Found more than one procedure matching only by name choose an arbitrary one
+  if(procedureId == -1 && !ids.isEmpty())
+    procedureId = ids.first();
 
   return procedureId;
 }

@@ -55,14 +55,13 @@
     <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
+    <addaction name="actionRouteSaveAsFms"/>
+    <addaction name="actionRouteSaveAsFlp"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveAsClean"/>
-    <addaction name="separator"/>
-    <addaction name="actionRouteSaveAsGpx"/>
     <addaction name="actionRouteSaveAsGfp"/>
     <addaction name="actionRouteSaveAsRte"/>
-    <addaction name="actionRouteSaveAsFlp"/>
-    <addaction name="actionRouteSaveAsFms"/>
+    <addaction name="actionRouteSaveAsGpx"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -4120,7 +4119,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight Plan &amp;as ...</string>
+    <string>Save Flight Plan &amp;as PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as</string>
@@ -4964,32 +4963,32 @@
    </property>
   </action>
   <action name="actionMapThemeCartoLight">
-  <property name="checkable">
-  <bool>true</bool>
-  </property>
-  <property name="text">
-  <string>CARTO &amp;Light</string>
-  </property>
-  <property name="toolTip">
-  <string>CARTO Light online map theme</string>
-  </property>
-  <property name="statusTip">
-  <string>CARTO Light online map theme</string>
-  </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CARTO &amp;Light</string>
+   </property>
+   <property name="toolTip">
+    <string>CARTO Light online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>CARTO Light online map theme</string>
+   </property>
   </action>
   <action name="actionMapThemeCartoDark">
-  <property name="checkable">
-  <bool>true</bool>
-  </property>
-  <property name="text">
-  <string>CARTO &amp;Dark</string>
-  </property>
-  <property name="toolTip">
-  <string>CARTO Dark online map theme</string>
-  </property>
-  <property name="statusTip">
-  <string>CARTO Dark online map theme</string>
-  </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CARTO &amp;Dark</string>
+   </property>
+   <property name="toolTip">
+    <string>CARTO Dark online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>CARTO Dark online map theme</string>
+   </property>
   </action>
   <action name="actionMapThemeOpenTopoMap">
    <property name="checkable">
@@ -5593,13 +5592,13 @@
      <normaloff>:/littlenavmap/resources/icons/saveasflp.svg</normaloff>:/littlenavmap/resources/icons/saveasflp.svg</iconset>
    </property>
    <property name="text">
-    <string>E&amp;xport Flight Plan as FLP ...</string>
+    <string>Save Flight Plan as &amp;FLP ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FLP file usable by the Aerosoft Airbus</string>
+    <string>Save flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FLP file usable by the Aerosoft Airbus</string>
+    <string>Save flight plan as FLP file usable by the Aerosoft Airbus and other add-on aircraft</string>
    </property>
   </action>
   <action name="actionShowAirspaces">
@@ -5647,13 +5646,13 @@
      <normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</iconset>
    </property>
    <property name="text">
-    <string>Export &amp;clean Flight Plan ...</string>
+    <string>E&amp;xport Flight Plan as clean PLN ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FSX/P3D PLN without any additional annotations</string>
+    <string>Save flight plan as PLN without any additional annotations</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FSX/P3D PLN without any additional annotations</string>
+    <string>Save flight plan as PLN without any additional annotations</string>
    </property>
   </action>
   <action name="actionMapShowAircraftAiBoat">
@@ -5683,7 +5682,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>E&amp;xport Flight Plan as FMS ...</string>
+    <string>Save Flight Plan as &amp;X-Plane FMS ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS file usable by X-Plane</string>
@@ -5698,7 +5697,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasgpx.svg</normaloff>:/littlenavmap/resources/icons/saveasgpx.svg</iconset>
    </property>
    <property name="text">
-    <string>E&amp;xport Flight Plan as GPX...</string>
+    <string>E&amp;xport Flight Plan as GPX ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan and flown track in GPS Exchange Format usable by Google Earth and many other Programs</string>
@@ -5791,6 +5790,11 @@
    </property>
    <property name="statusTip">
     <string>Show the online tutorials in a browser</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>&amp;Export</string>
    </property>
   </action>
  </widget>

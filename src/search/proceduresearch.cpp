@@ -89,7 +89,7 @@ private:
       if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
       {
         QTreeWidgetItem *item = tree->itemAt(mouseEvent->pos());
-        if(item == nullptr)
+        if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch)
           tree->clearSelection();
       }
 
@@ -156,6 +156,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   treeEventFilter = new TreeEventFilter(treeWidget);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
+  ui->labelProcedureSearch->installEventFilter(treeEventFilter);
 
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &ProcedureSearch::resetSearch);
 }
@@ -165,6 +166,7 @@ ProcedureSearch::~ProcedureSearch()
   delete zoomHandler;
   treeWidget->setItemDelegate(nullptr);
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
+  NavApp::getMainUi()->labelProcedureSearch->removeEventFilter(treeEventFilter);
   delete treeEventFilter;
   delete gridDelegate;
 }

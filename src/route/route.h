@@ -138,6 +138,9 @@ public:
                   map::MapSearchResult& mapobjects, QList<proc::MapProcedurePoint>& procPoints,
                   bool includeProcedure) const;
 
+  /* @return true if any leg has an airway name */
+  bool hasAirways() const;
+
   /* @return true if departure is an airport and parking is set */
   bool hasDepartureParking() const;
 

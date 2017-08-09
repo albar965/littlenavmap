@@ -20,6 +20,7 @@
 
 #include "fs/fspaths.h"
 #include "common/mapflags.h"
+#include "fs/pln/flightplanconstants.h"
 
 #include <QMainWindow>
 #include <QUrl>
@@ -189,17 +190,18 @@ private:
   void routeOpenRecent(const QString& routeFile);
 
   bool routeSave();
-  bool routeSaveAs();
-  bool routeSaveAsClean();
-  bool routeSaveAsGfp();
-  bool routeSaveAsRte();
+  bool routeSaveAsPln();
   bool routeSaveAsFlp();
   bool routeSaveAsFms();
-  bool routeSaveAsGpx();
+
+  bool routeExportClean();
+  bool routeExportGfp();
+  bool routeExportRte();
+  bool routeExportGpx();
 
   void routeCenter();
   bool routeCheckForChanges();
-  bool routeValidate(bool validateParking = true);
+  bool routeValidate(bool validateParking, bool validateDepartureAndDestination);
   void showMapLegend();
   void resetMessages();
   void showDatabaseFiles();
@@ -236,6 +238,7 @@ private:
   void fillWeatherContextXplane(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
   void updateAirspaceTypes(map::MapAirspaceTypes types);
   void resetWindowLayout();
+  bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
 
   /* Original unchanged window title */
   QString mainWindowTitle;

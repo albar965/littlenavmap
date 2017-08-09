@@ -636,6 +636,16 @@ bool Route::isFlightplanEmpty() const
   return getFlightplan().isEmpty();
 }
 
+bool Route::hasAirways() const
+{
+  for(const RouteLeg& leg : *this)
+  {
+    if(!leg.getAirwayName().isEmpty())
+      return true;
+  }
+  return false;
+}
+
 bool Route::hasValidDeparture() const
 {
   return !getFlightplan().isEmpty() &&

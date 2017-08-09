@@ -75,6 +75,10 @@ const QLatin1Literal ACTIONS_SHOWROUTE_ERROR("Actions/ShowRouteError");
 const QLatin1Literal ACTIONS_SHOWROUTE_PROC_ERROR("Actions/ShowRouteProcedureError");
 const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChanged");
 
+const QLatin1Literal ACTIONS_SHOW_FS9_WARNING("Actions/ShowFs9Warning");
+const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");
+const QLatin1Literal ACTIONS_SHOW_FMS_WARNING("Actions/ShowFmsWarning");
+
 /* Other setting key names */
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");
 const QLatin1Literal DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");

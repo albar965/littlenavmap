@@ -55,6 +55,7 @@
 #include <QFile>
 #include <QStandardItemModel>
 #include <QInputDialog>
+#include <QFileInfo>
 
 #include <marble/GeoDataLineString.h>
 
@@ -110,6 +111,42 @@ using Marble::GeoDataLineString;
 using Marble::GeoDataCoordinates;
 
 namespace pln = atools::fs::pln;
+
+/* Use event filter to catch mouse click in white area and deselect all entries */
+class ViewEventFilter :
+  public QObject
+{
+
+public:
+  ViewEventFilter(QTableView *parent)
+    : QObject(parent), view(parent)
+  {
+  }
+
+  virtual ~ViewEventFilter();
+
+private:
+  bool eventFilter(QObject *object, QEvent *event);
+
+  QTableView *view;
+};
+
+ViewEventFilter::~ViewEventFilter()
+{
+}
+
+bool ViewEventFilter::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::MouseButtonPress)
+  {
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
+      view->clearSelection();
+  }
+  return QObject::eventFilter(object, event);
+}
+
+// =====================================================================================
 
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(NavApp::getMapQuery())
@@ -214,12 +251,16 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::nothingSelectedTriggered);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
 
+  viewEventFilter = new ViewEventFilter(view);
+  ui->labelRouteInfo->installEventFilter(viewEventFilter);
+
   updateSpinboxSuffices();
 
 }
 
 RouteController::~RouteController()
 {
+  NavApp::getMainUi()->labelRouteInfo->removeEventFilter(viewEventFilter);
   routeAltDelayTimer.stop();
   delete entryBuilder;
   delete model;
@@ -228,6 +269,7 @@ RouteController::~RouteController()
   delete routeNetworkAirway;
   delete zoomHandler;
   delete symbolPainter;
+  delete viewEventFilter;
 }
 
 void RouteController::undoTriggered()
@@ -519,7 +561,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 {
   qDebug() << Q_FUNC_INFO << filename;
 
-  if(flightplan.getSource() == atools::fs::pln::FLP)
+  if(flightplan.getFileFormat() == atools::fs::pln::FLP)
   {
     // FLP is nothing more than a sort of route string
     // New waypoints along airways have to be inserted and waypoints have to be resolved without coordinate backup
@@ -556,6 +598,24 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
                                                      tr("Warnings while loading FLP flight plan file:<br/><br/>") +
                                                      rs.getMessages().join("<br/>"),
                                                      tr("Do not &show this dialog again."));
+
+    // Copy speed, type and altitude from GUI
+    updateFlightplanFromWidgets(flightplan);
+    adjustAltitude = true; // Change altitude based on airways later
+  }
+  else if(flightplan.getFileFormat() == atools::fs::pln::FMS)
+  {
+    // Save altitude
+    int cruiseAlt = flightplan.getCruisingAltitude();
+
+    // Set type cruise altitude and speed since FMS does not support this
+    updateFlightplanFromWidgets(flightplan);
+
+    // Reset altitude after update from widgets
+    if(cruiseAlt > 0)
+      flightplan.setCruisingAltitude(cruiseAlt);
+    else
+      adjustAltitude = true; // Change altitude based on airways later
   }
 
   clearRoute();
@@ -564,10 +624,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     undoIndexClean = -1;
 
   route.setFlightplan(flightplan);
-
-  if(flightplan.getSource() == atools::fs::pln::FLP || flightplan.getSource() == atools::fs::pln::FMS)
-    // Set type cruise altitude and speed since these formats do not support this
-    updateFlightplanFromWidgets();
 
   routeFilename = filename;
   fileDeparture = flightplan.getDepartureIdent();
@@ -589,10 +645,10 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
   // Update start position for other formats than FSX/P3D
-  bool forceUpdate = flightplan.getSource() != atools::fs::pln::FSX_P3D;
+  bool forceUpdate = flightplan.getFileFormat() != atools::fs::pln::PLN_FSX;
 
-  // Do not create an entry on the undo stack since this plan will be saved using save as
-  bool quietUpdate = flightplan.getSource() != atools::fs::pln::FSX_P3D ? false : !quiet;
+  // Do not create an entry on the undo stack since this plan file type does not support it
+  bool quietUpdate = flightplan.getFileFormat() != atools::fs::pln::PLN_FSX ? false : !quiet;
 
   if(updateStartPositionBestRunway(forceUpdate /* force */, quietUpdate /* undo */))
   {
@@ -771,20 +827,27 @@ bool RouteController::appendFlightplan(const QString& filename)
   return true;
 }
 
-bool RouteController::saveFlighplanAs(const QString& filename, bool cleanExport)
+bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat targetFileFormat)
+{
+  qDebug() << Q_FUNC_INFO << filename << targetFileFormat;
+  routeFilename = filename;
+  route.getFlightplan().setFileFormat(targetFileFormat);
+  return saveFlightplan(false);
+}
+
+bool RouteController::exportFlighplanAsClean(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString savedFilename = routeFilename;
   routeFilename = filename;
-  bool retval = saveFlightplan(cleanExport);
+  bool retval = saveFlightplan(true);
 
-  if(cleanExport)
-    // Revert back to original name
-    routeFilename = savedFilename;
+  // Revert back to original name
+  routeFilename = savedFilename;
   return retval;
 }
 
-bool RouteController::saveFlighplanAsGfp(const QString& filename)
+bool RouteController::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteString().createGfpStringForRoute(route);
@@ -804,7 +867,7 @@ bool RouteController::saveFlighplanAsGfp(const QString& filename)
   }
 }
 
-bool RouteController::saveFlighplanAsRte(const QString& filename)
+bool RouteController::exportFlighplanAsRte(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -825,49 +888,7 @@ bool RouteController::saveFlighplanAsRte(const QString& filename)
   return true;
 }
 
-bool RouteController::saveFlighplanAsFlp(const QString& filename)
-{
-  qDebug() << Q_FUNC_INFO << filename;
-
-  try
-  {
-    route.getFlightplan().saveFlp(filename, true /* save procedures */);
-  }
-  catch(atools::Exception& e)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleException(e);
-    return false;
-  }
-  catch(...)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-    return false;
-  }
-  return true;
-}
-
-bool RouteController::saveFlighplanAsFms(const QString& filename)
-{
-  qDebug() << Q_FUNC_INFO << filename;
-
-  try
-  {
-    route.getFlightplan().saveFms(filename);
-  }
-  catch(atools::Exception& e)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleException(e);
-    return false;
-  }
-  catch(...)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-    return false;
-  }
-  return true;
-}
-
-bool RouteController::saveFlighplanAsGpx(const QString& filename)
+bool RouteController::exportFlighplanAsGpx(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -898,32 +919,40 @@ bool RouteController::saveFlighplanAsGpx(const QString& filename)
   return true;
 }
 
+/* Save flight plan using the same format indicated in the flight plan object */
 bool RouteController::saveFlightplan(bool cleanExport)
 {
-  qDebug() << Q_FUNC_INFO;
+  Flightplan& flightplan = route.getFlightplan();
+  qDebug() << Q_FUNC_INFO << flightplan.getFileFormat();
 
   try
   {
     if(!cleanExport)
     {
-      fileDeparture = route.getFlightplan().getDepartureIdent();
-      fileDestination = route.getFlightplan().getDestinationIdent();
-      fileIfrVfr = route.getFlightplan().getFlightplanType();
+      fileDeparture = flightplan.getDepartureIdent();
+      fileDestination = flightplan.getDestinationIdent();
+      fileIfrVfr = flightplan.getFlightplanType();
     }
 
     // Will throw an exception if something goes wrong
 
     // Remember altitude in local units and set to feet before saving
-    int oldCruise = route.getFlightplan().getCruisingAltitude();
-    route.getFlightplan().setCruisingAltitude(
-      atools::roundToInt(Unit::rev(static_cast<float>(route.getFlightplan().getCruisingAltitude()),
+    int oldCruise = flightplan.getCruisingAltitude();
+    flightplan.setCruisingAltitude(
+      atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()),
                                    Unit::altFeetF)));
 
-    QHash<QString, QString>& properties = route.getFlightplan().getProperties();
+    QHash<QString, QString>& properties = flightplan.getProperties();
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
-    route.getFlightplan().save(routeFilename, cleanExport);
-    route.getFlightplan().setCruisingAltitude(oldCruise);
+    // Save PLN, FLP or FMS
+    flightplan.save(routeFilename, cleanExport /* clean */);
+
+    if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
+      // Old format is always saved as new after question dialog
+      flightplan.setFileFormat(atools::fs::pln::PLN_FSX);
+
+    flightplan.setCruisingAltitude(oldCruise);
 
     if(!cleanExport)
     {
@@ -1349,7 +1378,7 @@ QString RouteController::buildDefaultFilenameShort(const QString& sep, const QSt
   filename += sep;
 
   filename += flightplan.getEntries().last().getIcaoIdent();
-  filename += "." + suffix;
+  filename += suffix;
 
   // Remove characters that are note allowed in most filesystems
   filename = atools::cleanFilename(filename);
@@ -1837,16 +1866,21 @@ bool RouteController::hasChanged() const
   return undoIndexClean == -1 || undoIndexClean != undoIndex;
 }
 
-bool RouteController::doesFilenameMatchRoute()
+bool RouteController::doesFilenameMatchRoute(atools::fs::pln::FileFormat format)
 {
   if(!routeFilename.isEmpty())
   {
     if(!(OptionData::instance().getFlags() & opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN))
       return true;
 
-    return fileIfrVfr == route.getFlightplan().getFlightplanType() &&
-           fileDeparture == route.getFlightplan().getDepartureIdent() &&
-           fileDestination == route.getFlightplan().getDestinationIdent();
+    if(format == atools::fs::pln::PLN_FS9 || format == atools::fs::pln::PLN_FSX)
+      return fileIfrVfr == route.getFlightplan().getFlightplanType() &&
+             fileDeparture == route.getFlightplan().getDepartureIdent() &&
+             fileDestination == route.getFlightplan().getDestinationIdent();
+    else
+      return fileDeparture == route.getFlightplan().getDepartureIdent() &&
+             fileDestination == route.getFlightplan().getDestinationIdent();
+
   }
   return false;
 }
@@ -2567,13 +2601,17 @@ void RouteController::routeToFlightPlan()
 /* Copy type and cruise altitude from widgets to flight plan */
 void RouteController::updateFlightplanFromWidgets()
 {
-  Flightplan& flightplan = route.getFlightplan();
+  updateFlightplanFromWidgets(route.getFlightplan());
+}
+
+void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
+{
   Ui::MainWindow *ui = NavApp::getMainUi();
   flightplan.setFlightplanType(ui->comboBoxRouteType->currentIndex() ==
                                0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 
-  route.getFlightplan().getProperties().insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
+  flightplan.getProperties().insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.

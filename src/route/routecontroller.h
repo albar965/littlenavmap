@@ -20,6 +20,7 @@
 
 #include "route/routecommand.h"
 #include "route/route.h"
+#include "fs/pln/flightplanconstants.h"
 
 #include <QIcon>
 #include <QObject>
@@ -50,6 +51,7 @@ class RouteNetwork;
 class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
+class ViewEventFilter;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -80,16 +82,16 @@ public:
    * Emits routeChanged. */
   bool appendFlightplan(const QString& filename);
 
-  /* Saves flight plan using the given name and uses file name as new current name */
-  bool saveFlighplanAs(const QString& filename, bool cleanExport = false);
+  /* Saves flight plan using the given name and file format and uses file name as new current name */
+  bool saveFlighplanAs(const QString& filename, atools::fs::pln::FileFormat targetFileFormat);
 
-  /* Saves flight plan using current name */
-  bool saveFlightplan(bool cleanExport = false);
-  bool saveFlighplanAsGfp(const QString& filename);
-  bool saveFlighplanAsRte(const QString& filename);
-  bool saveFlighplanAsFlp(const QString& filename);
-  bool saveFlighplanAsFms(const QString& filename);
-  bool saveFlighplanAsGpx(const QString& filename);
+  /* Saves flight plan using current name and current format */
+  bool saveFlightplan(bool cleanExport);
+
+  bool exportFlighplanAsClean(const QString& filename);
+  bool exportFlighplanAsGfp(const QString& filename);
+  bool exportFlighplanAsRte(const QString& filename);
+  bool exportFlighplanAsGpx(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -121,9 +123,9 @@ public:
     return routeFilename;
   }
 
-  bool  doesFilenameMatchRoute();
+  bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
 
-  /* Create a default filename based on departure and destination names */
+  /* Create a default filename based on departure and destination names. Suffix includes dot. */
   QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
   QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
 
@@ -313,6 +315,7 @@ private:
 
   void updateModelRouteTime();
 
+  void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
 
   /* Used by undo/redo */
@@ -391,6 +394,7 @@ private:
   int iconSize = 20;
 
   QTimer routeAltDelayTimer;
+  ViewEventFilter *viewEventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H
