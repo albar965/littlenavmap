@@ -51,7 +51,7 @@ class RouteNetwork;
 class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
-class ViewEventFilter;
+class RouteViewEventFilter;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -394,7 +394,7 @@ private:
   int iconSize = 20;
 
   QTimer routeAltDelayTimer;
-  ViewEventFilter *viewEventFilter = nullptr;
+  RouteViewEventFilter *viewEventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

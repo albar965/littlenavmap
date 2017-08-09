@@ -113,17 +113,17 @@ using Marble::GeoDataCoordinates;
 namespace pln = atools::fs::pln;
 
 /* Use event filter to catch mouse click in white area and deselect all entries */
-class ViewEventFilter :
+class RouteViewEventFilter :
   public QObject
 {
 
 public:
-  ViewEventFilter(QTableView *parent)
+  RouteViewEventFilter(QTableView *parent)
     : QObject(parent), view(parent)
   {
   }
 
-  virtual ~ViewEventFilter();
+  virtual ~RouteViewEventFilter();
 
 private:
   bool eventFilter(QObject *object, QEvent *event);
@@ -131,11 +131,11 @@ private:
   QTableView *view;
 };
 
-ViewEventFilter::~ViewEventFilter()
+RouteViewEventFilter::~RouteViewEventFilter()
 {
 }
 
-bool ViewEventFilter::eventFilter(QObject *object, QEvent *event)
+bool RouteViewEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::MouseButtonPress)
   {
@@ -251,7 +251,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::nothingSelectedTriggered);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
 
-  viewEventFilter = new ViewEventFilter(view);
+  viewEventFilter = new RouteViewEventFilter(view);
   ui->labelRouteInfo->installEventFilter(viewEventFilter);
 
   updateSpinboxSuffices();
