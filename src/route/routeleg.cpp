@@ -39,6 +39,7 @@ const int MAX_WAYPOINT_DISTANCE_INVALID_METER = 10000000.f;
 
 const static QString EMPTY_STRING;
 const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
+const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
 
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
@@ -182,7 +183,28 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
         QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && prevLeg == nullptr)
         {
-          if(!name.isEmpty())
+          if(name.endsWith(PARKING_NO_NUMBER))
+          {
+            // X-Plane style parking - name only
+            name.chop(PARKING_NO_NUMBER.size());
+
+            // Get nearest with the same name
+            QList<map::MapParking> parkings;
+            mapQuery->getParkingByName(parkings, airport.id, name, flightplan->getDeparturePosition());
+
+            if(parkings.isEmpty())
+            {
+              qWarning() << "Found no parking spots for" << name;
+              flightplan->setDepartureParkingName(QString());
+            }
+            else
+            {
+              parking = parkings.first();
+              // Update flightplan with found name
+              flightplan->setDepartureParkingName(name);
+            }
+          }
+          else
           {
             // Resolve parking if first airport
             QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
@@ -200,13 +222,13 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
 
               if(parkings.isEmpty())
               {
-                qWarning() << "Found no parking spots";
+                qWarning() << "Found no parking spots for" << parkingName << number;
                 flightplan->setDepartureParkingName(QString());
               }
               else
               {
                 if(parkings.size() > 1)
-                  qWarning() << "Found multiple parking spots";
+                  qWarning() << "Found multiple parking spots for" << parkingName << number;
 
                 parking = parkings.first();
                 // Update flightplan with found name

@@ -2074,7 +2074,7 @@ void RouteController::select(QList<int>& rows, int offset)
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
-void RouteController::routeSetParking(map::MapParking parking)
+void RouteController::routeSetParking(const map::MapParking& parking)
 {
   qDebug() << "route set parking id" << parking.id;
 

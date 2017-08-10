@@ -106,7 +106,7 @@ const QColor parkingUnknownOutlineColor = QColor(40, 40, 40);
 const QColor parkingOutlineColor = QColor(80, 80, 80);
 
 const QColor darkParkingTextColor = QColor(Qt::black);
-const QColor brightParkingTextColor = QColor(Qt::white);
+const QColor brightParkingTextColor = QColor(235, 235, 235);
 
 const QColor towerTextColor = QColor(Qt::black);
 const QColor runwayDimsTextColor = QColor(Qt::black);

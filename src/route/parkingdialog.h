@@ -44,11 +44,11 @@ public:
 
   /* Get selected parking spot
    * @return true if parking was selected */
-  bool getSelectedParking(map::MapParking& parking);
+  bool getSelectedParking(map::MapParking& parking) const;
 
   /* Get selected start position.
    * @return true if a start was selected */
-  bool getSelectedStartPosition(map::MapStart& start);
+  bool getSelectedStartPosition(map::MapStart& start) const;
 
 private:
   void updateButtons();

@@ -589,7 +589,12 @@ QString startType(const map::MapStart& start)
 
 QString parkingNameForFlightplan(const map::MapParking& parking)
 {
-  return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);
+  if(parking.number == -1)
+    // Free name
+    return parking.name + " NULL";
+  else
+    // FSX/P3D type
+    return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);
 }
 
 bool MapAirport::closed() const

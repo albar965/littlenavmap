@@ -1174,6 +1174,26 @@ void MapQuery::getParkingByNameAndNumber(QList<map::MapParking>& parkings, int a
   }
 }
 
+void MapQuery::getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name,
+                                const atools::geo::Pos& sortByDistancePos)
+{
+  parkingNameQuery->bindValue(":airportId", airportId);
+  if(name.isEmpty())
+    // Use "like "%" if name is empty
+    parkingNameQuery->bindValue(":name", "%");
+  else
+    parkingNameQuery->bindValue(":name", name);
+  parkingNameQuery->exec();
+
+  while(parkingNameQuery->next())
+  {
+    map::MapParking parking;
+    mapTypesFactory->fillParking(parkingNameQuery->record(), parking);
+    parkings.append(parking);
+  }
+  maptools::sortByDistance(parkings, sortByDistancePos);
+}
+
 const QList<map::MapHelipad> *MapQuery::getHelipads(int airportId)
 {
   if(helipadCache.contains(airportId))
@@ -1504,6 +1524,10 @@ void MapQuery::initQueries()
     "select " + parkingQueryBase +
     " from parking where airport_id = :airportId and name like :name and number = :number order by radius desc");
 
+  parkingNameQuery = new SqlQuery(db);
+  parkingNameQuery->prepare("select " + parkingQueryBase +
+                            " from parking where airport_id = :airportId and name like :name order by radius desc");
+
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
     "select h.surface, h.type, h.length, h.width, h.heading, h.is_transparent, h.is_closed, h.lonx, h.laty, "
@@ -1663,6 +1687,8 @@ void MapQuery::deInitQueries()
   startQuery = nullptr;
   delete parkingTypeAndNumberQuery;
   parkingTypeAndNumberQuery = nullptr;
+  delete parkingNameQuery;
+  parkingNameQuery = nullptr;
   delete helipadQuery;
   helipadQuery = nullptr;
   delete taxiparthQuery;

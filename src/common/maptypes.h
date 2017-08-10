@@ -277,7 +277,8 @@ struct MapParking
   QString type, name, airlineCodes /* Comma separated list of airline codes */;
   int id /* database id parking.parking_id */, airportId /* database id airport.airport_id */;
   atools::geo::Pos position;
-  int number, radius, heading;
+  int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
+      radius, heading;
   bool jetway;
 
   bool isValid() const

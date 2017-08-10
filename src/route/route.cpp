@@ -646,6 +646,16 @@ bool Route::hasAirways() const
   return false;
 }
 
+bool Route::hasUserWaypoints() const
+{
+  for(const RouteLeg& leg : *this)
+  {
+    if(leg.getMapObjectType() == map::USER)
+      return true;
+  }
+  return false;
+}
+
 bool Route::hasValidDeparture() const
 {
   return !getFlightplan().isEmpty() &&

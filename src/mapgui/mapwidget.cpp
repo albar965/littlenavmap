@@ -1413,7 +1413,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(parking != nullptr)
   {
-    departureParkingText = map::parkingName(parking->name) + " " + QLocale().toString(parking->number);
+    if(parking->number == -1)
+      departureParkingText = map::parkingName(parking->name);
+    else
+      departureParkingText = map::parkingName(parking->name) + " " + QLocale().toString(parking->number);
+
     informationText.clear();
     measureText.clear();
     rangeRingText.clear();

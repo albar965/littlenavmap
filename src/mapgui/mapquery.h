@@ -139,6 +139,7 @@ public:
    * @param number parking number
    */
   void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name, int number);
+  void getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name, const atools::geo::Pos& sortByDistancePos);
 
   /*
    * Get a start position of an airport (runway, helipad and water)
@@ -282,7 +283,8 @@ private:
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
                         *parkingQuery = nullptr, *startQuery = nullptr, *helipadQuery = nullptr,
                         *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-                        *parkingTypeAndNumberQuery = nullptr;
+                        *parkingTypeAndNumberQuery = nullptr,
+                        *parkingNameQuery = nullptr;
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
                         *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,

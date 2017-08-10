@@ -1084,6 +1084,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
   };
 
   bool airways = NavApp::getRoute().hasAirways();
+  bool userWaypoints = NavApp::getRoute().hasUserWaypoints();
   bool procedures = NavApp::getRoute().hasAnyProcedure();
   QString routeFilename = NavApp::getRouteController()->getCurrentRouteFilename();
   int result = QMessageBox::Save;
@@ -1098,26 +1099,39 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                 tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
                                 BUTTONS, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FMS && (airways || procedures))
+  else if(fileFormat == atools::fs::pln::FMS && (airways || procedures || userWaypoints))
   {
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS_WARNING,
-                                 tr("The X-Plane FMS format does not allow saving of airways, procedures and type.\n\n"
-                                    "This information will be lost when reloading the file.\n\n"
-                                    "Really save as FMS file?\n"),
+                                 tr("The X-Plane FMS format does not allow saving of:"
+                                    "<ul>"
+                                      "<li>Procedures</li>"
+                                        "<li>Airways</li>"
+                                          "<li>Ground Speed</li>"
+                                            "<li>User waypoint names</li>"
+                                              "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                              "</ul>"
+                                              "This information will be lost when reloading the file.<br/><br/>"
+                                              "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
                                  BUTTONS, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FLP)
+  else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints))
   {
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLP_WARNING,
-                                 tr("The FLP format does not allow to save and restore procedures properly.\n"
-                                    "Flight plan type and cruise altitude cannot be saved too.\n\n"
-                                    "Some information will be lost when reloading the file.\n\n"
-                                    "Really save as FLP file?\n"),
+                                 tr("The FLP format does not allow saving of:"
+                                    "<ul>"
+                                      "<li>Procedures (limited, can result in mismatches)</li>"
+                                        "<li>User waypoints</li>"
+                                          "<li>Cruise Altitude</li>"
+                                            "<li>Ground Speed</li>"
+                                              "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                              "</ul>"
+                                              "This information will be lost when reloading the file.<br/><br/>"
+                                              "Really save as FLP file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
                                  BUTTONS, QMessageBox::Cancel, QMessageBox::Save);
   }

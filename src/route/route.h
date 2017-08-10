@@ -141,6 +141,8 @@ public:
   /* @return true if any leg has an airway name */
   bool hasAirways() const;
 
+  bool hasUserWaypoints() const;
+
   /* @return true if departure is an airport and parking is set */
   bool hasDepartureParking() const;
 
