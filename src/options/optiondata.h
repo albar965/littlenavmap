@@ -250,6 +250,22 @@ enum DisplayTrailType
   SOLID
 };
 
+/* comboBoxOptionsStartupUpdateRate - how often to check for updates */
+enum UpdateRate
+{
+  DAILY,
+  WEEKLY,
+  NEVER
+};
+
+/* comboBoxOptionsStartupUpdateChannels - what updates to check for */
+enum UpdateChannels
+{
+  STABLE,
+  STABLE_BETA,
+  STABLE_BETA_DEVELOP
+};
+
 }
 
 /*
@@ -551,6 +567,16 @@ public:
     return altitudeRuleType;
   }
 
+  opts::UpdateRate getUpdateRate() const
+  {
+    return updateRate;
+  }
+
+  opts::UpdateChannels getUpdateChannels() const
+  {
+    return updateChannels;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -738,6 +764,9 @@ private:
     opts::ITEM_AI_AIRCRAFT_REGISTRATION | opts::ITEM_AI_AIRCRAFT_TYPE |
     opts::ITEM_AI_AIRCRAFT_AIRLINE | opts::ITEM_AI_AIRCRAFT_GS |
     opts::ITEM_AI_AIRCRAFT_ALTITUDE;
+
+  opts::UpdateRate updateRate = opts::DAILY;
+  opts::UpdateChannels updateChannels = opts::STABLE;
 
   // Used in the singelton to check if data was already loaded
   bool valid = false;

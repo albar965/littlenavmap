@@ -109,6 +109,7 @@ private:
   void updateButtonColors();
   void updateCacheElevationStates();
   void offlineDataSelectClicked();
+  void checkUpdateClicked();
 
   QVector<int> ringStrToVector(const QString& string) const;
 

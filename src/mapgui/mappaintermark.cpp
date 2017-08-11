@@ -36,6 +36,9 @@
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
+const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);
+const atools::geo::Pos MAG_SOUTH_POLE_2007 = atools::geo::Pos(137.684f, -64.497f, 0.f);
+
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;

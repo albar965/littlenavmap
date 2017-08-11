@@ -28,6 +28,7 @@
 #include "route/routecontroller.h"
 #include "common/elevationprovider.h"
 #include "fs/common/magdecreader.h"
+#include "common/updatehandler.h"
 
 #include "ui_mainwindow.h"
 
@@ -48,6 +49,7 @@ atools::fs::db::DatabaseMeta *NavApp::databaseMeta = nullptr;
 QSplashScreen *NavApp::splashScreen = nullptr;
 
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
+UpdateHandler *NavApp::updateHandler = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -88,6 +90,10 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   qDebug() << "MainWindow Creating ConnectClient";
   connectClient = new ConnectClient(mainWindow);
+
+  qDebug() << "MainWindow Creating UpdateCheck";
+  updateHandler = new UpdateHandler(mainWindow);
+  // The check will be called on main window shown
 }
 
 void NavApp::initElevationProvider()
@@ -98,6 +104,10 @@ void NavApp::initElevationProvider()
 void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
+
+  qDebug() << Q_FUNC_INFO << "delete updateHandler";
+  delete updateHandler;
+  updateHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete connectClient";
   delete connectClient;
@@ -134,6 +144,11 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete splashScreen";
   delete splashScreen;
   splashScreen = nullptr;
+}
+
+void NavApp::checkForUpdates(int channelOpts, bool manuallyTriggered)
+{
+  updateHandler->checkForUpdates(static_cast<opts::UpdateChannels>(channelOpts), manuallyTriggered);
 }
 
 void NavApp::optionsChanged()
@@ -346,6 +361,11 @@ float NavApp::getMagVar(const atools::geo::Pos& pos, float defaultValue)
     return magDecReader->getMagVar(pos);
   else
     return defaultValue;
+}
+
+UpdateHandler *NavApp::getUpdateHandler()
+{
+  return updateHandler;
 }
 
 void NavApp::initSplashScreen()

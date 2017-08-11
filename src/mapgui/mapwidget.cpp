@@ -62,6 +62,9 @@ const int DEFAULT_MAP_DISTANCE = 7000;
 // Get elevation when mouse is still
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
+/* If width and height of a bounding rect are smaller than this use show point */
+const float POS_IS_POINT_EPSILON = 0.0001f;
+
 // Update rates defined by delta values
 const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 {

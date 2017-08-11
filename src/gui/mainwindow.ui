@@ -109,6 +109,8 @@
     <addaction name="separator"/>
     <addaction name="actionAboutMarble"/>
     <addaction name="actionHelpAboutQt"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpCheckUpdates"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -5795,6 +5797,24 @@
   <action name="actionExport">
    <property name="text">
     <string>&amp;Export</string>
+   </property>
+  </action>
+  <action name="actionHelpCheckUpdates">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/littlenavmap.svg</normaloff>:/littlenavmap/resources/icons/littlenavmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Check for Updates</string>
+   </property>
+   <property name="toolTip">
+    <string>Check for Updates</string>
+   </property>
+   <property name="statusTip">
+    <string>About Little Navmap</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
  </widget>

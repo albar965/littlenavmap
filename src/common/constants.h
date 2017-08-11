@@ -37,16 +37,11 @@
 
 #include "geo/pos.h"
 
-const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);
-const atools::geo::Pos MAG_SOUTH_POLE_2007 = atools::geo::Pos(137.684f, -64.497f, 0.f);
-
-/* If width and height of a bounding rect are smaller than this use show point */
-const float POS_IS_POINT_EPSILON = 0.0001f;
-
 namespace lnm {
 
+// ======== URLs ================================================================
 // "master" or "release/1.4"
-const QString HELP_BRANCH = "release/1.4";
+const QLatin1Literal HELP_BRANCH("master");
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
 const QString HELP_ONLINE_URL(
@@ -55,13 +50,14 @@ const QString HELP_ONLINE_URL(
 const QString HELP_ONLINE_TUTORIALS_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
 
-const QString HELP_LEGEND_INLINE_URL("help/legend-${LANG}.html");
+const QLatin1Literal HELP_LEGEND_INLINE_URL("help/legend-${LANG}.html");
 
-const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
+const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
 
-/* Supported languages for the online help system. Will be determined by the
- * installation of offline PDF manual. */
-const QStringList helpLanguages();
+// const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/assets/version/versioninfo"); // For test purposes
+const QLatin1Literal OPTIONS_UPDATE_URL("https://albar965.github.io/littlenavmap-version");
+
+// ======== Options ================================================================
 
 /* State of "do not show again" dialog buttons */
 const QLatin1Literal ACTIONS_SHOWDISCONNECTINFO("Actions/ShowDisconnectInfo");
@@ -74,6 +70,7 @@ const QLatin1Literal ACTIONS_SHOWROUTEWARNING("Actions/ShowRouteWarning");
 const QLatin1Literal ACTIONS_SHOWROUTE_ERROR("Actions/ShowRouteError");
 const QLatin1Literal ACTIONS_SHOWROUTE_PROC_ERROR("Actions/ShowRouteProcedureError");
 const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChanged");
+const QLatin1Literal ACTIONS_SHOW_UPDATEFAILED("Actions/ShowUpdateFailed");
 
 const QLatin1Literal ACTIONS_SHOW_FS9_WARNING("Actions/ShowFs9Warning");
 const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");
@@ -157,6 +154,9 @@ const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
+
+const QLatin1Literal OPTIONS_UPDATES_CHECKED("Update/AlreadyChecked");
+const QLatin1Literal OPTIONS_UPDATES_LAST_CHECKED("Update/LastCheckTimestamp");
 
 /* File dialog patterns */
 #if defined(Q_OS_WIN32)
@@ -242,6 +242,11 @@ const unsigned char DEFAULT_MAINWINDOW_STATE[841] =
   0x0, 0x69, 0x0, 0x65, 0x0, 0x77, 0x1, 0x0, 0x0, 0x2, 0xa8, 0x0, 0x0, 0x2, 0x58, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
   0x0
 };
+
+/* Supported languages for the online help system. Will be determined by the
+ * installation of offline PDF manual. */
+const QStringList helpLanguages();
+
 } // namespace lnm
 
 #pragma GCC diagnostic pop

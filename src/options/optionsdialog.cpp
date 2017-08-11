@@ -30,6 +30,7 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 #include "gui/palettesettings.h"
+#include "util/updatecheck.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -291,6 +292,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->spinBoxOptionsDisplayThicknessRangeDistance);
   widgets.append(ui->comboBoxOptionsDisplayTrailType);
 
+  widgets.append(ui->comboBoxOptionsStartupUpdateChannels);
+  widgets.append(ui->comboBoxOptionsStartupUpdateRate);
+
   widgets.append(ui->comboBoxOptionsUnitDistance);
   widgets.append(ui->comboBoxOptionsUnitAlt);
   widgets.append(ui->comboBoxOptionsUnitSpeed);
@@ -380,6 +384,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->pushButtonCacheOfflineDataSelect, &QPushButton::clicked,
           this, &OptionsDialog::offlineDataSelectClicked);
+
+  connect(ui->pushButtonOptionsStartupCheckUpdate, &QPushButton::clicked,
+          this, &OptionsDialog::checkUpdateClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -664,6 +671,14 @@ QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, const QString& te
   return item;
 }
 
+void OptionsDialog::checkUpdateClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Trigger async check and get a dialog even if nothing was found
+  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(), true /* manually triggered */);
+}
+
 void OptionsDialog::flightplanProcedureColorClicked()
 {
   QColor col = QColorDialog::getColor(flightplanProcedureColor, mainWindow);
@@ -913,6 +928,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayThicknessRangeDistance = ui->spinBoxOptionsDisplayThicknessRangeDistance->value();
   data.displayTrailType = static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
 
+  data.updateRate = static_cast<opts::UpdateRate>(ui->comboBoxOptionsStartupUpdateRate->currentIndex());
+  data.updateChannels = static_cast<opts::UpdateChannels>(ui->comboBoxOptionsStartupUpdateChannels->currentIndex());
+
   data.unitDist = static_cast<opts::UnitDist>(ui->comboBoxOptionsUnitDistance->currentIndex());
   data.unitShortDist = static_cast<opts::UnitShortDist>(ui->comboBoxOptionsUnitShortDistance->currentIndex());
   data.unitAlt = static_cast<opts::UnitAlt>(ui->comboBoxOptionsUnitAlt->currentIndex());
@@ -1034,6 +1052,9 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsDisplayThicknessTrail->setValue(data.displayThicknessTrail);
   ui->spinBoxOptionsDisplayThicknessRangeDistance->setValue(data.displayThicknessRangeDistance);
   ui->comboBoxOptionsDisplayTrailType->setCurrentIndex(data.displayTrailType);
+
+  ui->comboBoxOptionsStartupUpdateRate->setCurrentIndex(data.updateRate);
+  ui->comboBoxOptionsStartupUpdateChannels->setCurrentIndex(data.updateChannels);
 
   ui->comboBoxOptionsUnitDistance->setCurrentIndex(data.unitDist);
   ui->comboBoxOptionsUnitShortDistance->setCurrentIndex(data.unitShortDist);

@@ -177,7 +177,8 @@ SOURCES += src/main.cpp\
     src/common/mapflags.cpp \
     src/common/elevationprovider.cpp \
     src/mapgui/mappaintership.cpp \
-    src/mapgui/mappaintervehicle.cpp
+    src/mapgui/mappaintervehicle.cpp \
+    src/common/updatehandler.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -259,7 +260,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/mapflags.h \
     src/common/elevationprovider.h \
     src/mapgui/mappaintership.h \
-    src/mapgui/mappaintervehicle.h
+    src/mapgui/mappaintervehicle.h \
+    src/common/updatehandler.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

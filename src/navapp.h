@@ -37,6 +37,7 @@ class WeatherReporter;
 class ElevationProvider;
 class AircraftTrack;
 class QSplashScreen;
+class UpdateHandler;
 
 namespace atools {
 
@@ -82,6 +83,8 @@ public:
 
   /* Deletes all aggregated objects */
   static void deInit();
+
+  static void checkForUpdates(int channelOpts, bool manuallyTriggered);
 
   static void optionsChanged();
   static void preDatabaseLoad();
@@ -148,6 +151,8 @@ public:
 
   static float getMagVar(const atools::geo::Pos& pos, float defaultValue = 0.f);
 
+  static UpdateHandler *getUpdateHandler();
+
 private:
   /* Database query helpers and caches */
   static MapQuery *mapQuery;
@@ -163,6 +168,8 @@ private:
   static MainWindow *mainWindow;
   static atools::fs::db::DatabaseMeta *databaseMeta;
   static QSplashScreen *splashScreen;
+
+  static UpdateHandler *updateHandler;
 
   static bool shuttingDown;
 };

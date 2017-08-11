@@ -239,6 +239,7 @@ private:
   void updateAirspaceTypes(map::MapAirspaceTypes types);
   void resetWindowLayout();
   bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
+  void checkForUpdates();
 
   /* Original unchanged window title */
   QString mainWindowTitle;

@@ -338,6 +338,12 @@ void MainWindow::loadNavmapLegend()
   }
 }
 
+/* Check manually for updates as triggered by the action */
+void MainWindow::checkForUpdates()
+{
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manually triggered */);
+}
+
 void MainWindow::showOnlineHelp()
 {
   HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages());
@@ -601,6 +607,7 @@ void MainWindow::connectAllSlots()
   // Notify others of options change
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, &NavApp::optionsChanged);
 
   // Need to clean cache to regenerate some text if units have changed
   connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getProcedureQuery(), &ProcedureQuery::clearCache);
@@ -725,6 +732,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
+  connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
 
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
@@ -1880,6 +1888,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_FS9_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_UPDATEFAILED, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
@@ -1972,6 +1981,9 @@ void MainWindow::mainWindowShown()
   // Update the weather every 30 seconds if connected
   weatherUpdateTimer.setInterval(WEATHER_UPDATE_MS);
   weatherUpdateTimer.start();
+
+  // Check for updates once main window is visible
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 
   setStatusMessage(tr("Ready."));
 
