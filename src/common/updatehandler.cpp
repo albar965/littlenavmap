@@ -99,7 +99,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
   }
 
   // Async
-  qInfo() << "Checking for updates. Channels" << channels << "alread checked" << checked;
+  qInfo() << "Checking for updates. Channels" << channels << "already checked" << checked;
   updateCheck->checkForUpdates(checked, manuallyTriggered /* notifyForEmptyUpdates */, channels);
 }
 
@@ -116,7 +116,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     // Found updates - fill the HTML text for the dialog =============================
     atools::util::HtmlBuilder html(false);
 
-    html.h3(tr("Found Updates"));
+    html.h3(tr("Updates Found"));
     for(const atools::util::Update& update : updates)
     {
       QString channel;
@@ -139,12 +139,14 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
         html.text(update.changelog, atools::util::html::NO_ENTITIES);
 
       if(!update.download.isEmpty())
-        html.p().a(tr("<b>► Direct Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
+        html.p().a(tr("<b>&gt;&gt; Direct Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
+
+
       else
         html.p(tr("No download available for this operating system."));
 
       if(!update.url.isEmpty())
-        html.p().a(tr("<b>► Release Page</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
+        html.p().a(tr("<b>&gt;&gt; Release Page</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
       html.hr();
     }
 
@@ -152,6 +154,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     QMessageBox::StandardButtons buttons = manual ? QMessageBox::Ok : QMessageBox::Retry | QMessageBox::Ignore;
     QMessageBox information(QMessageBox::Information, QApplication::applicationName(),
                             html.getHtml(), buttons, mainWindow);
+    information.setWindowFlags(information.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     information.setTextInteractionFlags(Qt::TextBrowserInteraction);
     information.setWindowModality(Qt::ApplicationModal);

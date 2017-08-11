@@ -20,6 +20,7 @@
 #include "settings/settings.h"
 #include "common/constants.h"
 #include "util/version.h"
+#include "options/optiondata.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -35,14 +36,14 @@ void checkAndMigrateSettings()
   Settings& settings = Settings::instance();
 
   Version optionsVersion(settings.valueStr(lnm::OPTIONS_VERSION));
-  Version appVersion(QCoreApplication::applicationVersion());
+  Version appVersion;
 
   if(optionsVersion.isValid())
   {
     if(optionsVersion != appVersion)
     {
-      qWarning().nospace().noquote() << "Found settings version mismatch. Settings file: " <<
-      optionsVersion << ". Program " << appVersion << ".";
+      qInfo().nospace().noquote() << "Found settings version mismatch. Settings file: " <<
+        optionsVersion << ". Program " << appVersion << ".";
 
       // ------------------------------------------------------
       // Migrate/delete any settings that are not compatible right here
@@ -55,6 +56,22 @@ void checkAndMigrateSettings()
         settings.remove(lnm::MAINWINDOW_WIDGET_STATE_POS);
         settings.remove(lnm::MAINWINDOW_WIDGET_STATE_SIZE);
         settings.remove(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED);
+      }
+
+      // Test the update channels
+      if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !appVersion.isStable()))
+      {
+        // No channel assigned yet or user moved from a stable to beta or development version
+        if(appVersion.isBeta())
+        {
+          qInfo() << "Adjusting update channel to beta";
+          settings.setValue(lnm::OPTIONS_UPDATE_CHANNELS, opts::STABLE_BETA);
+        }
+        else if(appVersion.isDevelop())
+        {
+          qInfo() << "Adjusting update channel to develop";
+          settings.setValue(lnm::OPTIONS_UPDATE_CHANNELS, opts::STABLE_BETA_DEVELOP);
+        }
       }
 
       settings.setValue(lnm::OPTIONS_VERSION, appVersion.getVersionString());

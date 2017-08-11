@@ -158,6 +158,10 @@ const QLatin1Literal OPTIONS_VERSION("Options/Version");
 const QLatin1Literal OPTIONS_UPDATES_CHECKED("Update/AlreadyChecked");
 const QLatin1Literal OPTIONS_UPDATES_LAST_CHECKED("Update/LastCheckTimestamp");
 
+// Need to update these according to program version
+const QLatin1Literal OPTIONS_UPDATE_CHANNELS("OptionsDialog/Widget_comboBoxOptionsStartupUpdateChannels");
+const QLatin1Literal OPTIONS_UPDATE_RATE("OptionsDialog/Widget_comboBoxOptionsStartupUpdateRate");
+
 /* File dialog patterns */
 #if defined(Q_OS_WIN32)
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg)");

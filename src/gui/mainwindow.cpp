@@ -122,7 +122,7 @@ MainWindow::MainWindow()
 
     qDebug() << "MainWindow Creating OptionsDialog";
     optionsDialog = new OptionsDialog(this);
-    // Has to load the state now to options are available for all controller and manager classes
+    // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
 
     // Load all map feature colors
