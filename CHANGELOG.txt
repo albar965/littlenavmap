@@ -1,3 +1,68 @@
+Version 1.5.3.develop
+
+X-Plane
+* Added loading of full X-Plane scenery database except airspaces and ARINC files.
+* Added parking icons and map colors for new X-Plane types.
+* Added weather source and display for X-Plane METAR.rwx.
+
+Flight Plans
+* Now FMS, FLP and FS9 PLN flight plans can be loaded. Format is detected by file content.
+* Added automatic format detection while loading flight plans in P3D/FSX/FS9 PLN, X-Plane FMS and FLP.
+* Changed save/export menu to clarify which formats can be loaded.
+* Added warning dialogs when saving to a flight plan format not supporting all features like airways or procedures.
+* Now loads and saves FMS and FLP files like PLN. This avoids the need to select export in the menu.
+  Instead just save can be used.
+* Now saving and loading procedures in FLP format.
+* Made procedure loading more tolerant for incomplete procedure information in FLP.
+* X-Plane FMS save location is now set from base directory.
+
+Update
+* Added automatic update checks on startup and help menu item for manual check.
+* Added update check settings in options dialog on start page including update channels for
+  stable, beta and development versions.
+
+Magnetic declination
+* Magnetic declination for airports, waypoints and user defined points is now read from magdec.bgl in the
+  scenery database to avoid wrong values from airports and waypoints.
+* Added magdec.bgl file 1701 from http://www.aero.sors.fr for X-Plane data loader.
+* User defined waypoints now get a magvar assigned.
+* Removed now useless true indication for flight plan.
+
+Procedures
+* Fixed reversed above/below alt restriction.
+* Improved info display for procedures and removed useless data.
+* Fixed disappearing preview when selecting legs in procedure search.
+* Added new approach and fix types for X-Plane.
+* Added display of speed limits.
+
+Map Display
+* Added new detail layer where full parking names are shown.
+* Added taxiway center lines in map display to find taxi paths on X-Plane aprons.
+* Added support for runway shoulder, transparent surface and X-Plane aprons and taxiways.
+
+Scenery Database
+* Fixed reading of add-on.xml in UTF-16 encoding.
+* Now sorting of add-on packages by layer.
+* Added fix for unnamed scenery entries in add-on.xml files.
+* Added option to disable/enable reading and writing of add-on packages for P3D v3 and v4.
+* Reworked database managment. Databases are now opened read only to avoid corrupted files on crash.
+* Adapted database dialog behavior for X-Plane support. Dialog can now be shown even without installed simulator.
+
+Other
+* Added "only waypoints" option to route string dialog usable for X-Plane ATC.
+* Added clickspots in top labels to clear sometimes annoying selection in procedure search and flight plan.
+* Scenery is now compiled to a temporary database. Erase database dialog should not pop up anymore after crash.
+* Added links to start positions in information display.
+* Updated to Qt 5.9.1
+
+derived from atools:
+* Multiple X-Plane related schema extensions. Speed limit, apron.geometry and runway.shoulder and more. New columns are optional.
+* Fixed wrongly placed speed limit columns in procedure tables.
+* Can now load FMS, FLP and FS9 ini-style pln flight plan formats.
+* Added saving and loading of procedures to FLP format.
+* Made database loading more robust for mixed case paths on case sensitive operating systems.
+* Databases can now be opened read-only.
+
 Version 1.5.2.develop
 
 derived from atools:

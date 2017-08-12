@@ -60,7 +60,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
-  setApplicationVersion("1.5.2.develop");
+  setApplicationVersion("1.5.3.develop");
 }
 
 NavApp::~NavApp()
