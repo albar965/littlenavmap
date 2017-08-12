@@ -5814,7 +5814,7 @@
     <string>About Little Navmap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
  </widget>
