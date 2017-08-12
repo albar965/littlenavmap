@@ -253,7 +253,9 @@ QPainterPath MapPainterAirport::pathForBoundary(const atools::fs::common::Bounda
 
   // Create a copy and close the geometry
   atools::fs::common::Boundary boundary = boundaryNodes;
-  boundary.append(boundary.first());
+
+  if(!boundary.isEmpty())
+    boundary.append(boundary.first());
 
   int i = 0;
   for(const atools::fs::common::Node& node : boundary)
@@ -491,7 +493,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       QList<MapTaxiPath> pathsToLabel;
 
       // Simplified text placement - take first, last and middle name for a path
-      pathsToLabel.append(paths.first());
+      if(!paths.isEmpty())
+        pathsToLabel.append(paths.first());
       if(paths.size() > 2)
         pathsToLabel.append(paths.at(paths.size() / 2));
       pathsToLabel.append(paths.last());
