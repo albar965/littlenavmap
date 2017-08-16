@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
+    <width>567</width>
     <height>322</height>
    </rect>
   </property>
@@ -79,10 +79,11 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      <item row="8" column="1">
       <widget class="QSpinBox" name="spinBoxConnectPort">
        <property name="toolTip">
-        <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.</string>
+        <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
+Use your X-Plane computer name if you are running the Little XpConnect X-Plane plugin.</string>
        </property>
        <property name="statusTip">
-        <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.</string>
+        <string>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.\nUse your X-Plane computer name if you are running the Little XpConnect X-Plane plugin.</string>
        </property>
        <property name="minimum">
         <number>1024</number>
@@ -111,10 +112,11 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      <item row="7" column="1">
       <widget class="QComboBox" name="comboBoxConnectHostname">
        <property name="toolTip">
-        <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.</string>
+        <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
+Use your X-Plane computer name if you are running the Little XpConnect X-Plane plugin.</string>
        </property>
        <property name="statusTip">
-        <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.</string>
+        <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.\nUse your X-Plane computer name if you are running the Little XpConnect X-Plane plugin.</string>
        </property>
        <property name="editable">
         <bool>true</bool>
@@ -140,13 +142,14 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      <item row="6" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectRemote">
        <property name="toolTip">
-        <string>Connect to a remote flight simulator on another computer which is runnng Little Navconnect.</string>
+        <string>Connect to a local or remote X-Plane using the Little XpConnect plugin or 
+a remote flight simulator on another computer running Little Navconnect.</string>
        </property>
        <property name="statusTip">
-        <string>Connect to a remote flight simulator on another computer which is runnng Little Navconnect.</string>
+        <string>Connect to a local or remote X-Plane using the Little XpConnect plugin or  a remote flight simulator on another computer running Little Navconnect.</string>
        </property>
        <property name="text">
-        <string>Connect to a &amp;remote flight simulator</string>
+        <string>Connect to X-Plane or a &amp;remote flight simulator via Little Navconnect</string>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">buttonGroupConnectType</string>
@@ -169,13 +172,13 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      <item row="1" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectDirect">
        <property name="toolTip">
-        <string>Connect directly to a flight simulator on the same computer.</string>
+        <string>Connect directly to a FSX or Prepar3D flight simulator on the same computer.</string>
        </property>
        <property name="statusTip">
         <string>Connect directly to flight simulator on the same computer.</string>
        </property>
        <property name="text">
-        <string>Connect directly to a &amp;local flight simulator</string>
+        <string>Connect directly to a &amp;local FSX or Prepar3D flight simulator</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -227,8 +230,8 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      <item row="0" column="0" colspan="3">
       <widget class="QLabel" name="labelConnectHeader">
        <property name="text">
-        <string>No Flight Simulator installation found. SimConnect not loaded.&lt;br/&gt;
-Only remote connections are available.</string>
+        <string>No FSX or Prepar3D Flight Simulator installation found. SimConnect not loaded.&lt;br/&gt;
+Only remote connections or connections to the X-Plane Little XpConnect plugin are available.</string>
        </property>
       </widget>
      </item>

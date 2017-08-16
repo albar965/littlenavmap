@@ -27,6 +27,7 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
+#include "fs/sc/simconnecthandler.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -42,11 +43,19 @@ ConnectClient::ConnectClient(MainWindow *parent)
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
+  // Create FSX/P3D handler for SimConnect
+  atools::fs::sc::SimConnectHandler *scHandler = new atools::fs::sc::SimConnectHandler(verbose);
+  scHandler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
+  connectHandler = scHandler;
+
+  // Create thread class that reads data from handler
   DataReaderThread *dr =
-    new DataReaderThread(mainWindow, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+    new DataReaderThread(mainWindow, connectHandler,
+                         settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
 
   if(dr->isSimconnectAvailable())
   {
+    // We were able to connect
     dataReader = dr;
     dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
@@ -59,6 +68,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
     connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsToDataReader);
   }
   else
+    // No SimConnect - delete temp object
     delete dr;
 
   dialog = new ConnectDialog(mainWindow, dataReader != nullptr);
@@ -85,6 +95,9 @@ ConnectClient::~ConnectClient()
 
   qDebug() << Q_FUNC_INFO << "delete dataReader";
   delete dataReader;
+
+  qDebug() << Q_FUNC_INFO << "delete connectHandler";
+  delete connectHandler;
 
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
@@ -113,11 +126,7 @@ void ConnectClient::connectToServerDialog()
     closeSocket(false);
 
     if(dataReader != nullptr)
-    {
-      dataReader->setTerminate(true);
-      dataReader->wait();
-      dataReader->setTerminate(false);
-    }
+      dataReader->terminateThread();
 
     connectInternal();
   }
@@ -300,9 +309,7 @@ void ConnectClient::autoConnectToggled(bool state)
       if(dataReader->isReconnecting())
       {
         qDebug() << "Stopping reconnect";
-        dataReader->setTerminate(true);
-        dataReader->wait();
-        dataReader->setTerminate(false);
+        dataReader->terminateThread();
         qDebug() << "Stopping reconnect done";
       }
     }
@@ -323,11 +330,7 @@ void ConnectClient::disconnectClicked()
       manualDisconnect = true;
 
   if(dataReader != nullptr)
-  {
-    dataReader->setTerminate(true);
-    dataReader->wait();
-    dataReader->setTerminate(false);
-  }
+    dataReader->terminateThread();
 
   // Close but do not allow reconnect if auto is on
   closeSocket(false);

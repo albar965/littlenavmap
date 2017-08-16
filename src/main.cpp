@@ -25,6 +25,7 @@
 #include "gui/application.h"
 #include "exception.h"
 #include "navapp.h"
+#include "atools.h"
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
 #include "common/settingsmigrate.h"
@@ -104,6 +105,7 @@ int main(int argc, char *argv[])
     // This will prefix all log files with orgranization and application name and append ".log"
     LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(
                                         ":/littlenavmap/resources/config/logging.cfg"));
+
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
 
     Application::addReportPath(QObject::tr("Database directory:"),
@@ -113,6 +115,9 @@ int main(int argc, char *argv[])
 
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();
+    qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
+                                << Application::applicationName() << " revision " << GIT_REVISION;
+
     LoggingUtil::logStandardPaths();
     Settings::logSettingsInformation();
 

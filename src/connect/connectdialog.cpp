@@ -39,6 +39,8 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
   ui->setupUi(this);
 
+  QString header = tr("Connect to X-Plane or a remote FSX or Prepa3D flight simulator via Little Navconnect");
+
   if(!simConnect)
   {
     ui->checkBoxConnectFetchAiAircraft->hide();
@@ -50,11 +52,13 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
 #if !defined(Q_OS_WIN32)
     ui->lineDirectRemote->hide();
-    ui->labelConnectHeader->hide();
+    // ui->labelConnectHeader->hide();
+    ui->labelConnectHeader->setText(header);
 #endif
   }
   else
-    ui->labelConnectHeader->hide();
+    // ui->labelConnectHeader->hide();
+    ui->labelConnectHeader->setText(header);
 
   ui->comboBoxConnectHostname->setAutoCompletion(true);
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);

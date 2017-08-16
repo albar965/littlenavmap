@@ -33,6 +33,7 @@ namespace atools {
 namespace fs {
 namespace sc {
 class DataReaderThread;
+class ConnectHandler;
 class WeatherRequest;
 struct MetarResult;
 
@@ -109,6 +110,7 @@ private:
 
   /* Does automatic reconnect */
   atools::fs::sc::DataReaderThread *dataReader = nullptr;
+  atools::fs::sc::ConnectHandler *connectHandler = nullptr;
 
   /* Have to keep it since it is read multiple times */
   atools::fs::sc::SimConnectData *simConnectData = nullptr;

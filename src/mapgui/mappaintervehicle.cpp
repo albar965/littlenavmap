@@ -71,7 +71,7 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context,
   float x, y;
   if(wToS(pos, x, y))
   {
-    int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadius() * 2;
+    int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
     int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
 
     int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
@@ -97,8 +97,11 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context,
 void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
                                           const SimConnectUserAircraft& userAircraft, float x, float y)
 {
-  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32),
-                      scale->getPixelIntForFeet(userAircraft.getWingSpan()));
+  int modelSize = userAircraft.getWingSpan();
+  if(modelSize == 0)
+    modelSize = userAircraft.getModelRadiusCorrected() * 2;
+
+  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(modelSize));
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 

@@ -33,6 +33,7 @@
 #include "util/htmlbuilder.h"
 #include "fs/util/morsecode.h"
 #include "fs/util/tacanfrequencies.h"
+#include "fs/util/fsutil.h"
 #include "common/unit.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
@@ -1613,17 +1614,20 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   }
   else
   {
-    QString type(tr("Unknown"));
+    QString type(tr(" Unknown"));
     switch(aircraft.getCategory())
     {
       case atools::fs::sc::AIRPLANE:
-        type = "Aircraft";
+        type = " Aircraft";
         break;
       case atools::fs::sc::HELICOPTER:
-        type = "Helicopter";
+        type = " Helicopter";
         break;
       case atools::fs::sc::BOAT:
-        type = "Ship";
+        type = " Ship";
+        break;
+      case atools::fs::sc::UNKNOWN:
+        type.clear();
         break;
       case atools::fs::sc::GROUNDVEHICLE:
       case atools::fs::sc::CONTROLTOWER:
@@ -1633,9 +1637,9 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     }
 
     if(num != -1 && total != -1)
-      aircraftText = tr("AI / Multiplayer %1 - %2 of %3 Vehicles").arg(type).arg(num).arg(total);
+      aircraftText = tr("AI / Multiplayer%1 - %2 of %3 Vehicles").arg(type).arg(num).arg(total);
     else
-      aircraftText = tr("AI / Multiplayer %1").arg(type);
+      aircraftText = tr("AI / Multiplayer%1").arg(type);
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("AI and multiplayer aircraft are not shown on map."), atools::util::html::BOLD);
@@ -1659,7 +1663,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   if(!aircraft.getAirplaneRegistration().isEmpty())
     html.row2(tr("Registration:"), aircraft.getAirplaneRegistration());
 
-  if(!aircraft.getAirplaneType().isEmpty())
+  QString type = airplaneType(aircraft);
+  if(!type.isEmpty())
     html.row2(tr("Type:"), aircraft.getAirplaneType());
 
   if(aircraft.getCategory() == atools::fs::sc::BOAT)
@@ -2022,8 +2027,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
   if(userAircaft != nullptr && info && aircraft.getCategory() != atools::fs::sc::BOAT)
   {
-    html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
-    html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
+    if(userAircaft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
+    if(userAircaft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
   }
 
   if(toTod <= 0 && userAircaft != nullptr /*&& OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD*/)
@@ -2190,10 +2197,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   html.nbsp().nbsp();
 
   QString title(aircraft.getAirplaneRegistration());
-
-  QString title2;
-  if(!aircraft.getAirplaneType().isEmpty())
-    title2 += aircraft.getAirplaneType();
+  QString title2 = airplaneType(aircraft);
 
   if(!aircraft.getAirplaneModel().isEmpty())
     title2 += (title2.isEmpty() ? "" : ", ") + aircraft.getAirplaneModel();
@@ -2210,6 +2214,17 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
            arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()),
            atools::util::html::LINK_NO_UL);
   }
+}
+
+QString HtmlInfoBuilder::airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const
+{
+  if(!aircraft.getAirplaneType().isEmpty())
+    return aircraft.getAirplaneType();
+  else
+    // Convert model ICAO code to a name
+    return atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
+
+  return QString();
 }
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const
