@@ -1665,7 +1665,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   QString type = airplaneType(aircraft);
   if(!type.isEmpty())
-    html.row2(tr("Type:"), aircraft.getAirplaneType());
+    html.row2(tr("Type:"), type);
 
   if(aircraft.getCategory() == atools::fs::sc::BOAT)
   {
@@ -2143,7 +2143,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               locale.toString(atools::geo::degCToDegF(sat), 'f', 0) + tr("°F"));
 
     float isaDeviation = sat - atools::geo::isaTemperature(userAircaft->getPosition().getAltitude());
-    html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C, "));
+    html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C, ") +
+              locale.toString(atools::geo::degCToDegF(isaDeviation), 'f', 0) + tr("°F"));
 
     float slp = userAircaft->getSeaLevelPressureMbar();
     html.row2(tr("Sea Level Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +

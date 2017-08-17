@@ -405,7 +405,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
     {
       // Nicely closed on the other end
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWDISCONNECTINFO,
-                                                     tr("Little Navconnect closed connection."),
+                                                     tr("Remote end closed connection."),
                                                      tr("Do not &show this dialog again."));
     }
     else
