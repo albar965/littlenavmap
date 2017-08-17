@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>322</height>
+    <width>545</width>
+    <height>329</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="topMargin">
-      <number>9</number>
+      <number>0</number>
      </property>
      <item row="2" column="1">
       <widget class="QSpinBox" name="spinBoxConnectUpdateRate">
@@ -231,7 +231,7 @@ a remote flight simulator on another computer running Little Navconnect.</string
       <widget class="QLabel" name="labelConnectHeader">
        <property name="text">
         <string>No FSX or Prepar3D Flight Simulator installation found. SimConnect not loaded.&lt;br/&gt;
-Only remote connections or connections to the X-Plane Little XpConnect plugin are available.</string>
+Only connections to the &lt;i&gt;Little XpConnect&lt;/i&gt; X-Plane plugin or &lt;i&gt;Little Navconnect&lt;/i&gt; are available.</string>
        </property>
       </widget>
      </item>
