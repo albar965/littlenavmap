@@ -8,6 +8,7 @@ echo Filedate %FILEDATE%
 
 pushd "%APROJECTS%\deploy"
 
+rem ===========================================================================
 rem ==== Pack Little Navconnect ===================================================================
 del LittleNavconnect.zip
 
@@ -25,7 +26,25 @@ del \\frida\public\LittleNavconnect-%FILEDATE%.zip
 copy /Y /Z /B LittleNavconnect.zip \\frida\public\LittleNavconnect-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
+rem ===========================================================================
+rem ==== Pack Little XpConnect ===================================================================
+del LittleXpConnect.zip
 
+"C:\Program Files\7-Zip\7z.exe" a LittleXpConnect.zip "Little XpConnect"
+IF ERRORLEVEL 1 goto :err
+
+"C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleXpConnect.zip"
+IF ERRORLEVEL 1 goto :err
+
+del \\darkon\public\LittleXpConnect-%FILEDATE%.zip
+copy /Y /Z /B LittleXpConnect.zip \\darkon\public\LittleXpConnect-%FILEDATE%.zip
+IF ERRORLEVEL 1 goto :err
+
+del \\frida\public\LittleXpConnect-%FILEDATE%.zip
+copy /Y /Z /B LittleXpConnect.zip \\frida\public\LittleXpConnect-%FILEDATE%.zip
+IF ERRORLEVEL 1 goto :err
+
+rem ===========================================================================
 rem ==== Pack Little Navmap ===================================================================
 del LittleNavmap.zip
 
