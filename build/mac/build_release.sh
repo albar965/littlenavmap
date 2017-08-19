@@ -13,6 +13,16 @@ qmake ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=rel
 make -j2
 
 # ===========================================================================
+# ========================== littlexpconnect
+rm -rf ${APROJECTS}/build-littlexpconnect-release
+mkdir -p ${APROJECTS}/build-littlexpconnect-release
+cd ${APROJECTS}/build-littlexpconnect-release
+
+qmake ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
+make -j2
+make deploy -i -l
+
+# ===========================================================================
 # ========================== littlenavmap
 rm -rf ${APROJECTS}/build-littlenavmap-release
 mkdir -p ${APROJECTS}/build-littlenavmap-release

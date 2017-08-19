@@ -11,3 +11,6 @@ cd ${APROJECTS}/littlenavmap
 
 git pull --verbose  --tags
 
+cd ${APROJECTS}/littlexpconnect
+
+git pull --verbose  --tags
