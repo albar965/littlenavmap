@@ -57,6 +57,9 @@ public:
   bool isFetchAiAircraft() const;
   bool isFetchAiShip() const;
 
+  bool isDirectFsx() const;
+  bool isDirectXplane() const;
+
   unsigned int getDirectUpdateRateMs();
 
 signals:

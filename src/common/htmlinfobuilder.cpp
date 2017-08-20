@@ -1650,6 +1650,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   html.table();
   if(!aircraft.getAirplaneTitle().isEmpty())
     html.row2(tr("Title:"), aircraft.getAirplaneTitle());
+  else
+    html.row2(tr("Number:"), locale.toString(aircraft.getObjectId() + 1));
 
   if(!aircraft.getAirplaneAirline().isEmpty())
     html.row2(tr("Airline:"), aircraft.getAirplaneAirline());
@@ -1776,7 +1778,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE)
         {
           QString timeStr;
-          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED &&
+             aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
             timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
 
           html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
@@ -1869,7 +1872,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
         {
           QString timeStr;
-          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED &&
+             aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
             timeStr = formatter::formatMinutesHoursLong(nearestLegDistance / aircraft.getGroundSpeedKts());
 
           // Not for arc legs
@@ -1968,8 +1972,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     head(html, tr("Aircraft"));
   html.table();
 
-  html.row2(tr("Heading:"), locale.toString(aircraft.getHeadingDegMag(), 'f', 0) + tr("°M, ") +
-            locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
+  QStringList hdg;
+  if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+    hdg.append(locale.toString(aircraft.getHeadingDegMag(), 'f', 0) + tr("°M"));
+  if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+    hdg.append(locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
+
+  if(!hdg.isEmpty())
+    html.row2(tr("Heading:"), hdg.join(", "));
 
   if(userAircaft != nullptr && info)
   {
@@ -1980,21 +1990,25 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.row2(tr("Fuel Flow:"), Unit::ffLbs(userAircaft->getFuelFlowPPH()) + ", " +
               Unit::ffGallon(userAircaft->getFuelFlowGPH()));
 
-    if(userAircaft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+    if(userAircaft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     {
-      float hoursRemaining = userAircaft->getFuelTotalWeightLbs() / userAircaft->getFuelFlowPPH();
-      float distanceRemaining = hoursRemaining * aircraft.getGroundSpeedKts();
-      html.row2(tr("Endurance:"), formatter::formatMinutesHoursLong(hoursRemaining) + tr(", ") +
-                Unit::distNm(distanceRemaining));
-    }
+      if(userAircaft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+      {
+        float hoursRemaining = userAircaft->getFuelTotalWeightLbs() / userAircaft->getFuelFlowPPH();
+        float distanceRemaining = hoursRemaining * aircraft.getGroundSpeedKts();
+        html.row2(tr("Endurance:"), formatter::formatMinutesHoursLong(hoursRemaining) + tr(", ") +
+                  Unit::distNm(distanceRemaining));
+      }
 
-    if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f && userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
-    {
-      float neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
-      float neededFuelVol = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowGPH();
-      html.row2(tr("Fuel at Destination:"),
-                Unit::weightLbs(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight) + ", " +
-                Unit::volGallon(userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
+      if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f &&
+         userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
+      {
+        float neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
+        float neededFuelVol = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowGPH();
+        html.row2(tr("Fuel at Destination:"),
+                  Unit::weightLbs(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight) + ", " +
+                  Unit::volGallon(userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
+      }
     }
 
     QString ice;
@@ -2020,7 +2034,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
   if(aircraft.getCategory() != atools::fs::sc::BOAT)
   {
-    if(info)
+    if(info && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()));
   }
   html.row2(info ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
@@ -2055,16 +2069,20 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(info)
     head(html, tr("Speed"));
   html.table();
-  if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
+  if(info && aircraft.getCategory() != atools::fs::sc::BOAT &&
+     aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
 
-  html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
+  if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+    html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
+
   if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
-    html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueSpeedKts()));
+    if(aircraft.getTrueSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueSpeedKts()));
 
   if(aircraft.getCategory() != atools::fs::sc::BOAT)
   {
-    if(info)
+    if(info && aircraft.getMachSpeed() < atools::fs::sc::SC_INVALID_FLOAT)
     {
       float mach = aircraft.getMachSpeed();
       if(mach > 0.4f)
@@ -2073,18 +2091,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.row2(tr("Mach:"), tr("-"));
     }
 
-    int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
-    QString upDown;
-    if(vspeed >= 100)
-      upDown = tr(" <b>▲</b>");
-    else if(vspeed <= -100)
-      upDown = tr(" <b>▼</b>");
+    if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
+    {
+      int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
+      QString upDown;
+      if(vspeed >= 100)
+        upDown = tr(" <b>▲</b>");
+      else if(vspeed <= -100)
+        upDown = tr(" <b>▼</b>");
 
-    if(vspeed < 10.f && vspeed > -10.f)
-      vspeed = 0.f;
+      if(vspeed < 10.f && vspeed > -10.f)
+        vspeed = 0.f;
 
-    html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
-              atools::util::html::NO_ENTITIES);
+      html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
+                atools::util::html::NO_ENTITIES);
+    }
   }
   html.tableEnd();
 
@@ -2134,15 +2155,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
     float tat = userAircaft->getTotalAirTemperatureCelsius();
+    if(tat < 0.f && tat > -0.5f)
+      tat = 0.f;
     html.row2(tr("Total Air Temperature:"), locale.toString(tat, 'f', 0) + tr("°C, ") +
               locale.toString(atools::geo::degCToDegF(tat), 'f', 0) + tr("°F"));
 
     // Static air temperature (SAT) is also called: outside air temperature (OAT) or true air temperature
     float sat = userAircaft->getAmbientTemperatureCelsius();
+    if(sat < 0.f && sat > -0.5f)
+      sat = 0.f;
     html.row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) + tr("°C, ") +
               locale.toString(atools::geo::degCToDegF(sat), 'f', 0) + tr("°F"));
 
     float isaDeviation = sat - atools::geo::isaTemperature(userAircaft->getPosition().getAltitude());
+    if(isaDeviation < 0.f && isaDeviation > -0.5f)
+      isaDeviation = 0.f;
     html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C, ") +
               locale.toString(atools::geo::degCToDegF(isaDeviation), 'f', 0) + tr("°F"));
 
@@ -2224,8 +2251,6 @@ QString HtmlInfoBuilder::airplaneType(const atools::fs::sc::SimConnectAircraft& 
   else
     // Convert model ICAO code to a name
     return atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
-
-  return QString();
 }
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const

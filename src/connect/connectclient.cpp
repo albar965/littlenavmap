@@ -28,6 +28,7 @@
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
+#include "fs/sc/xpconnecthandler.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -44,34 +45,33 @@ ConnectClient::ConnectClient(MainWindow *parent)
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
   // Create FSX/P3D handler for SimConnect
-  atools::fs::sc::SimConnectHandler *scHandler = new atools::fs::sc::SimConnectHandler(verbose);
-  scHandler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
-  connectHandler = scHandler;
+  simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
+  simConnectHandler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
+
+  // Create X-Plane handler for shared memory
+  xpConnectHandler = new atools::fs::sc::XpConnectHandler();
 
   // Create thread class that reads data from handler
-  DataReaderThread *dr =
-    new DataReaderThread(mainWindow, connectHandler,
-                         settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+  dataReader =
+    new DataReaderThread(mainWindow, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
 
-  if(dr->isSimconnectAvailable())
-  {
-    // We were able to connect
-    dataReader = dr;
-    dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
-
-    connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
-    connect(dataReader, &DataReaderThread::postLogMessage, this, &ConnectClient::postLogMessage);
-    connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
-    connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
-            &ConnectClient::disconnectedFromSimulatorDirect);
-    connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader, &DataReaderThread::setUpdateRate);
-    connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsToDataReader);
-  }
+  if(simConnectHandler->isLoaded())
+    dataReader->setHandler(simConnectHandler);
   else
-    // No SimConnect - delete temp object
-    delete dr;
+    dataReader->setHandler(xpConnectHandler);
 
-  dialog = new ConnectDialog(mainWindow, dataReader != nullptr);
+  // We were able to connect
+  dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
+
+  connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
+  connect(dataReader, &DataReaderThread::postLogMessage, this, &ConnectClient::postLogMessage);
+  connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
+  connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
+          &ConnectClient::disconnectedFromSimulatorDirect);
+
+  dialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
+  connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader, &DataReaderThread::setUpdateRate);
+  connect(dialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsToDataReader);
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
   connect(dialog, &ConnectDialog::autoConnectToggled, this, &ConnectClient::autoConnectToggled);
@@ -96,8 +96,11 @@ ConnectClient::~ConnectClient()
   qDebug() << Q_FUNC_INFO << "delete dataReader";
   delete dataReader;
 
-  qDebug() << Q_FUNC_INFO << "delete connectHandler";
-  delete connectHandler;
+  qDebug() << Q_FUNC_INFO << "delete simConnectHandler";
+  delete simConnectHandler;
+
+  qDebug() << Q_FUNC_INFO << "delete xpConnectHandler";
+  delete xpConnectHandler;
 
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
@@ -125,8 +128,7 @@ void ConnectClient::connectToServerDialog()
     silent = false;
     closeSocket(false);
 
-    if(dataReader != nullptr)
-      dataReader->terminateThread();
+    dataReader->terminateThread();
 
     connectInternal();
   }
@@ -148,8 +150,7 @@ void ConnectClient::connectedToSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
-  mainWindow->setConnectionStatusMessageText(tr("Connected"),
-                                             tr("Connected to local flight simulator."));
+  mainWindow->setConnectionStatusMessageText(tr("Connected"), tr("Connected to local flight simulator."));
   dialog->setConnected(isConnected());
   emit connectedToSimulator();
   emit weatherUpdated();
@@ -163,8 +164,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   if(dialog->isAutoConnect() && dialog->isConnectDirect() && !manualDisconnect)
     connectInternal();
   else
-    mainWindow->setConnectionStatusMessageText(tr("Disconnected"),
-                                               tr("Disconnected from local flight simulator."));
+    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
   dialog->setConnected(isConnected());
 
   metarIdentCache.clear();
@@ -224,25 +224,28 @@ void ConnectClient::restoreState()
 {
   dialog->restoreState();
 
-  if(dataReader != nullptr)
-  {
-    dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
-    fetchOptionsToDataReader();
-  }
+  dataReader->setHandler(handlerByDialogSettings());
+  dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
+  fetchOptionsToDataReader();
+}
+
+atools::fs::sc::ConnectHandler *ConnectClient::handlerByDialogSettings()
+{
+  if(dialog->isDirectFsx())
+    return simConnectHandler;
+  else
+    return xpConnectHandler;
 }
 
 void ConnectClient::fetchOptionsToDataReader()
 {
-  if(dataReader != nullptr)
-  {
-    atools::fs::sc::Options options = atools::fs::sc::NO_OPTION;
-    if(dialog->isFetchAiAircraft())
-      options |= atools::fs::sc::FETCH_AI_AIRCRAFT;
-    if(dialog->isFetchAiShip())
-      options |= atools::fs::sc::FETCH_AI_BOAT;
+  atools::fs::sc::Options options = atools::fs::sc::NO_OPTION;
+  if(dialog->isFetchAiAircraft())
+    options |= atools::fs::sc::FETCH_AI_AIRCRAFT;
+  if(dialog->isFetchAiShip())
+    options |= atools::fs::sc::FETCH_AI_BOAT;
 
-    dataReader->setSimconnectOptions(options);
-  }
+  dataReader->setSimconnectOptions(options);
 }
 
 atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos)
@@ -261,7 +264,7 @@ atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station
     if(verbose)
       qDebug() << "ConnectClient::requestWeather" << station;
 
-    if((socket != nullptr && socket->isOpen()) || (dataReader != nullptr && dataReader->isConnected()))
+    if((socket != nullptr && socket->isOpen()) || (dataReader->isFsxHandler() && dataReader->isConnected()))
     {
       atools::fs::sc::WeatherRequest weatherRequest;
       weatherRequest.setStation(station);
@@ -283,7 +286,7 @@ atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
-  if(dataReader != nullptr && dataReader->isConnected())
+  if(dataReader->isFsxHandler() && dataReader->isConnected())
     dataReader->setWeatherRequest(weatherRequest);
 
   if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())
@@ -304,14 +307,11 @@ void ConnectClient::autoConnectToggled(bool state)
   {
     reconnectNetworkTimer.stop();
 
-    if(dataReader != nullptr)
+    if(dataReader->isReconnecting())
     {
-      if(dataReader->isReconnecting())
-      {
-        qDebug() << "Stopping reconnect";
-        dataReader->terminateThread();
-        qDebug() << "Stopping reconnect done";
-      }
+      qDebug() << "Stopping reconnect";
+      dataReader->terminateThread();
+      qDebug() << "Stopping reconnect done";
     }
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Autoconnect switched off."));
   }
@@ -324,13 +324,11 @@ void ConnectClient::disconnectClicked()
 
   reconnectNetworkTimer.stop();
 
-  if(dataReader != nullptr)
-    if(dataReader->isConnected())
-      // Tell disconnectedFromSimulatorDirect not to reconnect
-      manualDisconnect = true;
+  if(dataReader->isConnected())
+    // Tell disconnectedFromSimulatorDirect not to reconnect
+    manualDisconnect = true;
 
-  if(dataReader != nullptr)
-    dataReader->terminateThread();
+  dataReader->terminateThread();
 
   // Close but do not allow reconnect if auto is on
   closeSocket(false);
@@ -342,13 +340,12 @@ void ConnectClient::connectInternal()
   {
     qDebug() << "Starting direct connection";
     // Datareader has its own reconnect mechanism
-    if(dataReader != nullptr)
-    {
-      dataReader->start();
+    dataReader->setHandler(handlerByDialogSettings());
 
-      mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
-                                                 tr("Trying to connect to local flight simulator."));
-    }
+    dataReader->start();
+
+    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
+                                               tr("Trying to connect to local flight simulator."));
   }
   else if(socket == nullptr)
   {
@@ -378,14 +375,6 @@ bool ConnectClient::isConnected() const
     return (socket != nullptr && socket->isOpen()) || dataReader->isConnected();
   else
     return socket != nullptr && socket->isOpen();
-}
-
-bool ConnectClient::isSimConnectAvailable() const
-{
-  if(dataReader != nullptr)
-    return dataReader->isSimconnectAvailable();
-  else
-    return false;
 }
 
 /* Called by signal QAbstractSocket::error */

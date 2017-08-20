@@ -33,6 +33,8 @@ namespace atools {
 namespace fs {
 namespace sc {
 class DataReaderThread;
+class SimConnectHandler;
+class XpConnectHandler;
 class ConnectHandler;
 class WeatherRequest;
 struct MetarResult;
@@ -63,7 +65,6 @@ public:
 
   /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
-  bool isSimConnectAvailable() const;
 
   /* Just saves and restores the state of the dialog */
   void saveState();
@@ -104,13 +105,15 @@ private:
   void requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest);
   void flushQueuedRequests();
   void fetchOptionsToDataReader();
+  atools::fs::sc::ConnectHandler *handlerByDialogSettings();
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
 
   /* Does automatic reconnect */
   atools::fs::sc::DataReaderThread *dataReader = nullptr;
-  atools::fs::sc::ConnectHandler *connectHandler = nullptr;
+  atools::fs::sc::SimConnectHandler *simConnectHandler = nullptr;
+  atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;
 
   /* Have to keep it since it is read multiple times */
   atools::fs::sc::SimConnectData *simConnectData = nullptr;
