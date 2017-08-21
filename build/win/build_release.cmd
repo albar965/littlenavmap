@@ -106,15 +106,7 @@ endlocal
 
 rem ===========================================================================
 rem Copy navconnect =======================================================
-xcopy "%APROJECTS%\deploy\Little Navconnect\littlenavconnect.exe" "%APROJECTS%\deploy\Little Navmap\"
-IF ERRORLEVEL 1 goto :err
-xcopy "%APROJECTS%\deploy\Little Navconnect\littlenavconnect.exe.simconnect" "%APROJECTS%\deploy\Little Navmap\"
-IF ERRORLEVEL 1 goto :err
-xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navconnect\help" "%APROJECTS%\deploy\Little Navmap\help"
-IF ERRORLEVEL 1 goto :err
-xcopy "%APROJECTS%\deploy\Little Navconnect\README.txt" "%APROJECTS%\deploy\Little Navmap\README-Navconnect.txt*"
-IF ERRORLEVEL 1 goto :err
-xcopy "%APROJECTS%\deploy\Little Navconnect\CHANGELOG.txt" "%APROJECTS%\deploy\Little Navmap\CHANGELOG-Navconnect.txt*"
+xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little NavConnect" "%APROJECTS%\deploy\Little Navmap\Little NavConnect"
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
