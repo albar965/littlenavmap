@@ -88,13 +88,13 @@ macx {
 
 CONFIG += c++11
 
-# =====================================================================
-# Files
-# =====================================================================
-
 # Get the current GIT revision to include it into the code
 win32:DEFINES += GIT_REVISION='\\"$$system($${GIT_BIN} rev-parse --short HEAD)\\"'
 unix:DEFINES += GIT_REVISION='\\"$$system(git rev-parse --short HEAD)\\"'
+
+# =====================================================================
+# Files
+# =====================================================================
 
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
@@ -394,9 +394,9 @@ unix:!macx {
 macx {
   INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
          -change /Users/alex/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib \
-          @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+          @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib "$$OUT_PWD/Little Navmap.app/Contents/PlugIns"
 
-  deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
+  deploy.commands += mkdir -p "$$OUT_PWD/Little Navmap.app/Contents/PlugIns" &&
   deploy.commands += cp -Rvf \
     $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
     $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
@@ -410,7 +410,7 @@ macx {
     $${MARBLE_BASE}/lib/plugins/libOverviewMap.so \
     $${MARBLE_BASE}/lib/plugins/libPn2Plugin.so \
     $${MARBLE_BASE}/lib/plugins/libPntPlugin.so \
-    $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
+    "$$OUT_PWD/Little Navmap.app/Contents/PlugIns" &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCompassFloatItem.so &&
@@ -424,7 +424,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
-  deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite -dmg
+  deploy.commands += macdeployqt "Little Navmap.app" -appstore-compliant -always-overwrite -dmg
 
 # -verbose=3
 }
