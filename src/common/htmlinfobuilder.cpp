@@ -2066,48 +2066,55 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
   html.tableEnd();
 
-  if(info)
-    head(html, tr("Speed"));
-  html.table();
-  if(info && aircraft.getCategory() != atools::fs::sc::BOAT &&
-     aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-    html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
-
-  if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-    html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
-
-  if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
-    if(aircraft.getTrueSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueSpeedKts()));
-
-  if(aircraft.getCategory() != atools::fs::sc::BOAT)
+  if(aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
+     aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
+     aircraft.getTrueSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
+     aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
-    if(info && aircraft.getMachSpeed() < atools::fs::sc::SC_INVALID_FLOAT)
+
+    if(info)
+      head(html, tr("Speed"));
+    html.table();
+    if(info && aircraft.getCategory() != atools::fs::sc::BOAT &&
+       aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
+
+    if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
+
+    if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
+      if(aircraft.getTrueSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueSpeedKts()));
+
+    if(aircraft.getCategory() != atools::fs::sc::BOAT)
     {
-      float mach = aircraft.getMachSpeed();
-      if(mach > 0.4f)
-        html.row2(tr("Mach:"), locale.toString(mach, 'f', 3));
-      else
-        html.row2(tr("Mach:"), tr("-"));
+      if(info && aircraft.getMachSpeed() < atools::fs::sc::SC_INVALID_FLOAT)
+      {
+        float mach = aircraft.getMachSpeed();
+        if(mach > 0.4f)
+          html.row2(tr("Mach:"), locale.toString(mach, 'f', 3));
+        else
+          html.row2(tr("Mach:"), tr("-"));
+      }
+
+      if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
+      {
+        int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
+        QString upDown;
+        if(vspeed >= 100)
+          upDown = tr(" <b>▲</b>");
+        else if(vspeed <= -100)
+          upDown = tr(" <b>▼</b>");
+
+        if(vspeed < 10.f && vspeed > -10.f)
+          vspeed = 0.f;
+
+        html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
+                  atools::util::html::NO_ENTITIES);
+      }
     }
-
-    if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
-    {
-      int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
-      QString upDown;
-      if(vspeed >= 100)
-        upDown = tr(" <b>▲</b>");
-      else if(vspeed <= -100)
-        upDown = tr(" <b>▼</b>");
-
-      if(vspeed < 10.f && vspeed > -10.f)
-        vspeed = 0.f;
-
-      html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
-                atools::util::html::NO_ENTITIES);
-    }
+    html.tableEnd();
   }
-  html.tableEnd();
 
   if(userAircaft != nullptr && info)
   {

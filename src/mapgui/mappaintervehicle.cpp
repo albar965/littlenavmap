@@ -81,7 +81,8 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context,
 
     // Position is visible
     context->painter->translate(x, y);
-    context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
+    if(vehicle.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+      context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
 
     // Draw symbol
     context->painter->drawPixmap(offset, offset, *pixmapFromCache(vehicle, size, false));
@@ -105,7 +106,9 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 
-  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_TRACK_LINE) && userAircraft.getGroundSpeedKts() > 30)
+  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
+     userAircraft.getGroundSpeedKts() > 30 &&
+     userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
     symbolPainter->drawTrackLine(context->painter, x, y, size * 2, userAircraft.getTrackDegTrue());
 
   // Position is visible
@@ -206,7 +209,12 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
     if(!aircraft.isOnGround())
     {
       if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
-        texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
+      {
+        if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+          texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
+        else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+          texts.append(tr("HDG %3°T").arg(QString::number(aircraft.getHeadingDegTrue(), 'f', 0)));
+      }
 
       if(context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
         appendClimbSinkText(texts, aircraft);
@@ -242,7 +250,7 @@ void MapPainterVehicle::paintTextLabelUser(const PaintContext *context, float x,
                     context->dOpt(opts::ITEM_USER_AIRCRAFT_GS));
   }
 
-  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_HEADING))
+  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_HEADING) && aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
     texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
 
   if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_CLIMB_SINK))
@@ -323,22 +331,28 @@ const QPixmap *MapPainterVehicle::pixmapFromCache(const PixmapKey& key)
 
 void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft)
 {
-  if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
-    upDown = tr(" ▲");
-  else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
-    upDown = tr(" ▼");
+  if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
+  {
+    if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
+      upDown = tr(" ▲");
+    else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
+      upDown = tr(" ▼");
+  }
 }
 
 void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnectAircraft& aircraft)
 {
-  int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
-  QString upDown;
-  climbSinkPointer(upDown, aircraft);
+  if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
+  {
+    int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
+    QString upDown;
+    climbSinkPointer(upDown, aircraft);
 
-  if(vspeed < 10.f && vspeed > -10.f)
-    vspeed = 0.f;
+    if(vspeed < 10.f && vspeed > -10.f)
+      vspeed = 0.f;
 
-  texts.append(Unit::speedVertFpm(vspeed) + upDown);
+    texts.append(Unit::speedVertFpm(vspeed) + upDown);
+  }
 }
 
 void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
@@ -369,10 +383,10 @@ void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAirc
                                         bool ias, bool gs)
 {
   QStringList line;
-  if(ias)
+  if(ias && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     line.append(tr("IAS %1").arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())));
 
-  if(gs)
+  if(gs && aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     line.append(tr("GS %2").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
 
   if(!line.isEmpty())
@@ -383,27 +397,33 @@ void MapPainterVehicle::paintWindPointer(const PaintContext *context,
                                          const atools::fs::sc::SimConnectUserAircraft& aircraft,
                                          int x, int y)
 {
-  symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
-  paintTextLabelWind(context, x, y, WIND_POINTER_SIZE, aircraft);
+  if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
+  {
+    symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
+    paintTextLabelWind(context, x, y, WIND_POINTER_SIZE, aircraft);
+  }
 }
 
 void MapPainterVehicle::paintTextLabelWind(const PaintContext *context, int x, int y, int size,
                                            const SimConnectUserAircraft& aircraft)
 {
-  QStringList texts;
-
-  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
+  if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
-    texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
-                                                   aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
-                                                 'f', 0)));
+    QStringList texts;
 
-    texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
+    if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
+    {
+      texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
+                                                     aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
+                                                   'f', 0)));
+
+      texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
+    }
+
+    textatt::TextAttributes atts(textatt::BOLD);
+    atts |= textatt::ROUTE_BG_COLOR;
+
+    // Draw text label
+    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
   }
-
-  textatt::TextAttributes atts(textatt::BOLD);
-  atts |= textatt::ROUTE_BG_COLOR;
-
-  // Draw text label
-  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
 }

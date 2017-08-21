@@ -20,6 +20,7 @@
 
 #include "fs/sc/simconnectdata.h"
 #include "util/timedcache.h"
+#include "connectdialog.h"
 
 #include <QAbstractSocket>
 #include <QCache>
@@ -73,7 +74,7 @@ public:
   atools::fs::sc::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
 
 signals:
-  /* Emitted when a new SimConnect data was received from the server (Little Navconnect) */
+  /* Emitted when new data was received from the server (Little Navconnect) */
   void dataPacketReceived(atools::fs::sc::SimConnectData simConnectData);
 
   /* Emitted when a new SimConnect data was received that contains weather data */
@@ -86,8 +87,12 @@ signals:
   void disconnectedFromSimulator();
 
 private:
+  /* Try to reconnect every 5 seconds when network connection is lost */
   const int SOCKET_RECONNECT_SEC = 5;
+  /* Try to reconnect every 5 seconds when the SimConnect or X-Plane connection is lost */
   const int DIRECT_RECONNECT_SEC = 5;
+
+  /* Any metar fetched from the Simulator will time out in 15 seconds */
   const int WEATHER_TIMEOUT_FS_SECS = 15;
 
   void readFromSocket();
@@ -104,8 +109,11 @@ private:
   void autoConnectToggled(bool state);
   void requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest);
   void flushQueuedRequests();
-  void fetchOptionsToDataReader();
   atools::fs::sc::ConnectHandler *handlerByDialogSettings();
+
+  /* Options in ConnectDialog have changed */
+  void fetchOptionsChanged(cd::ConnectSimType type);
+  void directUpdateRateChanged(cd::ConnectSimType type);
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;

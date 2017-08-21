@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="labelConnectHeader">
      <property name="text">
-      <string>No FSX or Prepar3D Flight Simulator installation found. SimConnect not loaded.</string>
+      <string>Neither FSX nor Prepar3D Flight Simulator installation found. SimConnect not loaded.</string>
      </property>
     </widget>
    </item>
@@ -71,10 +71,10 @@ Use your X-Plane computer name if you are running the Little XpConnect X-Plane p
      <item row="6" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectDirectFsx">
        <property name="toolTip">
-        <string>Connect directly to a FSX or Prepar3D flight simulator on the same computer.</string>
+        <string>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</string>
        </property>
        <property name="statusTip">
-        <string>Connect directly to flight simulator on the same computer.</string>
+        <string>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</string>
        </property>
        <property name="text">
         <string>Connect directly to a &amp;local FSX or Prepar3D flight simulator</string>
@@ -229,10 +229,10 @@ Use your X-Plane computer name if you are running the Little XpConnect X-Plane p
      <item row="11" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectDirectXp">
        <property name="toolTip">
-        <string>Connect directly to a FSX or Prepar3D flight simulator on the same computer.</string>
+        <string>Connect directly to X-Plane on the same computer using the Little XpConnect plugin.</string>
        </property>
        <property name="statusTip">
-        <string>Connect directly to flight simulator on the same computer.</string>
+        <string>Connect directly to X-Plane on the same computer using the Little XpConnect plugin.</string>
        </property>
        <property name="text">
         <string>Connect directly to a local &amp;X-Plane simulator</string>
@@ -295,11 +295,10 @@ Lower values will result in a more fluid aircraft movement but can potentially i
      <item row="16" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectRemote">
        <property name="toolTip">
-        <string>Connect to a local or remote X-Plane using the Little XpConnect plugin or 
-a remote flight simulator on another computer running Little Navconnect.</string>
+        <string>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</string>
        </property>
        <property name="statusTip">
-        <string>Connect to a local or remote X-Plane using the Little XpConnect plugin or  a remote flight simulator on another computer running Little Navconnect.</string>
+        <string>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</string>
        </property>
        <property name="text">
         <string>Connect to a &amp;remote flight simulator via Little Navconnect</string>

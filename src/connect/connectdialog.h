@@ -26,6 +26,17 @@ class ConnectDialog;
 
 class QAbstractButton;
 
+namespace cd {
+enum ConnectSimType
+{
+  UNKNOWN,
+  REMOTE,
+  FSX_P3D,
+  XPLANE
+};
+
+}
+
 /*
  * Simulator connection dialog.
  */
@@ -39,10 +50,10 @@ public:
   ~ConnectDialog();
 
   /* Get hostname as entered in the edit field */
-  QString getHostname() const;
+  QString getRemoteHostname() const;
 
   /* Port number as set in the spin box */
-  quint16 getPort() const;
+  quint16 getRemotePort() const;
 
   /* Saves and restores all values */
   void saveState();
@@ -53,22 +64,25 @@ public:
 
   /* true if the connect on startup checkbox was checked */
   bool isAutoConnect() const;
-  bool isConnectDirect() const;
-  bool isFetchAiAircraft() const;
-  bool isFetchAiShip() const;
+  bool isAnyConnectDirect() const;
+  bool isFetchAiAircraft(cd::ConnectSimType type) const;
+  bool isFetchAiShip(cd::ConnectSimType type) const;
 
-  bool isDirectFsx() const;
-  bool isDirectXplane() const;
+  cd::ConnectSimType getCurrentSimType() const;
 
-  unsigned int getDirectUpdateRateMs();
+  unsigned int getDirectUpdateRateMs(cd::ConnectSimType type);
 
 signals:
   void disconnectClicked();
   void autoConnectToggled(bool state);
-  void directUpdateRateChanged(int value);
-  void fetchOptionsChanged();
+
+  void directUpdateRateChanged(cd::ConnectSimType type);
+  void fetchOptionsChanged(cd::ConnectSimType type);
 
 private:
+  void directUpdateRateClicked();
+  void fetchOptionsClicked();
+
   void buttonBoxClicked(QAbstractButton *button);
   void deleteClicked();
   void updateButtonStates();
