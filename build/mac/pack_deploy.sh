@@ -8,13 +8,15 @@ export FILENAME=`date "+20%y%m%d-%H%M"`
 (
   cd ${APROJECTS}/deploy
 
-  rm -rfv LittleNavmap.zip LittleXpConnect.zip "Little Navmap.app"
+  rm -rfv LittleNavmap.zip LittleNavconnect.zip LittleXpconnect.zip
 
-  cp -avf ${APROJECTS}/build-littlenavmap-release/littlenavmap.app "${APROJECTS}/deploy/Little Navmap.app"
+  zip -r LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect"
 
-  zip -r LittleNavmap.zip "Little Navmap.app" "Little XpConnect"
+  zip -r LittleXpconnect.zip "Little Xpconnect"
+
+  zip -r LittleNavconnect.zip "Little Navconnect.app"
+
+  cp -afv LittleXpconnect.zip /Volumes/public/LittleXpconnect-macOS-${FILENAME}.zip
+  cp -afv LittleNavconnect.zip /Volumes/public/LittleNavconnect-macOS-${FILENAME}.zip
   cp -afv LittleNavmap.zip /Volumes/public/LittleNavmap-macOS-${FILENAME}.zip
-
-  zip -r LittleXpConnect.zip "Little XpConnect"
-  cp -afv LittleXpConnect.zip /Volumes/public/LittleXpConnect-macOS-${FILENAME}.zip
 )

@@ -23,6 +23,17 @@ make -j2
 make deploy -i -l
 
 # ===========================================================================
+# ========================== littlenavconnect
+rm -rf ${APROJECTS}/build-littlenavconnect-release
+mkdir -p ${APROJECTS}/build-littlenavconnect-release
+cd ${APROJECTS}/build-littlenavconnect-release
+
+qmake ${APROJECTS}/littlenavconnect/littlenavconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
+make -j2
+make copydata
+make deploy -i -l
+
+# ===========================================================================
 # ========================== littlenavmap
 rm -rf ${APROJECTS}/build-littlenavmap-release
 mkdir -p ${APROJECTS}/build-littlenavmap-release
