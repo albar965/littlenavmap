@@ -118,6 +118,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 {
   qDebug() << Q_FUNC_INFO;
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 

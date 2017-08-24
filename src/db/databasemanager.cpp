@@ -56,6 +56,7 @@ using atools::fs::NavDatabaseOptions;
 using atools::fs::NavDatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
+using atools::sql::SqlQuery;
 using atools::fs::db::DatabaseMeta;
 
 const int MAX_ERROR_BGL_MESSAGES = 400;
@@ -270,8 +271,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
         QMessageBox progressBox(QMessageBox::NoIcon, QApplication::applicationName(), tr("Deleting ..."));
         progressBox.setWindowFlags(progressBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
         progressBox.setStandardButtons(QMessageBox::NoButton);
-        progressBox.setModal(false);
-        progressBox.setWindowModality(Qt::NonModal);
+        progressBox.setWindowModality(Qt::ApplicationModal);
         progressBox.show();
         atools::gui::Application::processEventsExtended();
 
@@ -439,14 +439,14 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
   bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
 
   // cache_size * 1024 bytes if value is negative
-  QStringList pragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
-                       "PRAGMA synchronous=OFF",
-                       "PRAGMA journal_mode=TRUNCATE",
-                       "PRAGMA page_size=8196",
-                       "PRAGMA locking_mode=EXCLUSIVE"});
+  QStringList DATABASE_PRAGMAS({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
+                                "PRAGMA synchronous=OFF",
+                                "PRAGMA journal_mode=TRUNCATE",
+                                "PRAGMA page_size=8196",
+                                "PRAGMA locking_mode=EXCLUSIVE"});
 
-  QStringList pragmaQueries({"PRAGMA foreign_keys", "PRAGMA cache_size", "PRAGMA synchronous",
-                             "PRAGMA journal_mode", "PRAGMA page_size", "PRAGMA locking_mode"});
+  QStringList DATABASE_PRAGMA_QUERIES({"PRAGMA foreign_keys", "PRAGMA cache_size", "PRAGMA synchronous",
+                                       "PRAGMA journal_mode", "PRAGMA page_size", "PRAGMA locking_mode"});
 
   try
   {
@@ -455,16 +455,16 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
 
     // Set foreign keys only on demand because they can decrease loading performance
     if(foreignKeys)
-      pragmas.append("PRAGMA foreign_keys = ON");
+      DATABASE_PRAGMAS.append("PRAGMA foreign_keys = ON");
     else
-      pragmas.append("PRAGMA foreign_keys = OFF");
+      DATABASE_PRAGMAS.append("PRAGMA foreign_keys = OFF");
 
     bool autocommit = db->isAutocommit();
     db->setAutocommit(false);
-    db->open(pragmas);
+    db->open(DATABASE_PRAGMAS);
 
     atools::sql::SqlQuery query(db);
-    for(const QString& pragmaQuery : pragmaQueries)
+    for(const QString& pragmaQuery : DATABASE_PRAGMA_QUERIES)
     {
       query.exec(pragmaQuery);
       if(query.next())
@@ -481,7 +481,7 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
         // Reopen database read/write
         db->close();
         db->setReadonly(false);
-        db->open(pragmas);
+        db->open(DATABASE_PRAGMAS);
       }
 
       createEmptySchema(db);
@@ -493,7 +493,7 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
       // Readonly requested - reopen database
       db->close();
       db->setReadonly();
-      db->open(pragmas);
+      db->open(DATABASE_PRAGMAS);
     }
 
     DatabaseMeta dbmeta(db);
@@ -543,6 +543,8 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 
 void DatabaseManager::run()
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(simulators.value(currentFsType).isInstalled)
     // Use what is currently displayed on the map
     selectedFsType = currentFsType;
@@ -563,10 +565,75 @@ void DatabaseManager::run()
   saveState();
 }
 
+void DatabaseManager::copyAirspaces()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  try
+  {
+    // The current database is read only so we cannot use the attach command
+    SqlUtil fromUtil(database);
+    if(fromUtil.hasTable("boundary"))
+    {
+      // We have a boundary table
+      QString targetFile = buildDatabaseFileName(atools::fs::FsPaths::XPLANE11);
+
+      if(QFile::exists(targetFile))
+      {
+        // X-Plane database file exists
+        SqlDatabase xpDb(DATABASE_NAME_TEMP);
+        xpDb.setDatabaseName(targetFile);
+        xpDb.open();
+
+        SqlUtil xpUtil(xpDb);
+
+        if(xpUtil.hasTable("boundary"))
+        {
+          // X-Plane database file has a boundary table
+          QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+          // Delete and copy
+          xpDb.exec("delete from boundary");
+
+          SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), database);
+          SqlQuery xpQuery(xpUtil.buildInsertStatement("boundary", QString(), QStringList(),
+                                                       false /* named bindings */), xpDb);
+          int copied = SqlUtil::copyResultValues(fromQuery, xpQuery);
+          xpDb.commit();
+
+          QGuiApplication::restoreOverrideCursor();
+          QMessageBox::information(mainWindow, QApplication::applicationName(),
+                                   tr("Copied %1 airspaces to the X-Plane scenery database.").
+                                   arg(copied));
+        }
+        else
+          QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                               tr("X-Plane database has no airspace boundary table.").arg(targetFile));
+      }
+      else
+        QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                             tr("X-Plane database \"%1\" does not exist.").arg(targetFile));
+    }
+    else
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("Airspace boundary table not found in currently selected database"));
+  }
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
+}
+
 /* Shows scenery database loading dialog.
  * @return true if execution was successfull. false if it was cancelled */
 bool DatabaseManager::runInternal()
 {
+  qDebug() << Q_FUNC_INFO;
+
   bool reopenDialog = true;
   try
   {
@@ -690,8 +757,9 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   navDatabaseOpts.setSimulatorType(selectedFsType);
 
   delete progressDialog;
-  progressDialog = new QProgressDialog(databaseDialog);
+  progressDialog = new QProgressDialog(mainWindow);
   progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  progressDialog->setWindowModality(Qt::ApplicationModal);
 
   progressDialog->setWindowTitle(tr("%1 - Loading %2").
                                  arg(QApplication::applicationName()).
@@ -704,7 +772,6 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   label->setTextInteractionFlags(Qt::TextSelectableByMouse);
   label->setMinimumWidth(800);
 
-  progressDialog->setWindowModality(Qt::WindowModal);
   progressDialog->setLabel(label);
   progressDialog->setAutoClose(false);
   progressDialog->setAutoReset(false);
@@ -738,15 +805,15 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   }
   catch(atools::Exception& e)
   {
-    // Show dialog if something went wrong
-    ErrorHandler(databaseDialog).handleException(
+    // Show dialog if something went wrong but do not exit
+    ErrorHandler(progressDialog).handleException(
       e, currentBglFilePath.isEmpty() ? QString() : tr("Processed BGL file:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
   catch(...)
   {
-    // Show dialog if something went wrong
-    ErrorHandler(databaseDialog).handleUnknownException(
+    // Show dialog if something went wrong but do not exit
+    ErrorHandler(progressDialog).handleUnknownException(
       currentBglFilePath.isEmpty() ? QString() : tr("Processed BGL file:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
@@ -819,13 +886,6 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
     // Loading was cancelled
     success = false;
 
-  if(!success)
-  {
-    // Something went wrong of loading was cancelled - restore backup
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    QGuiApplication::restoreOverrideCursor();
-  }
-
   delete progressDialog;
   progressDialog = nullptr;
 
@@ -842,6 +902,9 @@ void DatabaseManager::simulatorChangedFromComboBox(FsPaths::SimulatorType value)
 /* Called by atools::fs::NavDatabase. Updates progress bar and statistics */
 bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer)
 {
+  if(progressDialog->wasCanceled())
+    return true;
+
   if(progress.isFirstCall())
   {
     timer.start();

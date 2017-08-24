@@ -77,13 +77,29 @@ static const int WEATHER_UPDATE_MS = 15000;
 static const QString ABOUT_MESSAGE =
   QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
                 "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
+                "<p>"
+                  "<b>"
+                    "If you would like to show your appreciation you can donate "
+                    "<a href=\"%1\">here"
+                    "</a>."
+                  "</b>"
+                "</p>"
                 "<p>This software is licensed under "
-                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
-                    "<p>The source code for this application is available at "
-                      "<a href=\"https://github.com/albar965\">Github</a>.</p>"
-                        "<p>More about my projects at "
-                          "<a href=\"https://albar965.github.io\">albar965.github.io</a>.</p>"
-                            "<p><b>Copyright 2015-2017 Alexander Barthel</b></p>");
+                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+                  "</a> or any later version."
+                "</p>"
+                "<p>The source code for this application is available at "
+                  "<a href=\"https://github.com/albar965\">Github"
+                  "</a>."
+                "</p>"
+                "<p>More about my projects at "
+                  "<a href=\"https://albar965.github.io\">albar965.github.io"
+                  "</a>."
+                "</p>"
+                "<p>"
+                  "<b>Copyright 2015-2017 Alexander Barthel"
+                  "</b>"
+                "</p>").arg(lnm::HELP_DONTATE_URL);
 
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
@@ -352,6 +368,11 @@ void MainWindow::showOnlineHelp()
 void MainWindow::showOnlineTutorials()
 {
   HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguages());
+}
+
+void MainWindow::showDonationPage()
+{
+  HelpHandler::openUrl(this, lnm::HELP_DONTATE_URL);
 }
 
 void MainWindow::showOfflineHelp()
@@ -677,6 +698,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
+  connect(ui->actionReloadSceneryCopyAirspaces, &QAction::triggered,
+          NavApp::getDatabaseManager(), &DatabaseManager::copyAirspaces);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
@@ -733,6 +756,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
+  connect(ui->actionHelpDonate, &QAction::triggered, this, &MainWindow::showDonationPage);
 
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
@@ -1941,21 +1965,29 @@ void MainWindow::mainWindowShown()
     DatabaseManager *databaseManager = NavApp::getDatabaseManager();
     if(!databaseManager->hasSimulatorDatabases())
     {
+      // Show the scenery database dialog on first start
+#ifdef Q_OS_WIN32
       if(databaseManager->hasInstalledSimulators())
         // No databases but simulators let the user create new databases
         databaseManager->run();
       else
       {
+        // No databases and no simulators - show a message dialog
         NavApp::deleteSplashScreen();
 
         QMessageBox msgBox(this);
         msgBox.setWindowTitle(QApplication::applicationName());
         msgBox.setTextFormat(Qt::RichText);
         msgBox.setText(
-          tr("No Microsoft Flight Simulator or Prepar3D installations and no scenery library databases found.<br/>"
-             "You can copy a Little Navmap scenery library database from another computer.<br/>"
-             "Press the help button for more information on this.<br/><br/>"
-             "If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.<br/><br/>"
+          tr("Could not find a<ul>"
+             "<li>Microsoft Flight Simulator X,</li>"
+               "<li>Flight Simulator - Steam Edition or</li>"
+                 "<li>Prepar3D installation</li></ul>"
+                   "on this computer. Also, no scenery library databases were found.<br/><br/>"
+                   "You can copy a Little Navmap scenery library database from another computer.<br/>"
+                   "Press the help button for more information on this.<br/><br/>"
+                   "If you have X-Plane 11 installed you can go to the scenery library "
+                   "loading dialog by clicking the X-Plane button below.<br/><br/>"
              )
           );
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Open | QMessageBox::Help);
@@ -1968,6 +2000,11 @@ void MainWindow::mainWindowShown()
         else if(result == QMessageBox::Open)
           databaseManager->run();
       }
+#else
+      // Show always on non Windows systems
+      NavApp::deleteSplashScreen();
+      databaseManager->run();
+#endif
     }
 
     // else have databases do nothing
@@ -2077,6 +2114,11 @@ void MainWindow::updateActionStates()
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
+
+  // Allow to copy airspaces to X-Plane if the currently selected is FSX/P3D and the X-Plane path is set
+  ui->actionReloadSceneryCopyAirspaces->setEnabled(
+    NavApp::getCurrentSimulator() != atools::fs::FsPaths::XPLANE11 &&
+    !NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11).isEmpty());
 }
 
 void MainWindow::resetWindowLayout()

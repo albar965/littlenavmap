@@ -174,11 +174,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(!country.isEmpty())
     html.row2(tr("Country:"), country);
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
-  html.row2(tr("Magvar:"), map::magvarText(airport.magvar));
-
-  // if(rec != nullptr)
-  //// Add rating and coordinates for info panel
-  // html.row2(tr("Rating:"), atools::ratingString(rec->valueInt("rating"), 5));
+  html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
 
   if(info)
     addCoordinates(rec, html);
@@ -705,7 +701,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   if(!approach)
   {
     html.row2(tr("Range:"), Unit::distNm(ilsRec->valueFloat("range")));
-    html.row2(tr("Magvar:"), map::magvarText(magvar));
+    html.row2(tr("Magnetic declination:"), map::magvarText(magvar));
     rowForBool(html, ilsRec, "has_backcourse", tr("Has Backcourse"), false);
   }
 
@@ -999,19 +995,21 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     const atools::fs::sc::MetarResult& metar = context.fsMetar;
     if(metar.isValid())
     {
+      QString sim = tr(" (%1)").arg(NavApp::getCurrentSimulatorShortName());
+
       if(!metar.metarForStation.isEmpty())
       {
         Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
-        html.h3(tr("Station Weather (%1)").arg(met.getStation()), atools::util::html::UNDERLINE);
+        html.h3(tr("Station Weather%2 - %1").arg(met.getStation()).arg(sim), atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, false);
       }
 
       if(!metar.metarForNearest.isEmpty())
       {
         Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-        html.h3(tr("Nearest Weather (%1)").
-                arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()),
+        html.h3(tr("Nearest Weather%2 -%1").
+                arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()).arg(sim),
                 atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, false);
       }
@@ -1019,7 +1017,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       if(!metar.metarForInterpolated.isEmpty())
       {
         Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
-        html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()), atools::util::html::UNDERLINE);
+        html.h3(tr("Interpolated Weather%2 - %1").arg(met.getStation()).arg(sim), atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, true);
       }
     }
@@ -1251,7 +1249,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
               arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
 
   if(!vor.tacan && !vor.dmeOnly)
-    html.row2(tr("Magvar:"), map::magvarText(vor.magvar));
+    html.row2(tr("Magnetic declination:"), map::magvarText(vor.magvar));
 
   html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
@@ -1295,7 +1293,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
   html.row2(tr("Region:"), ndb.region);
   html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
-  html.row2(tr("Magvar:"), map::magvarText(ndb.magvar));
+  html.row2(tr("Magnetic declination:"), map::magvarText(ndb.magvar));
   html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(ndb.range));
   html.row2(tr("Morse:"), morse->getCode(ndb.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
@@ -1337,7 +1335,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.row2(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
   html.row2(tr("Region:"), waypoint.region);
   // html.row2(tr("Airport:"), waypoint.airportIdent);
-  html.row2(tr("Magvar:"), map::magvarText(waypoint.magvar));
+  html.row2(tr("Magnetic declination:"), map::magvarText(waypoint.magvar));
   addCoordinates(rec, html);
 
   html.tableEnd();
@@ -2390,15 +2388,13 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
     Metar m(metar, station, timestamp, fsMetar);
     const atools::fs::weather::MetarParser& pm = m.getParsedMetar();
 
-    // qDebug() << heading << "Metar:\n" << metar;
-    // qDebug() << heading << "Clean metar:\n" << m.getCleanMetar();
-
     if(!pm.isValid())
       qWarning() << "Metar is not valid";
 
     if(!pm.getUnusedData().isEmpty())
       qWarning() << "Found unused data:\n" << pm.getUnusedData();
 
+    // Add METAR suffix for tooltip
     html.row2(heading + (info ? tr(":") : tr(" METAR:")), fsMetar ? m.getCleanMetar() : metar);
   }
 }

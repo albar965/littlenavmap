@@ -37,6 +37,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   : QDialog(parent), ui(new Ui::RouteStringDialog), controller(routeController)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 

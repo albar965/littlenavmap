@@ -34,6 +34,7 @@ PrintDialog::PrintDialog(QWidget *parent)
   : QDialog(parent), ui(new Ui::PrintDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 

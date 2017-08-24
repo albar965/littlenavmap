@@ -58,6 +58,9 @@ public:
   /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();
 
+  /* Copy the boundary table from the currently selected FSX/P3D database to the X-Plane database */
+  void copyAirspaces();
+
   /* Save and restore all paths and current simulator settings */
   void saveState();
 

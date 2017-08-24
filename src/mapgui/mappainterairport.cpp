@@ -142,15 +142,12 @@ void MapPainterAirport::render(PaintContext *context)
 
     // Airport diagram is not influenced by detail level
     if(!context->mapLayerEffective->isAirportDiagram())
-      // Draw simplificated runway lines
+      // Draw simplified runway lines
       drawAirportSymbolOverview(context, *airport, pt.x(), pt.y());
 
     // More detailed symbol will be drawn by the route painter - so skip here
     if(!routeAirportIds.contains(airport->id))
     {
-      // if(context->dOpt(opts::ITEM_AIRPORT_WIND_POINTER))
-      // drawWindPointer(context, *airport, pt.x(), pt.y());
-
       // Symbol will be omitted for runway overview
       drawAirportSymbol(context, *airport, pt.x(), pt.y());
 

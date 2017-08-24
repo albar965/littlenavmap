@@ -146,7 +146,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
   append(Column("channel", tr("Channel"))).
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
          filter().condition(">").convertFunc(Unit::distNmF)).
-  append(Column("mag_var", tr("Mag\nVar°"))).
+  append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery Path")).filter()).
   append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("BGL File")).filter()).

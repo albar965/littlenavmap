@@ -80,6 +80,8 @@ struct PaintContext
   // Needs to be larger than number of highest level airports
   static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 2500;
   int objectCount = 0;
+
+  /* Increase drawn object count and return true if exceeded */
   bool objCount()
   {
     objectCount++;
@@ -124,7 +126,7 @@ struct PaintContext
 
   float szF(float scale, double size) const
   {
-    return scale * size;
+    return scale * static_cast<float>(size);
   }
 
   /* Calculate and set font based on scale */

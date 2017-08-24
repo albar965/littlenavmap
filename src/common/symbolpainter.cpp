@@ -131,7 +131,8 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,
                                       float x, float y, int size, bool isAirportDiagram, bool fast)
 {
-  if(airport.longestRunwayLength == 0)
+  if(airport.longestRunwayLength == 0 && !airport.helipad())
+    // Reduce size for airports without runways and without helipads
     size = size * 4 / 5;
 
   atools::util::PainterContextSaver saver(painter);
@@ -388,19 +389,19 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
 
       QPolygonF polygon;
       polygon
-      << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
-      << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
-      << QPointF((425. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.)
-      << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-      << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-      << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
-      << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
-      << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
-      << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
-      << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-      << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-      << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
-      << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
+        << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
+        << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
+        << QPointF((425. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.)
+        << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+        << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+        << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
+        << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
+        << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
+        << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
+        << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+        << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+        << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
+        << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
       double tx = polygon.boundingRect().width() / 2.;
       double ty = polygon.boundingRect().height() / 2. + 1.;
       polygon.translate(tx, ty);
@@ -414,28 +415,28 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
 
         polygon.clear();
         polygon
-        << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-        << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
-        << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
-        << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
+          << QPointF((378. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+          << QPointF((359. - 438.) * sizeF / 94., (502. - 583.) * sizeF / 81.)
+          << QPointF((345. - 438.) * sizeF / 94., (526. - 583.) * sizeF / 81.)
+          << QPointF((364. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.);
         polygon.translate(tx, ty);
         painter->drawConvexPolygon(polygon);
 
         polygon.clear();
         polygon
-        << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
-        << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
-        << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
-        << QPointF((424. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.);
+          << QPointF((439. - 438.) * sizeF / 94., (527. - 583.) * sizeF / 81.)
+          << QPointF((420. - 438.) * sizeF / 94., (538. - 583.) * sizeF / 81.)
+          << QPointF((406. - 438.) * sizeF / 94., (513. - 583.) * sizeF / 81.)
+          << QPointF((424. - 438.) * sizeF / 94., (503. - 583.) * sizeF / 81.);
         polygon.translate(tx, ty);
         painter->drawConvexPolygon(polygon);
 
         polygon.clear();
         polygon
-        << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
-        << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-        << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
-        << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.);
+          << QPointF((406. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.)
+          << QPointF((406. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+          << QPointF((378. - 438.) * sizeF / 94., (583. - 583.) * sizeF / 81.)
+          << QPointF((378. - 438.) * sizeF / 94., (562. - 583.) * sizeF / 81.);
         polygon.translate(tx, ty);
         painter->drawConvexPolygon(polygon);
       }

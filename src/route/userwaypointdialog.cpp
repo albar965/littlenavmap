@@ -26,6 +26,7 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name)
   : QDialog(parent), ui(new Ui::UserWaypointDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 

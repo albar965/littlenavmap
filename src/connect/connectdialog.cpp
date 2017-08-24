@@ -36,6 +36,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   : QDialog(parent), ui(new Ui::ConnectDialog), simConnect(simConnectAvailable)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 
@@ -153,7 +154,11 @@ void ConnectDialog::updateButtonStates()
     ui->radioButtonConnectDirectXp->setChecked(false);
   }
 
-  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setDisabled(ui->comboBoxConnectHostname->currentText().isEmpty());
+  if(ui->radioButtonConnectRemote->isChecked())
+    ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->
+    setDisabled(ui->comboBoxConnectHostname->currentText().isEmpty());
+  else
+    ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setDisabled(false);
 }
 
 void ConnectDialog::setConnected(bool connected)

@@ -1864,18 +1864,29 @@ void MapWidget::elevationDisplayTimerTimeout()
 
 bool MapWidget::eventFilter(QObject *obj, QEvent *e)
 {
+  if(e->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
+    if(keyEvent != nullptr &&
+       atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
+       (keyEvent->modifiers() & Qt::ControlModifier))
+    {
+      // Catch Ctrl++ and Ctrl+- and use it only for details
+      // Do not let marble use it for zooming
+
+      e->accept(); // Do not propagate further
+      event(e); // Call own event handler
+      return true; // Do not process further
+    }
+  }
+
   if(e->type() == QEvent::MouseButtonDblClick)
   {
     // Catch the double click event
 
-    // Do not propagate further
-    e->accept();
-
-    // Call own event handler
-    event(e);
-
-    // Do not process further
-    return true;
+    e->accept(); // Do not propagate further
+    event(e); // Call own event handler
+    return true; // Do not process further
   }
 
   if(e->type() == QEvent::MouseButtonPress)

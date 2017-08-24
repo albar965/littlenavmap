@@ -54,6 +54,8 @@ const QLatin1Literal HELP_LEGEND_INLINE_URL("help/legend-${LANG}.html");
 
 const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
 
+const QLatin1Literal HELP_DONTATE_URL("https://albar965.github.io/donate.html");
+
 // const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/assets/version/versioninfo"); // For test purposes
 const QLatin1Literal OPTIONS_UPDATE_URL("https://albar965.github.io/littlenavmap-version");
 

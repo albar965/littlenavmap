@@ -29,6 +29,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::Map
   : QDialog(parent), ui(new Ui::ParkingDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 

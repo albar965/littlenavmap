@@ -161,5 +161,6 @@
         <file>resources/icons/parkingunknown.svg</file>
         <file>resources/icons/parkingtiedown.svg</file>
         <file>resources/icons/parkinghangar.svg</file>
+        <file>resources/icons/qticon.png</file>
     </qresource>
 </RCC>

@@ -36,6 +36,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   : QDialog(parent), ui(new Ui::DatabaseDialog), simulators(pathMap)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 

@@ -162,7 +162,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool includeHeader, QString& r
 
   QAbstractItemModel *model = view->model();
 
-  if(view->selectionModel() != nullptr)
+  if(view->selectionModel() != nullptr && view->selectionModel()->hasSelection())
   {
     QTextStream stream(&result, QIODevice::WriteOnly);
     QHeaderView *header = view->horizontalHeader();

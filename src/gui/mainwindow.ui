@@ -110,6 +110,7 @@
     <addaction name="actionAboutMarble"/>
     <addaction name="actionHelpAboutQt"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpDonate"/>
     <addaction name="actionHelpCheckUpdates"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -228,6 +229,7 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionDatabaseFiles"/>
+    <addaction name="actionReloadSceneryCopyAirspaces"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <addaction name="menuFile"/>
@@ -3534,7 +3536,7 @@
   <action name="actionHelpAboutQt">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/qticon.png</normaloff>:/littlenavmap/resources/icons/qticon.png</iconset>
    </property>
    <property name="text">
     <string>About &amp;Qt</string>
@@ -5802,7 +5804,7 @@
   <action name="actionHelpCheckUpdates">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/littlenavmap.svg</normaloff>:/littlenavmap/resources/icons/littlenavmap.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/revert.svg</normaloff>:/littlenavmap/resources/icons/revert.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Check for Updates</string>
@@ -5815,6 +5817,42 @@
    </property>
    <property name="menuRole">
     <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="actionHelpDonate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Donate for this Program</string>
+   </property>
+   <property name="toolTip">
+    <string>If you would like show your appreciation you can donate here</string>
+   </property>
+   <property name="statusTip">
+    <string>If you would like show your appreciation you can donate here</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="actionReloadSceneryCopyAirspaces">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airspace.svg</normaloff>:/littlenavmap/resources/icons/airspace.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy Airspaces to X-Plane database ...</string>
+   </property>
+   <property name="iconText">
+    <string>Load Scenery Library</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy airspaces from the currently selected database to the X-Plane database</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy airspaces from the currently selected database to the X-Plane database</string>
    </property>
   </action>
  </widget>
