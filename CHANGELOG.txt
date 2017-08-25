@@ -1,3 +1,29 @@
+Version 1.5.4.develop
+
+* Added moving map display and aircraft information including AI for X-Plane.
+* Cleanup in help menu. Now only help actions have a question mark icon. Added Qt icon.
+* Renamed magvar to magnetic declination in information dialogs.
+* Added donation menu item in help menu and about dialog.
+* Fixed dialog modality to keep dialog from hiding behind main window on macOS.
+* Ctrl + cursor keys are now captured when changing details to avoid accidental zooming.
+* Initial information dialog about missing SimConnect and databases now only shown on Windows.
+* Added function to copy airspaces from FSX/P3D to X-Plane database.
+* Fix for shrinked heliports on map display.
+* Fixed issues with missing data in AI aircraft labels and information display.
+* Updated connect dialog for an additional X-Plane connect option.
+* Added XpConnect to build and deployment scripts.
+* Adapted to missing values from X-Plane moving map plugin.
+
+derived from atools:
+* Made all dialogs now application modal to avoid hiding behind main window.
+* Removed unneede schema generation in case of aborted compilation.
+* Fixed compilation not detecting abort/cancel condition for X-Plane.
+* Added tolerant distance match when merging TACAN and VOR to VORTAC.
+* BGL record length now checked to avoid endless loops and program freezing.
+* Added console application to avoid widget dependencies.
+* Added aircraft type codes.
+* Fixed crash when reading CIFP files.
+
 Version 1.5.3.develop
 
 X-Plane

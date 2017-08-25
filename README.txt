@@ -55,6 +55,23 @@ Little Navmap is a 32-bit application and was tested with Windows 7, Windows 8 a
 The installation on Linux and macOS computers is simlar except different paths.
 
 ------------------------------------------------------------------------------
+-- OTHER PROGRAMS INCLUDED ---------------------------------------------------
+------------------------------------------------------------------------------
+
+This archieve can contain two additional programs depending on downloaded version:
+
+Little Navconnect
+=================
+An agent connecting Little Navmap with a FSX, Prepar3D or X-Plane flight simulator usable
+for remote and networked connections.
+
+Little Xpconnect
+=================
+A X-Plane plugin that allows to use Little Navmap as a moving map when flying.
+Little Navmap can connect locally to this plugin. Remote or networked setups can be done with
+the Little Navconnect program.
+
+------------------------------------------------------------------------------
 -- LICENSE -------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
