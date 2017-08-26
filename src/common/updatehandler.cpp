@@ -39,7 +39,7 @@ UpdateHandler::UpdateHandler(MainWindow *parent)
 #ifdef DEBUG_UPDATE
   updateCheck = new UpdateCheck(true);
 #else
-  updateCheck = new UpdateCheck();
+  updateCheck = new UpdateCheck(false);
 #endif
 
   updateCheck->setUrl(lnm::OPTIONS_UPDATE_URL);
