@@ -5807,7 +5807,7 @@
      <normaloff>:/littlenavmap/resources/icons/revert.svg</normaloff>:/littlenavmap/resources/icons/revert.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Check for Updates</string>
+    <string>Check for &amp;Updates</string>
    </property>
    <property name="toolTip">
     <string>Check for Updates</string>

@@ -15,29 +15,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "db/databaseerrordialog.h"
-#include "ui_databaseerrordialog.h"
+#include "gui/updatedialog.h"
+#include "ui_updatedialog.h"
 
 #include "gui/helphandler.h"
 
-DatabaseErrorDialog::DatabaseErrorDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::DatabaseErrorDialog)
+UpdateDialog::UpdateDialog(QWidget *parent) :
+  QDialog(parent),
+  ui(new Ui::UpdateDialog)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
-  connect(ui->textBrowserDatabaseErrors, &QTextBrowser::anchorClicked, this, &DatabaseErrorDialog::anchorClicked);
+
+  connect(ui->textBrowserUpdate, &QTextBrowser::anchorClicked, this, &UpdateDialog::anchorClicked);
 }
 
-DatabaseErrorDialog::~DatabaseErrorDialog()
+UpdateDialog::~UpdateDialog()
 {
   delete ui;
 }
 
-void DatabaseErrorDialog::setErrorMessages(const QString& messages)
+void UpdateDialog::setMessage(const QString& text)
 {
-  ui->textBrowserDatabaseErrors->setHtml(messages);
+  ui->textBrowserUpdate->setText(text);
 }
 
-void DatabaseErrorDialog::anchorClicked(const QUrl& url)
+QDialogButtonBox *UpdateDialog::getButtonBox()
+{
+  return ui->buttonBoxUpdate;
+}
+
+void UpdateDialog::anchorClicked(const QUrl& url)
 {
   atools::gui::HelpHandler::openUrl(this, url);
 }

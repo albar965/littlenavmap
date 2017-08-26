@@ -15,29 +15,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "db/databaseerrordialog.h"
-#include "ui_databaseerrordialog.h"
+#ifndef LITTLENAVMAP_UPDATEDIALOG_H
+#define LITTLENAVMAP_UPDATEDIALOG_H
 
-#include "gui/helphandler.h"
+#include <QDialog>
 
-DatabaseErrorDialog::DatabaseErrorDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::DatabaseErrorDialog)
-{
-  ui->setupUi(this);
-  connect(ui->textBrowserDatabaseErrors, &QTextBrowser::anchorClicked, this, &DatabaseErrorDialog::anchorClicked);
+class QDialogButtonBox;
+
+namespace Ui {
+class UpdateDialog;
 }
 
-DatabaseErrorDialog::~DatabaseErrorDialog()
+/*
+ * Shows the update HTML text from the downloaded file
+ */
+class UpdateDialog :
+  public QDialog
 {
-  delete ui;
-}
+  Q_OBJECT
 
-void DatabaseErrorDialog::setErrorMessages(const QString& messages)
-{
-  ui->textBrowserDatabaseErrors->setHtml(messages);
-}
+public:
+  explicit UpdateDialog(QWidget *parent);
+  ~UpdateDialog();
 
-void DatabaseErrorDialog::anchorClicked(const QUrl& url)
-{
-  atools::gui::HelpHandler::openUrl(this, url);
-}
+  void setMessage(const QString& text);
+  QDialogButtonBox *getButtonBox();
+
+private:
+  void anchorClicked(const QUrl& url);
+
+  Ui::UpdateDialog *ui;
+};
+
+#endif // LITTLENAVMAP_UPDATEDIALOG_H

@@ -17,6 +17,7 @@
 
 #include "common/updatehandler.h"
 
+#include "gui/updatedialog.h"
 #include "util/updatecheck.h"
 #include "settings/settings.h"
 #include "common/constants.h"
@@ -26,7 +27,7 @@
 #include "util/updatecheck.h"
 #include "gui/dialog.h"
 
-#include <QMessageBox>
+#include <QDialogButtonBox>
 
 using atools::util::UpdateCheck;
 using atools::settings::Settings;
@@ -35,7 +36,12 @@ namespace html = atools::util::html;
 UpdateHandler::UpdateHandler(MainWindow *parent)
   : QObject(parent)
 {
+#ifdef DEBUG_UPDATE
+  updateCheck = new UpdateCheck(true);
+#else
   updateCheck = new UpdateCheck();
+#endif
+
   updateCheck->setUrl(lnm::OPTIONS_UPDATE_URL);
 
   connect(updateCheck, &UpdateCheck::updateFound, this, &UpdateHandler::updateFound);
@@ -52,6 +58,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
   qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "manual" << manuallyTriggered;
 
   manual = manuallyTriggered;
+#ifndef DEBUG_UPDATE
   if(!manuallyTriggered)
   {
     // Check timestamp if automatically triggered on starup
@@ -77,6 +84,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
       return;
     }
   }
+#endif
 
   QStringList checked;
   if(!manuallyTriggered)
@@ -139,46 +147,37 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
         html.text(update.changelog, atools::util::html::NO_ENTITIES);
 
       if(!update.download.isEmpty())
-        html.p().a(tr("<b>&gt;&gt; Direct Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
-
-
+        html.p().a(tr("<b>&gt;&gt; Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
       else
         html.p(tr("No download available for this operating system."));
 
       if(!update.url.isEmpty())
-        html.p().a(tr("<b>&gt;&gt; Release Page</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
+        html.p().a(tr("<b>&gt;&gt; Release Information</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
       html.hr();
     }
 
-    // Show dialog
-    QMessageBox::StandardButtons buttons = manual ? QMessageBox::Ok : QMessageBox::Retry | QMessageBox::Ignore;
-    QMessageBox information(QMessageBox::Information, QApplication::applicationName(),
-                            html.getHtml(), buttons, mainWindow);
-    information.setWindowFlags(information.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    NavApp::deleteSplashScreen();
 
-    information.setTextInteractionFlags(Qt::TextBrowserInteraction);
-    information.setWindowModality(Qt::ApplicationModal);
+    // Show dialog
+    UpdateDialog information(mainWindow);
+    information.setMessage(html.getHtml());
 
     if(!manual)
     {
       // Set ignore and remind me buttons
-      if(updates.size() > 1)
-        information.setButtonText(QMessageBox::Ignore, tr("&Ignore these Updates"));
-      else
-        information.setButtonText(QMessageBox::Ignore, tr("&Ignore this Update"));
-
-      information.setButtonText(QMessageBox::Retry, tr("&Remind me Later"));
-      information.setDefaultButton(QMessageBox::Retry);
-      information.setEscapeButton(QMessageBox::Retry);
+      QString text = updates.size() > 1 ? tr("&Ignore these Updates") : tr("&Ignore this Update");
+      information.getButtonBox()->addButton(text, QDialogButtonBox::AcceptRole);
+      information.getButtonBox()->addButton(tr("&Remind me Later"), QDialogButtonBox::RejectRole);
     }
-    // else use ok button only for manually triggered updates
+    else
+      information.getButtonBox()->addButton(QDialogButtonBox::Ok);
 
     // Show dialog
     int selected = information.exec();
 
     if(!manual)
     {
-      if(selected == QMessageBox::Ignore)
+      if(selected == QMessageBox::Accepted)
       {
         // Add all updates shown to the skip list
         QStringList ignore = Settings::instance().valueStrList(lnm::OPTIONS_UPDATES_CHECKED);
@@ -187,6 +186,9 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
           ignore.append(update.version);
 
         ignore.removeDuplicates();
+
+        qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
+
         Settings::instance().setValue(lnm::OPTIONS_UPDATES_CHECKED, ignore);
       }
     }

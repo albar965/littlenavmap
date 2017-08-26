@@ -31,9 +31,14 @@
 /* Use Shift+Ctrl-Mousemove to simulate an aircraft */
 // #define DEBUG_MOVING_AIRPLANE
 
+/* Print the main window state as a hex dump into the log */
 // #define DEBUG_CREATE_WINDOW_STATE
 
-// #ifdef DEBUG_OBJECT_ID
+/* Show database IDs in the information window and tooltips */
+// #define DEBUG_OBJECT_ID
+
+/* Force updates to always show a notification for testing */
+// #define DEBUG_UPDATE
 
 #include "geo/pos.h"
 
@@ -56,8 +61,11 @@ const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pd
 
 const QLatin1Literal HELP_DONTATE_URL("https://albar965.github.io/donate.html");
 
-// const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/assets/version/versioninfo"); // For test purposes
+#ifdef DEBUG_UPDATE
+const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/littlenavmap-version");  // For test purposes
+#else
 const QLatin1Literal OPTIONS_UPDATE_URL("https://albar965.github.io/littlenavmap-version");
+#endif
 
 // ======== Options ================================================================
 

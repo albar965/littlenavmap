@@ -178,7 +178,8 @@ SOURCES += src/main.cpp\
     src/common/elevationprovider.cpp \
     src/mapgui/mappaintership.cpp \
     src/mapgui/mappaintervehicle.cpp \
-    src/common/updatehandler.cpp
+    src/common/updatehandler.cpp \
+    src/gui/updatedialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -261,7 +262,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/elevationprovider.h \
     src/mapgui/mappaintership.h \
     src/mapgui/mappaintervehicle.h \
-    src/common/updatehandler.h
+    src/common/updatehandler.h \
+    src/gui/updatedialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -271,7 +273,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/print/printdialog.ui \
     src/route/routestringdialog.ui \
     src/route/userwaypointdialog.ui \
-    src/db/databaseerrordialog.ui
+    src/db/databaseerrordialog.ui \
+    src/gui/updatedialog.ui
 
 DISTFILES += \
     uncrustify.cfg \
