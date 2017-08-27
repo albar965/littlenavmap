@@ -592,12 +592,15 @@ void DatabaseManager::copyAirspaces()
           // X-Plane database file has a boundary table
           QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
-          // Delete and copy
+          // Delete
           xpDb.exec("delete from boundary");
 
+          // Build statements
           SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), database);
           SqlQuery xpQuery(xpUtil.buildInsertStatement("boundary", QString(), QStringList(),
                                                        false /* named bindings */), xpDb);
+
+          // Copy from one database to another
           int copied = SqlUtil::copyResultValues(fromQuery, xpQuery);
           xpDb.commit();
 
@@ -609,6 +612,7 @@ void DatabaseManager::copyAirspaces()
         else
           QMessageBox::warning(mainWindow, QApplication::applicationName(),
                                tr("X-Plane database has no airspace boundary table.").arg(targetFile));
+        xpDb.close();
       }
       else
         QMessageBox::warning(mainWindow, QApplication::applicationName(),

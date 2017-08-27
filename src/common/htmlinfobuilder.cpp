@@ -2175,8 +2175,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float isaDeviation = sat - atools::geo::isaTemperature(userAircaft->getPosition().getAltitude());
     if(isaDeviation < 0.f && isaDeviation > -0.5f)
       isaDeviation = 0.f;
-    html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C, ") +
-              locale.toString(atools::geo::degCToDegF(isaDeviation), 'f', 0) + tr("°F"));
+    html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C"));
 
     float slp = userAircaft->getSeaLevelPressureMbar();
     html.row2(tr("Sea Level Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
