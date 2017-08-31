@@ -369,7 +369,10 @@ void RouteController::routeSpeedChanged()
 {
   if(!route.isEmpty())
   {
-    RouteCommand *undoCommand = preChange(tr("Change Speed"), rctype::SPEED);
+    RouteCommand *undoCommand = nullptr;
+
+    if(route.getFlightplan().canSaveSpeed())
+      undoCommand = preChange(tr("Change Speed"), rctype::SPEED);
 
     // Get type, speed and cruise altitude from widgets
     updateFlightplanFromWidgets();
@@ -388,14 +391,13 @@ void RouteController::routeAltChanged()
 {
   RouteCommand *undoCommand = nullptr;
 
-  if(!route.isEmpty())
+  if(!route.isEmpty() && route.getFlightplan().canSaveAltitude())
     undoCommand = preChange(tr("Change Altitude"), rctype::ALTITUDE);
 
   // Get type, speed and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  if(!route.isEmpty())
-    postChange(undoCommand);
+  postChange(undoCommand);
 
   NavApp::updateWindowTitle();
 
@@ -416,20 +418,18 @@ void RouteController::routeTypeChanged()
 {
   RouteCommand *undoCommand = nullptr;
 
-  if(!route.isEmpty())
+  if(!route.isEmpty() && route.getFlightplan().canSaveFlightplanType())
     undoCommand = preChange(tr("Change Type"));
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  if(!route.isEmpty())
-    postChange(undoCommand);
+  postChange(undoCommand);
 
   NavApp::updateWindowTitle();
 
   if(!route.isEmpty())
   {
-
     emit routeChanged(false);
     Ui::MainWindow *ui = NavApp::getMainUi();
     NavApp::setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
@@ -1230,13 +1230,15 @@ void RouteController::adjustFlightplanAltitude()
 
   if(alt != fp.getCruisingAltitude())
   {
-    RouteCommand *undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
+    RouteCommand *undoCommand = nullptr;
+
+    if(route.getFlightplan().canSaveAltitude())
+      undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
     fp.setCruisingAltitude(alt);
 
     updateTableModel();
 
-    if(!route.isEmpty())
-      postChange(undoCommand);
+    postChange(undoCommand);
 
     NavApp::updateWindowTitle();
 
@@ -1761,7 +1763,11 @@ void RouteController::editUserWaypointName(int index)
   UserWaypointDialog dialog(mainWindow, route.at(index).getIdent());
   if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
   {
-    RouteCommand *undoCommand = preChange(tr("Waypoint Name Change"));
+    RouteCommand *undoCommand = nullptr;
+
+    if(route.getFlightplan().canSaveUserWaypointName())
+      undoCommand = preChange(tr("Waypoint Name Change"));
+
     route[index].updateUserName(dialog.getName());
     model->item(index, rc::IDENT)->setText(dialog.getName());
     postChange(undoCommand);
@@ -2078,7 +2084,10 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 {
   qDebug() << "route set parking id" << parking.id;
 
-  RouteCommand *undoCommand = preChange(tr("Set Parking"));
+  RouteCommand *undoCommand = nullptr;
+
+  if(route.getFlightplan().canSaveDepartureParking())
+    undoCommand = preChange(tr("Set Parking"));
 
   if(route.isEmpty() || route.first().getMapObjectType() != map::AIRPORT ||
      route.first().getId() != parking.airportId)
@@ -2262,7 +2271,10 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
 {
   qDebug() << Q_FUNC_INFO /* << legs*/;
 
-  RouteCommand *undoCommand = preChange(tr("Add Procedure"));
+  RouteCommand *undoCommand = nullptr;
+
+  if(route.getFlightplan().canSaveProcedures())
+    undoCommand = preChange(tr("Add Procedure"));
 
   map::MapAirport airport;
   query->getAirportById(airport, legs.ref.airportId);
