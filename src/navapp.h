@@ -103,7 +103,8 @@ public:
   static const Route& getRoute();
   static float getSpeedKts();
 
-  static atools::fs::FsPaths::SimulatorType getCurrentSimulator();
+  /* Currently selected simulator database */
+  static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
 

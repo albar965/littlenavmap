@@ -120,6 +120,18 @@ void MapQuery::getAirportByIdent(map::MapAirport& airport, const QString& ident)
   airportByIdentQuery->finish();
 }
 
+Pos MapQuery::getAirportCoordinatesByIdent(const QString& ident)
+{
+  Pos pos;
+  airportCoordsByIdentQuery->bindValue(":ident", ident);
+  airportCoordsByIdentQuery->exec();
+  if(airportCoordsByIdentQuery->next())
+    pos = Pos(airportCoordsByIdentQuery->value("lonx").toFloat(),
+              airportCoordsByIdentQuery->value("laty").toFloat());
+  airportCoordsByIdentQuery->finish();
+  return pos;
+}
+
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
 {
   vorByWaypointIdQuery->bindValue(":id", waypointId);
@@ -1429,6 +1441,9 @@ void MapQuery::initQueries()
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " + airportQueryBase + " from airport where ident = :ident ");
 
+  airportCoordsByIdentQuery = new SqlQuery(db);
+  airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
+
   vorByIdentQuery = new SqlQuery(db);
   vorByIdentQuery->prepare("select " + vorQueryBase + " from vor where " + whereIdentRegion);
 
@@ -1513,11 +1528,12 @@ void MapQuery::initQueries()
   parkingQuery = new SqlQuery(db);
   parkingQuery->prepare("select " + parkingQueryBase + " from parking where airport_id = :airportId");
 
-  // Start positions joined with runway ends
+  // Start positions ordered by type (runway, helipad) and name
   startQuery = new SqlQuery(db);
   startQuery->prepare(
     "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
-    "from start s where s.airport_id = :airportId");
+    "from start s where s.airport_id = :airportId "
+    "order by s.type desc, s.runway_name");
 
   parkingTypeAndNumberQuery = new SqlQuery(db);
   parkingTypeAndNumberQuery->prepare(
@@ -1737,6 +1753,8 @@ void MapQuery::deInitQueries()
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
+  delete airportCoordsByIdentQuery;
+  airportCoordsByIdentQuery = nullptr;
 
   delete vorByIdentQuery;
   vorByIdentQuery = nullptr;

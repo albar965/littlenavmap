@@ -22,6 +22,8 @@
 #include "options/optiondata.h"
 #include "fs/common/xpweatherreader.h"
 #include "navapp.h"
+#include "fs/sc/simconnecttypes.h"
+#include "mapgui/mapquery.h"
 
 #include <QDebug>
 #include <QDir>
@@ -112,7 +114,10 @@ void WeatherReporter::createFsWatcher()
 void WeatherReporter::initXplane()
 {
   if(simType == atools::fs::FsPaths::XPLANE11)
+  {
     xpWeatherReader->readWeatherFile(NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx");
+    buildXplaneAirportIndex();
+  }
 }
 
 void WeatherReporter::initActiveSkyNext()
@@ -519,9 +524,38 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
     return activeSkyMetars.value(airportIcao, QString());
 }
 
-QString WeatherReporter::getXplaneMetar(const QString& airportIcao)
+atools::fs::sc::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  return xpWeatherReader->getMetar(airportIcao);
+  atools::fs::sc::MetarResult result;
+  result.requestIdent = station;
+  result.requestPos = pos;
+
+  result.metarForStation = xpWeatherReader->getMetar(station);
+
+  if(result.metarForStation.isEmpty())
+  {
+    const XpCoordIdxEntryType *nearest = nullptr;
+    float nearestDistance = std::numeric_limits<float>::max();
+
+    for(const XpCoordIdxEntryType& entry : xpAirportCoordinates)
+    {
+      float dist = entry.first.distanceSimpleTo(pos);
+      if(dist < nearestDistance)
+      {
+        nearestDistance = dist;
+        nearest = &entry;
+      }
+    }
+
+    if(nearest != nullptr)
+      result.metarForNearest = xpWeatherReader->getMetar(nearest->second);
+  }
+
+  // metarForNearest
+  // metarForInterpolated;
+  result.timestamp = QDateTime::currentDateTime();
+  return result;
+
 }
 
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
@@ -587,6 +621,26 @@ void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
 void WeatherReporter::xplaneWeatherFileChanged()
 {
   mainWindow->setStatusMessage(tr("X-Plane weather information updated."));
-
+  buildXplaneAirportIndex();
   emit weatherUpdated();
+}
+
+void WeatherReporter::buildXplaneAirportIndex()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  MapQuery *query = NavApp::getMapQuery();
+  xpAirportCoordinates.clear();
+
+  int num = 0;
+  for(const QString& ident:  xpWeatherReader->getMetarAirportIdents())
+  {
+    atools::geo::Pos pos = query->getAirportCoordinatesByIdent(ident);
+    if(pos.isValid())
+    {
+      xpAirportCoordinates.append(std::make_pair(pos, ident));
+      num++;
+    }
+  }
+  qDebug() << Q_FUNC_INFO << "updated" << num << "airports";
 }

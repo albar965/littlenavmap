@@ -751,7 +751,7 @@ void OptionsDialog::addDatabaseExcludePathClicked()
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Scenery Loading"),
     lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulator()));
+    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
 
   if(!path.isEmpty())
   {
@@ -777,7 +777,7 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Add-On Recognition"),
     lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulator()));
+    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
 
   if(!path.isEmpty())
     ui->listWidgetOptionsDatabaseAddon->addItem(QDir::toNativeSeparators(path));

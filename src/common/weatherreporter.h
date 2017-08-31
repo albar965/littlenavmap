@@ -27,7 +27,14 @@
 #include <QTimer>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace fs {
+namespace sc {
+struct MetarResult;
+}
+
 namespace common {
 class XpWeatherReader;
 }
@@ -64,9 +71,10 @@ public:
   QString getActiveSkyMetar(const QString& airportIcao);
 
   /*
-   * @return X-Plane metar or empty if file not found or X-Plane base directory not found
+   * @return X-Plane metar or empty if file not found or X-Plane base directory not found. Gives the nearest
+   * weather if station has no weather report.
    */
-  QString getXplaneMetar(const QString& airportIcao);
+  atools::fs::sc::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
   /*
    * @return NOAA metar from cache or empty if not entry was found in the cache. Once the request was
@@ -161,6 +169,7 @@ private:
   void deleteFsWatcher();
   void createFsWatcher();
   void initXplane();
+  void buildXplaneAirportIndex();
 
   QHash<QString, QString> activeSkyMetars, xplaneMetars;
   QString activeSkyDepartureMetar, activeSkyDestinationMetar,
@@ -174,6 +183,9 @@ private:
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
 
   atools::fs::common::XpWeatherReader *xpWeatherReader = nullptr;
+  /* Simple index to allow a full search for nearest */
+  typedef std::pair<atools::geo::Pos, QString> XpCoordIdxEntryType;
+  QVector<XpCoordIdxEntryType> xpAirportCoordinates;
 
   // Stores the request ICAO so we can send it to httpFinished()
   QString noaaRequestIcao, vatsimRequestIcao;

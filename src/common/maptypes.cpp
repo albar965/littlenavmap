@@ -591,7 +591,7 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
 {
   if(parking.number == -1)
     // Free name
-    return parking.name + " NULL";
+    return parking.name;
   else
     // FSX/P3D type
     return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);

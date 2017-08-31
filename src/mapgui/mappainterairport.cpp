@@ -775,33 +775,24 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
           painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
 
           QString text;
-          if(parking.number != -1)
+          if(parking.type.startsWith("FUEL"))
+            text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
+          else if(parking.number != -1)
           {
             // FSX/P3D style names
-            QString name;
-
             if(context->mapLayerEffective->isAirportDiagramDetail3())
-              name = map::parkingName(parking.name) +
-                     (parking.number != -1 ? " " + QLocale().toString(parking.number) : QString());
-            else if(context->mapLayerEffective->isAirportDiagramDetail2())
-              name = map::parkingName(parking.name) +
-                     (parking.number != -1 ? " " + QLocale().toString(parking.number) : QString());
+              text = map::parkingName(parking.name) + " " + QLocale().toString(parking.number);
             else
-              name = QLocale().toString(parking.number);
-
-            if(parking.type.startsWith("FUEL"))
-              text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
-            else
-              text = name;
+              text = QLocale().toString(parking.number);
           }
           else
           {
             // X-Plane style names
-            if(parking.type.startsWith("FUEL"))
-              text = context->mapLayerEffective->isAirportDiagramDetail3() ? tr("Fuel") : tr("F");
-            else if(parking.name.size() <= 4 || context->mapLayerEffective->isAirportDiagramDetail3())
+            if(parking.name.size() <= 4 || context->mapLayerEffective->isAirportDiagramDetail3())
+              // Use short name
               text = parking.name;
-            else
+            else if(!parking.name.isEmpty())
+              // Use first character only
               text = parking.name.at(0);
           }
 

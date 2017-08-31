@@ -39,6 +39,8 @@ const int MAX_WAYPOINT_DISTANCE_INVALID_METER = 10000000.f;
 
 const static QString EMPTY_STRING;
 const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
+
+// Appended to X-Plane free parking names - obsolete
 const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
 
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
@@ -183,10 +185,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
         QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && prevLeg == nullptr)
         {
-          if(name.endsWith(PARKING_NO_NUMBER))
+          if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11 || name.endsWith(PARKING_NO_NUMBER))
           {
+            // Do not resolve parking for X-Plane databases
             // X-Plane style parking - name only
-            name.chop(PARKING_NO_NUMBER.size());
+            if(name.endsWith(PARKING_NO_NUMBER))
+              name.chop(PARKING_NO_NUMBER.size());
 
             // Get nearest with the same name
             QList<map::MapParking> parkings;

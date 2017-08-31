@@ -1608,7 +1608,7 @@ bool MainWindow::routeExportGfp()
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
-      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulator()) +
+      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
       QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       routeController->buildDefaultFilenameShort("-", ".gfp"));
 
@@ -1632,7 +1632,7 @@ bool MainWindow::routeExportRte()
       tr("Save Flightplan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
-      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulator()) +
+      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
       QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       routeController->buildDefaultFilenameShort(QString(), ".rte"));
 
@@ -1726,7 +1726,7 @@ void MainWindow::mapSaveImage()
   QString imageFile = dialog->saveFileDialog(
     tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
     "jpg", "MainWindow/",
-    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulator()), tr("Little Navmap Screenshot.jpg"));
+    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Screenshot.jpg"));
 
   if(!imageFile.isEmpty())
   {
@@ -2117,7 +2117,7 @@ void MainWindow::updateActionStates()
 
   // Allow to copy airspaces to X-Plane if the currently selected is FSX/P3D and the X-Plane path is set
   ui->actionReloadSceneryCopyAirspaces->setEnabled(
-    NavApp::getCurrentSimulator() != atools::fs::FsPaths::XPLANE11 &&
+    NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11 &&
     !NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11).isEmpty());
 }
 
@@ -2420,14 +2420,6 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateActionStates();
 }
 
-void MainWindow::fillWeatherContextXplane(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
-{
-  weatherContext.fsMetar.metarForStation = weatherReporter->getXplaneMetar(airport.ident);
-  weatherContext.fsMetar.requestIdent = airport.ident;
-  weatherContext.fsMetar.requestPos = airport.position;
-  weatherContext.fsMetar.timestamp = QDateTime::currentDateTime().toUTC();
-}
-
 /* Update the current weather context for the information window. Returns true if any
  * weather has changed or an update is needed */
 bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
@@ -2442,9 +2434,9 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
   {
     // qDebug() << "connectClient->isConnected()" << connectClient->isConnected();
     // qDebug() << "currentWeatherContext->fsMetar" << currentWeatherContext->fsMetar.metarForStation;
-    if(NavApp::getCurrentSimulator() == atools::fs::FsPaths::XPLANE11)
+    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     {
-      fillWeatherContextXplane(*currentWeatherContext, airport);
+      currentWeatherContext->fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
       changed = true;
     }
     else if(NavApp::isConnected())
@@ -2473,7 +2465,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulator() != atools::fs::FsPaths::XPLANE11)
+  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11)
   {
     fillActiveSkyType(*currentWeatherContext, airport.ident);
 
@@ -2530,13 +2522,13 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
 
   if(flags & opts::WEATHER_INFO_FS)
   {
-    if(NavApp::getCurrentSimulator() == atools::fs::FsPaths::XPLANE11)
-      fillWeatherContextXplane(weatherContext, airport);
+    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
     else
       weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulator() != atools::fs::FsPaths::XPLANE11)
+  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11)
   {
     weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
     fillActiveSkyType(weatherContext, airport.ident);
@@ -2559,8 +2551,8 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
 
   if(flags & opts::WEATHER_TOOLTIP_FS)
   {
-    if(NavApp::getCurrentSimulator() == atools::fs::FsPaths::XPLANE11)
-      fillWeatherContextXplane(weatherContext, airport);
+    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
     else
       weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
   }

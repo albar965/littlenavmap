@@ -63,6 +63,7 @@ public:
   map::MapAirport getAirportById(int airportId);
 
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
+  atools::geo::Pos getAirportCoordinatesByIdent(const QString& ident);
 
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
@@ -139,7 +140,8 @@ public:
    * @param number parking number
    */
   void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name, int number);
-  void getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name, const atools::geo::Pos& sortByDistancePos);
+  void getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name,
+                        const atools::geo::Pos& sortByDistancePos);
 
   /*
    * Get a start position of an airport (runway, helipad and water)
@@ -293,8 +295,9 @@ private:
                         *airspaceByRectAtAltQuery = nullptr,
                         *airspaceLinesByIdQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
-                        *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
+  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr,
+                        *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr,
+                        *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
                         *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,

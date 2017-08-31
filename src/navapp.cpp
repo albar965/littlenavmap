@@ -215,14 +215,14 @@ float NavApp::getSpeedKts()
   return mainWindow->getRouteController()->getSpinBoxSpeedKts();
 }
 
-atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulator()
+atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
 {
   return getDatabaseManager()->getCurrentSimulator();
 }
 
 QString NavApp::getCurrentSimulatorFilesPath()
 {
-  return atools::fs::FsPaths::getFilesPath(getCurrentSimulator());
+  return atools::fs::FsPaths::getFilesPath(getCurrentSimulatorDb());
 }
 
 QString NavApp::getCurrentSimulatorBasePath()
@@ -237,7 +237,7 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
 
 QString NavApp::getCurrentSimulatorShortName()
 {
-  return atools::fs::FsPaths::typeToShortName(getCurrentSimulator());
+  return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());
 }
 
 bool NavApp::hasSidStarInDatabase()

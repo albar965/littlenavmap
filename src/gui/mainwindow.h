@@ -236,7 +236,6 @@ private:
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
-  void fillWeatherContextXplane(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
   void updateAirspaceTypes(map::MapAirspaceTypes types);
   void resetWindowLayout();
   bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);

@@ -1008,7 +1008,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       if(!metar.metarForNearest.isEmpty())
       {
         Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-        html.h3(tr("Nearest Weather%2 -%1").
+        html.h3(tr("Nearest Weather%2 - %1").
                 arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()).arg(sim),
                 atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, false);
