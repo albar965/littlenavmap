@@ -103,10 +103,10 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
 
   const Column *colDescr = columns->getColumn(whereCol);
 
-  if(QLineEdit * edit = columns->getColumn(whereCol)->getLineEditWidget())
+  if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
     // Set the search text into the corresponding line edit
     edit->setText((exclude ? "-" : "") + whereValue.toString());
-  else if(QCheckBox * check = columns->getColumn(whereCol)->getCheckBoxWidget())
+  else if(QCheckBox *check = columns->getColumn(whereCol)->getCheckBoxWidget())
   {
     if(check->isTristate())
     {
@@ -216,9 +216,9 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
 
         // Replace "*" with "%" for SQL
         if(newVal.contains("*"))
-          newVal = newVal.toUpper().replace("*", "%");
+          newVal = newVal.replace("*", "%");
         else if(!newVal.isEmpty())
-          newVal = newVal.toUpper() + "%";
+          newVal = newVal + "%";
 
         newVariant = newVal;
       }
@@ -265,8 +265,8 @@ void SqlModel::setDataCallback(const DataFunctionType& func, const QSet<Qt::Item
   }
   else
   {
-  handlerRoles = roles;
-  dataFunction = func;
+    handlerRoles = roles;
+    dataFunction = func;
   }
 }
 
@@ -509,6 +509,8 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
 
 void SqlModel::resetSqlQuery()
 {
+  qDebug() << Q_FUNC_INFO << currentSqlQuery;
+
   QSqlQueryModel::setQuery(currentSqlQuery, db->getQSqlDatabase());
 
   if(lastError().isValid())

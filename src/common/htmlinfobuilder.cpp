@@ -527,6 +527,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
     if(details)
     {
+      // Helipads ==============================================================
       const SqlRecordVector *heliVector = infoQuery->getHelipadInformation(airport.id);
 
       if(heliVector != nullptr)
@@ -569,6 +570,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
       else
         html.p(tr("Airport has no helipads."));
 
+      // Start positions ==============================================================
       const SqlRecordVector *startVector = infoQuery->getStartInformation(airport.id);
 
       if(startVector != nullptr && !startVector->isEmpty())
@@ -584,7 +586,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
           if(type == "R")
             startText = tr("Runway %1").arg(name);
           else if(type == "H")
-            startText = tr("Helipad %1").arg(startRec.valueInt("runway_name"));
+            startText = tr("Helipad %1").arg(startRec.valueInt("number"));
           else if(type == "W")
             startText = tr("Water %1").arg(name);
 

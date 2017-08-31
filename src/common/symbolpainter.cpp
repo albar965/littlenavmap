@@ -131,15 +131,17 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,
                                       float x, float y, int size, bool isAirportDiagram, bool fast)
 {
+  float symsize = atools::roundToInt(size);
+
   if(airport.longestRunwayLength == 0 && !airport.helipad())
     // Reduce size for airports without runways and without helipads
-    size = size * 4 / 5;
+    symsize = symsize * 4 / 5;
 
   atools::util::PainterContextSaver saver(painter);
   Q_UNUSED(saver);
   QColor apColor = mapcolors::colorForAirport(airport);
 
-  int radius = size / 2;
+  float radius = symsize / 2.f;
   painter->setBackgroundMode(Qt::OpaqueMode);
 
   if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED))
@@ -149,73 +151,75 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
     // Use white filled circle
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
 
-  if((!fast || isAirportDiagram) && size > 5)
+  if((!fast || isAirportDiagram) && symsize > 5)
   {
     // Draw spikes only for larger symbols
-    if(airport.anyFuel() && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED) && size > 6)
+    if(airport.anyFuel() && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED) && symsize > 6)
     {
       // Draw fuel spikes
-      int fuelRadius = static_cast<int>(std::round(static_cast<double>(radius) * 1.4));
-      if(fuelRadius < radius + 2)
-        fuelRadius = radius + 2;
-      painter->setPen(QPen(QBrush(apColor), size / 4, Qt::SolidLine, Qt::FlatCap));
+      float fuelRadius = radius * 1.4f;
+      if(fuelRadius < radius + 2.f)
+        fuelRadius = radius + 2.f;
+      painter->setPen(QPen(QBrush(apColor), symsize / 4.f, Qt::SolidLine, Qt::FlatCap));
       painter->drawLine(QPointF(x, y - fuelRadius), QPointF(x, y + fuelRadius));
       painter->drawLine(QPointF(x - fuelRadius, y), QPointF(x + fuelRadius, y));
     }
   }
 
-  painter->setPen(QPen(QBrush(apColor), size / 5, Qt::SolidLine, Qt::FlatCap));
+  painter->setPen(QPen(QBrush(apColor), symsize / 5, Qt::SolidLine, Qt::FlatCap));
   painter->drawEllipse(QPointF(x, y), radius, radius);
 
-  if((!fast || isAirportDiagram) && size > 5)
+  if((!fast || isAirportDiagram) && symsize > 5.f)
   {
     if(airport.flags.testFlag(AP_MIL))
       // Military airport
-      painter->drawEllipse(QPointF(x, y), radius / 2, radius / 2);
+      painter->drawEllipse(QPointF(x, y), radius / 2.f, radius / 2.f);
 
-    if(airport.waterOnly() && size > 6)
+    if(airport.waterOnly() && symsize > 6.f)
     {
       // Water only runways - draw an anchor
-      int lineWidth = size / 7;
+      float lineWidth = symsize / 7.f;
       painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
-      painter->drawLine(QPointF(x - lineWidth / 4, y - radius / 2), QPointF(x - lineWidth / 4, y + radius / 2));
-      painter->drawArc(x - radius / 2, y - radius / 2, radius, radius, 0 * 16, -180 * 16);
+      painter->drawLine(QPointF(x, y - radius / 2.f), QPointF(x, y + radius / 2.f));
+      painter->drawArc(QRectF(x - radius / 2.f, y - radius / 2.f, radius, radius),
+                       0 * 16, // From
+                       -180 * 16); // to
     }
 
-    if(airport.helipadOnly() && size > 6)
+    if(airport.helipadOnly() && symsize > 6.f)
     {
       // Only helipads - draw an H
-      int lineWidth = size / 7;
+      float lineWidth = symsize / 7.f;
       painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
-      painter->drawLine(x - lineWidth / 4 - size / 5, y - radius / 2,
-                        x - lineWidth / 4 - size / 5, y + radius / 2);
+      painter->drawLine(QLineF(x - symsize / 5.f, y - radius / 2.f,
+                               x - symsize / 5.f, y + radius / 2.f));
 
-      painter->drawLine(x - lineWidth / 4 - size / 5, y,
-                        x - lineWidth / 4 + size / 5, y);
+      painter->drawLine(QLineF(x - symsize / 5.f, y,
+                               x + symsize / 5.f, y));
 
-      painter->drawLine(x - lineWidth / 4 + size / 5, y - radius / 2,
-                        x - lineWidth / 4 + size / 5, y + radius / 2);
+      painter->drawLine(QLineF(x + symsize / 5.f, y - radius / 2.f,
+                               x + symsize / 5.f, y + radius / 2.f));
     }
 
-    if(airport.flags.testFlag(AP_CLOSED) && size > 6)
+    if(airport.flags.testFlag(AP_CLOSED) && symsize > 6.f)
     {
       // Cross out whatever was painted before
-      painter->setPen(QPen(QBrush(apColor), size / 6.f, Qt::SolidLine, Qt::FlatCap));
-      painter->drawLine(x - radius, y - radius, x + radius, y + radius);
-      painter->drawLine(x - radius, y + radius, x + radius, y - radius);
+      painter->setPen(QPen(QBrush(apColor), symsize / 6.f, Qt::SolidLine, Qt::FlatCap));
+      painter->drawLine(QLineF(x - radius, y - radius, x + radius, y + radius));
+      painter->drawLine(QLineF(x - radius, y + radius, x + radius, y - radius));
     }
   }
 
-  if((!fast || isAirportDiagram) && size > 5)
+  if((!fast || isAirportDiagram) && symsize > 5)
   {
     if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) &&
-       !airport.flags.testFlag(AP_CLOSED) && size > 6)
+       !airport.flags.testFlag(AP_CLOSED) && symsize > 6)
     {
       // Draw line inside circle
       painter->translate(x, y);
       painter->rotate(airport.longestRunwayHeading);
-      painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), size / 5, Qt::SolidLine, Qt::RoundCap));
-      painter->drawLine(0, -radius + 2, 0, radius - 2);
+      painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), symsize / 5, Qt::SolidLine, Qt::RoundCap));
+      painter->drawLine(QLineF(0, -radius + 2, 0, radius - 2));
       painter->resetTransform();
     }
   }
