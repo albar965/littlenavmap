@@ -251,14 +251,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
                 flightplan->setDepartureParkingName(QString());
               }
               else
-              {
-                if(start.helipadNumber > 0)
-                  // Helicopter pad
-                  flightplan->setDepartureParkingName(QString::number(start.helipadNumber));
-                else
-                  // Runway name
-                  flightplan->setDepartureParkingName(start.runwayName);
-              }
+                // Helicopter pad or runway name
+                flightplan->setDepartureParkingName(start.runwayName);
             }
           }
         }

@@ -29,27 +29,17 @@ class SqlRecord;
 
 namespace map {
 struct MapAirport;
-
 struct MapRunway;
-
 struct MapRunwayEnd;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapWaypoint;
-
 struct MapAirway;
-
 struct MapIls;
-
 struct MapParking;
-
 struct MapAirspace;
-
 struct MapStart;
-
+struct MapHelipad;
 struct MapMarker;
 
 }
@@ -96,6 +86,8 @@ public:
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
   void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace);
+
+  void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);

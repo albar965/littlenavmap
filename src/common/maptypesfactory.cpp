@@ -308,6 +308,25 @@ void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
                      record.valueFloat("altitude"));
 }
 
+void MapTypesFactory::fillHelipad(const SqlRecord& record, map::MapHelipad& helipad)
+{
+  helipad.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+
+  if(record.isNull("start_number"))
+    helipad.start = -1;
+  else
+    helipad.start = record.value("start_number").toInt();
+
+  helipad.runwayName = record.value("runway_name").toString();
+  helipad.width = record.value("width").toInt();
+  helipad.length = record.value("length").toInt();
+  helipad.heading = static_cast<int>(std::roundf(record.value("heading").toFloat()));
+  helipad.surface = record.value("surface").toString();
+  helipad.type = record.value("type").toString();
+  helipad.transparent = record.value("is_transparent").toInt() > 0;
+  helipad.closed = record.value("is_closed").toInt() > 0;
+}
+
 void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& waypoint)
 {
   waypoint.id = record.valueInt("waypoint_id");

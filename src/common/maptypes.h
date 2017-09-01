@@ -326,7 +326,7 @@ struct MapStart
 /* Airport helipad */
 struct MapHelipad
 {
-  QString surface, type;
+  QString surface, type, runwayName;
   atools::geo::Pos position;
   int length, width, heading, start;
   bool closed, transparent;

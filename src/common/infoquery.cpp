@@ -262,7 +262,7 @@ void InfoQuery::initQueries()
   runwayEndQuery->prepare("select * from runway_end where runway_end_id = :id");
 
   helipadQuery = new SqlQuery(db);
-  helipadQuery->prepare("select h.*, s.number as start_number from helipad h "
+  helipadQuery->prepare("select h.*, s.number as start_number, s.runway_name from helipad h "
                         " left outer join start s on s.start_id= h.start_id "
                         " where h.airport_id = :id");
 

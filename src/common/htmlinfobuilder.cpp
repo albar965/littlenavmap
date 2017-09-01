@@ -536,8 +536,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         {
           bool closed = heliRec.valueBool("is_closed");
           bool hasStart = !heliRec.isNull("start_number");
-          QString num = hasStart ? " " + QString::number(heliRec.valueInt("start_number")) : tr(
-            " (No Start Position)");
+
+          QString num = hasStart ? " " + heliRec.valueStr("runway_name") : tr(" (No Start Position)");
 
           html.h3(tr("Helipad%1").arg(num),
                   (closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
@@ -586,7 +586,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
           if(type == "R")
             startText = tr("Runway %1").arg(name);
           else if(type == "H")
-            startText = tr("Helipad %1").arg(startRec.valueInt("number"));
+            startText = tr("Helipad %1").arg(name);
           else if(type == "W")
             startText = tr("Water %1").arg(name);
 
@@ -723,8 +723,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
 {
-  QString num = helipad.start != -1 ? " " + QString::number(helipad.start) :
-                tr(" (No Start Position)");
+  QString num = helipad.start != -1 ? (" " + helipad.runwayName) : QString();
 
   head(html, tr("Helipad%1:").arg(num));
   html.brText(tr("Surface: ") + map::surfaceName(helipad.surface));

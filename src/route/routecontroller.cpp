@@ -2131,12 +2131,8 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   // No need to update airport since this is called from dialog only
 
   // Update the current airport which is new or the same as the one used by the parking spot
-  if(start.helipadNumber > 0)
-    // Use helipad number
-    route.getFlightplan().setDepartureParkingName(QString::number(start.helipadNumber));
-  else
-    // Use runway name
-    route.getFlightplan().setDepartureParkingName(start.runwayName);
+  // Use helipad number or runway name
+  route.getFlightplan().setDepartureParkingName(start.runwayName);
 
   route.getFlightplan().setDeparturePosition(start.position);
   route.first().setDepartureStart(start);
@@ -2565,12 +2561,8 @@ void RouteController::routeToFlightPlan()
       }
       else if(route.hasDepartureStart())
       {
-        if(route.hasDepartureHelipad())
-          // Use helipad number
-          flightplan.setDepartureParkingName(QString::number(firstLeg.getDepartureStart().helipadNumber));
-        else
-          // Use runway name
-          flightplan.setDepartureParkingName(firstLeg.getDepartureStart().runwayName);
+        // Use runway name or helipad number
+        flightplan.setDepartureParkingName(firstLeg.getDepartureStart().runwayName);
         flightplan.setDeparturePosition(firstLeg.getDepartureStart().position);
       }
       else
@@ -3016,8 +3008,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
-      departure = flightplan.getDepartureAiportName() +
-                  " (" + flightplan.getDepartureIdent() + ")";
+      departure = flightplan.getDepartureAiportName() + " (" + flightplan.getDepartureIdent() + ")";
 
       if(route.first().getDepartureParking().isValid())
         departure += " " + map::parkingNameNumberType(route.first().getDepartureParking());
@@ -3025,7 +3016,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
       {
         const map::MapStart& start = route.first().getDepartureStart();
         if(route.hasDepartureHelipad())
-          departure += tr(" Helipad %1").arg(start.helipadNumber);
+          departure += tr(" Helipad %1").arg(start.runwayName);
         else if(!start.runwayName.isEmpty())
           departure += tr(" Runway %1").arg(start.runwayName);
         else

@@ -68,12 +68,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::Map
       {
         // Compare start
         if(p1.start.type == p2.start.type)
-        {
-          if(p1.start.runwayName == p2.start.runwayName)
-            return p1.start.helipadNumber < p2.start.helipadNumber;
-          else
-            return p1.start.runwayName < p2.start.runwayName;
-        }
+          return p1.start.runwayName < p2.start.runwayName;
         else
           return p1.start.type > p2.start.type;
       }
@@ -94,24 +89,24 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::Map
     {
       if(startPos.parking.isValid())
       {
-        QString text = tr("%1, %2%3").arg(map::parkingNameNumberType(startPos.parking)).
-                       arg(Unit::distShortFeet(startPos.parking.radius * 2)).
-                       arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
+        // Start position is a parking spot
+        QStringList text;
+
+        text.append(map::parkingNameNumberType(startPos.parking));
+
+        text.append(Unit::distShortFeet(startPos.parking.radius * 2));
+
+        if(startPos.parking.jetway)
+          text.append(tr("Has Jetway"));
 
         // Item will insert itself in list widget
         new QListWidgetItem(
-          mapcolors::iconForParkingType(startPos.parking.type), text, ui->listWidgetSelectParking);
+          mapcolors::iconForParkingType(startPos.parking.type), text.join(", "), ui->listWidgetSelectParking);
       }
       else if(startPos.start.isValid())
       {
-        QString number;
-        if(startPos.start.helipadNumber > 0)
-          number = QString::number(startPos.start.helipadNumber);
-
-        QString text = tr("%1 %2 %3").
-                       arg(map::startType(startPos.start)).
-                       arg(startPos.start.helipadNumber == 0 ? startPos.start.runwayName : QString()).
-                       arg(number);
+        // Other start position - runway or helipad
+        QString text = tr("%1 %2").arg(map::startType(startPos.start)).arg(startPos.start.runwayName);
 
         new QListWidgetItem(mapcolors::iconForStartType(startPos.start.type), text, ui->listWidgetSelectParking);
       }

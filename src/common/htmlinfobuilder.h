@@ -34,29 +34,18 @@ class MainWindow;
 
 namespace map {
 struct MapAirport;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapWaypoint;
-
 struct MapAirway;
-
 struct MapAirspace;
-
 struct MapMarker;
-
 struct MapAirport;
-
 struct MapParking;
-
 struct MapHelipad;
-
+struct MapStart;
 struct MapUserpoint;
-
 struct MapProcedurePoint;
-
 struct MapProcedureRef;
 
 }
@@ -198,11 +187,12 @@ public:
   void parkingText(const map::MapParking& parking, atools::util::HtmlBuilder& html) const;
 
   /*
-   * Creates a HTML description for a helipad.
+   * Creates a HTML description for a helipad. Only called for tooltip
    * @param helipad
    * @param html Result containing HTML snippet
    */
-  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html) const;
+  void helipadText(const map::MapHelipad& helipad,
+                   atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.

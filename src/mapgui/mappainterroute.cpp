@@ -1138,7 +1138,7 @@ void MapPainterRoute::drawStartParking(const PaintContext *context)
     const RouteLeg& first = route->at(0);
     if(first.getMapObjectType() == map::AIRPORT)
     {
-      int size = 100;
+      int size = 25;
 
       Pos startPos;
       if(route->hasDepartureParking())
