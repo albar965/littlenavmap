@@ -371,8 +371,8 @@ void RouteController::routeSpeedChanged()
   {
     RouteCommand *undoCommand = nullptr;
 
-    if(route.getFlightplan().canSaveSpeed())
-      undoCommand = preChange(tr("Change Speed"), rctype::SPEED);
+    // if(route.getFlightplan().canSaveSpeed())
+    undoCommand = preChange(tr("Change Speed"), rctype::SPEED);
 
     // Get type, speed and cruise altitude from widgets
     updateFlightplanFromWidgets();
@@ -391,7 +391,7 @@ void RouteController::routeAltChanged()
 {
   RouteCommand *undoCommand = nullptr;
 
-  if(!route.isEmpty() && route.getFlightplan().canSaveAltitude())
+  if(!route.isEmpty() /*&& route.getFlightplan().canSaveAltitude()*/)
     undoCommand = preChange(tr("Change Altitude"), rctype::ALTITUDE);
 
   // Get type, speed and cruise altitude from widgets
@@ -418,7 +418,7 @@ void RouteController::routeTypeChanged()
 {
   RouteCommand *undoCommand = nullptr;
 
-  if(!route.isEmpty() && route.getFlightplan().canSaveFlightplanType())
+  if(!route.isEmpty() /*&& route.getFlightplan().canSaveFlightplanType()*/)
     undoCommand = preChange(tr("Change Type"));
 
   // Get type and cruise altitude from widgets
@@ -1232,8 +1232,8 @@ void RouteController::adjustFlightplanAltitude()
   {
     RouteCommand *undoCommand = nullptr;
 
-    if(route.getFlightplan().canSaveAltitude())
-      undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
+    // if(route.getFlightplan().canSaveAltitude())
+    undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
     fp.setCruisingAltitude(alt);
 
     updateTableModel();
@@ -1765,8 +1765,8 @@ void RouteController::editUserWaypointName(int index)
   {
     RouteCommand *undoCommand = nullptr;
 
-    if(route.getFlightplan().canSaveUserWaypointName())
-      undoCommand = preChange(tr("Waypoint Name Change"));
+    // if(route.getFlightplan().canSaveUserWaypointName())
+    undoCommand = preChange(tr("Waypoint Name Change"));
 
     route[index].updateUserName(dialog.getName());
     model->item(index, rc::IDENT)->setText(dialog.getName());
@@ -2086,8 +2086,8 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 
   RouteCommand *undoCommand = nullptr;
 
-  if(route.getFlightplan().canSaveDepartureParking())
-    undoCommand = preChange(tr("Set Parking"));
+  // if(route.getFlightplan().canSaveDepartureParking())
+  undoCommand = preChange(tr("Set Parking"));
 
   if(route.isEmpty() || route.first().getMapObjectType() != map::AIRPORT ||
      route.first().getId() != parking.airportId)
@@ -2269,8 +2269,8 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
 
   RouteCommand *undoCommand = nullptr;
 
-  if(route.getFlightplan().canSaveProcedures())
-    undoCommand = preChange(tr("Add Procedure"));
+  // if(route.getFlightplan().canSaveProcedures())
+  undoCommand = preChange(tr("Add Procedure"));
 
   map::MapAirport airport;
   query->getAirportById(airport, legs.ref.airportId);
