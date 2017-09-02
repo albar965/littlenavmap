@@ -77,7 +77,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
     }
 
     qlonglong now = QDateTime::currentDateTime().toSecsSinceEpoch();
-    qlonglong timestamp = Settings::instance().valueVar(lnm::OPTIONS_UPDATES_LAST_CHECKED).toLongLong();
+    qlonglong timestamp = Settings::instance().valueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED).toLongLong();
     if(now - timestamp < diff)
     {
       qInfo() << "Skipping update check. Difference" << now - timestamp;
@@ -86,10 +86,10 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
   }
 #endif
 
-  QStringList checked;
+  QString checked;
   if(!manuallyTriggered)
-    // Get skipped updates
-    checked = Settings::instance().valueStrList(lnm::OPTIONS_UPDATES_CHECKED);
+    // Get skipped update
+    checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_CHECKED);
 
   // Copy combo box selection to channel enum
   atools::util::UpdateChannels channels = atools::util::STABLE;
@@ -109,6 +109,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
   // Async
   qInfo() << "Checking for updates. Channels" << channels << "already checked" << checked;
   updateCheck->checkForUpdates(checked, manuallyTriggered /* notifyForEmptyUpdates */, channels);
+  Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch());
 }
 
 /* Called by update checker */
@@ -117,44 +118,42 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   qDebug() << Q_FUNC_INFO;
   NavApp::deleteSplashScreen();
 
-  Settings::instance().setValueVar(lnm::OPTIONS_UPDATES_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch());
-
   if(!updates.isEmpty())
   {
     // Found updates - fill the HTML text for the dialog =============================
     atools::util::HtmlBuilder html(false);
 
-    html.h3(tr("Updates Found"));
-    for(const atools::util::Update& update : updates)
+    html.h3(tr("Update Available"));
+
+    // Show only the newest one
+    const atools::util::Update& update = updates.first();
+    QString channel;
+    switch(update.channel)
     {
-      QString channel;
-      switch(update.channel)
-      {
-        case atools::util::STABLE:
-          channel = tr("Stable");
-          break;
-        case atools::util::BETA:
-          channel = tr("Beta");
-          break;
-        case atools::util::DEVELOP:
-          channel = tr("Development");
-          break;
-      }
-
-      html.b(tr("%1: %2").arg(channel).arg(update.version));
-
-      if(!update.changelog.isEmpty())
-        html.text(update.changelog, atools::util::html::NO_ENTITIES);
-
-      if(!update.download.isEmpty())
-        html.p().a(tr("<b>&gt;&gt; Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
-      else
-        html.p(tr("No download available for this operating system."));
-
-      if(!update.url.isEmpty())
-        html.p().a(tr("<b>&gt;&gt; Release Information</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
-      html.hr();
+      case atools::util::STABLE:
+        channel = tr("Stable");
+        break;
+      case atools::util::BETA:
+        channel = tr("Beta");
+        break;
+      case atools::util::DEVELOP:
+        channel = tr("Development");
+        break;
     }
+
+    html.b(tr("%1: %2").arg(channel).arg(update.version));
+
+    if(!update.changelog.isEmpty())
+      html.text(update.changelog, atools::util::html::NO_ENTITIES);
+
+    if(!update.download.isEmpty())
+      html.p().a(tr("<b>&gt;&gt; Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
+    else
+      html.p(tr("No download available for this operating system."));
+
+    if(!update.url.isEmpty())
+      html.p().a(tr("<b>&gt;&gt; Release Information</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
+    html.hr();
 
     NavApp::deleteSplashScreen();
 
@@ -165,8 +164,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     if(!manual)
     {
       // Set ignore and remind me buttons
-      QString text = updates.size() > 1 ? tr("&Ignore these Updates") : tr("&Ignore this Update");
-      information.getButtonBox()->addButton(text, QDialogButtonBox::AcceptRole);
+      information.getButtonBox()->addButton(tr("&Ignore this Update"), QDialogButtonBox::AcceptRole);
       information.getButtonBox()->addButton(tr("&Remind me Later"), QDialogButtonBox::RejectRole);
     }
     else
@@ -179,17 +177,10 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     {
       if(selected == QMessageBox::Accepted)
       {
-        // Add all updates shown to the skip list
-        QStringList ignore = Settings::instance().valueStrList(lnm::OPTIONS_UPDATES_CHECKED);
-
-        for(const atools::util::Update& update : updates)
-          ignore.append(update.version);
-
-        ignore.removeDuplicates();
-
+        // Add latest update - do not report anything earlier or equal again
+        QString ignore = updates.first().version;
         qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
-
-        Settings::instance().setValue(lnm::OPTIONS_UPDATES_CHECKED, ignore);
+        Settings::instance().setValue(lnm::OPTIONS_UPDATE_CHECKED, ignore);
       }
     }
   }

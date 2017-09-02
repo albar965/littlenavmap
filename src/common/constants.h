@@ -168,8 +168,8 @@ const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
 
-const QLatin1Literal OPTIONS_UPDATES_CHECKED("Update/AlreadyChecked");
-const QLatin1Literal OPTIONS_UPDATES_LAST_CHECKED("Update/LastCheckTimestamp");
+const QLatin1Literal OPTIONS_UPDATE_CHECKED("Update/AlreadyChecked");
+const QLatin1Literal OPTIONS_UPDATE_LAST_CHECKED("Update/LastCheckTimestamp");
 
 // Need to update these according to program version
 const QLatin1Literal OPTIONS_UPDATE_CHANNELS("OptionsDialog/Widget_comboBoxOptionsStartupUpdateChannels");
