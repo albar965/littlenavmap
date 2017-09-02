@@ -1,3 +1,23 @@
+Version 1.6.0.beta
+
+* Changed handling of helipads and fixed display. Now using name as an identifier.
+* Aircraft size is now displayed correctly for X-Plane on map and information window.
+* Small improvements to airport symbol painting.
+* Fixed problems with special characters in search (special characters are still treated case sensistive).
+* Added display of nearest weather station for X-Plane metar file when showing information of an airport.
+* Fixed issues when displaying parking names on map (name too long).
+* Fixed problem where departure parking was dropped on certain cases like flight plan calculation.
+* Fixed crash after copying airspaces.
+* Added custom update dialog window that can display a longer message.
+
+derived from atools:
+* Enabled database file exclusions and add-on override options to X-Plane loader.
+* Fixed crash when reading X-Plane add-on airports (KLAS).
+* Better error reporting when reading X-Plane scenery including file and line number.
+* X-Plane file codec is now set to UTF-8 to avoid problems with special characters.
+* Added detection of closed airports by name for X-Plane.
+* Improved detection of military airports in general and name capitalization for X-Plane.
+
 Version 1.5.4.develop
 
 * Added moving map display and aircraft information including AI for X-Plane.
