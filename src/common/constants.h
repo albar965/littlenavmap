@@ -40,6 +40,9 @@
 /* Force updates to always show a notification for testing */
 // #define DEBUG_UPDATE
 
+/* Use local URL for update checks for testing */
+// #define DEBUG_UPDATE_URL
+
 #include "geo/pos.h"
 
 namespace lnm {
@@ -61,8 +64,8 @@ const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pd
 
 const QLatin1Literal HELP_DONTATE_URL("https://albar965.github.io/donate.html");
 
-#ifdef DEBUG_UPDATE
-const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/littlenavmap-version");  // For test purposes
+#ifdef DEBUG_UPDATE_URL
+const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/littlenavmap-version"); // For test purposes
 #else
 const QLatin1Literal OPTIONS_UPDATE_URL("https://albar965.github.io/littlenavmap-version");
 #endif
