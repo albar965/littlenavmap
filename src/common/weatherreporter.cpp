@@ -123,7 +123,16 @@ void WeatherReporter::initXplane()
 void WeatherReporter::initActiveSkyNext()
 {
   deleteFsWatcher();
+
   activeSkyType = NONE;
+  activeSkyMetars.clear();
+  activeSkyDepartureMetar.clear();
+  activeSkyDestinationMetar.clear();
+  activeSkyDepartureIdent.clear();
+  activeSkyDestinationIdent.clear();
+  asPath.clear();
+  asFlightplanPath.clear();
+
   QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
   if(manualActiveSkySnapshotPath.isEmpty())
   {
@@ -169,28 +178,19 @@ void WeatherReporter::initActiveSkyNext()
   {
     // Manual path overrides found path for all simulators
     asPath = manualActiveSkySnapshotPath;
-    asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() +
-                       QDir::separator() + "activeflightplanwx.txt";
+    asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() + QDir::separator() + "activeflightplanwx.txt";
     activeSkyType = MANUAL;
   }
 
   if(!asPath.isEmpty() || !asFlightplanPath.isEmpty())
   {
-    qDebug() << "Using Active Sky path" << asPath;
+    qDebug() << "Using Active Sky paths" << asPath << asFlightplanPath;
     loadActiveSkySnapshot(asPath);
     loadActiveSkyFlightplanSnapshot(asFlightplanPath);
     createFsWatcher();
   }
   else
-  {
     qDebug() << "Active Sky path not found";
-    activeSkyMetars.clear();
-    activeSkyDepartureMetar.clear();
-    activeSkyDestinationMetar.clear();
-
-    activeSkyDepartureIdent.clear();
-    activeSkyDestinationIdent.clear();
-  }
 }
 
 /* Loads complete ASN file into a hash map */
