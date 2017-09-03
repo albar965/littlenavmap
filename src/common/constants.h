@@ -64,11 +64,7 @@ const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pd
 
 const QLatin1Literal HELP_DONTATE_URL("https://albar965.github.io/donate.html");
 
-#ifdef DEBUG_UPDATE_URL
-const QLatin1Literal OPTIONS_UPDATE_URL("http://darkon:4000/littlenavmap-version"); // For test purposes
-#else
-const QLatin1Literal OPTIONS_UPDATE_URL("https://albar965.github.io/littlenavmap-version");
-#endif
+const QLatin1Literal OPTIONS_UPDATE_DEFAULT_URL("https://albar965.github.io/littlenavmap-version");
 
 // ======== Options ================================================================
 
@@ -167,6 +163,9 @@ const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
+
+/* Used to override  default URL */
+const QLatin1Literal OPTIONS_UPDATE_URL("Update/Url");
 
 const QLatin1Literal OPTIONS_UPDATE_CHECKED("Update/AlreadyChecked");
 const QLatin1Literal OPTIONS_UPDATE_LAST_CHECKED("Update/LastCheckTimestamp");

@@ -42,7 +42,8 @@ UpdateHandler::UpdateHandler(MainWindow *parent)
   updateCheck = new UpdateCheck(false);
 #endif
 
-  updateCheck->setUrl(lnm::OPTIONS_UPDATE_URL);
+  // Get URL from options for debugging otherwise use default
+  updateCheck->setUrl(Settings::instance().valueStr(lnm::OPTIONS_UPDATE_URL, lnm::OPTIONS_UPDATE_DEFAULT_URL));
 
   connect(updateCheck, &UpdateCheck::updateFound, this, &UpdateHandler::updateFound);
   connect(updateCheck, &UpdateCheck::updateFailed, this, &UpdateHandler::updateFailed);
