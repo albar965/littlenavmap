@@ -197,8 +197,12 @@ void UpdateHandler::updateFailed(QString errorString)
 
   NavApp::deleteSplashScreen();
 
-  atools::gui::Dialog(mainWindow).
-  showInfoMsgBox(lnm::ACTIONS_SHOW_UPDATEFAILED,
-                 tr("Error while checking for updates to\n\"%1\":\n%2").arg(lnm::OPTIONS_UPDATE_URL).arg(errorString),
-                 tr("Do not &show this dialog again."));
+  QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
+                    arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
+
+  if(manual)
+    QMessageBox::information(mainWindow, QApplication::applicationName(), message);
+  else
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_UPDATEFAILED, message,
+                                                   tr("Do not &show this dialog again."));
 }
