@@ -129,15 +129,31 @@ void WeatherReporter::initActiveSkyNext()
   {
     QString asnSnapshotPath, asnFlightplanSnapshotPath;
     QString as16SnapshotPath, as16FlightplanSnapshotPath;
-    findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN");
+    QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
+
+    findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
     qInfo() << "ASN snapshot" << asnSnapshotPath << "flight plan weather" << asnFlightplanSnapshotPath;
 
-    findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_");
+    findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
     qInfo() << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
 
-    if(!as16SnapshotPath.isEmpty())
+    if(simType == atools::fs::FsPaths::P3D_V4)
     {
-      // Prefer AS16 befor ASN
+      // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv4
+      findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv4");
+      qInfo() << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
+    }
+
+    if(!asp4SnapshotPath.isEmpty())
+    {
+      // Prefer AS4 before AS16
+      asPath = asp4SnapshotPath;
+      asFlightplanPath = asp4FlightplanSnapshotPath;
+      activeSkyType = ASP4;
+    }
+    else if(!as16SnapshotPath.isEmpty())
+    {
+      // Prefer AS16 before ASN
       asPath = as16SnapshotPath;
       asFlightplanPath = as16FlightplanSnapshotPath;
       activeSkyType = AS16;
@@ -311,7 +327,7 @@ bool WeatherReporter::validateActiveSkyFlightplanFile(const QString& path)
 }
 
 void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot,
-                                         const QString& activeSkyPrefix)
+                                         const QString& activeSkyPrefix, const QString& activeSkySimSuffix)
 {
  #if defined(Q_OS_WIN32)
   // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
@@ -322,16 +338,23 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
 #endif
 
   QString simPathComponent;
-  if(simType == atools::fs::FsPaths::FSX)
-    simPathComponent = activeSkyPrefix + "FSX";
-  else if(simType == atools::fs::FsPaths::FSX_SE)
-    simPathComponent = activeSkyPrefix + "FSX";
-  else if(simType == atools::fs::FsPaths::P3D_V2)
-    simPathComponent = activeSkyPrefix + "P3D";
-  else if(simType == atools::fs::FsPaths::P3D_V3)
-    simPathComponent = activeSkyPrefix + "P3D";
-  else if(simType == atools::fs::FsPaths::P3D_V4)
-    simPathComponent = activeSkyPrefix + "P3D";
+  if(activeSkySimSuffix.isEmpty())
+  {
+    // Determine suffix from sim type
+    if(simType == atools::fs::FsPaths::FSX)
+      simPathComponent = activeSkyPrefix + "FSX";
+    else if(simType == atools::fs::FsPaths::FSX_SE)
+      simPathComponent = activeSkyPrefix + "FSX";
+    else if(simType == atools::fs::FsPaths::P3D_V2)
+      simPathComponent = activeSkyPrefix + "P3D";
+    else if(simType == atools::fs::FsPaths::P3D_V3)
+      simPathComponent = activeSkyPrefix + "P3D";
+    else if(simType == atools::fs::FsPaths::P3D_V4)
+      simPathComponent = activeSkyPrefix + "P3D";
+  }
+  else
+    // Use fixed suffix for AS4
+    simPathComponent = activeSkyPrefix + activeSkySimSuffix;
 
   QString hifiPath = appdata +
                      QDir::separator() + "HiFi" +
@@ -343,7 +366,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
 
   if(QFile::exists(weatherFile))
   {
-    qInfo() << "found ASN weather file" << weatherFile;
+    qInfo() << "found Active Sky weather file" << weatherFile;
     if(validateActiveSkyFile(weatherFile))
       asnSnapshot = weatherFile;
     else
@@ -356,11 +379,11 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
 
   if(QFile::exists(weatherFile))
   {
-    qInfo() << "found ASN flight plan weathers file" << weatherFile;
+    qInfo() << "found Active Sky flight plan weathers file" << weatherFile;
     if(validateActiveSkyFlightplanFile(weatherFile))
       flightplanSnapshot = weatherFile;
     else
-      qWarning() << "is not an ASN flight plan weather snapshot file" << weatherFile;
+      qWarning() << "is not an Active Sky flight plan weather snapshot file" << weatherFile;
   }
   else
     qInfo() << "file does not exist" << weatherFile;
@@ -432,6 +455,19 @@ bool WeatherReporter::testUrl(const QString& url, const QString& airportIcao, QS
     reply->deleteLater();
     return false;
   }
+}
+
+QString WeatherReporter::getCurrentActiveSkyName() const
+{
+  if(activeSkyType == WeatherReporter::ASP4)
+    return tr("ASP4");
+  else if(activeSkyType == WeatherReporter::AS16)
+    return tr("AS16");
+  else if(activeSkyType == WeatherReporter::ASN)
+    return tr("ASN");
+  else
+    // Manually selected
+    return tr("Active Sky");
 }
 
 void WeatherReporter::loadNoaaMetar(const QString& airportIcao)

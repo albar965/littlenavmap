@@ -114,14 +114,18 @@ public:
     NONE, /* not found */
     MANUAL, /* Snapshot file is manually selected */
     ASN, /* Active Sky Next */
-    AS16
+    AS16,
+    ASP4 /* Active Sky for Prepar3D v4 */
   };
 
   /* Get type of active sky weather snapshot that was found */
-  ActiveSkyType getCurrentActiveSkyType()
+  ActiveSkyType getCurrentActiveSkyType() const
   {
     return activeSkyType;
   }
+
+  /* ASN, AS16, ASP4, ... */
+  QString getCurrentActiveSkyName() const;
 
   atools::fs::FsPaths::SimulatorType getSimType() const
   {
@@ -152,7 +156,8 @@ private:
   void loadActiveSkySnapshot(const QString& path);
   void loadActiveSkyFlightplanSnapshot(const QString& path);
   void initActiveSkyNext();
-  void findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot, const QString& activeSkyPrefix);
+  void findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot, const QString& activeSkyPrefix,
+                          const QString& activeSkySimSuffix);
 
   void loadNoaaMetar(const QString& airportIcao);
   void loadVatsimMetar(const QString& airportIcao);

@@ -2573,13 +2573,7 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
 /* Fill active sky information into the weather context */
 void MainWindow::fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const
 {
-  if(weatherReporter->getCurrentActiveSkyType() == WeatherReporter::AS16)
-    weatherContext.asType = tr("AS16");
-  else if(weatherReporter->getCurrentActiveSkyType() == WeatherReporter::ASN)
-    weatherContext.asType = tr("ASN");
-  else
-    weatherContext.asType = tr("Active Sky");
-
+  weatherContext.asType = weatherReporter->getCurrentActiveSkyName();
   weatherContext.isAsDeparture = false;
   weatherContext.isAsDestination = false;
 

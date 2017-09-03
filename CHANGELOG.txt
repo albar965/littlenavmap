@@ -1,6 +1,7 @@
 Version 1.6.0.beta
 
 * Changed handling of helipads and fixed display. Now using name as an identifier.
+* Added support for Hifi ASP4.
 * Aircraft size is now displayed correctly for X-Plane on map and information window.
 * Small improvements to airport symbol painting.
 * Fixed problems with special characters in search (special characters are still treated case sensistive).
