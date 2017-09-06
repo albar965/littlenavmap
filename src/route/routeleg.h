@@ -258,6 +258,12 @@ public:
     return index;
   }
 
+  /* true if airway given but not found in database */
+  bool isAirwaySetAndInvalid() const
+  {
+    return !getAirwayName().isEmpty() && !airway.isValid();
+  }
+
 private:
   const atools::fs::pln::FlightplanEntry& curEntry() const;
 

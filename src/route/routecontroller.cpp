@@ -2921,6 +2921,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
   highlightProcedureItems();
 }
 
+/* Set colors for procedures and missing objects like waypoints and airways */
 void RouteController::highlightProcedureItems()
 {
   for(int row = 0; row < model->rowCount(); ++row)
@@ -2943,8 +2944,7 @@ void RouteController::highlightProcedureItems()
                                 mapcolors::routeProcedureTableColor);
         }
         else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && !leg.getAirwayName().isEmpty() &&
-                 !leg.getAirway().isValid()))
+                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid()))
           item->setForeground(Qt::red);
         else
           item->setForeground(QApplication::palette().color(QPalette::Normal, QPalette::Text));

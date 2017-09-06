@@ -147,12 +147,13 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     const QString& airway = leg.getAirwayName();
     QString ident = leg.getIdent();
 
-    if(leg.getMapObjectType() == map::INVALID || leg.getMapObjectType() == map::USER)
+    if(leg.getMapObjectType() == map::USER)
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
       ident = (options& rs::GFP) ? coords::toGfpFormat(leg.getPosition()) : coords::toDegMinFormat(leg.getPosition());
 
-    if(airway.isEmpty() || options & rs::NO_AIRWAYS)
+    if(airway.isEmpty() || leg.isAirwaySetAndInvalid() || options & rs::NO_AIRWAYS)
     {
+      // Do not use  airway string if not found in database
       if(!lastId.isEmpty())
         retval.append(lastId);
       if(i > 0 && (options & rs::DCT))
