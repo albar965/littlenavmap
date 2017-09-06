@@ -96,6 +96,8 @@ public:
   void showSelectedEntry();
   void activateView();
 
+  void nothingSelectedTriggered();
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -127,6 +129,7 @@ signals:
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;
+  virtual void updatePushButtons() = 0;
 
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */
   void initViewAndController();
@@ -173,7 +176,6 @@ private:
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row);
-  void nothingSelectedTriggered();
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;

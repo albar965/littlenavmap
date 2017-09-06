@@ -160,7 +160,7 @@ MainWindow::MainWindow()
     NavApp::getDatabaseManager()->insertSimSwitchActions();
 
     qDebug() << "MainWindow Creating WeatherReporter";
-    weatherReporter = new WeatherReporter(this, NavApp::getDatabaseManager()->getCurrentSimulator());
+    weatherReporter = new WeatherReporter(this, NavApp::getCurrentSimulatorDb());
 
     qDebug() << "MainWindow Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,

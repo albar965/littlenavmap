@@ -268,6 +268,7 @@ private:
   /* Called by route command */
   void undoMerge();
 
+  /* Save undo state before and after change */
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);
 
@@ -394,7 +395,6 @@ private:
   int iconSize = 20;
 
   QTimer routeAltDelayTimer;
-  RouteViewEventFilter *viewEventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

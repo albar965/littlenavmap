@@ -73,8 +73,8 @@ class TreeEventFilter :
 {
 
 public:
-  TreeEventFilter(QTreeWidget *parent /*, ProcedureSearch *procedureSearch*/)
-    : QObject(parent), tree(parent) /*, search(procedureSearch)*/
+  TreeEventFilter(QTreeWidget *parent)
+    : QObject(parent), tree(parent)
   {
   }
 
@@ -94,26 +94,10 @@ private:
       }
 
     }
-
-    // if(event->type() == QEvent::KeyPress)
-    // {
-    // QKeyEvent *pKeyEvent = static_cast<QKeyEvent *>(event);
-    // switch(pKeyEvent->key())
-    // {
-    // case Qt::Key_Return:
-    // if(!tree->selectedItems().isEmpty())
-    // {
-    // search->showEntry(tree->selectedItems().first(), true);
-    // return true;
-    // }
-    // }
-    // }
-
     return QObject::eventFilter(object, event);
   }
 
   QTreeWidget *tree;
-  // ProcedureSearch *search;
 };
 
 TreeEventFilter::~TreeEventFilter()
@@ -135,6 +119,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   ui->actionSearchProcedureSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   treeWidget->addActions({ui->actionSearchProcedureSelectNothing});
 
+  connect(ui->pushButtonProcedureSearchClearSelection, &QPushButton::clicked,
+          this, &ProcedureSearch::clearSelectionTriggered);
   connect(ui->actionSearchProcedureSelectNothing, &QAction::triggered, this, &ProcedureSearch::clearSelectionTriggered);
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureSearch::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureSearch::itemDoubleClicked);
@@ -156,7 +142,6 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   treeEventFilter = new TreeEventFilter(treeWidget);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
-  ui->labelProcedureSearch->installEventFilter(treeEventFilter);
 
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &ProcedureSearch::resetSearch);
 }
@@ -166,7 +151,6 @@ ProcedureSearch::~ProcedureSearch()
   delete zoomHandler;
   treeWidget->setItemDelegate(nullptr);
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
-  NavApp::getMainUi()->labelProcedureSearch->removeEventFilter(treeEventFilter);
   delete treeEventFilter;
   delete gridDelegate;
 }
@@ -562,12 +546,15 @@ void ProcedureSearch::itemSelectionChanged()
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   if(items.isEmpty() || NavApp::getMainUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
+    NavApp::getMainUi()->pushButtonProcedureSearchClearSelection->setEnabled(false);
+
     emit procedureSelected(proc::MapProcedureRef());
 
     emit procedureLegSelected(proc::MapProcedureRef());
   }
   else
   {
+    NavApp::getMainUi()->pushButtonProcedureSearchClearSelection->setEnabled(true);
     for(QTreeWidgetItem *item : items)
     {
       MapProcedureRef ref = itemIndex.at(item->type());

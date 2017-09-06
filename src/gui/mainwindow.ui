@@ -372,6 +372,40 @@
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="pushButtonAirportSearchReset">
+               <property name="toolTip">
+                <string>Clear all search filters</string>
+               </property>
+               <property name="statusTip">
+                <string>Clear all search filters</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAirportSearchClearSelection">
+               <property name="toolTip">
+                <string>Clear selection and remove any highlights on the map</string>
+               </property>
+               <property name="statusTip">
+                <string>Clear selection and remove any highlights on the map</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="pushButtonAirportHelpSearch">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
@@ -498,22 +532,6 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item row="1" column="1">
-              <widget class="QCheckBox" name="checkBoxAirportLightSearch">
-               <property name="toolTip">
-                <string>Airports with at least one lighted runway</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports with at least one lighted runway</string>
-               </property>
-               <property name="text">
-                <string>&amp;Lighted</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="4">
               <widget class="QCheckBox" name="checkBoxAirportAvgasSearch">
                <property name="toolTip">
@@ -524,6 +542,54 @@
                </property>
                <property name="text">
                 <string>Av&amp;gas</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QCheckBox" name="checkBoxAirportApprSearch">
+               <property name="toolTip">
+                <string>Airports with procedures</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports with procedures</string>
+               </property>
+               <property name="text">
+                <string>&amp;Procedures</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
+               <property name="toolTip">
+                <string>Airports where all runways are closed</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports where all runways are closed</string>
+               </property>
+               <property name="text">
+                <string>&amp;Closed</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="4">
+              <widget class="QCheckBox" name="checkBoxAirportJetASearch">
+               <property name="toolTip">
+                <string>Airports that have jet fuel</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have jet fuel</string>
+               </property>
+               <property name="text">
+                <string>Jet&amp;fuel</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -597,16 +663,16 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="2">
-              <widget class="QCheckBox" name="checkBoxAirportApprSearch">
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="checkBoxAirportLightSearch">
                <property name="toolTip">
-                <string>Airports with procedures</string>
+                <string>Airports with at least one lighted runway</string>
                </property>
                <property name="statusTip">
-                <string>Airports with procedures</string>
+                <string>Airports with at least one lighted runway</string>
                </property>
                <property name="text">
-                <string>&amp;Procedures</string>
+                <string>&amp;Lighted</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -623,38 +689,6 @@
                </property>
                <property name="text">
                 <string>&amp;Tower</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="3">
-              <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
-               <property name="toolTip">
-                <string>Airports where all runways are closed</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports where all runways are closed</string>
-               </property>
-               <property name="text">
-                <string>&amp;Closed</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="4">
-              <widget class="QCheckBox" name="checkBoxAirportJetASearch">
-               <property name="toolTip">
-                <string>Airports that have jet fuel</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports that have jet fuel</string>
-               </property>
-               <property name="text">
-                <string>Jet&amp;fuel</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -1495,6 +1529,40 @@
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="pushButtonNavSearchReset">
+               <property name="toolTip">
+                <string>Clear all search filters</string>
+               </property>
+               <property name="statusTip">
+                <string>Clear all search filters</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonNavSearchClearSelection">
+               <property name="toolTip">
+                <string>Clear selection and remove any highlights on the map</string>
+               </property>
+               <property name="statusTip">
+                <string>Clear selection and remove any highlights on the map</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="pushButtonNavHelpSearch">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
@@ -2120,6 +2188,23 @@
             </spacer>
            </item>
            <item>
+            <widget class="QPushButton" name="pushButtonProcedureSearchClearSelection">
+             <property name="toolTip">
+              <string>Clear selection and remove any highlights and preview on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear selection and remove any highlights and preview on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButtonProcedureHelpSearch">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
@@ -2233,17 +2318,47 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="labelRouteInfo">
-       <property name="text">
-        <string>No Flight Plan loaded</string>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="topMargin">
+        <number>0</number>
        </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::TextSelectableByMouse</set>
-       </property>
-      </widget>
+       <item>
+        <widget class="QLabel" name="labelRouteInfo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>No Flight Plan loaded</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignRight|Qt::AlignTop">
+        <widget class="QPushButton" name="pushButtonRouteClearSelection">
+         <property name="toolTip">
+          <string>Clear selection and remove any highlights on the map</string>
+         </property>
+         <property name="statusTip">
+          <string>Clear selection and remove any highlights on the map</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../littlenavmap.qrc">
+           <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">

@@ -522,6 +522,8 @@ void SearchBaseTable::tableSelectionChanged()
   if(sm != nullptr && sm->hasSelection())
     selectedRows = sm->selectedRows().size();
 
+  updatePushButtons();
+
   emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
 }
 
@@ -544,6 +546,7 @@ void SearchBaseTable::resetView()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetView();
+    updatePushButtons();
     NavApp::setStatusMessage(tr("Table view reset to defaults."));
   }
 }
@@ -554,6 +557,7 @@ void SearchBaseTable::resetSearch()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetSearch();
+    updatePushButtons();
     NavApp::setStatusMessage(tr("Search filters cleared."));
   }
 }
@@ -565,6 +569,7 @@ void SearchBaseTable::loadAllRowsIntoView()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->loadAllRows();
+    updatePushButtons();
     NavApp::setStatusMessage(tr("All entries read."));
   }
 }

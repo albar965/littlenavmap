@@ -112,42 +112,6 @@ using Marble::GeoDataCoordinates;
 
 namespace pln = atools::fs::pln;
 
-/* Use event filter to catch mouse click in white area and deselect all entries */
-class RouteViewEventFilter :
-  public QObject
-{
-
-public:
-  RouteViewEventFilter(QTableView *parent)
-    : QObject(parent), view(parent)
-  {
-  }
-
-  virtual ~RouteViewEventFilter();
-
-private:
-  bool eventFilter(QObject *object, QEvent *event);
-
-  QTableView *view;
-};
-
-RouteViewEventFilter::~RouteViewEventFilter()
-{
-}
-
-bool RouteViewEventFilter::eventFilter(QObject *object, QEvent *event)
-{
-  if(event->type() == QEvent::MouseButtonPress)
-  {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-    if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
-      view->clearSelection();
-  }
-  return QObject::eventFilter(object, event);
-}
-
-// =====================================================================================
-
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(NavApp::getMapQuery())
 {
@@ -249,10 +213,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::nothingSelectedTriggered);
+  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::nothingSelectedTriggered);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
-
-  viewEventFilter = new RouteViewEventFilter(view);
-  ui->labelRouteInfo->installEventFilter(viewEventFilter);
 
   updateSpinboxSuffices();
 
@@ -260,7 +222,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
 RouteController::~RouteController()
 {
-  NavApp::getMainUi()->labelRouteInfo->removeEventFilter(viewEventFilter);
   routeAltDelayTimer.stop();
   delete entryBuilder;
   delete model;
@@ -269,7 +230,6 @@ RouteController::~RouteController()
   delete routeNetworkAirway;
   delete zoomHandler;
   delete symbolPainter;
-  delete viewEventFilter;
 }
 
 void RouteController::undoTriggered()
@@ -1804,6 +1764,8 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   int selectedRows = 0;
   if(sm != nullptr && sm->hasSelection())
     selectedRows = sm->selectedRows().size();
+
+  NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
   emit routeSelectionChanged(selectedRows, model->rowCount());
 }

@@ -509,8 +509,6 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
 
 void SqlModel::resetSqlQuery()
 {
-  qDebug() << Q_FUNC_INFO << currentSqlQuery;
-
   QSqlQueryModel::setQuery(currentSqlQuery, db->getQSqlDatabase());
 
   if(lastError().isValid())

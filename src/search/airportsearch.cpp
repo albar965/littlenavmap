@@ -97,10 +97,10 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
 
   // Show/hide all search options menu action
   connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
-          {
-            for(QAction *a: airportSearchMenuActions)
-              a->setChecked(state);
-          });
+  {
+    for(QAction *a: airportSearchMenuActions)
+      a->setChecked(state);
+  });
 
   // Build SQL query conditions
   QStringList gateCondMap;
@@ -241,8 +241,13 @@ AirportSearch::~AirportSearch()
 void AirportSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
-
   Ui::MainWindow *ui = NavApp::getMainUi();
+
+  // Small push buttons on top
+  connect(ui->pushButtonAirportSearchClearSelection, &QPushButton::clicked,
+          this, &SearchBaseTable::nothingSelectedTriggered);
+  connect(ui->pushButtonAirportSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
+
   connectLineEdit(ui->lineEditAirportIcaoSearch);
   connectLineEdit(ui->lineEditAirportCitySearch);
   connectLineEdit(ui->lineEditAirportCountrySearch);
@@ -276,46 +281,46 @@ void AirportSearch::connectSearchSlots()
 
   // Drop down menu actions
   connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
-                                                      {ui->lineAirportExtSearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
+                                              {ui->lineAirportExtSearch});
+    updateButtonMenu();
+  });
 
   connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state,
-                                                      {ui->lineAirportFuelParkSearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state,
+                                              {ui->lineAirportFuelParkSearch});
+    updateButtonMenu();
+  });
 
   connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state,
-                                                      {ui->lineAirportRunwaySearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state,
+                                              {ui->lineAirportRunwaySearch});
+    updateButtonMenu();
+  });
 
   connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
-                                                      {ui->lineAirportAltSearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
+                                              {ui->lineAirportAltSearch});
+    updateButtonMenu();
+  });
 
   connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
-                                                      {ui->lineAirportDistSearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
+                                              {ui->lineAirportDistSearch});
+    updateButtonMenu();
+  });
 
   connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
-                                                      {ui->lineAirportScenerySearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
+                                              {ui->lineAirportScenerySearch});
+    updateButtonMenu();
+  });
 }
 
 void AirportSearch::saveState()
@@ -539,4 +544,10 @@ void AirportSearch::updateButtonMenu()
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
                                           atools::gui::util::anyWidgetChanged(
                                             {ui->horizontalLayoutAirportScenerySearch}));
+}
+
+void AirportSearch::updatePushButtons()
+{
+  QItemSelectionModel *sm = view->selectionModel();
+  NavApp::getMainUi()->pushButtonAirportSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }

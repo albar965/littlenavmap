@@ -62,10 +62,10 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
 
   // Show/hide all search options menu action
   connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
-          {
-            for(QAction *a: navSearchMenuActions)
-              a->setChecked(state);
-          });
+  {
+    for(QAction *a: navSearchMenuActions)
+      a->setChecked(state);
+  });
 
   // Possible VOR types
   // H
@@ -180,6 +180,11 @@ void NavSearch::connectSearchSlots()
 
   Ui::MainWindow *ui = NavApp::getMainUi();
 
+  // Small push buttons on top
+  connect(ui->pushButtonNavSearchClearSelection, &QPushButton::clicked,
+          this, &SearchBaseTable::nothingSelectedTriggered);
+  connect(ui->pushButtonNavSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
+
   connectLineEdit(ui->lineEditNavIcaoSearch);
   connectLineEdit(ui->lineEditNavNameSearch);
   connectLineEdit(ui->lineEditNavRegionSearch);
@@ -199,17 +204,17 @@ void NavSearch::connectSearchSlots()
 
   // Drop down menu actions
   connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
-                                                      {ui->lineNavDistSearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
+                                              {ui->lineNavDistSearch});
+    updateButtonMenu();
+  });
   connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
-          {
-            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
-                                                      {ui->lineNavScenerySearch});
-            updateButtonMenu();
-          });
+  {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
+                                              {ui->lineNavScenerySearch});
+    updateButtonMenu();
+  });
 }
 
 void NavSearch::saveState()
@@ -417,4 +422,10 @@ void NavSearch::updateButtonMenu()
   atools::gui::util::changeStarIndication(ui->actionNavSearchShowSceneryOptions,
                                           atools::gui::util::anyWidgetChanged(
                                             {ui->horizontalLayoutNavScenerySearch}));
+}
+
+void NavSearch::updatePushButtons()
+{
+  QItemSelectionModel *sm = view->selectionModel();
+  NavApp::getMainUi()->pushButtonNavSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }
