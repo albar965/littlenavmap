@@ -50,6 +50,12 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 {
   xpWeatherReader = new atools::fs::common::XpWeatherReader(this);
   initActiveSkyNext();
+
+  // Set callback so the reader can build an index for nearest airports
+  xpWeatherReader->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
+  {
+    return NavApp::getMapQuery()->getAirportCoordinatesByIdent(ident);
+  });
   initXplane();
 
   connect(xpWeatherReader, &atools::fs::common::XpWeatherReader::weatherUpdated,
@@ -114,10 +120,7 @@ void WeatherReporter::createFsWatcher()
 void WeatherReporter::initXplane()
 {
   if(simType == atools::fs::FsPaths::XPLANE11)
-  {
     xpWeatherReader->readWeatherFile(NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx");
-    buildXplaneAirportIndex();
-  }
 }
 
 void WeatherReporter::initActiveSkyNext()
@@ -565,34 +568,7 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 
 atools::fs::sc::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  atools::fs::sc::MetarResult result;
-  result.requestIdent = station;
-  result.requestPos = pos;
-
-  result.metarForStation = xpWeatherReader->getMetar(station);
-
-  if(result.metarForStation.isEmpty())
-  {
-    const XpCoordIdxEntryType *nearest = nullptr;
-    float nearestDistance = std::numeric_limits<float>::max();
-
-    for(const XpCoordIdxEntryType& entry : xpAirportCoordinates)
-    {
-      float dist = entry.first.distanceSimpleTo(pos);
-      if(dist < nearestDistance)
-      {
-        nearestDistance = dist;
-        nearest = &entry;
-      }
-    }
-
-    if(nearest != nullptr)
-      result.metarForNearest = xpWeatherReader->getMetar(nearest->second);
-  }
-
-  result.timestamp = QDateTime::currentDateTime();
-  return result;
-
+  return xpWeatherReader->getXplaneMetar(station, pos);
 }
 
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
@@ -657,26 +633,5 @@ void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
 void WeatherReporter::xplaneWeatherFileChanged()
 {
   mainWindow->setStatusMessage(tr("X-Plane weather information updated."));
-  buildXplaneAirportIndex();
   emit weatherUpdated();
-}
-
-void WeatherReporter::buildXplaneAirportIndex()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  MapQuery *query = NavApp::getMapQuery();
-  xpAirportCoordinates.clear();
-
-  int num = 0;
-  for(const QString& ident:  xpWeatherReader->getMetarAirportIdents())
-  {
-    atools::geo::Pos pos = query->getAirportCoordinatesByIdent(ident);
-    if(pos.isValid())
-    {
-      xpAirportCoordinates.append(std::make_pair(pos, ident));
-      num++;
-    }
-  }
-  qDebug() << Q_FUNC_INFO << "updated" << num << "airports";
 }

@@ -174,7 +174,6 @@ private:
   void deleteFsWatcher();
   void createFsWatcher();
   void initXplane();
-  void buildXplaneAirportIndex();
 
   QHash<QString, QString> activeSkyMetars, xplaneMetars;
   QString activeSkyDepartureMetar, activeSkyDestinationMetar,
@@ -188,9 +187,6 @@ private:
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
 
   atools::fs::common::XpWeatherReader *xpWeatherReader = nullptr;
-  /* Simple index to allow a full search for nearest */
-  typedef std::pair<atools::geo::Pos, QString> XpCoordIdxEntryType;
-  QVector<XpCoordIdxEntryType> xpAirportCoordinates;
 
   // Stores the request ICAO so we can send it to httpFinished()
   QString noaaRequestIcao, vatsimRequestIcao;
