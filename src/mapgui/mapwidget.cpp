@@ -1669,7 +1669,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.text = airport->name + " (" + airport->ident + ")";
         dm.from = airport->position;
         dm.magvar = airport->magvar;
-        dm.hasMagvar = true;
         dm.color = mapcolors::colorForAirport(*airport);
       }
       else if(vor != nullptr)
@@ -1680,7 +1679,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
         dm.from = vor->position;
         dm.magvar = vor->magvar;
-        dm.hasMagvar = !vor->dmeOnly;
         dm.color = mapcolors::vorSymbolColor;
       }
       else if(ndb != nullptr)
@@ -1688,7 +1686,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.text = ndb->ident + " " + QLocale().toString(ndb->frequency / 100., 'f', 2);
         dm.from = ndb->position;
         dm.magvar = ndb->magvar;
-        dm.hasMagvar = true;
         dm.color = mapcolors::ndbSymbolColor;
       }
       else if(waypoint != nullptr)
@@ -1696,12 +1693,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.text = waypoint->ident;
         dm.from = waypoint->position;
         dm.magvar = waypoint->magvar;
-        dm.hasMagvar = true;
         dm.color = mapcolors::waypointSymbolColor;
       }
       else
       {
-        dm.hasMagvar = false;
+        dm.magvar = NavApp::getMagVar(pos, 0.f);
         dm.from = pos;
         dm.color = dm.isRhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
       }

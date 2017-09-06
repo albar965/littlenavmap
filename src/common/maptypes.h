@@ -677,7 +677,7 @@ struct DistanceMarker
   atools::geo::Pos from, to;
   float magvar;
 
-  bool isRhumbLine, hasMagvar /* If true use  degrees magnetic for display */;
+  bool isRhumbLine;
 
   bool isValid() const
   {
