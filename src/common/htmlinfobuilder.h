@@ -261,9 +261,11 @@ private:
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
                     const QString& station = QString(),
                     const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
+
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
-                    const atools::fs::weather::Metar& metar,
+                    const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar,
                     bool isInterpolated) const;
+
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;

@@ -987,12 +987,14 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
 void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport,
                                   atools::util::HtmlBuilder& html, QColor background) const
 {
+  static const Flags TITLE_FLAGS = atools::util::html::BOLD | atools::util::html::BIG;
+
   if(info)
   {
     if(!print)
       airportTitle(airport, html, -1, background);
 
-    // Simconnect metar ===========================
+    // Simconnect or X-Plane weather file metar ===========================
     const atools::fs::sc::MetarResult& metar = context.fsMetar;
     if(metar.isValid())
     {
@@ -1002,24 +1004,37 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       {
         Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
-        html.h3(tr("Station Weather%2 - %1").arg(met.getStation()).arg(sim), atools::util::html::UNDERLINE);
-        decodedMetar(html, airport, met, false);
+        html.p(tr("Station Weather%1").arg(sim), TITLE_FLAGS);
+        decodedMetar(html, airport, map::MapAirport(), met, false);
       }
 
       if(!metar.metarForNearest.isEmpty())
       {
         Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-        html.h3(tr("Nearest Weather%2 - %1").
-                arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()).arg(sim),
-                atools::util::html::UNDERLINE);
-        decodedMetar(html, airport, met, false);
+        QString reportIcao = met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation();
+
+        html.p(tr("Nearest Weather%2 - %1").arg(reportIcao).arg(sim), TITLE_FLAGS);
+
+        // Check if the station is an airport
+        map::MapAirport reportAirport;
+        mapQuery->getAirportByIdent(reportAirport, reportIcao);
+        if(!print && reportAirport.isValid())
+        {
+          // Add link to airport
+          html.nbsp().nbsp();
+          html.a(tr("Map"),
+                 QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
+                 atools::util::html::LINK_NO_UL);
+        }
+
+        decodedMetar(html, airport, reportAirport, met, false);
       }
 
       if(!metar.metarForInterpolated.isEmpty())
       {
         Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
-        html.h3(tr("Interpolated Weather%2 - %1").arg(met.getStation()).arg(sim), atools::util::html::UNDERLINE);
-        decodedMetar(html, airport, met, true);
+        html.p(tr("Interpolated Weather%2 - %1").arg(met.getStation()).arg(sim), TITLE_FLAGS);
+        decodedMetar(html, airport, map::MapAirport(), met, true);
       }
     }
     else if(!print && OptionData::instance().getFlags() & opts::WEATHER_INFO_FS)
@@ -1031,36 +1046,37 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       Metar met(context.asMetar);
 
       if(context.isAsDeparture && context.isAsDestination)
-        html.h3(context.asType + tr(" - Departure and Destination"), atools::util::html::UNDERLINE);
+        html.p(context.asType + tr(" - Departure and Destination"), TITLE_FLAGS);
       else if(context.isAsDeparture)
-        html.h3(context.asType + tr(" - Departure"), atools::util::html::UNDERLINE);
+        html.p(context.asType + tr(" - Departure"), TITLE_FLAGS);
       else if(context.isAsDestination)
-        html.h3(context.asType + tr(" - Destination"), atools::util::html::UNDERLINE);
+        html.p(context.asType + tr(" - Destination"), TITLE_FLAGS);
       else
-        html.h3(context.asType, atools::util::html::UNDERLINE);
+        html.p(context.asType, TITLE_FLAGS);
 
-      decodedMetar(html, airport, met, false);
+      decodedMetar(html, airport, map::MapAirport(), met, false);
     }
 
     // NOAA metar ===========================
     if(!context.noaaMetar.isEmpty())
     {
       Metar met(context.noaaMetar);
-      html.h3(tr("NOAA Weather"), atools::util::html::UNDERLINE);
-      decodedMetar(html, airport, met, false);
+      html.p(tr("NOAA Weather"), TITLE_FLAGS);
+      decodedMetar(html, airport, map::MapAirport(), met, false);
     }
 
     // Vatsim metar ===========================
     if(!context.vatsimMetar.isEmpty())
     {
       Metar met(context.vatsimMetar);
-      html.h3(tr("VATSIM Weather"), atools::util::html::UNDERLINE);
-      decodedMetar(html, airport, met, false);
+      html.p(tr("VATSIM Weather"), TITLE_FLAGS);
+      decodedMetar(html, airport, map::MapAirport(), met, false);
     }
   }
 }
 
 void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& airport,
+                                   const map::MapAirport& reportAirport,
                                    const atools::fs::weather::Metar& metar, bool isInterpolated) const
 {
   using atools::fs::weather::INVALID_METAR_VALUE;
@@ -1071,6 +1087,14 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
                    parsed.getClouds().first().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
 
   html.table();
+
+  if(reportAirport.isValid())
+  {
+    html.row2(tr("Reporting airport: "), tr("%1 (%2), %3").
+              arg(reportAirport.name).
+              arg(reportAirport.ident).
+              arg(Unit::distMeter(reportAirport.position.distanceMeterTo(airport.position))));
+  }
 
   // Time and date =============================================================
   if(!isInterpolated)
