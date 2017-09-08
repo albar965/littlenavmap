@@ -151,6 +151,11 @@ public:
 
   void resultTruncated(int truncatedTo);
 
+  void setDatabaseErased(bool value)
+  {
+    databasesErased = value;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -294,6 +299,10 @@ private:
   map::WeatherContext *currentWeatherContext = nullptr;
 
   QAction *emptyAirportSeparator = nullptr;
+
+  /* Show database dialog after cleanup of obsolete databases if true */
+  bool databasesErased = false;
+
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

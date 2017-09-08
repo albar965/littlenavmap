@@ -90,7 +90,7 @@ public:
   void insertSimSwitchActions();
 
   /* if false quit application */
-  bool checkIncompatibleDatabases();
+  bool checkIncompatibleDatabases(bool* databasesErased);
 
   /* Get the settings directory where the database is stored */
   const QString& getDatabaseDirectory() const

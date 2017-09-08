@@ -183,9 +183,12 @@ DatabaseManager::~DatabaseManager()
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
 }
 
-bool DatabaseManager::checkIncompatibleDatabases()
+bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
 {
   bool ok = true;
+
+  if(databasesErased != nullptr)
+    *databasesErased = false;
 
   // Need empty block to delete sqlDb before removing driver
   {
@@ -290,6 +293,9 @@ bool DatabaseManager::checkIncompatibleDatabases()
             sqlDb.open();
             createEmptySchema(&sqlDb);
             sqlDb.close();
+
+            if(databasesErased != nullptr)
+              *databasesErased = true;
           }
           else
           {

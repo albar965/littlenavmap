@@ -1959,10 +1959,10 @@ void MainWindow::mainWindowShown()
   // Focus map widget instead of a random widget
   mapWidget->setFocus();
 
+  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
-    DatabaseManager *databaseManager = NavApp::getDatabaseManager();
     if(!databaseManager->hasSimulatorDatabases())
     {
       // Show the scenery database dialog on first start
@@ -2008,6 +2008,13 @@ void MainWindow::mainWindowShown()
     }
 
     // else have databases do nothing
+  }
+  else if(databasesErased)
+  {
+    databasesErased = false;
+    // Databases were removed - show dialog
+    NavApp::deleteSplashScreen();
+    databaseManager->run();
   }
 
   // If enabled connect to simulator without showing dialog

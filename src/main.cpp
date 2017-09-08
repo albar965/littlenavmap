@@ -184,13 +184,18 @@ int main(int argc, char *argv[])
 
     // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application
+    bool databasesErased = false;
     dbManager = new DatabaseManager(nullptr);
-    if(dbManager->checkIncompatibleDatabases())
+    if(dbManager->checkIncompatibleDatabases(&databasesErased))
     {
       delete dbManager;
       dbManager = nullptr;
 
       MainWindow mainWindow;
+
+      // Show database dialog if something was removed
+      mainWindow.setDatabaseErased(databasesErased);
+
       mainWindow.show();
 
       // Hide splash once main window is shown
