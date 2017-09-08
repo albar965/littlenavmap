@@ -1,3 +1,24 @@
+Version 1.6.1.beta
+
+* Adapted flight plan calculation, map display and information display to one-way airways and maximum altitude
+  restriction (X-Plane).
+* Database loading dialog now pops up after erasing incompatible databases.
+* Improved weather display for nearest station: Added name, distance and map link to reporting station.
+* Rhumb line measurement now shows both magnetic and true course where declination is based on origin.
+* Workaround in route string generation for malformed PLN files from PFPX.
+* Now all waypoints are added instead if an airway could not be found in the database in route string.
+* Invalid waypoints (not found in database) are now added as name instead of coordinates to route string.
+* Removed "select nothing" click areas in flight plan and procedure search top level labels. Added push buttons instead.
+
+derived from atools:
+* Increased database version for schema changes - needs a reload.
+* Changed database schema for one-way airways and maximum altitude.
+* Adapted airway compilation for direction and maximum altitude.
+* Fixed error where number of attached airways was not assigned to waypoints.
+* Now erasing wrong airway entries at departure and destination when loading flight plan to avoid
+  problems with malformed flight plans from PFPX.
+* Fixed error where Documents path was not selected as default if missing simulator.
+
 Version 1.6.0.beta
 
 * Changed handling of helipads and fixed display. Now using name as an identifier.
