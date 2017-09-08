@@ -39,7 +39,7 @@ RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeT
                            const QString& edgeTableName, const QStringList& nodeExtraColumns,
                            const QStringList& edgeExtraColumns)
   : db(sqlDb), nodeTable(nodeTableName), edgeTable(edgeTableName), nodeExtraCols(nodeExtraColumns),
-    edgeExtraCols(edgeExtraColumns)
+  edgeExtraCols(edgeExtraColumns)
 {
   nodeCache.reserve(60000);
   destinationNodePredecessors.reserve(1000);
@@ -172,10 +172,10 @@ void RouteNetwork::cleanDestNodeEdges()
       // Remove all edges from the node that point to the destination node
       QVector<Edge>& edges = nodeCache[i].edges;
       QVector<Edge>::iterator it = std::remove_if(edges.begin(), edges.end(),
-                                                  [ = ](const Edge &e)->bool
-                                                  {
-                                                    return e.toNodeId == DESTINATION_NODE_ID;
-                                                  });
+                                                  [ = ](const Edge& e) -> bool
+      {
+        return e.toNodeId == DESTINATION_NODE_ID;
+      });
 
       if(it == edges.end())
         qWarning() << "No node destination predecessors deleted for node" << nodeCache.value(i).id;
@@ -352,7 +352,7 @@ nw::Node RouteNetwork::fetchNode(int id)
     {
       int nodeId = edgeToQuery->value("to_node_id").toInt();
       if(nodeId != id && testType(static_cast<nw::NodeType>(edgeToQuery->value("to_node_type").toInt())))
-        tempEdges.insert(createEdge(edgeToQuery->record(), nodeId));
+        tempEdges.insert(createEdge(edgeToQuery->record(), nodeId, false /* reverseDirection */));
     }
 
     // Add outgoing edges
@@ -363,7 +363,7 @@ nw::Node RouteNetwork::fetchNode(int id)
     {
       int nodeId = edgeFromQuery->value("from_node_id").toInt();
       if(nodeId != id && testType(static_cast<nw::NodeType>(edgeFromQuery->value("from_node_type").toInt())))
-        tempEdges.insert(createEdge(edgeFromQuery->record(), nodeId));
+        tempEdges.insert(createEdge(edgeFromQuery->record(), nodeId, true /* reverseDirection */));
     }
 
     node.edges = tempEdges.values().toVector();
@@ -474,19 +474,39 @@ void RouteNetwork::updateNodeIndexes(const SqlRecord& rec)
 }
 
 /* Create edge from SQL record */
-nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeId)
+nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeId, bool reverseDirection)
 {
   updateEdgeIndexes(rec);
   Edge edge;
   edge.toNodeId = toNodeId;
+
   if(edgeTypeIndex != -1)
     edge.type = static_cast<nw::EdgeType>(rec.valueInt(edgeTypeIndex));
+
+  if(edgeDirectionIndex != -1)
+  {
+    edge.direction = static_cast<nw::EdgeDirection>(rec.valueInt(edgeDirectionIndex));
+    if(reverseDirection && edge.direction != BOTH)
+    {
+      if(edge.direction == FORWARD)
+        edge.direction = BACKWARD;
+      else if(edge.direction == BACKWARD)
+        edge.direction = FORWARD;
+    }
+  }
+
   if(edgeMinAltIndex != -1)
     edge.minAltFt = rec.valueInt(edgeMinAltIndex);
+
+  if(edgeMaxAltIndex != -1)
+    edge.maxAltFt = rec.valueInt(edgeMaxAltIndex);
+
   if(edgeAirwayIdIndex != -1)
     edge.airwayId = rec.valueInt(edgeAirwayIdIndex);
+
   if(edgeAirwayNameIndex != -1)
     edge.airwayName = rec.valueStr(edgeAirwayNameIndex);
+
   if(edgeDistanceIndex != -1)
     edge.lengthMeter = rec.valueInt(edgeDistanceIndex);
   return edge;
@@ -502,10 +522,20 @@ void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
     else
       edgeTypeIndex = -1;
 
+    if(rec.contains("direction"))
+      edgeDirectionIndex = rec.indexOf("direction");
+    else
+      edgeDirectionIndex = -1;
+
     if(rec.contains("minimum_altitude"))
       edgeMinAltIndex = rec.indexOf("minimum_altitude");
     else
       edgeMinAltIndex = -1;
+
+    if(rec.contains("maximum_altitude"))
+      edgeMaxAltIndex = rec.indexOf("maximum_altitude");
+    else
+      edgeMaxAltIndex = -1;
 
     if(rec.contains("airway_name"))
       edgeAirwayNameIndex = rec.indexOf("airway_name");

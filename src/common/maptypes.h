@@ -481,13 +481,23 @@ enum MapAirwayType
   BOTH
 };
 
+enum MapAirwayDirection
+{
+  /* 0 = both, 1 = forward only (from -> to), 2 = backward only (to -> from) */
+  DIR_BOTH = 0,
+  DIR_FORWARD = 1,
+  DIR_BACKWARD = 2
+};
+
 /* Airway segment */
 struct MapAirway
 {
   QString name;
   map::MapAirwayType type;
-  int id, fromWaypointId, toWaypointId; /* all database ids waypoint.waypoint_id */
-  int minAltitude /* feet */, sequence /* segment sequence in airway */,
+  int id, fromWaypointId, toWaypointId /* all database ids */;
+  MapAirwayDirection direction;
+  int minAltitude, maxAltitude /* feet */,
+      sequence /* segment sequence in airway */,
       fragment /* fragment number of disconnected airways with the same name */;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
@@ -763,6 +773,13 @@ QString ndbText(const map::MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
 QString userpointText(const map::MapUserpoint& userpoint);
 QString airwayText(const map::MapAirway& airway);
+
+/* Altitude text for airways */
+QString airwayAltText(const MapAirway& airway);
+
+/* Short for map display */
+QString airwayAltTextShort(const MapAirway& airway);
+
 QString magvarText(float magvar);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */

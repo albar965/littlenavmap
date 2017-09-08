@@ -138,8 +138,15 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
 
     const Edge& edge = successorEdges.at(i);
 
-    if(altitude > 0 && edge.minAltFt > 0 && altitude < edge.minAltFt)
+    if(altitude > 0 && !(altitude >= edge.minAltFt && altitude <= edge.maxAltFt))
       // Altitude restrictions do not match - ignore this edge to the node
+      continue;
+
+    // if(edge.airwayName == "UJ3")
+    // qDebug() << Q_FUNC_INFO;
+
+    if(edge.direction == nw::BACKWARD)
+      // Do not travel against a one-way airway
       continue;
 
     int lengthMeter = edge.lengthMeter;

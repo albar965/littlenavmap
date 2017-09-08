@@ -126,6 +126,7 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
     }
     else
     {
+      // Text is flipped upside down for readability
       if(!arrowLeft.isEmpty())
         newText = arrowLeft + newText;
       elide = Qt::ElideRight;

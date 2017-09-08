@@ -1377,8 +1377,12 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     for(const MapAirway& aw : airways)
     {
       QString txt(map::airwayTypeToString(aw.type));
-      if(aw.minAltitude > 0)
-        txt += tr(", ") + Unit::altFeet(aw.minAltitude);
+
+      QString altTxt = map::airwayAltText(aw);
+
+      if(!altTxt.isEmpty())
+        txt.append(tr(", ") + altTxt);
+
       airwayTexts.append(std::make_pair(aw.name, txt));
     }
 
@@ -1475,39 +1479,68 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   html.table();
   html.row2(tr("Segment type:"), map::airwayTypeToString(airway.type));
 
-  if(airway.minAltitude > 0)
-    html.row2(tr("Min altitude for this segment:"), Unit::altFeet(airway.minAltitude));
+  if(airway.direction != map::DIR_BOTH)
+  {
+    // Show from/to waypoints if one-way and include links ==================================
+    HtmlBuilder tempHtml(true);
+
+    map::MapWaypoint from = mapQuery->getWaypointById(airway.fromWaypointId);
+    map::MapWaypoint to = mapQuery->getWaypointById(airway.toWaypointId);
+
+    if(airway.direction == map::DIR_BACKWARD)
+      // Reverse if one-way is backward
+      std::swap(from, to);
+
+    if(info)
+    {
+      tempHtml.a(tr("%1/%2").arg(from.ident).arg(from.region), QString("lnm://show?lonx=%1&laty=%2").
+                 arg(from.position.getLonX()).arg(from.position.getLatY()), atools::util::html::LINK_NO_UL);
+      tempHtml.text(" ► ");
+      tempHtml.a(tr("%1/%2").arg(to.ident).arg(to.region), QString("lnm://show?lonx=%1&laty=%2").
+                 arg(to.position.getLonX()).arg(to.position.getLatY()), atools::util::html::LINK_NO_UL);
+    }
+    else
+      tempHtml.text(tr("%1/%2 ► %3/%4").arg(from.ident).arg(from.region).arg(to.ident).arg(to.region));
+
+    html.row2(tr("Segment One-way:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
+  }
+
+  QString altTxt = map::airwayAltText(airway);
+
+  if(!altTxt.isEmpty())
+    html.row2(tr("Altitude for this segment:"), altTxt);
 
   html.row2(tr("Segment length:"), Unit::distMeter(airway.from.distanceMeterTo(airway.to)));
 
   if(infoQuery != nullptr && info)
   {
+    // Show list of waypoints =================================================================
     atools::sql::SqlRecordVector waypoints =
       infoQuery->getAirwayWaypointInformation(airway.name, airway.fragment);
 
     if(!waypoints.isEmpty())
     {
-      HtmlBuilder wpHtml(true);
+      HtmlBuilder tempHtml(true);
       for(const SqlRecord& wprec : waypoints)
       {
-        if(!wpHtml.isEmpty())
-          wpHtml.text(", ");
-        wpHtml.a(tr("%1/%2").
-                 arg(wprec.valueStr("from_ident")).
-                 arg(wprec.valueStr("from_region")),
-                 QString("lnm://show?lonx=%1&laty=%2").
-                 arg(wprec.valueFloat("from_lonx")).
-                 arg(wprec.valueFloat("from_laty")), atools::util::html::LINK_NO_UL);
+        if(!tempHtml.isEmpty())
+          tempHtml.text(", ");
+        tempHtml.a(tr("%1/%2").
+                   arg(wprec.valueStr("from_ident")).
+                   arg(wprec.valueStr("from_region")),
+                   QString("lnm://show?lonx=%1&laty=%2").
+                   arg(wprec.valueFloat("from_lonx")).
+                   arg(wprec.valueFloat("from_laty")), atools::util::html::LINK_NO_UL);
       }
-      wpHtml.text(", ");
-      wpHtml.a(tr("%1/%2").
-               arg(waypoints.last().valueStr("to_ident")).
-               arg(waypoints.last().valueStr("to_region")),
-               QString("lnm://show?lonx=%1&laty=%2").
-               arg(waypoints.last().valueFloat("to_lonx")).
-               arg(waypoints.last().valueFloat("to_laty")), atools::util::html::LINK_NO_UL);
+      tempHtml.text(", ");
+      tempHtml.a(tr("%1/%2").
+                 arg(waypoints.last().valueStr("to_ident")).
+                 arg(waypoints.last().valueStr("to_region")),
+                 QString("lnm://show?lonx=%1&laty=%2").
+                 arg(waypoints.last().valueFloat("to_lonx")).
+                 arg(waypoints.last().valueFloat("to_laty")), atools::util::html::LINK_NO_UL);
 
-      html.row2(tr("Waypoints Ident/Region:"), wpHtml.getHtml(), atools::util::html::NO_ENTITIES);
+      html.row2(tr("Waypoints Ident/Region:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
     }
   }
   html.tableEnd();

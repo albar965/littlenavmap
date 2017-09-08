@@ -888,6 +888,38 @@ QString airwayText(const MapAirway& airway)
   return QObject::tr("Airway %1").arg(airway.name);
 }
 
+QString airwayAltText(const MapAirway& airway)
+{
+  QString altTxt;
+  if(airway.minAltitude > 0)
+  {
+    if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
+      altTxt = Unit::altFeet(airway.minAltitude);
+    else
+      altTxt = QObject::tr("Min ") + Unit::altFeet(airway.minAltitude);
+  }
+
+  if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
+  {
+    if(airway.minAltitude > 0)
+      altTxt += QObject::tr(" to ") + Unit::altFeet(airway.maxAltitude);
+    else
+      altTxt += QObject::tr("Max ") + Unit::altFeet(airway.maxAltitude);
+  }
+  return altTxt;
+}
+
+QString airwayAltTextShort(const MapAirway& airway)
+{
+  QString altTxt;
+  if(airway.minAltitude > 0)
+    altTxt = Unit::altFeet(airway.minAltitude, true /*addUnit*/, true /*narrow*/);
+
+  if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
+    altTxt += QObject::tr("<") + Unit::altFeet(airway.maxAltitude, true /*addUnit*/, true /*narrow*/);
+  return altTxt;
+}
+
 QString airportText(const MapAirport& airport)
 {
   return QObject::tr("Airport %1 (%2)").arg(airport.name).arg(airport.ident);

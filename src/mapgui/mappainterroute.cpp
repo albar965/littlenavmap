@@ -1099,8 +1099,8 @@ void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
   {
     if(visibleStartPoints.testBit(i))
     {
-      int x = pt.x();
-      int y = pt.y();
+      int x = atools::roundToInt(pt.x());
+      int y = atools::roundToInt(pt.y());
       const RouteLeg& obj = route->at(i);
       map::MapObjectTypes type = obj.getMapObjectType();
       switch(type)

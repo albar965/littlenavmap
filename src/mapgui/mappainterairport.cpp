@@ -867,10 +867,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       text = rwMetrics.elidedText(text, Qt::ElideRight, runwayRect.height());
 
       painter->translate(runwayCenters.at(i));
-      if(runway.heading > 180.f)
-        painter->rotate(runway.heading + 90.f);
-      else
-        painter->rotate(runway.heading - 90.f);
+      painter->rotate(runway.heading > 180.f ? runway.heading + 90.f : runway.heading - 90.f);
 
       // Draw semi-transparent rectangle behind text
       QRect textBackRect = rwMetrics.boundingRect(text);

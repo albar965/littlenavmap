@@ -106,13 +106,32 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 {
   QFontMetrics metrics = context->painter->fontMetrics();
 
-  // Used to combine texts of different airway lines with the same coordinates into one text
-  // Key is line coordinates as text (avoid floating point compare) and value is index into texts and airwayIndex
+  // Keep text placement information for each airway line which can cover multiple texts/airways
+  struct Place
+  {
+    Place()
+    {
+    }
+
+    Place(const QString& text, int initialIndex, bool reversed)
+      : texts(
+    {
+      text
+    }), airwayIndexByText({initialIndex}), positionReversed({reversed})
+    {
+    }
+
+    QStringList texts; // Prepared airway texts
+    QVector<int> airwayIndexByText; // Index into "airways" for each text
+    QVector<bool> positionReversed; // Line is reversed for text
+  };
+
+  // Used to combine texts of different airway lines with the same coordinates into one text.
+  // Key is line coordinates as text (avoid floating point compare) and
+  // value is index into texts and airwayIndex
   QHash<QString, int> lines;
-  // Contains combined text for overlapping airway lines
-  QList<QString> texts;
-  // points to index or airway in airway list
-  QList<int> airwayIndex;
+  // Contains combined text for overlapping airway lines and points to index or airway in airway list
+  QVector<Place> textlist;
 
   for(int i = 0; i < airways->size(); i++)
   {
@@ -135,8 +154,9 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     bool visible1 = wToS(airway.from, x1, y1);
     bool visible2 = wToS(airway.to, x2, y2);
 
-    if(!visible1 && !visible2) // Check bounding rect for visibility
+    if(!visible1 && !visible2)
     {
+      // Check bounding rect for visibility
       const Rect& bnd = airway.bounding;
       Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(),
                                          Marble::GeoDataCoordinates::Degree);
@@ -157,40 +177,51 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
         QString text;
         if(context->mapLayer->isAirwayIdent())
           text += airway.name;
+
         if(context->mapLayer->isAirwayInfo())
         {
           text += QString(tr(" / ")) + map::airwayTypeToShortString(airway.type);
-          if(airway.minAltitude)
-            text += QString(tr(" / ")) + Unit::altFeet(airway.minAltitude, true /*addUnit*/, true /*narrow*/);
+
+          QString altTxt = map::airwayAltTextShort(airway);
+
+          if(!altTxt.isEmpty())
+            text += QString(tr(" / ")) + altTxt;
         }
 
         if(!text.isEmpty())
         {
-          QString firstStr = airway.from.toString(3, false /*altitude*/);
-          QString lastStr = airway.to.toString(3, false /*altitude*/);
+          QString firstCoordStr = airway.from.toString(3, false /*altitude*/);
+          QString toCoordStr = airway.to.toString(3, false /*altitude*/);
 
           // Create string key for index by using the coordinates
-          QString lineTextKey = firstStr + "|" + lastStr;
+          QString lineTextKey = firstCoordStr + "|" + toCoordStr;
+
+          bool reversed = false;
 
           // Does it already exist in the map?
           int index = lines.value(lineTextKey, -1);
           if(index == -1)
+          {
             // Try with reversed coordinates
-            index = lines.value(lastStr + "|" + firstStr, -1);
+            index = lines.value(toCoordStr + "|" + firstCoordStr, -1);
+            reversed = index != -1;
+          }
+
+          // if(reversed)
+          // qDebug() << text << reversed;
 
           if(index != -1)
           {
             // Index already found - add the new text to the present one
-            QString oldTxt(texts.at(index));
-            if(oldTxt != text)
-              texts[index] = texts.at(index) + ", " + text;
+            textlist[index].texts.append(text);
+            textlist[index].airwayIndexByText.append(i);
+            textlist[index].positionReversed.append(reversed);
           }
           else if(!text.isEmpty())
           {
             // Neither with forward nor reversed coordinates found - insert a new entry
-            texts.append(text);
-            lines.insert(lineTextKey, texts.size() - 1);
-            airwayIndex.append(i);
+            textlist.append(Place(text, i, reversed));
+            lines.insert(lineTextKey, textlist.size() - 1);
           }
         }
       }
@@ -200,26 +231,37 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
   TextPlacement textPlacement(context->painter, this);
 
   // Draw texts ----------------------------------------
-  if(!texts.isEmpty())
+  if(!textlist.isEmpty())
   {
     int i = 0;
     context->painter->setPen(mapcolors::airwayTextColor);
-    for(const QString& text : texts)
+    for(Place& place: textlist)
     {
-      const MapAirway& airway = airways->at(airwayIndex.at(i));
+      const MapAirway& airway = airways->at(place.airwayIndexByText.first());
       int xt = -1, yt = -1;
       float textBearing;
+
+      // First find text position with incomplete text
+      QString text = place.texts.join(tr(", "));
       if(textPlacement.findTextPos(airway.from, airway.to, metrics.width(text), metrics.height() * 2,
                                    xt, yt, &textBearing))
       {
-        float rotate;
-        if(textBearing > 180.f)
-          rotate = textBearing + 90.f;
-        else
-          rotate = textBearing - 90.f;
+        // Prepend arrows to all texts
+        for(int j = 0; j < place.texts.size(); ++j)
+        {
+          const map::MapAirway& aw = airways->at(place.airwayIndexByText.at(j));
+          QString& txt = place.texts[j];
+
+          if(aw.direction != map::DIR_BOTH)
+            // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
+            txt.prepend(((textBearing > 180.f) ^
+                         place.positionReversed.at(j) ^
+                         (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
+        }
+        text = place.texts.join(tr(", "));
 
         context->painter->translate(xt, yt);
-        context->painter->rotate(rotate);
+        context->painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
         context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
                                    context->painter->fontMetrics().ascent(), text);
         context->painter->resetTransform();

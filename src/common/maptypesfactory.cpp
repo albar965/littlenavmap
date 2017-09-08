@@ -358,6 +358,22 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway
   airway.type = airwayTypeFromString(record.valueStr("airway_type"));
   airway.name = record.valueStr("airway_name");
   airway.minAltitude = record.valueInt("minimum_altitude");
+
+  if(record.contains("maximum_altitude"))
+    airway.maxAltitude = record.valueInt("maximum_altitude");
+
+  if(record.contains("direction"))
+  {
+    QString dir = record.valueStr("direction");
+    if(dir == "F")
+      airway.direction = map::DIR_FORWARD;
+    else if(dir == "B")
+      airway.direction = map::DIR_BACKWARD;
+    else
+      // 'N'
+      airway.direction = map::DIR_BOTH;
+  }
+
   airway.fragment = record.valueInt("airway_fragment_no");
   airway.sequence = record.valueInt("sequence_no");
   airway.fromWaypointId = record.valueInt("from_waypoint_id");

@@ -1391,7 +1391,7 @@ void MapQuery::initQueries()
 
   static const QString airwayQueryBase(
     "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
-    "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
+    "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
 
   static const QString airspaceQueryBase(
     "boundary_id, type, name, com_type, com_frequency, com_name, "

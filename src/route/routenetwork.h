@@ -74,21 +74,35 @@ enum EdgeType
   AIRWAY_BOTH = 7
 };
 
+enum EdgeDirection
+{
+  /* 0 = both, 1 = forward only (from -> to), 2 = backward only (to -> from) */
+  BOTH = 0,
+  FORWARD = 1,
+  BACKWARD = 2
+};
+
 /* Network edge that connects two nodes. Is loaded from the database. */
 struct Edge
 {
+  static constexpr int MIN_ALTITUDE = 0;
+  static constexpr int MAX_ALTITUDE = std::numeric_limits<int>::max();
+
   Edge()
-    : toNodeId(-1), lengthMeter(0), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
+    : toNodeId(-1), lengthMeter(0), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), airwayId(-1),
+    type(nw::AIRWAY_NONE), direction(nw::BOTH)
   {
   }
 
   Edge(int to, int distance)
-    : toNodeId(to), lengthMeter(distance), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
+    : toNodeId(to), lengthMeter(distance), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), airwayId(-1),
+    type(nw::AIRWAY_NONE), direction(nw::BOTH)
   {
   }
 
-  int toNodeId /* database "node_id" */, lengthMeter, minAltFt, airwayId;
+  int toNodeId /* database "node_id" */, lengthMeter, minAltFt, maxAltFt, airwayId;
   nw::EdgeType type;
+  nw::EdgeDirection direction;
   QString airwayName;
 
   bool operator==(const nw::Edge& other) const
@@ -225,7 +239,7 @@ private:
   void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
   bool testType(nw::NodeType type);
   nw::Node createNode(const atools::sql::SqlRecord& rec);
-  nw::Edge createEdge(const atools::sql::SqlRecord& rec, int toNodeId);
+  nw::Edge createEdge(const atools::sql::SqlRecord& rec, int toNodeId, bool reverseDirection);
 
   void updateNodeIndexes(const atools::sql::SqlRecord& rec);
   void updateEdgeIndexes(const atools::sql::SqlRecord& rec);
@@ -242,8 +256,8 @@ private:
   int numNodesDb = -1;
 
   atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
-  *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
-  *edgeFromQuery = nullptr;
+                        *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
+                        *edgeFromQuery = nullptr;
 
   /* Bounding rectangle around destination used to find virtual successor edges */
   atools::geo::Rect destinationNodeRect;
@@ -266,8 +280,8 @@ private:
   bool nodeIndexesCreated = false;
   int nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
   bool edgeIndexesCreated = false;
-  int edgeTypeIndex = -1, edgeAirwayNameIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
-      edgeDistanceIndex = -1;
+  int edgeTypeIndex = -1, edgeAirwayNameIndex = -1, edgeDirectionIndex = -1, edgeMinAltIndex = -1, edgeMaxAltIndex = -1,
+      edgeAirwayIdIndex = -1, edgeDistanceIndex = -1;
 
   bool airwayRouting;
 };
