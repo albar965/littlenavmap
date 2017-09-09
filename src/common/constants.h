@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_CONSTANTS_H
 #define LITTLENAVMAP_CONSTANTS_H
 
+#include <QLatin1Literal>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-const-variable"
 
@@ -43,13 +45,11 @@
 /* Use local URL for update checks for testing */
 // #define DEBUG_UPDATE_URL
 
-#include "geo/pos.h"
-
 namespace lnm {
 
 // ======== URLs ================================================================
 // "master" or "release/1.4"
-const QLatin1Literal HELP_BRANCH("master");
+const QLatin1Literal HELP_BRANCH("release/1.6");
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
 const QString HELP_ONLINE_URL(
