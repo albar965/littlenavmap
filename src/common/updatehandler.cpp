@@ -132,25 +132,26 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     switch(update.channel)
     {
       case atools::util::STABLE:
-        channel = tr("Stable");
+        channel = tr("Stable Version");
         break;
       case atools::util::BETA:
-        channel = tr("Beta");
+        channel = tr("Beta/Test Version");
         break;
       case atools::util::DEVELOP:
-        channel = tr("Development");
+        channel = tr("Development Version");
         break;
     }
 
     html.b(tr("%1: %2").arg(channel).arg(update.version));
 
+    if(!update.download.isEmpty())
+      html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Download &lt;&lt;</b>"),
+             update.download, html::NO_ENTITIES | html::LINK_NO_UL);
+    else
+      html.text(tr("No download available for this operating system."));
+
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
-
-    if(!update.download.isEmpty())
-      html.p().a(tr("<b>&gt;&gt; Download</b>"), update.download, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
-    else
-      html.p(tr("No download available for this operating system."));
 
     if(!update.url.isEmpty())
       html.p().a(tr("<b>&gt;&gt; Release Information</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
