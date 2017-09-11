@@ -21,6 +21,7 @@
 
 #include "navapp.h"
 #include "options/optiondata.h"
+#include "gui/helphandler.h"
 #include "common/procedurequery.h"
 #include "common/constants.h"
 #include "common/formatter.h"
@@ -214,6 +215,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::nothingSelectedTriggered);
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::nothingSelectedTriggered);
+  connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
 
   updateSpinboxSuffices();
@@ -1494,6 +1496,11 @@ void RouteController::activateLegTriggered()
 
   if(!rows.isEmpty())
     activateLegManually(rows.first());
+}
+
+void RouteController::helpClicked()
+{
+  atools::gui::HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "FLIGHTPLAN.html", lnm::helpLanguages());
 }
 
 void RouteController::nothingSelectedTriggered()

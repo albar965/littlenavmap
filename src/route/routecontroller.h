@@ -331,6 +331,7 @@ private:
   void undoTriggered();
   void redoTriggered();
   bool updateStartPositionBestRunway(bool force, bool undo);
+  void helpClicked();
 
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);

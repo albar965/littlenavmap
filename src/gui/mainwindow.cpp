@@ -1112,7 +1112,8 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
   {
     {QString(), QMessageBox::Cancel},
     {tr("Save &as PLN ..."), QMessageBox::SaveAll},
-    {QString(), QMessageBox::Save}
+    {QString(), QMessageBox::Save},
+    {QString(), QMessageBox::Help}
   };
 
   bool airways = NavApp::getRoute().hasAirways();
@@ -1178,6 +1179,8 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     saveAs = false;
     return true;
   }
+  else if(result == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html", lnm::helpLanguages());
   // else cancel
 
   return false;
