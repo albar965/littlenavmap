@@ -41,6 +41,9 @@ unix:!macx {
 # Mac OS X ==================
 macx {
   MARBLE_BASE=/Users/alex/Programme/Marble-$${CONF_TYPE}
+
+  # Compatibility down to OS X Mountain Lion 10.8
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
 }
 
 # End of configuration section

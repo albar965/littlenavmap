@@ -907,6 +907,8 @@ bool RouteController::saveFlightplan(bool cleanExport)
     QHash<QString, QString>& properties = flightplan.getProperties();
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
+    properties.insert(pln::NAVDATA, NavApp::getCurrentSimulatorShortName());
+
     // Save PLN, FLP or FMS
     flightplan.save(routeFilename, cleanExport /* clean */);
 
@@ -2858,24 +2860,26 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
-    const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
-
-    // Sequence only for airborne airplanes
-    if(!aircraft.isOnGround())
+    if(simulatorData.isUserAircraftValid())
     {
-      map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
-      int previousRouteLeg = route.getActiveLegIndexCorrected();
-      route.updateActiveLegAndPos(position);
-      int routeLeg = route.getActiveLegIndexCorrected();
+      const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
 
-      if(routeLeg != previousRouteLeg)
+      // Sequence only for airborne airplanes
+      if(!aircraft.isOnGround())
       {
-        // Use corrected indexes to highlight initial fix
-        qDebug() << "new route leg" << previousRouteLeg << routeLeg;
-        highlightNextWaypoint(routeLeg);
+        map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
+        int previousRouteLeg = route.getActiveLegIndexCorrected();
+        route.updateActiveLegAndPos(position);
+        int routeLeg = route.getActiveLegIndexCorrected();
+
+        if(routeLeg != previousRouteLeg)
+        {
+          // Use corrected indexes to highlight initial fix
+          qDebug() << "new route leg" << previousRouteLeg << routeLeg;
+          highlightNextWaypoint(routeLeg);
+        }
       }
     }
-
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
 }

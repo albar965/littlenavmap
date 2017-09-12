@@ -301,6 +301,7 @@ private:
         magvar = 0.f; /* Either taken from navaid or average across the route */
   atools::geo::LineString geometry;
 
+  void assignRunwayOrHelipad(MapQuery* mapQuery, const QString& name);
 };
 
 QDebug operator<<(QDebug out, const RouteLeg& leg);

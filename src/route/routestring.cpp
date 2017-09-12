@@ -38,7 +38,7 @@ const static int MAX_WAYPOINT_DISTANCE_NM = 1000;
 const static QRegularExpression SPDALT("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
 const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
-const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,5})(\\.([A-Z0-9]{1,5}))?$");
+const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,6})(\\.([A-Z0-9]{1,6}))?$");
 
 const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT |
                                              map::VOR | map::NDB | map::USER |
@@ -204,9 +204,9 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan)
 {
-  float fdummy;
-  bool bdummy;
-  return createRouteFromString(routeString, flightplan, fdummy, bdummy);
+  float speeddummy;
+  bool altdummy;
+  return createRouteFromString(routeString, flightplan, speeddummy, altdummy);
 }
 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,

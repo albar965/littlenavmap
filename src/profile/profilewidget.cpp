@@ -1010,12 +1010,12 @@ void ProfileWidget::updateLabel()
       {
         float toTod = routeController->getRoute().getTopOfDescentFromStart() - distFromStartNm;
 
-        fixedLabelText = tr("<b>To Destination %1, to Top of Descent %2.</b>&nbsp;&nbsp;").
+        fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
                          arg(Unit::distNm(distToDestNm)).
                          arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
       }
       else
-        fixedLabelText = tr("<b>To Destination %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+        fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
     }
   }
   else

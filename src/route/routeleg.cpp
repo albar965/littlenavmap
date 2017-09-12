@@ -187,6 +187,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
         {
           if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11 || name.endsWith(PARKING_NO_NUMBER))
           {
+            // X-Plane =============================================================================
             // Do not resolve parking for X-Plane databases
             // X-Plane style parking - name only
             if(name.endsWith(PARKING_NO_NUMBER))
@@ -198,8 +199,9 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
 
             if(parkings.isEmpty())
             {
+              // Always try runway or helipad if no start positions found
               qWarning() << "Found no parking spots for" << name;
-              flightplan->setDepartureParkingName(QString());
+              assignRunwayOrHelipad(mapQuery, name);
             }
             else
             {
@@ -210,6 +212,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
           }
           else
           {
+            // FSX/P3D =============================================================================
             // Resolve parking if first airport
             QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
 
@@ -226,8 +229,9 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
 
               if(parkings.isEmpty())
               {
+                // Always try runway or helipad if no start positions found
                 qWarning() << "Found no parking spots for" << parkingName << number;
-                flightplan->setDepartureParkingName(QString());
+                assignRunwayOrHelipad(mapQuery, name);
               }
               else
               {
@@ -240,20 +244,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
               }
             }
             else
-            {
-              // Runway or helipad
-              mapQuery->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
-
-              if(!start.isValid())
-              {
-                qWarning() << "Found no start positions";
-                // Clear departure position in flight plan
-                flightplan->setDepartureParkingName(QString());
-              }
-              else
-                // Helicopter pad or runway name
-                flightplan->setDepartureParkingName(start.runwayName);
-            }
+              // Name does not match FSX patter try runway or helipads
+              assignRunwayOrHelipad(mapQuery, name);
           }
         }
         else
@@ -685,6 +677,21 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setIcaoIdent(ndb.ident);
   flightplanEntry->setPosition(ndb.position);
   flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
+}
+
+void RouteLeg::assignRunwayOrHelipad(MapQuery *mapQuery, const QString& name)
+{
+  mapQuery->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
+
+  if(!start.isValid())
+  {
+    qWarning() << "Found no start positions";
+    // Clear departure position in flight plan
+    flightplan->setDepartureParkingName(QString());
+  }
+  else
+    // Helicopter pad or runway name
+    flightplan->setDepartureParkingName(start.runwayName);
 }
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)

@@ -2113,9 +2113,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       float diff = aircraft.getPosition().getAltitude() - vertAlt;
       QString upDown;
       if(diff >= 100.f)
-        upDown = tr(" above <b>▼</b>");
+        upDown = tr(", above <b>▼</b>");
       else if(diff <= -100)
-        upDown = tr(" below <b>▲</b>");
+        upDown = tr(", below <b>▲</b>");
 
       html.row2(tr("Vertical Path Dev.:"), Unit::altFeet(diff) + upDown, atools::util::html::NO_ENTITIES);
     }

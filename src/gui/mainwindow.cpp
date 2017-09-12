@@ -1108,32 +1108,42 @@ void MainWindow::routeCenter()
 bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat)
 {
   // Use a button box including a save as button
-  static const atools::gui::DialogButtonList BUTTONS =
+  atools::gui::DialogButtonList buttonList =
   {
     {QString(), QMessageBox::Cancel},
-    {tr("Save &as PLN ..."), QMessageBox::SaveAll},
-    {QString(), QMessageBox::Save},
+    {tr("Save &as PLN instead ..."), QMessageBox::SaveAll},
+    // {QString(), QMessageBox::Save},
     {QString(), QMessageBox::Help}
   };
 
   bool airways = NavApp::getRoute().hasAirways();
   bool userWaypoints = NavApp::getRoute().hasUserWaypoints();
   bool procedures = NavApp::getRoute().hasAnyProcedure();
+  bool parking = NavApp::getRoute().hasDepartureParking();
   QString routeFilename = NavApp::getRouteController()->getCurrentRouteFilename();
   int result = QMessageBox::Save;
 
+  // Build button text depending if this is a "save as" or plain save
+  QString saveAsButtonText = tr("Save%1%3%2").
+                             arg(saveAs ? tr(" as") : QString()).
+                             arg(saveAs ? tr(" ...") : QString());
+
   if(QFileInfo::exists(routeFilename) && fileFormat == atools::fs::pln::PLN_FS9)
   {
+    buttonList.append({saveAsButtonText.arg(tr(" &FSX/P3D PLN")), QMessageBox::Save});
+
     // We can load FS9 but saving does not make sense anymore
     // Ask before overwriting file
     result = atools::gui::Dialog(this).
              showQuestionMsgBox(lnm::ACTIONS_SHOW_FS9_WARNING,
                                 tr("Overwrite FS9 flight plan with the FSX/P3D PLN flight plan format?\n"),
                                 tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
-                                BUTTONS, QMessageBox::Cancel, QMessageBox::Save);
+                                buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FMS && (airways || procedures || userWaypoints))
+  else if(fileFormat == atools::fs::pln::FMS && (airways || procedures || userWaypoints || parking))
   {
+    buttonList.append({saveAsButtonText.arg(tr(" &FMS")), QMessageBox::Save});
+
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS_WARNING,
@@ -1143,15 +1153,18 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                         "<li>Airways</li>"
                                           "<li>Ground Speed</li>"
                                             "<li>User waypoint names</li>"
-                                              "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                              "</ul>"
-                                              "This information will be lost when reloading the file.<br/><br/>"
-                                              "Really save as FMS file?<br/>"),
+                                              "<li>Departure parking position</li>"
+                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                                "</ul>"
+                                                "This information will be lost when reloading the file.<br/><br/>"
+                                                "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
-                                 BUTTONS, QMessageBox::Cancel, QMessageBox::Save);
+                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints))
+  else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints || parking))
   {
+    buttonList.append({saveAsButtonText.arg(tr(" &FLP")), QMessageBox::Save});
+
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLP_WARNING,
@@ -1161,12 +1174,13 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                         "<li>User waypoints</li>"
                                           "<li>Cruise Altitude</li>"
                                             "<li>Ground Speed</li>"
-                                              "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                              "</ul>"
-                                              "This information will be lost when reloading the file.<br/><br/>"
-                                              "Really save as FLP file?<br/>"),
+                                              "<li>Departure parking position</li>"
+                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                                "</ul>"
+                                                "This information will be lost when reloading the file.<br/><br/>"
+                                                "Really save as FLP file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
-                                 BUTTONS, QMessageBox::Cancel, QMessageBox::Save);
+                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
 
   if(result == QMessageBox::SaveAll)
@@ -1512,7 +1526,7 @@ bool MainWindow::routeSaveAsPln()
 
 bool MainWindow::routeSaveAsFlp()
 {
-  bool saveAs = false;
+  bool saveAs = true;
   bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FLP);
 
   if(saveAs)
@@ -1541,7 +1555,7 @@ bool MainWindow::routeSaveAsFlp()
 
 bool MainWindow::routeSaveAsFms()
 {
-  bool saveAs = false;
+  bool saveAs = true;
   bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FMS);
 
   if(saveAs)
@@ -2458,7 +2472,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
       {
         currentWeatherContext->fsMetar = metar;
         changed = true;
-        qDebug() << Q_FUNC_INFO << "FS changed";
+        // qDebug() << Q_FUNC_INFO << "FS changed";
       }
     }
     else
