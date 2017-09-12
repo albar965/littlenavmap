@@ -546,9 +546,10 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
           atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
-          html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
-                 arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER)),
-                 atools::util::html::LINK_NO_UL).br();
+          if(!print)
+            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
+                   arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER)),
+                   atools::util::html::LINK_NO_UL).br();
 
           if(closed)
             html.text(tr("Is Closed"));
@@ -594,9 +595,12 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
           if(i > 0)
             html.text(tr(", "));
-          html.a(startText, QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
-                 arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(STARTPOS_ZOOM_METER)),
-                 atools::util::html::LINK_NO_UL);
+          if(print)
+            html.text(startText);
+          else
+            html.a(startText, QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
+                   arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(STARTPOS_ZOOM_METER)),
+                   atools::util::html::LINK_NO_UL);
           i++;
         }
       }
