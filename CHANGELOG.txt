@@ -1,3 +1,22 @@
+Version 1.6.2
+
+* Added compatibility flag for Mac OS X 10.8.
+* New flight plan metadata for used simulator database.
+* Updated PDF manual and legend.
+* Removed links in information when printing.
+* Fixed blinking magenta line in flight plan table when using FSX/P3D weather.
+* Fixed parsing of SID and STAR with names longer than five characters in route string dialog.
+* Fixed problem where departure position was not loaded from flight plans when using X-Plane database.
+* Changed button text for warning dialogs when saving FLP or FMS for more clarity.
+* Now adding navdata source to saved flight plan annotations.
+* Added help buttons to save flight plan warning dialogs.
+* Added help button to flight plan window.
+* Reformatted update notification. Pulled download to top of dialog.
+
+derived from atools:
+* Better error handling in X-Plane compiler. Now checking for required files.
+* Corrected mapping for runway markings in X-Plane compilation.
+
 Version 1.6.1.beta
 
 * Adapted flight plan calculation, map display and information display to one-way airways and maximum altitude
