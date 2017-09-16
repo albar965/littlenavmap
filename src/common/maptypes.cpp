@@ -947,19 +947,26 @@ bool MapObjectRef::operator!=(const MapObjectRef& other) const
 
 QString magvarText(float magvar)
 {
-  int decimals = 0;
-  if(std::remainder(std::abs(magvar), 1.f) > 0.f)
-    decimals = 1;
+  QString num = QLocale().toString(std::abs(magvar), 'f', 1);
 
-  if(magvar < -0.04f)
-    return QObject::tr("%1°%2").
-           arg(QLocale().toString(std::abs(magvar), 'f', decimals)).arg(QObject::tr(" West"));
-  else if(magvar > 0.04f)
-    // positive" (or "easterly") variation
-    return QObject::tr("%1°%2").
-           arg(QLocale().toString(magvar, 'f', decimals)).arg(QObject::tr(" East"));
-  else
-    return "0°";
+  if(!num.isEmpty())
+  {
+    // The only way to remove trailing zeros
+    QString pt = QLocale().decimalPoint();
+    if(num.endsWith(pt))
+      num.chop(1);
+    if(num.endsWith(pt + "0"))
+      num.chop(2);
+
+    if(magvar < -0.04f)
+      return QObject::tr("%1° West").arg(num);
+    else if(magvar > 0.04f)
+      // positive" (or "easterly") variation
+      return QObject::tr("%1° East").arg(num);
+    else
+      return QObject::tr("0°");
+  }
+  return QString();
 }
 
 bool isHardSurface(const QString& surface)

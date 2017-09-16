@@ -1,4 +1,12 @@
-Version 1.6.2
+Version 1.6.3
+
+* Fixed display issue for declination where decimals places were cut off.
+* Small improvement in map context menu to indicate missing procedures.
+
+derived from atools:
+* Fixed error that caused a few hundred waypoints having invalid declination for X-Plane and FSX/P3D.
+
+Version 1.6.2 (not public)
 
 * Added compatibility flag for Mac OS X 10.8.
 * New flight plan metadata for used simulator database.

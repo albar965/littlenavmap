@@ -1544,10 +1544,15 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(tr("Position")));
   }
 
-  if(airport != nullptr && (airport->flags & map::AP_PROCEDURE))
+  if(airport != nullptr)
   {
-    ui->actionMapShowApproaches->setEnabled(true);
-    ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
+    if(airport->flags & map::AP_PROCEDURE)
+    {
+      ui->actionMapShowApproaches->setEnabled(true);
+      ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
+    }
+    else
+      ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedures)").arg(airport->ident));
   }
   else
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()));
