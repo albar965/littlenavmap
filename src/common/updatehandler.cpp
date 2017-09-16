@@ -155,7 +155,6 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
 
     if(!update.url.isEmpty())
       html.p().a(tr("<b>&gt;&gt; Release Information</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
-    html.hr();
 
     NavApp::deleteSplashScreen();
 
