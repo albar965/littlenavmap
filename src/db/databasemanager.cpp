@@ -817,14 +817,14 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   {
     // Show dialog if something went wrong but do not exit
     ErrorHandler(progressDialog).handleException(
-      e, currentBglFilePath.isEmpty() ? QString() : tr("Processed BGL file:\n%1\n").arg(currentBglFilePath));
+      e, currentBglFilePath.isEmpty() ? QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
   catch(...)
   {
     // Show dialog if something went wrong but do not exit
     ErrorHandler(progressDialog).handleUnknownException(
-      currentBglFilePath.isEmpty() ? QString() : tr("Processed BGL file:\n%1\n").arg(currentBglFilePath));
+      currentBglFilePath.isEmpty() ? QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
 
@@ -845,7 +845,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
                       arg(atools::gui::Application::getEmailHtml()).
                       arg(atools::gui::Application::getReportPathHtml()));
 
-    errorTexts.append(tr("<hr/>Some BGL files or scenery directories could not be read.<br/>"
+    errorTexts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
                          "You should check if the airports of the affected sceneries display "
                          "correctly and show the correct information.<hr/>"));
 
@@ -864,7 +864,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
       for(const QString& err : scErr.sceneryErrorsMessages)
         errorTexts.append(err + "<br/>");
 
-      for(const atools::fs::NavDatabaseErrors::BglFileError& bglErr : scErr.bglFileErrors)
+      for(const atools::fs::NavDatabaseErrors::SceneryFileError& bglErr : scErr.fileErrors)
       {
         if(numBgl >= MAX_ERROR_BGL_MESSAGES)
         {
@@ -874,7 +874,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
         numBgl++;
 
         errorTexts.append(tr("<b>File:</b> <i>%1</i><br/><b>Error:</b> <i>%2</i><br/>").
-                          arg(bglErr.bglFilepath).arg(bglErr.errorMessage));
+                          arg(bglErr.filepath).arg(bglErr.errorMessage));
       }
       errorTexts.append("<br/>");
       numScenery++;
