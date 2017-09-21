@@ -999,15 +999,14 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   int fontHeight = treeWidget->fontMetrics().height();
   texts << proc::procedureLegTypeStr(leg.type) << leg.fixIdent;
 
-  QStringList restrictions;
+  QString restrictions;
   if(leg.altRestriction.isValid())
     restrictions.append(proc::altRestrictionTextShort(leg.altRestriction));
   if(leg.speedRestriction.isValid())
-    restrictions.append(proc::speedRestrictionTextShort(leg.speedRestriction));
+    restrictions.append("/" + proc::speedRestrictionTextShort(leg.speedRestriction));
 
   QString remarkStr = proc::procedureLegRemark(leg);
-  texts << restrictions.join(tr(", "))
-        << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
+  texts << restrictions << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
   texts << remarkStr;
 

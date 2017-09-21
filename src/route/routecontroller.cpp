@@ -668,6 +668,8 @@ void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       minAltitude = adjustAltitude(minAltitude);
     route.getFlightplan().setCruisingAltitude(minAltitude);
 
+    qDebug() << Q_FUNC_INFO << "Updating flight plan altitude to" << minAltitude;
+
     if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
       route.getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
     else
@@ -1019,7 +1021,7 @@ void RouteController::calculateLowAlt(int fromIndex, int toIndex)
 
   if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
                             tr("Low altitude Flight Plan Calculation"),
-                            /* fetch airways */ true, false /* Use altitude */,
+                            true /* fetch airways */, false /* Use altitude */,
                             fromIndex, toIndex))
     NavApp::setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
@@ -1523,7 +1525,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
-                                      ui->actionRouteDeleteLeg});
+                                      ui->actionRouteShowApproaches, ui->actionRouteDeleteLeg});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -1562,9 +1564,16 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                                routeLeg->isRoute() &&
                                                routeLeg->getMapObjectType() != map::USER &&
                                                routeLeg->getMapObjectType() != map::INVALID);
-    ui->actionRouteShowApproaches->setEnabled(routeLeg->isValid() &&
-                                              routeLeg->getMapObjectType() == map::AIRPORT &&
-                                              (routeLeg->getAirport().flags & map::AP_PROCEDURE));
+
+    ui->actionRouteShowApproaches->setEnabled(false);
+    if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
+    {
+      if(routeLeg->getAirport().flags & map::AP_PROCEDURE)
+        ui->actionRouteShowApproaches->setEnabled(true);
+      else
+        ui->actionRouteShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(routeLeg->getIdent()));
+    }
+
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionSearchSetMark->setEnabled(true);
@@ -2694,13 +2703,13 @@ void RouteController::updateTableModel()
     {
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
 
-      QStringList restrictions;
+      QString restrictions;
       if(leg.getProcedureLeg().altRestriction.isValid())
         restrictions.append(proc::altRestrictionTextShort(leg.getProcedureLeg().altRestriction));
       if(leg.getProcedureLeg().speedRestriction.isValid())
-        restrictions.append(proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
+        restrictions.append("/" + proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
 
-      itemRow[rc::RESTRICTION] = new QStandardItem(restrictions.join(", "));
+      itemRow[rc::RESTRICTION] = new QStandardItem(restrictions);
     }
 
     // VOR/NDB type ===========================

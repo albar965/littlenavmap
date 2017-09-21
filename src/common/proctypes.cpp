@@ -186,12 +186,12 @@ const static QHash<ProcedureLegType, QString> approachLegRemarkStr(
 
 QString procedureFixType(const QString& type)
 {
-  return approachFixTypeToStr.value(type);
+  return approachFixTypeToStr.value(type, type);
 }
 
 QString procedureType(const QString& type)
 {
-  return approachTypeToStr.value(type);
+  return approachTypeToStr.value(type, type);
 }
 
 QString edgeLights(const QString& type)

@@ -1,3 +1,17 @@
+Version 1.6.4
+
+* Fixed several inconsistencies around context menus and procedure restriction display.
+* Move hidden URL to top in update notification dialog.
+* Updated PDF manual.
+
+derived from atools:
+* Fixed crashes when reading X-Plane CIFP files with unknown approach type.
+* Fixed crash with older apt.dat files where runway name for VASI is missing.
+* Added support for all altitude restriction types.
+* Warnings now print full filename including path.
+* Fixed error where altitude restrictions were not recognized when given as flight levels.
+* Enabled support for older apt.dat files with version down to 850.
+
 Version 1.6.3
 
 * Fixed display issue for declination where decimals places were cut off.

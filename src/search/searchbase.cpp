@@ -661,7 +661,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Save and restore action texts on return
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
-                                      ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange});
+                                      ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange,
+                                      ui->actionSearchShowApproaches});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -721,8 +722,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == map::AIRPORT);
-  ui->actionSearchShowApproaches->setEnabled(navType == map::AIRPORT && airport.isValid() &&
-                                             (airport.flags & map::AP_PROCEDURE));
+
+  ui->actionSearchShowApproaches->setEnabled(false);
+  if(navType == map::AIRPORT && airport.isValid())
+  {
+    if(airport.flags & map::AP_PROCEDURE)
+      ui->actionSearchShowApproaches->setEnabled(true);
+    else
+      ui->actionSearchShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport.ident));
+  }
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||

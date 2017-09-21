@@ -3853,10 +3853,10 @@
     <string>Goto &amp;Home</string>
    </property>
    <property name="toolTip">
-    <string>Goto home position</string>
+    <string>Goto home view</string>
    </property>
    <property name="statusTip">
-    <string>Goto home position</string>
+    <string>Goto home view</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Home</string>
@@ -3925,10 +3925,10 @@
     <string>Set Home</string>
    </property>
    <property name="toolTip">
-    <string>Set position and zoom as home</string>
+    <string>Sets currently visible map view as home view</string>
    </property>
    <property name="statusTip">
-    <string>Set position and zoom as home</string>
+    <string>Sets currently visible map view as home view</string>
    </property>
   </action>
   <action name="actionMapShowAirports">

@@ -144,17 +144,18 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
 
     html.b(tr("%1: %2").arg(channel).arg(update.version));
 
+    if(!update.url.isEmpty())
+      html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Release Information &lt;&lt;</b>"),
+             update.url, html::NO_ENTITIES | html::LINK_NO_UL);
+
     if(!update.download.isEmpty())
       html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Download &lt;&lt;</b>"),
              update.download, html::NO_ENTITIES | html::LINK_NO_UL);
     else
-      html.text(tr("No download available for this operating system."));
+      html.text(tr("<p>No download available for this operating system.</p>"));
 
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
-
-    if(!update.url.isEmpty())
-      html.p().a(tr("<b>&gt;&gt; Release Information</b>"), update.url, html::NO_ENTITIES | html::LINK_NO_UL).pEnd();
 
     NavApp::deleteSplashScreen();
 

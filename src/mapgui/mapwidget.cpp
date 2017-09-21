@@ -1552,7 +1552,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
     }
     else
-      ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedures)").arg(airport->ident));
+      ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport->ident));
   }
   else
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()));
