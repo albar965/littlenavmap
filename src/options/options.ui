@@ -2314,7 +2314,7 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</string>
            <widget class="QLabel" name="labelCacheGlobePathDownload">
             <property name="text">
              <string>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Get the free GLOBE elevation data here.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
-Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitraty place.</string>
+Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitrary place.</string>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
