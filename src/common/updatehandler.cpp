@@ -148,11 +148,15 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
       html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Release Information &lt;&lt;</b>"),
              update.url, html::NO_ENTITIES | html::LINK_NO_UL);
 
+    bool hasDownload = false;
     if(!update.download.isEmpty())
+    {
+      hasDownload = true;
       html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Download &lt;&lt;</b>"),
              update.download, html::NO_ENTITIES | html::LINK_NO_UL);
+    }
     else
-      html.text(tr("<p>No download available for this operating system.</p>"));
+      html.p().b(tr("No download available for this operating system.")).pEnd();
 
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
@@ -160,24 +164,21 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     NavApp::deleteSplashScreen();
 
     // Show dialog
-    UpdateDialog information(mainWindow);
-    information.setMessage(html.getHtml());
-
-    if(!manual)
-    {
-      // Set ignore and remind me buttons
-      information.getButtonBox()->addButton(tr("&Ignore this Update"), QDialogButtonBox::AcceptRole);
-      information.getButtonBox()->addButton(tr("&Remind me Later"), QDialogButtonBox::RejectRole);
-    }
-    else
-      information.getButtonBox()->addButton(QDialogButtonBox::Ok);
+    UpdateDialog information(mainWindow, manual, hasDownload);
+    information.setMessage(html.getHtml(), update.download);
 
     // Show dialog
-    int selected = information.exec();
+    information.exec();
 
     if(!manual)
     {
-      if(selected == QMessageBox::Accepted)
+      // DestructiveRole = ignore
+      // NoRole = later
+      // RejectRole = Close (manual only)
+      // YesRole = download (has download only)
+      QDialogButtonBox::ButtonRole role = information.getButtonClickedRole();
+
+      if(role == QDialogButtonBox::DestructiveRole)
       {
         // Add latest update - do not report anything earlier or equal again
         QString ignore = updates.first().version;

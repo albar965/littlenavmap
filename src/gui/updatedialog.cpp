@@ -20,15 +20,46 @@
 
 #include "gui/helphandler.h"
 
-UpdateDialog::UpdateDialog(QWidget *parent) :
-  QDialog(parent),
-  ui(new Ui::UpdateDialog)
+#include <QAbstractButton>
+#include <QDialogButtonBox>
+#include <QPushButton>
+
+UpdateDialog::UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadParam) :
+  QDialog(parent), ui(new Ui::UpdateDialog), manual(manualParam), hasDownload(hasDownloadParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
 
+  if(!manual)
+  {
+    // Set ignore and remind me buttons
+    ui->buttonBoxUpdate->addButton(tr("&Ignore this Update"), QDialogButtonBox::DestructiveRole);
+    QPushButton *later = ui->buttonBoxUpdate->addButton(tr("&Remind me Later"), QDialogButtonBox::NoRole);
+    later->setDefault(true);
+  }
+  else
+  {
+    QPushButton *close = ui->buttonBoxUpdate->addButton(QDialogButtonBox::Close); // RejectRole
+    close->setDefault(true);
+  }
+
+  if(hasDownload)
+    ui->buttonBoxUpdate->addButton(tr("&Download"), QDialogButtonBox::YesRole);
+
+  connect(ui->buttonBoxUpdate, &QDialogButtonBox::clicked, this, &UpdateDialog::buttonBoxClicked);
   connect(ui->textBrowserUpdate, &QTextBrowser::anchorClicked, this, &UpdateDialog::anchorClicked);
+}
+
+/* A button box button was clicked */
+void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
+{
+  buttonClickedRole = ui->buttonBoxUpdate->buttonRole(button);
+
+  if(buttonClickedRole == QDialogButtonBox::ButtonRole::YesRole)
+    atools::gui::HelpHandler::openUrl(this, downloadUrl);
+
+  QDialog::accept();
 }
 
 UpdateDialog::~UpdateDialog()
@@ -36,9 +67,10 @@ UpdateDialog::~UpdateDialog()
   delete ui;
 }
 
-void UpdateDialog::setMessage(const QString& text)
+void UpdateDialog::setMessage(const QString& text, const QUrl& url)
 {
   ui->textBrowserUpdate->setText(text);
+  downloadUrl = url;
 }
 
 QDialogButtonBox *UpdateDialog::getButtonBox()

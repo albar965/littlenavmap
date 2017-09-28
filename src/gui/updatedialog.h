@@ -19,8 +19,8 @@
 #define LITTLENAVMAP_UPDATEDIALOG_H
 
 #include <QDialog>
-
-class QDialogButtonBox;
+#include <QDialogButtonBox>
+#include <QUrl>
 
 namespace Ui {
 class UpdateDialog;
@@ -35,16 +35,32 @@ class UpdateDialog :
   Q_OBJECT
 
 public:
-  explicit UpdateDialog(QWidget *parent);
+  explicit UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadParam);
   ~UpdateDialog();
 
-  void setMessage(const QString& text);
+  /* HTML text and URL for the download button */
+  void setMessage(const QString& text, const QUrl& url);
   QDialogButtonBox *getButtonBox();
+
+  /*
+   * DestructiveRole = ignore
+   * NoRole = later
+   * RejectRole = Close (manual only)
+   * YesRole = download (has download only)
+   */
+  QDialogButtonBox::ButtonRole getButtonClickedRole() const
+  {
+    return buttonClickedRole;
+  }
 
 private:
   void anchorClicked(const QUrl& url);
+  void buttonBoxClicked(QAbstractButton *button);
 
+  QUrl downloadUrl;
+  QDialogButtonBox::ButtonRole buttonClickedRole = QDialogButtonBox::InvalidRole;
   Ui::UpdateDialog *ui;
+  bool manual, hasDownload;
 };
 
 #endif // LITTLENAVMAP_UPDATEDIALOG_H
