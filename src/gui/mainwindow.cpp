@@ -117,6 +117,9 @@ MainWindow::MainWindow()
 {
   qDebug() << "MainWindow constructor";
 
+  // Show a dialog on fatal log events like asserts
+  atools::logging::LoggingHandler::setGuiAbortFunction(this);
+
   try
   {
     // Have to handle exceptions here since no message handler is active yet and no
@@ -300,6 +303,8 @@ MainWindow::~MainWindow()
   qDebug() << Q_FUNC_INFO << "Settings::shutdown()";
   Settings::shutdown();
   atools::gui::Translator::unload();
+
+  atools::logging::LoggingHandler::resetAbortFunction();
 
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
