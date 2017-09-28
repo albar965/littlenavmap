@@ -15,13 +15,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="labelConnectHeader">
-     <property name="text">
-      <string>Neither FSX nor Prepar3D Flight Simulator installation found. SimConnect not loaded.</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="topMargin">
       <number>0</number>

@@ -588,7 +588,7 @@ void MainWindow::setupUi()
   // Create labels for the statusbar
   connectStatusLabel = new QLabel();
   connectStatusLabel->setAlignment(Qt::AlignCenter);
-  connectStatusLabel->setMinimumWidth(100);
+  connectStatusLabel->setMinimumWidth(140);
   connectStatusLabel->setText(tr("Not connected."));
   connectStatusLabel->setToolTip(tr("Simulator connection status."));
   ui->statusBar->addPermanentWidget(connectStatusLabel);
@@ -606,19 +606,19 @@ void MainWindow::setupUi()
 
   renderStatusLabel = new QLabel();
   renderStatusLabel->setAlignment(Qt::AlignCenter);
-  renderStatusLabel->setMinimumWidth(120);
+  renderStatusLabel->setMinimumWidth(140);
   renderStatusLabel->setToolTip(tr("Map rendering and download status."));
   ui->statusBar->addPermanentWidget(renderStatusLabel);
 
   mapDistanceLabel = new QLabel();
   mapDistanceLabel->setAlignment(Qt::AlignCenter);
-  mapDistanceLabel->setMinimumWidth(100);
+  mapDistanceLabel->setMinimumWidth(60);
   mapDistanceLabel->setToolTip(tr("Map view distance to ground."));
   ui->statusBar->addPermanentWidget(mapDistanceLabel);
 
   mapPosLabel = new QLabel();
   mapPosLabel->setAlignment(Qt::AlignCenter);
-  mapPosLabel->setMinimumWidth(220);
+  mapPosLabel->setMinimumWidth(240);
   mapPosLabel->setToolTip(tr("Cursor position on map."));
   ui->statusBar->addPermanentWidget(mapPosLabel);
 }

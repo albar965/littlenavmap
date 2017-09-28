@@ -111,6 +111,8 @@ private:
   void requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest);
   void flushQueuedRequests();
   atools::fs::sc::ConnectHandler *handlerByDialogSettings();
+  QString simShortName() const;
+  QString simName() const;
 
   /* Options in ConnectDialog have changed */
   void fetchOptionsChanged(cd::ConnectSimType type);

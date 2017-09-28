@@ -42,19 +42,13 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
   if(!simConnect)
   {
+    // Hide the FSX and P3D controls
     ui->checkBoxConnectFetchAiAircraftFsx->hide();
     ui->checkBoxConnectFetchAiShipFsx->hide();
     ui->radioButtonConnectDirectFsx->hide();
     ui->spinBoxConnectUpdateRateFsx->hide();
     ui->labelConnectUpdateRateFsx->hide();
-
-#if !defined(Q_OS_WIN32)
-    // Show the warning label only in Windows
-    ui->labelConnectHeader->hide();
-#endif
   }
-  else
-    ui->labelConnectHeader->hide();
 
   ui->comboBoxConnectHostname->setAutoCompletion(true);
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
@@ -286,10 +280,6 @@ void ConnectDialog::restoreState()
                        ui->radioButtonConnectDirectFsx, ui->radioButtonConnectDirectXp,
                        ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
                        ui->checkBoxConnectFetchAiShipFsx});
-
-  if(!simConnect && ui->comboBoxConnectHostname->currentText().isEmpty())
-    // Disable autoconnect if no host is given and this is not a windows client
-    ui->checkBoxConnectOnStartup->setChecked(false);
 
   updateButtonStates();
 }

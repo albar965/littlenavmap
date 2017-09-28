@@ -125,9 +125,12 @@ void ConnectClient::connectToServerDialog()
   if(retval == QDialog::Accepted)
   {
     silent = false;
-    closeSocket(false);
+    closeSocket(false /* allow restart */);
 
     dataReader->terminateThread();
+
+    // Let the dataReader send its message to the statusbar so it does not overwrite the socket message
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     connectInternal();
   }
@@ -145,11 +148,36 @@ void ConnectClient::tryConnectOnStartup()
   }
 }
 
+QString ConnectClient::simName() const
+{
+  if(dialog->isAnyConnectDirect())
+  {
+    if(dataReader->getHandler() == xpConnectHandler)
+      return tr("X-Plane");
+    else if(dataReader->getHandler() == simConnectHandler)
+      return tr("FSX or Prepar3D");
+  }
+  return QString();
+}
+
+QString ConnectClient::simShortName() const
+{
+  if(dialog->isAnyConnectDirect())
+  {
+    if(dataReader->getHandler() == xpConnectHandler)
+      return tr("XP");
+    else if(dataReader->getHandler() == simConnectHandler)
+      return tr("FSX/P3D");
+  }
+  return QString();
+}
+
 void ConnectClient::connectedToSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
-  mainWindow->setConnectionStatusMessageText(tr("Connected"), tr("Connected to local flight simulator."));
+  mainWindow->setConnectionStatusMessageText(tr("Connected (%1)").arg(simShortName()),
+                                             tr("Connected to local flight simulator (%1).").arg(simName()));
   dialog->setConnected(isConnected());
   emit connectedToSimulator();
   emit weatherUpdated();
@@ -360,8 +388,8 @@ void ConnectClient::connectInternal()
 
     dataReader->start();
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
-                                               tr("Trying to connect to local flight simulator."));
+    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1)...").arg(simShortName()),
+                                               tr("Trying to connect to local flight simulator (%1).").arg(simName()));
   }
   else if(socket == nullptr)
   {
@@ -502,20 +530,23 @@ void ConnectClient::closeSocket(bool allowRestart)
 
 void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
 {
-  reply.write(socket);
-
-  if(reply.getStatus() != atools::fs::sc::OK)
+  if(socket != nullptr && socketConnected)
   {
-    // Something went wrong - shutdown
-    QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          QString(tr("Error writing reply to Little Navconnect: %1.")).
-                          arg(reply.getStatusText()));
-    closeSocket(false);
-    return;
-  }
+    reply.write(socket);
 
-  if(!socket->flush())
-    qWarning() << "Reply to server not flushed";
+    if(reply.getStatus() != atools::fs::sc::OK)
+    {
+      // Something went wrong - shutdown
+      QMessageBox::critical(mainWindow, QApplication::applicationName(),
+                            QString(tr("Error writing reply to Little Navconnect: %1.")).
+                            arg(reply.getStatusText()));
+      closeSocket(false);
+      return;
+    }
+
+    if(!socket->flush())
+      qWarning() << "Reply to server not flushed";
+  }
 }
 
 /* Called by signal QTcpSocket::connected */
@@ -541,56 +572,59 @@ void ConnectClient::connectedToServerSocket()
 /* Called by signal QTcpSocket::readyRead - read data from socket */
 void ConnectClient::readFromSocket()
 {
-  while(socket->bytesAvailable())
+  if(socket != nullptr)
   {
-    if(verbose)
-      qDebug() << "readFromSocket" << socket->bytesAvailable();
-    if(simConnectData == nullptr)
-      // Need to keep the data in background since this method can be called multiple times until the data is filled
-      simConnectData = new atools::fs::sc::SimConnectData;
-
-    bool read = simConnectData->read(socket);
-    if(simConnectData->getStatus() != atools::fs::sc::OK)
-    {
-      // Something went wrong - shutdown
-      QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                            QString(tr("Error reading data from Little Navconnect: %1.")).
-                            arg(simConnectData->getStatusText()));
-      closeSocket(false);
-      return;
-    }
-
-    if(verbose)
-      qDebug() << "readFromSocket 2" << socket->bytesAvailable();
-    if(read)
+    while(socket->bytesAvailable())
     {
       if(verbose)
-        qDebug() << "readFromSocket id " << simConnectData->getPacketId();
+        qDebug() << "readFromSocket" << socket->bytesAvailable();
+      if(simConnectData == nullptr)
+        // Need to keep the data in background since this method can be called multiple times until the data is filled
+        simConnectData = new atools::fs::sc::SimConnectData;
 
-      if(simConnectData->getPacketId() > 0)
+      bool read = simConnectData->read(socket);
+      if(simConnectData->getStatus() != atools::fs::sc::OK)
       {
-        // Data was read completely and successfully - reply to server
-        atools::fs::sc::SimConnectReply reply;
-        reply.setPacketId(simConnectData->getPacketId());
-        writeReplyToSocket(reply);
-      }
-      else if(!simConnectData->getMetars().isEmpty())
-      {
-        for(const atools::fs::sc::MetarResult& metar : simConnectData->getMetars())
-          outstandingReplies.remove(metar.requestIdent);
-
-        if(outstandingReplies.isEmpty() && !queuedRequests.isEmpty())
-          requestWeather(queuedRequests.takeLast());
+        // Something went wrong - shutdown
+        QMessageBox::critical(mainWindow, QApplication::applicationName(),
+                              QString(tr("Error reading data from Little Navconnect: %1.")).
+                              arg(simConnectData->getStatusText()));
+        closeSocket(false);
+        return;
       }
 
-      // Send around in the application
-      postSimConnectData(*simConnectData);
-      delete simConnectData;
-      simConnectData = nullptr;
+      if(verbose)
+        qDebug() << "readFromSocket 2" << socket->bytesAvailable();
+      if(read)
+      {
+        if(verbose)
+          qDebug() << "readFromSocket id " << simConnectData->getPacketId();
+
+        if(simConnectData->getPacketId() > 0)
+        {
+          // Data was read completely and successfully - reply to server
+          atools::fs::sc::SimConnectReply reply;
+          reply.setPacketId(simConnectData->getPacketId());
+          writeReplyToSocket(reply);
+        }
+        else if(!simConnectData->getMetars().isEmpty())
+        {
+          for(const atools::fs::sc::MetarResult& metar : simConnectData->getMetars())
+            outstandingReplies.remove(metar.requestIdent);
+
+          if(outstandingReplies.isEmpty() && !queuedRequests.isEmpty())
+            requestWeather(queuedRequests.takeLast());
+        }
+
+        // Send around in the application
+        postSimConnectData(*simConnectData);
+        delete simConnectData;
+        simConnectData = nullptr;
+      }
+      else
+        return;
     }
-    else
-      return;
+    if(verbose)
+      qDebug() << "outstanding" << outstandingReplies;
   }
-  if(verbose)
-    qDebug() << "outstanding" << outstandingReplies;
 }
