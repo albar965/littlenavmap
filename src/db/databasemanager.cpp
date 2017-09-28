@@ -63,7 +63,9 @@ const int MAX_ERROR_BGL_MESSAGES = 400;
 const int MAX_ERROR_SCENERY_MESSAGES = 400;
 
 const QString DATABASE_META_TEXT(
-  QObject::tr("<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</big></p>"));
+  QObject::tr("<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6</big></p>"));
+
+const QString DATABASE_AIRAC_CYCLE_TEXT(QObject::tr(" AIRAC Cycle %1."));
 
 const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                "<tbody>"
@@ -685,8 +687,6 @@ bool DatabaseManager::runInternal()
           if(loadScenery(&tempDb))
           {
             // Successfully loaded
-            DatabaseMeta dbmeta(tempDb);
-            dbmeta.updateAll();
             reopenDialog = false;
 
             closeDatabaseFile(&tempDb);
@@ -1116,18 +1116,25 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     DatabaseMeta dbmeta(tempDb);
     if(!dbmeta.isValid())
       metaText = DATABASE_META_TEXT.arg(tr("None")).arg(tr("None")).arg(tr("None")).
-                 arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR);
+                 arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR).arg(QString());
     else
+    {
+      QString cycleText;
+      if(!dbmeta.getAiracCycle().isEmpty())
+        cycleText = DATABASE_AIRAC_CYCLE_TEXT.arg(dbmeta.getAiracCycle());
+
       metaText = DATABASE_META_TEXT.
                  arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
                  arg(dbmeta.getMajorVersion()).
                  arg(dbmeta.getMinorVersion()).
                  arg(DatabaseMeta::DB_VERSION_MAJOR).
-                 arg(DatabaseMeta::DB_VERSION_MINOR);
+                 arg(DatabaseMeta::DB_VERSION_MINOR).
+                 arg(cycleText);
+    }
   }
   else
     metaText = DATABASE_META_TEXT.arg(tr("None")).arg(tr("None")).arg(tr("None")).
-               arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR);
+               arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR).arg(QString());
 
   QString tableText;
   if(tempDb.isOpen() && hasSchema(&tempDb))
