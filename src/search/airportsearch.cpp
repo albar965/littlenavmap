@@ -53,6 +53,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
     ui->horizontalLayoutAirportNameSearch,
     ui->horizontalLayoutAirportNameSearch2,
     ui->gridLayoutAirportExtSearch,
+    ui->horizontalLayoutAirportRatingSearch,
     ui->horizontalLayoutAirportFuelParkSearch,
     ui->horizontalLayoutAirportRunwaySearch,
     ui->horizontalLayoutAirportAltitudeSearch,
@@ -84,7 +85,6 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
   };
 
   // set tri state checkboxes to partially checked
-  ui->checkBoxAirportScenerySearch->setCheckState(Qt::PartiallyChecked);
   ui->checkBoxAirportMilSearch->setCheckState(Qt::PartiallyChecked);
   ui->checkBoxAirportLightSearch->setCheckState(Qt::PartiallyChecked);
   ui->checkBoxAirportTowerSearch->setCheckState(Qt::PartiallyChecked);
@@ -108,6 +108,14 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
               << "like 'G%'"
               << "in ('GM', 'GH')"
               << "= 'GH'";
+
+  QStringList ratingCondMap;
+  ratingCondMap << QString()
+                << ">=1"
+                << ">=2"
+                << ">=3"
+                << ">=4"
+                << "=5";
 
   QStringList rampCondMap;
   rampCondMap << QString()
@@ -148,7 +156,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
   append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
   append(Column("country", ui->lineEditAirportCountrySearch, tr("Country")).filter()).
 
-  append(Column("rating", ui->checkBoxAirportScenerySearch, tr("Rating")).conditions("> 0", "== 0")).
+  append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).indexCondMap(ratingCondMap)).
 
   append(Column("altitude", tr("Elevation\n%alt%")).
          convertFunc(Unit::altFeetF)).
@@ -522,7 +530,7 @@ void AirportSearch::updateButtonMenu()
   // Show star in action for all widgets that are not in default state
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowExtOptions,
                                           atools::gui::util::anyWidgetChanged(
-                                            {ui->gridLayoutAirportExtSearch}));
+                                            {ui->gridLayoutAirportExtSearch, ui->horizontalLayoutAirportRatingSearch}));
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
                                           atools::gui::util::anyWidgetChanged(
                                             {ui->horizontalLayoutAirportFuelParkSearch}));
