@@ -6,6 +6,7 @@ Version 1.6.5
 * Fixed potential crash on failing network connection.
 * Fixed status bar connection indication remaining in disconnected state sometimes.
 * Removed "no SimConnect" header label in connect dialog.
+* Fixed "Connect on startup" checkbox state not saved.
 * Added download button to update notification dialog.
 
 from atools version 2.6.6
