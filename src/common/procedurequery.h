@@ -142,9 +142,10 @@ private:
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
-  *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
-  *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr,
-  *transitionIdByNameQuery = nullptr, *approachIdByNameQuery = nullptr, *transitionIdsForApproachQuery = nullptr;
+                        *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
+                        *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr,
+                        *transitionIdByNameQuery = nullptr, *approachIdByNameQuery = nullptr,
+                        *approachIdByArincNameQuery = nullptr, *transitionIdsForApproachQuery = nullptr;
 
   /* approach ID and transition ID to full lists
    * The approach also has to be stored for transitions since the handover can modify approach legs (CI legs, etc.) */

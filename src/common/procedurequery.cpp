@@ -20,6 +20,7 @@
 #include "common/proctypes.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
+#include "sql/sqldatabase.h"
 #include "common/unit.h"
 #include "common/constants.h"
 #include "geo/line.h"
@@ -531,6 +532,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     legs->approachType = approach->approachType;
     legs->approachSuffix = approach->approachSuffix;
     legs->approachFixIdent = approach->approachFixIdent;
+    legs->approachArincName = approach->approachArincName;
     legs->gpsOverlay = approach->gpsOverlay;
 
     delete approach;
@@ -579,6 +581,10 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
     legs->approachType = approachQuery->value("type").toString();
     legs->approachSuffix = approachQuery->value("suffix").toString();
     legs->approachFixIdent = approachQuery->value("fix_ident").toString();
+
+    if(approachQuery->hasField("arinc_name"))
+      legs->approachArincName = approachQuery->value("arinc_name").toString();
+
     legs->gpsOverlay = approachQuery->value("has_gps_overlay").toBool();
     legs->procedureRunway = approachQuery->value("runway_name").toString();
   }
@@ -1244,8 +1250,19 @@ void ProcedureQuery::initQueries()
                          "from approach where approach_id = :id");
 
   approachIdByNameQuery = new SqlQuery(db);
-  approachIdByNameQuery->prepare("select approach_id, suffix , runway_name from approach "
-                                 "where fix_ident like :fixident and type like :type and airport_id = :apid");
+  if(db->record("approach").contains("arinc_name"))
+    approachIdByNameQuery->prepare("select approach_id, arinc_name, suffix, runway_name from approach "
+                                   "where fix_ident like :fixident and type like :type and airport_id = :apid");
+  else
+    approachIdByNameQuery->prepare("select approach_id, suffix, runway_name from approach "
+                                   "where fix_ident like :fixident and type like :type and airport_id = :apid");
+
+  if(db->record("approach").contains("arinc_name"))
+  {
+    approachIdByArincNameQuery = new SqlQuery(db);
+    approachIdByArincNameQuery->prepare("select approach_id, suffix, runway_name from approach "
+                                        "where arinc_name like :arincname and airport_id = :apid");
+  }
 
   transitionIdByNameQuery = new SqlQuery(db);
   transitionIdByNameQuery->prepare("select transition_id from transition where fix_ident like :fixident and "
@@ -1285,6 +1302,9 @@ void ProcedureQuery::deInitQueries()
 
   delete approachIdByNameQuery;
   approachIdByNameQuery = nullptr;
+
+  delete approachIdByArincNameQuery;
+  approachIdByArincNameQuery = nullptr;
 
   delete transitionIdByNameQuery;
   transitionIdByNameQuery = nullptr;
@@ -1336,6 +1356,7 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   if(type & proc::PROCEDURE_APPROACH)
   {
     properties.remove(pln::APPROACH);
+    properties.remove(pln::APPROACH_ARINC);
     properties.remove(pln::APPROACHTYPE);
     properties.remove(pln::APPROACHRW);
     properties.remove(pln::APPROACHSUFFIX);
@@ -1395,6 +1416,7 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
     if(!arrivalLegs.approachFixIdent.isEmpty())
     {
       properties.insert(pln::APPROACH, arrivalLegs.approachFixIdent);
+      properties.insert(pln::APPROACH_ARINC, arrivalLegs.approachArincName);
       properties.insert(pln::APPROACHTYPE, arrivalLegs.approachType);
       properties.insert(pln::APPROACHRW, arrivalLegs.procedureRunway);
       properties.insert(pln::APPROACHSUFFIX, arrivalLegs.approachSuffix);
@@ -1545,6 +1567,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   // Get an approach id =================================================================
   if(properties.contains(pln::APPROACH))
   {
+    // Use approach name
     QString type = properties.value(pln::APPROACHTYPE);
     if(type.isEmpty())
       type = "%";
@@ -1560,6 +1583,23 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(approachId == -1)
     {
       qWarning() << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
+      error = true;
+    }
+  }
+  else if(properties.contains(pln::APPROACH_ARINC) && approachIdByArincNameQuery != nullptr)
+  {
+    // Use ARINC name which is more specific - potential source is new X-Plane FMS file
+    approachIdByArincNameQuery->bindValue(":arincname", properties.value(pln::APPROACH_ARINC));
+    approachIdByArincNameQuery->bindValue(":apid", destination.id);
+
+    approachId = findApproachId(destination, approachIdByArincNameQuery,
+                                QString(),
+                                properties.value(pln::APPROACHRW),
+                                properties.value(pln::APPROACHDISTANCE).toFloat(),
+                                properties.value(pln::APPROACHSIZE).toInt());
+    if(approachId == -1)
+    {
+      qWarning() << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
       error = true;
     }
   }

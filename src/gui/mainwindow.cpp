@@ -722,7 +722,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeExportGfp);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeExportRte);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
-  connect(ui->actionRouteSaveAsFms, &QAction::triggered, this, &MainWindow::routeSaveAsFms);
+
+  // TODO change for X-Plane 11.10
+  connect(ui->actionRouteSaveAsFms, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
+
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, &MainWindow::routeExportGpx);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
@@ -1145,14 +1148,14 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                 tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FMS && (airways || procedures || userWaypoints || parking))
+  else if(fileFormat == atools::fs::pln::FMS3 && (airways || procedures || userWaypoints || parking))
   {
-    buttonList.append({saveAsButtonText.arg(tr(" &FMS")), QMessageBox::Save});
+    buttonList.append({saveAsButtonText.arg(tr(" &FMS 3")), QMessageBox::Save});
 
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS_WARNING,
-                                 tr("The X-Plane FMS format does not allow saving of:"
+                                 tr("The old X-Plane FMS format version 3 does not allow saving of:"
                                     "<ul>"
                                       "<li>Procedures</li>"
                                         "<li>Airways</li>"
@@ -1163,6 +1166,25 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                                 "</ul>"
                                                 "This information will be lost when reloading the file.<br/><br/>"
                                                 "Really save as FMS file?<br/>"),
+                                 tr("Do not show this dialog again and save the Flight Plan in the future."),
+                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
+  }
+  else if(fileFormat == atools::fs::pln::FMS11 && (userWaypoints || parking))
+  {
+    buttonList.append({saveAsButtonText.arg(tr(" &FMS 11")), QMessageBox::Save});
+
+    // Ask before saving file
+    result =
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS_WARNING,
+                                 tr("The new X-Plane FMS format version 11 does not allow saving of:"
+                                    "<ul>"
+                                      "<li>Ground Speed</li>"
+                                        "<li>User waypoint names</li>"
+                                          "<li>Departure parking position</li>"
+                                            "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                            "</ul>"
+                                            "This information will be lost when reloading the file.<br/><br/>"
+                                            "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1467,8 +1489,8 @@ bool MainWindow::routeSave()
 
   if(routeController->getCurrentRouteFilename().isEmpty() || !routeController->doesFilenameMatchRoute(format))
   {
-    if(format == atools::fs::pln::FMS)
-      return routeSaveAsFms();
+    if(format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11)
+      return routeSaveAsFms(format);
     else if(format == atools::fs::pln::FLP)
       return routeSaveAsFlp();
     else
@@ -1558,10 +1580,21 @@ bool MainWindow::routeSaveAsFlp()
   return false;
 }
 
-bool MainWindow::routeSaveAsFms()
+bool MainWindow::routeSaveAsFms3()
+{
+  return routeSaveAsFms(atools::fs::pln::FMS3);
+}
+
+bool MainWindow::routeSaveAsFms11()
+{
+  return routeSaveAsFms(atools::fs::pln::FMS11);
+}
+
+bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
 {
   bool saveAs = true;
-  bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FMS);
+
+  bool save = routeSaveCheckWarnings(saveAs, format);
 
   if(saveAs)
     return routeSaveAsPln();
@@ -1582,7 +1615,7 @@ bool MainWindow::routeSaveAsFms()
 
     if(!routeFile.isEmpty())
     {
-      if(routeController->saveFlighplanAs(routeFile, atools::fs::pln::FMS))
+      if(routeController->saveFlighplanAs(routeFile, format))
       {
         routeFileHistory->addFile(routeFile);
         updateActionStates();

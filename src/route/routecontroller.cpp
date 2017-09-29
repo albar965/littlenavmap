@@ -28,6 +28,7 @@
 #include "search/proceduresearch.h"
 #include "common/unit.h"
 #include "exception.h"
+#include "fs/db/databasemeta.h"
 #include "export/csvexporter.h"
 #include "gui/actiontextsaver.h"
 #include "gui/actionstatesaver.h"
@@ -565,7 +566,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     updateFlightplanFromWidgets(flightplan);
     adjustAltitude = true; // Change altitude based on airways later
   }
-  else if(flightplan.getFileFormat() == atools::fs::pln::FMS)
+  else if(flightplan.getFileFormat() == atools::fs::pln::FMS11 || flightplan.getFileFormat() == atools::fs::pln::FMS3)
   {
     // Save altitude
     int cruiseAlt = flightplan.getCruisingAltitude();
@@ -910,9 +911,10 @@ bool RouteController::saveFlightplan(bool cleanExport)
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
     properties.insert(pln::NAVDATA, NavApp::getCurrentSimulatorShortName());
+    properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseMeta()->getAiracCycle());
 
     // Save PLN, FLP or FMS
-    flightplan.save(routeFilename, cleanExport /* clean */);
+    flightplan.save(routeFilename, NavApp::getDatabaseMeta()->getAiracCycle(), cleanExport /* clean */);
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
       // Old format is always saved as new after question dialog

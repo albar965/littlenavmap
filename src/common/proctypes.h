@@ -359,7 +359,7 @@ struct MapProcedureLegs
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
-  QString approachType, approachSuffix, approachFixIdent, transitionType, transitionFixIdent,
+  QString approachType, approachSuffix, approachFixIdent, approachArincName, transitionType, transitionFixIdent,
           procedureRunway; /* Runway from the procedure does not have to match the airport runway but is saved */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search */

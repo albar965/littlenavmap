@@ -197,7 +197,9 @@ private:
   bool routeSave();
   bool routeSaveAsPln();
   bool routeSaveAsFlp();
-  bool routeSaveAsFms();
+  bool routeSaveAsFms(atools::fs::pln::FileFormat format);
+  bool routeSaveAsFms3();
+  bool routeSaveAsFms11();
 
   bool routeExportClean();
   bool routeExportGfp();

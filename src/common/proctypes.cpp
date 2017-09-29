@@ -388,6 +388,7 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
   out << "approachType" << legs.approachType
       << "approachSuffix" << legs.approachSuffix
       << "approachFixIdent" << legs.approachFixIdent
+      << "approachArincName" << legs.approachArincName
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
       << "procedureRunway" << legs.procedureRunway
@@ -568,6 +569,7 @@ void MapProcedureLegs::clearApproach()
   approachDistance = missedDistance = 0.f;
   approachType.clear();
   approachSuffix.clear();
+  approachArincName.clear();
   approachFixIdent.clear();
 }
 
