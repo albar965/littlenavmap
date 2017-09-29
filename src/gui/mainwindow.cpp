@@ -36,6 +36,7 @@
 #include "info/infocontroller.h"
 #include "common/infoquery.h"
 #include "logging/logginghandler.h"
+#include "logging/loggingguiabort.h"
 #include "mapgui/mapquery.h"
 #include "mapgui/mapwidget.h"
 #include "profile/profilewidget.h"
@@ -118,7 +119,7 @@ MainWindow::MainWindow()
   qDebug() << "MainWindow constructor";
 
   // Show a dialog on fatal log events like asserts
-  atools::logging::LoggingHandler::setGuiAbortFunction(this);
+  atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
 
   try
   {
@@ -304,7 +305,7 @@ MainWindow::~MainWindow()
   Settings::shutdown();
   atools::gui::Translator::unload();
 
-  atools::logging::LoggingHandler::resetAbortFunction();
+  atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
 
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
