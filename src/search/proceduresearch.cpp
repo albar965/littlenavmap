@@ -448,9 +448,9 @@ void ProcedureSearch::fillApproachTreeWidget()
     else
     {
       if(foundItems)
-        message = tr("No procedures found.");
+        message = tr("No procedure found.");
       else
-        message = tr("%1 has no procedures.").arg(map::airportText(currentAirport));
+        message = tr("%1 has no procedure.").arg(map::airportText(currentAirport));
     }
 
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {message});

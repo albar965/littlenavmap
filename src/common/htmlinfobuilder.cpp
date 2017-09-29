@@ -412,7 +412,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
       html.tableEnd();
     }
     else
-      html.p(tr("Airport has no COM Frequencies."));
+      html.p(tr("Airport has no COM Frequency."));
   }
 }
 
@@ -523,7 +523,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
       }
     }
     else
-      html.p(tr("Airport has no runways."));
+      html.p(tr("Airport has no runway."));
 
     if(details)
     {
@@ -569,7 +569,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         }
       }
       else
-        html.p(tr("Airport has no helipads."));
+        html.p(tr("Airport has no helipad."));
 
       // Start positions ==============================================================
       const SqlRecordVector *startVector = infoQuery->getStartInformation(airport.id);
@@ -605,7 +605,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         }
       }
       else
-        html.p(tr("Airport has no start positions."));
+        html.p(tr("Airport has no start position."));
     }
   }
 }
@@ -913,7 +913,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
       }
     }
     else
-      html.p(tr("Airport has no approaches."));
+      html.p(tr("Airport has no approach."));
   }
 }
 
