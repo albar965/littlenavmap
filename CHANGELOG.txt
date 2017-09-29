@@ -1,3 +1,23 @@
+Version 1.6.5
+
+* Added display of AIRAC cycle to database dialog.
+* Changed rating checkbox to combo in airport search.
+* Added display of simulator type to connection status in statusbar.
+* Fixed potential crash on failing network connection.
+* Fixed status bar connection indication remaining in disconnected state sometimes.
+* Removed "no SimConnect" header label in connect dialog.
+* Added download button to update notification dialog.
+
+from atools version 2.6.6
+* Added AIRAC cycle to metadata and comment to file table.
+* Updated database minor version to 2.
+* X-Plane 3D airport state now considered when calculating rating.
+* Fixed confusing 0 error dialog appearing after loading X-Plane database successfully.
+* Now checking X-Plane CIFP filenames before loading.
+* Better error handling and reporting of too old files with version < 850 when loading X-Plane scenery.
+* Added handler for assertions/crashes showing dialog to avoid crash to desktop.
+* Made loading of add-on.xml more robust for files with wrong encoding.
+
 Version 1.6.4
 
 * Fixed several inconsistencies around context menus and procedure restriction display.
