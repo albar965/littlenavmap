@@ -318,15 +318,15 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       head(html, tr("COM Frequencies"));
     html.table();
     if(airport.towerFrequency > 0)
-      html.row2(tr("Tower:"), locale.toString(airport.towerFrequency / 1000., 'f', 3));
+      html.row2(tr("Tower:"), locale.toString(airport.towerFrequency / 1000., 'f', 3) + tr(" MHz"));
     if(airport.atisFrequency > 0)
-      html.row2(tr("ATIS:"), locale.toString(airport.atisFrequency / 1000., 'f', 3));
+      html.row2(tr("ATIS:"), locale.toString(airport.atisFrequency / 1000., 'f', 3) + tr(" MHz"));
     if(airport.awosFrequency > 0)
-      html.row2(tr("AWOS:"), locale.toString(airport.awosFrequency / 1000., 'f', 3));
+      html.row2(tr("AWOS:"), locale.toString(airport.awosFrequency / 1000., 'f', 3) + tr(" MHz"));
     if(airport.asosFrequency > 0)
-      html.row2(tr("ASOS:"), locale.toString(airport.asosFrequency / 1000., 'f', 3));
+      html.row2(tr("ASOS:"), locale.toString(airport.asosFrequency / 1000., 'f', 3) + tr(" MHz"));
     if(airport.unicomFrequency > 0)
-      html.row2(tr("Unicom:"), locale.toString(airport.unicomFrequency / 1000., 'f', 3));
+      html.row2(tr("Unicom:"), locale.toString(airport.unicomFrequency / 1000., 'f', 3) + tr(" MHz"));
     html.tableEnd();
   }
 
@@ -1562,7 +1562,11 @@ void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html) con
 void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) const
 {
   if(airport.towerFrequency > 0)
-    head(html, tr("Tower: ") + locale.toString(airport.towerFrequency / 1000., 'f', 3));
+  {
+    head(html, tr("Tower:"));
+    html.br();
+    head(html, locale.toString(airport.towerFrequency / 1000., 'f', 3) + tr(" MHz"));
+  }
   else
     head(html, tr("Tower"));
 }
