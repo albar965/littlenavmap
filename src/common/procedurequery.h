@@ -159,6 +159,11 @@ private:
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */
   Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 1000000000;
+
+  /* Base id for artificial transition/approach connections */
+  Q_DECL_CONSTEXPR static int TRANS_CONNECT_LEG_ID_BASE = 1500000000;
+
+  /* Base id for artificial start legs */
   Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;
 
 };

@@ -628,7 +628,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
 
   updateMagvar(airport, legs);
 
-  // Prepare all leg coordinates
+  // Prepare all leg coordinates and fill line
   processLegs(legs);
 
   // Add artificial legs (not in the database) that end at the runway
@@ -637,6 +637,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   // Calculate intercept terminators
   processCourseInterceptLegs(legs);
 
+  // fill distance and course as well as geometry field
   processLegsDistanceAndCourse(legs);
 
   // Correct overlapping conflicting altitude restrictions
@@ -653,6 +654,69 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 {
   if(!legs.isEmpty())
   {
+    if(!legs.transitionLegs.isEmpty() && !legs.approachLegs.isEmpty())
+    {
+      if(legs.mapType & proc::PROCEDURE_SID_ALL)
+      {
+        // Insert between approach and transition and add new one to approach
+        MapProcedureLeg& firstTransLeg = legs.transitionLegs.first();
+        MapProcedureLeg& lastApprLeg = legs.approachLegs.last();
+
+        if((firstTransLeg.fixIdent != lastApprLeg.fixIdent || firstTransLeg.fixRegion != lastApprLeg.fixRegion) &&
+           firstTransLeg.type == proc::INITIAL_FIX &&
+           contains(lastApprLeg.type, {proc::COURSE_TO_FIX, proc::DIRECT_TO_FIX, proc::TRACK_TO_FIX}))
+        {
+          // Correct previous and last position
+          firstTransLeg.line.setPos1(firstTransLeg.fixPos);
+          lastApprLeg.line.setPos2(lastApprLeg.fixPos);
+
+          // Insert a new leg
+          MapProcedureLeg leg = firstTransLeg;
+          leg.type = proc::DIRECT_TO_FIX;
+          leg.mapType = proc::PROCEDURE_SID;
+          leg.line = Line(lastApprLeg.line.getPos2(), firstTransLeg.line.getPos1());
+          leg.turnDirection.clear();
+          leg.displayText.clear();
+          leg.remarks.clear();
+
+          leg.transitionId = -1;
+          leg.legId = TRANS_CONNECT_LEG_ID_BASE + leg.legId;
+
+          legs.approachLegs.append(leg);
+        }
+      }
+
+      if(legs.mapType & proc::PROCEDURE_STAR_ALL)
+      {
+        // Insert between transition and approach and add new one to transition
+        MapProcedureLeg& lastTransLeg = legs.transitionLegs.last();
+        MapProcedureLeg& firstApprLeg = legs.approachLegs.first();
+
+        if((lastTransLeg.fixIdent != firstApprLeg.fixIdent || lastTransLeg.fixRegion != firstApprLeg.fixRegion) &&
+           firstApprLeg.type == proc::INITIAL_FIX &&
+           contains(lastTransLeg.type, {proc::COURSE_TO_FIX, proc::DIRECT_TO_FIX, proc::TRACK_TO_FIX}))
+        {
+          // Correct previous and last position
+          lastTransLeg.line.setPos2(lastTransLeg.fixPos);
+          firstApprLeg.line.setPos1(firstApprLeg.fixPos);
+
+          // Insert a new leg - create a copy of the successor
+          MapProcedureLeg leg = firstApprLeg;
+          leg.type = proc::DIRECT_TO_FIX;
+          leg.mapType = proc::PROCEDURE_STAR_TRANSITION;
+          leg.line = Line(lastTransLeg.line.getPos2(), firstApprLeg.line.getPos1());
+          leg.turnDirection.clear();
+          leg.displayText.clear();
+          leg.remarks.clear();
+
+          leg.transitionId = legs.transitionLegs.last().transitionId;
+          leg.legId = TRANS_CONNECT_LEG_ID_BASE + leg.legId;
+
+          legs.transitionLegs.append(leg);
+        }
+      }
+    }
+
     if(legs.mapType & proc::PROCEDURE_DEPARTURE)
     {
       if(legs.runwayEnd.isValid())
