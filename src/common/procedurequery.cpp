@@ -1608,7 +1608,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                          properties.value(pln::SIDAPPRSIZE).toInt());
     if(sidApprId == -1)
     {
-      qWarning() << "Loading of approach" << properties.value(pln::SIDAPPR) << "failed";
+      qWarning() << "Loading of SID" << properties.value(pln::SIDAPPR) << "failed";
       error = true;
     }
   }
@@ -1623,7 +1623,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                                     properties.value(pln::SIDTRANSSIZE).toInt());
     if(sidTransId == -1)
     {
-      qWarning() << "Loading of approach" << properties.value(pln::SIDTRANS) << "failed";
+      qWarning() << "Loading of SID transition" << properties.value(pln::SIDTRANS) << "failed";
       error = true;
     }
   }
@@ -1690,18 +1690,32 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
   // Get a STAR id =================================================================
   if(properties.contains(pln::STAR))
+  {
     starId = getStarId(destination,
                        properties.value(pln::STAR),
                        properties.value(pln::STARDISTANCE).toFloat(),
                        properties.value(pln::STARSIZE).toInt());
+    if(starId == -1)
+    {
+      qWarning() << "Loading of STAR " << properties.value(pln::STAR) << "failed";
+      error = true;
+    }
+  }
 
   // Get a STAR transition id =================================================================
   if(properties.contains(pln::STARTRANS) && starId != -1)
+  {
     starTransId = getStarTransitionId(destination,
                                       properties.value(pln::STARTRANS),
                                       starId,
                                       properties.value(pln::STARTRANSDISTANCE).toFloat(),
                                       properties.value(pln::STARTRANSSIZE).toInt());
+    if(starTransId == -1)
+    {
+      qWarning() << "Loading of STAR transition" << properties.value(pln::STARTRANS) << "failed";
+      error = true;
+    }
+  }
 
   if(!error) // load all or nothing in case of error
   {
