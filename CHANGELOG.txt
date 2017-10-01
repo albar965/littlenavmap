@@ -8,6 +8,10 @@ Version 1.6.5
 * Removed "no SimConnect" header label in connect dialog.
 * Fixed "Connect on startup" checkbox state not saved.
 * Added download button to update notification dialog.
+* Fixed several small text errors.
+* Solved problem with gaps between SIDs, STARs and the respective transitions resulting in wrong
+  display and distance calculation.
+*  Fixed problem where STAR was not reloaded after database switch.
 
 from atools version 2.6.6
 * Added AIRAC cycle to metadata and comment to file table.
@@ -18,6 +22,7 @@ from atools version 2.6.6
 * Better error handling and reporting of too old files with version < 850 when loading X-Plane scenery.
 * Added handler for assertions/crashes showing dialog to avoid crash to desktop.
 * Made loading of add-on.xml more robust for files with wrong encoding.
+* Fixed problem loading FS9 flight plans.
 
 Version 1.6.4
 
