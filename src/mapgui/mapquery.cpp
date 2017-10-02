@@ -812,7 +812,8 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
 }
 
 const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                      map::MapAirspaceTypes types, float flightPlanAltitude, bool lazy)
+                                                      map::MapAirspaceFilter filter, float flightPlanAltitude,
+                                                      bool lazy)
 {
   airspaceCache.updateCache(rect, mapLayer, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -820,11 +821,12 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
     return curLayer->hasSameQueryParametersAirspace(newLayer);
   });
 
-  if(types != lastAirspaceTypes || atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
+  if(filter.types != lastAirspaceFilter.types || filter.flags != lastAirspaceFilter.flags ||
+     atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
   {
     // Need a few more parameters to clear the cache which is different to other map features
     airspaceCache.list.clear();
-    lastAirspaceTypes = types;
+    lastAirspaceFilter = filter;
     lastFlightplanAltitude = flightPlanAltitude;
   }
 
@@ -832,44 +834,44 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
   {
     QStringList typeStrings;
 
-    if(types != map::AIRSPACE_NONE)
+    if(filter.types != map::AIRSPACE_NONE)
     {
       // Build a list of query strings based on the bitfield
-      if(types == map::AIRSPACE_ALL)
+      if(filter.types == map::AIRSPACE_ALL)
         typeStrings.append("%");
       else
       {
         for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
           map::MapAirspaceTypes t(1 << i);
-          if(types & t)
+          if(filter.types & t)
             typeStrings.append(map::airspaceTypeToDatabase(t));
         }
       }
 
       SqlQuery *query = nullptr;
       int alt;
-      if(types & map::AIRSPACE_AT_FLIGHTPLAN)
+      if(filter.flags & map::AIRSPACE_AT_FLIGHTPLAN)
       {
         query = airspaceByRectAtAltQuery;
         alt = atools::roundToInt(flightPlanAltitude);
       }
-      else if(types & map::AIRSPACE_BELOW_10000)
+      else if(filter.flags & map::AIRSPACE_BELOW_10000)
       {
         query = airspaceByRectBelowAltQuery;
         alt = 10000;
       }
-      else if(types & map::AIRSPACE_BELOW_18000)
+      else if(filter.flags & map::AIRSPACE_BELOW_18000)
       {
         query = airspaceByRectBelowAltQuery;
         alt = 18000;
       }
-      else if(types & map::AIRSPACE_ABOVE_10000)
+      else if(filter.flags & map::AIRSPACE_ABOVE_10000)
       {
         query = airspaceByRectAboveAltQuery;
         alt = 10000;
       }
-      else if(types & map::AIRSPACE_ABOVE_18000)
+      else if(filter.flags & map::AIRSPACE_ABOVE_18000)
       {
         query = airspaceByRectAboveAltQuery;
         alt = 18000;

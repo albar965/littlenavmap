@@ -105,7 +105,7 @@ const QLatin1Literal MAINWINDOW_WIDGET_STATE_MAXIMIZED("MainWindow/WidgetStateMa
 const QLatin1Literal MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1Literal MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1Literal MAP_DISTANCEMARKERS("Map/DistanceMarkers");
-const QLatin1Literal MAP_AIRSPACES("Map/Airspaces");
+const QLatin1Literal MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1Literal MAP_HOMEDISTANCE("Map/HomeDistance");
 const QLatin1Literal MAP_HOMELATY("Map/HomeLatY");
 const QLatin1Literal MAP_HOMELONX("Map/HomeLonX");

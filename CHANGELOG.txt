@@ -1,8 +1,9 @@
-Version 1.6.5
+Version 1.6.5.beta
 
 * Added display of AIRAC cycle to database dialog.
 * Changed rating checkbox to combo in airport search.
 * Added display of simulator type to connection status in statusbar.
+* Added scenery file display for airspaces.
 * Fixed potential crash on failing network connection.
 * Fixed status bar connection indication remaining in disconnected state sometimes.
 * Removed "no SimConnect" header label in connect dialog.
@@ -12,10 +13,16 @@ Version 1.6.5
 * Solved problem with gaps between SIDs, STARs and the respective transitions resulting in wrong
   display and distance calculation.
 *  Fixed problem where STAR was not reloaded after database switch.
+* Cleanup of airspace management code to allow addition of more airspaces.
+* Now clipping long airport names on map.
+* Fixed issue where airspaces were not updated when changing cruise altitude with empty flight plan.
 
-from atools version 2.6.6
+from atools version 2.6.6.beta
+* Added OpenAir airspace format compilation for X-PLane - also reading
+  from $HOME/Documents/Little Navmap/X-Plane Airspaces
+* Increased database minor version to 3.
+* Fixed problem loading FS9 flight plans.
 * Added AIRAC cycle to metadata and comment to file table.
-* Updated database minor version to 2.
 * X-Plane 3D airport state now considered when calculating rating.
 * Fixed confusing 0 error dialog appearing after loading X-Plane database successfully.
 * Now checking X-Plane CIFP filenames before loading.

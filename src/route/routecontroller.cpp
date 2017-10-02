@@ -483,6 +483,9 @@ void RouteController::restoreState()
       }
     }
   }
+
+  if(route.isEmpty())
+    updateFlightplanFromWidgets();
 }
 
 float RouteController::getSpinBoxSpeedKts() const
@@ -3186,6 +3189,7 @@ void RouteController::clearRoute()
   undoIndex = 0;
   undoIndexClean = 0;
   entryBuilder->setCurUserpointNumber(1);
+  updateFlightplanFromWidgets();
 }
 
 /* Call this before doing any change to the flight plan that should be undoable */

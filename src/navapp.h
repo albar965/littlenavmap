@@ -95,7 +95,7 @@ public:
   static bool isConnected();
 
   static map::MapObjectTypes getShownMapFeatures();
-  static map::MapAirspaceTypes getShownMapAirspaces();
+  static map::MapAirspaceFilter getShownMapAirspaces();
 
   static MapQuery *getMapQuery();
   static InfoQuery *getInfoQuery();

@@ -51,7 +51,7 @@ void MapPainterAirspace::render(PaintContext *context)
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirspace> *airspaces =
-    query->getAirspaces(curBox, context->mapLayer, context->airspaceTypesByLayer, route->getCruisingAltitudeFeet(),
+    query->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer, route->getCruisingAltitudeFeet(),
                         context->viewContext == Marble::Animation);
   if(airspaces != nullptr)
   {
@@ -63,7 +63,7 @@ void MapPainterAirspace::render(PaintContext *context)
 
     for(const MapAirspace& airspace : *airspaces)
     {
-      if(!(airspace.type & context->airspaceTypesByLayer))
+      if(!(airspace.type & context->airspaceFilterByLayer.types))
         continue;
 
       if(context->viewportRect.overlaps(airspace.bounding))

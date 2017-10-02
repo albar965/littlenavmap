@@ -167,7 +167,8 @@ void MapPainterAirport::render(PaintContext *context)
                                      flags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
-                                     context->mapLayerEffective->isAirportDiagram());
+                                     context->mapLayerEffective->isAirportDiagram(),
+                                     context->mapLayer->getMaxTextLength());
     }
   }
 }

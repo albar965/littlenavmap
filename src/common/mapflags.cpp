@@ -17,6 +17,7 @@
 
 #include "common/mapflags.h"
 
+#include <QDataStream>
 #include <QDebug>
 
 namespace map {
@@ -80,6 +81,21 @@ QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
   out.nospace().noquote() << flags.join("|");
 
   return out;
+}
+
+QDataStream& operator>>(QDataStream& dataStream, MapAirspaceFilter& obj)
+{
+  quint32 types, flags;
+  dataStream >> types >> flags;
+  obj.types = map::MapAirspaceTypes(types);
+  obj.flags = map::MapAirspaceFlags(flags);
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const MapAirspaceFilter& obj)
+{
+  dataStream << static_cast<quint32>(obj.types) << static_cast<quint32>(obj.flags);
+  return dataStream;
 }
 
 } // namespace types

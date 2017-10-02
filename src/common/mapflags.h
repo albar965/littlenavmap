@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPFLAGS_H
 #define LITTLENAVMAP_MAPFLAGS_H
 
-#include <QString>
+#include <QObject>
 
 /*
  * Maptypes are mostly filled from database tables and are used to pass airport, navaid and more information
@@ -77,6 +77,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectTypes);
 
 QDebug operator<<(QDebug out, const map::MapObjectTypes& type);
 
+/* Covers all airspace types */
 enum MapAirspaceType
 {
   AIRSPACE_NONE = 0,
@@ -103,25 +104,15 @@ enum MapAirspaceType
   MODEC = 1 << 20,
   RADAR = 1 << 21,
   TRAINING = 1 << 22,
-
-  /* Special filter flags - not airspaces */
-  AIRSPACE_BELOW_10000 = 1 << 23,
-  AIRSPACE_BELOW_18000 = 1 << 24,
-  AIRSPACE_ABOVE_10000 = 1 << 25,
-  AIRSPACE_ABOVE_18000 = 1 << 26,
-  AIRSPACE_AT_FLIGHTPLAN = 1 << 27,
-  AIRSPACE_ALL_ALTITUDE = 1 << 28,
-
-  /* Action flags - not airspaces */
-  AIRSPACE_ALL_ON = 1 << 29,
-  AIRSPACE_ALL_OFF = 1 << 30,
+  GLIDERPROHIBITED = 1 << 23, // Not FSX/P3D
+  WAVEWINDOW = 1 << 24, // Not FSX/P3D
 
   AIRSPACE_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_FIR = CLASS_F | CLASS_G,
   AIRSPACE_CENTER = CENTER,
-  AIRSPACE_RESTRICTED = RESTRICTED | PROHIBITED | MOA | DANGER,
+  AIRSPACE_RESTRICTED = RESTRICTED | PROHIBITED | GLIDERPROHIBITED | MOA | DANGER,
   AIRSPACE_SPECIAL = WARNING | ALERT | TRAINING,
-  AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK,
+  AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK | WAVEWINDOW,
 
   AIRSPACE_FOR_VFR = CLASS_B | CLASS_C | CLASS_D | CLASS_E | AIRSPACE_FIR,
   AIRSPACE_FOR_IFR = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E | CENTER,
@@ -130,10 +121,46 @@ enum MapAirspaceType
                  AIRSPACE_OTHER,
 
   // Default value on first start
-  AIRSPACE_DEFAULT = AIRSPACE_ICAO | AIRSPACE_RESTRICTED | AIRSPACE_ALL_ALTITUDE
+  AIRSPACE_DEFAULT = AIRSPACE_ICAO | AIRSPACE_RESTRICTED
 };
 
-Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 22;
+Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
+
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 24;
+
+/* Airspace filter flags */
+enum MapAirspaceFlag
+{
+  AIRSPACE_FLAG_NONE = 0,
+
+  /* Special filter flags - not airspaces */
+  AIRSPACE_BELOW_10000 = 1 << 1,
+  AIRSPACE_BELOW_18000 = 1 << 2,
+  AIRSPACE_ABOVE_10000 = 1 << 3,
+  AIRSPACE_ABOVE_18000 = 1 << 4,
+  AIRSPACE_AT_FLIGHTPLAN = 1 << 5,
+  AIRSPACE_ALL_ALTITUDE = 1 << 6,
+
+  /* Action flags - not airspaces */
+  AIRSPACE_ALL_ON = 1 << 7,
+  AIRSPACE_ALL_OFF = 1 << 8,
+
+  AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALL_ALTITUDE
+};
+
+Q_DECLARE_FLAGS(MapAirspaceFlags, MapAirspaceFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags);
+
+/* Combines all airspace types and flags into a serializable object */
+struct MapAirspaceFilter
+{
+  MapAirspaceTypes types;
+  MapAirspaceFlags flags;
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& obj);
 
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
@@ -167,9 +194,9 @@ enum MapAirportFlag
 Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags);
 
-Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
-
 } // namespace types
+
+Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapAirspaceFilter);
 
 #endif // LITTLENAVMAP_MAPFLAGS_H

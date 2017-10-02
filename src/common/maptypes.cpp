@@ -346,7 +346,12 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap(
     {map::MODEC, QObject::tr("Mode-C")},
     {map::RADAR, QObject::tr("Radar")},
     {map::TRAINING, QObject::tr("Training")},
+    {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
+    {map::WAVEWINDOW, QObject::tr("Wave Window")}
+  });
 
+static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMap(
+  {
     // Values below only for actions
     {map::AIRSPACE_AT_FLIGHTPLAN, QObject::tr("At flight plan cruise altitude")},
     {map::AIRSPACE_BELOW_10000, QObject::tr("Below 10,000 ft only")},
@@ -381,7 +386,9 @@ static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap(
     {map::NATIONAL_PARK, QString()},
     {map::MODEC, QObject::tr("Needs altitude aware transponder.")},
     {map::RADAR, QObject::tr("Terminal radar area. Not controlled.")},
-    {map::TRAINING, QString()}
+    {map::TRAINING, QString()},
+    {map::GLIDERPROHIBITED, QString()},
+    {map::WAVEWINDOW, QObject::tr("Sailplane Area.")}
   });
 
 const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
@@ -410,6 +417,8 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"MD", map::MODEC},
     {"RD", map::RADAR},
     {"TR", map::TRAINING},
+    {"WW", map::WAVEWINDOW},
+    {"GP", map::GLIDERPROHIBITED}
   });
 
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
@@ -438,9 +447,11 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
     {map::MODEC, "MD"},
     {map::RADAR, "RD"},
     {map::TRAINING, "TR"},
+    {map::WAVEWINDOW, "WW"},
+    {map::GLIDERPROHIBITED, "GP"},
   });
 
-/* Defines drawing sort order - lower values are drawn first*/
+/* Defines drawing sort order - lower values are drawn first - higher values are drawn on top */
 const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
   {
     {map::AIRSPACE_NONE, 1},
@@ -464,9 +475,11 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::APPROACH, 54},
 
     {map::MOA, 1},
+    {map::WAVEWINDOW, 3},
 
+    {map::GLIDERPROHIBITED, 99},
     {map::RESTRICTED, 100},
-    {map::PROHIBITED, 101},
+    {map::PROHIBITED, 102},
 
     {map::WARNING, 60},
     {map::ALERT, 61},
@@ -485,10 +498,10 @@ int qHash(const map::MapObjectRef& type)
 
 void updateUnits()
 {
-  airspaceTypeNameMap[map::AIRSPACE_BELOW_10000] = QObject::tr("Below %1 only").arg(Unit::altFeet(10000.f));
-  airspaceTypeNameMap[map::AIRSPACE_BELOW_18000] = QObject::tr("Below %1 only").arg(Unit::altFeet(18000.f));
-  airspaceTypeNameMap[map::AIRSPACE_ABOVE_10000] = QObject::tr("Above %1 only").arg(Unit::altFeet(10000.f));
-  airspaceTypeNameMap[map::AIRSPACE_ABOVE_18000] = QObject::tr("Above %1 only").arg(Unit::altFeet(18000.f));
+  airspaceFlagNameMap[map::AIRSPACE_BELOW_10000] = QObject::tr("Below %1 only").arg(Unit::altFeet(10000.f));
+  airspaceFlagNameMap[map::AIRSPACE_BELOW_18000] = QObject::tr("Below %1 only").arg(Unit::altFeet(18000.f));
+  airspaceFlagNameMap[map::AIRSPACE_ABOVE_10000] = QObject::tr("Above %1 only").arg(Unit::altFeet(10000.f));
+  airspaceFlagNameMap[map::AIRSPACE_ABOVE_18000] = QObject::tr("Above %1 only").arg(Unit::altFeet(18000.f));
 }
 
 QString navTypeName(const QString& type)
@@ -1075,6 +1088,11 @@ QString ndbFullShortText(const MapNdb& ndb)
 const QString& airspaceTypeToString(map::MapAirspaceTypes type)
 {
   return airspaceTypeNameMap[type];
+}
+
+const QString& airspaceFlagToString(map::MapAirspaceFlags type)
+{
+  return airspaceFlagNameMap[type];
 }
 
 const QString& airspaceRemark(map::MapAirspaceTypes type)

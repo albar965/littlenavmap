@@ -53,6 +53,9 @@ public:
   /* Get record for joined tables ndb, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
 
+  /* Get record for joined tables boundary, bgl_file and scenery_area */
+  const atools::sql::SqlRecord *getAirspaceInformation(int airspaceId);
+
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
 
@@ -102,7 +105,7 @@ private:
 
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache,
-                                      vorCache, ndbCache, waypointCache, airwayCache, runwayEndCache,
+                                      vorCache, ndbCache, waypointCache, airspaceCache, airwayCache, runwayEndCache,
                                       ilsCache;
 
   QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
@@ -114,11 +117,12 @@ private:
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr,
-  *vorQuery = nullptr, *ndbQuery = nullptr,
-  *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
-  *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr, *startQuery = nullptr,
-  *ilsQuery = nullptr, *airwayWaypointQuery = nullptr, *vorIdentRegionQuery = nullptr, *approachQuery =
-    nullptr, *transitionQuery = nullptr;
+                        *vorQuery = nullptr, *ndbQuery = nullptr,
+                        *waypointQuery = nullptr, *airspaceQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
+                        *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr,
+                        *startQuery = nullptr, *ilsQuery = nullptr, *airwayWaypointQuery = nullptr,
+                        *vorIdentRegionQuery = nullptr,
+                        *approachQuery = nullptr, *transitionQuery = nullptr;
 
 };
 

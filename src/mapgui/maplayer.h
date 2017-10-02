@@ -163,6 +163,9 @@ public:
   MapLayer& aiAircraftGroundText(bool value = true);
   MapLayer& aiAircraftText(bool value = true);
 
+  /* Only for airport texts */
+  MapLayer& maxTextLength(int size);
+
   bool operator<(const MapLayer& other) const;
 
   float getMaxRange() const
@@ -461,6 +464,11 @@ public:
     return layerAiAircraftText;
   }
 
+  int getMaxTextLength() const
+  {
+    return maximumTextLength;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -488,6 +496,8 @@ private:
 
   int layerWaypointSymbolSize = 8, layerVorSymbolSize = 8, layerNdbSymbolSize = 8,
       layerMarkerSymbolSize = 8;
+
+  int maximumTextLength = 16;
 
   bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFir = false, layerAirspaceRestricted =
     false, layerAirspaceSpecial = false, layerAirspaceOther = false;

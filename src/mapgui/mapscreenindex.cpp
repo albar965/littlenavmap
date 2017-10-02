@@ -69,7 +69,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
     {
       for(const map::MapAirspace& airspace : *airspaces)
       {
-        if(!(airspace.type & mapWidget->getShownAirspaceTypesByLayer()))
+        if(!(airspace.type & mapWidget->getShownAirspaceTypesByLayer().types))
           continue;
 
         Marble::GeoDataLatLonBox airspacebox(airspace.bounding.getNorth(), airspace.bounding.getSouth(),

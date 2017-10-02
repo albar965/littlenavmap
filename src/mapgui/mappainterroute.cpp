@@ -941,7 +941,8 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
     flags |= textflags::NAME | textflags::INFO;
 
   symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts, flags, size,
-                                 context->mapLayerEffective->isAirportDiagram());
+                                 context->mapLayerEffective->isAirportDiagram(),
+                                 context->mapLayer->getMaxTextLength());
 }
 
 void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj, bool preview)

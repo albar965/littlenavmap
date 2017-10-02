@@ -79,6 +79,8 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
   qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();
 
+  qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
+
   // Needed to send SimConnectData through queued connections
   qRegisterMetaType<atools::fs::sc::SimConnectData>();
   qRegisterMetaType<atools::fs::sc::SimConnectReply>();

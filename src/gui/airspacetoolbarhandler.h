@@ -39,25 +39,38 @@ public:
   virtual ~AirspaceToolBarHandler();
   void createToolButtons();
 
+  /* Update buttons and menus based on NavApp::getShownMapAirspaces() */
   void updateButtonsAndActions();
 
 signals:
-  void updateAirspaceTypes(map::MapAirspaceTypes types);
+  void updateAirspaceTypes(map::MapAirspaceFilter types);
 
 private:
+  /* Update button depressed state or not */
   void updateAirspaceToolButtons();
+
+  /* Check or uncheck menu items */
   void updateAirspaceToolActions();
+
   void createAirspaceToolButton(const QString& icon, const QString& help,
                                 const std::initializer_list<map::MapAirspaceTypes>& types,
+                                const std::initializer_list<map::MapAirspaceFlags>& flags,
                                 bool groupActions = false);
   void actionTriggered();
   void actionGroupTriggered(QAction *action);
   void allAirspacesToggled();
 
+  /* List of all actions */
   QVector<QAction *> airspaceActions;
+
+  /* List of actions that are not grouped */
   QVector<QToolButton *> airspaceToolButtons;
-  QVector<map::MapAirspaceTypes> airspaceToolButtonTypes;
+
+  /* List of grouped actions or null if not grouped */
   QVector<QActionGroup *> airspaceToolGroups;
+
+  /* Flags and types for each button */
+  QVector<map::MapAirspaceFilter> airspaceToolButtonFilters;
   MainWindow *mainWindow;
 
 };

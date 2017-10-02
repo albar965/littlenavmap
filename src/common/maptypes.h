@@ -752,6 +752,7 @@ QString parkingShortName(const QString& name);
 QString parkingNameForFlightplan(const MapParking& parking);
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
+const QString& airspaceFlagToString(map::MapAirspaceFlags type);
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
 

@@ -116,7 +116,7 @@ public:
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
                          bool isAirportDiagram, bool fast);
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                       opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram);
+                       opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram, int maxTextLength);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
@@ -173,7 +173,7 @@ public:
 
 private:
   QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
-                           const map::MapAirport& airport);
+                           const map::MapAirport& airport, int maxTextLength);
   const QPixmap *windPointerFromCache(int size);
   const QPixmap *trackLineFromCache(int size);
 

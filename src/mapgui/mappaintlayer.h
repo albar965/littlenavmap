@@ -73,7 +73,7 @@ public:
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
   void setShowMapObjects(map::MapObjectTypes type, bool show);
-  void setShowAirspaces(map::MapAirspaceTypes types);
+  void setShowAirspaces(map::MapAirspaceFilter types);
 
   /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
@@ -85,9 +85,9 @@ public:
   }
 
   /* Adjusted by layer visibility */
-  map::MapAirspaceTypes getShownAirspacesTypesByLayer() const;
+  map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
 
-  map::MapAirspaceTypes getShownAirspaces() const
+  map::MapAirspaceFilter getShownAirspaces() const
   {
     return airspaceTypes;
   }
@@ -119,7 +119,7 @@ private:
 
   /* Map objects currently shown */
   map::MapObjectTypes objectTypes = map::NONE;
-  map::MapAirspaceTypes airspaceTypes;
+  map::MapAirspaceFilter airspaceTypes;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;

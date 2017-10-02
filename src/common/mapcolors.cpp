@@ -322,7 +322,9 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
     {map::NATIONAL_PARK, QColor("#30509090")},
     {map::MODEC, QColor("#30509090")},
     {map::RADAR, QColor("#30509090")},
-    {map::TRAINING, QColor("#30509090")}
+    {map::TRAINING, QColor("#30509090")},
+    {map::GLIDERPROHIBITED, QColor("#30fd8c00")},
+    {map::WAVEWINDOW, QColor("#304485b7")}
   }
   );
 
@@ -351,7 +353,9 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
     {map::NATIONAL_PARK, QPen(QColor("#509090"), 2)},
     {map::MODEC, QPen(QColor("#509090"), 2)},
     {map::RADAR, QPen(QColor("#509090"), 2)},
-    {map::TRAINING, QPen(QColor("#509090"), 2)}
+    {map::TRAINING, QPen(QColor("#509090"), 2)},
+    {map::GLIDERPROHIBITED, QPen(QColor("#fd8c00"), 2)},
+    {map::WAVEWINDOW, QPen(QColor("#4485b7"), 2)}
   }
   );
 
@@ -379,7 +383,9 @@ static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
     {"NationalPark", map::NATIONAL_PARK},
     {"Modec", map::MODEC},
     {"Radar", map::RADAR},
-    {"Training", map::TRAINING}
+    {"Training", map::TRAINING},
+    {"GliderProhibited", map::GLIDERPROHIBITED},
+    {"WaveWindow", map::WAVEWINDOW}
   }
   );
 

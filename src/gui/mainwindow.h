@@ -243,7 +243,7 @@ private:
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
-  void updateAirspaceTypes(map::MapAirspaceTypes types);
+  void updateAirspaceTypes(map::MapAirspaceFilter types);
   void resetWindowLayout();
   bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
   void checkForUpdates();

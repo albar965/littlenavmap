@@ -651,9 +651,9 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
 
 void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
                                     opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
-                                    bool diagram)
+                                    bool diagram, int maxTextLength)
 {
-  QStringList texts = airportTexts(dispOpts, flags, airport);
+  QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
   if(!texts.isEmpty())
   {
     textatt::TextAttributes atts = textatt::BOLD;
@@ -675,12 +675,12 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
 }
 
 QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
-                                        const map::MapAirport& airport)
+                                        const map::MapAirport& airport, int maxTextLength)
 {
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & opts::ITEM_AIRPORT_NAME)
-    texts.append(airport.name + " (" + airport.ident + ")");
+    texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.ident + ")");
   else if(flags & textflags::IDENT)
     texts.append(airport.ident);
   else if(flags & textflags::NAME)

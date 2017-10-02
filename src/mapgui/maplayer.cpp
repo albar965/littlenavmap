@@ -17,6 +17,8 @@
 
 #include "mapgui/maplayer.h"
 
+#include "maplayer.h"
+
 MapLayer::MapLayer(float maximumRange)
 {
   maxRange = maximumRange;
@@ -396,6 +398,12 @@ MapLayer& MapLayer::aiAircraftGroundText(bool value)
 MapLayer& MapLayer::aiAircraftText(bool value)
 {
   layerAiAircraftText = value;
+  return *this;
+}
+
+MapLayer& MapLayer::maxTextLength(int size)
+{
+  maximumTextLength = size;
   return *this;
 }
 

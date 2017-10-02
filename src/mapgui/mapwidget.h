@@ -215,11 +215,11 @@ public:
 
   /* Define which airport or navaid types are shown on the map */
   void setShowMapFeatures(map::MapObjectTypes type, bool show);
-  void setShowMapAirspaces(map::MapAirspaceTypes types);
+  void setShowMapAirspaces(map::MapAirspaceFilter types);
 
   map::MapObjectTypes getShownMapFeatures() const;
-  map::MapAirspaceTypes getShownAirspaces() const;
-  map::MapAirspaceTypes getShownAirspaceTypesByLayer() const;
+  map::MapAirspaceFilter getShownAirspaces() const;
+  map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
 
   /* Change map detail level */
   void increaseMapDetail();

@@ -1908,10 +1908,9 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
     mapWidget->changeProcedureLegHighlights(nullptr);
 }
 
-void MainWindow::updateAirspaceTypes(map::MapAirspaceTypes types)
+void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter types)
 {
   mapWidget->setShowMapAirspaces(types);
-  mapWidget->saveState();
   mapWidget->updateMapObjectsShown();
   setStatusMessage(tr("Map settigs changed."));
 }

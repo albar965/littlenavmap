@@ -186,7 +186,7 @@ public:
   const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              map::MapAirspaceTypes types, float flightPlanAltitude, bool lazy);
+                                              map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy);
   const atools::geo::LineString *getAirspaceGeometry(int boundaryId);
 
   /* Get a partially filled runway list for the overview */
@@ -260,7 +260,7 @@ private:
   SimpleRectCache<map::MapIls> ilsCache;
   SimpleRectCache<map::MapAirway> airwayCache;
   SimpleRectCache<map::MapAirspace> airspaceCache;
-  map::MapAirspaceTypes lastAirspaceTypes = map::AIRSPACE_NONE;
+  map::MapAirspaceFilter lastAirspaceFilter = {map::AIRSPACE_NONE, map::AIRSPACE_FLAG_NONE};
   float lastFlightplanAltitude = 0.f;
 
   /* ID/object caches */

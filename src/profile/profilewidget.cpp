@@ -42,17 +42,17 @@
 
 /* Maximum delta values depending on update rate in options */
 static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
+{
   {
-    {
-      opts::FAST, {1, 1.f}
-    },
-    {
-      opts::MEDIUM, {2, 10.f}
-    },
-    {
-      opts::LOW, {4, 100.f}
-    }
-  });
+    opts::FAST, {1, 1.f}
+  },
+  {
+    opts::MEDIUM, {2, 10.f}
+  },
+  {
+    opts::LOW, {4, 100.f}
+  }
+});
 
 using Marble::GeoDataCoordinates;
 using Marble::GeoDataLineString;
@@ -125,7 +125,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
                                                      * verticalScale));
 
           // Get screen point for current update
-          QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
+          QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart *horizontalScale),
                               Y0 + static_cast<int>(rect().height() - Y0 -
                                                     simData.getUserAircraft().getPosition().getAltitude() *
                                                     verticalScale));
@@ -281,7 +281,7 @@ void ProfileWidget::updateScreenCoords()
     {
       float alt = leg.elevation.at(i).getAltitude();
       QPoint pt(X0 + static_cast<int>(leg.distances.at(i) * horizontalScale),
-                Y0 + static_cast<int>(h - alt * verticalScale));
+                Y0 + static_cast<int>(h - alt *verticalScale));
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
@@ -309,7 +309,7 @@ void ProfileWidget::updateScreenCoords()
 
       if(distFromStart < map::INVALID_DISTANCE_VALUE)
       {
-        QPoint pt(X0 + static_cast<int>(distFromStart * horizontalScale),
+        QPoint pt(X0 + static_cast<int>(distFromStart *horizontalScale),
                   Y0 + static_cast<int>(rect().height() - Y0 - aircraftPos.getAltitude() * verticalScale));
 
         if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
@@ -519,7 +519,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanTextY,
-                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
     }
   }
 
@@ -531,7 +531,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), X0, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, departureLeg.getAirport(), X0 - 5, flightplanTextY,
-                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
     }
 
     // Draw destination always on the right also if there are approach procedures
@@ -540,7 +540,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), X0 + w, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, destinationLeg.getAirport(), X0 + w - 5, flightplanTextY,
-                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
     }
   }
 
@@ -696,7 +696,7 @@ void ProfileWidget::routeChanged(bool geometryChanged)
   }
   // else
   // {
-  // // Only update screen
+  //// Only update screen
   // updateScreenCoords();
   // update();
   // }
@@ -787,6 +787,7 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
     // Add start or end point if heightProfile omitted these - check only lat lon not alt
     if(!elevations.first().almostEqual(geometry.first()))
       elevations.prepend(Pos(geometry.first().getLonX(), geometry.first().getLatY(), elevations.first().getAltitude()));
+
 
     if(!elevations.last().almostEqual(geometry.last()))
       elevations.append(Pos(geometry.last().getLonX(), geometry.last().getLatY(), elevations.last().getAltitude()));

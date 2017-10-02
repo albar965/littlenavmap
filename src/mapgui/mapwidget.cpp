@@ -253,7 +253,8 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
-  setShowMapFeatures(map::AIRSPACE, getShownAirspaces() & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
+  setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
+                     ui->actionShowAirspaces->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
@@ -324,7 +325,7 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
     screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
-void MapWidget::setShowMapAirspaces(map::MapAirspaceTypes types)
+void MapWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
 {
   paintLayer->setShowAirspaces(types);
   // setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
@@ -346,12 +347,12 @@ map::MapObjectTypes MapWidget::getShownMapFeatures() const
   return paintLayer->getShownMapObjects();
 }
 
-map::MapAirspaceTypes MapWidget::getShownAirspaces() const
+map::MapAirspaceFilter MapWidget::getShownAirspaces() const
 {
   return paintLayer->getShownAirspaces();
 }
 
-map::MapAirspaceTypes MapWidget::getShownAirspaceTypesByLayer() const
+map::MapAirspaceFilter MapWidget::getShownAirspaceTypesByLayer() const
 {
   return paintLayer->getShownAirspacesTypesByLayer();
 }
@@ -435,7 +436,7 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
 
   s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
-  s.setValue(lnm::MAP_AIRSPACES, static_cast<int>(paintLayer->getShownAirspaces()));
+  s.setValueVar(lnm::MAP_AIRSPACES, QVariant::fromValue(paintLayer->getShownAirspaces()));
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
@@ -509,7 +510,7 @@ void MapWidget::resetSettingActionsToDefault()
 
 void MapWidget::resetSettingsToDefault()
 {
-  paintLayer->setShowAirspaces(map::AIRSPACE_DEFAULT);
+  paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
   mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
   setMapDetail(mapDetailLevel);
 }
@@ -554,10 +555,13 @@ void MapWidget::restoreState()
     state.restore(action);
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-    paintLayer->setShowAirspaces(static_cast<map::MapAirspaceTypes>(
-                                   s.valueVar(lnm::MAP_AIRSPACES, map::AIRSPACE_DEFAULT).toInt()));
+  {
+    map::MapAirspaceFilter defaultValue = {map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT};
+    paintLayer->setShowAirspaces(s.valueVar(lnm::MAP_AIRSPACES,
+                                            QVariant::fromValue(defaultValue)).value<map::MapAirspaceFilter>());
+  }
   else
-    paintLayer->setShowAirspaces(map::AIRSPACE_DEFAULT);
+    paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
 
   restoreHistoryState();
 }
@@ -2564,35 +2568,35 @@ void MapWidget::updateVisibleObjectsStatusBar()
       QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip;
       if(shown & map::AIRSPACE)
       {
-        map::MapAirspaceTypes airspaceTypes = paintLayer->getShownAirspacesTypesByLayer();
+        map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
         // Collect airspace information ==========================================================
         for(int i = 0; i < map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
           map::MapAirspaceTypes type(1 << i);
-          if(airspaceTypes & type)
+          if(airspaceFilter.types & type)
             airspacesTooltip.append(map::airspaceTypeToString(type));
         }
-        if(airspaceTypes & map::AIRSPACE_ICAO)
+        if(airspaceFilter.types & map::AIRSPACE_ICAO)
         {
           airspaceGroupLabel.append(tr("ICAO"));
           airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
         }
-        if(airspaceTypes & map::AIRSPACE_FIR)
+        if(airspaceFilter.types & map::AIRSPACE_FIR)
         {
           airspaceGroupLabel.append(tr("FIR"));
           airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
         }
-        if(airspaceTypes & map::AIRSPACE_RESTRICTED)
+        if(airspaceFilter.types & map::AIRSPACE_RESTRICTED)
         {
           airspaceGroupLabel.append(tr("RSTR"));
           airspaceGroupTooltip.append(tr("Restricted (RSTR)"));
         }
-        if(airspaceTypes & map::AIRSPACE_SPECIAL)
+        if(airspaceFilter.types & map::AIRSPACE_SPECIAL)
         {
           airspaceGroupLabel.append(tr("SPEC"));
           airspaceGroupTooltip.append(tr("Special (SPEC)"));
         }
-        if(airspaceTypes & map::AIRSPACE_OTHER || airspaceTypes & map::AIRSPACE_CENTER)
+        if(airspaceFilter.types & map::AIRSPACE_OTHER || airspaceFilter.types & map::AIRSPACE_CENTER)
         {
           airspaceGroupLabel.append(tr("OTR"));
           airspaceGroupTooltip.append(tr("Centers and others (OTR)"));

@@ -60,7 +60,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
-  setApplicationVersion("1.6.5");
+  setApplicationVersion("1.6.5.beta");
 }
 
 NavApp::~NavApp()
@@ -325,7 +325,7 @@ map::MapObjectTypes NavApp::getShownMapFeatures()
   return mainWindow->getMapWidget()->getShownMapFeatures();
 }
 
-map::MapAirspaceTypes NavApp::getShownMapAirspaces()
+map::MapAirspaceFilter NavApp::getShownMapAirspaces()
 {
   return mainWindow->getMapWidget()->getShownAirspaces();
 }

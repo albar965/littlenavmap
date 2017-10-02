@@ -1431,7 +1431,13 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
   if(airspace.name.isEmpty())
     navaidTitle(html, tr("Airspace"));
   else
-    navaidTitle(html, (info ? tr("Airspace: ") : QString()) + formatter::capNavString(airspace.name));
+  {
+    QString name = formatter::capNavString(airspace.name);
+    if(!info)
+      name = atools::elideTextShort(name, 40);
+
+    navaidTitle(html, (info ? tr("Airspace: ") : QString()) + name);
+  }
 
   if(info)
   {
@@ -1440,7 +1446,6 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
     html.a(tr("Map"),
            QString("lnm://show?id=%1&type=%2").arg(airspace.id).arg(map::AIRSPACE),
            atools::util::html::LINK_NO_UL);
-
   }
 
   if(info)
@@ -1472,9 +1477,18 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
   }
   html.tableEnd();
 
+  if(info)
+  {
+    const atools::sql::SqlRecord *rec = infoQuery->getAirspaceInformation(airspace.id);
+
+    if(rec != nullptr)
+      addScenery(rec, html);
+  }
+
 #ifdef DEBUG_OBJECT_ID
   html.p().b(QString("Database: boundary_id = %1").arg(airspace.getId())).pEnd();
 #endif
+
 }
 
 void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
