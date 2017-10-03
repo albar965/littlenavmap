@@ -831,7 +831,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
   // Show errors that occured during loading, if any
-  if(!errors.sceneryErrors.isEmpty())
+  if(errors.getTotalErrors() > 0)
   {
     QString errorTexts;
     errorTexts.append(tr("<h3>Found %1 errors in %2 scenery entries when loading the scenery database</h3>").
