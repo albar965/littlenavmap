@@ -20,8 +20,6 @@
 
 #include <QRegularExpressionValidator>
 
-static const QRegularExpression USER_WAYPOINT_REGEXP("^[A-Za-z0-9_ ]{1,10}$");
-
 UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name)
   : QDialog(parent), ui(new Ui::UserWaypointDialog)
 {
@@ -30,17 +28,11 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name)
 
   ui->setupUi(this);
 
-  validator = new QRegularExpressionValidator();
-  validator->setRegularExpression(USER_WAYPOINT_REGEXP);
-
-  ui->lineEditRouteUserWaypoint->setValidator(validator);
-
   ui->lineEditRouteUserWaypoint->setText(name);
 }
 
 UserWaypointDialog::~UserWaypointDialog()
 {
-  delete validator;
   delete ui;
 }
 

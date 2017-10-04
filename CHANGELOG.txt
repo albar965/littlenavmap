@@ -12,15 +12,19 @@ Version 1.6.5.beta
 * Fixed several small text errors.
 * Solved problem with gaps between SIDs, STARs and the respective transitions resulting in wrong
   display and distance calculation.
-*  Fixed problem where STAR was not reloaded after database switch.
+* Fixed problem where STAR was not reloaded after database switch.
 * Cleanup of airspace management code to allow addition of more airspaces.
 * Now clipping long airport names on map.
 * Fixed issue where airspaces were not updated when changing cruise altitude with empty flight plan.
+* Removed restrictions on user defined waypoint names. Names are now adjusted according to save flight plan format.
+* Added coordinates to CSV export by clipboard.
 
 from atools version 2.6.6.beta
 * Added OpenAir airspace format compilation for X-PLane - also reading
   from $HOME/Documents/Little Navmap/X-Plane Airspaces
 * Increased database minor version to 3.
+* Enabled user defined waypoint names for X-Plane FMS format.
+* Fixed user waypoint format for FLP so that it can be reloaded.
 * Fixed problem loading FS9 flight plans.
 * Added AIRAC cycle to metadata and comment to file table.
 * X-Plane 3D airport state now considered when calculating rating.

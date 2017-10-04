@@ -60,7 +60,9 @@ public:
 
 #endif
 
-  static int selectionAsCsv(QTableView *view, bool includeHeader, QString& result);
+  static int selectionAsCsv(QTableView *view, bool includeHeader, QString& result,
+                            const QStringList& additionalHeader = QStringList(),
+                            std::function<QStringList(int)> additionalFields = nullptr);
 
 private:
   /* Get file from save dialog */

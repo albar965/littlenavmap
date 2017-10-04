@@ -1110,7 +1110,9 @@ void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
           paintText(context, mapcolors::routeInvalidPointColor, x, y, {obj.getIdent()}, true /* draw as route */);
           break;
         case map::USER:
-          paintText(context, mapcolors::routeUserPointColor, x, y, {obj.getIdent()}, true /* draw as route */);
+          paintText(context, mapcolors::routeUserPointColor, x, y,
+                    {atools::elideTextShort(obj.getIdent(), context->mapLayer->getMaxTextLength())},
+                    true /* draw as route */);
           break;
         case map::AIRPORT:
           paintAirportText(context, x, y, true /* draw as route */, obj.getAirport());

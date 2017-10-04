@@ -250,8 +250,13 @@ void RouteController::tableCopyClipboard()
 {
   qDebug() << "RouteController::tableCopyClipboard";
 
+  const Route& rt = route;
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(view, true, csv);
+  int exported = CsvExporter::selectionAsCsv(view, true, csv, {"longitude", "latitude"}, [&rt](int index) -> QStringList
+  {
+    return {QLocale().toString(rt.at(index).getPosition().getLonX()),
+            QLocale().toString(rt.at(index).getPosition().getLatY())};
+  });
 
   if(!csv.isEmpty())
     QApplication::clipboard()->setText(csv);

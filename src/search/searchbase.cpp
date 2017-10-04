@@ -169,7 +169,13 @@ void SearchBaseTable::tableCopyClipboard()
   if(view->isVisible())
   {
     QString csv;
-    int exported = CsvExporter::selectionAsCsv(view, true, csv);
+    SqlController *c = controller;
+    int exported = CsvExporter::selectionAsCsv(view, true, csv, {"longitude", "latitude"},
+                                               [c](int index) -> QStringList
+    {
+      return {QLocale().toString(c->getRawData(index, "lonx").toFloat()),
+              QLocale().toString(c->getRawData(index, "laty").toFloat())};
+    });
 
     if(!csv.isEmpty())
       QApplication::clipboard()->setText(csv);

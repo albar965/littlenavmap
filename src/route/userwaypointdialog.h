@@ -38,7 +38,6 @@ public:
   QString getName() const;
 
 private:
-  QRegularExpressionValidator *validator = nullptr;
   Ui::UserWaypointDialog *ui;
 };
 

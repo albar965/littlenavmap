@@ -1120,7 +1120,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
   atools::gui::DialogButtonList buttonList =
   {
     {QString(), QMessageBox::Cancel},
-    {tr("Save &as PLN instead ..."), QMessageBox::SaveAll},
+    // {tr("Save &as PLN instead ..."), QMessageBox::SaveAll},
     // {QString(), QMessageBox::Save},
     {QString(), QMessageBox::Help}
   };
@@ -1149,9 +1149,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                 tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FMS3 && (airways || procedures || userWaypoints || parking))
+  else if(fileFormat == atools::fs::pln::FMS3 && (airways || procedures || parking))
   {
     buttonList.append({saveAsButtonText.arg(tr(" &FMS 3")), QMessageBox::Save});
+    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
 
     // Ask before saving file
     result =
@@ -1161,18 +1162,18 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                       "<li>Procedures</li>"
                                         "<li>Airways</li>"
                                           "<li>Ground Speed</li>"
-                                            "<li>User waypoint names</li>"
-                                              "<li>Departure parking position</li>"
-                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                "</ul>"
-                                                "This information will be lost when reloading the file.<br/><br/>"
-                                                "Really save as FMS file?<br/>"),
+                                            "<li>Departure parking position</li>"
+                                              "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                              "</ul>"
+                                              "This information will be lost when reloading the file.<br/><br/>"
+                                              "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FMS11 && (userWaypoints || parking))
+  else if(fileFormat == atools::fs::pln::FMS11 && parking)
   {
     buttonList.append({saveAsButtonText.arg(tr(" &FMS 11")), QMessageBox::Save});
+    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
 
     // Ask before saving file
     result =
@@ -1180,18 +1181,18 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                  tr("The new X-Plane FMS format version 11 does not allow saving of:"
                                     "<ul>"
                                       "<li>Ground Speed</li>"
-                                        "<li>User waypoint names</li>"
-                                          "<li>Departure parking position</li>"
-                                            "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                            "</ul>"
-                                            "This information will be lost when reloading the file.<br/><br/>"
-                                            "Really save as FMS file?<br/>"),
+                                        "<li>Departure parking position</li>"
+                                          "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                          "</ul>"
+                                          "This information will be lost when reloading the file.<br/><br/>"
+                                          "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
   else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints || parking))
   {
     buttonList.append({saveAsButtonText.arg(tr(" &FLP")), QMessageBox::Save});
+    buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
 
     // Ask before saving file
     result =
@@ -1199,8 +1200,8 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                  tr("The FLP format does not allow saving of:"
                                     "<ul>"
                                       "<li>Procedures (limited, can result in mismatches)</li>"
-                                        "<li>User waypoints</li>"
-                                          "<li>Cruise Altitude</li>"
+                                        "<li>User waypoint names</li>"
+                                    "<li>Cruise Altitude</li>"
                                             "<li>Ground Speed</li>"
                                               "<li>Departure parking position</li>"
                                                 "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
