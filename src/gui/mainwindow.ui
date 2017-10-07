@@ -6009,7 +6009,7 @@
   <action name="actionReloadSceneryCopyAirspaces">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspace.svg</normaloff>:/littlenavmap/resources/icons/airspace.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/airspacecopy.svg</normaloff>:/littlenavmap/resources/icons/airspacecopy.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Copy Airspaces to X-Plane database ...</string>

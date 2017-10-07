@@ -162,5 +162,6 @@
         <file>resources/icons/parkingtiedown.svg</file>
         <file>resources/icons/parkinghangar.svg</file>
         <file>resources/icons/qticon.png</file>
+        <file>resources/icons/airspacecopy.svg</file>
     </qresource>
 </RCC>
