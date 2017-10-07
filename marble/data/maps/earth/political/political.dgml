@@ -43,13 +43,18 @@
                     <sourcefile> naturalearth/ne_50m_rivers_lake_centerlines.pn2 </sourcefile>
                     <pen color="#3474df" />
                 </geodata>
+                <geodata name="lake" property="water">
+                    <sourcefile> naturalearth/ne_50m_lakes.pn2 </sourcefile>
+                    <brush color="#99b3cc" />
+                    <pen color="transparent" style="nopen"/>
+                </geodata>
             </layer>
 
             <!-- This layer draws the boundaries for different geographical regions -->
             <layer name="coutries" backend="geodata">
                 <geodata name="country-borders" property="borders">
                     <sourcefile>naturalearth/ne_50m_admin_0_countries.pn2 </sourcefile>
-                    <brush colorMap="#ec7331,#ffeb55,#77b753,#c173b0,#6193cf,#e85752,#b3925d,#f2bb88,#b1d28f,#8e79b9,#fff299,#f08682,#debc85" alpha="0.60" />
+                    <brush colorMap="#ec7331,#ffeb55,#77b753,#c173b0,#6193cf,#e85752,#b3925d,#f2bb88,#b1d28f,#8e79b9,#fff299,#f08682,#debc85" alpha="0.40" />
                     <pen color="#57401e" style="solidline"/>
                 </geodata>
                 <geodata name="breakawaydisputed" property="borders">
@@ -57,6 +62,7 @@
                     <pen color="#cccbca" width="1" style="dotline"/>
                     <brush color="#cccbca" alpha="0.20" />
                 </geodata>
+
             </layer>
             <layer name="standardplaces" backend="geodata">
                 <geodata name="cityplacemarks">

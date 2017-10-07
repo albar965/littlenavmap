@@ -971,7 +971,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
           if((!widgetRect.contains(curPos.toPoint()) || // Aircraft out of box or ...
               OptionData::instance().getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY) && // ... update always
              centerAircraft) // Centering wanted
+          {
+            // Save distance value to avoid "zoom creep"
+            double savedDistance = distance();
             centerOn(userAircraft.getPosition().getLonX(), userAircraft.getPosition().getLatY(), false);
+            setDistance(savedDistance);
+          }
           else
             update();
         }

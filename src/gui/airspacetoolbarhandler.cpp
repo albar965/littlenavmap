@@ -47,6 +47,10 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
   map::MapAirspaceFilter filter = NavApp::getShownMapAirspaces();
   // qDebug() << Q_FUNC_INFO << types;
 
+  QAction *airspaceAction = NavApp::getMainUi()->actionShowAirspaces;
+  bool hasAirspaces = NavApp::hasDatabaseAirspaces();
+  airspaceAction->setEnabled(hasAirspaces);
+
   for(int i = 0; i < airspaceToolButtons.size(); i++)
   {
     if(airspaceToolGroups.at(i) == nullptr)
@@ -57,7 +61,7 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
       // Depress button if the first is not selected in groups
       airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().first()->isChecked());
 
-    airspaceToolButtons.at(i)->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
+    airspaceToolButtons.at(i)->setEnabled(airspaceAction->isChecked() && hasAirspaces);
   }
 }
 

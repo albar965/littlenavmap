@@ -602,14 +602,26 @@ void DatabaseManager::copyAirspaces()
 
           // Delete
           xpDb.exec("delete from boundary");
+          xpDb.commit();
 
           // Build statements
           SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), database);
-          SqlQuery xpQuery(xpUtil.buildInsertStatement("boundary", QString(), QStringList(),
-                                                       false /* named bindings */), xpDb);
+
+          // Use named bindings to overcome different column order
+          // Let SQLite generate the ID automatically
+          SqlQuery xpQuery(xpDb);
+          xpQuery.prepare(xpUtil.buildInsertStatement("boundary", QString(), {"boundary_id"},
+                                                      true /* named bindings */));
 
           // Copy from one database to another
-          int copied = SqlUtil::copyResultValues(fromQuery, xpQuery);
+          std::function<bool(SqlQuery&, SqlQuery&)> func =
+            [](SqlQuery&, SqlQuery& to) -> bool
+            {
+              // use an invalid value for file_id to avoid display in information window
+              to.bindValue(":file_id", 0);
+              return true;
+            };
+          int copied = SqlUtil::copyResultValues(fromQuery, xpQuery, func);
           xpDb.commit();
 
           QGuiApplication::restoreOverrideCursor();

@@ -60,7 +60,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
-  setApplicationVersion("1.6.5.beta");
+  setApplicationVersion("1.6.6");
 }
 
 NavApp::~NavApp()
@@ -308,6 +308,16 @@ DatabaseManager *NavApp::getDatabaseManager()
 ConnectClient *NavApp::getConnectClient()
 {
   return connectClient;
+}
+
+QString NavApp::getDatabaseAiracCycle()
+{
+  return databaseMeta->getAiracCycle();
+}
+
+bool NavApp::hasDatabaseAirspaces()
+{
+  return databaseMeta->hasAirspaces();
 }
 
 const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMeta()

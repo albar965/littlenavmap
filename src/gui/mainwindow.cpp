@@ -1201,7 +1201,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                     "<ul>"
                                       "<li>Procedures (limited, can result in mismatches)</li>"
                                         "<li>User waypoint names</li>"
-                                    "<li>Cruise Altitude</li>"
+                                          "<li>Cruise Altitude</li>"
                                             "<li>Ground Speed</li>"
                                               "<li>Departure parking position</li>"
                                                 "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
@@ -2481,6 +2481,8 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   // Update toolbar buttons
   updateActionStates();
+
+  airspaceHandler->updateButtonsAndActions();
 }
 
 /* Update the current weather context for the information window. Returns true if any

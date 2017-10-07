@@ -63,7 +63,7 @@
                 </geodata>
                 <geodata name="lake" property="waterbodies" colorize="sea">
                     <sourcefile> naturalearth/ne_50m_lakes.pn2 </sourcefile>
-                    <brush color="f00e0eff" />
+                    <brush color="#99b3cc" />
                     <pen color="transparent" style="nopen"/>
                 </geodata>
                 <geodata name="glacier" property="ice" colorize="sea">
@@ -75,6 +75,7 @@
 
 
             <layer name="naturalearth" backend="geodata">
+
                 <geodata name="lakeshistoric" property="waterbodies">
                     <sourcefile> naturalearth/ne_50m_lakes_historic.pn2 </sourcefile>
                     <pen color="#bfd5ee" style="dotline"/>
@@ -148,6 +149,10 @@
                     <available>true</available>
                 </property>
                 <property name="cities">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+                <property name="land">
                     <value>true</value>
                     <available>true</available>
                 </property>

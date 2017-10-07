@@ -139,6 +139,8 @@ public:
   static ConnectClient *getConnectClient();
 
   static const atools::fs::db::DatabaseMeta *getDatabaseMeta();
+  static QString getDatabaseAiracCycle();
+  static bool hasDatabaseAirspaces();
 
   static const AircraftTrack& getAircraftTrack();
 

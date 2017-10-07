@@ -28,7 +28,6 @@
 #include "search/proceduresearch.h"
 #include "common/unit.h"
 #include "exception.h"
-#include "fs/db/databasemeta.h"
 #include "export/csvexporter.h"
 #include "gui/actiontextsaver.h"
 #include "gui/actionstatesaver.h"
@@ -919,10 +918,10 @@ bool RouteController::saveFlightplan(bool cleanExport)
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
     properties.insert(pln::NAVDATA, NavApp::getCurrentSimulatorShortName());
-    properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseMeta()->getAiracCycle());
+    properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycle());
 
     // Save PLN, FLP or FMS
-    flightplan.save(routeFilename, NavApp::getDatabaseMeta()->getAiracCycle(), cleanExport /* clean */);
+    flightplan.save(routeFilename, NavApp::getDatabaseAiracCycle(), cleanExport /* clean */);
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
       // Old format is always saved as new after question dialog
