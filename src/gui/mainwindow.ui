@@ -227,7 +227,6 @@
     <property name="title">
      <string>&amp;Scenery Library</string>
     </property>
-    <addaction name="separator"/>
     <addaction name="actionDatabaseFiles"/>
     <addaction name="actionReloadSceneryCopyAirspaces"/>
     <addaction name="actionReloadScenery"/>

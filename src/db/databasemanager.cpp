@@ -362,7 +362,6 @@ void DatabaseManager::insertSimSwitchActions()
   }
 
   // Add external databases next
-  menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
   for(atools::fs::FsPaths::SimulatorType type : keys)
   {
     if(type != atools::fs::FsPaths::EXTERNAL && type != atools::fs::FsPaths::EXTERNAL2)
@@ -379,11 +378,13 @@ void DatabaseManager::insertSimSwitchActions()
     for(atools::fs::FsPaths::SimulatorType type : sims)
       insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
 
+    if(!sims.isEmpty() && !external.isEmpty())
+      menuExternDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+
     for(atools::fs::FsPaths::SimulatorType type : external)
       insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
 
-    if(!external.isEmpty())
-      menuExternDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
+    menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
   }
 }
 
