@@ -9,6 +9,7 @@ Version 1.6.6
 * "Calculate based on given altitude" is working again. Previously failed with "no route found".
 * Now correctly considering min and maximum altitude ranges when calculating to avoid
   non-overlapping airway altitude min/max ranges.
+* Fixed error in flight plan saving logic where cancel did not stop saving.
 
 Version 1.6.5.beta
 

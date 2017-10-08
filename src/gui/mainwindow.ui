@@ -5862,6 +5862,9 @@
    <property name="statusTip">
     <string>Save flight plan as FMS file usable by X-Plane</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+X</string>
+   </property>
   </action>
   <action name="actionRouteSaveAsGpx">
    <property name="icon">

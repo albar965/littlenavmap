@@ -1226,6 +1226,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html", lnm::helpLanguages());
   // else cancel
 
+  saveAs = false;
   return false;
 }
 
