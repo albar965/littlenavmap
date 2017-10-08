@@ -73,6 +73,7 @@ private:
   float calculateEdgeCost(const nw::Node& node, const nw::Node& successorNode, int lengthMeter);
   float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
   map::MapObjectTypes toMapObjectType(nw::NodeType type);
+  bool combineRanges(std::pair<int, int>& range1, int min, int max);
 
   /* Force algortihm to avoid direct route from start to destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_DIRECT = 2.f;
@@ -117,6 +118,9 @@ private:
   /* Costs from start to this node. Maps node id to costs. Costs are distance in meter
    * adjusted by some factors. */
   QHash<int, float> nodeCosts;
+
+  /* Min and maximum altitude range of airways to this node so far */
+  QHash<int, std::pair<int, int> > nodeAltRange;
 
   /* Maps node id to predecessor node id */
   QHash<int, int> nodePredecessor;

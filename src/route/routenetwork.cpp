@@ -496,11 +496,19 @@ nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeI
   }
 
   if(edgeMinAltIndex != -1)
-    edge.minAltFt = rec.valueInt(edgeMinAltIndex);
+  {
+    int minAlt = rec.valueInt(edgeMinAltIndex);
+    if(minAlt > 0)
+      edge.minAltFt = minAlt;
+  }
 
   if(edgeMaxAltIndex != -1)
-    edge.maxAltFt = rec.valueInt(edgeMaxAltIndex);
-
+  {
+    int maxAlt = rec.valueInt(edgeMaxAltIndex);
+    if(maxAlt > 0)
+      edge.maxAltFt = maxAlt;
+    // otherwise leave max value
+  }
   if(edgeAirwayIdIndex != -1)
     edge.airwayId = rec.valueInt(edgeAirwayIdIndex);
 

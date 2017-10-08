@@ -664,6 +664,8 @@ void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       query->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
+
+      // qDebug() << "min" << airway.minAltitude << "max" << airway.maxAltitude;
     }
     else
       routeLeg.setAirway(map::MapAirway());

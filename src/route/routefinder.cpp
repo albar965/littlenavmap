@@ -28,6 +28,7 @@ RouteFinder::RouteFinder(RouteNetwork *routeNetwork)
 {
   closedNodes.reserve(10000);
   nodeCosts.reserve(10000);
+  nodeAltRange.reserve(10000);
   nodePredecessor.reserve(10000);
   nodeAirwayId.reserve(10000);
   nodeAirwayName.reserve(10000);
@@ -55,6 +56,7 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
 
   openNodesHeap.push(startNode, 0.f);
   nodeCosts[startNode.id] = 0.f;
+  nodeAltRange[startNode.id] = std::make_pair(0, std::numeric_limits<int>::max());
 
   Node currentNode;
   bool destinationFound = false;
@@ -138,6 +140,7 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
 
     const Edge& edge = successorEdges.at(i);
 
+    // Calculate set altitude if altitude > 0
     if(altitude > 0 && !(altitude >= edge.minAltFt && altitude <= edge.maxAltFt))
       // Altitude restrictions do not match - ignore this edge to the node
       continue;
@@ -167,12 +170,18 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
       // New path is not cheaper
       continue;
 
+    std::pair<int, int> successorNodeAltRange = nodeAltRange.value(currentNode.id);
+
+    if(!combineRanges(successorNodeAltRange, edge.minAltFt, edge.maxAltFt))
+      continue;
+
     // New path is cheaper - update node
     nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
     if(network->isAirwayRouting())
       nodeAirwayName[successor.id] = successorEdges.at(i).airwayName;
     nodePredecessor[successor.id] = currentNode.id;
     nodeCosts[successor.id] = successorNodeCosts;
+    nodeAltRange[successor.id] = successorNodeAltRange;
 
     // Costs from start to successor + estimate to destination = sort order in heap
     float totalCost = successorNodeCosts + costEstimate(successor, destNode);
@@ -183,6 +192,18 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     else
       openNodesHeap.push(successor, totalCost);
   }
+}
+
+bool RouteFinder::combineRanges(std::pair<int, int>& range1, int min, int max)
+{
+  // qDebug() << "[" << range1.first << "," << range1.second << "]" << "[" << min << "," << max << "]";
+  if(range1.second < min || range1.first > max)
+    return false;
+
+  range1.first = std::max(range1.first, min);
+  range1.second = std::min(range1.second, max);
+  // qDebug() << "RESULT [" << range1.first << "," << range1.second << "]";
+  return true;
 }
 
 /* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that

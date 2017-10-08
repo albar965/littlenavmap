@@ -6,6 +6,9 @@ Version 1.6.6
 * Offline map themes Atlas and Simple: Fixed missing lakes in map.
 * Fixed problem where airspace showed wrong scenery files after copying. Now disabled.
 * Airspace buttons now disabled if no airspaces are loaded.
+* "Calculate based on given altitude" is working again. Previously failed with "no route found".
+* Now correctly considering min and maximum altitude ranges when calculating to avoid
+  non-overlapping airway altitude min/max ranges.
 
 Version 1.6.5.beta
 
