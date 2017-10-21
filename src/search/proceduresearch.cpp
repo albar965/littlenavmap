@@ -492,7 +492,7 @@ void ProcedureSearch::restoreState()
 
   fillApproachTreeWidget();
   QBitArray state;
-  if(currentAirport.isValid())
+  if(currentAirport.isValid() && currentAirport.procedure())
   {
     state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
     recentTreeState.insert(currentAirport.id, state);
@@ -502,7 +502,7 @@ void ProcedureSearch::restoreState()
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
   // Restoring state will emit above signal
-  if(currentAirport.isValid())
+  if(currentAirport.isValid() && currentAirport.procedure())
     restoreTreeViewState(state);
   updateHeaderLabel();
 }
@@ -624,6 +624,9 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
 {
   if(item != nullptr)
   {
+    if(item->type() >= itemLoadedIndex.size())
+      return;
+
     if(itemLoadedIndex.at(item->type()))
       return;
 
