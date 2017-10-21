@@ -17,9 +17,9 @@ rd /S /Q "%APROJECTS%\deploy\Little Navconnect"
 IF ERRORLEVEL 1 goto :err
 popd
 
-del /S /Q /F "%APROJECTS%\deploy\Little XpConnect"
-for /f %%f in ('dir /ad /b "%APROJECTS%\deploy\Little XpConnect"') do rd /s /q "%APROJECTS%\deploy\Little XpConnect\%%f"
-rd /S /Q "%APROJECTS%\deploy\Little XpConnect"
+del /S /Q /F "%APROJECTS%\deploy\Little Xpconnect"
+for /f %%f in ('dir /ad /b "%APROJECTS%\deploy\Little Xpconnect"') do rd /s /q "%APROJECTS%\deploy\Little Xpconnect\%%f"
+rd /S /Q "%APROJECTS%\deploy\Little Xpconnect"
 IF ERRORLEVEL 1 goto :err
 popd
 
@@ -106,12 +106,12 @@ endlocal
 
 rem ===========================================================================
 rem Copy navconnect =======================================================
-xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little NavConnect" "%APROJECTS%\deploy\Little Navmap\Little NavConnect"
+xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navconnect" "%APROJECTS%\deploy\Little Navmap\Little Navconnect"
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
 rem Copy xpconnect =======================================================
-xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little XpConnect" "%APROJECTS%\deploy\Little Navmap\Little XpConnect"
+xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Xpconnect" "%APROJECTS%\deploy\Little Navmap\Little Xpconnect"
 IF ERRORLEVEL 1 goto :err
 
 echo ---- Success ----
