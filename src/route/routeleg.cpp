@@ -469,7 +469,7 @@ QString RouteLeg::getMapObjectTypeName() const
   else if(vor.isValid())
     return map::vorType(vor) + " (" + map::navTypeNameVor(vor.type) + ")";
   else if(ndb.isValid())
-    return tr("NDB (%1)").arg(map::navTypeNameNdb(ndb.type));
+    return ndb.type.isEmpty() ? tr("NDB") : tr("NDB (%1)").arg(map::navTypeNameNdb(ndb.type));
   else if(airport.isValid())
     return tr("Airport");
   else if(ils.isValid())

@@ -346,9 +346,6 @@ void DatabaseManager::insertSimSwitchActions()
   // Add real simulators first
   for(atools::fs::FsPaths::SimulatorType type : keys)
   {
-    if(type == atools::fs::FsPaths::EXTERNAL || type == atools::fs::FsPaths::EXTERNAL2)
-      continue;
-
     const FsPathType& pathType = simulators.value(type);
 
     if(type == FsPaths::XPLANE11)
@@ -359,17 +356,6 @@ void DatabaseManager::insertSimSwitchActions()
     else if(pathType.isInstalled || pathType.hasDatabase)
       // Create an action for each simulator installation or database found
       sims.append(type);
-  }
-
-  // Add external databases next
-  for(atools::fs::FsPaths::SimulatorType type : keys)
-  {
-    if(type != atools::fs::FsPaths::EXTERNAL && type != atools::fs::FsPaths::EXTERNAL2)
-      continue;
-
-    // Create an action for each simulator installation or database found
-    if(simulators.value(type).hasDatabase)
-      external.append(type);
   }
 
   if(sims.size() + external.size() > 1)
@@ -886,7 +872,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
         }
         numBgl++;
 
-        errorTexts.append(tr("<b>File:</b> <i>%1</i><br/><b>Error:</b> <i>%2</i><br/>").
+        errorTexts.append(tr("<b>File:</b> \"%1\"<br/><b>Error:</b> %2<br/>").
                           arg(bglErr.filepath).arg(bglErr.errorMessage));
       }
       errorTexts.append("<br/>");
@@ -1229,7 +1215,7 @@ void DatabaseManager::updateSimulatorPathsFromDialog()
  * not simulator installation was found */
 void DatabaseManager::updateSimulatorFlags()
 {
-  for(atools::fs::FsPaths::SimulatorType type : FsPaths::ALL_SIMULATOR_TYPES)
+  for(atools::fs::FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
     // Already present or not - update database status since file exists
     simulators[type].hasDatabase = QFile::exists(buildDatabaseFileName(type));
 }

@@ -501,13 +501,13 @@
              <item>
               <widget class="QLineEdit" name="lineEditAirportCountrySearch">
                <property name="toolTip">
-                <string>Airport country</string>
+                <string>Airport country or area code if available</string>
                </property>
                <property name="statusTip">
-                <string>Airport country</string>
+                <string>Airport country or area code if available</string>
                </property>
                <property name="placeholderText">
-                <string>Country</string>
+                <string>Country / Area Code</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>

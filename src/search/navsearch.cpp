@@ -19,6 +19,7 @@
 
 #include "navapp.h"
 #include "common/maptypes.h"
+#include "common/mapflags.h"
 #include "common/constants.h"
 #include "search/sqlcontroller.h"
 #include "search/column.h"
@@ -149,7 +150,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery Path")).filter()).
-  append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("BGL File")).filter()).
+  append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("File")).filter()).
   append(Column("waypoint_num_victor_airway").hidden()).
   append(Column("waypoint_num_jet_airway").hidden()).
   append(Column("vor_id").hidden()).
@@ -311,7 +312,8 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
   else if(col->getColumnName() == "range" && displayRoleValue.toFloat() > 0.f)
     return Unit::distNm(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "altitude")
-    return Unit::altFeet(displayRoleValue.toFloat(), false);
+    return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
+           Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
   else if(col->getColumnName() == "frequency" && !displayRoleValue.isNull())
   {
     // VOR and/or DME

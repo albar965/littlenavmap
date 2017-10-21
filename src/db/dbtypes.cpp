@@ -25,7 +25,7 @@ using atools::fs::FsPaths;
 
 void SimulatorTypeMap::fillDefault()
 {
-  for(atools::fs::FsPaths::SimulatorType type : FsPaths::ALL_SIMULATOR_TYPES)
+  for(atools::fs::FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
     fillOneDefault(type);
 }
 
@@ -43,10 +43,6 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
     return atools::fs::FsPaths::FSX;
   else if(contains(atools::fs::FsPaths::XPLANE11) && value(atools::fs::FsPaths::XPLANE11).hasDatabase)
     return atools::fs::FsPaths::XPLANE11;
-  else if(contains(atools::fs::FsPaths::EXTERNAL) && value(atools::fs::FsPaths::EXTERNAL).hasDatabase)
-    return atools::fs::FsPaths::EXTERNAL;
-  else if(contains(atools::fs::FsPaths::EXTERNAL2) && value(atools::fs::FsPaths::EXTERNAL2).hasDatabase)
-    return atools::fs::FsPaths::EXTERNAL2;
 
   return atools::fs::FsPaths::UNKNOWN;
 }

@@ -72,8 +72,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   if(!overview)
   {
     runway.surface = record.valueStr("surface");
-    if(record.contains("shoulder")) // Optional X-Plane field
-      runway.shoulder = record.valueStr("shoulder");
+    runway.shoulder = record.valueStr("shoulder", QString()); // Optional X-Plane field
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
     runway.primaryEndId = record.valueInt("primary_end_id");
@@ -128,6 +127,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.towerFrequency = record.valueInt("tower_frequency");
     ap.ident = record.valueStr("ident");
     ap.name = record.valueStr("name");
+    ap.rating = record.valueInt("rating", -1);
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
@@ -290,8 +290,11 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
 
   vor.range = record.valueInt("range");
   vor.magvar = record.valueFloat("mag_var");
-  vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
-                     record.valueFloat("altitude"));
+
+  if(record.isNull("altitude"))
+    vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), INVALID_ALTITUDE_VALUE);
+  else
+    vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 }
 
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
@@ -304,8 +307,11 @@ void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
   ndb.frequency = record.valueInt("frequency");
   ndb.range = record.valueInt("range");
   ndb.magvar = record.valueFloat("mag_var");
-  ndb.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
-                     record.valueFloat("altitude"));
+
+  if(record.isNull("altitude"))
+    ndb.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), INVALID_ALTITUDE_VALUE);
+  else
+    ndb.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 }
 
 void MapTypesFactory::fillHelipad(const SqlRecord& record, map::MapHelipad& helipad)
@@ -396,6 +402,7 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker
 {
   marker.id = record.valueInt("marker_id");
   marker.type = record.valueStr("type");
+  marker.ident = record.valueStr("ident");
   marker.heading = static_cast<int>(std::round(record.valueFloat("heading")));
   marker.position = Pos(record.valueFloat("lonx"),
                         record.valueFloat("laty"));
@@ -407,7 +414,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.ident = record.valueStr("ident");
   ils.name = record.valueStr("name");
   ils.heading = record.valueFloat("loc_heading");
-  ils.width = record.valueFloat("loc_width");
+  ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
   ils.slope = record.valueFloat("gs_pitch");
 

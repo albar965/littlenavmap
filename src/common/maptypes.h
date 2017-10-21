@@ -101,6 +101,7 @@ struct MapAirport
   QString ident, /* ICAO ident*/ name;
   int id; /* Database id airport.airport_id */
   int longestRunwayLength = 0, longestRunwayHeading = 0;
+  int rating = -1;
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
 
@@ -131,6 +132,7 @@ struct MapAirport
   bool vasi() const;
   bool fence() const;
   bool closedRunways() const;
+  bool procedure() const;
 
   bool isValid() const
   {
@@ -522,7 +524,7 @@ struct MapAirway
 /* Marker beacon */
 struct MapMarker
 {
-  QString type;
+  QString type, ident;
   int id; /* database id marker.marker_id */
   int heading;
   atools::geo::Pos position;

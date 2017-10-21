@@ -714,8 +714,11 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   float hdg = ilsRec->valueFloat("loc_heading") - magvar;
   hdg = normalizeCourse(hdg);
 
-  html.row2(prefix + tr("Localizer Heading and Width:"), locale.toString(hdg, 'f', 0) + tr("°M") +
-            tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + tr("°"));
+  if(ilsRec->isNull("loc_width"))
+    html.row2(prefix + tr("Localizer Heading:"), locale.toString(hdg, 'f', 0) + tr("°M"));
+  else
+    html.row2(prefix + tr("Localizer Heading and Width:"), locale.toString(hdg, 'f', 0) + tr("°M") +
+              tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + tr("°"));
 
   if(gs)
     html.row2(prefix + tr("Glideslope Pitch:"),
@@ -940,7 +943,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
         html.row2(tr("TACAN Channel:"), QString(tr("%1 (%2 MHz)")).
                   arg(vor.channel).
                   arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
-        html.row2(tr("TACAN Range:"), Unit::distNm(vor.range));
+        if(vor.range > 0)
+          html.row2(tr("TACAN Range:"), Unit::distNm(vor.range));
       }
       else if(vor.vortac)
       {
@@ -948,7 +952,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
         html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
         if(!vor.channel.isEmpty())
           html.row2(tr("VORTAC Channel:"), vor.channel);
-        html.row2(tr("VORTAC Range:"), Unit::distNm(vor.range));
+        if(vor.range > 0)
+          html.row2(tr("VORTAC Range:"), Unit::distNm(vor.range));
         html.row2(tr("VORTAC Morse:"), morse->getCode(
                     vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
       }
@@ -956,7 +961,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       {
         html.row2(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
         html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
-        html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
+        if(vor.range > 0)
+          html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
         html.row2(tr("VOR Morse:"), morse->getCode(
                     vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
       }
@@ -977,9 +983,15 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
     if(result.hasNdb())
     {
       const MapNdb& ndb = result.ndbs.first();
-      html.row2(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
+
+      if(!ndb.type.isEmpty())
+        html.row2(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
+
       html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" MHz"));
-      html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
+
+      if(ndb.range > 0)
+        html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
+
       html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident),
                 atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
@@ -1280,7 +1292,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(!vor.tacan && !vor.dmeOnly)
     html.row2(tr("Magnetic declination:"), map::magvarText(vor.magvar));
 
-  html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
+  if(vor.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE)
+    html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
   html.row2(tr("Morse:"), morse->getCode(vor.ident),
             atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
@@ -1319,12 +1332,15 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.table();
   if(ndb.routeIndex >= 0)
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
-  html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
+  if(!ndb.type.isEmpty())
+    html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
   html.row2(tr("Region:"), ndb.region);
   html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
   html.row2(tr("Magnetic declination:"), map::magvarText(ndb.magvar));
-  html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
-  html.row2(tr("Range:"), Unit::distNm(ndb.range));
+  if(ndb.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE)
+    html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
+  if(ndb.range > 0)
+    html.row2(tr("Range:"), Unit::distNm(ndb.range));
   html.row2(tr("Morse:"), morse->getCode(ndb.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
@@ -1570,7 +1586,10 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
 void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html) const
 {
-  head(html, tr("Marker: ") + marker.type);
+  if(marker.ident.isEmpty())
+    head(html, tr("Marker: %1").arg(atools::capString(marker.type)));
+  else
+    head(html, tr("Marker: %1 (%2)").arg(marker.ident).arg(atools::capString(marker.type)));
 }
 
 void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) const
@@ -2379,10 +2398,7 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
 {
   if(rec != nullptr)
   {
-    float alt = 0;
-    if(rec->contains("altitude"))
-      alt = rec->valueFloat("altitude");
-    atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), alt);
+    atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f));
     html.row2(tr("Coordinates:"), Unit::coords(pos));
   }
 }

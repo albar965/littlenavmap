@@ -35,6 +35,8 @@ Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max(
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
 
+Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH = 4.f;
+
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
 {

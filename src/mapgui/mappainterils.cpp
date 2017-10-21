@@ -130,12 +130,14 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
       context->painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 
+      float width = ils.width < map::INVALID_COURSE_VALUE ? ils.width : map::DEFAULT_ILS_WIDTH;
+
       // Rotate to draw the text upwards so it is readable
       float rotate;
       if(ils.heading > 180)
-        rotate = ils.heading + 90.f - ils.width / 2.f;
+        rotate = ils.heading + 90.f - width / 2.f;
       else
-        rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + ils.width / 2.f;
+        rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + width / 2.f;
 
       // get an approximation of the ILS length
       int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));

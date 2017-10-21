@@ -581,10 +581,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
     legs->approachType = approachQuery->value("type").toString();
     legs->approachSuffix = approachQuery->value("suffix").toString();
     legs->approachFixIdent = approachQuery->value("fix_ident").toString();
-
-    if(approachQuery->hasField("arinc_name"))
-      legs->approachArincName = approachQuery->value("arinc_name").toString();
-
+    legs->approachArincName = approachQuery->valueStr("arinc_name", QString());
     legs->gpsOverlay = approachQuery->value("has_gps_overlay").toBool();
     legs->procedureRunway = approachQuery->value("runway_name").toString();
   }

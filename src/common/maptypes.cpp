@@ -675,12 +675,20 @@ bool MapAirport::closedRunways() const
 
 bool MapAirport::empty() const
 {
-  return !parking() && !taxiway() && !apron() && !addon();
+  if(rating == -1)
+    return !parking() && !taxiway() && !apron() && !addon();
+  else
+    return rating == 0;
 }
 
 bool MapAirport::addon() const
 {
   return flags.testFlag(AP_ADDON);
+}
+
+bool MapAirport::procedure() const
+{
+  return flags.testFlag(AP_PROCEDURE);
 }
 
 bool MapAirport::anyFuel() const
@@ -1082,7 +1090,7 @@ QString vorFullShortText(const MapVor& vor)
 QString ndbFullShortText(const MapNdb& ndb)
 {
   QString type = ndb.type == "CP" ? QObject::tr("CL") : ndb.type;
-  return QObject::tr("NDB (%1)").arg(type);
+  return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type)

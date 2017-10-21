@@ -1371,7 +1371,7 @@ void MapQuery::initQueries()
 
   // Common select statements
   static const QString airportQueryBase(
-    "airport_id, ident, name, "
+    "airport_id, ident, name, rating, "
     "has_avgas, has_jetfuel, has_tower_object, "
     "tower_frequency, atis_frequency, awos_frequency, asos_frequency, unicom_frequency, "
     "is_closed, is_military, is_addon, num_apron, num_taxi_path, "
@@ -1573,7 +1573,7 @@ void MapQuery::initQueries()
 
   markersByRectQuery = new SqlQuery(db);
   markersByRectQuery->prepare(
-    "select marker_id, type, heading, lonx, laty "
+    "select marker_id, type, ident, heading, lonx, laty "
     "from marker "
     "where " + whereRect + " " + whereLimit);
 

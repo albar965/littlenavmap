@@ -563,7 +563,12 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-    texts.append(ndb.ident + " (" + (ndb.type == "CP" ? tr("CL") : ndb.type) + ")");
+  {
+    if(ndb.type.isEmpty())
+      texts.append(ndb.ident);
+    else
+      texts.append(ndb.ident + " (" + (ndb.type == "CP" ? tr("CL") : ndb.type) + ")");
+  }
   else if(flags & textflags::IDENT)
     texts.append(ndb.ident);
 

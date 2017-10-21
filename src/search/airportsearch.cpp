@@ -154,7 +154,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
   append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
-  append(Column("country", ui->lineEditAirportCountrySearch, tr("Country")).filter()).
+  append(Column("country", ui->lineEditAirportCountrySearch, tr("Country\nArea Code")).filter()).
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).indexCondMap(ratingCondMap)).
 
@@ -210,7 +210,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
   append(Column("num_runway_end_closed").hidden()).
 
   append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery Paths")).filter()).
-  append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("BGL Files")).filter()).
+  append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("Files")).filter()).
 
   append(Column("num_apron").hidden()).
   append(Column("num_taxi_path").hidden()).
