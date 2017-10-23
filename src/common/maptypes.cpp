@@ -1212,6 +1212,9 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
     rwname = rwname.mid(2);
   }
 
+  if(rwname.isEmpty())
+    return QString();
+
   // First check for exact match
   if(airportRunwayNames.contains(rwname))
     return procRunwayName;

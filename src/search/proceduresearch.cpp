@@ -330,11 +330,7 @@ void ProcedureSearch::updateFilterBoxes()
     {
       QSet<QString> runways;
       for(const SqlRecord& recApp : *recAppVector)
-      {
-        QString best = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
-        if(!best.isEmpty())
-          runways.insert(best);
-      }
+        runways.insert(map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames));
 
       // Sort list of runways
       QList<QString> runwaylist = runways.toList();
