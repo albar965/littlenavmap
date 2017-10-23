@@ -720,8 +720,22 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
       {
         QVector<MapProcedureLeg>& legList = legs.approachLegs.isEmpty() ? legs.transitionLegs : legs.approachLegs;
 
-        if(!legList.isEmpty()) // Add runway fix to departure
+        if(!legList.isEmpty())
         {
+          if(legList.first().type == proc::INITIAL_FIX)
+          {
+            // Convert IF back into a point
+            legList.first().line.setPos1(legList.first().line.getPos2());
+
+            // Connect runway and initial fix
+            proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
+            sleg.type = proc::START_OF_PROCEDURE;
+            sleg.line = Line(legs.runwayEnd.position, legs.first().line.getPos1());
+            sleg.mapType = legs.approachLegs.isEmpty() ? proc::PROCEDURE_SID_TRANSITION : proc::PROCEDURE_SID;
+            legList.prepend(sleg);
+          }
+
+          // Add runway fix to departure
           proc::MapProcedureLeg rwleg = createRunwayLeg(legList.first(), legs);
           rwleg.type = proc::DIRECT_TO_RUNWAY;
           rwleg.altRestriction.alt1 = airport.position.getAltitude(); // At 50ft above threshold
@@ -828,10 +842,25 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
       qWarning() << "leg line for leg is invalid" << leg;
 
     // ===========================================================
-    else if(type == proc::INITIAL_FIX || type == proc::START_OF_PROCEDURE)
+    else if(type == proc::INITIAL_FIX)
     {
       leg.calculatedDistance = 0.f;
       leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
+      leg.geometry << leg.line.getPos1() << leg.line.getPos2();
+    }
+    else if(type == proc::START_OF_PROCEDURE)
+    {
+      if(leg.mapType & proc::PROCEDURE_DEPARTURE)
+      {
+        // START_OF_PROCEDURE is an actual leg for departure where it connects runway and initial fix
+        leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
+        leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+      }
+      else
+      {
+        leg.calculatedDistance = 0.f;
+        leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
+      }
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     else if(contains(type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC}))

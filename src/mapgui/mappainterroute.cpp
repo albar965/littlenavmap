@@ -408,8 +408,18 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
   if(leg.disabled)
     return;
 
-  if(leg.type == proc::INITIAL_FIX || leg.type == proc::START_OF_PROCEDURE) // Nothing to do here
+  if(leg.type == proc::INITIAL_FIX)
   {
+    // Nothing to do here
+    lastLine = line;
+    return;
+  }
+
+  if(leg.type == proc::START_OF_PROCEDURE &&
+     // START_OF_PROCEDURE is an actual leg for departure where it connects runway and initial fix
+     !(leg.mapType & proc::PROCEDURE_DEPARTURE))
+  {
+    // Nothing to do here
     lastLine = line;
     return;
   }
@@ -521,6 +531,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
   else if(contains(leg.type, {proc::COURSE_TO_RADIAL_TERMINATION,
                               proc::HEADING_TO_RADIAL_TERMINATION,
                               proc::COURSE_TO_DME_DISTANCE,
+                              proc::START_OF_PROCEDURE,
                               proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                               proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
                               proc::DIRECT_TO_RUNWAY}))
