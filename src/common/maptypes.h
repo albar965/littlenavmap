@@ -736,7 +736,7 @@ QString startType(const map::MapStart& start);
 bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
 bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
 
-/* Get the closes matching runway name from the list of airport  runways */
+/* Get the closes matching runway name from the list of airport runways or empty if none */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
 
 /* Compare runway numbers fuzzy */
