@@ -577,6 +577,11 @@ public:
     return updateChannels;
   }
 
+  int getAircraftTrackMaxPoints() const
+  {
+    return aircraftTrackMaxPoints;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -749,6 +754,9 @@ private:
 
   // spinBoxOptionsDisplayThicknessRangeDistance
   int displayThicknessRangeDistance = 100;
+
+  // spinBoxSimMaxTrackPoints
+  int aircraftTrackMaxPoints = 20000;
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
 

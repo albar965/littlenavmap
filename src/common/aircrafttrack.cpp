@@ -125,7 +125,7 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime&
       }
       else
       {
-        if(size() > MAX_TRACK_ENTRIES)
+        if(size() > maxTrackEntries)
         {
           for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
             removeFirst();

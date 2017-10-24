@@ -74,9 +74,14 @@ public:
   using QList::begin;
   using QList::end;
 
+  void setMaxTrackEntries(int value)
+  {
+    maxTrackEntries = value;
+  }
+
 private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
-  static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 20000;
+  int maxTrackEntries = 20000;
   /* Number of entries to remove at once */
   static Q_DECL_CONSTEXPR int PRUNE_TRACK_ENTRIES = 200;
 
@@ -85,7 +90,7 @@ private:
   static Q_DECL_CONSTEXPR int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
 
   /* Clear track if aircraft jumps too far */
-  static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_NM = 1000;
+  static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_NM = 2000;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
