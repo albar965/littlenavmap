@@ -131,6 +131,7 @@ struct MapAirport
   bool vasi() const;
   bool fence() const;
   bool closedRunways() const;
+  bool procedure() const;
 
   bool isValid() const
   {

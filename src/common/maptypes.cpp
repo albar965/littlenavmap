@@ -683,6 +683,11 @@ bool MapAirport::addon() const
   return flags.testFlag(AP_ADDON);
 }
 
+bool MapAirport::procedure() const
+{
+  return flags.testFlag(AP_PROCEDURE);
+}
+
 bool MapAirport::anyFuel() const
 {
   return flags.testFlag(AP_AVGAS) || flags.testFlag(AP_JETFUEL);
