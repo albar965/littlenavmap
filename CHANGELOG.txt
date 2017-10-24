@@ -1,3 +1,17 @@
+Version 1.6.7
+
+* Fixed problem where procedures were assigned to the wrong runway in search window.
+* "No runway" filter is now back in procedure search.
+* Fixed problem with gap and wrong distance calculation for SIDs starting with an initial fix.
+* Fixed crash after startup when airport procedures changed.
+* Added adjustable limitation for maximum points of aircraft track
+
+from atools version 2.6.8
+* Fixed flight plan GPX export to save procedure points and altitude now.
+* Fixed exception when compiling new TACAN approach in P3D version 4.1.
+* Now populating channel in VORTACs.
+* Added new aviation acronyms to capitalization function.
+
 Version 1.6.6
 
 * Attempt to fix zoom distance creep while using moving map.
