@@ -279,7 +279,7 @@ QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)
     {
       // Only approach
       procs.append(" " + item->text(COL_DESCRIPTION) + " " + item->text(COL_IDENT));
-      if(item->childCount() == 1)
+      if(item->childCount() == 1 && ref.mapType & proc::PROCEDURE_SID)
       {
         // Special SID case that has only transition legs and only one transition
         QTreeWidgetItem *child = item->child(0);
