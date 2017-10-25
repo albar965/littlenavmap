@@ -203,6 +203,7 @@ private:
 
   bool routeExportClean();
   bool routeExportGfp();
+  bool routeExportTxt();
   bool routeExportRte();
   bool routeExportGpx();
 

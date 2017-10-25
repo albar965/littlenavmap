@@ -841,6 +841,26 @@ bool RouteController::exportFlighplanAsGfp(const QString& filename)
   }
 }
 
+bool RouteController::exportFlighplanAsTxt(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  QString txt = RouteString().createStringForRoute(route, 0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    QByteArray utf8 = txt.toUtf8();
+    file.write(utf8.data(), utf8.size());
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving TXT file:"));
+    return false;
+  }
+}
+
 bool RouteController::exportFlighplanAsRte(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;

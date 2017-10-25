@@ -90,6 +90,7 @@ public:
 
   bool exportFlighplanAsClean(const QString& filename);
   bool exportFlighplanAsGfp(const QString& filename);
+  bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsRte(const QString& filename);
   bool exportFlighplanAsGpx(const QString& filename);
 

@@ -721,6 +721,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
   connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeExportGfp);
+  connect(ui->actionRouteSaveAsTxt, &QAction::triggered, this, &MainWindow::routeExportTxt);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeExportRte);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
 
@@ -1682,6 +1683,29 @@ bool MainWindow::routeExportGfp()
   return false;
 }
 
+/* Called from menu or toolbar by action */
+bool MainWindow::routeExportTxt()
+{
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as TXT Format"),
+      tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
+      routeController->buildDefaultFilenameShort(QString(), ".txt"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->exportFlighplanAsTxt(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as TXT."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool MainWindow::routeExportRte()
 {
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
@@ -2109,6 +2133,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsTxt->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms->setEnabled(hasFlightplan);

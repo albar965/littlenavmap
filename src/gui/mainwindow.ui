@@ -62,6 +62,7 @@
     <addaction name="actionRouteSaveAsGfp"/>
     <addaction name="actionRouteSaveAsRte"/>
     <addaction name="actionRouteSaveAsGpx"/>
+    <addaction name="actionRouteSaveAsTxt"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -6024,6 +6025,21 @@
    </property>
    <property name="statusTip">
     <string>Copy airspaces from the currently selected database to the X-Plane database</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsTxt">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveastxt.svg</normaloff>:/littlenavmap/resources/icons/saveastxt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>E&amp;xport Flight Plan as TXT ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as Text File usable by JARDesign or Rotate Simulations aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as Text File usable by JARDesign or Rotate Simulations aircraft</string>
    </property>
   </action>
  </widget>
