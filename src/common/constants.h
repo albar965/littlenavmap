@@ -180,7 +180,7 @@ const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.pln *.flp *.fms)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln)");
 const QLatin1Literal FILE_PATTERN_GFP("(*.gfp)");
-const QLatin1Literal FILE_PATTERN_GFP("(*.txt)");
+const QLatin1Literal FILE_PATTERN_TXT("(*.txt)");
 const QLatin1Literal FILE_PATTERN_RTE("(*.rte)");
 const QLatin1Literal FILE_PATTERN_FLP("(*.flp)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
