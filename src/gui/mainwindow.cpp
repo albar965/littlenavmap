@@ -1639,8 +1639,7 @@ bool MainWindow::routeExportClean()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Clean Flightplan without Annotations"),
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath(),
+      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename(tr(" Clean")));
 
     if(!routeFile.isEmpty())
@@ -1667,8 +1666,7 @@ bool MainWindow::routeExportGfp()
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
-      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
-      QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       routeController->buildDefaultFilenameShort("-", ".gfp"));
 
     if(!routeFile.isEmpty())
@@ -1714,8 +1712,7 @@ bool MainWindow::routeExportRte()
       tr("Save Flightplan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
-      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
-      QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       routeController->buildDefaultFilenameShort(QString(), ".rte"));
 
     if(!routeFile.isEmpty())
