@@ -5,6 +5,10 @@ Version 1.6.7
 * Fixed problem with gap and wrong distance calculation for SIDs starting with an initial fix.
 * Fixed crash after startup when airport procedures changed.
 * Added adjustable limitation for maximum points of aircraft track
+* Added txt flight plan format usable by JARDesign or Rotate Simulations aircraft.
+* Fixed errors in ATS route string generation where a DCT was inserted after SID or before STAR
+  statement creating invalid routes.
+* Fixed problem where X-Plane basepath was not found as "save as" or "export" default path.
 
 from atools version 2.6.8
 * Fixed flight plan GPX export to save procedure points and altitude now.
