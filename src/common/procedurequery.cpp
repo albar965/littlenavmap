@@ -1841,8 +1841,8 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
                                        float distance, int size, bool transition)
 {
   int procedureId = -1;
-  query->exec();
   QVector<int> ids;
+  query->exec();
   while(query->next())
   {
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
@@ -1854,6 +1854,22 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
   }
   query->finish();
+
+  if(ids.isEmpty())
+  {
+    // Nothing found - try again ignoring the suffix
+    query->exec();
+    while(query->next())
+    {
+      // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
+      if(!transition && ( // Runway will be compared directly to the approach and not the airport runway
+           (!runway.isEmpty() && runway != query->value("runway_name").toString())))
+        continue;
+
+      ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
+    }
+    query->finish();
+  }
 
   if(ids.size() == 1)
     // Found exactly one - no need to compare distance and leg number

@@ -554,7 +554,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     RouteString rs(entryBuilder);
     rs.setPlaintextMessages(true);
     bool ok = rs.createRouteFromString(routeString.join(" "), flightplan);
-    qInfo() << "Cannot create flight plan" << rs.getMessages();
+    qInfo() << "createRouteFromString messages" << rs.getMessages();
 
     if(!ok)
     {
