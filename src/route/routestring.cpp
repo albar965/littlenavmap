@@ -133,6 +133,10 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   if(route.isEmpty())
     return retval;
 
+  bool hasSid = ((options& rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
+  bool hasStar = ((options& rs::SID_STAR) && !star.isEmpty()) || (options & rs::SID_STAR_GENERIC);
+
+  bool firstDct = true;
   QString lastAw, lastId;
   for(int i = 0; i < route.size(); i++)
   {
@@ -140,8 +144,9 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     if(leg.isAnyProcedure())
       continue;
 
+    // Add departure airport
     if(i == 0 && leg.getMapObjectType() == map::AIRPORT && !(options & rs::START_AND_DEST))
-      // Departure but options is off
+      // Options is off
       continue;
 
     const QString& airway = leg.getAirwayName();
@@ -157,8 +162,12 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       if(!lastId.isEmpty())
         retval.append(lastId);
       if(i > 0 && (options & rs::DCT))
-        // Add direct if not start airport
-        retval.append("DCT");
+      {
+        if(!(firstDct && hasSid))
+          // Add direct if not start airport - do not add where a SID is inserted
+          retval.append("DCT");
+        firstDct = false;
+      }
     }
     else
     {
@@ -175,27 +184,34 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     lastAw = airway;
   }
 
-  int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
+  if(!retval.isEmpty())
+  {
+    if(hasStar && retval.last() == "DCT")
+      // Remove last DCT so it does not collide with the STAR - destination airport not inserted yet
+      retval.removeLast();
 
-  // Add SID
-  if(sid.isEmpty() && sidTrans.isEmpty() && options & rs::SID_STAR_GENERIC)
-    retval.insert(insertPosition, "SID");
-  else if(options & rs::SID_STAR)
-    retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans));
+    int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
 
-  // Add speed and altitude
-  if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
-    retval.insert(insertPosition, createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
+    // Add SID
+    if((options& rs::SID_STAR) && !sid.isEmpty())
+      retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans));
+    else if(options & rs::SID_STAR_GENERIC)
+      retval.insert(insertPosition, "SID");
 
-  // Add STAR
-  if(star.isEmpty() && starTrans.isEmpty() && options & rs::SID_STAR_GENERIC)
-    retval.append("STAR");
-  else if(options & rs::SID_STAR)
-    retval.append(star + (starTrans.isEmpty() ? QString() : "." + starTrans));
+    // Add speed and altitude
+    if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
+      retval.insert(insertPosition, createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
 
-  // Add destination airport
-  if(options & rs::START_AND_DEST)
-    retval.append(lastId);
+    // Add STAR
+    if((options& rs::SID_STAR) && !star.isEmpty())
+      retval.append(star + (starTrans.isEmpty() ? QString() : "." + starTrans));
+    else if(options & rs::SID_STAR_GENERIC)
+      retval.append("STAR");
+
+    // Add destination airport
+    if(options & rs::START_AND_DEST)
+      retval.append(lastId);
+  }
 
   qDebug() << Q_FUNC_INFO << retval;
 
