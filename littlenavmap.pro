@@ -315,6 +315,8 @@ unix:!macx {
     $$OUT_PWD/plugins &&
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/magdec $$OUT_PWD &&
+  copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD &&
+  copydata.commands += cp -avfu $$PWD/../atools/*.qm $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
@@ -326,7 +328,8 @@ unix:!macx {
 macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/magdec $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
-  copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS
+  copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
+  copydata.commands += cp -vf $$PWD/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
   cleandata.commands = rm -Rvf $$OUT_PWD/help $$PWD/magdec $$OUT_PWD/data $$OUT_PWD/plugins
 }
@@ -354,6 +357,7 @@ unix:!macx {
   deploy.commands += cp -Rvf $${OUT_PWD}/help $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/magdec $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $${DEPLOY_DIR} &&
+  deploy.commands += cp -avfu $$OUT_PWD/*.qm $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $${DEPLOY_DIR} &&
   deploy.commands += chmod -v a+x $${DEPLOY_DIR}/littlenavmap.sh &&
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
@@ -473,6 +477,7 @@ win32 {
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${WINPWD}\\*.qm $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\littlenavmap.exe.simconnect $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\help $${DEPLOY_DIR_WIN}\\help &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\magdec $${DEPLOY_DIR_WIN}\\magdec &&
@@ -508,6 +513,7 @@ QMAKE_EXTRA_TARGETS += first copydata
 clean.depends = $(clean) cleandata
 QMAKE_EXTRA_TARGETS += clean cleandata
 
-# TRANSLATIONS = littlenavmap_de.ts \
+TRANSLATIONS = \
+#                littlenavmap_de.ts \
 #                littlenavmap_nl.ts \
-#                littlenavmap_fr.ts
+                littlenavmap_fr.ts

@@ -75,33 +75,6 @@
 
 static const int WEATHER_UPDATE_MS = 15000;
 
-static const QString ABOUT_MESSAGE =
-  QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
-                "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
-                "<p>"
-                  "<b>"
-                    "If you would like to show your appreciation you can donate "
-                    "<a href=\"%1\">here"
-                    "</a>."
-                  "</b>"
-                "</p>"
-                "<p>This software is licensed under "
-                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-                  "</a> or any later version."
-                "</p>"
-                "<p>The source code for this application is available at "
-                  "<a href=\"https://github.com/albar965\">Github"
-                  "</a>."
-                "</p>"
-                "<p>More about my projects at "
-                  "<a href=\"https://albar965.github.io\">albar965.github.io"
-                  "</a>."
-                "</p>"
-                "<p>"
-                  "<b>Copyright 2015-2017 Alexander Barthel"
-                  "</b>"
-                "</p>").arg(lnm::HELP_DONTATE_URL);
-
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
                                            "openstreetmaproadshs", "opentopomap", "plain", "political",
@@ -118,6 +91,33 @@ MainWindow::MainWindow()
 {
   qDebug() << "MainWindow constructor";
 
+  aboutMessage =
+    QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
+                  "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
+                  "<p>"
+                    "<b>"
+                      "If you would like to show your appreciation you can donate "
+                      "<a href=\"%1\">here"
+                      "</a>."
+                    "</b>"
+                  "</p>"
+                  "<p>This software is licensed under "
+                    "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+                    "</a> or any later version."
+                  "</p>"
+                  "<p>The source code for this application is available at "
+                    "<a href=\"https://github.com/albar965\">Github"
+                    "</a>."
+                  "</p>"
+                  "<p>More about my projects at "
+                    "<a href=\"https://albar965.github.io\">albar965.github.io"
+                    "</a>."
+                  "</p>"
+                  "<p>"
+                    "<b>Copyright 2015-2017 Alexander Barthel"
+                    "</b>"
+                  "</p>").arg(lnm::HELP_DONTATE_URL);
+
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
 
@@ -131,7 +131,7 @@ MainWindow::MainWindow()
 
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
-    helpHandler = new atools::gui::HelpHandler(this, ABOUT_MESSAGE, GIT_REVISION);
+    helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -1835,7 +1835,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 /* Selection in one of the search result tables has changed */
 void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
-  static QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
+  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;
   if(source == searchController->getAirportSearch())
   {

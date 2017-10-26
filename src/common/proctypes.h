@@ -31,6 +31,9 @@
  */
 namespace proc {
 
+/* Initialize all text that are translateable after loading the translation files */
+void initTranslateableTexts();
+
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapProcedureType
 {

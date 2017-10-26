@@ -22,6 +22,7 @@
 #include "settings/settings.h"
 #include "gui/translator.h"
 #include "gui/mapposhistory.h"
+#include "common/maptypes.h"
 #include "gui/application.h"
 #include "exception.h"
 #include "navapp.h"
@@ -33,6 +34,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "common/maptypes.h"
+#include "common/proctypes.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -140,6 +142,10 @@ int main(int argc, char *argv[])
 
     // Load local and Qt system translations from various places
     Translator::load(settings.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
+
+    /* Avoid static translations and load these dynamically now */
+    map::initTranslateableTexts();
+    proc::initTranslateableTexts();
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes

@@ -397,6 +397,9 @@ private:
   int iconSize = 20;
 
   QTimer routeAltDelayTimer;
+
+  // Route table colum headings
+  QList<QString> routeColumns;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H
