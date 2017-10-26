@@ -15,6 +15,7 @@ from atools version 2.6.8
 * Fixed exception when compiling new TACAN approach in P3D version 4.1.
 * Now populating channel in VORTACs.
 * Added new aviation acronyms to capitalization function.
+* Adapted weather parser for language translation.
 
 Version 1.6.6
 
