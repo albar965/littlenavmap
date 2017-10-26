@@ -39,6 +39,9 @@ public:
   static void init();
   static void deInit();
 
+  /* Initialize all text that are translateable after loading the translation files */
+  static void initTranslateableTexts();
+
   ~Unit();
 
   /* Reverse function. Convert local unit to known unit */

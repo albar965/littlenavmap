@@ -35,6 +35,7 @@
 #include "fs/sc/simconnectreply.h"
 #include "common/maptypes.h"
 #include "common/proctypes.h"
+#include "common/unit.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -144,6 +145,7 @@ int main(int argc, char *argv[])
     Translator::load(settings.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
 
     /* Avoid static translations and load these dynamically now */
+    Unit::initTranslateableTexts();
     map::initTranslateableTexts();
     proc::initTranslateableTexts();
 

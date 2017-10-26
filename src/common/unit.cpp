@@ -37,17 +37,17 @@ opts::UnitVertSpeed Unit::unitVertSpeed = opts::VERT_SPEED_FPM;
 opts::UnitCoords Unit::unitCoords = opts::COORDS_DMS;
 opts::UnitFuelAndWeight Unit::unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
 
-QString Unit::unitDistStr(Unit::tr("nm"));
-QString Unit::unitShortDistStr(Unit::tr("ft"));
-QString Unit::unitAltStr(Unit::tr("ft"));
-QString Unit::unitSpeedStr(Unit::tr("kts"));
-QString Unit::unitVertSpeedStr(Unit::tr("fpm"));
+QString Unit::unitDistStr;
+QString Unit::unitShortDistStr;
+QString Unit::unitAltStr;
+QString Unit::unitSpeedStr;
+QString Unit::unitVertSpeedStr;
 
-QString Unit::unitVolStr(Unit::tr("gal"));
-QString Unit::unitWeightStr(Unit::tr("lbs"));
+QString Unit::unitVolStr;
+QString Unit::unitWeightStr;
 
-QString Unit::unitFfVolStr(Unit::tr("gph"));
-QString Unit::unitFfWeightStr(Unit::tr("pph"));
+QString Unit::unitFfVolStr;
+QString Unit::unitFfWeightStr;
 
 Unit::Unit()
 {
@@ -70,16 +70,11 @@ QString Unit::replacePlaceholders(const QString& text, QString& origtext)
 QString Unit::replacePlaceholders(const QString& text)
 {
   QString retval(text);
-  if(retval.contains("%distshort%"))
-    retval = QString(retval).replace("%distshort%", unitShortDistStr);
-  if(retval.contains("%dist%"))
-    retval = QString(retval).replace("%dist%", unitDistStr);
-  if(retval.contains("%alt%"))
-    retval = QString(retval).replace("%alt%", unitAltStr);
-  if(retval.contains("%speed%"))
-    retval = QString(retval).replace("%speed%", unitSpeedStr);
-  if(retval.contains("%vspeed%"))
-    retval = QString(retval).replace("%vspeed%", unitVertSpeedStr);
+  retval.replace("%distshort%", unitShortDistStr);
+  retval.replace("%dist%", unitDistStr);
+  retval.replace("%alt%", unitAltStr);
+  retval.replace("%speed%", unitSpeedStr);
+  retval.replace("%vspeed%", unitVertSpeedStr);
   return retval;
 }
 
@@ -100,6 +95,21 @@ void Unit::deInit()
   locale = nullptr;
   delete clocale;
   clocale = nullptr;
+}
+
+void Unit::initTranslateableTexts()
+{
+  unitDistStr = Unit::tr("nm");
+  unitShortDistStr = Unit::tr("ft");
+  unitAltStr = Unit::tr("ft");
+  unitSpeedStr = Unit::tr("kts");
+  unitVertSpeedStr = Unit::tr("fpm");
+
+  unitVolStr = Unit::tr("gal");
+  unitWeightStr = Unit::tr("lbs");
+
+  unitFfVolStr = Unit::tr("gph");
+  unitFfWeightStr = Unit::tr("pph");
 }
 
 QString Unit::distMeter(float value, bool addUnit, int minValPrec, bool narrow)

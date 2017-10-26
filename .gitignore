@@ -19,7 +19,8 @@
 *.BIN
 *.bin
 *.db
-*.qm
+atools_*.qm
+atools_*.ts
 #*#
 *.cache/
 *.pro.user
