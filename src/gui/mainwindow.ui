@@ -61,8 +61,8 @@
     <addaction name="actionRouteSaveAsClean"/>
     <addaction name="actionRouteSaveAsGfp"/>
     <addaction name="actionRouteSaveAsRte"/>
-    <addaction name="actionRouteSaveAsGpx"/>
     <addaction name="actionRouteSaveAsTxt"/>
+    <addaction name="actionRouteSaveAsGpx"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -6040,6 +6040,39 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as Text File usable by JARDesign or Rotate Simulations aircraft</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsFms3">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
+   </property>
+   <property name="text">
+    <string>E&amp;xport Flight Plan as X-Plane FMS 3...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsFms11">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Flight &amp;Plan as X-Plane FMS 11...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+X</string>
    </property>
   </action>
  </widget>
