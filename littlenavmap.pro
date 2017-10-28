@@ -348,8 +348,7 @@ unix:!macx {
   DEPLOY_DIR=\"$$PWD/../deploy/Little Navmap\"
   DEPLOY_DIR_LIB=\"$$PWD/../deploy/Little Navmap/lib\"
 
-  deploy.commands = cp -vf $$PWD/../atools/*.ts $$PWD &&
-  deploy.commands += $${QT_HOME}/bin/lrelease $$PWD/*.ts &&
+  deploy.commands = cp -vf $$PWD/../atools/*.qm $$OUT_PWD &&
   deploy.commands += rm -Rfv $${DEPLOY_DIR} &&
   deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB} &&
   deploy.commands += mkdir -pv $${DEPLOY_DIR}/iconengines &&
@@ -521,5 +520,4 @@ QMAKE_EXTRA_TARGETS += first copydata
 clean.depends = $(clean) cleandata
 QMAKE_EXTRA_TARGETS += clean cleandata
 
-TRANSLATIONS = littlenavmap_de.ts \
-                littlenavmap_fr.ts
+TRANSLATIONS = littlenavmap_fr.ts
