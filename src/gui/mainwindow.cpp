@@ -75,33 +75,6 @@
 
 static const int WEATHER_UPDATE_MS = 15000;
 
-static const QString ABOUT_MESSAGE =
-  QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
-                "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
-                "<p>"
-                  "<b>"
-                    "If you would like to show your appreciation you can donate "
-                    "<a href=\"%1\">here"
-                    "</a>."
-                  "</b>"
-                "</p>"
-                "<p>This software is licensed under "
-                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-                  "</a> or any later version."
-                "</p>"
-                "<p>The source code for this application is available at "
-                  "<a href=\"https://github.com/albar965\">Github"
-                  "</a>."
-                "</p>"
-                "<p>More about my projects at "
-                  "<a href=\"https://albar965.github.io\">albar965.github.io"
-                  "</a>."
-                "</p>"
-                "<p>"
-                  "<b>Copyright 2015-2017 Alexander Barthel"
-                  "</b>"
-                "</p>").arg(lnm::HELP_DONTATE_URL);
-
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
                                            "openstreetmaproadshs", "opentopomap", "plain", "political",
@@ -118,6 +91,33 @@ MainWindow::MainWindow()
 {
   qDebug() << "MainWindow constructor";
 
+  aboutMessage =
+    QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
+                  "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
+                  "<p>"
+                    "<b>"
+                      "If you would like to show your appreciation you can donate "
+                      "<a href=\"%1\">here"
+                      "</a>."
+                    "</b>"
+                  "</p>"
+                  "<p>This software is licensed under "
+                    "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+                    "</a> or any later version."
+                  "</p>"
+                  "<p>The source code for this application is available at "
+                    "<a href=\"https://github.com/albar965\">Github"
+                    "</a>."
+                  "</p>"
+                  "<p>More about my projects at "
+                    "<a href=\"https://albar965.github.io\">albar965.github.io"
+                    "</a>."
+                  "</p>"
+                  "<p>"
+                    "<b>Copyright 2015-2017 Alexander Barthel"
+                    "</b>"
+                  "</p>").arg(lnm::HELP_DONTATE_URL);
+
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
 
@@ -131,7 +131,7 @@ MainWindow::MainWindow()
 
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
-    helpHandler = new atools::gui::HelpHandler(this, ABOUT_MESSAGE, GIT_REVISION);
+    helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -721,11 +721,15 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
   connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeExportGfp);
+  connect(ui->actionRouteSaveAsTxt, &QAction::triggered, this, &MainWindow::routeExportTxt);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeExportRte);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
 
   // TODO change for X-Plane 11.10
   connect(ui->actionRouteSaveAsFms, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
+
+  // connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
+  // connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
 
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, &MainWindow::routeExportGpx);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
@@ -1638,8 +1642,7 @@ bool MainWindow::routeExportClean()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Clean Flightplan without Annotations"),
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath(),
+      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename(tr(" Clean")));
 
     if(!routeFile.isEmpty())
@@ -1666,8 +1669,7 @@ bool MainWindow::routeExportGfp()
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
-      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
-      QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
       routeController->buildDefaultFilenameShort("-", ".gfp"));
 
     if(!routeFile.isEmpty())
@@ -1675,6 +1677,29 @@ bool MainWindow::routeExportGfp()
       if(routeController->exportFlighplanAsGfp(routeFile))
       {
         setStatusMessage(tr("Flight plan saved as GFP."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* Called from menu or toolbar by action */
+bool MainWindow::routeExportTxt()
+{
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as TXT Format"),
+      tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
+      routeController->buildDefaultFilenameShort(QString(), ".txt"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->exportFlighplanAsTxt(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as TXT."));
         return true;
       }
     }
@@ -1690,8 +1715,7 @@ bool MainWindow::routeExportRte()
       tr("Save Flightplan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
-      atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
-      QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       routeController->buildDefaultFilenameShort(QString(), ".rte"));
 
     if(!routeFile.isEmpty())
@@ -1814,7 +1838,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 /* Selection in one of the search result tables has changed */
 void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
-  static QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
+  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;
   if(source == searchController->getAirportSearch())
   {
@@ -2109,6 +2133,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsTxt->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms->setEnabled(hasFlightplan);

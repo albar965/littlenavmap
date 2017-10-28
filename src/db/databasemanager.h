@@ -90,7 +90,7 @@ public:
   void insertSimSwitchActions();
 
   /* if false quit application */
-  bool checkIncompatibleDatabases(bool* databasesErased);
+  bool checkIncompatibleDatabases(bool *databasesErased);
 
   /* Get the settings directory where the database is stored */
   const QString& getDatabaseDirectory() const
@@ -177,6 +177,9 @@ private:
   bool readInactive = false, readAddOnXml = true;
 
   QString currentBglFilePath;
+
+  QString databaseMetaText, databaseAiracCycleText, databaseInfoText, databaseLoadingText,
+          databaseTimeText;
 
 };
 

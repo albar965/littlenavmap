@@ -28,41 +28,109 @@
 
 namespace proc  {
 
-const static QHash<QString, QString> approachFixTypeToStr(
-  {
-    {"NONE", QObject::tr("NONE")},
-    {"L", QObject::tr("Localizer")},
-    {"V", QObject::tr("VOR")},
-    {"N", QObject::tr("NDB")},
-    {"TN", QObject::tr("Terminal NDB")},
-    {"W", QObject::tr("Waypoint")},
-    {"TW", QObject::tr("Terminal Waypoint")},
-    {"R", QObject::tr("Runway")}
-  });
+static QHash<QString, QString> approachFixTypeToStr;
+static QHash<QString, QString> approachTypeToStr;
+static QHash<ProcedureLegType, QString> approachLegTypeToStr;
+static QHash<ProcedureLegType, QString> approachLegRemarkStr;
 
-const static QHash<QString, QString> approachTypeToStr(
-  {
-    {"GPS", QObject::tr("GPS")},
-    {"VOR", QObject::tr("VOR")},
-    {"NDB", QObject::tr("NDB")},
-    {"ILS", QObject::tr("ILS")},
-    {"LOC", QObject::tr("Localizer")},
-    {"SDF", QObject::tr("SDF")},
-    {"LDA", QObject::tr("LDA")},
-    {"VORDME", QObject::tr("VORDME")},
-    {"NDBDME", QObject::tr("NDBDME")},
-    {"RNAV", QObject::tr("RNAV")},
-    {"LOCB", QObject::tr("Localizer Backcourse")},
+void initTranslateableTexts()
+{
+  approachFixTypeToStr = QHash<QString, QString>(
+    {
+      {"NONE", QObject::tr("NONE")},
+      {"L", QObject::tr("Localizer")},
+      {"V", QObject::tr("VOR")},
+      {"N", QObject::tr("NDB")},
+      {"TN", QObject::tr("Terminal NDB")},
+      {"W", QObject::tr("Waypoint")},
+      {"TW", QObject::tr("Terminal Waypoint")},
+      {"R", QObject::tr("Runway")}
+    });
 
-    // Additional types from X-Plane
-    {"FMS", QObject::tr("FMS")},
-    {"IGS", QObject::tr("IGS")},
-    {"GNSS", QObject::tr("GNSS")},
-    {"TCN", QObject::tr("TACAN")},
-    {"CTL", QObject::tr("Circle to Land")},
-    {"MLS", QObject::tr("MLS")}
+  approachTypeToStr = QHash<QString, QString>(
+    {
+      {"GPS", QObject::tr("GPS")},
+      {"VOR", QObject::tr("VOR")},
+      {"NDB", QObject::tr("NDB")},
+      {"ILS", QObject::tr("ILS")},
+      {"LOC", QObject::tr("Localizer")},
+      {"SDF", QObject::tr("SDF")},
+      {"LDA", QObject::tr("LDA")},
+      {"VORDME", QObject::tr("VORDME")},
+      {"NDBDME", QObject::tr("NDBDME")},
+      {"RNAV", QObject::tr("RNAV")},
+      {"LOCB", QObject::tr("Localizer Backcourse")},
 
-  });
+      // Additional types from X-Plane
+      {"FMS", QObject::tr("FMS")},
+      {"IGS", QObject::tr("IGS")},
+      {"GNSS", QObject::tr("GNSS")},
+      {"TCN", QObject::tr("TACAN")},
+      {"CTL", QObject::tr("Circle to Land")},
+      {"MLS", QObject::tr("MLS")}
+
+    });
+
+  approachLegTypeToStr = QHash<ProcedureLegType, QString>(
+    {
+      {ARC_TO_FIX, QObject::tr("Arc to fix")},
+      {COURSE_TO_ALTITUDE, QObject::tr("Course to altitude")},
+      {COURSE_TO_DME_DISTANCE, QObject::tr("Course to DME distance")},
+      {COURSE_TO_FIX, QObject::tr("Course to fix")},
+      {COURSE_TO_INTERCEPT, QObject::tr("Course to intercept")},
+      {COURSE_TO_RADIAL_TERMINATION, QObject::tr("Course to radial termination")},
+      {DIRECT_TO_FIX, QObject::tr("Direct to fix")},
+      {FIX_TO_ALTITUDE, QObject::tr("Fix to altitude")},
+      {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("Track from fix from distance")},
+      {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("Track from fix to DME distance")},
+      {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("From fix to manual termination")},
+      {HOLD_TO_ALTITUDE, QObject::tr("Hold to altitude")},
+      {HOLD_TO_FIX, QObject::tr("Hold to fix")},
+      {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Hold to manual termination")},
+      {INITIAL_FIX, QObject::tr("Initial fix")},
+      {PROCEDURE_TURN, QObject::tr("Procedure turn")},
+      {CONSTANT_RADIUS_ARC, QObject::tr("Constant radius arc")},
+      {TRACK_TO_FIX, QObject::tr("Track to fix")},
+      {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("Heading to altitude termination")},
+      {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("Heading to DME distance termination")},
+      {HEADING_TO_INTERCEPT, QObject::tr("Heading to intercept")},
+      {HEADING_TO_MANUAL_TERMINATION, QObject::tr("Heading to manual termination")},
+      {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")},
+
+      {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
+      {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
+    });
+
+  approachLegRemarkStr = QHash<ProcedureLegType, QString>(
+    {
+      {ARC_TO_FIX, QObject::tr("")},
+      {COURSE_TO_ALTITUDE, QObject::tr("")},
+      {COURSE_TO_DME_DISTANCE, QObject::tr("")},
+      {COURSE_TO_FIX, QObject::tr("")},
+      {COURSE_TO_INTERCEPT, QObject::tr("")},
+      {COURSE_TO_RADIAL_TERMINATION, QObject::tr("")},
+      {DIRECT_TO_FIX, QObject::tr("")},
+      {FIX_TO_ALTITUDE, QObject::tr("")},
+      {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("")},
+      {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("")},
+      {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("")},
+      {HOLD_TO_ALTITUDE, QObject::tr("Mandatory hold")},
+      {HOLD_TO_FIX, QObject::tr("Single circuit")},
+      {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Mandatory hold")},
+      {INITIAL_FIX, QObject::tr("")},
+      {PROCEDURE_TURN, QObject::tr("")},
+      {CONSTANT_RADIUS_ARC, QObject::tr("")},
+      {TRACK_TO_FIX, QObject::tr("")},
+      {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("")},
+      {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("")},
+      {HEADING_TO_INTERCEPT, QObject::tr("")},
+      {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
+      {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
+
+      {DIRECT_TO_RUNWAY, QObject::tr("")},
+      {START_OF_PROCEDURE, QObject::tr("")}
+    });
+}
 
 const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
   {
@@ -122,66 +190,6 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
 
     {DIRECT_TO_RUNWAY, "RX"},
     {START_OF_PROCEDURE, "SX"}
-  });
-
-const static QHash<ProcedureLegType, QString> approachLegTypeToStr(
-  {
-    {ARC_TO_FIX, QObject::tr("Arc to fix")},
-    {COURSE_TO_ALTITUDE, QObject::tr("Course to altitude")},
-    {COURSE_TO_DME_DISTANCE, QObject::tr("Course to DME distance")},
-    {COURSE_TO_FIX, QObject::tr("Course to fix")},
-    {COURSE_TO_INTERCEPT, QObject::tr("Course to intercept")},
-    {COURSE_TO_RADIAL_TERMINATION, QObject::tr("Course to radial termination")},
-    {DIRECT_TO_FIX, QObject::tr("Direct to fix")},
-    {FIX_TO_ALTITUDE, QObject::tr("Fix to altitude")},
-    {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("Track from fix from distance")},
-    {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("Track from fix to DME distance")},
-    {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("From fix to manual termination")},
-    {HOLD_TO_ALTITUDE, QObject::tr("Hold to altitude")},
-    {HOLD_TO_FIX, QObject::tr("Hold to fix")},
-    {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Hold to manual termination")},
-    {INITIAL_FIX, QObject::tr("Initial fix")},
-    {PROCEDURE_TURN, QObject::tr("Procedure turn")},
-    {CONSTANT_RADIUS_ARC, QObject::tr("Constant radius arc")},
-    {TRACK_TO_FIX, QObject::tr("Track to fix")},
-    {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("Heading to altitude termination")},
-    {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("Heading to DME distance termination")},
-    {HEADING_TO_INTERCEPT, QObject::tr("Heading to intercept")},
-    {HEADING_TO_MANUAL_TERMINATION, QObject::tr("Heading to manual termination")},
-    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")},
-
-    {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
-    {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
-  });
-
-const static QHash<ProcedureLegType, QString> approachLegRemarkStr(
-  {
-    {ARC_TO_FIX, QObject::tr("")},
-    {COURSE_TO_ALTITUDE, QObject::tr("")},
-    {COURSE_TO_DME_DISTANCE, QObject::tr("")},
-    {COURSE_TO_FIX, QObject::tr("")},
-    {COURSE_TO_INTERCEPT, QObject::tr("")},
-    {COURSE_TO_RADIAL_TERMINATION, QObject::tr("")},
-    {DIRECT_TO_FIX, QObject::tr("")},
-    {FIX_TO_ALTITUDE, QObject::tr("")},
-    {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("")},
-    {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("")},
-    {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("")},
-    {HOLD_TO_ALTITUDE, QObject::tr("Mandatory hold")},
-    {HOLD_TO_FIX, QObject::tr("Single circuit")},
-    {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Mandatory hold")},
-    {INITIAL_FIX, QObject::tr("")},
-    {PROCEDURE_TURN, QObject::tr("")},
-    {CONSTANT_RADIUS_ARC, QObject::tr("")},
-    {TRACK_TO_FIX, QObject::tr("")},
-    {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("")},
-    {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("")},
-    {HEADING_TO_INTERCEPT, QObject::tr("")},
-    {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
-    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
-
-    {DIRECT_TO_RUNWAY, QObject::tr("")},
-    {START_OF_PROCEDURE, QObject::tr("")}
   });
 
 QString procedureFixType(const QString& type)

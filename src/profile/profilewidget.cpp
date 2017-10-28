@@ -469,13 +469,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     else if(type == map::USER)
     {
       symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
-      symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeUserPointColor,
+      symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
                          symx - 5, flightplanTextY, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
     else if(type == map::INVALID)
     {
       symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
-      symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeInvalidPointColor,
+      symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
                          symx - 5, flightplanTextY, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
     else if(type == map::PROCEDURE)
@@ -977,8 +977,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   float maxElev = calcGroundBuffer(leg.maxElevation);
 
   // Get from/to text
-  QString from = legList.route.at(index).getIdent();
-  QString to = legList.route.at(index + 1).getIdent();
+  QString from = atools::elideTextShort(legList.route.at(index).getIdent(), 20);
+  QString to = atools::elideTextShort(legList.route.at(index + 1).getIdent(), 20);
 
   // Add text to upper dock window label
   variableLabelText =

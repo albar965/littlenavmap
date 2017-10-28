@@ -60,24 +60,6 @@
 
 #include <marble/GeoDataLineString.h>
 
-// Route table colum headings
-const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
-                                    QObject::tr("Region"),
-                                    QObject::tr("Name"),
-                                    QObject::tr("Procedure\nType"),
-                                    QObject::tr("Airway or\nProcedure"),
-                                    QObject::tr("Restriction\n%alt%/%speed%"),
-                                    QObject::tr("Type"),
-                                    QObject::tr("Freq.\nMHz/kHz/Cha."),
-                                    QObject::tr("Range\n%dist%"),
-                                    QObject::tr("Course\n°M"),
-                                    QObject::tr("Direct\n°M"),
-                                    QObject::tr("Distance\n%dist%"),
-                                    QObject::tr("Remaining\n%dist%"),
-                                    QObject::tr("Leg Time\nhh:mm"),
-                                    QObject::tr("ETA\nhh:mm"),
-                                    QObject::tr("Remarks")});
-
 namespace rc {
 // Route table column indexes
 enum RouteColumns
@@ -116,6 +98,23 @@ namespace pln = atools::fs::pln;
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(NavApp::getMapQuery())
 {
+  routeColumns = QList<QString>({QObject::tr("Ident"),
+                                 QObject::tr("Region"),
+                                 QObject::tr("Name"),
+                                 QObject::tr("Procedure\nType"),
+                                 QObject::tr("Airway or\nProcedure"),
+                                 QObject::tr("Restriction\n%alt%/%speed%"),
+                                 QObject::tr("Type"),
+                                 QObject::tr("Freq.\nMHz/kHz/Cha."),
+                                 QObject::tr("Range\n%dist%"),
+                                 QObject::tr("Course\n°M"),
+                                 QObject::tr("Direct\n°M"),
+                                 QObject::tr("Distance\n%dist%"),
+                                 QObject::tr("Remaining\n%dist%"),
+                                 QObject::tr("Leg Time\nhh:mm"),
+                                 QObject::tr("ETA\nhh:mm"),
+                                 QObject::tr("Remarks")});
+
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
@@ -443,7 +442,7 @@ void RouteController::saveState()
 
 void RouteController::updateTableHeaders()
 {
-  QList<QString> routeHeaders(ROUTE_COLUMNS);
+  QList<QString> routeHeaders(routeColumns);
 
   for(QString& str : routeHeaders)
     str = Unit::replacePlaceholders(str);
@@ -554,7 +553,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     RouteString rs(entryBuilder);
     rs.setPlaintextMessages(true);
     bool ok = rs.createRouteFromString(routeString.join(" "), flightplan);
-    qInfo() << "Cannot create flight plan" << rs.getMessages();
+    qInfo() << "createRouteFromString messages" << rs.getMessages();
 
     if(!ok)
     {
@@ -837,6 +836,26 @@ bool RouteController::exportFlighplanAsGfp(const QString& filename)
   else
   {
     atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving GFP file:"));
+    return false;
+  }
+}
+
+bool RouteController::exportFlighplanAsTxt(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  QString txt = RouteString().createStringForRoute(route, 0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    QByteArray utf8 = txt.toUtf8();
+    file.write(utf8.data(), utf8.size());
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving TXT file:"));
     return false;
   }
 }

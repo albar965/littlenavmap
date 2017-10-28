@@ -203,6 +203,7 @@ private:
 
   bool routeExportClean();
   bool routeExportGfp();
+  bool routeExportTxt();
   bool routeExportRte();
   bool routeExportGpx();
 
@@ -305,6 +306,7 @@ private:
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
 
+  QString aboutMessage;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

@@ -43,6 +43,9 @@ struct MapProcedurePoint;
  */
 namespace map {
 
+/* Initialize all text that are translateable after loading the translation files */
+void initTranslateableTexts();
+
 struct PosCourse
 {
   PosCourse()

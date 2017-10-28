@@ -62,77 +62,77 @@ using atools::fs::db::DatabaseMeta;
 const int MAX_ERROR_BGL_MESSAGES = 400;
 const int MAX_ERROR_SCENERY_MESSAGES = 400;
 
-const QString DATABASE_META_TEXT(
-  QObject::tr("<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6</big></p>"));
-
-const QString DATABASE_AIRAC_CYCLE_TEXT(QObject::tr(" AIRAC Cycle %1."));
-
-const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
-                                               "<tbody>"
-                                                 "<tr> "
-                                                   "<td width=\"60\"><b>Files:</b>"
-                                                   "</td>    "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
-                                                   "</td> "
-                                                   "<td width=\"60\"><b>VOR:</b>"
-                                                   "</td> "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
-                                                   "</td> "
-                                                   "<td width=\"60\"><b>Markers:</b>"
-                                                   "</td>     "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
-                                                   "</td>"
-                                                 "</tr>"
-                                                 "<tr> "
-                                                   "<td width=\"60\"><b>Airports:</b>"
-                                                   "</td> "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
-                                                   "</td> "
-                                                   "<td width=\"60\"><b>ILS:</b>"
-                                                   "</td> "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
-                                                   "</td> "
-                                                   "<td width=\"60\"><b>Waypoints:</b>"
-                                                   "</td>  "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
-                                                   "</td>"
-                                                 "</tr>"
-                                                 "<tr> "
-                                                   "<td width=\"60\">"
-                                                   "</td>"
-                                                   "<td width=\"60\">"
-                                                   "</td>"
-                                                   "<td width=\"60\"><b>NDB:</b>"
-                                                   "</td> "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
-                                                   "</td> "
-                                                   "<td width=\"60\"><b>Airspaces:</b>"
-                                                   "</td>  "
-                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
-                                                   "</td>"
-                                                 "</tr>"
-                                               "</tbody>"
-                                             "</table>"
-                                             ));
-
-const QString DATABASE_TIME_TEXT(QObject::tr(
-                                   "<b>%1</b><br/><br/><br/>"
-                                   "<b>Time:</b> %2<br/>%3%4"
-                                     "<b>Errors:</b> %5<br/><br/>"
-                                     "<big>Found:</big></br>"
-                                   ) + DATABASE_INFO_TEXT);
-
-const QString DATABASE_LOADING_TEXT(QObject::tr(
-                                      "<b>Scenery:</b> %1 (%2)<br/>"
-                                      "<b>File:</b> %3<br/><br/>"
-                                      "<b>Time:</b> %4<br/>"
-                                      "<b>Errors:</b> %5<br/><br/>"
-                                      "<big>Found:</big></br>"
-                                      ) + DATABASE_INFO_TEXT);
-
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
+  databaseMetaText = QObject::tr(
+    "<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6</big></p>");
+
+  databaseAiracCycleText = QObject::tr(" AIRAC Cycle %1.");
+
+  databaseInfoText = QObject::tr("<table>"
+                                   "<tbody>"
+                                     "<tr> "
+                                       "<td width=\"60\"><b>Files:</b>"
+                                       "</td>    "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
+                                       "</td> "
+                                       "<td width=\"60\"><b>VOR:</b>"
+                                       "</td> "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
+                                       "</td> "
+                                       "<td width=\"60\"><b>Markers:</b>"
+                                       "</td>     "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
+                                       "</td>"
+                                     "</tr>"
+                                     "<tr> "
+                                       "<td width=\"60\"><b>Airports:</b>"
+                                       "</td> "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
+                                       "</td> "
+                                       "<td width=\"60\"><b>ILS:</b>"
+                                       "</td> "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
+                                       "</td> "
+                                       "<td width=\"60\"><b>Waypoints:</b>"
+                                       "</td>  "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
+                                       "</td>"
+                                     "</tr>"
+                                     "<tr> "
+                                       "<td width=\"60\">"
+                                       "</td>"
+                                       "<td width=\"60\">"
+                                       "</td>"
+                                       "<td width=\"60\"><b>NDB:</b>"
+                                       "</td> "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
+                                       "</td> "
+                                       "<td width=\"60\"><b>Airspaces:</b>"
+                                       "</td>  "
+                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
+                                       "</td>"
+                                     "</tr>"
+                                   "</tbody>"
+                                 "</table>"
+                                 );
+
+  databaseTimeText = QObject::tr(
+    "<b>%1</b><br/><br/><br/>"
+    "<b>Time:</b> %2<br/>%3%4"
+      "<b>Errors:</b> %5<br/><br/>"
+      "<big>Found:</big></br>"
+    ) + databaseInfoText;
+
+  databaseLoadingText = QObject::tr(
+    "<b>Scenery:</b> %1 (%2)<br/>"
+    "<b>File:</b> %3<br/><br/>"
+    "<b>Time:</b> %4<br/>"
+    "<b>Errors:</b> %5<br/><br/>"
+    "<big>Found:</big></br>"
+    ) + databaseInfoText;
+
   // Also loads list of simulators
   restoreState();
 
@@ -793,7 +793,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   progressTimerElapsed = 0L;
 
   progressDialog->setLabelText(
-    DATABASE_TIME_TEXT.arg(QString()).
+    databaseTimeText.arg(QString()).
     arg(QString()).
     arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
 
@@ -932,7 +932,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
       // Run script etc.
       progressDialog->setLabelText(
-        DATABASE_TIME_TEXT.arg(progress.getOtherAction()).
+        databaseTimeText.arg(progress.getOtherAction()).
         arg(formatter::formatElapsed(timer)).
         arg(QString()).
         arg(QString()).
@@ -952,7 +952,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
       // Switched to a new scenery area
       progressDialog->setLabelText(
-        DATABASE_LOADING_TEXT.arg(progress.getSceneryTitle()).
+        databaseLoadingText.arg(progress.getSceneryTitle()).
         arg(progress.getSceneryPath()).
         arg(progress.getBglFileName()).
         arg(formatter::formatElapsed(timer)).
@@ -973,7 +973,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
       // Last report
       progressDialog->setLabelText(
-        DATABASE_TIME_TEXT.arg(tr("<big>Done.</big>")).
+        databaseTimeText.arg(tr("<big>Done.</big>")).
         arg(formatter::formatElapsed(timer)).
         arg(QString()).
         arg(QString()).
@@ -1114,15 +1114,15 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   {
     DatabaseMeta dbmeta(tempDb);
     if(!dbmeta.isValid())
-      metaText = DATABASE_META_TEXT.arg(tr("None")).arg(tr("None")).arg(tr("None")).
+      metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(tr("None")).
                  arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR).arg(QString());
     else
     {
       QString cycleText;
       if(!dbmeta.getAiracCycle().isEmpty())
-        cycleText = DATABASE_AIRAC_CYCLE_TEXT.arg(dbmeta.getAiracCycle());
+        cycleText = databaseAiracCycleText.arg(dbmeta.getAiracCycle());
 
-      metaText = DATABASE_META_TEXT.
+      metaText = databaseMetaText.
                  arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
                  arg(dbmeta.getMajorVersion()).
                  arg(dbmeta.getMinorVersion()).
@@ -1132,7 +1132,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     }
   }
   else
-    metaText = DATABASE_META_TEXT.arg(tr("None")).arg(tr("None")).arg(tr("None")).
+    metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(tr("None")).
                arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR).arg(QString());
 
   QString tableText;
@@ -1141,7 +1141,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     atools::sql::SqlUtil util(tempDb);
 
     // Get row counts for the dialog
-    tableText = DATABASE_INFO_TEXT.arg(util.rowCount("bgl_file")).
+    tableText = databaseInfoText.arg(util.rowCount("bgl_file")).
                 arg(util.rowCount("airport")).
                 arg(util.rowCount("vor")).
                 arg(util.rowCount("ils")).
@@ -1151,7 +1151,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
                 arg(util.rowCount("boundary"));
   }
   else
-    tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
+    tableText = databaseInfoText.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
   databaseDialog->setHeader(metaText + tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
 

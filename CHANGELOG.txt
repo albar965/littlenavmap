@@ -1,3 +1,25 @@
+Version 1.6.7
+
+* Fixed problem where procedures were assigned to the wrong runway in search window.
+* "No runway" filter is now back in procedure search.
+* Fixed problem with gap and wrong distance calculation for SIDs starting with an initial fix.
+* Fixed crash after startup when airport procedures changed.
+* Added adjustable limitation for maximum points of aircraft track
+* Added txt flight plan format usable by JARDesign or Rotate Simulations aircraft.
+* Fixed errors in ATS route string generation where a DCT was inserted after SID or before STAR
+  statement creating invalid routes.
+* Fixed problem where X-Plane basepath was not found as "save as" or "export" default path.
+* Fixes for translation support.
+
+from atools version 2.6.8
+* Fixed flight plan GPX export to save procedure points and altitude now.
+* Fixed exception when compiling new TACAN approach in P3D version 4.1.
+* Now populating channel in VORTACs.
+* Added new aviation acronyms to capitalization function.
+* Adapted weather parser for language translation.
+* Fixed error when loading FMS flight plans with invalid altitude values resulted in missing
+  flight plan line in elevation profile.
+
 Version 1.6.6
 
 * Attempt to fix zoom distance creep while using moving map.

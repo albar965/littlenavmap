@@ -90,6 +90,7 @@ public:
 
   bool exportFlighplanAsClean(const QString& filename);
   bool exportFlighplanAsGfp(const QString& filename);
+  bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsRte(const QString& filename);
   bool exportFlighplanAsGpx(const QString& filename);
 
@@ -396,6 +397,9 @@ private:
   int iconSize = 20;
 
   QTimer routeAltDelayTimer;
+
+  // Route table colum headings
+  QList<QString> routeColumns;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H
