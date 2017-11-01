@@ -175,7 +175,7 @@ void AirspaceToolBarHandler::createToolButtons()
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacespec.svg",
                            tr("Select warning, alert and training airspaces"),
-                           {map::WARNING, map::ALERT, map::TRAINING}, {});
+                           {map::WARNING, map::CAUTION, map::ALERT, map::TRAINING}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceother.svg",
                            tr("Select centers and other airspaces"),

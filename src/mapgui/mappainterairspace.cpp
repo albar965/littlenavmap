@@ -71,6 +71,8 @@ void MapPainterAirspace::render(PaintContext *context)
         if(context->objCount())
           return;
 
+        // qDebug() << airspace.getId() << airspace.name;
+
         Marble::GeoDataLinearRing linearRing;
         linearRing.setTessellate(true);
 

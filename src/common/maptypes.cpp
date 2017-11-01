@@ -393,6 +393,7 @@ void initTranslateableTexts()
       {map::RESTRICTED, QObject::tr("Restricted")},
       {map::PROHIBITED, QObject::tr("Prohibited")},
       {map::WARNING, QObject::tr("Warning")},
+      {map::CAUTION, QObject::tr("Caution")},
       {map::ALERT, QObject::tr("Alert")},
       {map::DANGER, QObject::tr("Danger")},
       {map::NATIONAL_PARK, QObject::tr("National Park")},
@@ -434,6 +435,7 @@ void initTranslateableTexts()
       {map::RESTRICTED, QObject::tr("Needs authorization.")},
       {map::PROHIBITED, QObject::tr("No flight allowed.")},
       {map::WARNING, QObject::tr("Contains activity that may be hazardous to aircraft.")},
+      {map::CAUTION, QString()},
       {map::ALERT, QObject::tr("High volume of pilot training or an unusual type of aerial activity.")},
       {map::DANGER, QObject::tr("Avoid or proceed with caution.")},
       {map::NATIONAL_PARK, QString()},
@@ -493,6 +495,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"M", map::MOA},
     {"R", map::RESTRICTED},
     {"P", map::PROHIBITED},
+    {"CN", map::CAUTION},
     {"W", map::WARNING},
     {"AL", map::ALERT},
     {"DA", map::DANGER},
@@ -524,6 +527,7 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
     {map::RESTRICTED, "R"},
     {map::PROHIBITED, "P"},
     {map::WARNING, "W"},
+    {map::CAUTION, "CN"},
     {map::ALERT, "AL"},
     {map::DANGER, "DA"},
     {map::NATIONAL_PARK, "NP"},
@@ -565,6 +569,7 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
     {map::PROHIBITED, 102},
 
     {map::WARNING, 60},
+    {map::CAUTION, 60},
     {map::ALERT, 61},
     {map::DANGER, 62},
 
@@ -581,6 +586,7 @@ int qHash(const map::MapObjectRef& type)
 
 void updateUnits()
 {
+  Q_ASSERT(!airspaceFlagNameMap.isEmpty());
   airspaceFlagNameMap[map::AIRSPACE_BELOW_10000] = QObject::tr("Below %1 only").arg(Unit::altFeet(10000.f));
   airspaceFlagNameMap[map::AIRSPACE_BELOW_18000] = QObject::tr("Below %1 only").arg(Unit::altFeet(18000.f));
   airspaceFlagNameMap[map::AIRSPACE_ABOVE_10000] = QObject::tr("Above %1 only").arg(Unit::altFeet(10000.f));
@@ -601,56 +607,68 @@ QString navTypeName(const QString& type)
 
 const QString& navTypeNameVor(const QString& type)
 {
+  Q_ASSERT(!navTypeNamesVor.isEmpty());
   return navTypeNamesVor[type];
 }
 
 const QString& navTypeNameVorLong(const QString& type)
 {
+  Q_ASSERT(!navTypeNamesVorLong.isEmpty());
   return navTypeNamesVorLong[type];
 }
 
 const QString& navTypeNameNdb(const QString& type)
 {
+  Q_ASSERT(!navTypeNamesNdb.isEmpty());
   return navTypeNamesNdb[type];
 }
 
 const QString& navTypeNameWaypoint(const QString& type)
 {
+  Q_ASSERT(!navTypeNamesWaypoint.isEmpty());
   return navTypeNamesWaypoint[type];
 }
 
 const QString& navName(const QString& type)
 {
+  Q_ASSERT(!navTypeNames.isEmpty());
   return navTypeNames[type];
 }
 
 const QString& surfaceName(const QString& surface)
 {
+  Q_ASSERT(!surfaceMap.isEmpty());
   return surfaceMap[surface];
 }
 
 int surfaceQuality(const QString& surface)
 {
+  Q_ASSERT(!surfaceQualityMap.isEmpty());
   return surfaceQualityMap.value(surface, 0);
 }
 
 const QString& parkingGateName(const QString& gate)
 {
+  Q_ASSERT(!parkingMapGate.isEmpty());
   return parkingMapGate[gate];
 }
 
 const QString& parkingRampName(const QString& ramp)
 {
+  Q_ASSERT(!parkingMapRamp.isEmpty());
   return parkingMapRamp[ramp];
 }
 
 const QString& parkingTypeName(const QString& type)
 {
+  Q_ASSERT(!parkingTypeMap.isEmpty());
   return parkingTypeMap[type];
 }
 
 const QString& parkingName(const QString& name)
 {
+  Q_ASSERT(!parkingNameMap.isEmpty());
+
   if(parkingNameMap.contains(name))
     return parkingNameMap[name];
   else
@@ -659,6 +677,8 @@ const QString& parkingName(const QString& name)
 
 const QString& parkingDatabaseName(const QString& name)
 {
+  Q_ASSERT(!parkingDatabaseNameMap.isEmpty());
+
   return parkingDatabaseNameMap[name];
 }
 
@@ -1036,6 +1056,7 @@ QString airportTextShort(const MapAirport& airport)
 
 QString comTypeName(const QString& type)
 {
+  Q_ASSERT(!comTypeNames.isEmpty());
   return comTypeNames.value(type);
 }
 
@@ -1178,31 +1199,37 @@ QString ndbFullShortText(const MapNdb& ndb)
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type)
 {
+  Q_ASSERT(!airspaceTypeNameMap.isEmpty());
   return airspaceTypeNameMap[type];
 }
 
 const QString& airspaceFlagToString(map::MapAirspaceFlags type)
 {
+  Q_ASSERT(!airspaceFlagNameMap.isEmpty());
   return airspaceFlagNameMap[type];
 }
 
 const QString& airspaceRemark(map::MapAirspaceTypes type)
 {
+  Q_ASSERT(!airspaceRemarkMap.isEmpty());
   return airspaceRemarkMap[type];
 }
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type)
 {
+  Q_ASSERT(!airspacePriorityMap.isEmpty());
   return airspacePriorityMap.value(type);
 }
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
 {
+  Q_ASSERT(!airspaceTypeFromDatabaseMap.isEmpty());
   return airspaceTypeFromDatabaseMap.value(type);
 }
 
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
 {
+  Q_ASSERT(!airspaceTypeToDatabaseMap.isEmpty());
   return airspaceTypeToDatabaseMap[type];
 }
 
