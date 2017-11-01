@@ -440,9 +440,6 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
                                 "PRAGMA page_size=8196",
                                 "PRAGMA locking_mode=EXCLUSIVE"});
 
-  QStringList DATABASE_PRAGMA_QUERIES({"PRAGMA foreign_keys", "PRAGMA cache_size", "PRAGMA synchronous",
-                                       "PRAGMA journal_mode", "PRAGMA page_size", "PRAGMA locking_mode"});
-
   try
   {
     qDebug() << "Opening database" << file;
@@ -457,15 +454,6 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
     bool autocommit = db->isAutocommit();
     db->setAutocommit(false);
     db->open(DATABASE_PRAGMAS);
-
-    atools::sql::SqlQuery query(db);
-    for(const QString& pragmaQuery : DATABASE_PRAGMA_QUERIES)
-    {
-      query.exec(pragmaQuery);
-      if(query.next())
-        qDebug() << pragmaQuery << "value is now: " << query.value(0).toString();
-      query.finish();
-    }
 
     db->setAutocommit(autocommit);
 

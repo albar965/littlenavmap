@@ -24,6 +24,9 @@ DatabaseErrorDialog::DatabaseErrorDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::DatabaseErrorDialog)
 {
   ui->setupUi(this);
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
+
   connect(ui->textBrowserDatabaseErrors, &QTextBrowser::anchorClicked, this, &DatabaseErrorDialog::anchorClicked);
 }
 
