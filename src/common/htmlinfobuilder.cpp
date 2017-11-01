@@ -1488,12 +1488,12 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
 
   html.row2(tr("Max altitude:"), maxAlt);
 
-  if(!airspace.comType.isEmpty())
-  {
+  if(!airspace.comName.isEmpty())
     html.row2(tr("COM:"), formatter::capNavString(airspace.comName));
+  if(!airspace.comType.isEmpty())
     html.row2(tr("COM Type:"), map::comTypeName(airspace.comType));
+  if(airspace.comFrequency > 0)
     html.row2(tr("COM Frequency:"), locale.toString(airspace.comFrequency / 1000., 'f', 3) + tr(" MHz"));
-  }
   html.tableEnd();
 
   if(info)
