@@ -1313,7 +1313,7 @@ bool RouteController::hasValidParking() const
     return false;
 }
 
-void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
+void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
   if(pos.isValid())
   {
@@ -1322,7 +1322,12 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
     if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
+#ifdef DEBUG_OBJECT_ID
+    text.append(QString(" [%1,%2]").arg(x).arg(y));
+#endif
+
     mapPosLabel->setText(text);
+
   }
   else
     mapPosLabel->setText(tr("No position"));

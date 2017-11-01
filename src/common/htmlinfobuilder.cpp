@@ -2403,6 +2403,10 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
   {
     atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f));
     html.row2(tr("Coordinates:"), Unit::coords(pos));
+
+#ifdef DEBUG_OBJECT_ID
+    html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()));
+#endif
   }
 }
 

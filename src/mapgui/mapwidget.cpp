@@ -1870,7 +1870,7 @@ void MapWidget::elevationDisplayTimerTimeout()
   {
     Pos pos(lon, lat);
     pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
-    mainWindow->updateMapPosLabel(pos);
+    mainWindow->updateMapPosLabel(pos, point.x(), point.y());
   }
 }
 
@@ -1919,10 +1919,11 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     {
       if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
         elevationDisplayTimer.start();
-      mainWindow->updateMapPosLabel(Pos(lon, lat, static_cast<double>(map::INVALID_ALTITUDE_VALUE)));
+      mainWindow->updateMapPosLabel(Pos(lon, lat, static_cast<double>(map::INVALID_ALTITUDE_VALUE)),
+                                    mouseEvent->pos().x(), mouseEvent->pos().y());
     }
     else
-      mainWindow->updateMapPosLabel(Pos());
+      mainWindow->updateMapPosLabel(Pos(), -1, -1);
   }
 
   if(e->type() == QEvent::MouseMove && mouseState != mw::NONE)
@@ -2303,7 +2304,7 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
 
 void MapWidget::leaveEvent(QEvent *)
 {
-  mainWindow->updateMapPosLabel(Pos());
+  mainWindow->updateMapPosLabel(Pos(), -1, -1);
 }
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
