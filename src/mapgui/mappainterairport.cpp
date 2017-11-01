@@ -102,16 +102,22 @@ void MapPainterAirport::render(PaintContext *context)
     if(airport->longestRunwayLength >= context->mapLayer->getMinRunwayLength())
     {
       float x, y;
-      bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding));
+      bool hidden;
+      bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding), &hidden);
 
-      if(!visible)
-        // Check bounding rect for visibility
-        visible = airport->bounding.overlaps(context->viewportRect);
-
-      if(visible)
+      if(!hidden)
       {
-        visibleAirports.append(airport);
-        visiblePoints.append(QPointF(x, y));
+        if(!visible && context->mapLayer->isAirportOverviewRunway())
+          // Check bounding rect for visibility if relevant - not for point symbols
+          visible = airport->bounding.overlaps(context->viewportRect);
+
+        airport->bounding.overlaps(context->viewportRect);
+
+        if(visible)
+        {
+          visibleAirports.append(airport);
+          visiblePoints.append(QPointF(x, y));
+        }
       }
     }
   }

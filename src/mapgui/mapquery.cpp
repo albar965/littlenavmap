@@ -795,15 +795,28 @@ const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, 
 
   if(airwayCache.list.isEmpty() && !lazy)
   {
+    QSet<int> ids;
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, airwayByRectQuery);
       airwayByRectQuery->exec();
       while(airwayByRectQuery->next())
       {
-        map::MapAirway airway;
-        mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
-        airwayCache.list.append(airway);
+        if(ids.contains(airwayByRectQuery->valueInt("airway_id")))
+          continue;
+
+        // qreal north, qreal south, qreal east, qreal west
+        if(rect.intersects(GeoDataLatLonBox(airwayByRectQuery->valueFloat("top_laty"),
+                                            airwayByRectQuery->valueFloat("bottom_laty"),
+                                            airwayByRectQuery->valueFloat("right_lonx"),
+                                            airwayByRectQuery->valueFloat("left_lonx"),
+                                            GeoDataCoordinates::GeoDataCoordinates::Degree)))
+        {
+          map::MapAirway airway;
+          mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
+          airwayCache.list.append(airway);
+          ids.insert(airway.id);
+        }
       }
     }
   }
@@ -882,9 +895,15 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
         alt = 0;
       }
 
+      QSet<int> ids;
+
+      // qDebug() << rect.toString(GeoDataCoordinates::Degree);
+
       // Get the airspace objects without geometry
       for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
       {
+        // qDebug() << r.toString(GeoDataCoordinates::Degree);
+
         for(const QString& typeStr : typeStrings)
         {
           bindCoordinatePointInRect(r, query);
@@ -893,12 +912,26 @@ const QList<map::MapAirspace> *MapQuery::getAirspaces(const GeoDataLatLonBox& re
           if(alt > 0)
             query->bindValue(":alt", alt);
 
+          // qDebug() << "==================== query" << endl << query->getFullQueryString();
+
           query->exec();
           while(query->next())
           {
-            map::MapAirspace airspace;
-            mapTypesFactory->fillAirspace(query->record(), airspace);
-            airspaceCache.list.append(airspace);
+            // Avoid double airspaces which can happen if they cross the date boundary
+            if(ids.contains(query->valueInt("boundary_id")))
+              continue;
+
+            // qreal north, qreal south, qreal east, qreal west
+            if(rect.intersects(GeoDataLatLonBox(query->valueFloat("max_laty"), query->valueFloat("min_laty"),
+                                                query->valueFloat("max_lonx"), query->valueFloat("min_lonx"),
+                                                GeoDataCoordinates::GeoDataCoordinates::Degree)))
+            {
+              map::MapAirspace airspace;
+              mapTypesFactory->fillAirspace(query->record(), airspace);
+              airspaceCache.list.append(airspace);
+
+              ids.insert(airspace.id);
+            }
           }
         }
       }
@@ -929,6 +962,8 @@ const LineString *MapQuery::getAirspaceGeometry(int boundaryId)
     {
       atools::fs::common::BinaryGeometry geometry(airspaceLinesByIdQuery->value("geometry").toByteArray());
       geometry.swapGeometry(*lines);
+
+      // qDebug() << *lines;
     }
 
     airspaceLineCache.insert(boundaryId, lines);
@@ -1328,9 +1363,7 @@ void MapQuery::bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, a
 QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect)
 {
   GeoDataLatLonBox newRect = rect;
-  inflateRect(newRect,
-              newRect.width(GeoDataCoordinates::Degree) * queryRectInflationFactor + queryRectInflationIncrement,
-              newRect.height(GeoDataCoordinates::Degree) * queryRectInflationFactor + queryRectInflationIncrement);
+  inflateRect(newRect);
 
   if(newRect.crossesDateLine())
   {
@@ -1354,12 +1387,9 @@ QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoD
 }
 
 /* Inflate rect by width and height in degrees. If it crosses the poles or date line it will be limited */
-void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height)
+void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect)
 {
-  rect.setNorth(std::min(rect.north(GeoDataCoordinates::Degree) + height, 89.), GeoDataCoordinates::Degree);
-  rect.setSouth(std::max(rect.south(GeoDataCoordinates::Degree) - height, -89.), GeoDataCoordinates::Degree);
-  rect.setWest(std::max(rect.west(GeoDataCoordinates::Degree) - width, -179.), GeoDataCoordinates::Degree);
-  rect.setEast(std::min(rect.east(GeoDataCoordinates::Degree) + width, 179.), GeoDataCoordinates::Degree);
+  rect.scale(1. + queryRectInflationFactor, 1. + queryRectInflationFactor);
 }
 
 void MapQuery::initQueries()
@@ -1580,10 +1610,12 @@ void MapQuery::initQueries()
   ilsByRectQuery = new SqlQuery(db);
   ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
 
+  // Get all that are crossing the anti meridian too and filter them out from the query result
   airwayByRectQuery = new SqlQuery(db);
   airwayByRectQuery->prepare(
-    "select " + airwayQueryBase + " from airway where " +
-    "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
+    "select " + airwayQueryBase + ", right_lonx, left_lonx, bottom_laty, top_laty from airway where " +
+    "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) "
+    "or right_lonx < left_lonx");
 
   airwayByWaypointIdQuery = new SqlQuery(db);
   airwayByWaypointIdQuery->prepare(
@@ -1621,31 +1653,33 @@ void MapQuery::initQueries()
   airwayWaypointsQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name "
                                                               " order by airway_fragment_no, sequence_no");
 
+  // Get all that are crossing the anti meridian too and filter them out from the query result
+  QString airspaceRect =
+    " (not (max_lonx < :leftx or min_lonx > :rightx or "
+    "min_laty > :topy or max_laty < :bottomy) or max_lonx < min_lonx) and ";
+
   airspaceByRectQuery = new SqlQuery(db);
   airspaceByRectQuery->prepare(
     "select " + airspaceQueryBase + "from boundary "
-                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
-                                    "min_laty > :topy or max_laty < :bottomy) and type like :type");
+                                    "where " + airspaceRect + " type like :type");
 
   airspaceByRectBelowAltQuery = new SqlQuery(db);
   airspaceByRectBelowAltQuery->prepare(
     "select " + airspaceQueryBase + "from boundary "
-                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
-                                    "min_laty > :topy or max_laty < :bottomy) and type like :type and "
-                                    "min_altitude < :alt");
+                                    "where " + airspaceRect + " type like :type and min_altitude < :alt");
 
   airspaceByRectAboveAltQuery = new SqlQuery(db);
   airspaceByRectAboveAltQuery->prepare(
     "select " + airspaceQueryBase + "from boundary "
-                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
-                                    "min_laty > :topy or max_laty < :bottomy) and type like :type and "
-                                    "max_altitude > :alt");
+                                    "where " + airspaceRect + " type like :type and max_altitude > :alt");
 
   airspaceByRectAtAltQuery = new SqlQuery(db);
   airspaceByRectAtAltQuery->prepare(
     "select " + airspaceQueryBase + "from boundary "
-                                    "where not (max_lonx < :leftx or min_lonx > :rightx or "
-                                    "min_laty > :topy or max_laty < :bottomy) and type like :type and "
+                                    "where "
+                                    "not (max_lonx < :leftx or min_lonx > :rightx or "
+                                    "min_laty > :topy or max_laty < :bottomy) and "
+                                    "type like :type and "
                                     ":alt between min_altitude and max_altitude");
 
   airspaceLinesByIdQuery = new SqlQuery(db);

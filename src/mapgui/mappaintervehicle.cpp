@@ -68,30 +68,34 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context,
   if(!pos.isValid())
     return;
 
+  bool hidden = false;
   float x, y;
-  if(wToS(pos, x, y))
+  if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
   {
-    int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-    int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
+    if(!hidden)
+    {
+      int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
+      int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
 
-    int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
-    int offset = -(size / 2);
+      int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
+      int offset = -(size / 2);
 
-    context->szFont(context->textSizeAircraftAi);
+      context->szFont(context->textSizeAircraftAi);
 
-    // Position is visible
-    context->painter->translate(x, y);
-    if(vehicle.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-      context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
+      // Position is visible
+      context->painter->translate(x, y);
+      if(vehicle.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+        context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
 
-    // Draw symbol
-    context->painter->drawPixmap(offset, offset, *pixmapFromCache(vehicle, size, false));
+      // Draw symbol
+      context->painter->drawPixmap(offset, offset, *pixmapFromCache(vehicle, size, false));
 
-    context->painter->resetTransform();
+      context->painter->resetTransform();
 
-    // Build text label
-    if(vehicle.getCategory() != atools::fs::sc::BOAT)
-      paintTextLabelAi(context, x, y, size, vehicle);
+      // Build text label
+      if(vehicle.getCategory() != atools::fs::sc::BOAT)
+        paintTextLabelAi(context, x, y, size, vehicle);
+    }
   }
 }
 

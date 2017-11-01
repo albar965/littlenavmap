@@ -85,11 +85,17 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
 
           for(const Pos& pos : *lines)
           {
-            conv.wToS(pos, x, y);
+            conv.wToS(pos, x, y /*, QSize(2000, 2000)*/);
+            // qDebug() << airspace.name << pos << x << y;
             polygon.append(QPoint(x, y));
           }
 
-          // polygon = polygon.intersected(QPolygon(mapWidget->geometry()));
+          // qDebug() << airspace.name << polygon;
+
+          polygon = polygon.intersected(QPolygon(mapWidget->geometry()));
+
+          // qDebug() << airspace.name << polygon;
+
           airspacePolygons.append(std::make_pair(airspace.id, polygon));
         }
       }

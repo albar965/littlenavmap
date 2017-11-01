@@ -75,9 +75,13 @@ void MapPainterAircraft::render(PaintContext *context)
         if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
           paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
 
+        bool hidden = false;
         float x, y;
-        if(wToS(pos, x, y))
-          paintUserAircraft(context, userAircraft, x, y);
+        if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
+        {
+          if(!hidden)
+            paintUserAircraft(context, userAircraft, x, y);
+        }
       }
     }
   }
