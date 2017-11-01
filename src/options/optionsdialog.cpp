@@ -1211,7 +1211,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
       }
     }
     else
-      text = tr("X-Plane is selected in the Scenery Library menu. Active Sky weather not available.").arg(sim);
+      text = tr("X-Plane is selected in the Scenery Library menu. Active Sky weather not available.");
 
     ui->labelOptionsWeatherAsnPathState->setText(text);
   }
