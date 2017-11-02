@@ -82,7 +82,7 @@ del /S /Q /F "%APROJECTS%\build-atools-release"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-atools-release"') do rd /s /q "%APROJECTS%\build-atools-release\%%f"
 IF ERRORLEVEL 1 goto :err
 
-qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=release
+C:\msys64\mingw64\qt5-static\bin\qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=release
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe -j2
 IF ERRORLEVEL 1 goto :err
@@ -95,7 +95,7 @@ del /S /Q /F "%APROJECTS%\build-littlexpconnect-release"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlexpconnect-release"') do rd /s /q "%APROJECTS%\build-littlexpconnect-release\%%f"
 IF ERRORLEVEL 1 goto :err
 
-qmake.exe "%APROJECTS%\littlexpconnect\littlexpconnect.pro" -spec win32-g++ CONFIG+=release DEFINES+=XPLM200=1 DEFINES+=APL=0 DEFINES+=IBM=0 DEFINES+=LIN=1
+C:\msys64\mingw64\qt5-static\bin\qmake.exe "%APROJECTS%\littlexpconnect\littlexpconnect.pro" -spec win32-g++ CONFIG+=release DEFINES+=XPLM200=1 DEFINES+=APL=0 DEFINES+=IBM=0 DEFINES+=LIN=1
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe -j2
 IF ERRORLEVEL 1 goto :err
