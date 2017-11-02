@@ -33,7 +33,7 @@ class MapPainterNav :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterNav(MapWidget *mapWidget, MapScale *mapScale);
   virtual ~MapPainterNav();
 
   virtual void render(PaintContext *context) override;

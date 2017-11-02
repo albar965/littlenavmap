@@ -34,7 +34,7 @@ class MapPainterAirspace :
   public MapPainter
 {
 public:
-  MapPainterAirspace(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam);
+  MapPainterAirspace(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterAirspace();
 
   virtual void render(PaintContext *context) override;

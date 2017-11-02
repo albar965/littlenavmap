@@ -18,6 +18,7 @@
 #include "mapgui/mappainter.h"
 
 #include "mapgui/mapscale.h"
+#include "navapp.h"
 #include "common/symbolpainter.h"
 #include "geo/calculations.h"
 #include "mapgui/mapwidget.h"
@@ -52,9 +53,11 @@ void PaintContext::szFont(float scale) const
 }
 
 // =================================================
-MapPainter::MapPainter(MapWidget *parentMapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), query(mapQuery), scale(mapScale)
+MapPainter::MapPainter(MapWidget *parentMapWidget, MapScale *mapScale)
+  : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), scale(mapScale)
 {
+  query = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuery();
   symbolPainter = new SymbolPainter();
 }
 

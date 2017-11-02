@@ -34,6 +34,7 @@ class SqlQuery;
 }
 
 class MapQuery;
+class AirportQuery;
 
 /* Loads and caches approaches and transitions. The corresponding approach is also loaded and cached if a
  * transition is loaded since legs depend on each other.*/
@@ -43,7 +44,11 @@ class ProcedureQuery :
   Q_OBJECT
 
 public:
-  ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam);
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
   virtual ~ProcedureQuery();
 
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
@@ -140,7 +145,7 @@ private:
                          const QString& suffix, const QString& runway, float distance, int size, bool transition);
   void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
 
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase *db, *dbNav;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
                         *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
                         *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr,
@@ -155,6 +160,7 @@ private:
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
+  AirportQuery *airportQuery = nullptr;
 
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */

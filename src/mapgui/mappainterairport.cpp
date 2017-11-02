@@ -21,6 +21,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
@@ -39,9 +40,9 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapScale *mapScale,
                                      const Route *routeParam)
-  : MapPainter(mapWidget, mapQuery, mapScale), route(routeParam)
+  : MapPainter(mapWidget, mapScale), route(routeParam)
 {
 }
 
@@ -195,7 +196,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
                        Qt::SolidLine, Qt::RoundCap));
 
   // Get all runways for this airport
-  const QList<MapRunway> *runways = query->getRunways(airport.id);
+  const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
 
   // Calculate all runway screen coordinates
   QList<QPoint> runwayCenters;
@@ -217,7 +218,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
     }
 
   // For taxipaths
-  const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(airport.id);
+  const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
   for(const MapTaxiPath& taxipath : *taxipaths)
   {
     bool visible;
@@ -227,7 +228,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
   }
 
   // For aprons
-  const QList<MapApron> *aprons = query->getAprons(airport.id);
+  const QList<MapApron> *aprons = airportQuery->getAprons(airport.id);
   for(const MapApron& apron : *aprons)
   {
     // FSX/P3D geometry
@@ -345,7 +346,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   painter->setFont(context->defaultFont);
 
   // Get all runways for this airport
-  const QList<MapRunway> *runways = query->getRunways(airport.id);
+  const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
 
   // Calculate all runway screen coordinates
   QList<QPoint> runwayCenters;
@@ -372,7 +373,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
   // Draw aprons ---------------------------------
   painter->setBackground(Qt::transparent);
-  const QList<MapApron> *aprons = query->getAprons(airport.id);
+  const QList<MapApron> *aprons = airportQuery->getAprons(airport.id);
 
   for(const MapApron& apron : *aprons)
   {
@@ -403,7 +404,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   QVector<int> pathThickness;
 
   // Collect coordinates first
-  const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(airport.id);
+  const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
   for(const MapTaxiPath& taxipath : *taxipaths)
   {
     bool visible;
@@ -658,7 +659,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw parking --------------------------------
-  const QList<MapParking> *parkings = query->getParkingsForAirport(airport.id);
+  const QList<MapParking> *parkings = airportQuery->getParkingsForAirport(airport.id);
   for(const MapParking& parking : *parkings)
   {
     bool visible;
@@ -689,7 +690,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw helipads ------------------------------------------------
-  const QList<MapHelipad> *helipads = query->getHelipads(airport.id);
+  const QList<MapHelipad> *helipads = airportQuery->getHelipads(airport.id);
   if(!helipads->isEmpty())
   {
     for(const MapHelipad& helipad : *helipads)

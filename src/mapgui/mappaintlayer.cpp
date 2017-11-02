@@ -49,14 +49,14 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapScale = new MapScale();
 
   // Create all painters
-  mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale);
-  mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
-  mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &NavApp::getRoute());
-  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
-  mapPainterShip = new MapPainterShip(mapWidget, mapQuery, mapScale);
+  mapPainterNav = new MapPainterNav(mapWidget, mapScale);
+  mapPainterIls = new MapPainterIls(mapWidget, mapScale);
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterMark = new MapPainterMark(mapWidget, mapScale);
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale);
+  mapPainterShip = new MapPainterShip(mapWidget, mapScale);
 
   // Default for visible object types
   objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);

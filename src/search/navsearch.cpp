@@ -34,9 +34,8 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
-                     MapQuery *mapQuery, int tabWidgetIndex)
-  : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), mapQuery, tabWidgetIndex)
+NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex)
+  : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -164,7 +163,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView,
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  SearchBaseTable::initViewAndController();
+  SearchBaseTable::initViewAndController(NavApp::getDatabaseNav());
 
   // Add model data handler and model format handler as callbacks
   setCallbacks();

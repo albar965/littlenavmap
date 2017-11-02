@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(mapWidget, mapQuery, mapScale)
+MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapScale *mapScale)
+  : MapPainter(mapWidget, mapScale)
 {
 }
 

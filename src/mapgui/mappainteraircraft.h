@@ -27,7 +27,7 @@ class MapPainterAircraft :
   public MapPainterVehicle
 {
 public:
-  MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterAircraft(MapWidget *mapWidget, MapScale *mapScale);
   virtual ~MapPainterAircraft();
 
   virtual void render(PaintContext *context) override;

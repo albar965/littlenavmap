@@ -100,13 +100,13 @@ void SearchController::restoreState()
 
 void SearchController::createAirportSearch(QTableView *tableView)
 {
-  airportSearch = new AirportSearch(mainWindow, tableView, mapQuery, 0);
+  airportSearch = new AirportSearch(mainWindow, tableView, 0);
   postCreateSearch(airportSearch);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
 {
-  navSearch = new NavSearch(mainWindow, tableView, mapQuery, 1);
+  navSearch = new NavSearch(mainWindow, tableView, 1);
   postCreateSearch(navSearch);
 }
 

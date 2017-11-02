@@ -58,7 +58,7 @@ class MapPainterRoute :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam);
+  MapPainterRoute(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterRoute();
 
   virtual void render(PaintContext *context) override;

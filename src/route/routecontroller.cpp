@@ -35,6 +35,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
 #include "route/routefinder.h"
@@ -96,8 +97,11 @@ using Marble::GeoDataCoordinates;
 namespace pln = atools::fs::pln;
 
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
-  : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(NavApp::getMapQuery())
+  : QObject(parentWindow), mainWindow(parentWindow), view(tableView)
 {
+  query = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuery();
+
   routeColumns = QList<QString>({QObject::tr("Ident"),
                                  QObject::tr("Region"),
                                  QObject::tr("Name"),
@@ -129,8 +133,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
   // Create flight plan calculation caches
-  routeNetworkRadio = new RouteNetworkRadio(NavApp::getDatabase());
-  routeNetworkAirway = new RouteNetworkAirway(NavApp::getDatabase());
+  routeNetworkRadio = new RouteNetworkRadio(NavApp::getDatabaseNav());
+  routeNetworkAirway = new RouteNetworkAirway(NavApp::getDatabaseNav());
 
   // Set up undo/redo framework
   undoStack = new QUndoStack(mainWindow);
@@ -406,7 +410,7 @@ bool RouteController::selectDepartureParking()
 {
   qDebug() << "selectDepartureParking";
   const map::MapAirport& airport = route.first().getAirport();
-  ParkingDialog dialog(mainWindow, query, airport);
+  ParkingDialog dialog(mainWindow, airport);
 
   int result = dialog.exec();
   dialog.hide();
@@ -1383,6 +1387,24 @@ QString RouteController::buildDefaultFilenameShort(const QString& sep, const QSt
   return filename;
 }
 
+/* Check if route has valid departure parking.
+ *  @return true if route can be saved anyway */
+bool RouteController::hasValidParking() const
+{
+  if(route.hasValidDeparture())
+  {
+    const QList<map::MapParking> *parkingCache = airportQuery->getParkingsForAirport(route.first().getId());
+
+    if(!parkingCache->isEmpty())
+      return route.hasDepartureParking() || route.hasDepartureHelipad();
+    else
+      // No parking available - so no parking selection is ok
+      return true;
+  }
+  else
+    return false;
+}
+
 void RouteController::preDatabaseLoad()
 {
   routeNetworkRadio->deInitQueries();
@@ -1598,7 +1620,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowApproaches->setEnabled(false);
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
-      if(routeLeg->getAirport().flags & map::AP_PROCEDURE)
+      if(NavApp::getAirportQueryNav()->hasProcedures(routeLeg->getAirport().ident))
         ui->actionRouteShowApproaches->setEnabled(true);
       else
         ui->actionRouteShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(routeLeg->getIdent()));
@@ -2104,7 +2126,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   {
     // No route, no start airport or different airport
     map::MapAirport ap;
-    query->getAirportById(ap, parking.airportId);
+    airportQuery->getAirportById(ap, parking.airportId);
     routeSetDepartureInternal(ap);
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
@@ -2283,7 +2305,9 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   undoCommand = preChange(tr("Add Procedure"));
 
   map::MapAirport airport;
-  query->getAirportById(airport, legs.ref.airportId);
+  NavApp::getAirportQueryNav()->getAirportById(airport, legs.ref.airportId);
+
+  airportQuery->getAirportByIdent(airport, airport.ident);
   if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_ARRIVAL)
   {
     if(route.isEmpty() || route.last().getMapObjectType() != map::AIRPORT ||
@@ -2364,7 +2388,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   if(flightplan.isEmpty() && insertIndex > 0)
     lastLeg = &route.at(insertIndex - 1);
   RouteLeg routeLeg(&flightplan);
-  routeLeg.createFromDatabaseByEntry(insertIndex, query, lastLeg);
+  routeLeg.createFromDatabaseByEntry(insertIndex, lastLeg);
 
   route.insert(insertIndex, routeLeg);
 
@@ -2472,7 +2496,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
     lastLeg = &route.at(legIndex - 1);
 
   RouteLeg routeLeg(&flightplan);
-  routeLeg.createFromDatabaseByEntry(legIndex, query, lastLeg);
+  routeLeg.createFromDatabaseByEntry(legIndex, lastLeg);
 
   route.replace(legIndex, routeLeg);
   eraseAirway(legIndex);
@@ -2642,7 +2666,7 @@ void RouteController::createRouteLegsFromFlightplan()
   for(int i = 0; i < flightplan.getEntries().size(); i++)
   {
     RouteLeg mapobj(&flightplan);
-    mapobj.createFromDatabaseByEntry(i, query, last);
+    mapobj.createFromDatabaseByEntry(i, last);
 
     if(mapobj.getMapObjectType() == map::INVALID)
       // Not found in database
@@ -3262,7 +3286,7 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
     {
       // Reset departure position to best runway
       map::MapStart start;
-      query->getBestStartPositionForAirport(start, routeLeg.getAirport().id);
+      airportQuery->getBestStartPositionForAirport(start, routeLeg.getAirport().id);
 
       // Check if the airport has a start position - sone add-on airports don't
       if(start.isValid())

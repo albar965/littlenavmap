@@ -33,9 +33,9 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirspace::MapPainterAirspace(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterAirspace::MapPainterAirspace(MapWidget *mapWidget, MapScale *mapScale,
                                        const Route *routeParam)
-  : MapPainter(mapWidget, mapQuery, mapScale), route(routeParam)
+  : MapPainter(mapWidget, mapScale), route(routeParam)
 {
 }
 

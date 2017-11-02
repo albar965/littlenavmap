@@ -32,6 +32,7 @@ class GeoDataLatLonAltBox;
 }
 
 class MapWidget;
+class AirportQuery;
 class MapPaintLayer;
 
 /*
@@ -43,7 +44,7 @@ class MapPaintLayer;
 class MapScreenIndex
 {
 public:
-  MapScreenIndex(MapWidget *parentWidget, MapQuery *mapQueryParam, MapPaintLayer *mapPaintLayer);
+  MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintLayer);
   ~MapScreenIndex();
 
   /*
@@ -181,6 +182,7 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
+  AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 
   map::MapSearchResult highlights;

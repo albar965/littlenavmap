@@ -17,8 +17,8 @@
 
 #include "common/procedurequery.h"
 #include "navapp.h"
-#include "common/proctypes.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"
 #include "common/unit.h"
@@ -45,9 +45,11 @@ using proc::MapSpeedRestriction;
 
 namespace pln = atools::fs::pln;
 
-ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
-  : db(sqlDb), mapQuery(mapQueryParam)
+ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav)
+  : dbNav(sqlDbNav)
 {
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQueryNav();
 }
 
 ProcedureQuery::~ProcedureQuery()
@@ -71,14 +73,12 @@ int ProcedureQuery::approachIdForTransitionId(int transitionId)
   return approachId;
 }
 
-const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const map::MapAirport& airport,
-                                                                int transitionId)
+const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const map::MapAirport& airport, int transitionId)
 {
   return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
-const proc::MapProcedureLeg *ProcedureQuery::getApproachLeg(const map::MapAirport& airport, int approachId,
-                                                            int legId)
+const proc::MapProcedureLeg *ProcedureQuery::getApproachLeg(const map::MapAirport& airport, int approachId, int legId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(approachLegIndex.contains(legId))
@@ -250,8 +250,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   // Load full navaid information for fix and set fix position
   if(leg.fixType == "W" || leg.fixType == "TW")
   {
-    mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion,
-                     QString(), airport.position);
+    mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion, QString(), airport.position);
     if(!leg.navaids.waypoints.isEmpty())
     {
       leg.fixPos = leg.navaids.waypoints.first().position;
@@ -394,10 +393,11 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
  * position if no runway ends were found */
 void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport)
 {
-  QString bestRunway = map::runwayBestFit(name, mapQuery->getRunwayNames(airport.id));
+  QString bestRunway = map::runwayBestFit(name, airportQuery->getRunwayNames(airport.id));
 
   if(!bestRunway.isEmpty())
-    mapQuery->getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident);
+    mapQuery->getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
+                                  true /* Nav database */);
 
   if(result.runwayEnds.isEmpty())
   {
@@ -425,10 +425,11 @@ void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObje
                                       const QString& ident, const QString& region, const QString& airport,
                                       const Pos& sortByDistancePos)
 {
-  mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos);
+  mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
+                                map::INVALID_DISTANCE_VALUE, true /* Nav database */);
   if(result.isEmpty(type))
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
-                                  atools::geo::nmToMeter(200.f));
+                                  atools::geo::nmToMeter(200.f), true /* Nav database */);
 }
 
 void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
@@ -595,7 +596,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   {
     if(!runwayEndIdQuery->isNull("runway_end_id"))
     {
-      legs->runwayEnd = mapQuery->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
+      legs->runwayEnd = airportQuery->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
 
       // Add altitude to position since it is needed to display the first point in the SID
       legs->runwayEnd.position.setAltitude(airport.getPosition().getAltitude());
@@ -1314,51 +1315,51 @@ void ProcedureQuery::initQueries()
 {
   deInitQueries();
 
-  approachLegQuery = new SqlQuery(db);
+  approachLegQuery = new SqlQuery(dbNav);
   approachLegQuery->prepare("select * from approach_leg where approach_id = :id "
                             "order by approach_leg_id");
 
-  transitionLegQuery = new SqlQuery(db);
+  transitionLegQuery = new SqlQuery(dbNav);
   transitionLegQuery->prepare("select * from transition_leg where transition_id = :id "
                               "order by transition_leg_id");
 
-  transitionIdForLegQuery = new SqlQuery(db);
+  transitionIdForLegQuery = new SqlQuery(dbNav);
   transitionIdForLegQuery->prepare("select transition_id as id from transition_leg where transition_leg_id = :id");
 
-  approachIdForTransQuery = new SqlQuery(db);
+  approachIdForTransQuery = new SqlQuery(dbNav);
   approachIdForTransQuery->prepare("select approach_id from transition where transition_id = :id");
 
-  runwayEndIdQuery = new SqlQuery(db);
+  runwayEndIdQuery = new SqlQuery(dbNav);
   runwayEndIdQuery->prepare("select e.runway_end_id from approach a "
                             "join runway_end e on a.runway_end_id = e.runway_end_id where approach_id = :id");
 
-  transitionQuery = new SqlQuery(db);
+  transitionQuery = new SqlQuery(dbNav);
   transitionQuery->prepare("select type, fix_ident from transition where transition_id = :id");
 
-  approachQuery = new SqlQuery(db);
+  approachQuery = new SqlQuery(dbNav);
   approachQuery->prepare("select type, suffix, has_gps_overlay, fix_ident, runway_name "
                          "from approach where approach_id = :id");
 
-  approachIdByNameQuery = new SqlQuery(db);
-  if(db->record("approach").contains("arinc_name"))
+  approachIdByNameQuery = new SqlQuery(dbNav);
+  if(dbNav->record("approach").contains("arinc_name"))
     approachIdByNameQuery->prepare("select approach_id, arinc_name, suffix, runway_name from approach "
                                    "where fix_ident like :fixident and type like :type and airport_id = :apid");
   else
     approachIdByNameQuery->prepare("select approach_id, suffix, runway_name from approach "
                                    "where fix_ident like :fixident and type like :type and airport_id = :apid");
 
-  if(db->record("approach").contains("arinc_name"))
+  if(dbNav->record("approach").contains("arinc_name"))
   {
-    approachIdByArincNameQuery = new SqlQuery(db);
+    approachIdByArincNameQuery = new SqlQuery(dbNav);
     approachIdByArincNameQuery->prepare("select approach_id, suffix, runway_name from approach "
                                         "where arinc_name like :arincname and airport_id = :apid");
   }
 
-  transitionIdByNameQuery = new SqlQuery(db);
+  transitionIdByNameQuery = new SqlQuery(dbNav);
   transitionIdByNameQuery->prepare("select transition_id from transition where fix_ident like :fixident and "
                                    "type like :type and approach_id = :apprid");
 
-  transitionIdsForApproachQuery = new SqlQuery(db);
+  transitionIdsForApproachQuery = new SqlQuery(dbNav);
   transitionIdsForApproachQuery->prepare("select transition_id from transition where approach_id = :id");
 }
 

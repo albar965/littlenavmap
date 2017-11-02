@@ -23,6 +23,7 @@
 #include "common/mapflags.h"
 #include "fs/fspaths.h"
 
+class AirportQuery;
 class MapQuery;
 class InfoQuery;
 class ProcedureQuery;
@@ -97,6 +98,8 @@ public:
   static map::MapObjectTypes getShownMapFeatures();
   static map::MapAirspaceFilter getShownMapAirspaces();
 
+  static AirportQuery *getAirportQuery();
+  static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
@@ -117,7 +120,11 @@ public:
   static bool hasSidStarInDatabase();
   static bool hasDataInDatabase();
 
-  static atools::sql::SqlDatabase *getDatabase();
+  /* Simulator scenery data */
+  static atools::sql::SqlDatabase *getDatabaseSim();
+
+  /* External update from navaids or same as above */
+  static atools::sql::SqlDatabase *getDatabaseNav();
 
   static ElevationProvider *getElevationProvider();
 
@@ -139,7 +146,10 @@ public:
   static ConnectClient *getConnectClient();
 
   static const atools::fs::db::DatabaseMeta *getDatabaseMeta();
+  static const atools::fs::db::DatabaseMeta *getDatabaseMetaNav();
+
   static QString getDatabaseAiracCycle();
+  static QString getDatabaseAiracCycleNav();
   static bool hasDatabaseAirspaces();
 
   static const AircraftTrack& getAircraftTrack();
@@ -157,6 +167,7 @@ public:
 
 private:
   /* Database query helpers and caches */
+  static AirportQuery *airportQuery, *airportQueryNav;
   static MapQuery *mapQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
@@ -169,6 +180,7 @@ private:
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
   static atools::fs::db::DatabaseMeta *databaseMeta;
+  static atools::fs::db::DatabaseMeta *databaseMetaNav;
   static QSplashScreen *splashScreen;
 
   static UpdateHandler *updateHandler;

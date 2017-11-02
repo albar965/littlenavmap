@@ -52,6 +52,7 @@ class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
 class RouteViewEventFilter;
+class AirportQuery;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -383,6 +384,7 @@ private:
   QMainWindow *mainWindow;
   QTableView *view;
   MapQuery *query;
+  AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

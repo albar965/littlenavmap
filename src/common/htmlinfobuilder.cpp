@@ -27,6 +27,7 @@
 #include "geo/calculations.h"
 #include "common/infoquery.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "common/symbolpainter.h"
@@ -63,9 +64,13 @@ const float MIN_GROUND_SPEED = 30.f;
 
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
-  : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), infoQuery(NavApp::getInfoQuery()), info(formatInfo),
+  : mainWindow(parentWindow), info(formatInfo),
   print(formatPrint)
 {
+  mapQuery = NavApp::getMapQuery();
+  infoQuery = NavApp::getInfoQuery();
+  airportQuery = NavApp::getAirportQuery();
+
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
 
@@ -152,7 +157,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.br();
 
   QString city, state, country;
-  mapQuery->getAirportAdminNamesById(airport.id, city, state, country);
+  airportQuery->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
   if(route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
@@ -750,7 +755,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(airport.id);
+      QStringList runwayNames = airportQuery->getRunwayNames(airport.id);
 
       for(const SqlRecord& recApp : *recAppVector)
       {
@@ -812,7 +817,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         }
         else if(procType == "LOCB")
         {
-          const QList<MapRunway> *runways = mapQuery->getRunways(airport.id);
+          const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
 
           if(runways != nullptr)
           {
@@ -1033,7 +1038,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         // Check if the station is an airport
         map::MapAirport reportAirport;
-        mapQuery->getAirportByIdent(reportAirport, reportIcao);
+        airportQuery->getAirportByIdent(reportAirport, reportIcao);
         if(!print && reportAirport.isValid())
         {
           // Add link to airport

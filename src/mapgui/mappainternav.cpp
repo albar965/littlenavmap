@@ -34,8 +34,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(mapWidget, mapQuery, mapScale)
+MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapScale *mapScale)
+  : MapPainter(mapWidget, mapScale)
 {
 }
 

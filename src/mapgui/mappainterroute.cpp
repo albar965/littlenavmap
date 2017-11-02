@@ -39,8 +39,8 @@ using proc::MapProcedureLegs;
 using map::PosCourse;
 using atools::contains;
 
-MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam)
-  : MapPainter(mapWidget, mapQuery, mapScale), route(routeParam)
+MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam)
+  : MapPainter(mapWidget, mapScale), route(routeParam)
 {
 }
 

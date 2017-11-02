@@ -30,6 +30,7 @@ class ColumnList;
 class QMainWindow;
 class QItemSelection;
 class MapQuery;
+class AirportQuery;
 class QTimer;
 class CsvExporter;
 class Column;
@@ -38,6 +39,10 @@ class LineEditEventFilter;
 class QLineEdit;
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
+
 namespace geo {
 class Pos;
 class Rect;
@@ -62,8 +67,7 @@ class SearchBaseTable :
 
 public:
   /* Class will take ownership of columnList */
-  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, MapQuery *mapQuery,
-                  int tabWidgetIndex);
+  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, int tabWidgetIndex);
   virtual ~SearchBaseTable();
 
   /* Disconnect and reconnect queries on database change */
@@ -132,7 +136,7 @@ protected:
   virtual void updatePushButtons() = 0;
 
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */
-  void initViewAndController();
+  void initViewAndController(atools::sql::SqlDatabase *db);
 
   /* Connect widgets to the controller */
   void connectSearchWidgets();
@@ -180,6 +184,7 @@ private:
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
   MapQuery *query;
+  AirportQuery *airportQuery;
 
   /* Used to delay search when using the time intensive distance search */
   QTimer *updateTimer;

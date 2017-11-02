@@ -186,7 +186,8 @@ SOURCES += src/main.cpp\
     src/mapgui/mappaintership.cpp \
     src/mapgui/mappaintervehicle.cpp \
     src/common/updatehandler.cpp \
-    src/gui/updatedialog.cpp
+    src/gui/updatedialog.cpp \
+    src/query/airportquery.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -270,7 +271,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappaintership.h \
     src/mapgui/mappaintervehicle.h \
     src/common/updatehandler.h \
-    src/gui/updatedialog.h
+    src/gui/updatedialog.h \
+    src/query/airportquery.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

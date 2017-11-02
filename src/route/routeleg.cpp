@@ -17,6 +17,7 @@
 
 #include "route/routeleg.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
 #include "common/maptools.h"
@@ -54,8 +55,7 @@ RouteLeg::~RouteLeg()
 
 }
 
-void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirport,
-                                 const RouteLeg *prevLeg)
+void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg)
 {
   index = entryIndex;
   type = map::AIRPORT;
@@ -66,8 +66,7 @@ void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirpo
   valid = true;
 }
 
-void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs,
-                                     const RouteLeg *prevLeg)
+void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
@@ -91,13 +90,13 @@ void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLeg
   valid = true;
 }
 
-void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, MapQuery *mapQuery,
-                               const atools::geo::Pos& last, float maxDistance)
+void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
+                               float maxDistance)
 {
   map::MapSearchResult mapobjectResult;
-  mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
-                                flightplanEntry->getIcaoIdent(), flightplanEntry->getIcaoRegion(), QString(),
-                                last, maxDistance);
+  NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
+                                             flightplanEntry->getIcaoIdent(), flightplanEntry->getIcaoRegion(),
+                                             QString(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
   {
@@ -116,11 +115,13 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
   }
 }
 
-void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, const RouteLeg *prevLeg)
+void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
+  MapQuery *mapQuery = NavApp::getMapQuery();
+  AirportQuery *airportQuery = NavApp::getAirportQuery();
 
   QString region = flightplanEntry->getIcaoRegion();
 
@@ -144,7 +145,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
 
         if(flightplanEntry->getAirway().isEmpty())
           // Look for an arbitrary navaid
-          assignAnyNavaid(flightplanEntry, mapQuery, last, maxDistance);
+          assignAnyNavaid(flightplanEntry, last, maxDistance);
         else if(prevLeg != nullptr && !flightplanEntry->getAirway().isEmpty())
         {
           // Look for navaid at an airway
@@ -160,7 +161,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
           else
           {
             // Not found at airway search for any navaid with the given name nearby
-            assignAnyNavaid(flightplanEntry, mapQuery, last, maxDistance);
+            assignAnyNavaid(flightplanEntry, last, maxDistance);
             qWarning() << "No waypoints for" << flightplanEntry->getIcaoIdent() << flightplanEntry->getAirway();
           }
         }
@@ -195,13 +196,13 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
 
             // Get nearest with the same name
             QList<map::MapParking> parkings;
-            mapQuery->getParkingByName(parkings, airport.id, name, flightplan->getDeparturePosition());
+            airportQuery->getParkingByName(parkings, airport.id, name, flightplan->getDeparturePosition());
 
             if(parkings.isEmpty())
             {
               // Always try runway or helipad if no start positions found
               qWarning() << "Found no parking spots for" << name;
-              assignRunwayOrHelipad(mapQuery, name);
+              assignRunwayOrHelipad(name);
             }
             else
             {
@@ -224,14 +225,14 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
               // Seems to be a parking position
               int number = QString(match.captured(2)).toInt();
               QList<map::MapParking> parkings;
-              mapQuery->getParkingByNameAndNumber(parkings, airport.id,
-                                                  map::parkingDatabaseName(parkingName), number);
+              airportQuery->getParkingByNameAndNumber(parkings, airport.id,
+                                                      map::parkingDatabaseName(parkingName), number);
 
               if(parkings.isEmpty())
               {
                 // Always try runway or helipad if no start positions found
                 qWarning() << "Found no parking spots for" << parkingName << number;
-                assignRunwayOrHelipad(mapQuery, name);
+                assignRunwayOrHelipad(name);
               }
               else
               {
@@ -245,7 +246,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, con
             }
             else
               // Name does not match FSX patter try runway or helipads
-              assignRunwayOrHelipad(mapQuery, name);
+              assignRunwayOrHelipad(name);
           }
         }
         else
@@ -679,9 +680,9 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
 }
 
-void RouteLeg::assignRunwayOrHelipad(MapQuery *mapQuery, const QString& name)
+void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  mapQuery->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
+  NavApp::getAirportQuery()->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
 
   if(!start.isValid())
   {

@@ -43,8 +43,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(mapWidget, mapQuery, mapScale)
+MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapScale *mapScale)
+  : MapPainter(mapWidget, mapScale)
 {
 }
 

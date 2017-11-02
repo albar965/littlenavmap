@@ -22,6 +22,7 @@
 #include "common/procedurequery.h"
 #include "route/route.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "common/maptools.h"
 #include "common/unit.h"
@@ -52,6 +53,7 @@ RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuery();
   procQuery = NavApp::getProcedureQuery();
 }
 
@@ -398,7 +400,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
   }
 
   map::MapAirport departure;
-  mapQuery->getAirportByIdent(departure, ident);
+  airportQuery->getAirportByIdent(departure, ident);
   if(departure.isValid())
   {
     // qDebug() << "found" << departure.ident << "id" << departure.id;
@@ -479,7 +481,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
   }
 
   map::MapAirport destination;
-  mapQuery->getAirportByIdent(destination, ident);
+  airportQuery->getAirportByIdent(destination, ident);
   if(destination.isValid())
   {
     // qDebug() << "found" << destination.ident << "id" << destination.id;

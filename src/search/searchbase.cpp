@@ -28,6 +28,7 @@
 #include "gui/actionstatesaver.h"
 #include "export/csvexporter.h"
 #include "mapgui/mapquery.h"
+#include "query/airportquery.h"
 #include "options/optiondata.h"
 #include "common/unit.h"
 
@@ -108,10 +109,12 @@ private:
   SearchBaseTable *searchBase;
 };
 
-SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                                 MapQuery *mapQuery, int tabWidgetIndex)
-  : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery)
+SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, int tabWidgetIndex)
+  : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent)
 {
+  query = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuery();
+
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -184,14 +187,14 @@ void SearchBaseTable::tableCopyClipboard()
   }
 }
 
-void SearchBaseTable::initViewAndController()
+void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
 {
   view->horizontalHeader()->setSectionsMovable(true);
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
   delete controller;
-  controller = new SqlController(NavApp::getDatabase(), columns, view);
+  controller = new SqlController(db, columns, view);
   controller->prepareModel();
 
   csvExporter = new CsvExporter(mainWindow, controller);
@@ -707,7 +710,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     // get airport, VOR, NDB or waypoint id from model row
     getNavTypeAndId(index.row(), navType, id);
     if(navType == map::AIRPORT)
-      query->getAirportById(airport, id);
+      airportQuery->getAirportById(airport, id);
   }
   else
     qDebug() << "Invalid index at" << pos;
@@ -854,13 +857,13 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionRouteAirportStart)
     {
       map::MapAirport ap;
-      query->getAirportById(ap, controller->getIdForRow(index));
+      airportQuery->getAirportById(ap, controller->getIdForRow(index));
       emit routeSetDeparture(ap);
     }
     else if(action == ui->actionRouteAirportDest)
     {
       map::MapAirport ap;
-      query->getAirportById(ap, controller->getIdForRow(index));
+      airportQuery->getAirportById(ap, controller->getIdForRow(index));
       emit routeSetDestination(ap);
     }
   }
@@ -902,7 +905,7 @@ void SearchBaseTable::showApproachesTriggered()
       map::MapObjectTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
-      emit showProcedures(query->getAirportById(id));
+      emit showProcedures(airportQuery->getAirportById(id));
     }
   }
 }
