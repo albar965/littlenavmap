@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/infoquery.h"
+#include "query/infoquery.h"
 
 #include "sql/sqldatabase.h"
 #include "settings/settings.h"

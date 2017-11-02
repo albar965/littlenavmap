@@ -19,9 +19,9 @@
 
 #include "navapp.h"
 #include "fs/util/coordinates.h"
-#include "common/procedurequery.h"
+#include "query/procedurequery.h"
 #include "route/route.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "common/maptools.h"

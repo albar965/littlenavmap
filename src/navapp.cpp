@@ -17,10 +17,10 @@
 
 #include "navapp.h"
 
-#include "common/infoquery.h"
-#include "common/procedurequery.h"
+#include "query/infoquery.h"
+#include "query/procedurequery.h"
 #include "connect/connectclient.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"

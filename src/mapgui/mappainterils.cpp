@@ -19,7 +19,7 @@
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"

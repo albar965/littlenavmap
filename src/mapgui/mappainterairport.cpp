@@ -20,7 +20,7 @@
 #include "common/symbolpainter.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "common/maptypes.h"

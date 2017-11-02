@@ -24,7 +24,7 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "settings/settings.h"

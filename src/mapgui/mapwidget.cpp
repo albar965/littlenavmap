@@ -33,7 +33,7 @@
 #include "route/route.h"
 #include "route/routecontroller.h"
 #include "atools.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "mapgui/maptooltip.h"
 #include "common/symbolpainter.h"

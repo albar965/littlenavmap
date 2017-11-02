@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "route/routeleg.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"

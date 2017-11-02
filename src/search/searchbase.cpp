@@ -27,7 +27,7 @@
 #include "gui/actiontextsaver.h"
 #include "gui/actionstatesaver.h"
 #include "export/csvexporter.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "options/optiondata.h"
 #include "common/unit.h"

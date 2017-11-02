@@ -18,7 +18,7 @@
 #include "route/parkingdialog.h"
 
 #include "ui_parkingdialog.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "common/mapcolors.h"
 #include "atools.h"

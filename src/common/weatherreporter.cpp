@@ -23,7 +23,7 @@
 #include "fs/common/xpweatherreader.h"
 #include "navapp.h"
 #include "fs/sc/simconnecttypes.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 
 #include <QDebug>

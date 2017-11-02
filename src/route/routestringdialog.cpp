@@ -19,7 +19,7 @@
 
 #include "navapp.h"
 #include "settings/settings.h"
-#include "common/procedurequery.h"
+#include "query/procedurequery.h"
 #include "route/routecontroller.h"
 #include "fs/pln/flightplan.h"
 #include "gui/helphandler.h"

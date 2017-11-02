@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/procedurequery.h"
+#include "query/procedurequery.h"
 #include "navapp.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"

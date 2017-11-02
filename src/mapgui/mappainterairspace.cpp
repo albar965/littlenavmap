@@ -20,7 +20,7 @@
 #include "common/mapcolors.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>

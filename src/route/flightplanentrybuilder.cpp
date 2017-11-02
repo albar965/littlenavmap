@@ -20,7 +20,7 @@
 #include "common/proctypes.h"
 #include "fs/pln/flightplan.h"
 #include "fs/pln/flightplanentry.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;

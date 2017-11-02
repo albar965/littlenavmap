@@ -27,7 +27,7 @@
 #include "common/maptypes.h"
 #include "query/airportquery.h"
 #include "common/maptools.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "common/coordinateconverter.h"
 #include "common/constants.h"
 #include "settings/settings.h"

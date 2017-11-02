@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
