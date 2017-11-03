@@ -90,10 +90,10 @@ void NavApp::init(MainWindow *mainWindowParam)
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
   mapQuery->initQueries();
 
-  airportQuery = new AirportQuery(mainWindow, databaseManager->getDatabaseSim());
+  airportQuery = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
   airportQuery->initQueries();
 
-  airportQueryNav = new AirportQuery(mainWindow, databaseManager->getDatabaseNav());
+  airportQueryNav = new AirportQuery(mainWindow, databaseManager->getDatabaseNav(), true /* nav */);
   airportQueryNav->initQueries();
 
   infoQuery = new InfoQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
@@ -224,7 +224,7 @@ bool NavApp::isConnected()
   return NavApp::getConnectClient()->isConnected();
 }
 
-AirportQuery *NavApp::getAirportQuery()
+AirportQuery *NavApp::getAirportQuerySim()
 {
   return airportQuery;
 }
@@ -374,7 +374,7 @@ bool NavApp::hasDatabaseAirspaces()
   return databaseMetaNav->hasAirspaces();
 }
 
-const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMeta()
+const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaSim()
 {
   return databaseMeta;
 }

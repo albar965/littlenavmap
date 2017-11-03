@@ -55,7 +55,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   // Set callback so the reader can build an index for nearest airports
   xpWeatherReader->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
   {
-    return NavApp::getAirportQuery()->getAirportCoordinatesByIdent(ident);
+    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(ident);
   });
   initXplane();
 

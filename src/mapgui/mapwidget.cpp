@@ -93,7 +93,7 @@ MapWidget::MapWidget(MainWindow *parent)
   : Marble::MarbleWidget(parent), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
   setMinimumSize(QSize(50, 50));

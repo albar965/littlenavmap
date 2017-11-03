@@ -79,9 +79,9 @@ void MapPainterAirport::render(PaintContext *context)
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache = nullptr;
   if(context->mapLayerEffective->isAirportDiagram())
-    airportCache = query->getAirports(curBox, context->mapLayerEffective, context->lazyUpdate);
+    airportCache = mapQuery->getAirports(curBox, context->mapLayerEffective, context->lazyUpdate);
   else
-    airportCache = query->getAirports(curBox, context->mapLayer, context->lazyUpdate);
+    airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate);
 
   for(const MapAirport& ap : *airportCache)
     airportMap.insert(ap.id, &ap);
@@ -1014,7 +1014,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
     painter->setBackgroundMode(Qt::OpaqueMode);
 
     // Get all runways longer than 4000 feet
-    const QList<map::MapRunway> *rw = query->getRunwaysForOverview(ap.id);
+    const QList<map::MapRunway> *rw = mapQuery->getRunwaysForOverview(ap.id);
 
     QList<QPoint> centers;
     QList<QRect> rects, innerRects;

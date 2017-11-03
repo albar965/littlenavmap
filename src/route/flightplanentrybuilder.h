@@ -55,7 +55,7 @@ class MapQuery;
 class FlightplanEntryBuilder
 {
 public:
-  FlightplanEntryBuilder(MapQuery *mapQuery = nullptr);
+  FlightplanEntryBuilder();
   virtual ~FlightplanEntryBuilder();
 
   void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
@@ -86,7 +86,7 @@ public:
 
   MapQuery *getMapQuery() const
   {
-    return query;
+    return mapQuery;
   }
 
   int getCurUserpointNumber() const
@@ -100,7 +100,7 @@ public:
   }
 
 private:
-  MapQuery *query = nullptr;
+  MapQuery *mapQuery = nullptr;
 
   bool vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const;
   bool ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const;

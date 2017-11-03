@@ -45,7 +45,7 @@ MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintL
   : mapWidget(parentWidget), paintLayer(mapPaintLayer)
 {
   mapQuery = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 }
 
 MapScreenIndex::~MapScreenIndex()

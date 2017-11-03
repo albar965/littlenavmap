@@ -69,7 +69,7 @@ HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
 {
   mapQuery = NavApp::getMapQuery();
   infoQuery = NavApp::getInfoQuery();
-  airportQuery = NavApp::getAirportQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
@@ -381,7 +381,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info && !print)
     addAirportScenery(airport, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: airport_id = %1").arg(airport.getId())).pEnd();
 #endif
 }
@@ -510,18 +510,18 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
         html.tableEnd();
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
         html.p().small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).pEnd();
 #endif
 
         if(details)
         {
           runwayEndText(html, recPrim, hdgPrim, rec.valueFloat("length"));
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).pEnd();
 #endif
           runwayEndText(html, recSec, hdgSec, rec.valueFloat("length"));
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).pEnd();
 #endif
         }
@@ -850,7 +850,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           }
         }
         html.tableEnd();
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
         html.p().small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).pEnd();
 #endif
 
@@ -913,7 +913,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
             addRadionavFixType(html, recTrans);
             html.tableEnd();
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
             html.p().b(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).pEnd();
 #endif
           }
@@ -1246,7 +1246,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().
     text(parsed.getUnusedData()).pEnd();
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(tr("Source: %1").arg(metar.getMetar())).pEnd();
 #endif
 }
@@ -1311,7 +1311,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(rec != nullptr)
     addScenery(rec, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: vor_id = %1").arg(vor.getId())).pEnd();
 #endif
 }
@@ -1356,7 +1356,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   if(rec != nullptr)
     addScenery(rec, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: ndb_id = %1").arg(ndb.getId())).pEnd();
 #endif
 }
@@ -1441,7 +1441,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(rec != nullptr)
     addScenery(rec, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).pEnd();
 #endif
 }
@@ -1509,7 +1509,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
       addScenery(rec, html);
   }
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: boundary_id = %1").arg(airspace.getId())).pEnd();
 #endif
 
@@ -1587,7 +1587,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   }
   html.tableEnd();
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: airway_id = %1").arg(airway.getId())).pEnd();
 #endif
 }
@@ -2409,7 +2409,7 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
     atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f));
     html.row2(tr("Coordinates:"), Unit::coords(pos));
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
     html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()));
 #endif
   }

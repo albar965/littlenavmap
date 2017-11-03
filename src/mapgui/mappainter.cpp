@@ -56,8 +56,8 @@ void PaintContext::szFont(float scale) const
 MapPainter::MapPainter(MapWidget *parentMapWidget, MapScale *mapScale)
   : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), scale(mapScale)
 {
-  query = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
 

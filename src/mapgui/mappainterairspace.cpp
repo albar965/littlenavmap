@@ -51,7 +51,7 @@ void MapPainterAirspace::render(PaintContext *context)
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirspace> *airspaces =
-    query->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer, route->getCruisingAltitudeFeet(),
+    mapQuery->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer, route->getCruisingAltitudeFeet(),
                         context->viewContext == Marble::Animation);
   if(airspaces != nullptr)
   {
@@ -81,7 +81,7 @@ void MapPainterAirspace::render(PaintContext *context)
         if(!context->drawFast)
           painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
 
-        const LineString *lines = query->getAirspaceGeometry(airspace.id);
+        const LineString *lines = mapQuery->getAirspaceGeometry(airspace.id);
 
         for(const Pos& pos : *lines)
           linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));

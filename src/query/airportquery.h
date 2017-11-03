@@ -58,7 +58,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb);
+  AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool nav);
   ~AirportQuery();
 
   void getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country);
@@ -132,6 +132,9 @@ private:
 
   const int queryRowLimit = 5000;
 
+  /* true if third party navdata */
+  bool navdata;
+
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
@@ -142,6 +145,9 @@ private:
   QCache<int, QList<map::MapParking> > parkingCache;
   QCache<int, QList<map::MapStart> > startCache;
   QCache<int, QList<map::MapHelipad> > helipadCache;
+
+  QCache<QString, map::MapAirport> airportIdentCache;
+  QCache<int, map::MapAirport> airportIdCache;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,

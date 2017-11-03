@@ -23,6 +23,8 @@
 #include "mapgui/mapwidget.h"
 #include "common/textplacement.h"
 #include "util/paintercontextsaver.h"
+#include "mapgui/maplayer.h"
+#include "query/mapquery.h"
 
 #include <QElapsedTimer>
 
@@ -60,8 +62,8 @@ void MapPainterNav::render(PaintContext *context)
   if(drawAirway && !context->isOverflow())
   {
     // Draw airway lines
-    const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer,
-                                                        context->viewContext == Marble::Animation);
+    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, context->mapLayer,
+                                                           context->viewContext == Marble::Animation);
     if(airways != nullptr)
       paintAirways(context, airways, context->drawFast);
   }
@@ -71,7 +73,7 @@ void MapPainterNav::render(PaintContext *context)
   if((drawWaypoint || drawAirway) && !context->isOverflow())
   {
     // If airways are drawn we also have to go through waypoints
-    const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, context->lazyUpdate);
+    const QList<MapWaypoint> *waypoints = mapQuery->getWaypoints(curBox, context->mapLayer, context->lazyUpdate);
     if(waypoints != nullptr)
       paintWaypoints(context, waypoints, drawWaypoint, context->drawFast);
   }
@@ -79,7 +81,7 @@ void MapPainterNav::render(PaintContext *context)
   // VOR -------------------------------------------------
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isOverflow())
   {
-    const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, context->lazyUpdate);
+    const QList<MapVor> *vors = mapQuery->getVors(curBox, context->mapLayer, context->lazyUpdate);
     if(vors != nullptr)
       paintVors(context, vors, context->drawFast);
   }
@@ -87,7 +89,7 @@ void MapPainterNav::render(PaintContext *context)
   // NDB -------------------------------------------------
   if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB) && !context->isOverflow())
   {
-    const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, context->lazyUpdate);
+    const QList<MapNdb> *ndbs = mapQuery->getNdbs(curBox, context->mapLayer, context->lazyUpdate);
     if(ndbs != nullptr)
       paintNdbs(context, ndbs, context->drawFast);
   }
@@ -95,7 +97,7 @@ void MapPainterNav::render(PaintContext *context)
   // Marker -------------------------------------------------
   if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS) && !context->isOverflow())
   {
-    const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, context->lazyUpdate);
+    const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate);
     if(markers != nullptr)
       paintMarkers(context, markers, context->drawFast);
   }

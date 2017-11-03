@@ -383,7 +383,7 @@ private:
 
   QMainWindow *mainWindow;
   QTableView *view;
-  MapQuery *query;
+  MapQuery *mapQuery;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;

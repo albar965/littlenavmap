@@ -37,7 +37,7 @@
 // #define DEBUG_CREATE_WINDOW_STATE
 
 /* Show database IDs in the information window and tooltips */
-// #define DEBUG_OBJECT_ID
+// #define DEBUG_INFORMATION
 
 /* Force updates to always show a notification for testing */
 // #define DEBUG_UPDATE

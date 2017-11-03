@@ -78,6 +78,40 @@ MapQuery::~MapQuery()
   delete mapTypesFactory;
 }
 
+map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
+{
+  if(airport.navdata)
+  {
+    map::MapAirport retval;
+    NavApp::getAirportQuerySim()->getAirportByIdent(retval, airport.ident);
+    return retval;
+  }
+  return airport;
+}
+
+map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
+{
+  if(!airport.navdata)
+  {
+    map::MapAirport retval;
+    NavApp::getAirportQueryNav()->getAirportByIdent(retval, airport.ident);
+    return retval;
+  }
+  return airport;
+}
+
+void MapQuery::getAirportSimReplace(map::MapAirport& airport)
+{
+  if(airport.navdata)
+    NavApp::getAirportQuerySim()->getAirportByIdent(airport, airport.ident);
+}
+
+void MapQuery::getAirportNavReplace(map::MapAirport& airport)
+{
+  if(!airport.navdata)
+    NavApp::getAirportQueryNav()->getAirportByIdent(airport, airport.ident);
+}
+
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
 {
   vorByWaypointIdQuery->bindValue(":id", waypointId);
@@ -170,7 +204,7 @@ void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypo
     // Add from waypoint
     map::MapSearchResult result;
     int fromId = rec.valueInt("from_waypoint_id");
-    getMapObjectById(result, map::WAYPOINT, fromId);
+    getMapObjectById(result, map::WAYPOINT, fromId, false /* airport from nav database */);
     if(!result.waypoints.isEmpty())
       aw.waypoint = result.waypoints.first();
     else
@@ -182,7 +216,7 @@ void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypo
       // Add to waypoint if this is the last one or if the fragment is about to change
       result.waypoints.clear();
       int toId = rec.valueInt("to_waypoint_id");
-      getMapObjectById(result, map::WAYPOINT, toId);
+      getMapObjectById(result, map::WAYPOINT, toId, false /* airport from nav database */);
       if(!result.waypoints.isEmpty())
         aw.waypoint = result.waypoints.first();
       else
@@ -259,7 +293,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
     if(airportFromNavDatabase)
       NavApp::getAirportQueryNav()->getAirportByIdent(ap, ident);
     else
-      NavApp::getAirportQuery()->getAirportByIdent(ap, ident);
+      NavApp::getAirportQuerySim()->getAirportByIdent(ap, ident);
 
     if(ap.isValid())
     {
@@ -334,7 +368,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
     if(airportFromNavDatabase)
       NavApp::getAirportQueryNav()->getRunwayEndByNames(result, ident, airport);
     else
-      NavApp::getAirportQuery()->getRunwayEndByNames(result, ident, airport);
+      NavApp::getAirportQuerySim()->getRunwayEndByNames(result, ident, airport);
   }
 
   if(type & map::AIRWAY)
@@ -350,11 +384,14 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
   }
 }
 
-void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id)
+void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id,
+                                bool airportFromNavDatabase)
 {
   if(type == map::AIRPORT)
   {
-    map::MapAirport airport = NavApp::getAirportQuery()->getAirportById(id);
+    map::MapAirport airport = (airportFromNavDatabase ?
+                               NavApp::getAirportQueryNav() :
+                               NavApp::getAirportQuerySim())->getAirportById(id);
     if(airport.isValid())
       result.airports.append(airport);
   }
@@ -384,7 +421,9 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::RUNWAYEND)
   {
-    map::MapRunwayEnd end = NavApp::getAirportQuery()->getRunwayEndById(id);
+    map::MapRunwayEnd end = (airportFromNavDatabase ?
+                             NavApp::getAirportQueryNav() :
+                             NavApp::getAirportQuerySim())->getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
   }
@@ -544,7 +583,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
   {
     if(airportDiagram)
     {
-      QHash<int, QList<map::MapParking> > parkingCache = NavApp::getAirportQuery()->getParkingCache();
+      QHash<int, QList<map::MapParking> > parkingCache = NavApp::getAirportQuerySim()->getParkingCache();
 
       // Also check parking and helipads in airport diagrams
       for(int id : parkingCache.keys())
@@ -557,7 +596,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
         }
       }
 
-      QHash<int, QList<map::MapHelipad> > helipadCache = NavApp::getAirportQuery()->getHelipadCache();
+      QHash<int, QList<map::MapHelipad> > helipadCache = NavApp::getAirportQuerySim()->getHelipadCache();
 
       for(int id : helipadCache.keys())
       {
@@ -944,7 +983,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
           // Fill only a part of the object
           mapTypesFactory->fillAirportForOverview(query->record(), ap);
         else
-          mapTypesFactory->fillAirport(query->record(), ap, true);
+          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, false /* nav */);
 
         if(reverse)
           airportCache.list.prepend(ap);

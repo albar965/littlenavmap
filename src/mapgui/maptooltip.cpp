@@ -33,7 +33,7 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
 MapTooltip::MapTooltip(MainWindow *parentWindow)
-  : mainWindow(parentWindow), query(NavApp::getMapQuery()), weather(NavApp::getWeatherReporter())
+  : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), weather(NavApp::getWeatherReporter())
 {
   qDebug() << Q_FUNC_INFO;
 }

@@ -99,8 +99,8 @@ namespace pln = atools::fs::pln;
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView)
 {
-  query = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 
   routeColumns = QList<QString>({QObject::tr("Ident"),
                                  QObject::tr("Region"),
@@ -122,7 +122,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
-  entryBuilder = new FlightplanEntryBuilder(query);
+  entryBuilder = new FlightplanEntryBuilder();
 
   symbolPainter = new SymbolPainter(Qt::transparent);
 
@@ -664,7 +664,7 @@ void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
     if(!routeLeg.getAirwayName().isEmpty())
     {
       map::MapAirway airway;
-      query->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
+      mapQuery->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
 
@@ -943,7 +943,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
     properties.insert(pln::NAVDATA, NavApp::getCurrentSimulatorShortName());
-    properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycle());
+    properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycleNav());
 
     // Save PLN, FLP or FMS
     flightplan.save(routeFilename, NavApp::getDatabaseAiracCycle(), cleanExport /* clean */);
@@ -1455,7 +1455,7 @@ void RouteController::doubleClick(const QModelIndex& index)
       emit showPos(mo.getPosition(), 0.f, true);
 
     map::MapSearchResult result;
-    query->getMapObjectById(result, mo.getMapObjectType(), mo.getId());
+    mapQuery->getMapObjectById(result, mo.getMapObjectType(), mo.getId(), false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -1509,7 +1509,8 @@ void RouteController::showInformationMenu()
   {
     const RouteLeg& routeLeg = route.at(index.row());
     map::MapSearchResult result;
-    query->getMapObjectById(result, routeLeg.getMapObjectType(), routeLeg.getId());
+    mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), routeLeg.getId(),
+                            false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -1834,6 +1835,11 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   int selectedRows = 0;
   if(sm != nullptr && sm->hasSelection())
     selectedRows = sm->selectedRows().size();
+
+#ifdef DEBUG_INFORMATION
+  if(sm != nullptr && sm->hasSelection())
+    qDebug() << sm->currentIndex().row() << "#" << route.at(sm->currentIndex().row());
+#endif
 
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
@@ -2566,7 +2572,7 @@ void RouteController::routeDelete(int index)
 void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry)
 {
   map::MapAirway airway;
-  query->getAirwayById(airway, airwayId);
+  mapQuery->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
 }
 

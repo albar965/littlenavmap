@@ -53,7 +53,7 @@ RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  airportQuery = NavApp::getAirportQuerySim();
   procQuery = NavApp::getProcedureQuery();
 }
 

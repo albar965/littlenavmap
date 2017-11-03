@@ -73,7 +73,7 @@ private:
   static Q_DECL_CONSTEXPR int MAX_ENTRIES = 3;
 
   MainWindow *mainWindow = nullptr;
-  MapQuery *query;
+  MapQuery *mapQuery;
   WeatherReporter *weather;
 };
 

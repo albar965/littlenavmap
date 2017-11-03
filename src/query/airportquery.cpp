@@ -41,8 +41,8 @@ using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
 
-AirportQuery::AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
-  : QObject(parent), db(sqlDb)
+AirportQuery::AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool nav)
+  : QObject(parent), navdata(nav), db(sqlDb)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -53,6 +53,8 @@ AirportQuery::AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
   parkingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ParkingCache", 1000).toInt());
   startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "StartCache", 1000).toInt());
   helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "HelipadCache", 1000).toInt());
+  airportIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdCache", 1000).toInt());
+  airportIdentCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdentCache", 1000).toInt());
 }
 
 AirportQuery::~AirportQuery()
@@ -83,20 +85,44 @@ map::MapAirport AirportQuery::getAirportById(int airportId)
 
 void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
 {
-  airportByIdQuery->bindValue(":id", airportId);
-  airportByIdQuery->exec();
-  if(airportByIdQuery->next())
-    mapTypesFactory->fillAirport(airportByIdQuery->record(), airport, true);
-  airportByIdQuery->finish();
+  map::MapAirport *ap = airportIdCache.object(airportId);
+
+  if(ap != nullptr)
+    airport = *ap;
+  else
+  {
+    ap = new map::MapAirport;
+
+    airportByIdQuery->bindValue(":id", airportId);
+    airportByIdQuery->exec();
+    if(airportByIdQuery->next())
+      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true, navdata);
+    airportByIdQuery->finish();
+
+    airport = *ap;
+    airportIdCache.insert(airportId, ap);
+  }
 }
 
 void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& ident)
 {
-  airportByIdentQuery->bindValue(":ident", ident);
-  airportByIdentQuery->exec();
-  if(airportByIdentQuery->next())
-    mapTypesFactory->fillAirport(airportByIdentQuery->record(), airport, true);
-  airportByIdentQuery->finish();
+  map::MapAirport *ap = airportIdentCache.object(ident);
+
+  if(ap != nullptr)
+    airport = *ap;
+  else
+  {
+    ap = new map::MapAirport;
+
+    airportByIdentQuery->bindValue(":ident", ident);
+    airportByIdentQuery->exec();
+    if(airportByIdentQuery->next())
+      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true, navdata);
+    airportByIdentQuery->finish();
+
+    airport = *ap;
+    airportIdentCache.insert(ident, ap);
+  }
 }
 
 Pos AirportQuery::getAirportCoordinatesByIdent(const QString& ident)
@@ -141,7 +167,7 @@ map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
   runwayEndByIdQuery->bindValue(":id", id);
   runwayEndByIdQuery->exec();
   if(runwayEndByIdQuery->next())
-    mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end);
+    mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end, navdata);
   runwayEndByIdQuery->finish();
   return end;
 }
@@ -159,7 +185,7 @@ void AirportQuery::getRunwayEndByNames(map::MapSearchResult& result, const QStri
   while(runwayEndByNameQuery->next())
   {
     map::MapRunwayEnd end;
-    mapTypesFactory->fillRunwayEnd(runwayEndByNameQuery->record(), end);
+    mapTypesFactory->fillRunwayEnd(runwayEndByNameQuery->record(), end, navdata);
     result.runwayEnds.append(end);
   }
 }

@@ -176,7 +176,7 @@ protected:
 
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;
-  MapQuery *query;
+  MapQuery *mapQuery;
   AirportQuery *airportQuery;
   MapScale *scale;
 

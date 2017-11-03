@@ -98,7 +98,7 @@ public:
   static map::MapObjectTypes getShownMapFeatures();
   static map::MapAirspaceFilter getShownMapAirspaces();
 
-  static AirportQuery *getAirportQuery();
+  static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
   static InfoQuery *getInfoQuery();
@@ -145,7 +145,7 @@ public:
 
   static ConnectClient *getConnectClient();
 
-  static const atools::fs::db::DatabaseMeta *getDatabaseMeta();
+  static const atools::fs::db::DatabaseMeta *getDatabaseMetaSim();
   static const atools::fs::db::DatabaseMeta *getDatabaseMetaNav();
 
   static QString getDatabaseAiracCycle();

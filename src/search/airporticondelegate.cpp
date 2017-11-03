@@ -57,7 +57,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   // Get airport from the SQL model
   map::MapAirport ap;
-  mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true);
+  mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true /* complete */, false /* nav */);
 
   // Create a style copy
   QStyleOptionViewItem opt(option);

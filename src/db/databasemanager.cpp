@@ -380,8 +380,7 @@ void DatabaseManager::insertSimSwitchActions()
       cycle = tr(" - AIRAC Cycle %1").arg(cycle);
 
     navDbAction = new QAction("&" + QString::number(index) + " " + FsPaths::typeToName(FsPaths::NAVIGRAPH) +
-                              cycle,
-                              ui->menuDatabase);
+                              cycle, ui->menuDatabase);
     navDbAction->setCheckable(true);
     navDbAction->setChecked(usingNavDatabase);
     navDbAction->setStatusTip(tr("Switch to %1 database").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));

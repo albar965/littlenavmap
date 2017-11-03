@@ -183,7 +183,7 @@ private:
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
-  MapQuery *query;
+  MapQuery *mapQuery;
   AirportQuery *airportQuery;
 
   /* Used to delay search when using the time intensive distance search */

@@ -112,8 +112,8 @@ private:
 SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, int tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent)
 {
-  query = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
@@ -644,7 +644,7 @@ void SearchBaseTable::showRow(int row)
     }
 
     map::MapSearchResult result;
-    query->getMapObjectById(result, navType, id);
+    mapQuery->getMapObjectById(result, navType, id, false /* airport from nav database */);
 
     emit showInformation(result);
   }
@@ -886,7 +886,7 @@ void SearchBaseTable::showInformationTriggered()
       getNavTypeAndId(index.row(), navType, id);
 
       map::MapSearchResult result;
-      query->getMapObjectById(result, navType, id);
+      mapQuery->getMapObjectById(result, navType, id, false /* airport from nav database */);
       emit showInformation(result);
     }
   }
@@ -924,7 +924,7 @@ void SearchBaseTable::showOnMapTriggered()
       getNavTypeAndId(index.row(), navType, id);
 
       map::MapSearchResult result;
-      query->getMapObjectById(result, navType, id);
+      mapQuery->getMapObjectById(result, navType, id, false /* airport from nav database */);
 
       if(!result.airports.isEmpty())
       {

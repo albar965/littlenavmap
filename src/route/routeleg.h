@@ -206,6 +206,9 @@ public:
     return valid;
   }
 
+  /* true if nav database otherwise simulator */
+  bool isNavdata() const;
+
   bool isRoute() const
   {
     return !isAnyProcedure();

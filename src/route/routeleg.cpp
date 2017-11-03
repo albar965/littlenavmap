@@ -121,7 +121,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
   MapQuery *mapQuery = NavApp::getMapQuery();
-  AirportQuery *airportQuery = NavApp::getAirportQuery();
+  AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
   QString region = flightplanEntry->getIcaoRegion();
 
@@ -552,6 +552,30 @@ QString RouteLeg::getIdent() const
     return EMPTY_STRING;
 }
 
+bool RouteLeg::isNavdata() const
+{
+  if(airport.isValid())
+    return airport.navdata;
+  else if(vor.isValid())
+    return true;
+  else if(ndb.isValid())
+    return true;
+  else if(waypoint.isValid())
+    return true;
+  else if(ils.isValid())
+    return true;
+  else if(runwayEnd.isValid())
+    return runwayEnd.navdata;
+  else if(type == map::INVALID)
+    return true;
+  else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return true;
+  else if(curEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+    return true;
+
+  return true;
+}
+
 QString RouteLeg::getRegion() const
 {
   if(vor.isValid())
@@ -682,7 +706,7 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  NavApp::getAirportQuery()->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
+  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
 
   if(!start.isValid())
   {
@@ -698,8 +722,13 @@ void RouteLeg::assignRunwayOrHelipad(const QString& name)
 QDebug operator<<(QDebug out, const RouteLeg& leg)
 {
   out << "RouteLeg[id" << leg.getId() << leg.getPosition()
-      << "magvar" << leg.getMagvar() << "distance" << leg.getDistanceTo()
-      << "course mag" << leg.getCourseToMag() << "course true" << leg.getCourseToTrue()
+      << "magvar" << leg.getMagvar()
+      << "distance" << leg.getDistanceTo()
+      << "course mag" << leg.getCourseToMag()
+      << "course true" << leg.getCourseToTrue()
+      << "id" << leg.getId()
+      << "ident" << leg.getIdent()
+      << "nav" << leg.isNavdata()
       << leg.getIdent() << leg.getMapObjectTypeName()
       << proc::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
   return out;

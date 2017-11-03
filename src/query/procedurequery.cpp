@@ -57,9 +57,16 @@ ProcedureQuery::~ProcedureQuery()
   deInitQueries();
 }
 
-const proc::MapProcedureLegs *ProcedureQuery::getApproachLegs(const map::MapAirport& airport, int approachId)
+const proc::MapProcedureLegs *ProcedureQuery::getApproachLegs(map::MapAirport airport, int approachId)
 {
+  mapQuery->getAirportNavReplace(airport);
   return fetchApproachLegs(airport, approachId);
+}
+
+const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(map::MapAirport airport, int transitionId)
+{
+  mapQuery->getAirportNavReplace(airport);
+  return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
 int ProcedureQuery::approachIdForTransitionId(int transitionId)
@@ -71,11 +78,6 @@ int ProcedureQuery::approachIdForTransitionId(int transitionId)
     approachId = approachIdForTransQuery->value("approach_id").toInt();
   approachIdForTransQuery->finish();
   return approachId;
-}
-
-const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const map::MapAirport& airport, int transitionId)
-{
-  return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
 const proc::MapProcedureLeg *ProcedureQuery::getApproachLeg(const map::MapAirport& airport, int approachId, int legId)
@@ -321,8 +323,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   map::MapSearchResult recResult;
   if(leg.recFixType == "W" || leg.recFixType == "TW")
   {
-    mapObjectByIdent(recResult, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion,
-                     QString(), airport.position);
+    mapObjectByIdent(recResult, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
     if(!recResult.waypoints.isEmpty())
     {
       leg.recFixPos = recResult.waypoints.first().position;
@@ -407,7 +408,8 @@ void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString
 
     // Create a dummy with the airport position as the last resort
     map::MapRunwayEnd end;
-    end.name = name;
+    end.navdata = false;
+    end.name = name.startsWith("RW") ? name.mid(2) : name;
     end.heading = rwnum * 10.f;
     end.position = airport.position;
     end.secondary = false;
@@ -1343,16 +1345,16 @@ void ProcedureQuery::initQueries()
   approachIdByNameQuery = new SqlQuery(dbNav);
   if(dbNav->record("approach").contains("arinc_name"))
     approachIdByNameQuery->prepare("select approach_id, arinc_name, suffix, runway_name from approach "
-                                   "where fix_ident like :fixident and type like :type and airport_id = :apid");
+                                   "where fix_ident like :fixident and type like :type and airport_ident = :apident");
   else
     approachIdByNameQuery->prepare("select approach_id, suffix, runway_name from approach "
-                                   "where fix_ident like :fixident and type like :type and airport_id = :apid");
+                                   "where fix_ident like :fixident and type like :type and airport_ident = :apident");
 
   if(dbNav->record("approach").contains("arinc_name"))
   {
     approachIdByArincNameQuery = new SqlQuery(dbNav);
     approachIdByArincNameQuery->prepare("select approach_id, suffix, runway_name from approach "
-                                        "where arinc_name like :arincname and airport_id = :apid");
+                                        "where arinc_name like :arincname and airport_ident = :apident");
   }
 
   transitionIdByNameQuery = new SqlQuery(dbNav);
@@ -1517,16 +1519,18 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
   }
 }
 
-int ProcedureQuery::getSidId(const map::MapAirport& departure, const QString& sid,
+int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid,
                              const QString& runway, float distance, int size)
 {
+  mapQuery->getAirportNavReplace(departure);
+
   int sidApprId = -1;
   // Get a SID id =================================================================
   if(!sid.isEmpty())
   {
     approachIdByNameQuery->bindValue(":fixident", sid);
     approachIdByNameQuery->bindValue(":type", "GPS");
-    approachIdByNameQuery->bindValue(":apid", departure.id);
+    approachIdByNameQuery->bindValue(":apident", departure.ident);
 
     sidApprId = findApproachId(departure, approachIdByNameQuery, "D", runway, distance, size);
     if(sidApprId == -1)
@@ -1535,9 +1539,11 @@ int ProcedureQuery::getSidId(const map::MapAirport& departure, const QString& si
   return sidApprId;
 }
 
-int ProcedureQuery::getSidTransitionId(const map::MapAirport& departure, const QString& sidTrans,
+int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString& sidTrans,
                                        int sidId, float distance, int size)
 {
+  mapQuery->getAirportNavReplace(departure);
+
   int sidTransId = -1;
   // Get a SID transition id =================================================================
   if(!sidTrans.isEmpty() && sidId != -1)
@@ -1554,16 +1560,17 @@ int ProcedureQuery::getSidTransitionId(const map::MapAirport& departure, const Q
   return sidTransId;
 }
 
-int ProcedureQuery::getStarId(const map::MapAirport& destination, const QString& star,
-                              float distance, int size)
+int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, float distance, int size)
 {
+  mapQuery->getAirportNavReplace(destination);
+
   int starId = -1;
   // Get a STAR id =================================================================
   if(!star.isEmpty())
   {
     approachIdByNameQuery->bindValue(":fixident", star);
     approachIdByNameQuery->bindValue(":type", "GPS");
-    approachIdByNameQuery->bindValue(":apid", destination.id);
+    approachIdByNameQuery->bindValue(":apident", destination.ident);
 
     starId = findApproachId(destination, approachIdByNameQuery, "A", QString(), /*No runway*/ distance, size);
     if(starId == -1)
@@ -1574,9 +1581,11 @@ int ProcedureQuery::getStarId(const map::MapAirport& destination, const QString&
   return starId;
 }
 
-int ProcedureQuery::getStarTransitionId(const map::MapAirport& destination, const QString& starTrans, int starId,
+int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId,
                                         float distance, int size)
 {
+  mapQuery->getAirportNavReplace(destination);
+
   int starTransId = -1;
   // Get a STAR transition id =================================================================
   if(!starTrans.isEmpty() && starId != -1)
@@ -1615,13 +1624,16 @@ QVector<int> ProcedureQuery::getTransitionIdsForApproach(int approachId)
 }
 
 bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                                    const map::MapAirport& departure,
-                                                    const map::MapAirport& destination,
+                                                    map::MapAirport departure,
+                                                    map::MapAirport destination,
                                                     proc::MapProcedureLegs& arrivalLegs,
                                                     proc::MapProcedureLegs& starLegs,
                                                     proc::MapProcedureLegs& departureLegs)
 {
   bool error = false;
+
+  mapQuery->getAirportNavReplace(departure);
+  mapQuery->getAirportNavReplace(destination);
 
   int sidApprId = -1, sidTransId = -1, approachId = -1, starId = -1, starTransId = -1, transitionId = -1;
   // Get a SID id (approach and transition) =================================================================
@@ -1664,7 +1676,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
       type = "%";
     approachIdByNameQuery->bindValue(":fixident", properties.value(pln::APPROACH));
     approachIdByNameQuery->bindValue(":type", type);
-    approachIdByNameQuery->bindValue(":apid", destination.id);
+    approachIdByNameQuery->bindValue(":apident", destination.ident);
 
     approachId = findApproachId(destination, approachIdByNameQuery,
                                 properties.value(pln::APPROACHSUFFIX),
@@ -1681,7 +1693,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     // Use ARINC name which is more specific - potential source is new X-Plane FMS file
     approachIdByArincNameQuery->bindValue(":arincname", properties.value(pln::APPROACH_ARINC));
-    approachIdByArincNameQuery->bindValue(":apid", destination.id);
+    approachIdByArincNameQuery->bindValue(":apident", destination.ident);
 
     approachId = findApproachId(destination, approachIdByArincNameQuery,
                                 QString(),

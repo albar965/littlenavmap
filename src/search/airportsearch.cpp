@@ -481,7 +481,7 @@ void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
       rec.setValue(2, controller->getRawData(row, "laty"));
 
       // Not fully populated
-      factory.fillAirport(rec, ap, false);
+      factory.fillAirport(rec, ap, false /* complete */, false /* nav */);
       result.airports.append(ap);
     }
   }

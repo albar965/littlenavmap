@@ -61,6 +61,12 @@ public:
   MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
   ~MapQuery();
 
+  /* Convert airport instances from/to simulator and third party nav databases */
+  map::MapAirport  getAirportSim(const map::MapAirport& airport);
+  map::MapAirport  getAirportNav(const map::MapAirport& airport);
+  void getAirportSimReplace(map::MapAirport& airport);
+  void getAirportNavReplace(map::MapAirport& airport);
+
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
 
@@ -113,7 +119,7 @@ public:
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param id database id
    */
-  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id);
+  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id, bool airportFromNavDatabase);
 
   /*
    * Get objects near a screen coordinate from the cache which will cover all visible objects.

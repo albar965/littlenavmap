@@ -53,7 +53,7 @@ InfoController::InfoController(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
@@ -257,7 +257,7 @@ void InfoController::restoreState()
   for(int i = 0; i < refsStrList.size(); i += 2)
     mapQuery->getMapObjectById(res,
                                map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
-                               refsStrList.at(i).toInt());
+                               refsStrList.at(i).toInt(), false /* airport from nav database */);
 
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   updateTextEditFontSizes();

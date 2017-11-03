@@ -38,12 +38,12 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
   // Update label with airport name/ident
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(map::airportText(departureAirport)));
 
-  const QList<map::MapStart> *startCache = NavApp::getAirportQuery()->getStartPositionsForAirport(departureAirport.id);
+  const QList<map::MapStart> *startCache = NavApp::getAirportQuerySim()->getStartPositionsForAirport(departureAirport.id);
   // Create a copy from the cached start objects to allow sorting
   for(const map::MapStart& start : *startCache)
     entries.append({map::MapParking(), start});
 
-  const QList<map::MapParking> *parkingCache = NavApp::getAirportQuery()->getParkingsForAirport(departureAirport.id);
+  const QList<map::MapParking> *parkingCache = NavApp::getAirportQuerySim()->getParkingsForAirport(departureAirport.id);
   // Create a copy from the cached parking objects and exclude fuel
   for(const map::MapParking& parking : *parkingCache)
     // Vehicles are already omitted in database creation

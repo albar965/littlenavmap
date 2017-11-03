@@ -1305,7 +1305,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
