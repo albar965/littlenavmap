@@ -509,7 +509,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
         int starId = procQuery->getStarId(destination, star);
         if(starId != -1 && !trans.isEmpty())
         {
-          starTransId = procQuery->getSidTransitionId(destination, trans, starId);
+          starTransId = procQuery->getStarTransitionId(destination, trans, starId);
           foundStar = starTransId != -1;
         }
         else
