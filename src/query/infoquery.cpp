@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/infoquery.h"
+#include "query/infoquery.h"
 
 #include "sql/sqldatabase.h"
 #include "settings/settings.h"
@@ -26,8 +26,8 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 
-InfoQuery::InfoQuery(SqlDatabase *sqlDb)
-  : db(sqlDb)
+InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
+  : db(sqlDb), dbNav(sqlDbNav)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
@@ -241,31 +241,31 @@ void InfoQuery::initQueries()
   comQuery = new SqlQuery(db);
   comQuery->prepare("select * from com where airport_id = :id order by type, frequency");
 
-  vorQuery = new SqlQuery(db);
+  vorQuery = new SqlQuery(dbNav);
   vorQuery->prepare("select * from vor "
                     "join bgl_file on vor.file_id = bgl_file.bgl_file_id "
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where vor_id = :id");
 
-  ndbQuery = new SqlQuery(db);
+  ndbQuery = new SqlQuery(dbNav);
   ndbQuery->prepare("select * from ndb "
                     "join bgl_file on ndb.file_id = bgl_file.bgl_file_id "
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where ndb_id = :id");
 
-  waypointQuery = new SqlQuery(db);
+  waypointQuery = new SqlQuery(dbNav);
   waypointQuery->prepare("select * from waypoint "
                          "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
                          "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                          "where waypoint_id = :id");
 
-  airspaceQuery = new SqlQuery(db);
+  airspaceQuery = new SqlQuery(dbNav);
   airspaceQuery->prepare("select * from boundary "
                          "join bgl_file on boundary.file_id = bgl_file.bgl_file_id "
                          "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                          "where boundary_id = :id");
 
-  airwayQuery = new SqlQuery(db);
+  airwayQuery = new SqlQuery(dbNav);
   airwayQuery->prepare("select * from airway where airway_id = :id");
 
   runwayQuery = new SqlQuery(db);
@@ -285,7 +285,7 @@ void InfoQuery::initQueries()
   ilsQuery = new SqlQuery(db);
   ilsQuery->prepare("select * from ils where loc_runway_end_id = :id");
 
-  airwayWaypointQuery = new SqlQuery(db);
+  airwayWaypointQuery = new SqlQuery(dbNav);
   airwayWaypointQuery->prepare("select "
                                " w1.ident as from_ident, w1.region as from_region, "
                                " w1.lonx as from_lonx, w1.laty as from_laty, "
@@ -297,15 +297,15 @@ void InfoQuery::initQueries()
                                " where airway_name = :name and airway_fragment_no = :fragment "
                                " order by a.sequence_no");
 
-  vorIdentRegionQuery = new SqlQuery(db);
+  vorIdentRegionQuery = new SqlQuery(dbNav);
   vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");
 
-  approachQuery = new SqlQuery(db);
+  approachQuery = new SqlQuery(dbNav);
   approachQuery->prepare("select a.runway_name, r.runway_end_id, a.* from approach a "
                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
                          "where a.airport_id = :id");
 
-  transitionQuery = new SqlQuery(db);
+  transitionQuery = new SqlQuery(dbNav);
   transitionQuery->prepare("select * from transition where approach_id = :id order by fix_ident");
 }
 

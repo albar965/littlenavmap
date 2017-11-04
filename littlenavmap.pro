@@ -112,7 +112,6 @@ SOURCES += src/main.cpp\
     src/search/searchcontroller.cpp \
     src/search/airportsearch.cpp \
     src/search/navsearch.cpp \
-    src/mapgui/mapquery.cpp \
     src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
     src/mapgui/maplayersettings.cpp \
@@ -169,11 +168,9 @@ SOURCES += src/main.cpp\
     src/route/flightplanentrybuilder.cpp \
     src/common/unit.cpp \
     src/route/userwaypointdialog.cpp \
-    src/common/infoquery.cpp \
     src/common/textplacement.cpp \
     src/route/routeleg.cpp \
     src/route/route.cpp \
-    src/common/procedurequery.cpp \
     src/search/abstractsearch.cpp \
     src/search/proceduresearch.cpp \
     src/common/proctypes.cpp \
@@ -186,7 +183,11 @@ SOURCES += src/main.cpp\
     src/mapgui/mappaintership.cpp \
     src/mapgui/mappaintervehicle.cpp \
     src/common/updatehandler.cpp \
-    src/gui/updatedialog.cpp
+    src/gui/updatedialog.cpp \
+    src/query/airportquery.cpp \
+    src/query/infoquery.cpp \
+    src/query/mapquery.cpp \
+    src/query/procedurequery.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -196,7 +197,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/searchcontroller.h \
     src/search/airportsearch.h \
     src/search/navsearch.h \
-    src/mapgui/mapquery.h \
     src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
     src/mapgui/maplayersettings.h \
@@ -253,11 +253,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/flightplanentrybuilder.h \
     src/common/unit.h \
     src/route/userwaypointdialog.h \
-    src/common/infoquery.h \
     src/common/textplacement.h \
     src/route/routeleg.h \
     src/route/route.h \
-    src/common/procedurequery.h \
     src/search/abstractsearch.h \
     src/search/proceduresearch.h \
     src/common/proctypes.h \
@@ -270,7 +268,11 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappaintership.h \
     src/mapgui/mappaintervehicle.h \
     src/common/updatehandler.h \
-    src/gui/updatedialog.h
+    src/gui/updatedialog.h \
+    src/query/airportquery.h \
+    src/query/infoquery.h \
+    src/query/mapquery.h \
+    src/query/procedurequery.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

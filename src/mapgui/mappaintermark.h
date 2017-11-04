@@ -36,7 +36,7 @@ class MapPainterMark :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterMark(MapWidget *mapWidget, MapScale *mapScale);
   virtual ~MapPainterMark();
 
   virtual void render(PaintContext *context) override;

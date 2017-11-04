@@ -76,10 +76,13 @@ public:
 
   /* Close database.
    * Will not return if an exception is caught during opening. */
-  void closeDatabase();
+  void closeDatabases();
 
-  /* Get the database. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabase();
+  /* Get the simulator database. Will return null if not opened before. */
+  atools::sql::SqlDatabase *getDatabaseSim();
+
+  /* Get navaid database or same as above if it does not exist */
+  atools::sql::SqlDatabase *getDatabaseNav();
 
   /*
    * Insert actions for switching between installed flight simulators.
@@ -139,6 +142,8 @@ private:
   QString buildCompilingDatabaseFileName();
 
   void switchSimFromMainMenu();
+  void switchNavFromMainMenu();
+
   void freeActions();
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
   void updateSimulatorFlags();
@@ -146,7 +151,12 @@ private:
   bool loadScenery(atools::sql::SqlDatabase *db);
   void correctSimulatorType();
 
+  /* Database name for all loaded from simulators */
   const QString DATABASE_NAME = "LNMDB";
+
+  /* Navaid database e.g. from Navigraph */
+  const QString DATABASE_NAME_NAV = "LNMDBNAV";
+
   const QString DATABASE_NAME_TEMP = "LNMTEMPDB";
   const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
   const QString DATABASE_TYPE = "QSQLITE";
@@ -156,7 +166,7 @@ private:
   qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
-  atools::sql::SqlDatabase *database = nullptr;
+  atools::sql::SqlDatabase *database = nullptr, *databaseNav = nullptr;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
@@ -164,13 +174,16 @@ private:
   /* Switch simulator actions */
   QActionGroup *group = nullptr;
   QList<QAction *> actions;
-  QAction *menuDbSeparator = nullptr, *menuExternDbSeparator = nullptr;
+  QAction *navDbAction = nullptr, *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
 
   atools::fs::FsPaths::SimulatorType
   /* Currently selected simulator which will be used in the map, search, etc. */
     currentFsType = atools::fs::FsPaths::UNKNOWN,
   /* Currently selected simulator in the load scenery database dialog */
     selectedFsType = atools::fs::FsPaths::UNKNOWN;
+
+  /* Using Navigraph update or not */
+  bool usingNavDatabase = false;
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;

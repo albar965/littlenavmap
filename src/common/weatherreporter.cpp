@@ -23,7 +23,8 @@
 #include "fs/common/xpweatherreader.h"
 #include "navapp.h"
 #include "fs/sc/simconnecttypes.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 
 #include <QDebug>
 #include <QDir>
@@ -54,7 +55,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   // Set callback so the reader can build an index for nearest airports
   xpWeatherReader->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
   {
-    return NavApp::getMapQuery()->getAirportCoordinatesByIdent(ident);
+    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(ident);
   });
   initXplane();
 

@@ -46,6 +46,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class QMainWindow;
 class ProcedureQuery;
+class AirportQuery;
 class HtmlInfoBuilder;
 class TreeEventFilter;
 
@@ -173,6 +174,7 @@ private:
 
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
+  AirportQuery *airportQuery = nullptr;
   QTreeWidget *treeWidget = nullptr;
   QMainWindow *mainWindow = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;

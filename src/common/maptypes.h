@@ -107,6 +107,7 @@ struct MapAirport
   int rating = -1;
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
+  bool navdata; /* true if source is third party nav database, false if source is simulator data */
 
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
   atools::geo::Pos position, towerCoords;
@@ -214,6 +215,7 @@ struct MapRunwayEnd
   float heading;
   atools::geo::Pos position;
   bool secondary;
+  bool navdata; /* true if source is third party nav database, false if source is simulator data */
 
   bool isValid() const
   {

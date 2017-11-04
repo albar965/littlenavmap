@@ -55,7 +55,7 @@ public:
    * @param query Database query object
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromDatabaseByEntry(int entryIndex, MapQuery *mapQuery, const RouteLeg *prevLeg);
+  void createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg);
 
   /*
    * Creates a route map object from an airport database object.
@@ -206,6 +206,9 @@ public:
     return valid;
   }
 
+  /* true if nav database otherwise simulator */
+  bool isNavdata() const;
+
   bool isRoute() const
   {
     return !isAnyProcedure();
@@ -271,8 +274,9 @@ private:
                           atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
-  void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, MapQuery *mapQuery,
-                       const atools::geo::Pos& last, float maxDistance);
+  void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
+                       float maxDistance);
+  void assignRunwayOrHelipad(const QString& name);
 
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -301,7 +305,6 @@ private:
         magvar = 0.f; /* Either taken from navaid or average across the route */
   atools::geo::LineString geometry;
 
-  void assignRunwayOrHelipad(MapQuery* mapQuery, const QString& name);
 };
 
 QDebug operator<<(QDebug out, const RouteLeg& leg);

@@ -37,7 +37,7 @@
 // #define DEBUG_CREATE_WINDOW_STATE
 
 /* Show database IDs in the information window and tooltips */
-// #define DEBUG_OBJECT_ID
+// #define DEBUG_INFORMATION
 
 /* Force updates to always show a notification for testing */
 // #define DEBUG_UPDATE
@@ -89,10 +89,12 @@ const QLatin1Literal ACTIONS_SHOW_FMS_WARNING("Actions/ShowFmsWarning");
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");
 const QLatin1Literal DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");
 const QLatin1Literal DATABASE_PATHS("Database/Paths");
+const QLatin1Literal DATABASE_USE_NAV("Database/UseNav");
 const QLatin1Literal DATABASE_SCENERYCONFIG("Database/SceneryConfig");
 const QLatin1Literal DATABASE_SIMULATOR("Database/Simulator");
 const QLatin1Literal DATABASE_LOAD_INACTIVE("Database/LoadInactive");
 const QLatin1Literal DATABASE_LOAD_ADDONXML("Database/LoadAddOnXml");
+
 const QLatin1Literal EXPORT_FILEDIALOG("Export/FileDialog");
 const QLatin1Literal INFOWINDOW_CURRENTMAPOBJECTS("InfoWindow/CurrentMapObjects");
 const QLatin1Literal INFOWINDOW_WIDGET("InfoWindow/Widget");

@@ -54,16 +54,18 @@ class MapQuery
   Q_OBJECT
 
 public:
-  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb);
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
   ~MapQuery();
 
-  void getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country);
-
-  void getAirportById(map::MapAirport& airport, int airportId);
-  map::MapAirport getAirportById(int airportId);
-
-  void getAirportByIdent(map::MapAirport& airport, const QString& ident);
-  atools::geo::Pos getAirportCoordinatesByIdent(const QString& ident);
+  /* Convert airport instances from/to simulator and third party nav databases */
+  map::MapAirport  getAirportSim(const map::MapAirport& airport);
+  map::MapAirport  getAirportNav(const map::MapAirport& airport);
+  void getAirportSimReplace(map::MapAirport& airport);
+  void getAirportNavReplace(map::MapAirport& airport);
 
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
@@ -93,7 +95,6 @@ public:
   map::MapNdb getNdbById(int id);
   map::MapIls getIlsById(int id);
   map::MapWaypoint getWaypointById(int id);
-  map::MapRunwayEnd getRunwayEndById(int id);
   map::MapAirspace getAirspaceById(int airspaceId);
 
   /*
@@ -106,7 +107,11 @@ public:
   void getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
                            const QString& ident, const QString& region = QString(), const QString& airport = QString(),
                            const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
-                           float maxDistance = map::INVALID_DISTANCE_VALUE);
+                           float maxDistance = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
+
+  void getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
+                           const QString& ident, const QString& region,
+                           const QString& airport, bool airportFromNavDatabase);
 
   /*
    * Get a map object by type and id
@@ -114,7 +119,7 @@ public:
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param id database id
    */
-  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id);
+  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id, bool airportFromNavDatabase);
 
   /*
    * Get objects near a screen coordinate from the cache which will cover all visible objects.
@@ -131,30 +136,6 @@ public:
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
                          map::MapObjectTypes types, int xs, int ys, int screenDistance,
                          map::MapSearchResult& result);
-
-  /*
-   * Get a parking spot of an airport by name and number
-   * @param parkings result
-   * @param airportId airport where parking spot should be fetched
-   * @param name name like PARKING, GATE_P, etc.
-   * @param number parking number
-   */
-  void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name, int number);
-  void getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name,
-                        const atools::geo::Pos& sortByDistancePos);
-
-  /*
-   * Get a start position of an airport (runway, helipad and water)
-   * @param start result
-   * @param airportId airport where start position should be fetched
-   * @param runwayEndName name like 24, 12C, 13W
-   * @param position needed to distinguish between helipads and runways which can have the same name
-   */
-  void getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
-                            const atools::geo::Pos& position);
-
-  /* Get best start position for an airport. This is the longest preferrably hard surfaced primary runway end */
-  void getBestStartPositionForAirport(map::MapStart& start, int airportId);
 
   /*
    * Fetch airports for a map coordinate rectangle
@@ -192,20 +173,6 @@ public:
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
-  /* Get a completely filled runway list for the airport */
-  const QList<map::MapRunway> *getRunways(int airportId);
-  QStringList getRunwayNames(int airportId);
-
-  const QList<map::MapApron> *getAprons(int airportId);
-
-  const QList<map::MapTaxiPath> *getTaxiPaths(int airportId);
-
-  const QList<map::MapParking> *getParkingsForAirport(int airportId);
-
-  const QList<map::MapStart> *getStartPositionsForAirport(int airportId);
-
-  const QList<map::MapHelipad> *getHelipads(int airportId);
-
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
@@ -235,6 +202,11 @@ private:
     QList<TYPE> list;
   };
 
+  void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
+                                const QString& ident, const QString& region, const QString& airport,
+                                const atools::geo::Pos& sortByDistancePos,
+                                float maxDistance, bool airportFromNavDatabase);
+
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query, bool reverse,
                                               bool lazy, bool overview);
@@ -249,7 +221,7 @@ private:
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
   MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase *db, *dbNav;
 
   /* Simple bounding rectangle caches */
   SimpleRectCache<map::MapAirport> airportCache;
@@ -264,13 +236,7 @@ private:
   float lastFlightplanAltitude = 0.f;
 
   /* ID/object caches */
-  QCache<int, QList<map::MapRunway> > runwayCache;
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
-  QCache<int, QList<map::MapApron> > apronCache;
-  QCache<int, QList<map::MapTaxiPath> > taxipathCache;
-  QCache<int, QList<map::MapParking> > parkingCache;
-  QCache<int, QList<map::MapStart> > startCache;
-  QCache<int, QList<map::MapHelipad> > helipadCache;
   QCache<int, atools::geo::LineString> airspaceLineCache;
 
   /* Inflate bounding rectangle before passing it to query */
@@ -279,14 +245,9 @@ private:
   static int queryRowLimit;
 
   /* Database queries */
-  atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
+  atools::sql::SqlQuery *runwayOverviewQuery = nullptr,
+                        *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
                         *airportLargeByRectQuery = nullptr;
-
-  atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
-                        *parkingQuery = nullptr, *startQuery = nullptr, *helipadQuery = nullptr,
-                        *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-                        *parkingTypeAndNumberQuery = nullptr,
-                        *parkingNameQuery = nullptr;
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
                         *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
@@ -295,17 +256,14 @@ private:
                         *airspaceByRectAtAltQuery = nullptr,
                         *airspaceLinesByIdQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr,
-                        *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr,
+  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr,
                         *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
                         *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
-                        *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
-                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+                        *ilsByIdQuery = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr,
-                        *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
+  atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
                         *airwayByIdQuery = nullptr,
                         *airspaceByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,
                         *airwayWaypointsQuery = nullptr,

@@ -33,7 +33,8 @@
 #include "route/route.h"
 #include "route/routecontroller.h"
 #include "atools.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 #include "mapgui/maptooltip.h"
 #include "common/symbolpainter.h"
 #include "mapgui/mapscreenindex.h"
@@ -89,8 +90,11 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
 MapWidget::MapWidget(MainWindow *parent)
-  : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(NavApp::getMapQuery())
+  : Marble::MarbleWidget(parent), mainWindow(parent)
 {
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuerySim();
+
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
   setMinimumSize(QSize(50, 50));
 
@@ -112,7 +116,7 @@ MapWidget::MapWidget(MainWindow *parent)
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
-  screenIndex = new MapScreenIndex(this, mapQuery, paintLayer);
+  screenIndex = new MapScreenIndex(this, paintLayer);
 
   // Disable all unwante popups on mouse click
   MarbleWidgetInputHandler *input = inputHandler();
@@ -1497,7 +1501,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     {
       // Get airport for parking
       map::MapAirport parkAp;
-      mapQuery->getAirportById(parkAp, parking->airportId);
+      airportQuery->getAirportById(parkAp, parking->airportId);
       airportText = map::airportText(parkAp) + " / ";
     }
 
@@ -1557,7 +1561,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(airport != nullptr)
   {
-    if(airport->flags & map::AP_PROCEDURE)
+    if(NavApp::getAirportQueryNav()->hasProcedures(airport->ident))
     {
       ui->actionMapShowApproaches->setEnabled(true);
       ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));

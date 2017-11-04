@@ -18,14 +18,16 @@
 #include "route/parkingdialog.h"
 
 #include "ui_parkingdialog.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 #include "common/mapcolors.h"
 #include "atools.h"
+#include "navapp.h"
 #include "common/unit.h"
 
 #include <QPushButton>
 
-ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::MapAirport& departureAirport)
+ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAirport)
   : QDialog(parent), ui(new Ui::ParkingDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -36,12 +38,12 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::Map
   // Update label with airport name/ident
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(map::airportText(departureAirport)));
 
-  const QList<map::MapStart> *startCache = mapQuery->getStartPositionsForAirport(departureAirport.id);
+  const QList<map::MapStart> *startCache = NavApp::getAirportQuerySim()->getStartPositionsForAirport(departureAirport.id);
   // Create a copy from the cached start objects to allow sorting
   for(const map::MapStart& start : *startCache)
     entries.append({map::MapParking(), start});
 
-  const QList<map::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
+  const QList<map::MapParking> *parkingCache = NavApp::getAirportQuerySim()->getParkingsForAirport(departureAirport.id);
   // Create a copy from the cached parking objects and exclude fuel
   for(const map::MapParking& parking : *parkingCache)
     // Vehicles are already omitted in database creation

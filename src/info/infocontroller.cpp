@@ -24,7 +24,8 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 #include "route/route.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
@@ -49,8 +50,11 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
 InfoController::InfoController(MainWindow *parent)
-  : QObject(parent), mainWindow(parent), mapQuery(NavApp::getMapQuery())
+  : QObject(parent), mainWindow(parent)
 {
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuerySim();
+
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -135,7 +139,7 @@ void InfoController::anchorClicked(const QUrl& url)
         int id = query.queryItemValue("id").toInt();
 
         if(type & map::AIRPORT)
-          emit showRect(mapQuery->getAirportById(id).bounding, false);
+          emit showRect(airportQuery->getAirportById(id).bounding, false);
         if(type & map::AIRSPACE)
           emit showRect(mapQuery->getAirspaceById(id).bounding, false);
       }
@@ -143,7 +147,7 @@ void InfoController::anchorClicked(const QUrl& url)
       {
         // Airport ident from AI aircraft progress
         map::MapAirport airport;
-        mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
+        airportQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
         emit showRect(airport.bounding, false);
       }
       else if(query.hasQueryItem("filepath"))
@@ -253,7 +257,7 @@ void InfoController::restoreState()
   for(int i = 0; i < refsStrList.size(); i += 2)
     mapQuery->getMapObjectById(res,
                                map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
-                               refsStrList.at(i).toInt());
+                               refsStrList.at(i).toInt(), false /* airport from nav database */);
 
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   updateTextEditFontSizes();
@@ -302,7 +306,7 @@ void InfoController::updateAirportInternal(bool newAirport)
     {
       HtmlBuilder html(true);
       map::MapAirport airport;
-      mapQuery->getAirportById(airport, currentSearchResult.airports.first().id);
+      airportQuery->getAirportById(airport, currentSearchResult.airports.first().id);
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
@@ -715,10 +719,10 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
     {
       QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
         std::find_if(newAiAircraft.begin(), newAiAircraft.end(),
-                     [ = ](const SimConnectAircraft &ac)->bool
-                     {
-                       return ac.getObjectId() == aircraft.getObjectId();
-                     });
+                     [ = ](const SimConnectAircraft& ac) -> bool
+      {
+        return ac.getObjectId() == aircraft.getObjectId();
+      });
       if(it != newAiAircraft.end())
         newAiAircraftShown.append(*it);
     }

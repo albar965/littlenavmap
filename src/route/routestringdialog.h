@@ -79,7 +79,7 @@ private:
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
-  MapQuery *query = nullptr;
+  MapQuery *mapQuery = nullptr;
   RouteController *controller = nullptr;
   RouteString *routeString;
   float speedKts = 0.f;
@@ -87,6 +87,7 @@ private:
   rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;
 
   void updateFlightplan();
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

@@ -27,6 +27,7 @@
 
 class RouteLeg;
 class MapQuery;
+class AirportQuery;
 class InfoQuery;
 class WeatherReporter;
 class Route;
@@ -275,6 +276,7 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
+  AirportQuery *airportQuery;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;
   bool info, print;

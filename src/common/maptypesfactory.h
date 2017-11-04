@@ -58,8 +58,9 @@ public:
    * Populate airport object.
    * @param complete if false only id and position are present in the record. Used for creating the object
    * based on incomplete records in the search.
+   * @param nav filled from third party nav database
    */
-  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete);
+  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav);
 
   /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
   void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport);
@@ -68,7 +69,7 @@ public:
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
    */
   void fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview);
-  void fillRunwayEnd(const atools::sql::SqlRecord& record, map::MapRunwayEnd& end);
+  void fillRunwayEnd(const atools::sql::SqlRecord& record, map::MapRunwayEnd& end, bool nav);
 
   void fillVor(const atools::sql::SqlRecord& record, map::MapVor& vor);
   void fillVorFromNav(const atools::sql::SqlRecord& record, map::MapVor& vor);

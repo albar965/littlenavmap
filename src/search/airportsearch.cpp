@@ -41,9 +41,8 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
 
-AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuery *mapQuery,
-                             int tabWidgetIndex)
-  : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), mapQuery, tabWidgetIndex)
+AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex)
+  : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -235,7 +234,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, MapQuer
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  SearchBaseTable::initViewAndController();
+  SearchBaseTable::initViewAndController(NavApp::getDatabaseSim());
 
   // Add model data handler and model format handler as callbacks
   setCallbacks();
@@ -482,7 +481,7 @@ void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
       rec.setValue(2, controller->getRawData(row, "laty"));
 
       // Not fully populated
-      factory.fillAirport(rec, ap, false);
+      factory.fillAirport(rec, ap, false /* complete */, false /* nav */);
       result.airports.append(ap);
     }
   }

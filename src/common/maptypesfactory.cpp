@@ -36,9 +36,10 @@ MapTypesFactory::~MapTypesFactory()
 
 }
 
-void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete)
+void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav)
 {
   fillAirportBase(record, airport, complete);
+  airport.navdata = nav;
 
   if(complete)
   {
@@ -62,6 +63,7 @@ void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAi
 {
   fillAirportBase(record, airport, true);
 
+  airport.navdata = false;
   airport.flags = fillAirportFlags(record, true);
   airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
@@ -108,8 +110,9 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
 }
 
-void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRunwayEnd& end)
+void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRunwayEnd& end, bool nav)
 {
+  end.navdata = nav;
   end.name = record.valueStr("name");
   end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   end.secondary = record.valueStr("end_type") == "S";

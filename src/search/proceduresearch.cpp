@@ -20,8 +20,8 @@
 #include "common/unit.h"
 #include "navapp.h"
 #include "common/mapcolors.h"
-#include "common/infoquery.h"
-#include "common/procedurequery.h"
+#include "query/infoquery.h"
+#include "query/procedurequery.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
@@ -29,7 +29,8 @@
 #include "common/constants.h"
 #include "settings/settings.h"
 #include "gui/widgetstate.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 #include "common/htmlinfobuilder.h"
 #include "util/htmlbuilder.h"
 #include "common/symbolpainter.h"
@@ -106,10 +107,12 @@ TreeEventFilter::~TreeEventFilter()
 }
 
 ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
-  : AbstractSearch(main,
-                   tabWidgetIndex), infoQuery(NavApp::getInfoQuery()), procedureQuery(NavApp::getProcedureQuery()),
-  treeWidget(treeWidgetParam), mainWindow(main)
+  : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam), mainWindow(main)
 {
+  infoQuery = NavApp::getInfoQuery();
+  procedureQuery = NavApp::getProcedureQuery();
+  airportQuery = NavApp::getAirportQueryNav();
+
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
 
@@ -219,16 +222,13 @@ void ProcedureSearch::postDatabaseLoad()
 
 void ProcedureSearch::showProcedures(map::MapAirport airport)
 {
-  if(!(airport.flags & map::AP_PROCEDURE))
-    return;
-
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
   ui->tabWidgetSearch->setCurrentIndex(2);
   treeWidget->setFocus();
 
-  if(currentAirport.isValid() && currentAirport.id == airport.id)
+  if(currentAirport.isValid() && currentAirport.ident == airport.ident)
     // Ignore if noting has changed - or jump out of the view mode
     return;
 
@@ -239,7 +239,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   if(currentAirport.isValid())
     recentTreeState.insert(currentAirport.id, saveTreeViewState());
 
-  currentAirport = airport;
+  airportQuery->getAirportByIdent(currentAirport, airport.ident);
 
   updateFilterBoxes();
   fillApproachTreeWidget();
@@ -321,7 +321,7 @@ void ProcedureSearch::updateFilterBoxes()
 
   if(currentAirport.isValid())
   {
-    QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(currentAirport.id);
+    QStringList runwayNames = airportQuery->getRunwayNames(currentAirport.id);
 
     // Add a tree of transitions and approaches
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirport.id);
@@ -364,7 +364,7 @@ void ProcedureSearch::fillApproachTreeWidget()
 
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(currentAirport.id);
+      QStringList runwayNames = airportQuery->getRunwayNames(currentAirport.id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
       SqlRecordVector sorted;
@@ -479,7 +479,7 @@ void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   if(NavApp::hasDataInDatabase())
-    NavApp::getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+    airportQuery->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
   updateFilterBoxes();
 
   Ui::MainWindow *ui = NavApp::getMainUi();

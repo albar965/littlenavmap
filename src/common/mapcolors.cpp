@@ -17,7 +17,7 @@
 
 #include "common/mapcolors.h"
 
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
 

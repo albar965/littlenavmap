@@ -48,7 +48,7 @@ class MapPainterVehicle :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterVehicle(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterVehicle(MapWidget *mapWidget, MapScale *mapScale);
   virtual ~MapPainterVehicle();
 
   virtual void render(PaintContext *context) = 0;

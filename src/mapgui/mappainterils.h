@@ -36,7 +36,7 @@ class MapPainterIls :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterIls(MapWidget *mapWidget, MapScale *mapScale);
   virtual ~MapPainterIls();
 
   virtual void render(PaintContext *context) override;

@@ -33,6 +33,7 @@ class FlightplanEntry;
 }
 
 class MapQuery;
+class AirportQuery;
 class ProcedureQuery;
 class FlightplanEntryBuilder;
 class Route;
@@ -123,6 +124,7 @@ private:
   QString createSpeedAndAltitude(float speedKnots, float altFeet);
 
   MapQuery *mapQuery = nullptr;
+  AirportQuery *airportQuery = nullptr;
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;

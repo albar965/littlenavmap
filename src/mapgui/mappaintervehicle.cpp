@@ -46,8 +46,8 @@ bool MapPainterVehicle::PixmapKey::operator==(const MapPainterVehicle::PixmapKey
   return type == other.type && ground == other.ground && user == other.user && size == other.size;
 }
 
-MapPainterVehicle::MapPainterVehicle(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(mapWidget, mapQuery, mapScale)
+MapPainterVehicle::MapPainterVehicle(MapWidget *mapWidget, MapScale *mapScale)
+  : MapPainter(mapWidget, mapScale)
 {
 
 }

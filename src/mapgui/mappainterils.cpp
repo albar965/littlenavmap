@@ -19,7 +19,7 @@
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(mapWidget, mapQuery, mapScale)
+MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapScale *mapScale)
+  : MapPainter(mapWidget, mapScale)
 {
 }
 
@@ -51,7 +51,7 @@ void MapPainterIls::render(PaintContext *context)
   {
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
-    const QList<MapIls> *ilsList = query->getIls(curBox, context->mapLayer, context->lazyUpdate);
+    const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate);
     if(ilsList != nullptr)
     {
       atools::util::PainterContextSaver saver(context->painter);

@@ -26,8 +26,8 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainterVehicle(mapWidget, mapQuery, mapScale)
+MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapScale *mapScale)
+  : MapPainterVehicle(mapWidget, mapScale)
 {
 
 }

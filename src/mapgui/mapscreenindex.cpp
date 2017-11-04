@@ -25,8 +25,9 @@
 #include "mapgui/mappaintlayer.h"
 #include "mapgui/maplayer.h"
 #include "common/maptypes.h"
+#include "query/airportquery.h"
 #include "common/maptools.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "common/coordinateconverter.h"
 #include "common/constants.h"
 #include "settings/settings.h"
@@ -40,9 +41,11 @@ using map::MapAirway;
 using Marble::GeoDataLineString;
 using Marble::GeoDataCoordinates;
 
-MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapQuery *mapQueryParam, MapPaintLayer *mapPaintLayer)
-  : mapWidget(parentWidget), mapQuery(mapQueryParam), paintLayer(mapPaintLayer)
+MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintLayer)
+  : mapWidget(parentWidget), paintLayer(mapPaintLayer)
 {
+  mapQuery = NavApp::getMapQuery();
+  airportQuery = NavApp::getAirportQuerySim();
 }
 
 MapScreenIndex::~MapScreenIndex()
@@ -341,7 +344,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   // Update all incomplete objects, especially from search
   for(map::MapAirport& obj : result.airports)
     if(!obj.complete())
-      mapQuery->getAirportById(obj, obj.getId());
+      airportQuery->getAirportById(obj, obj.getId());
 }
 
 void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result)

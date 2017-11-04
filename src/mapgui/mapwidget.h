@@ -43,6 +43,7 @@ class QContextMenuEvent;
 class MainWindow;
 class MapPaintLayer;
 class MapQuery;
+class AirportQuery;
 class RouteController;
 class MapTooltip;
 class QRubberBand;
@@ -392,6 +393,7 @@ private:
   MainWindow *mainWindow;
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
+  AirportQuery *airportQuery;
   MapScreenIndex *screenIndex = nullptr;
 
   atools::geo::Pos searchMarkPos, homePos;

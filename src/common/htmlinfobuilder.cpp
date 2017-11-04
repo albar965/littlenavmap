@@ -25,8 +25,9 @@
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
-#include "common/infoquery.h"
-#include "mapgui/mapquery.h"
+#include "query/infoquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "common/symbolpainter.h"
@@ -63,9 +64,13 @@ const float MIN_GROUND_SPEED = 30.f;
 
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
-  : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), infoQuery(NavApp::getInfoQuery()), info(formatInfo),
+  : mainWindow(parentWindow), info(formatInfo),
   print(formatPrint)
 {
+  mapQuery = NavApp::getMapQuery();
+  infoQuery = NavApp::getInfoQuery();
+  airportQuery = NavApp::getAirportQuerySim();
+
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
 
@@ -152,7 +157,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.br();
 
   QString city, state, country;
-  mapQuery->getAirportAdminNamesById(airport.id, city, state, country);
+  airportQuery->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
   if(route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
@@ -376,7 +381,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info && !print)
     addAirportScenery(airport, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: airport_id = %1").arg(airport.getId())).pEnd();
 #endif
 }
@@ -505,18 +510,18 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
         html.tableEnd();
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
         html.p().small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).pEnd();
 #endif
 
         if(details)
         {
           runwayEndText(html, recPrim, hdgPrim, rec.valueFloat("length"));
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).pEnd();
 #endif
           runwayEndText(html, recSec, hdgSec, rec.valueFloat("length"));
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).pEnd();
 #endif
         }
@@ -750,7 +755,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = NavApp::getMapQuery()->getRunwayNames(airport.id);
+      QStringList runwayNames = airportQuery->getRunwayNames(airport.id);
 
       for(const SqlRecord& recApp : *recAppVector)
       {
@@ -812,7 +817,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         }
         else if(procType == "LOCB")
         {
-          const QList<MapRunway> *runways = mapQuery->getRunways(airport.id);
+          const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
 
           if(runways != nullptr)
           {
@@ -845,7 +850,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           }
         }
         html.tableEnd();
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
         html.p().small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).pEnd();
 #endif
 
@@ -908,7 +913,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
             addRadionavFixType(html, recTrans);
             html.tableEnd();
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
             html.p().b(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).pEnd();
 #endif
           }
@@ -1033,7 +1038,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         // Check if the station is an airport
         map::MapAirport reportAirport;
-        mapQuery->getAirportByIdent(reportAirport, reportIcao);
+        airportQuery->getAirportByIdent(reportAirport, reportIcao);
         if(!print && reportAirport.isValid())
         {
           // Add link to airport
@@ -1241,7 +1246,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().
     text(parsed.getUnusedData()).pEnd();
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(tr("Source: %1").arg(metar.getMetar())).pEnd();
 #endif
 }
@@ -1306,7 +1311,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(rec != nullptr)
     addScenery(rec, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: vor_id = %1").arg(vor.getId())).pEnd();
 #endif
 }
@@ -1351,7 +1356,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   if(rec != nullptr)
     addScenery(rec, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: ndb_id = %1").arg(ndb.getId())).pEnd();
 #endif
 }
@@ -1436,7 +1441,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(rec != nullptr)
     addScenery(rec, html);
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).pEnd();
 #endif
 }
@@ -1504,7 +1509,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
       addScenery(rec, html);
   }
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: boundary_id = %1").arg(airspace.getId())).pEnd();
 #endif
 
@@ -1582,7 +1587,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   }
   html.tableEnd();
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: airway_id = %1").arg(airway.getId())).pEnd();
 #endif
 }
@@ -2404,7 +2409,7 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
     atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f));
     html.row2(tr("Coordinates:"), Unit::coords(pos));
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
     html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()));
 #endif
   }

@@ -18,7 +18,7 @@
 #include "symbolpainter.h"
 
 #include "common/maptypes.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
 #include "common/mapcolors.h"
 #include "options/optiondata.h"
 #include "common/unit.h"

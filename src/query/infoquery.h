@@ -36,7 +36,11 @@ class SqlRecordVector;
 class InfoQuery
 {
 public:
-  InfoQuery(atools::sql::SqlDatabase *sqlDb);
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  InfoQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
   virtual ~InfoQuery();
 
   /* Get record for joined tables airport, bgl_file and scenery_area */
@@ -113,7 +117,7 @@ private:
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase *db, *dbNav;
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr,

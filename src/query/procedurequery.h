@@ -34,31 +34,40 @@ class SqlQuery;
 }
 
 class MapQuery;
+class AirportQuery;
 
 /* Loads and caches approaches and transitions. The corresponding approach is also loaded and cached if a
- * transition is loaded since legs depend on each other.*/
+ * transition is loaded since legs depend on each other.
+ *
+ * All navaids and procedure are taken from the nav database.
+ */
 class ProcedureQuery :
   public QObject
 {
   Q_OBJECT
 
 public:
-  ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam);
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
   virtual ~ProcedureQuery();
 
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);
 
   /* Get approach only */
-  const proc::MapProcedureLegs *getApproachLegs(const map::MapAirport& airport, int approachId);
+  const proc::MapProcedureLegs *getApproachLegs(map::MapAirport airport, int approachId);
 
   /* Get transition and its approach */
-  const proc::MapProcedureLegs *getTransitionLegs(const map::MapAirport& airport, int transitionId);
+  const proc::MapProcedureLegs *getTransitionLegs(map::MapAirport airport, int transitionId);
 
   QVector<int> getTransitionIdsForApproach(int approachId);
 
-  bool getLegsForFlightplanProperties(const QHash<QString, QString> properties, const map::MapAirport& departure,
-                                      const map::MapAirport& destination,
+  bool getLegsForFlightplanProperties(const QHash<QString, QString> properties,
+                                      map::MapAirport departure,
+                                      map::MapAirport destination,
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& departureLegs);
 
@@ -73,14 +82,14 @@ public:
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureTypes& type);
 
-  int getSidId(const map::MapAirport& departure, const QString& sid,
+  int getSidId(map::MapAirport departure, const QString& sid,
                const QString& runway = QString(), float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
-  int getSidTransitionId(const map::MapAirport& departure, const QString& sidTrans, int sidId,
+  int getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId,
                          float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
 
-  int getStarId(const map::MapAirport& destination, const QString& star,
+  int getStarId(map::MapAirport destination, const QString& star,
                 float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
-  int getStarTransitionId(const map::MapAirport& destination, const QString& starTrans, int starId,
+  int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId,
                           float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
 
   /* Flush the cache to update units */
@@ -140,7 +149,7 @@ private:
                          const QString& suffix, const QString& runway, float distance, int size, bool transition);
   void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
 
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase *db, *dbNav;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
                         *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
                         *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr,
@@ -155,6 +164,7 @@ private:
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
+  AirportQuery *airportQuery = nullptr;
 
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */

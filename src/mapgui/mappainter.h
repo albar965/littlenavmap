@@ -41,6 +41,7 @@ class GeoPainter;
 class SymbolPainter;
 class MapLayer;
 class MapQuery;
+class AirportQuery;
 class MapScale;
 class MapWidget;
 
@@ -143,7 +144,7 @@ class MapPainter :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainter(MapWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainter(MapWidget *marbleWidget, MapScale *mapScale);
   virtual ~MapPainter();
 
   virtual void render(PaintContext *context) = 0;
@@ -175,7 +176,8 @@ protected:
 
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;
-  MapQuery *query;
+  MapQuery *mapQuery;
+  AirportQuery *airportQuery;
   MapScale *scale;
 
 };

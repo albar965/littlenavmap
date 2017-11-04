@@ -44,7 +44,7 @@ class MapPainterAirport :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam);
+  MapPainterAirport(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterAirport();
 
   virtual void render(PaintContext *context) override;

@@ -39,7 +39,7 @@ class ParkingDialog :
   Q_OBJECT
 
 public:
-  ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::MapAirport& departureAirport);
+  ParkingDialog(QWidget *parent, const map::MapAirport& departureAirport);
   virtual ~ParkingDialog();
 
   /* Get selected parking spot

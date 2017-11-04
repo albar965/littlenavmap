@@ -25,6 +25,7 @@
 
 class MainWindow;
 class MapQuery;
+class AirportQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
@@ -123,12 +124,14 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
+  AirportQuery *airportQuery = nullptr;
   QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
 
   void updateAircraftInfo();
+
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

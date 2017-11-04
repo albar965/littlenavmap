@@ -34,10 +34,11 @@
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
-#include "common/infoquery.h"
+#include "query/infoquery.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingguiabort.h"
-#include "mapgui/mapquery.h"
+#include "query/mapquery.h"
+#include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
 #include "profile/profilewidget.h"
 #include "route/routecontroller.h"
@@ -53,7 +54,7 @@
 #include "route/routestringdialog.h"
 #include "route/routestring.h"
 #include "common/unit.h"
-#include "common/procedurequery.h"
+#include "query/procedurequery.h"
 #include "search/proceduresearch.h"
 #include "gui/airspacetoolbarhandler.h"
 
@@ -1295,24 +1296,6 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
   return true;
 }
 
-/* Check if route has valid departure parking.
- *  @return true if route can be saved anyway */
-bool RouteController::hasValidParking() const
-{
-  if(route.hasValidDeparture())
-  {
-    const QList<map::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
-
-    if(!parkingCache->isEmpty())
-      return route.hasDepartureParking() || route.hasDepartureHelipad();
-    else
-      // No parking available - so no parking selection is ok
-      return true;
-  }
-  else
-    return false;
-}
-
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
   if(pos.isValid())
@@ -1322,7 +1305,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
-#ifdef DEBUG_OBJECT_ID
+#ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
@@ -1868,7 +1851,7 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
   // << "transitionId" << ref.transitionId
   // << "legId" << ref.legId;
 
-  map::MapAirport airport = NavApp::getMapQuery()->getAirportById(ref.airportId);
+  map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
 
   if(ref.isEmpty())
     mapWidget->changeApproachHighlight(proc::MapProcedureLegs());
@@ -1922,7 +1905,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
   {
     const proc::MapProcedureLeg *leg;
 
-    map::MapAirport airport = NavApp::getMapQuery()->getAirportById(ref.airportId);
+    map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
     if(ref.transitionId != -1)
       leg = NavApp::getProcedureQuery()->getTransitionLeg(airport, ref.legId);
     else

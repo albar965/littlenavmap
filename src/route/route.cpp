@@ -21,7 +21,7 @@
 #include "common/maptools.h"
 #include "common/unit.h"
 #include "route/flightplanentrybuilder.h"
-#include "common/procedurequery.h"
+#include "query/procedurequery.h"
 #include "navapp.h"
 
 #include <QRegularExpression>
