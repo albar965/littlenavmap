@@ -853,7 +853,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 
   try
   {
-    atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors);
+    atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors, GIT_REVISION);
     QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
     nd.create(sceneryCfgCodec);
   }
@@ -1097,7 +1097,7 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db)
   try
   {
     NavDatabaseOptions opts;
-    NavDatabase(&opts, db, nullptr).createSchema();
+    NavDatabase(&opts, db, nullptr, GIT_REVISION).createSchema();
     DatabaseMeta(db).updateVersion();
   }
   catch(atools::Exception& e)
