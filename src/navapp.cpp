@@ -38,7 +38,7 @@
 #include <QIcon>
 #include <QSplashScreen>
 
-AirportQuery *NavApp::airportQuery = nullptr;
+AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
@@ -65,8 +65,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
 
-  // VERSION_NUMBER
-  setApplicationVersion("1.7.0.develop");
+  setApplicationVersion("1.7.1.develop"); // VERSION_NUMBER
 }
 
 NavApp::~NavApp()
@@ -90,8 +89,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
   mapQuery->initQueries();
 
-  airportQuery = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
-  airportQuery->initQueries();
+  airportQuerySim = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
+  airportQuerySim->initQueries();
 
   airportQueryNav = new AirportQuery(mainWindow, databaseManager->getDatabaseNav(), true /* nav */);
   airportQueryNav->initQueries();
@@ -132,8 +131,8 @@ void NavApp::deInit()
   elevationProvider = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete airportQuery";
-  delete airportQuery;
-  airportQuery = nullptr;
+  delete airportQuerySim;
+  airportQuerySim = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete airportQueryNav";
   delete airportQueryNav;
@@ -187,7 +186,7 @@ void NavApp::preDatabaseLoad()
   qDebug() << Q_FUNC_INFO;
 
   infoQuery->deInitQueries();
-  airportQuery->deInitQueries();
+  airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
   procedureQuery->deInitQueries();
@@ -207,7 +206,7 @@ void NavApp::postDatabaseLoad()
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
   magDecReader->readFromTable(*getDatabaseSim());
-  airportQuery->initQueries();
+  airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
   infoQuery->initQueries();
@@ -226,7 +225,7 @@ bool NavApp::isConnected()
 
 AirportQuery *NavApp::getAirportQuerySim()
 {
-  return airportQuery;
+  return airportQuerySim;
 }
 
 AirportQuery *NavApp::getAirportQueryNav()
@@ -359,7 +358,7 @@ ConnectClient *NavApp::getConnectClient()
   return connectClient;
 }
 
-QString NavApp::getDatabaseAiracCycle()
+QString NavApp::getDatabaseAiracCycleSim()
 {
   return databaseMeta->getAiracCycle();
 }

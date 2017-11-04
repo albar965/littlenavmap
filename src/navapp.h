@@ -148,7 +148,7 @@ public:
   static const atools::fs::db::DatabaseMeta *getDatabaseMetaSim();
   static const atools::fs::db::DatabaseMeta *getDatabaseMetaNav();
 
-  static QString getDatabaseAiracCycle();
+  static QString getDatabaseAiracCycleSim();
   static QString getDatabaseAiracCycleNav();
   static bool hasDatabaseAirspaces();
 
@@ -167,7 +167,7 @@ public:
 
 private:
   /* Database query helpers and caches */
-  static AirportQuery *airportQuery, *airportQueryNav;
+  static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;

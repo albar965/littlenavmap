@@ -40,6 +40,7 @@ class AirportQuery;
  * transition is loaded since legs depend on each other.
  *
  * All navaids and procedure are taken from the nav database.
+ * All structs of MapAirport are converted to simulator database airports when passed in.
  */
 class ProcedureQuery :
   public QObject
@@ -164,7 +165,7 @@ private:
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
+  AirportQuery *airportQueryNav = nullptr;
 
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */

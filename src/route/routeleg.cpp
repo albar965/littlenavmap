@@ -179,6 +179,9 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
         flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
 
         airport = mapobjectResult.airports.first();
+
+        Q_ASSERT(!airport.navdata);
+
         valid = true;
         if(!flightplanEntry->getPosition().isValid())
           flightplanEntry->setPosition(airport.position);
