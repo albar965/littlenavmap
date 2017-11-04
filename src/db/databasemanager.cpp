@@ -140,6 +140,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
+  if(!QFile::exists(buildDatabaseFileName(FsPaths::NAVIGRAPH)))
+    navDatabaseStatus = dm::NAVDATABASE_OFF;
+
   // Find simulators by default registry entries
   simulators.fillDefault();
 
@@ -390,14 +393,14 @@ void DatabaseManager::insertSimSwitchActions()
 
     navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbSubMenu);
     navDbActionAll->setCheckable(true);
-    navDbActionAll->setChecked(usingNavDatabase == dm::NAVDATABASE_ALL);
+    navDbActionAll->setChecked(navDatabaseStatus == dm::NAVDATABASE_ALL);
     navDbActionAll->setStatusTip(tr("Use all of %1 database features").arg(dbname));
     navDbActionAll->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionAll);
 
     navDbActionBlend = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbSubMenu);
     navDbActionBlend->setCheckable(true);
-    navDbActionBlend->setChecked(usingNavDatabase == dm::NAVDATABASE_MIXED);
+    navDbActionBlend->setChecked(navDatabaseStatus == dm::NAVDATABASE_MIXED);
     navDbActionBlend->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(
                                      dbname));
     navDbActionBlend->setActionGroup(navDbGroup);
@@ -405,7 +408,7 @@ void DatabaseManager::insertSimSwitchActions()
 
     navDbActionOff = new QAction(tr("Do &not use %1 database").arg(dbname), navDbSubMenu);
     navDbActionOff->setCheckable(true);
-    navDbActionOff->setChecked(usingNavDatabase == dm::NAVDATABASE_OFF);
+    navDbActionOff->setChecked(navDatabaseStatus == dm::NAVDATABASE_OFF);
     navDbActionOff->setStatusTip(tr("Do not use %1 database").arg(dbname));
     navDbActionOff->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionOff);
@@ -455,20 +458,20 @@ void DatabaseManager::switchNavFromMainMenu()
   QString text;
   if(navDbActionAll->isChecked())
   {
-    usingNavDatabase = dm::NAVDATABASE_ALL;
+    navDatabaseStatus = dm::NAVDATABASE_ALL;
     text = tr("Enabled all features for %1.");
   }
   else if(navDbActionBlend->isChecked())
   {
-    usingNavDatabase = dm::NAVDATABASE_MIXED;
+    navDatabaseStatus = dm::NAVDATABASE_MIXED;
     text = tr("Enabled navaids, airways, airspaces and procedures for %1.");
   }
   else if(navDbActionOff->isChecked())
   {
-    usingNavDatabase = dm::NAVDATABASE_OFF;
+    navDatabaseStatus = dm::NAVDATABASE_OFF;
     text = tr("Disabled %1.");
   }
-  qDebug() << Q_FUNC_INFO << "usingNavDatabase" << usingNavDatabase;
+  qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
   openDatabase();
 
@@ -509,9 +512,9 @@ void DatabaseManager::openDatabase()
   QString simDbFile = buildDatabaseFileName(currentFsType);
   QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
-  if(usingNavDatabase == dm::NAVDATABASE_ALL)
+  if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     simDbFile = navDbFile;
-  else if(usingNavDatabase == dm::NAVDATABASE_OFF)
+  else if(navDatabaseStatus == dm::NAVDATABASE_OFF)
     navDbFile = simDbFile;
   // else if(usingNavDatabase == MIXED)
 
@@ -1169,7 +1172,7 @@ void DatabaseManager::saveState()
   s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
   s.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
   s.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
-  s.setValue(lnm::DATABASE_USE_NAV, usingNavDatabase);
+  s.setValue(lnm::DATABASE_USE_NAV, static_cast<int>(navDatabaseStatus));
 }
 
 void DatabaseManager::restoreState()
@@ -1180,10 +1183,7 @@ void DatabaseManager::restoreState()
   selectedFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
-  usingNavDatabase = static_cast<dm::NavdatabaseUsage>(s.valueInt(lnm::DATABASE_USE_NAV, dm::NAVDATABASE_OFF));
-
-  if(!QFile::exists(buildDatabaseFileName(FsPaths::NAVIGRAPH)))
-    usingNavDatabase = dm::NAVDATABASE_OFF;
+  navDatabaseStatus = static_cast<dm::NavdatabaseStatus>(s.valueInt(lnm::DATABASE_USE_NAV, dm::NAVDATABASE_OFF));
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */

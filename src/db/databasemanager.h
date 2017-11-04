@@ -38,7 +38,7 @@ class MainWindow;
 class QSplashScreen;
 
 namespace dm {
-enum NavdatabaseUsage
+enum NavdatabaseStatus
 {
   NAVDATABASE_ALL, /* Only third party nav database */
   NAVDATABASE_MIXED, /* Airports from simulator rest from nav database */
@@ -120,9 +120,9 @@ public:
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
 
-  dm::NavdatabaseUsage getUsingNavDatabase() const
+  dm::NavdatabaseStatus getNavDatabaseStatus() const
   {
-    return usingNavDatabase;
+    return navDatabaseStatus;
   }
 
 signals:
@@ -200,7 +200,7 @@ private:
     selectedFsType = atools::fs::FsPaths::UNKNOWN;
 
   /* Using Navigraph update or not */
-  dm::NavdatabaseUsage usingNavDatabase = dm::NAVDATABASE_OFF;
+  dm::NavdatabaseStatus navDatabaseStatus = dm::NAVDATABASE_OFF;
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;

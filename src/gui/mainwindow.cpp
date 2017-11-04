@@ -1322,7 +1322,7 @@ void MainWindow::updateWindowTitle()
   QString newTitle = mainWindowTitle;
   newTitle += " - " + NavApp::getCurrentSimulatorShortName();
 
-  dm::NavdatabaseUsage navDbStatus = NavApp::getDatabaseManager()->getUsingNavDatabase();
+  dm::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
   if(navDbStatus == dm::NAVDATABASE_ALL)
     newTitle += "/ND+";
   else if(navDbStatus == dm::NAVDATABASE_MIXED)
