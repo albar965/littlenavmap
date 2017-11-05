@@ -37,6 +37,16 @@ class DatabaseDialog;
 class MainWindow;
 class QSplashScreen;
 
+namespace dm {
+enum NavdatabaseStatus
+{
+  NAVDATABASE_ALL, /* Only third party nav database */
+  NAVDATABASE_MIXED, /* Airports from simulator rest from nav database */
+  NAVDATABASE_OFF /* Only simulator database */
+};
+
+}
+
 /*
  * Takes care of all scenery database management. Switching between flight simulators, loading of scenery
  * databases, validation of databases and comparing versions.
@@ -110,6 +120,11 @@ public:
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;
 
+  dm::NavdatabaseStatus getNavDatabaseStatus() const
+  {
+    return navDatabaseStatus;
+  }
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
@@ -166,15 +181,17 @@ private:
   qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
-  atools::sql::SqlDatabase *database = nullptr, *databaseNav = nullptr;
+  atools::sql::SqlDatabase *databaseSim = nullptr, *databaseNav = nullptr;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
 
   /* Switch simulator actions */
-  QActionGroup *group = nullptr;
+  QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;
   QList<QAction *> actions;
-  QAction *navDbAction = nullptr, *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
+  QAction *navDbActionOff = nullptr, *navDbActionBlend = nullptr, *navDbActionAll = nullptr,
+          *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
+  QMenu *navDbSubMenu = nullptr;
 
   atools::fs::FsPaths::SimulatorType
   /* Currently selected simulator which will be used in the map, search, etc. */
@@ -183,7 +200,7 @@ private:
     selectedFsType = atools::fs::FsPaths::UNKNOWN;
 
   /* Using Navigraph update or not */
-  bool usingNavDatabase = false;
+  dm::NavdatabaseStatus navDatabaseStatus = dm::NAVDATABASE_OFF;
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;

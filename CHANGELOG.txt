@@ -1,3 +1,33 @@
+Version 1.7.1.develop
+
+* Added sub-menu for third party navdata with three display options.
+* Changed main window title bar to indicate usage of navdata ("FSX/ND", "FSX/ND+" or "FSX")
+* Fixed problem with wrong AIRAC cycle indication in menu item.
+* Fixed problems with disappearing procedures when adding STAR.
+* Fixed several problems with procedures when using navdata and simdata together.
+* Fixed error in route string parser which did not recognize STARs correctly.
+* Removed what's this question mark in scenery database error dialog.
+* Map display, info display, flight plan and procedure functionality now uses third party data for navaids
+  and simulator data for airports depending on mode.
+
+from atools version 2.7.1
+* Finished DFD compiler
+* Disabling maximum airway segment length for data sources that contain a valid airspace geometry
+  (X-Plane and DFD - FSX/P3D contain invalid segments).
+* Extended database metadata with optional compiler_version, valid_through and data source columns.
+
+Version 1.7.0.develop
+
+* Adapted airspace COM display to missing values.
+* Fixed several display issues with large airspaces and airways crossing the anti meridian.
+* Solved problems with airspaces and airways crossing date boundary displayed twice on map and information window.
+* Fixed display issue with airports, AI and user aircraft in spherical display.
+* Added caution airspace.
+
+from atools version 2.7.0.develop
+* Better handling of X-Plane OpenAirspace comments and fixed problem where airspace names contain a comment character.
+* Fixed problems with bounding box and overlap calculations around the anti meridian.
+
 Version 1.6.7
 
 * Fixed problem where procedures were assigned to the wrong runway in search window.

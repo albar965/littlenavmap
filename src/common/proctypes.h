@@ -189,7 +189,9 @@ struct MapProcedureRef
   {
   }
 
-  int airportId, runwayEndId, approachId, transitionId, legId;
+  int airportId /* always from navdatabase*/,
+      runwayEndId /* always from navdatabase*/,
+      approachId, transitionId, legId;
   proc::MapProcedureTypes mapType;
 
   bool isLeg() const

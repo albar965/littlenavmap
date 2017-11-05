@@ -53,7 +53,7 @@ RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQuerySim();
+  airportQuerySim = NavApp::getAirportQuerySim();
   procQuery = NavApp::getProcedureQuery();
 }
 
@@ -400,7 +400,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
   }
 
   map::MapAirport departure;
-  airportQuery->getAirportByIdent(departure, ident);
+  airportQuerySim->getAirportByIdent(departure, ident);
   if(departure.isValid())
   {
     // qDebug() << "found" << departure.ident << "id" << departure.id;
@@ -481,7 +481,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
   }
 
   map::MapAirport destination;
-  airportQuery->getAirportByIdent(destination, ident);
+  airportQuerySim->getAirportByIdent(destination, ident);
   if(destination.isValid())
   {
     // qDebug() << "found" << destination.ident << "id" << destination.id;

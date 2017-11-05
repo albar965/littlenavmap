@@ -178,7 +178,7 @@ private:
   QTreeWidget *treeWidget = nullptr;
   QMainWindow *mainWindow = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
-  map::MapAirport currentAirport;
+  map::MapAirport currentAirportNav;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;

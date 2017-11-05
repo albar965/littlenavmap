@@ -655,6 +655,8 @@ void AirportQuery::deInitQueries()
   parkingCache.clear();
   startCache.clear();
   helipadCache.clear();
+  airportIdentCache.clear();
+  airportIdCache.clear();
 
   delete runwayOverviewQuery;
   runwayOverviewQuery = nullptr;

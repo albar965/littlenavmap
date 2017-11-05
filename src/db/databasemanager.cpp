@@ -140,6 +140,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
+  if(!QFile::exists(buildDatabaseFileName(FsPaths::NAVIGRAPH)))
+    navDatabaseStatus = dm::NAVDATABASE_OFF;
+
   // Find simulators by default registry entries
   simulators.fillDefault();
 
@@ -168,7 +171,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
 
-  database = new SqlDatabase(DATABASE_NAME);
+  databaseSim = new SqlDatabase(DATABASE_NAME);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
 }
 
@@ -181,7 +184,7 @@ DatabaseManager::~DatabaseManager()
   delete progressDialog;
 
   closeDatabases();
-  delete database;
+  delete databaseSim;
   delete databaseNav;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
@@ -341,7 +344,7 @@ void DatabaseManager::insertSimSwitchActions()
   freeActions();
 
   // Create group to get radio button like behavior
-  group = new QActionGroup(ui->menuDatabase);
+  simDbGroup = new QActionGroup(ui->menuDatabase);
 
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.keys();
@@ -375,19 +378,47 @@ void DatabaseManager::insertSimSwitchActions()
   QString ngDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
   if(QFile::exists(ngDbFile))
   {
-    QString cycle = DatabaseMeta(databaseNav).getAiracCycle();
+    SqlDatabase tempDb(DATABASE_NAME_TEMP);
+    tempDb.setDatabaseName(ngDbFile);
+    tempDb.open();
+    QString cycle = DatabaseMeta(tempDb).getAiracCycle();
+    closeDatabaseFile(&tempDb);
+
     if(!cycle.isEmpty())
       cycle = tr(" - AIRAC Cycle %1").arg(cycle);
 
-    navDbAction = new QAction("&" + QString::number(index) + " " + FsPaths::typeToName(FsPaths::NAVIGRAPH) +
-                              cycle, ui->menuDatabase);
-    navDbAction->setCheckable(true);
-    navDbAction->setChecked(usingNavDatabase);
-    navDbAction->setStatusTip(tr("Switch to %1 database").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    QString dbname = FsPaths::typeToName(FsPaths::NAVIGRAPH);
+    navDbSubMenu = new QMenu("&" + QString::number(index) + " " + dbname + cycle);
+    navDbGroup = new QActionGroup(navDbSubMenu);
 
-    ui->menuDatabase->insertAction(ui->actionDatabaseFiles, navDbAction);
+    navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbSubMenu);
+    navDbActionAll->setCheckable(true);
+    navDbActionAll->setChecked(navDatabaseStatus == dm::NAVDATABASE_ALL);
+    navDbActionAll->setStatusTip(tr("Use all of %1 database features").arg(dbname));
+    navDbActionAll->setActionGroup(navDbGroup);
+    navDbSubMenu->addAction(navDbActionAll);
+
+    navDbActionBlend = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbSubMenu);
+    navDbActionBlend->setCheckable(true);
+    navDbActionBlend->setChecked(navDatabaseStatus == dm::NAVDATABASE_MIXED);
+    navDbActionBlend->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(
+                                     dbname));
+    navDbActionBlend->setActionGroup(navDbGroup);
+    navDbSubMenu->addAction(navDbActionBlend);
+
+    navDbActionOff = new QAction(tr("Do &not use %1 database").arg(dbname), navDbSubMenu);
+    navDbActionOff->setCheckable(true);
+    navDbActionOff->setChecked(navDatabaseStatus == dm::NAVDATABASE_OFF);
+    navDbActionOff->setStatusTip(tr("Do not use %1 database").arg(dbname));
+    navDbActionOff->setActionGroup(navDbGroup);
+    navDbSubMenu->addAction(navDbActionOff);
+
+    ui->menuDatabase->insertMenu(ui->actionDatabaseFiles, navDbSubMenu);
     menuNavDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
-    connect(navDbAction, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
+
+    connect(navDbActionAll, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
+    connect(navDbActionBlend, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
+    connect(navDbActionOff, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
   }
 }
 
@@ -398,7 +429,7 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
   action->setStatusTip(tr("Switch to %1 database").arg(FsPaths::typeToName(type)));
   action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
   action->setCheckable(true);
-  action->setActionGroup(group);
+  action->setActionGroup(simDbGroup);
 
   if(type == currentFsType)
   {
@@ -419,26 +450,36 @@ void DatabaseManager::switchNavFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QAction *action = dynamic_cast<QAction *>(sender());
+  // Disconnect all queries
+  emit preDatabaseLoad();
 
-  if(action != nullptr)
+  closeDatabases();
+
+  QString text;
+  if(navDbActionAll->isChecked())
   {
-    // Disconnect all queries
-    emit preDatabaseLoad();
-
-    closeDatabases();
-
-    usingNavDatabase = action->isChecked();
-
-    openDatabase();
-
-    emit postDatabaseLoad(currentFsType);
-
-    QString text = usingNavDatabase ? tr("Enabled %1.") : tr("Disabled %1.");
-    mainWindow->setStatusMessage(text.arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-
-    saveState();
+    navDatabaseStatus = dm::NAVDATABASE_ALL;
+    text = tr("Enabled all features for %1.");
   }
+  else if(navDbActionBlend->isChecked())
+  {
+    navDatabaseStatus = dm::NAVDATABASE_MIXED;
+    text = tr("Enabled navaids, airways, airspaces and procedures for %1.");
+  }
+  else if(navDbActionOff->isChecked())
+  {
+    navDatabaseStatus = dm::NAVDATABASE_OFF;
+    text = tr("Disabled %1.");
+  }
+  qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
+
+  openDatabase();
+
+  emit postDatabaseLoad(currentFsType);
+
+  mainWindow->setStatusMessage(text.arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+
+  saveState();
 }
 
 void DatabaseManager::switchSimFromMainMenu()
@@ -469,13 +510,16 @@ void DatabaseManager::switchSimFromMainMenu()
 void DatabaseManager::openDatabase()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
-  openDatabaseFile(database, simDbFile, true /* readonly */);
+  QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
-  QString ngDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
-  if(QFile::exists(ngDbFile) && usingNavDatabase)
-    openDatabaseFile(databaseNav, ngDbFile, true /* readonly */);
-  else
-    openDatabaseFile(databaseNav, simDbFile, true /* readonly */);
+  if(navDatabaseStatus == dm::NAVDATABASE_ALL)
+    simDbFile = navDbFile;
+  else if(navDatabaseStatus == dm::NAVDATABASE_OFF)
+    navDbFile = simDbFile;
+  // else if(usingNavDatabase == MIXED)
+
+  openDatabaseFile(databaseSim, simDbFile, true /* readonly */);
+  openDatabaseFile(databaseNav, navDbFile, true /* readonly */);
 }
 
 void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly)
@@ -549,7 +593,7 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
 
 void DatabaseManager::closeDatabases()
 {
-  closeDatabaseFile(database);
+  closeDatabaseFile(databaseSim);
   closeDatabaseFile(databaseNav);
 }
 
@@ -573,7 +617,7 @@ void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseSim()
 {
-  return database;
+  return databaseSim;
 }
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseNav()
@@ -612,7 +656,7 @@ void DatabaseManager::copyAirspaces()
   try
   {
     // The current database is read only so we cannot use the attach command
-    SqlUtil fromUtil(database);
+    SqlUtil fromUtil(databaseSim);
     if(fromUtil.hasTable("boundary"))
     {
       // We have a boundary table
@@ -637,7 +681,7 @@ void DatabaseManager::copyAirspaces()
           xpDb.commit();
 
           // Build statements
-          SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), database);
+          SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), databaseSim);
 
           // Use named bindings to overcome different column order
           // Let SQLite generate the ID automatically
@@ -1128,7 +1172,7 @@ void DatabaseManager::saveState()
   s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
   s.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
   s.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
-  s.setValue(lnm::DATABASE_USE_NAV, usingNavDatabase);
+  s.setValue(lnm::DATABASE_USE_NAV, static_cast<int>(navDatabaseStatus));
 }
 
 void DatabaseManager::restoreState()
@@ -1139,10 +1183,7 @@ void DatabaseManager::restoreState()
   selectedFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
-  usingNavDatabase = s.valueBool(lnm::DATABASE_USE_NAV, false);
-
-  if(QFile::exists(buildDatabaseFileName(FsPaths::NAVIGRAPH)))
-    usingNavDatabase = false;
+  navDatabaseStatus = static_cast<dm::NavdatabaseStatus>(s.valueInt(lnm::DATABASE_USE_NAV, dm::NAVDATABASE_OFF));
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */
@@ -1228,25 +1269,41 @@ void DatabaseManager::freeActions()
     menuDbSeparator->deleteLater();
     menuDbSeparator = nullptr;
   }
-
   if(menuNavDbSeparator != nullptr)
   {
     menuNavDbSeparator->deleteLater();
     menuNavDbSeparator = nullptr;
   }
-
-  if(group != nullptr)
+  if(simDbGroup != nullptr)
   {
-    group->deleteLater();
-    group = nullptr;
+    simDbGroup->deleteLater();
+    simDbGroup = nullptr;
   }
-
-  if(navDbAction != nullptr)
+  if(navDbActionAll != nullptr)
   {
-    navDbAction->deleteLater();
-    navDbAction = nullptr;
+    navDbActionAll->deleteLater();
+    navDbActionAll = nullptr;
   }
-
+  if(navDbActionBlend != nullptr)
+  {
+    navDbActionBlend->deleteLater();
+    navDbActionBlend = nullptr;
+  }
+  if(navDbActionOff != nullptr)
+  {
+    navDbActionOff->deleteLater();
+    navDbActionOff = nullptr;
+  }
+  if(navDbSubMenu != nullptr)
+  {
+    navDbSubMenu->deleteLater();
+    navDbSubMenu = nullptr;
+  }
+  if(navDbGroup != nullptr)
+  {
+    navDbGroup->deleteLater();
+    navDbGroup = nullptr;
+  }
   for(QAction *action : actions)
     action->deleteLater();
   actions.clear();

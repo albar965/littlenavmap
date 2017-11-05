@@ -1322,6 +1322,12 @@ void MainWindow::updateWindowTitle()
   QString newTitle = mainWindowTitle;
   newTitle += " - " + NavApp::getCurrentSimulatorShortName();
 
+  dm::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
+  if(navDbStatus == dm::NAVDATABASE_ALL)
+    newTitle += "/ND+";
+  else if(navDbStatus == dm::NAVDATABASE_MIXED)
+    newTitle += "/ND";
+
   if(!routeController->getCurrentRouteFilename().isEmpty())
     newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
                 (routeController->hasChanged() ? tr(" *") : QString());

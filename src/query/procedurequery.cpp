@@ -49,7 +49,7 @@ ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav)
   : dbNav(sqlDbNav)
 {
   mapQuery = NavApp::getMapQuery();
-  airportQuery = NavApp::getAirportQueryNav();
+  airportQueryNav = NavApp::getAirportQueryNav();
 }
 
 ProcedureQuery::~ProcedureQuery()
@@ -394,11 +394,13 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
  * position if no runway ends were found */
 void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport)
 {
-  QString bestRunway = map::runwayBestFit(name, airportQuery->getRunwayNames(airport.id));
+  Q_ASSERT(airport.navdata);
+
+  QString bestRunway = map::runwayBestFit(name, airportQueryNav->getRunwayNames(airport.id));
 
   if(!bestRunway.isEmpty())
     mapQuery->getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
-                                  true /* Nav database */);
+                                  true /* airport or runway from nav database */);
 
   if(result.runwayEnds.isEmpty())
   {
@@ -408,7 +410,7 @@ void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString
 
     // Create a dummy with the airport position as the last resort
     map::MapRunwayEnd end;
-    end.navdata = false;
+    end.navdata = true;
     end.name = name.startsWith("RW") ? name.mid(2) : name;
     end.heading = rwnum * 10.f;
     end.position = airport.position;
@@ -428,10 +430,11 @@ void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObje
                                       const Pos& sortByDistancePos)
 {
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
-                                map::INVALID_DISTANCE_VALUE, true /* Nav database */);
+                                map::INVALID_DISTANCE_VALUE, true /* airport from nav database */);
   if(result.isEmpty(type))
+    // Try again in 200 nm radius by excluding the region - result sorted by distance
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
-                                  atools::geo::nmToMeter(200.f), true /* Nav database */);
+                                  atools::geo::nmToMeter(200.f), true /* airport from nav database */);
 }
 
 void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
@@ -481,6 +484,8 @@ void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs)
 
 proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport& airport, int approachId)
 {
+  Q_ASSERT(airport.navdata);
+
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(approachCache.contains(approachId))
     return approachCache.object(approachId);
@@ -503,6 +508,8 @@ proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport&
 proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirport& airport,
                                                             int approachId, int transitionId)
 {
+  Q_ASSERT(airport.navdata);
+
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionCache.contains(transitionId))
     return transitionCache.object(transitionId);
@@ -561,6 +568,8 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
 
 proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport& airport, int approachId)
 {
+  Q_ASSERT(airport.navdata);
+
   approachLegQuery->bindValue(":id", approachId);
   approachLegQuery->exec();
 
@@ -598,7 +607,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   {
     if(!runwayEndIdQuery->isNull("runway_end_id"))
     {
-      legs->runwayEnd = airportQuery->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
+      legs->runwayEnd = airportQueryNav->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
 
       // Add altitude to position since it is needed to display the first point in the SID
       legs->runwayEnd.position.setAltitude(airport.getPosition().getAltitude());

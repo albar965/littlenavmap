@@ -946,7 +946,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycleNav());
 
     // Save PLN, FLP or FMS
-    flightplan.save(routeFilename, NavApp::getDatabaseAiracCycle(), cleanExport /* clean */);
+    flightplan.save(routeFilename, NavApp::getDatabaseAiracCycleSim(), cleanExport /* clean */);
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
       // Old format is always saved as new after question dialog
@@ -1510,7 +1510,7 @@ void RouteController::showInformationMenu()
     const RouteLeg& routeLeg = route.at(index.row());
     map::MapSearchResult result;
     mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), routeLeg.getId(),
-                            false /* airport from nav database */);
+                               false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -2310,18 +2310,18 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   // if(route.getFlightplan().canSaveProcedures())
   undoCommand = preChange(tr("Add Procedure"));
 
-  map::MapAirport airport;
-  NavApp::getAirportQueryNav()->getAirportById(airport, legs.ref.airportId);
+  // Airport id in legs is from nav database - convert to simulator database
+  map::MapAirport airportSim;
+  NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
+  mapQuery->getAirportSimReplace(airportSim);
 
-  airportQuery->getAirportByIdent(airport, airport.ident);
   if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_ARRIVAL)
   {
-    if(route.isEmpty() || route.last().getMapObjectType() != map::AIRPORT ||
-       route.last().getId() != legs.ref.airportId)
+    if(route.isEmpty() || route.last().getMapObjectType() != map::AIRPORT || route.last().getId() != airportSim.id)
     {
       // No route, no destination airport or different airport
       route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
-      routeSetDestinationInternal(airport);
+      routeSetDestinationInternal(airportSim);
     }
     // Will take care of the flight plan entries too
     if(legs.mapType & proc::PROCEDURE_STAR)
@@ -2333,12 +2333,11 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
   }
   else if(legs.mapType & proc::PROCEDURE_DEPARTURE)
   {
-    if(route.isEmpty() || route.first().getMapObjectType() != map::AIRPORT ||
-       route.first().getId() != legs.ref.airportId)
+    if(route.isEmpty() || route.first().getMapObjectType() != map::AIRPORT || route.first().getId() != airportSim.id)
     {
       // No route, no departure airport or different airport
       route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
-      routeSetDepartureInternal(airport);
+      routeSetDepartureInternal(airportSim);
     }
     // Will take care of the flight plan entries too
     route.setDepartureProcedureLegs(legs);
