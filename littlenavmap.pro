@@ -414,6 +414,7 @@ macx {
          -change /Users/alex/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib \
           @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
+  DEPLOY_DIR=\"$$PWD/../deploy\"
 
   deploy.commands = rm -Rfv $${DEPLOY_APP} &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
@@ -445,7 +446,11 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
   deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite &&
-  deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $${DEPLOY_APP}
+  deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $${DEPLOY_APP} &&
+  deploy.commands += cp -fv $$PWD/LICENSE.txt $${DEPLOY_DIR} &&
+  deploy.commands += cp -fv $$PWD/README.txt $${DEPLOY_DIR}/README-LittleNavmap.txt &&
+  deploy.commands += cp -fv $$PWD/CHANGELOG.txt $${DEPLOY_DIR}/CHANGELOG-LittleNavmap.txt
+
 
 # -verbose=3
 }
