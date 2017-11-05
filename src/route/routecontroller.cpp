@@ -534,6 +534,10 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 {
   qDebug() << Q_FUNC_INFO << filename;
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << flightplan;
+#endif
+
   if(flightplan.getFileFormat() == atools::fs::pln::FLP)
   {
     // FLP is nothing more than a sort of route string
@@ -1201,6 +1205,11 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       postChange(undoCommand);
       NavApp::updateWindowTitle();
+
+#ifdef DEBUG_INFORMATION
+      qDebug() << flightplan;
+#endif
+
       emit routeChanged(true);
     }
     else

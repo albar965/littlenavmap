@@ -352,6 +352,9 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     lastPos = flightplan.getEntries().at(flightplan.getEntries().size() - 2).getPosition();
   }
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << flightplan;
+#endif
   return true;
 }
 

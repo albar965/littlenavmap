@@ -1134,9 +1134,13 @@ void Route::removeDuplicateRouteLegs()
                           {proc::TRACK_TO_FIX, proc::COURSE_TO_FIX, proc::ARC_TO_FIX, proc::DIRECT_TO_FIX}) &&
          departureLeg.isNavaidEqualTo(routeLeg))
       {
+        // Remove duplicate leg and erase airway of following
         qDebug() << "removing duplicate leg at" << (offset + 1) << at(offset + 1);
         removeAt(offset + 1);
+        (*this)[offset + 1].setAirway(map::MapAirway());
+
         flightplan.getEntries().removeAt(offset + 1);
+        flightplan.getEntries()[offset + 1].setAirway(QString());
       }
     }
   }
