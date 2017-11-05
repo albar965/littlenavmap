@@ -176,7 +176,7 @@ void RouteStringDialog::readButtonClicked()
   if(success)
   {
     msg =
-      tr("Found %1 waypoints. Flight plan from <b>%3 (%4)</b> to <b>%5 (%6)</b>. Distance is %2.<br/>").
+      tr("Found %1 waypoints. Flight plan from <b>%3 (%4)</b> to <b>%5 (%6)</b>.<br/>Distance is %2.<br/>").
       arg(flightplan->getEntries().size()).
       arg(Unit::distNm(flightplan->getDistanceNm())).
       arg(flightplan->getDepartureAiportName()).

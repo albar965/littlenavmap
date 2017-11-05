@@ -303,23 +303,28 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
     if(!result.airways.isEmpty())
     {
-      // Add all airway waypoints if any were found
-      for(const map::MapWaypoint& wp : result.waypoints)
+      if(i == 0)
+        appendWarning(tr("Found airway %1 instead of waypoint as first entry in enroute list. Ignoring.").arg(item));
+      else
       {
-        // Reset but keep the last one
-        FlightplanEntry entry;
-
-        // Will fetch objects in order: airport, waypoint, vor, ndb
-        entryBuilder->entryFromWaypoint(wp, entry, true);
-
-        if(entry.getPosition().isValid())
+        // Add all airway waypoints if any were found
+        for(const map::MapWaypoint& wp : result.waypoints)
         {
-          entry.setAirway(item);
-          flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
-          // qDebug() << entry.getIcaoIdent() << entry.getAirway();
+          // Reset but keep the last one
+          FlightplanEntry entry;
+
+          // Will fetch objects in order: airport, waypoint, vor, ndb
+          entryBuilder->entryFromWaypoint(wp, entry, true);
+
+          if(entry.getPosition().isValid())
+          {
+            entry.setAirway(item);
+            flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
+            // qDebug() << entry.getIcaoIdent() << entry.getAirway();
+          }
+          else
+            appendWarning(tr("No navaid found for %1 on airway %2. Ignoring.").arg(wp.ident).arg(item));
         }
-        else
-          qWarning() << "No navaid found for" << wp.ident << "on airway" << item;
       }
     }
     else

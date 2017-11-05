@@ -9,6 +9,8 @@ Version 1.7.1.develop
 * Removed what's this question mark in scenery database error dialog.
 * Map display, info display, flight plan and procedure functionality now uses third party data for navaids
   and simulator data for airports depending on mode.
+* Fixed problem in route string parser where an airway as first entry did not generate a warning message.
+* Fixed error where first enroute waypoint contained an airway reference after calculating with SID.
 
 from atools version 2.7.1
 * Finished DFD compiler
