@@ -450,7 +450,8 @@ void ProcedureSearch::fillApproachTreeWidget()
       if(foundItems)
         message = tr("No procedure found.");
       else
-        message = tr("%1 has no procedure.").arg(map::airportText(currentAirportNav));
+        message = tr("%1 has no procedure.").arg(map::airportText(
+                                                   NavApp::getMapQuery()->getAirportSim(currentAirportNav)));
     }
 
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {message});
@@ -784,6 +785,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
           ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirportNav.ident).arg(text));
+
 
       }
     }
