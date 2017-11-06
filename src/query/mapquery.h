@@ -239,10 +239,7 @@ private:
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
   QCache<int, atools::geo::LineString> airspaceLineCache;
 
-  /* Inflate bounding rectangle before passing it to query */
-  static double queryRectInflationFactor;
-  static double queryRectInflationIncrement;
-  static int queryRowLimit;
+  static int queryMaxRows;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr,
@@ -297,7 +294,7 @@ bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox
 template<typename TYPE>
 void MapQuery::SimpleRectCache<TYPE>::validate()
 {
-  if(list.size() >= queryRowLimit)
+  if(list.size() >= queryMaxRows)
   {
     curRect.clear();
     curMapLayer = nullptr;

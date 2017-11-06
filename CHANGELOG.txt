@@ -2,8 +2,6 @@ Version 1.7.1.develop
 
 * Added sub-menu for third party navdata with three display options.
 * Changed main window title bar to indicate usage of navdata ("FSX/ND", "FSX/ND+" or "FSX")
-* Fixed problem with wrong AIRAC cycle indication in menu item.
-* Fixed problems with disappearing procedures when adding STAR.
 * Fixed several problems with procedures when using navdata and simdata together.
 * Fixed error in route string parser which did not recognize STARs correctly.
 * Removed what's this question mark in scenery database error dialog.
@@ -11,6 +9,10 @@ Version 1.7.1.develop
   and simulator data for airports depending on mode.
 * Fixed problem in route string parser where an airway as first entry did not generate a warning message.
 * Fixed error where first enroute waypoint contained an airway reference after calculating with SID.
+* Fixed display of procedure information in information dock.
+* Removed SIDs and STARs in information in information dock on tab procedure.
+* Can now display more than one ILS for a runway end.
+* Added readme and changelog to macOS deployment
 
 from atools version 2.7.1
 * Finished DFD compiler

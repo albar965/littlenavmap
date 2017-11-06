@@ -43,9 +43,9 @@ using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
 
-double MapQuery::queryRectInflationFactor = 0.3;
-double MapQuery::queryRectInflationIncrement = 0.1;
-int MapQuery::queryRowLimit = 5000;
+static double queryRectInflationFactor = 0.2;
+static double queryRectInflationIncrement = 0.1;
+int MapQuery::queryMaxRows = 5000;
 
 struct MapAirspaceCoordinate
 {
@@ -68,7 +68,7 @@ MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, SqlDatabase
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryRowLimit = settings.getAndStoreValue(
+  queryMaxRows = settings.getAndStoreValue(
     lnm::SETTINGS_MAPQUERY + "QueryRowLimit", 5000).toInt();
 }
 
@@ -1065,6 +1065,19 @@ QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoD
 void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect)
 {
   rect.scale(1. + queryRectInflationFactor, 1. + queryRectInflationFactor);
+
+  if(rect.east(GeoDataCoordinates::Degree) + queryRectInflationIncrement < 180.f)
+    rect.setEast(rect.east(GeoDataCoordinates::Degree) + queryRectInflationIncrement, GeoDataCoordinates::Degree);
+
+  if(rect.west(GeoDataCoordinates::Degree) - queryRectInflationIncrement > -180.f)
+    rect.setWest(rect.west(GeoDataCoordinates::Degree) - queryRectInflationIncrement, GeoDataCoordinates::Degree);
+
+  if(rect.north(GeoDataCoordinates::Degree) + queryRectInflationIncrement < 90.f)
+    rect.setNorth(rect.north(GeoDataCoordinates::Degree) + queryRectInflationIncrement, GeoDataCoordinates::Degree);
+  if(rect.south(GeoDataCoordinates::Degree) - queryRectInflationIncrement > -90.f)
+    rect.setSouth(rect.south(GeoDataCoordinates::Degree) - queryRectInflationIncrement, GeoDataCoordinates::Degree);
+
+  // qDebug() << rect.toString(GeoDataCoordinates::Degree);
 }
 
 void MapQuery::initQueries()
@@ -1072,7 +1085,7 @@ void MapQuery::initQueries()
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
   static const QString whereIdentRegion("ident = :ident and region like :region");
-  static const QString whereLimit("limit " + QString::number(queryRowLimit));
+  static const QString whereLimit("limit " + QString::number(queryMaxRows));
 
   // Common select statements
   static const QString airportQueryBase(
