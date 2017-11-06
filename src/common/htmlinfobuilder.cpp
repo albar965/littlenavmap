@@ -69,7 +69,8 @@ HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
 {
   mapQuery = NavApp::getMapQuery();
   infoQuery = NavApp::getInfoQuery();
-  airportQuery = NavApp::getAirportQuerySim();
+  airportQuerySim = NavApp::getAirportQuerySim();
+  airportQueryNav = NavApp::getAirportQueryNav();
 
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
@@ -157,7 +158,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.br();
 
   QString city, state, country;
-  airportQuery->getAirportAdminNamesById(airport.id, city, state, country);
+  airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
   if(route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
@@ -516,11 +517,11 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
         if(details)
         {
-          runwayEndText(html, recPrim, hdgPrim, rec.valueFloat("length"));
+          runwayEndText(html, airport, recPrim, hdgPrim, rec.valueFloat("length"));
 #ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).pEnd();
 #endif
-          runwayEndText(html, recSec, hdgSec, rec.valueFloat("length"));
+          runwayEndText(html, airport, recSec, hdgSec, rec.valueFloat("length"));
 #ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).pEnd();
 #endif
@@ -615,7 +616,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
   }
 }
 
-void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, float hdgPrim,
+void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport, const SqlRecord *rec, float hdgPrim,
                                     float length) const
 {
   bool closed = rec->valueBool("has_closed_markings");
@@ -679,9 +680,14 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
     html.row2(tr("Runway End Lights:"), lights.join(tr(", ")));
   html.tableEnd();
 
-  const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rec->valueInt("runway_end_id"));
+  // Show none, one or more ILS
+  const atools::sql::SqlRecordVector *ilsRec =
+    infoQuery->getIlsInformationSimByName(airport.ident, rec->valueStr("name"));
   if(ilsRec != nullptr)
-    ilsText(ilsRec, html, false);
+  {
+    for(const atools::sql::SqlRecord& irec : *ilsRec)
+      ilsText(&irec, html, false);
+  }
 }
 
 void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder& html, bool approach) const
@@ -749,23 +755,21 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 {
   if(info && infoQuery != nullptr && airport.isValid())
   {
+    MapAirport navAirport = mapQuery->getAirportNav(airport);
+
     if(!print)
       airportTitle(airport, html, -1, background);
 
-    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
+    html.p(tr("Approaches and Transitions"));
+
+    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(navAirport.id);
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = airportQuery->getRunwayNames(airport.id);
+      QStringList runwayNames = airportQueryNav->getRunwayNames(navAirport.id);
 
       for(const SqlRecord& recApp : *recAppVector)
       {
-        // Approach information
-        int rwEndId = recApp.valueInt("runway_end_id");
-
-        QString runway = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
-
-        if(!runway.isEmpty())
-          runway = tr(" - Runway ") + runway;
+        // Approach information ==============================
 
         // Build header ===============================================
         QString procType = recApp.valueStr("type");
@@ -774,16 +778,27 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                                                            recApp.valueStr("suffix"),
                                                            recApp.valueBool("has_gps_overlay"));
 
+        if(type & proc::PROCEDURE_STAR_ALL || type & proc::PROCEDURE_SID_ALL)
+          continue;
+
+        int rwEndId = recApp.valueInt("runway_end_id");
+
+        QString runwayIdent = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
+        QString runwayTxt = runwayIdent;
+
+        if(!runwayTxt.isEmpty())
+          runwayTxt = tr(" - Runway ") + runwayTxt;
+
         QString fix = recApp.valueStr("fix_ident");
         QString header;
 
         if(type & proc::PROCEDURE_SID)
-          header = tr("SID %1 %2").arg(fix).arg(runway);
+          header = tr("SID %1 %2").arg(fix).arg(runwayTxt);
         else if(type & proc::PROCEDURE_STAR)
-          header = tr("STAR %1 %2").arg(fix).arg(runway);
+          header = tr("STAR %1 %2").arg(fix).arg(runwayTxt);
         else
           header = tr("Approach %1 %2 %3 %4").arg(proc::procedureType(procType)).
-                   arg(recApp.valueStr("suffix")).arg(fix).arg(runway);
+                   arg(recApp.valueStr("suffix")).arg(fix).arg(runwayTxt);
 
         html.h3(header, atools::util::html::UNDERLINE);
 
@@ -809,39 +824,49 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
         if(procType == "ILS" || procType == "LOC")
         {
-          const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rwEndId);
-          if(ilsRec != nullptr)
-            ilsText(ilsRec, html, true);
+          // Display ILS information ===========================================
+          const atools::sql::SqlRecordVector *ilsRec =
+            infoQuery->getIlsInformationSimByName(airport.ident, runwayIdent);
+          if(ilsRec != nullptr && !ilsRec->isEmpty())
+          {
+            for(const atools::sql::SqlRecord& irec : *ilsRec)
+              ilsText(&irec, html, true);
+          }
           else
             html.row2(tr("ILS data not found"));
         }
         else if(procType == "LOCB")
         {
-          const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
+          // Display backcourse ILS information ===========================================
+          const QList<MapRunway> *runways = airportQueryNav->getRunways(airport.id);
 
           if(runways != nullptr)
           {
             // Find the opposite end
-            int backcourseEndId = 0;
+            QString backcourseEndIdent;
             for(const MapRunway& rw : *runways)
             {
               if(rw.primaryEndId == rwEndId)
               {
-                backcourseEndId = rw.secondaryEndId;
+                backcourseEndIdent = rw.secondaryName;
                 break;
               }
               else if(rw.secondaryEndId == rwEndId)
               {
-                backcourseEndId = rw.primaryEndId;
+                backcourseEndIdent = rw.primaryName;
                 break;
               }
             }
 
-            if(backcourseEndId != 0)
+            if(backcourseEndIdent != 0)
             {
-              const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(backcourseEndId);
-              if(ilsRec != nullptr)
-                ilsText(ilsRec, html, true);
+              const atools::sql::SqlRecordVector *ilsRec =
+                infoQuery->getIlsInformationSimByName(airport.ident, backcourseEndIdent);
+              if(ilsRec != nullptr && !ilsRec->isEmpty())
+              {
+                for(const atools::sql::SqlRecord& irec : *ilsRec)
+                  ilsText(&irec, html, true);
+              }
               else
                 html.row2(tr("ILS data not found"));
             }
@@ -854,8 +879,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         html.p().small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).pEnd();
 #endif
 
-        const SqlRecordVector *recTransVector =
-          infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+        const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
         if(recTransVector != nullptr)
         {
           // Transitions for this approach
@@ -914,7 +938,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
             addRadionavFixType(html, recTrans);
             html.tableEnd();
 #ifdef DEBUG_INFORMATION
-            html.p().b(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).pEnd();
+            html.p().small(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).pEnd();
 #endif
           }
         }
@@ -937,6 +961,7 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("Fix Type:"), tr("Terminal VOR"));
 
     map::MapSearchResult result;
+
     mapQuery->getMapObjectByIdent(result, map::VOR, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
     if(result.hasVor())
@@ -1038,7 +1063,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         // Check if the station is an airport
         map::MapAirport reportAirport;
-        airportQuery->getAirportByIdent(reportAirport, reportIcao);
+        airportQuerySim->getAirportByIdent(reportAirport, reportIcao);
         if(!print && reportAirport.isValid())
         {
           // Add link to airport

@@ -36,7 +36,9 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
   waypointCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
   airwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirwayCache", 100).toInt());
   runwayEndCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayEndCache", 100).toInt());
-  ilsCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
+  ilsCacheSim.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
+  ilsCacheNav.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
+  ilsCacheSimByName.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "IlsCache", 100).toInt());
   comCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ComCache", 100).toInt());
   runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayCache", 100).toInt());
   helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "HelipadCache", 100).toInt());
@@ -98,9 +100,35 @@ const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId
   return cachedRecord(runwayEndCache, runwayEndQuery, runwayEndId);
 }
 
-const atools::sql::SqlRecord *InfoQuery::getIlsInformation(int runwayEndId)
+const atools::sql::SqlRecord *InfoQuery::getIlsInformationSim(int runwayEndId)
 {
-  return cachedRecord(ilsCache, ilsQuery, runwayEndId);
+  return cachedRecord(ilsCacheSim, ilsQuerySim, runwayEndId);
+}
+
+const atools::sql::SqlRecord *InfoQuery::getIlsInformationNav(int runwayEndId)
+{
+  return cachedRecord(ilsCacheNav, ilsQueryNav, runwayEndId);
+}
+
+const atools::sql::SqlRecordVector *InfoQuery::getIlsInformationSimByName(const QString& airportIdent,
+                                                                          const QString& runway)
+{
+  std::pair<QString, QString> key = std::make_pair(airportIdent, runway);
+  atools::sql::SqlRecordVector *rec = ilsCacheSimByName.object(key);
+
+  if(rec == nullptr)
+  {
+    ilsQuerySimByName->bindValue(":apt", airportIdent);
+    ilsQuerySimByName->bindValue(":rwy", runway);
+    ilsQuerySimByName->exec();
+
+    rec = new atools::sql::SqlRecordVector;
+    while(ilsQuerySimByName->next())
+      rec->append(ilsQuerySimByName->record());
+
+    ilsCacheSimByName.insert(key, rec);
+  }
+  return rec;
 }
 
 const atools::sql::SqlRecord *InfoQuery::getVorInformation(int vorId)
@@ -186,8 +214,7 @@ const SqlRecord *InfoQuery::cachedRecord(QCache<ID, SqlRecord>& cache, SqlQuery 
 
 /* Get a record vector from the cache of get it from a database query */
 template<typename ID>
-const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<ID, SqlRecordVector>& cache,
-                                                     SqlQuery *query, ID id)
+const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<ID, SqlRecordVector>& cache, SqlQuery *query, ID id)
 {
   SqlRecordVector *rec = cache.object(id);
   if(rec != nullptr)
@@ -282,8 +309,14 @@ void InfoQuery::initQueries()
   startQuery = new SqlQuery(db);
   startQuery->prepare("select * from start where airport_id = :id");
 
-  ilsQuery = new SqlQuery(db);
-  ilsQuery->prepare("select * from ils where loc_runway_end_id = :id");
+  ilsQuerySim = new SqlQuery(db);
+  ilsQuerySim->prepare("select * from ils where loc_runway_end_id = :id");
+
+  ilsQueryNav = new SqlQuery(dbNav);
+  ilsQueryNav->prepare("select * from ils where loc_runway_end_id = :id");
+
+  ilsQuerySimByName = new SqlQuery(db);
+  ilsQuerySimByName->prepare("select * from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
 
   airwayWaypointQuery = new SqlQuery(dbNav);
   airwayWaypointQuery->prepare("select "
@@ -303,7 +336,8 @@ void InfoQuery::initQueries()
   approachQuery = new SqlQuery(dbNav);
   approachQuery->prepare("select a.runway_name, r.runway_end_id, a.* from approach a "
                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
-                         "where a.airport_id = :id");
+                         "where a.airport_id = :id "
+                         "order by a.runway_name, a.type");
 
   transitionQuery = new SqlQuery(dbNav);
   transitionQuery->prepare("select * from transition where approach_id = :id order by fix_ident");
@@ -318,7 +352,9 @@ void InfoQuery::deInitQueries()
   waypointCache.clear();
   airwayCache.clear();
   runwayEndCache.clear();
-  ilsCache.clear();
+  ilsCacheSim.clear();
+  ilsCacheNav.clear();
+  ilsCacheSimByName.clear();
   comCache.clear();
   runwayCache.clear();
   helipadCache.clear();
@@ -363,8 +399,14 @@ void InfoQuery::deInitQueries()
   delete runwayEndQuery;
   runwayEndQuery = nullptr;
 
-  delete ilsQuery;
-  ilsQuery = nullptr;
+  delete ilsQueryNav;
+  ilsQueryNav = nullptr;
+
+  delete ilsQuerySim;
+  ilsQuerySim = nullptr;
+
+  delete ilsQuerySimByName;
+  ilsQuerySimByName = nullptr;
 
   delete airwayWaypointQuery;
   airwayWaypointQuery = nullptr;

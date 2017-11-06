@@ -80,7 +80,11 @@ public:
   const atools::sql::SqlRecordVector *getStartInformation(int airportId);
 
   /* Get record for table ils for an runway end */
-  const atools::sql::SqlRecord *getIlsInformation(int runwayEndId);
+  const atools::sql::SqlRecord *getIlsInformationSim(int runwayEndId);
+
+  /* Get record for table ils for an runway end */
+  const atools::sql::SqlRecord *getIlsInformationNav(int runwayEndId);
+  const atools::sql::SqlRecordVector *getIlsInformationSimByName(const QString& airportIdent, const QString& runway);
 
   /* Get runway name and all columns from table approach */
   const atools::sql::SqlRecordVector *getApproachInformation(int airportId);
@@ -110,10 +114,11 @@ private:
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache,
                                       vorCache, ndbCache, waypointCache, airspaceCache, airwayCache, runwayEndCache,
-                                      ilsCache;
+                                      ilsCacheNav, ilsCacheSim;
 
   QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
                                             transitionCache;
+  QCache<std::pair<QString, QString>, atools::sql::SqlRecordVector> ilsCacheSimByName;
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
@@ -124,9 +129,10 @@ private:
                         *vorQuery = nullptr, *ndbQuery = nullptr,
                         *waypointQuery = nullptr, *airspaceQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
                         *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr,
-                        *startQuery = nullptr, *ilsQuery = nullptr, *airwayWaypointQuery = nullptr,
-                        *vorIdentRegionQuery = nullptr,
-                        *approachQuery = nullptr, *transitionQuery = nullptr;
+                        *startQuery = nullptr, *ilsQuerySim = nullptr, *ilsQueryNav = nullptr,
+                        *ilsQuerySimByName = nullptr,
+                        *airwayWaypointQuery = nullptr, *vorIdentRegionQuery = nullptr, *approachQuery = nullptr,
+                        *transitionQuery = nullptr;
 
 };
 

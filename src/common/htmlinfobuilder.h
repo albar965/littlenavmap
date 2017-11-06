@@ -242,7 +242,7 @@ private:
   void rowForBool(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                   const QString& msg, bool expected = false) const;
 
-  void runwayEndText(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, float hdgPrim,
+  void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec, float hdgPrim,
                      float length) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
@@ -276,7 +276,7 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
-  AirportQuery *airportQuery;
+  AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;
   bool info, print;
