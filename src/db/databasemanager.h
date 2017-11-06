@@ -82,7 +82,7 @@ public:
 
   /* Opens a Sqlite database. If the database is new or does not contain a schema an empty schema is created.
    * Will not return if an exception is caught during opening. */
-  void openDatabase();
+  void openAllDatabases();
 
   /* Close database.
    * Will not return if an exception is caught during opening. */
@@ -153,7 +153,13 @@ private:
   bool runInternal();
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
+  /* Database stored in settings directory */
   QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
+
+  /* Database stored in application directory or settings directory */
+  QString buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type);
+
+  /* Temporary name stored in settings directory */
   QString buildCompilingDatabaseFileName();
 
   void switchSimFromMainMenu();
@@ -181,7 +187,8 @@ private:
   qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
-  atools::sql::SqlDatabase *databaseSim = nullptr, *databaseNav = nullptr;
+  atools::sql::SqlDatabase *databaseSim = nullptr /* Database for simulator content */,
+                           *databaseNav = nullptr /* Database for third party navigation data */;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;

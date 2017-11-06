@@ -140,7 +140,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
-  if(!QFile::exists(buildDatabaseFileName(FsPaths::NAVIGRAPH)))
+  QString name = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  if(name.isEmpty() && !QFile::exists(name))
+    // Set to off if not database found
     navDatabaseStatus = dm::NAVDATABASE_OFF;
 
   // Find simulators by default registry entries
@@ -375,11 +377,12 @@ void DatabaseManager::insertSimSwitchActions()
     menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
   }
 
-  QString ngDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
-  if(QFile::exists(ngDbFile))
+  QString file = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+
+  if(!file.isEmpty())
   {
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
-    tempDb.setDatabaseName(ngDbFile);
+    tempDb.setDatabaseName(file);
     tempDb.open();
     QString cycle = DatabaseMeta(tempDb).getAiracCycle();
     closeDatabaseFile(&tempDb);
@@ -473,7 +476,7 @@ void DatabaseManager::switchNavFromMainMenu()
   }
   qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
-  openDatabase();
+  openAllDatabases();
 
   emit postDatabaseLoad(currentFsType);
 
@@ -497,7 +500,7 @@ void DatabaseManager::switchSimFromMainMenu()
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
-    openDatabase();
+    openAllDatabases();
 
     // Reopen all with new database
     emit postDatabaseLoad(currentFsType);
@@ -507,10 +510,10 @@ void DatabaseManager::switchSimFromMainMenu()
   }
 }
 
-void DatabaseManager::openDatabase()
+void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
-  QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  QString navDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
 
   if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     simDbFile = navDbFile;
@@ -601,9 +604,11 @@ void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
 {
   try
   {
-    qDebug() << "Closing database" << db->databaseName();
     if(db != nullptr && db->isOpen())
+    {
+      qDebug() << "Closing database" << db->databaseName();
       db->close();
+    }
   }
   catch(atools::Exception& e)
   {
@@ -793,7 +798,7 @@ bool DatabaseManager::runInternal()
             // Syncronize display with loaded database
             currentFsType = selectedFsType;
 
-            openDatabase();
+            openAllDatabases();
             emit postDatabaseLoad(currentFsType);
           }
           else
@@ -1253,8 +1258,26 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 /* Create database name including simulator short name */
 QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type)
 {
-  return databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX +
+  return databaseDirectory +
+         QDir::separator() + lnm::DATABASE_PREFIX +
          atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
+}
+
+/* Create database name including simulator short name */
+QString DatabaseManager::buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type)
+{
+  QString ngDbFile = buildDatabaseFileName(type);
+  QString ngDbFileApp = QCoreApplication::applicationDirPath() +
+                        QDir::separator() + lnm::DATABASE_DIR +
+                        QDir::separator() + lnm::DATABASE_PREFIX +
+                        atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
+
+  QString file;
+  if(QFile::exists(ngDbFile))
+    file = ngDbFile;
+  else if(QFile::exists(ngDbFileApp))
+    file = ngDbFileApp;
+  return file;
 }
 
 QString DatabaseManager::buildCompilingDatabaseFileName()

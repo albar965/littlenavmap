@@ -37,6 +37,7 @@
 #include "common/proctypes.h"
 #include "common/unit.h"
 
+#include <QCommandLineParser>
 #include <QDebug>
 #include <QSplashScreen>
 #include <QSslSocket>
@@ -105,6 +106,22 @@ int main(int argc, char *argv[])
   try
   {
     app.processEvents();
+
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    QCommandLineOption settingsDirOpt({"s", "settings-directory"},
+                                      QObject::tr("Use <settings-directory> instead of \"%1\".").
+                                      arg(NavApp::organizationName()),
+                                      QObject::tr("settings-directory"));
+    parser.addOption(settingsDirOpt);
+
+    // Process the actual command line arguments given by the user
+    parser.process(*QCoreApplication::instance());
+
+    if(parser.isSet(settingsDirOpt) && !parser.value(settingsDirOpt).isEmpty())
+      Settings::setOverrideOrganisation(parser.value(settingsDirOpt));
 
     // Initialize logging and force logfiles into the system or user temp directory
     // This will prefix all log files with orgranization and application name and append ".log"

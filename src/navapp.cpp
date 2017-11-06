@@ -78,7 +78,7 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   NavApp::mainWindow = mainWindowParam;
   databaseManager = new DatabaseManager(mainWindow);
-  databaseManager->openDatabase();
+  databaseManager->openAllDatabases();
 
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());

@@ -1339,10 +1339,10 @@
              <item>
               <widget class="QLineEdit" name="lineEditAirportScenerySearch">
                <property name="toolTip">
-                <string>Path of the BGL file containing the airport as in scenery.cfg</string>
+                <string>Path of the scenery file containing the airport</string>
                </property>
                <property name="statusTip">
-                <string>Path of the BGL file containing the airport as in scenery.cfg</string>
+                <string>Path of the scenery file containing the airport</string>
                </property>
                <property name="placeholderText">
                 <string>Scenery Path</string>
@@ -1355,10 +1355,10 @@
              <item>
               <widget class="QLineEdit" name="lineEditAirportFileSearch">
                <property name="toolTip">
-                <string>Name of the BGL file containg the airport</string>
+                <string>Name of the scenery file containg the airport</string>
                </property>
                <property name="statusTip">
-                <string>Name of the BGL file containg the airport</string>
+                <string>Name of the scenery file containg the airport</string>
                </property>
                <property name="placeholderText">
                 <string>Filename</string>
@@ -2057,10 +2057,10 @@
              <item>
               <widget class="QLineEdit" name="lineEditNavScenerySearch">
                <property name="toolTip">
-                <string>Path of the BGL file containing the navaid as in scenery.cfg</string>
+                <string>Path of the scenery file containing the navaid</string>
                </property>
                <property name="statusTip">
-                <string>Path of the BGL file containing the navaid as in scenery.cfg</string>
+                <string>Path of the scenery file containing the navaid</string>
                </property>
                <property name="placeholderText">
                 <string>Scenery Path</string>
@@ -2073,10 +2073,10 @@
              <item>
               <widget class="QLineEdit" name="lineEditNavFileSearch">
                <property name="toolTip">
-                <string>Name of the BGL file containg the navaid</string>
+                <string>Name of the scenery file containg the navaid</string>
                </property>
                <property name="statusTip">
-                <string>Name of the BGL file containg the navaid</string>
+                <string>Name of the scenery file containg the navaid</string>
                </property>
                <property name="placeholderText">
                 <string>Filename</string>
@@ -2456,7 +2456,7 @@
           <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
          </property>
          <property name="statusTip">
-          <string>Flight plan altitude which is also used to calculate flight plan based on given altitude</string>
+          <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
          </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>
@@ -4733,7 +4733,7 @@
     <string>Connect to or disconnect from simulator via Little Navconnect on another computer or directly to a simulator on the same computer</string>
    </property>
    <property name="statusTip">
-    <string>Connect to or disconnect from simulator via Little Navconnect</string>
+    <string>Connect to or disconnect from simulator via Little Navconnect on another computer or directly to a simulator on the same computer</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
@@ -5684,7 +5684,7 @@
     <string>Activate Flight Plan Leg</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a direct flight plan</string>
+    <string>Activate Flight Plan Leg</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -5846,7 +5846,7 @@
     <string>Show simulator AI and multiplayer ship position and data on map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer ship position and data on map</string>
    </property>
   </action>
   <action name="actionRouteSaveAsFms">
@@ -5985,7 +5985,7 @@
     <string>Check for Updates</string>
    </property>
    <property name="statusTip">
-    <string>About Little Navmap</string>
+    <string>Check for Updates</string>
    </property>
    <property name="menuRole">
     <enum>QAction::TextHeuristicRole</enum>
