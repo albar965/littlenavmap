@@ -249,24 +249,27 @@ void InfoController::saveState()
 
 void InfoController::restoreState()
 {
-  QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
-  QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_INFO)
+  {
+    QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
+    QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
 
-  // Go through the string and collect all objects in the MapSearchResult
-  map::MapSearchResult res;
-  for(int i = 0; i < refsStrList.size(); i += 2)
-    mapQuery->getMapObjectById(res,
-                               map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
-                               refsStrList.at(i).toInt(), false /* airport from nav database */);
+    // Go through the string and collect all objects in the MapSearchResult
+    map::MapSearchResult res;
+    for(int i = 0; i < refsStrList.size(); i += 2)
+      mapQuery->getMapObjectById(res,
+                                 map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
+                                 refsStrList.at(i).toInt(), false /* airport from nav database */);
 
-  iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-  updateTextEditFontSizes();
-  infoBuilder->updateAircraftIcons(true);
-  showInformationInternal(res, false);
+    iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+    updateTextEditFontSizes();
+    infoBuilder->updateAircraftIcons(true);
+    showInformationInternal(res, false);
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
-                                                            ui->tabWidgetLegend});
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
+                                                              ui->tabWidgetLegend});
+  }
 }
 
 void InfoController::updateAirport()

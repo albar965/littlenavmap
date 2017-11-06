@@ -27,6 +27,7 @@
 #include "ui_mainwindow.h"
 #include "common/constants.h"
 #include "search/proceduresearch.h"
+#include "options/optiondata.h"
 
 #include <QTabWidget>
 #include <QUrl>
@@ -94,8 +95,11 @@ void SearchController::saveState()
 
 void SearchController::restoreState()
 {
-  for(AbstractSearch *s : allSearchTabs)
-    s->restoreState();
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  {
+    for(AbstractSearch *s : allSearchTabs)
+      s->restoreState();
+  }
 }
 
 void SearchController::createAirportSearch(QTableView *tableView)

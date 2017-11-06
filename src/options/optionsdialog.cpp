@@ -244,6 +244,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsStartupLoadKml);
   widgets.append(ui->checkBoxOptionsStartupLoadMapSettings);
   widgets.append(ui->checkBoxOptionsStartupLoadRoute);
+  widgets.append(ui->checkBoxOptionsStartupLoadSearch);
+  widgets.append(ui->checkBoxOptionsStartupLoadInfoContent);
   widgets.append(ui->checkBoxOptionsWeatherInfoAsn);
   widgets.append(ui->checkBoxOptionsWeatherInfoNoaa);
   widgets.append(ui->checkBoxOptionsWeatherInfoVatsim);
@@ -854,6 +856,8 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   toFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
+  toFlags(ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
+  toFlags(ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
   toFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
   toFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
   toFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
@@ -969,6 +973,8 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   fromFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
+  fromFlags(ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
+  fromFlags(ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
   fromFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
   fromFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
   fromFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);

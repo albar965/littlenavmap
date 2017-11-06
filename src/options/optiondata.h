@@ -120,7 +120,13 @@ enum Flag
   CACHE_USE_OFFLINE_ELEVATION = 1 << 23,
 
   /* checkBoxOptionsShowTod*/
-  FLIGHT_PLAN_SHOW_TOD = 1 << 24
+  FLIGHT_PLAN_SHOW_TOD = 1 << 24,
+
+  /* checkBoxOptionsStartupLoadSearch */
+  STARTUP_LOAD_INFO = 1 << 25,
+
+  /* checkBoxOptionsStartupLoadInfoContent */
+  STARTUP_LOAD_SEARCH = 1 << 26
 
 };
 
