@@ -735,7 +735,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproaches->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
-    if(airport.flags & map::AP_PROCEDURE)
+    if(NavApp::getAirportQueryNav()->hasProcedures(airport.ident))
       ui->actionSearchShowApproaches->setEnabled(true);
     else
       ui->actionSearchShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport.ident));

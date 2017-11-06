@@ -217,7 +217,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(airport.flags.testFlag(AP_JETFUEL))
     facilities.append(tr("Jetfuel"));
 
-  if(airport.flags.testFlag(AP_PROCEDURE))
+  if(airportQueryNav->hasProcedures(airport.ident))
     facilities.append(tr("Procedures"));
 
   if(airport.flags.testFlag(AP_ILS))
