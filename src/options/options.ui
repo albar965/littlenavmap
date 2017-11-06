@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1007</width>
-    <height>469</height>
+    <width>1094</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
        <string>Startup</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
          <property name="text">
           <string>Load all last used Google Earth &amp;KML files</string>
@@ -40,7 +40,159 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="12" column="0">
+        <spacer name="verticalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
+         <property name="text">
+          <string>Load last used &amp;flight plan</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>On startup:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadTrail">
+         <property name="toolTip">
+          <string>Load the last flight trail flown</string>
+         </property>
+         <property name="statusTip">
+          <string>Load the last flight trail flown</string>
+         </property>
+         <property name="text">
+          <string>Restore aircraft &amp;trail</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadInfoContent">
+         <property name="toolTip">
+          <string>Restore all information window tabs with airport, navaid and other information</string>
+         </property>
+         <property name="statusTip">
+          <string>Restore all information window tabs with airport, navaid and other information</string>
+         </property>
+         <property name="text">
+          <string>Restore &amp;information window content</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
+         <property name="toolTip">
+          <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
+         </property>
+         <property name="statusTip">
+          <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
+         </property>
+         <property name="text">
+          <string>Load the &amp;map display saved settings</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadSearch">
+         <property name="toolTip">
+          <string>Restore the search settings in airport, navaid and procedure search tabs</string>
+         </property>
+         <property name="statusTip">
+          <string>Restore the search settings in airport, navaid and procedure search tabs</string>
+         </property>
+         <property name="text">
+          <string>Restore &amp;airport, navaid and procedure searches</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBoxOptionsStartupShowMap">
+         <property name="title">
+          <string>On startup show on map:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsStartupShowLast">
+            <property name="toolTip">
+             <string>Show last used map position on startup.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>&amp;Last position</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsStartupShowHome">
+            <property name="toolTip">
+             <string>Show the map home position after startup.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Home position</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsStartupShowFlightplan">
+            <property name="toolTip">
+             <string>Center the last used flight plan on the map on startup.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>&amp;Flight plan</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0" colspan="2">
         <layout class="QGridLayout" name="gridLayout_16">
          <property name="topMargin">
           <number>0</number>
@@ -140,146 +292,10 @@
          </item>
         </layout>
        </item>
-       <item row="7" column="0">
-        <widget class="QGroupBox" name="groupBoxOptionsStartupShowMap">
-         <property name="title">
-          <string>On startup show on map:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QRadioButton" name="radioButtonOptionsStartupShowLast">
-            <property name="toolTip">
-             <string>Show last used map position on startup.</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>&amp;Last position</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButtonOptionsStartupShowHome">
-            <property name="toolTip">
-             <string>Show the map home position after startup.</string>
-            </property>
-            <property name="text">
-             <string>&amp;Home position</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButtonOptionsStartupShowFlightplan">
-            <property name="toolTip">
-             <string>Center the last used flight plan on the map on startup.</string>
-            </property>
-            <property name="statusTip">
-             <string/>
-            </property>
-            <property name="text">
-             <string>&amp;Flight plan</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <spacer name="verticalSpacer_6">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
-         <property name="toolTip">
-          <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
-         </property>
-         <property name="statusTip">
-          <string>Load the last used map display settings (airport, VOR, etc.) at startup. Otherwise goes back to default settings on startup.</string>
-         </property>
-         <property name="text">
-          <string>Load the &amp;map display saved settings</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
+       <item row="10" column="0" colspan="2">
         <widget class="Line" name="line_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadInfoContent">
-         <property name="toolTip">
-          <string>Restore all information window tabs with airport, navaid and other information</string>
-         </property>
-         <property name="statusTip">
-          <string>Restore all information window tabs with airport, navaid and other information</string>
-         </property>
-         <property name="text">
-          <string>Restore &amp;information window content</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="Line" name="line_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
-         <property name="text">
-          <string>Load last used &amp;flight plan</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>On startup:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadSearch">
-         <property name="toolTip">
-          <string>Restore the search settings in airport, navaid and procedure search tabs</string>
-         </property>
-         <property name="statusTip">
-          <string>Restore the search settings in airport, navaid and procedure search tabs</string>
-         </property>
-         <property name="text">
-          <string>Restore &amp;airport, navaid and procedure searches</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -2567,6 +2583,7 @@ Changes only settings that can be done with this dialog.</string>
  <tabstops>
   <tabstop>tabWidgetOptions</tabstop>
   <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
   <tabstop>checkBoxOptionsStartupLoadKml</tabstop>
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
   <tabstop>checkBoxOptionsStartupLoadInfoContent</tabstop>

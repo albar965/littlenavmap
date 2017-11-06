@@ -553,7 +553,8 @@ void MapWidget::restoreState()
     kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);
   screenIndex->restoreState();
 
-  aircraftTrack.restoreState();
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
+    aircraftTrack.restoreState();
   aircraftTrack.setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);

@@ -126,7 +126,10 @@ enum Flag
   STARTUP_LOAD_INFO = 1 << 25,
 
   /* checkBoxOptionsStartupLoadInfoContent */
-  STARTUP_LOAD_SEARCH = 1 << 26
+  STARTUP_LOAD_SEARCH = 1 << 26,
+
+  /* checkBoxOptionsStartupLoadTrail */
+  STARTUP_LOAD_TRAIL = 1 << 27
 
 };
 
