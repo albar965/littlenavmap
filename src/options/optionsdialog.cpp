@@ -186,10 +186,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     delete style;
   }
 
-  // Add additional night mode
-  ui->comboBoxOptionsGuiTheme->addItem("Night", "Fusion");
-  stylesheets.append(QString() /*"QToolTip { color: #d0d0d0; background-color: #404040; border: 1px solid lightgray; }"*/);
-
   QPalette darkPalette(QGuiApplication::palette());
   darkPalette.setColor(QPalette::Window, QColor(15, 15, 15));
   darkPalette.setColor(QPalette::WindowText, QColor(200, 200, 200));
@@ -209,6 +205,18 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   darkPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
   darkPalette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
   darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
+
+  // Add additional night mode
+  ui->comboBoxOptionsGuiTheme->addItem("Night", "Fusion");
+
+  // Add stylesheet for better checkbox visibility
+  stylesheets.append(QString("QCheckBox { background-color: %1; border: 1px solid %2; }").
+                     arg(darkPalette.color(QPalette::Window).lighter(400).name()).
+                     arg(darkPalette.color(QPalette::Window).lighter(400).name()) +
+                     QLatin1Literal("QCheckBox::indicator:checked "
+                                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
+                     QLatin1Literal("QCheckBox::indicator:unchecked "
+                                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }"));
 
   // Store dark palette settings a in a separate ini file
   QString filename = Settings::instance().getConfigFilename("_nightstyle.ini");

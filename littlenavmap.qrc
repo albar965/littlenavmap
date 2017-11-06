@@ -164,5 +164,7 @@
         <file>resources/icons/qticon.png</file>
         <file>resources/icons/airspacecopy.svg</file>
         <file>resources/icons/saveastxt.svg</file>
+        <file>resources/icons/checkbox_dark_unchecked.png</file>
+        <file>resources/icons/checkbox_dark_checked.png</file>
     </qresource>
 </RCC>
