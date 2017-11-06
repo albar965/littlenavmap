@@ -13,6 +13,9 @@ Version 1.7.1.develop
 * Removed SIDs and STARs in information in information dock on tab procedure.
 * Can now display more than one ILS for a runway end.
 * Added readme and changelog to macOS deployment
+* Additonal third party database is not opened from application directory first and can be overloaded in settings database directory.
+* Added options to disable restoring the last search and info content on startup.
+* Fixed problem with almost invisible checkbox in night more by adding stylesheet.
 
 from atools version 2.7.1
 * Finished DFD compiler
