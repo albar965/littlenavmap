@@ -336,9 +336,8 @@ QMessageBox *DatabaseManager::showSimpleProgressDialog(const QString& message)
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QApplication::applicationName(), message);
-  progressBox->setWindowFlags(progressBox->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
   progressBox->setStandardButtons(QMessageBox::NoButton);
-  progressBox->setWindowModality(Qt::ApplicationModal);
   progressBox->show();
   atools::gui::Application::processEventsExtended();
   return progressBox;
@@ -399,6 +398,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     // Copy to target
     if(resultRemove)
     {
+      dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
       resultCopy = QFile(appDb).copy(settingsDb);
       qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
     }
@@ -408,7 +409,12 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     {
       SqlDatabase tempDb(DATABASE_NAME_TEMP);
       openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+      dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
       NavDatabase::runPreparationScript(tempDb);
+
+      dialog->setText(tr("Preparing %1 Database: Analyizing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
       tempDb.analyze();
       closeDatabaseFile(&tempDb);
       settingsNeedsPreparation = false;
@@ -423,7 +429,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     if(!resultCopy)
       QMessageBox::warning(nullptr, QApplication::applicationName(),
                            tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
-                              "<i>%1</i><br/><br/>.").arg(settingsDb));
+                              "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
   }
 
   if(settingsNeedsPreparation && hasSettings)
