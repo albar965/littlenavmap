@@ -36,6 +36,7 @@ class QElapsedTimer;
 class DatabaseDialog;
 class MainWindow;
 class QSplashScreen;
+class QMessageBox;
 
 namespace dm {
 enum NavdatabaseStatus
@@ -105,6 +106,9 @@ public:
   /* if false quit application */
   bool checkIncompatibleDatabases(bool *databasesErased);
 
+  /* Copy from app dir to settings directory if newer and create indexes if missing */
+  void checkCopyAndPrepareDatabases();
+
   /* Get the settings directory where the database is stored */
   const QString& getDatabaseDirectory() const
   {
@@ -159,6 +163,9 @@ private:
   /* Database stored in application directory or settings directory */
   QString buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type);
 
+  /* Database stored in application directory */
+  QString buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type);
+
   /* Temporary name stored in settings directory */
   QString buildCompilingDatabaseFileName();
 
@@ -171,6 +178,8 @@ private:
   void updateSimulatorPathsFromDialog();
   bool loadScenery(atools::sql::SqlDatabase *db);
   void correctSimulatorType();
+  QMessageBox *showSimpleProgressDialog(const QString& message);
+  void deleteSimpleProgressDialog(QMessageBox *messageBox);
 
   /* Database name for all loaded from simulators */
   const QString DATABASE_NAME = "LNMDB";

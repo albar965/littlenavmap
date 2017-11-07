@@ -280,20 +280,12 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        // Create an empty schema for all incompatible databases
-        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-        QMessageBox progressBox(QMessageBox::NoIcon, QApplication::applicationName(), tr("Deleting ..."));
-        progressBox.setWindowFlags(progressBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
-        progressBox.setStandardButtons(QMessageBox::NoButton);
-        progressBox.setWindowModality(Qt::ApplicationModal);
-        progressBox.show();
-        atools::gui::Application::processEventsExtended();
+        QMessageBox *dialog = showSimpleProgressDialog(tr("Deleting ..."));
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
-          progressBox.setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          dialog->setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
           atools::gui::Application::processEventsExtended();
 
           if(QFile::remove(dbfile))
@@ -321,11 +313,132 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         }
         QGuiApplication::restoreOverrideCursor();
 
-        progressBox.close();
+        deleteSimpleProgressDialog(dialog);
       }
     }
   }
   return ok;
+}
+
+void DatabaseManager::deleteSimpleProgressDialog(QMessageBox *messageBox)
+{
+  messageBox->close();
+  messageBox->deleteLater();
+
+  QGuiApplication::restoreOverrideCursor();
+}
+
+QMessageBox *DatabaseManager::showSimpleProgressDialog(const QString& message)
+{
+  // Avoid the splash screen hiding the dialog
+  NavApp::deleteSplashScreen();
+
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QApplication::applicationName(), message);
+  progressBox->setWindowFlags(progressBox->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  progressBox->setStandardButtons(QMessageBox::NoButton);
+  progressBox->setWindowModality(Qt::ApplicationModal);
+  progressBox->show();
+  atools::gui::Application::processEventsExtended();
+  return progressBox;
+}
+
+void DatabaseManager::checkCopyAndPrepareDatabases()
+{
+  QString appDb = buildDatabaseFileNameAppDir(FsPaths::NAVIGRAPH);
+  QString settingsDb = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  bool hasApp = false, hasSettings = false, settingsNeedsPreparation = false;
+
+  QDateTime appLastLoad = QDateTime::fromMSecsSinceEpoch(0), settingsLastLoad = QDateTime::fromMSecsSinceEpoch(0);
+
+  // Open databases and get loading timestamp from metadata
+  if(QFile::exists(appDb))
+  {
+    // Database in application directory
+    SqlDatabase tempDb(DATABASE_NAME_TEMP);
+    tempDb.setDatabaseName(appDb);
+    tempDb.open();
+    appLastLoad = DatabaseMeta(tempDb).getLastLoadTime();
+    closeDatabaseFile(&tempDb);
+    hasApp = true;
+  }
+
+  if(QFile::exists(settingsDb))
+  {
+    // Database in settings directory
+    SqlDatabase tempDb(DATABASE_NAME_TEMP);
+    tempDb.setDatabaseName(settingsDb);
+    tempDb.open();
+    settingsLastLoad = DatabaseMeta(tempDb).getLastLoadTime();
+    settingsNeedsPreparation = SqlUtil(tempDb).hasTableAndRows("script");
+    closeDatabaseFile(&tempDb);
+    hasSettings = true;
+  }
+
+  qInfo() << Q_FUNC_INFO << "settings database" << settingsDb << settingsLastLoad;
+  qInfo() << Q_FUNC_INFO << "app database" << appDb << appLastLoad;
+  qInfo() << Q_FUNC_INFO << "hasApp" << hasApp
+          << "hasSettings" << hasSettings
+          << "settingsNeedsPreparation" << settingsNeedsPreparation;
+
+  if(hasApp && (appLastLoad > settingsLastLoad))
+  {
+    // We have a database in the application folder and it is newer than the one in the settings folder
+    QMessageBox *dialog =
+      showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+
+    bool resultRemove = true, resultCopy = false;
+    // Remove target
+    if(hasSettings)
+    {
+      resultRemove = QFile(settingsDb).remove();
+      qDebug() << "removed" << settingsDb << resultRemove;
+    }
+
+    // Copy to target
+    if(resultRemove)
+    {
+      resultCopy = QFile(appDb).copy(settingsDb);
+      qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
+    }
+
+    // Create indexes and delete script afterwards
+    if(resultRemove && resultCopy)
+    {
+      SqlDatabase tempDb(DATABASE_NAME_TEMP);
+      openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+      NavDatabase::runPreparationScript(tempDb);
+      tempDb.analyze();
+      closeDatabaseFile(&tempDb);
+      settingsNeedsPreparation = false;
+    }
+    deleteSimpleProgressDialog(dialog);
+
+    if(!resultRemove)
+      QMessageBox::warning(nullptr, QApplication::applicationName(),
+                           tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                              "Remove the database file manually and restart the program.").arg(settingsDb));
+
+    if(!resultCopy)
+      QMessageBox::warning(nullptr, QApplication::applicationName(),
+                           tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
+                              "<i>%1</i><br/><br/>.").arg(settingsDb));
+  }
+
+  if(settingsNeedsPreparation && hasSettings)
+  {
+    QMessageBox *dialog =
+      showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+
+    SqlDatabase tempDb(DATABASE_NAME_TEMP);
+    openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+    NavDatabase::runPreparationScript(tempDb);
+    tempDb.analyze();
+    closeDatabaseFile(&tempDb);
+
+    deleteSimpleProgressDialog(dialog);
+  }
 }
 
 QString DatabaseManager::getCurrentSimulatorBasePath() const
@@ -1263,14 +1376,20 @@ QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorTyp
          atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
 }
 
+/* Create database name including simulator short name in application directory */
+QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type)
+{
+  return QCoreApplication::applicationDirPath() +
+         QDir::separator() + lnm::DATABASE_DIR +
+         QDir::separator() + lnm::DATABASE_PREFIX +
+         atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
+}
+
 /* Create database name including simulator short name */
 QString DatabaseManager::buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type)
 {
   QString ngDbFile = buildDatabaseFileName(type);
-  QString ngDbFileApp = QCoreApplication::applicationDirPath() +
-                        QDir::separator() + lnm::DATABASE_DIR +
-                        QDir::separator() + lnm::DATABASE_PREFIX +
-                        atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
+  QString ngDbFileApp = buildDatabaseFileNameAppDir(type);
 
   QString file;
   if(QFile::exists(ngDbFile))

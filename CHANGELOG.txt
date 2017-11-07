@@ -1,5 +1,8 @@
 Version 1.7.1.develop
 
+* Changed database update method. Now comparing databases in app and settings directory
+  and will use/copy the latest one (compared by compilation time).
+* Databases are now prepared if table "script" contains statements to create indexes.
 * Added sub-menu for third party navdata with three display options.
 * Changed main window title bar to indicate usage of navdata ("FSX/ND", "FSX/ND+" or "FSX")
 * Fixed several problems with procedures when using navdata and simdata together.

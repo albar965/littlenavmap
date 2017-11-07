@@ -213,6 +213,10 @@ int main(int argc, char *argv[])
     // If erasing databases is refused exit application
     bool databasesErased = false;
     dbManager = new DatabaseManager(nullptr);
+
+    /* Copy from application directory to settings directory if newer and create indexes if missing */
+    dbManager->checkCopyAndPrepareDatabases();
+
     if(dbManager->checkIncompatibleDatabases(&databasesErased))
     {
       delete dbManager;
