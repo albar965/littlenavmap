@@ -366,6 +366,7 @@ unix:!macx {
   deploy.commands += cp -Rvf $${OUT_PWD}/magdec $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $${DEPLOY_DIR} &&
   deploy.commands += cp -avfu $$OUT_PWD/*.qm $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${PWD}/../little_navmap_db $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $${DEPLOY_DIR} &&
   deploy.commands += chmod -v a+x $${DEPLOY_DIR}/littlenavmap.sh &&
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
@@ -418,6 +419,7 @@ macx {
 
   deploy.commands = rm -Rfv $${DEPLOY_APP} &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
+  deploy.commands += cp -Rvf $$PWD/../little_navmap_db $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   deploy.commands += cp -Rvf \
     $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
     $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
@@ -492,6 +494,7 @@ win32 {
   deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\*.qm $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\..\\atools\\*.qm $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\..\\little_navmap_db $${DEPLOY_DIR_WIN}\\little_navmap_db &&
   deploy.commands += xcopy $${WINPWD}\\littlenavmap.exe.simconnect $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\help $${DEPLOY_DIR_WIN}\\help &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\magdec $${DEPLOY_DIR_WIN}\\magdec &&
