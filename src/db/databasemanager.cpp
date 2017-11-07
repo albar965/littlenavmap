@@ -413,7 +413,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
       NavDatabase::runPreparationScript(tempDb);
 
-      dialog->setText(tr("Preparing %1 Database: Analyizing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+      dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
       QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
       tempDb.analyze();
       closeDatabaseFile(&tempDb);
@@ -1307,7 +1307,7 @@ void DatabaseManager::restoreState()
   selectedFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
-  navDatabaseStatus = static_cast<dm::NavdatabaseStatus>(s.valueInt(lnm::DATABASE_USE_NAV, dm::NAVDATABASE_OFF));
+  navDatabaseStatus = static_cast<dm::NavdatabaseStatus>(s.valueInt(lnm::DATABASE_USE_NAV, dm::NAVDATABASE_MIXED));
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */
