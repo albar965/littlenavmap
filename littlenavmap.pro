@@ -93,7 +93,7 @@ macx {
   DEPENDPATH += $$MARBLE_BASE/include
 }
 
-CONFIG += c++11
+CONFIG += c++14
 
 # Get the current GIT revision to include it into the code
 win32:DEFINES += GIT_REVISION='\\"$$system($${GIT_BIN} rev-parse --short HEAD)\\"'
