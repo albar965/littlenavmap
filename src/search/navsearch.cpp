@@ -229,25 +229,31 @@ void NavSearch::saveState()
 
 void NavSearch::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
-  widgetState.restore(navSearchWidgets);
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  {
 
-  // Need to block signals here to avoid unwanted behavior (will enable
-  // distance search and avoid saving of wrong view widget state)
-  widgetState.setBlockSignals(true);
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.restore(ui->horizontalLayoutNavDistanceSearch);
-  restoreViewState(ui->checkBoxNavDistSearch->isChecked());
+    atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
+    widgetState.restore(navSearchWidgets);
 
-  bool distSearchChecked = ui->checkBoxNavDistSearch->isChecked();
-  if(distSearchChecked)
-    // Activate distance search if it was active - otherwise leave default behavior
-    distanceSearchChanged(distSearchChecked, false /* Change view state */);
+    // Need to block signals here to avoid unwanted behavior (will enable
+    // distance search and avoid saving of wrong view widget state)
+    widgetState.setBlockSignals(true);
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    widgetState.restore(ui->horizontalLayoutNavDistanceSearch);
+    restoreViewState(ui->checkBoxNavDistSearch->isChecked());
 
-  QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
-  QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
-  minDistanceWidget->setMaximum(maxDistanceWidget->value());
-  maxDistanceWidget->setMinimum(minDistanceWidget->value());
+    bool distSearchChecked = ui->checkBoxNavDistSearch->isChecked();
+    if(distSearchChecked)
+      // Activate distance search if it was active - otherwise leave default behavior
+      distanceSearchChanged(distSearchChecked, false /* Change view state */);
+
+    QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
+    QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
+    minDistanceWidget->setMaximum(maxDistanceWidget->value());
+    maxDistanceWidget->setMinimum(minDistanceWidget->value());
+  }
+  else
+    atools::gui::WidgetState(lnm::SEARCHTAB_NAV_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewNavSearch);
 }
 
 void NavSearch::saveViewState(bool distSearchActive)

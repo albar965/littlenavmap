@@ -95,11 +95,8 @@ void SearchController::saveState()
 
 void SearchController::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
-  {
-    for(AbstractSearch *s : allSearchTabs)
-      s->restoreState();
-  }
+  for(AbstractSearch *s : allSearchTabs)
+    s->restoreState();
 }
 
 void SearchController::createAirportSearch(QTableView *tableView)

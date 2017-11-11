@@ -483,28 +483,39 @@ void ProcedureSearch::saveState()
 void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  if(NavApp::hasDataInDatabase())
-    airportQuery->getAirportById(currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  {
+    if(NavApp::hasDataInDatabase())
+      airportQuery->getAirportById(currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+  }
+
   updateFilterBoxes();
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter,
-                                                 ui->comboBoxProcedureRunwayFilter});
-
-  fillApproachTreeWidget();
   QBitArray state;
-  if(currentAirportNav.isValid() && currentAirportNav.procedure())
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-    state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
-    recentTreeState.insert(currentAirportNav.id, state);
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter,
+                                                   ui->comboBoxProcedureRunwayFilter});
+
+    fillApproachTreeWidget();
+    if(currentAirportNav.isValid() && currentAirportNav.procedure())
+    {
+      state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
+      recentTreeState.insert(currentAirportNav.id, state);
+    }
   }
 
   updateTreeHeader();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
-  // Restoring state will emit above signal
-  if(currentAirportNav.isValid() && currentAirportNav.procedure())
-    restoreTreeViewState(state);
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  {
+    // Restoring state will emit above signal
+    if(currentAirportNav.isValid() && currentAirportNav.procedure())
+      restoreTreeViewState(state);
+  }
+
   updateHeaderLabel();
 }
 

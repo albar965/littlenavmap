@@ -342,25 +342,33 @@ void AirportSearch::saveState()
 
 void AirportSearch::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
-  widgetState.restore(airportSearchWidgets);
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  {
+    atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
+    widgetState.restore(airportSearchWidgets);
 
-  // Need to block signals here to avoid unwanted behavior (will enable
-  // distance search and avoid saving of wrong view widget state)
-  widgetState.setBlockSignals(true);
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.restore(ui->horizontalLayoutAirportDistanceSearch);
-  restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
+    // Need to block signals here to avoid unwanted behavior (will enable
+    // distance search and avoid saving of wrong view widget state)
+    widgetState.setBlockSignals(true);
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    widgetState.restore(ui->horizontalLayoutAirportDistanceSearch);
+    restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
 
-  bool distSearchChecked = ui->checkBoxAirportDistSearch->isChecked();
-  if(distSearchChecked)
-    // Activate distance search if it was active - otherwise leave default behavior
-    distanceSearchChanged(distSearchChecked, false /* Change view state */);
+    if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+    {
+      bool distSearchChecked = ui->checkBoxAirportDistSearch->isChecked();
+      if(distSearchChecked)
+        // Activate distance search if it was active - otherwise leave default behavior
+        distanceSearchChanged(distSearchChecked, false /* Change view state */);
 
-  QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
-  QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
-  minDistanceWidget->setMaximum(maxDistanceWidget->value());
-  maxDistanceWidget->setMinimum(minDistanceWidget->value());
+      QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
+      QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
+      minDistanceWidget->setMaximum(maxDistanceWidget->value());
+      maxDistanceWidget->setMinimum(minDistanceWidget->value());
+    }
+  }
+  else
+    atools::gui::WidgetState(lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewAirportSearch);
 }
 
 void AirportSearch::saveViewState(bool distSearchActive)
