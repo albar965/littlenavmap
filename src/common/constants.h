@@ -83,7 +83,8 @@ const QLatin1Literal ACTIONS_SHOW_UPDATEFAILED("Actions/ShowUpdateFailed");
 
 const QLatin1Literal ACTIONS_SHOW_FS9_WARNING("Actions/ShowFs9Warning");
 const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");
-const QLatin1Literal ACTIONS_SHOW_FMS_WARNING("Actions/ShowFmsWarning");
+const QLatin1Literal ACTIONS_SHOW_FMS3_WARNING("Actions/ShowFms3Warning");
+const QLatin1Literal ACTIONS_SHOW_FMS11_WARNING("Actions/ShowFms11Warning");
 
 /* Other setting key names */
 const QLatin1Literal DATABASE_BASEPATH("Database/BasePath");

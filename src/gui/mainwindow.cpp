@@ -1162,7 +1162,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
     // Ask before saving file
     result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS_WARNING,
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS3_WARNING,
                                  tr("The old X-Plane FMS format version 3 does not allow saving of:"
                                     "<ul>"
                                       "<li>Procedures</li>"
@@ -1183,8 +1183,13 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
     // Ask before saving file
     result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS_WARNING,
-                                 tr("The new X-Plane FMS format version 11 does not allow saving of:"
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS11_WARNING,
+                                 tr("<p><b><big>This new format can only be loaded from<br/>"
+                                    "X-Plane 11.10 and above.<br/><br/>"
+                                    "Do not use it with X-Plane 11.05 or lower.<br/>"
+                                    "It might crash the simulator.</big><br/><br/>"
+                                    "Use \"Export Flight Plan as X-Plane FMS 3...\" instead.</b></p>"
+                                    "The new X-Plane FMS format version 11 does not allow saving of:"
                                     "<ul>"
                                       "<li>Ground Speed</li>"
                                         "<li>Departure parking position</li>"
@@ -2075,7 +2080,8 @@ void MainWindow::resetMessages()
 
   s.setValue(lnm::ACTIONS_SHOW_FS9_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_FMS_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_FMS11_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_UPDATEFAILED, true);
 
   setStatusMessage(tr("All message dialogs reset."));
