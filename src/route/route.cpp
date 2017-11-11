@@ -142,6 +142,32 @@ void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QStr
   starTrans = starLegs.transitionFixIdent;
 }
 
+void Route::getRunwayNames(QString& departure, QString& arrival) const
+{
+  departure = departureLegs.runwayEnd.name;
+
+  if(hasAnyArrivalProcedure())
+    arrival = arrivalLegs.runwayEnd.name;
+  else if(hasAnyStarProcedure())
+    arrival = starLegs.runwayEnd.name;
+  else
+    arrival.clear();
+}
+
+void Route::getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const
+{
+  if(hasAnyArrivalProcedure())
+  {
+    arrivalArincName = arrivalLegs.approachArincName;
+    arrivalTransition = arrivalLegs.transitionFixIdent;
+  }
+  else
+  {
+    arrivalArincName.clear();
+    arrivalTransition.clear();
+  }
+}
+
 void Route::updateActiveLegAndPos(bool force)
 {
   if(force)

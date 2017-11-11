@@ -129,8 +129,10 @@ QString RouteString::createStringForRoute(const Route& route, float speed, rs::R
 QStringList RouteString::createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options)
 {
   QStringList retval;
-  QString sid, sidTrans, star, starTrans;
+  QString sid, sidTrans, star, starTrans, depRwy, destRwy, arrivalArincName, arrivalTransition;
   route.getSidStarNames(sid, sidTrans, star, starTrans);
+  route.getRunwayNames(depRwy, destRwy);
+  route.getArrivalNames(arrivalArincName, arrivalTransition);
 
   if(route.isEmpty())
     return retval;
@@ -140,13 +142,14 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
   bool firstDct = true;
   QString lastAw, lastId;
+  int lastIndex = 0;
   for(int i = 0; i < route.size(); i++)
   {
     const RouteLeg& leg = route.at(i);
     if(leg.isAnyProcedure())
       continue;
 
-    // Add departure airport
+    // Ignore departure airport depending on options
     if(i == 0 && leg.getMapObjectType() == map::AIRPORT && !(options & rs::START_AND_DEST))
       // Options is off
       continue;
@@ -162,7 +165,14 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     {
       // Do not use  airway string if not found in database
       if(!lastId.isEmpty())
+      {
         retval.append(lastId);
+
+        if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
+          // Add runway after departure
+          retval.append(depRwy);
+      }
+
       if(i > 0 && (options & rs::DCT))
       {
         if(!(firstDct && hasSid))
@@ -184,6 +194,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
     lastId = ident;
     lastAw = airway;
+    lastIndex = i;
   }
 
   if(!retval.isEmpty())
@@ -192,11 +203,19 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       // Remove last DCT so it does not collide with the STAR - destination airport not inserted yet
       retval.removeLast();
 
+    if(options & rs::APPROACH && !arrivalArincName.isEmpty() && retval.last() == "DCT")
+      // Remove last DCT if approach information is desired and available
+      retval.removeLast();
+
     int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
+    if(options & rs::RUNWAY && !depRwy.isEmpty())
+      insertPosition++;
+
+    QString transSeparator = options & rs::SID_STAR_SPACE ? " " : ".";
 
     // Add SID
     if((options& rs::SID_STAR) && !sid.isEmpty())
-      retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans));
+      retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : transSeparator + sidTrans));
     else if(options & rs::SID_STAR_GENERIC)
       retval.insert(insertPosition, "SID");
 
@@ -206,13 +225,23 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
     // Add STAR
     if((options& rs::SID_STAR) && !star.isEmpty())
-      retval.append(star + (starTrans.isEmpty() ? QString() : "." + starTrans));
+      retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
     else if(options & rs::SID_STAR_GENERIC)
       retval.append("STAR");
 
     // Add destination airport
     if(options & rs::START_AND_DEST)
       retval.append(lastId);
+
+    if(options & rs::APPROACH && !arrivalArincName.isEmpty())
+    {
+      retval.append(arrivalArincName);
+      if(!arrivalTransition.isEmpty())
+        retval.append(arrivalTransition);
+    }
+
+    if(options & rs::FLIGHTLEVEL)
+      retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));
   }
 
   qDebug() << Q_FUNC_INFO << retval;

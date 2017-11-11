@@ -186,6 +186,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
         if(!flightplanEntry->getPosition().isValid())
           flightplanEntry->setPosition(airport.position);
 
+        // values which are not saved in PLN but other formats
+        flightplanEntry->setName(airport.name);
+        flightplanEntry->setMagvar(airport.magvar);
+
         QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && prevLeg == nullptr)
         {
@@ -300,6 +304,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       type = map::USER;
       flightplanEntry->setIcaoIdent(QString());
       flightplanEntry->setIcaoRegion(QString());
+      flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
+
       // flightplanEntry->setWaypointId(userName);
       break;
   }
@@ -670,6 +676,7 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
+// TODO assign functions are duplicatd in FlightplanEntryBuilder
 void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
@@ -681,6 +688,7 @@ void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
   flightplanEntry->setIcaoIdent(waypoint.ident);
   flightplanEntry->setPosition(waypoint.position);
   flightplanEntry->setWaypointType(atools::fs::pln::entry::INTERSECTION);
+  flightplanEntry->setMagvar(waypoint.magvar);
 }
 
 void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
@@ -693,6 +701,8 @@ void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setIcaoIdent(vor.ident);
   flightplanEntry->setPosition(vor.position);
   flightplanEntry->setWaypointType(atools::fs::pln::entry::VOR);
+  flightplanEntry->setName(vor.name);
+  flightplanEntry->setMagvar(vor.magvar);
 }
 
 void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
@@ -705,6 +715,8 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setIcaoIdent(ndb.ident);
   flightplanEntry->setPosition(ndb.position);
   flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
+  flightplanEntry->setName(ndb.name);
+  flightplanEntry->setMagvar(ndb.magvar);
 }
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)

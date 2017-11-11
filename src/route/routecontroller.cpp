@@ -889,6 +889,71 @@ bool RouteController::exportFlighplanAsRte(const QString& filename)
   return true;
 }
 
+bool RouteController::exportFlighplanAsFpr(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  try
+  {
+    route.getFlightplan().saveFpr(filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
+bool RouteController::exportFlighplanAsCorteIn(const QString& filename)
+{
+
+  qDebug() << Q_FUNC_INFO << filename;
+  QString txt = RouteString().createStringForRoute(route, 0.f,
+                                                   rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
+                                                   rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
+
+  txt.prepend(QString("RTE %1%2 ").
+              arg(route.getFlightplan().getDepartureIdent()).arg(route.getFlightplan().getDestinationIdent()));
+
+  // Check if we have to insert an endl first
+  bool endsWithEol = false;
+  QFile tmp(filename);
+  if(tmp.open(QFile::ReadOnly))
+  {
+    tmp.seek(tmp.size() - 1);
+    char lastChar = '\0';
+    tmp.read(&lastChar, 1);
+    tmp.close();
+
+    endsWithEol = lastChar == '\n' || lastChar == '\r';
+  }
+
+  // Append string to file
+  QFile file(filename);
+  if(file.open(QFile::Append | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+
+    if(!endsWithEol)
+      stream << endl;
+    stream << txt;
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to corte.in file:"));
+    return false;
+  }
+
+}
+
 bool RouteController::exportFlighplanAsGpx(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;

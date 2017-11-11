@@ -93,6 +93,9 @@ public:
   bool exportFlighplanAsGfp(const QString& filename);
   bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsRte(const QString& filename);
+  bool exportFlighplanAsFpr(const QString& filename);
+  bool exportFlighplanAsCorteIn(const QString& filename);
+
   bool exportFlighplanAsGpx(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */

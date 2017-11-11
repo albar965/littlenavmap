@@ -51,6 +51,11 @@ enum RouteStringOption
   GFP = 1 << 5, /* Produce Garmin flight plan format */
   NO_AIRWAYS = 1 << 6, /* Add all waypoints instead of from/airway/to triplet */
 
+  SID_STAR_SPACE = 1 << 7, /* Separate SID/STAR and transition with space. Not ATS compliant. */
+  RUNWAY = 1 << 8, /* Add departure runway if available. Not ATS compliant. */
+  APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. */
+  FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
+
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };
 

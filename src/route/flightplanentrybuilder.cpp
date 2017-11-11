@@ -39,10 +39,7 @@ FlightplanEntryBuilder::~FlightplanEntryBuilder()
 /* Copy airport attributes to flight plan entry */
 void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry) const
 {
-  entry.setIcaoIdent(airport.ident);
-  entry.setPosition(airport.position);
-  entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
-  entry.setWaypointId(entry.getIcaoIdent());
+  entryFromAirport(airport, entry);
 }
 
 /* create a flight plan entry from object id/type or user position */
@@ -62,6 +59,7 @@ void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, F
   entry.setWaypointType(atools::fs::pln::entry::USER);
   entry.setIcaoIdent(QString());
   entry.setWaypointId("WP" + QString::number(curUserpointNumber++));
+  entry.setMagvar(NavApp::getMagVar(userPos));
 }
 
 void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntry& entry) const
@@ -71,6 +69,8 @@ void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntr
   entry.setIcaoRegion(ndb.region);
   entry.setWaypointType(atools::fs::pln::entry::NDB);
   entry.setWaypointId(entry.getIcaoIdent());
+  entry.setName(ndb.name);
+  entry.setMagvar(ndb.magvar);
 }
 
 void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntry& entry) const
@@ -80,6 +80,8 @@ void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntr
   entry.setIcaoRegion(vor.region);
   entry.setWaypointType(atools::fs::pln::entry::VOR);
   entry.setWaypointId(entry.getIcaoIdent());
+  entry.setName(vor.name);
+  entry.setMagvar(vor.magvar);
 }
 
 void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, FlightplanEntry& entry) const
@@ -88,6 +90,8 @@ void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, Fl
   entry.setPosition(airport.position);
   entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
   entry.setWaypointId(entry.getIcaoIdent());
+  entry.setName(airport.name);
+  entry.setMagvar(airport.magvar);
 }
 
 bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const
@@ -152,6 +156,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
     entry.setIcaoRegion(waypoint.region);
     entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
     entry.setWaypointId(entry.getIcaoIdent());
+    entry.setMagvar(waypoint.magvar);
   }
 }
 

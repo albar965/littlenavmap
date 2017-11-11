@@ -720,17 +720,18 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
+  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
+
   connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeExportGfp);
   connect(ui->actionRouteSaveAsTxt, &QAction::triggered, this, &MainWindow::routeExportTxt);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeExportRte);
-  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
+  connect(ui->actionRouteSaveAsFpr, &QAction::triggered, this, &MainWindow::routeExportFpr);
+  connect(ui->actionRouteSaveAsFpl, &QAction::triggered, this, &MainWindow::routeExportFpl);
+  connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, this, &MainWindow::routeExportCorteIn);
 
-  // TODO change for X-Plane 11.10
-  connect(ui->actionRouteSaveAsFms, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
-
-  // connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
-  // connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
+  connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
+  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
 
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, &MainWindow::routeExportGpx);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
@@ -1320,13 +1321,17 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  newTitle += " - " + NavApp::getCurrentSimulatorShortName();
-
   dm::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
+
   if(navDbStatus == dm::NAVDATABASE_ALL)
-    newTitle += "/ND+";
+    newTitle += " - (" + NavApp::getCurrentSimulatorShortName() + ")";
+  else
+    newTitle += " - " + NavApp::getCurrentSimulatorShortName();
+
+  if(navDbStatus == dm::NAVDATABASE_ALL)
+    newTitle += " / N";
   else if(navDbStatus == dm::NAVDATABASE_MIXED)
-    newTitle += "/ND";
+    newTitle += " / N";
 
   if(!routeController->getCurrentRouteFilename().isEmpty())
     newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
@@ -1554,6 +1559,7 @@ bool MainWindow::routeSaveAsPln()
 
 bool MainWindow::routeSaveAsFlp()
 {
+  // <Documents>/Aerosoft/Airbus/Flightplans.
   bool saveAs = true;
   bool save = routeSaveCheckWarnings(saveAs, atools::fs::pln::FLP);
 
@@ -1657,6 +1663,7 @@ bool MainWindow::routeExportClean()
 /* Called from menu or toolbar by action */
 bool MainWindow::routeExportGfp()
 {
+  // <FSX/P3D>/F1GTN/FPL.
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
@@ -1717,6 +1724,88 @@ bool MainWindow::routeExportRte()
       if(routeController->exportFlighplanAsRte(routeFile))
       {
         setStatusMessage(tr("Flight plan saved as RTE."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeExportFpr()
+{
+  // <FSX/P3D>/SimObjects/Airplanes/mjc8q400/nav/routes.
+
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as Majestic Dash FPR..."),
+      tr("FPR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPR),
+      "fpr", "Route/Fpr",
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "SimObjects" +
+      QDir::separator() + "Airplanes" +
+      QDir::separator() + "mjc8q400" +
+      QDir::separator() + "nav" +
+      QDir::separator() + "routes",
+      routeController->buildDefaultFilenameShort(QString(), ".fpr"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->exportFlighplanAsFpr(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as FPR."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeExportFpl()
+{
+  // \X-Plane 11\Aircraft\X-Aviation\IXEG 737 Classic\coroutes
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as IEXG FPL Format"),
+      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
+      "fpl", "Route/Fpl",
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "Aircraft" +
+      QDir::separator() + "X-Aviation" +
+      QDir::separator() + "IXEG 737 Classic" +
+      QDir::separator() + "coroutes",
+      routeController->buildDefaultFilenameShort(QString(), ".fpl"));
+
+    if(!routeFile.isEmpty())
+    {
+      // Same format as txt
+      if(routeController->exportFlighplanAsTxt(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as FPL."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeExportCorteIn()
+{
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan to corte.in for Flight Factor A320"),
+      tr("corte.in Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CORTEIN),
+      ".in", "Route/CorteIn",
+      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft", "corte.in",
+      true /* dont confirm overwrite */);
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->exportFlighplanAsCorteIn(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved to corte.in."));
         return true;
       }
     }
@@ -2130,7 +2219,11 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsTxt->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsFms->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFpr->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFpl->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsCorteIn->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFms3->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);

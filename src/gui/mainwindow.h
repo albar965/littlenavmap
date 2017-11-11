@@ -194,6 +194,7 @@ private:
   void routeAppend();
   void routeOpenRecent(const QString& routeFile);
 
+  /* Flight plan save functions */
   bool routeSave();
   bool routeSaveAsPln();
   bool routeSaveAsFlp();
@@ -201,11 +202,15 @@ private:
   bool routeSaveAsFms3();
   bool routeSaveAsFms11();
 
+  /* Flight plan export functions */
   bool routeExportClean();
   bool routeExportGfp();
   bool routeExportTxt();
   bool routeExportRte();
   bool routeExportGpx();
+  bool routeExportFpr();
+  bool routeExportFpl();
+  bool routeExportCorteIn();
 
   void routeCenter();
   bool routeCheckForChanges();

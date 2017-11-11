@@ -84,11 +84,6 @@ public:
   void entryFromWaypoint(const map::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
                          bool resolveWaypoints) const;
 
-  MapQuery *getMapQuery() const
-  {
-    return mapQuery;
-  }
-
   int getCurUserpointNumber() const
   {
     return curUserpointNumber;
