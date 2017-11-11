@@ -579,6 +579,7 @@ void MapProcedureLegs::clearApproach()
   approachSuffix.clear();
   approachArincName.clear();
   approachFixIdent.clear();
+  runwayEnd = map::MapRunwayEnd();
 }
 
 void MapProcedureLegs::clearTransition()
