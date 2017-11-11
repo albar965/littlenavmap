@@ -1348,22 +1348,29 @@ void ProcedureQuery::initQueries()
   transitionQuery->prepare("select type, fix_ident from transition where transition_id = :id");
 
   approachQuery = new SqlQuery(dbNav);
-  approachQuery->prepare("select type, suffix, has_gps_overlay, fix_ident, runway_name "
-                         "from approach where approach_id = :id");
-
   approachIdByNameQuery = new SqlQuery(dbNav);
-  if(dbNav->record("approach").contains("arinc_name"))
-    approachIdByNameQuery->prepare("select approach_id, arinc_name, suffix, runway_name from approach "
-                                   "where fix_ident like :fixident and type like :type and airport_ident = :apident");
-  else
-    approachIdByNameQuery->prepare("select approach_id, suffix, runway_name from approach "
-                                   "where fix_ident like :fixident and type like :type and airport_ident = :apident");
 
   if(dbNav->record("approach").contains("arinc_name"))
   {
+    approachQuery->prepare("select type, arinc_name, suffix, has_gps_overlay, fix_ident, runway_name "
+                           "from approach where approach_id = :id");
+
+    approachIdByNameQuery->prepare("select approach_id, arinc_name, suffix, runway_name from approach "
+                                   "where fix_ident like :fixident and type like :type and airport_ident = :apident");
+
     approachIdByArincNameQuery = new SqlQuery(dbNav);
     approachIdByArincNameQuery->prepare("select approach_id, suffix, runway_name from approach "
                                         "where arinc_name like :arincname and airport_ident = :apident");
+  }
+  else
+  {
+    approachQuery->prepare("select type, suffix, has_gps_overlay, fix_ident, runway_name "
+                           "from approach where approach_id = :id");
+
+    approachIdByNameQuery->prepare("select approach_id, suffix, runway_name from approach "
+                                   "where fix_ident like :fixident and type like :type and airport_ident = :apident");
+
+    // Leave ARINC name query as null
   }
 
   transitionIdByNameQuery = new SqlQuery(dbNav);
