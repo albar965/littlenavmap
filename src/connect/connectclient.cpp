@@ -391,7 +391,7 @@ void ConnectClient::connectInternal()
     mainWindow->setConnectionStatusMessageText(tr("Connecting (%1)...").arg(simShortName()),
                                                tr("Trying to connect to local flight simulator (%1).").arg(simName()));
   }
-  else if(socket == nullptr)
+  else if(socket == nullptr && !dialog->getRemoteHostname().isEmpty())
   {
     // qDebug() << "Starting network connection";
 
