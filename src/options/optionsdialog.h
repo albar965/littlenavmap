@@ -56,6 +56,9 @@ public:
   /* Show the dialog */
   virtual int exec() override;
 
+  static bool isOverrideLanguage();
+  static bool isOverrideLocale();
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();

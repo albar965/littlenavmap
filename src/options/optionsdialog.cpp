@@ -236,6 +236,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsGuiCenterKml);
   widgets.append(ui->checkBoxOptionsGuiCenterRoute);
   widgets.append(ui->checkBoxOptionsGuiAvoidOverwrite);
+  widgets.append(ui->checkBoxOptionsGuiOverrideLanguage);
+  widgets.append(ui->checkBoxOptionsGuiOverrideLocale);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
   widgets.append(ui->checkBoxOptionsRouteEastWestRule);
   widgets.append(ui->comboBoxOptionsRouteAltitudeRuleType);
@@ -452,23 +454,19 @@ void OptionsDialog::applyStyle()
     qWarning() << "Invalid style index" << idx;
 }
 
+bool OptionsDialog::isOverrideLanguage()
+{
+  return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LANGUAGE, false);
+}
+
+bool OptionsDialog::isOverrideLocale()
+{
+  return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LOCALE, false);
+}
+
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "Clicked" << button->text();
-
-  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply) || button ==
-     ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
-  {
-    int idx = ui->comboBoxOptionsGuiTheme->currentIndex();
-
-    OptionData& data = OptionData::instanceInternal();
-
-    if(data.guiStyleIndex != idx)
-      atools::gui::Dialog(this).showInfoMsgBox(
-        lnm::OPTIONS_DIALOG_WARN_STYLE,
-        tr("The application should be restarted after a style change."),
-        tr("Do not show this dialog again."));
-  }
 
   if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
   {
@@ -477,6 +475,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     applyStyle();
     emit optionsChanged();
 
+    // Update dialog internal stuff
     updateWidgetUnits();
     updateActiveSkyPathStatus();
     updateWeatherButtonState();
@@ -866,6 +865,8 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
+  toFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);
+  toFlags(ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
   toFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
@@ -984,6 +985,8 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   fromFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
+  fromFlags(ui->checkBoxOptionsGuiOverrideLanguage, opts::GUI_OVERRIDE_LANGUAGE);
+  fromFlags(ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
   fromFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   fromFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
   fromFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);

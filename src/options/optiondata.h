@@ -129,7 +129,13 @@ enum Flag
   STARTUP_LOAD_SEARCH = 1 << 26,
 
   /* checkBoxOptionsStartupLoadTrail */
-  STARTUP_LOAD_TRAIL = 1 << 27
+  STARTUP_LOAD_TRAIL = 1 << 27,
+
+  /* checkBoxOptionsGuiOverrideLanguage */
+  GUI_OVERRIDE_LANGUAGE = 1 << 28,
+
+  /* checkBoxOptionsGuiOverrideLocale */
+  GUI_OVERRIDE_LOCALE = 1 << 29
 
 };
 

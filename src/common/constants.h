@@ -173,9 +173,13 @@ const QLatin1Literal OPTIONS_UPDATE_URL("Update/Url");
 const QLatin1Literal OPTIONS_UPDATE_CHECKED("Update/AlreadyChecked");
 const QLatin1Literal OPTIONS_UPDATE_LAST_CHECKED("Update/LastCheckTimestamp");
 
-// Need to update these according to program version
+/* Need to update these according to program version */
 const QLatin1Literal OPTIONS_UPDATE_CHANNELS("OptionsDialog/Widget_comboBoxOptionsStartupUpdateChannels");
 const QLatin1Literal OPTIONS_UPDATE_RATE("OptionsDialog/Widget_comboBoxOptionsStartupUpdateRate");
+
+/* These have to be loaded before the options dialog instantiation */
+const QLatin1Literal OPTIONS_GUI_OVERRIDE_LANGUAGE("OptionsDialog/Widget_checkBoxOptionsGuiOverrideLanguage");
+const QLatin1Literal OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxOptionsGuiOverrideLocale");
 
 /* File dialog patterns */
 #if defined(Q_OS_WIN32)
@@ -193,7 +197,7 @@ const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
 #else
-// Use more or less case insensitive patters for Linux
+/* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln *.Pln *.PLN)");

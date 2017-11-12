@@ -19,6 +19,7 @@
 #include "common/constants.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
+#include "options/optionsdialog.h"
 #include "settings/settings.h"
 #include "gui/translator.h"
 #include "gui/mapposhistory.h"
@@ -158,8 +159,20 @@ int main(int argc, char *argv[])
 
     Settings& settings = Settings::instance();
 
+    // Forcing the English locale if the user has chosen it this way
+    if(OptionsDialog::isOverrideLocale())
+    {
+      qInfo() << "Overriding locale";
+      QLocale::setDefault(QLocale("en"));
+    }
+
     // Load local and Qt system translations from various places
-    Translator::load(settings.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
+    QString lang = settings.valueStr(lnm::OPTIONS_LANGUAGE, QString());
+    if(lang.isEmpty())
+      // Checkbox in options dialog
+      lang = OptionsDialog::isOverrideLanguage() ? "en" : lang;
+
+    Translator::load(lang);
 
     /* Avoid static translations and load these dynamically now */
     Unit::initTranslateableTexts();

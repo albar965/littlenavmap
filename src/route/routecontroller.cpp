@@ -970,7 +970,7 @@ bool RouteController::exportFlighplanAsGpx(const QString& filename)
 
   try
   {
-    route.getFlightplan().saveGpx(filename, track, timestamps, route.getCruisingAltitudeFeet());
+    route.getFlightplan().saveGpx(filename, track, timestamps, static_cast<int>(route.getCruisingAltitudeFeet()));
   }
   catch(atools::Exception& e)
   {
