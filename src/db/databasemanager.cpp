@@ -399,7 +399,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     if(resultRemove)
     {
       dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+      atools::gui::Application::processEventsExtended();
       resultCopy = QFile(appDb).copy(settingsDb);
       qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
     }
@@ -410,11 +410,11 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       SqlDatabase tempDb(DATABASE_NAME_TEMP);
       openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
       dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+      atools::gui::Application::processEventsExtended();
       NavDatabase::runPreparationScript(tempDb);
 
       dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+      atools::gui::Application::processEventsExtended();
       tempDb.analyze();
       closeDatabaseFile(&tempDb);
       settingsNeedsPreparation = false;
