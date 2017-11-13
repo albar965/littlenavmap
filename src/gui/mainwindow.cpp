@@ -1145,6 +1145,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
   if(QFileInfo::exists(routeFilename) && fileFormat == atools::fs::pln::PLN_FS9)
   {
+    // Warn before overwriting FS9 with FSX format
     buttonList.append({saveAsButtonText.arg(tr(" &FSX/P3D PLN")), QMessageBox::Save});
 
     // We can load FS9 but saving does not make sense anymore
@@ -1176,7 +1177,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                  tr("Do not show this dialog again and save the Flight Plan in the future."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
-  else if(fileFormat == atools::fs::pln::FMS11 && parking)
+  else if(fileFormat == atools::fs::pln::FMS11 /* && parking*/) // Always warn
   {
     buttonList.append({saveAsButtonText.arg(tr(" &FMS 11")), QMessageBox::Save});
     buttonList.append({tr("Save &as PLN instead ..."), QMessageBox::SaveAll});
