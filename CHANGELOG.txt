@@ -1,43 +1,72 @@
-Version 1.7.1.develop
+Version 1.8.0.beta
 
-* Changed database update method. Now comparing databases in app and settings directory
-  and will use/copy the latest one (compared by compilation time).
-* Databases are now prepared if table "script" contains statements to create indexes.
 * Added sub-menu for third party navdata with three display options.
-* Changed main window title bar to indicate usage of navdata ("FSX/ND", "FSX/ND+" or "FSX")
-* Fixed several problems with procedures when using navdata and simdata together.
+* Changed main window title bar to indicate usage of navdata (i.e. Navigraph):
+  "FSX/N": simulator and navdata, "(FSX)/N": navdata only and "FSX": simulator only.
+* Added Navigraph database cycle 1707 to program download archive. Database is prepared and
+  used automatically on startup.
+* Program can now display mixed data (i.e. "FSX/N") on map and in information window:
+  Complete airports and ILS from simulator data. Navaids, airways, airspaces and procedures
+  from third party navdata like Navigraph.
+* Additonal third party database is now opened from application directory
+  first and can be overloaded in settings database directory by a newer one. Programm checks
+  database internal compilation time before copying and creates database indexes on demand.
+  Database is copied and prepared on first startup. #127
+
+* Added French legend and updates to translation by Patrick.
+* Updated Linux startup script so that it can be used also by the desktop launcher (thanks to Valerio for the tip).
+* Now adding all readme and changelog files to macOS deployment.
+* Added command line option "-s" or "--settings-directory" that allows to change the "ABarthel" part of the
+  settings directory for testing purposes like running more than one version of Little Navmap.
+
+* Added settings in option dialog on tab "User Interface" to force language and
+  locale (number format, date format and more) in program to English. #156
+* Added options to disable restoring the last search parameters, information window content and
+  aircraft trail on startup in options dialog on tab "Startup".
+
+* Moved most flight export menus to sub-menu.
+* Added flight plan export for Majestic Dash. Currently limited to waypoints. #140
+* Added export for IEXG 737 flight plan format. #153
+* Flight plan export to Flight Factor Airbus added. #139
+* Enabled saving of the new X-Plane 11 FMS file format and added warning before saving since the
+  format is not usable by X-Plane 11.05.
+  FMS 11 is now the default format when saving FMS although it needs at least a 11.10 beta version.
+  FMS 3 can still be saved using the export option. #155
+
+* Removed SIDs and STARs in information dock window on procedure tab since this information was not useful.
+* Fixed error where ARINC name of procedures was not loaded causing problems when exporting and loading flight plans.
+* Information dock window on tab "Runways/Helipads" can now display more than one ILS for a runway end (EDDF 25R/07L).
+
+* Fixed problem in ATS route string parser where an airway as an invalid first entry did not generate a warning message.
 * Fixed error in route string parser which did not recognize STARs correctly.
-* Removed what's this question mark in scenery database error dialog.
-* Map display, info display, flight plan and procedure functionality now uses third party data for navaids
-  and simulator data for airports depending on mode.
-* Fixed problem in route string parser where an airway as first entry did not generate a warning message.
-* Fixed error where first enroute waypoint contained an airway reference after calculating with SID.
-* Fixed display of procedure information in information dock.
-* Removed SIDs and STARs in information in information dock on tab procedure.
-* Can now display more than one ILS for a runway end.
-* Added readme and changelog to macOS deployment
-* Additonal third party database is not opened from application directory first and can be overloaded in settings database directory.
-* Added options to disable restoring the last search and info content on startup.
-* Reload of aircraft trail on startup can now be disabled.
-* Fixed problem with almost invisible checkbox in night more by adding stylesheet.
+* Fixed error where first enroute waypoint contained an airway reference after calculating with SID in some cases.
+  This caused problems when exporting some flight plan formats and in the route string parser.
 
-from atools version 2.7.1
-* Finished DFD compiler
-* Disabling maximum airway segment length for data sources that contain a valid airspace geometry
-  (X-Plane and DFD - FSX/P3D contain invalid segments).
+* Fixed several display issues with large airspaces and airways crossing the anti meridian. These showed up
+  mirrored with their tooltips in other parts of the world. Small problems remain (e.g. Melbourne FIR). #127
+* Fixed display issues with airports, AI and user aircraft in spherical display which showed up at the upper window
+  border in some cases.
+* Adapted airspace and COM display to new types. Added caution airspace. #127
+
+* Fixed error where an automatic connect was attempted even when hostname is empty.
+* Fixed problem with almost invisible checkbox in night mode.
+* Removed unused "what's this" question mark in scenery database error dialog.
+
+from atools version  2.8.0.beta
+
+* Finished DFD to Little Navmap database compiler for Navigraph data. #126
+* Added script table and option to store create index scripts in that table for preparation by the client. #126
+* Added option to drop indexes after database creation to keep the file small.
+* Vacuum and analyze option for database creation now defaults to true to get smaller and better organized files. #126
 * Extended database metadata with optional compiler_version, valid_through and data source columns.
-
-Version 1.7.0.develop
-
-* Adapted airspace COM display to missing values.
-* Fixed several display issues with large airspaces and airways crossing the anti meridian.
-* Solved problems with airspaces and airways crossing date boundary displayed twice on map and information window.
-* Fixed display issue with airports, AI and user aircraft in spherical display.
-* Added caution airspace.
-
-from atools version 2.7.0.develop
+* Increased database minor version to 6.
+* Added flight plan export option for Majestic Dash. #140
+* Updated French translation files.
+* Fixed error with wrong ILS pitch in X-Plane compiler.
+* Disabling maximum airway segment length now for data sources that contain a valid airspace geometry
+  (X-Plane and DFD - FSX/P3D contain invalid segments).
+* Fixed several problems with bounding box and overlap calculations around the anti meridian.
 * Better handling of X-Plane OpenAirspace comments and fixed problem where airspace names contain a comment character.
-* Fixed problems with bounding box and overlap calculations around the anti meridian.
 
 Version 1.6.7
 
