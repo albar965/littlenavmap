@@ -530,4 +530,6 @@ QMAKE_EXTRA_TARGETS += first copydata
 clean.depends = $(clean) cleandata
 QMAKE_EXTRA_TARGETS += clean cleandata
 
-TRANSLATIONS = littlenavmap_fr.ts
+TRANSLATIONS = littlenavmap_fr.ts \
+               littlenavmap_it.ts \
+               littlenavmap_de.ts
