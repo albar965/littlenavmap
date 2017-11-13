@@ -6,7 +6,10 @@
 # cd "/home/YOURUSERNAME/Little Navmap"
 # LD_LIBRARY_PATH="/home/YOURUSERNAME/Little Navmap/lib"
 
-export LD_LIBRARY_PATH=./lib
+cd `dirname $0`
 
-./littlenavmap
+export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
+
+./littlenavmap "$@"
+
 
