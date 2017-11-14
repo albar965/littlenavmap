@@ -58,6 +58,8 @@ from atools version  2.8.0.beta
 * Added script table and option to store create index scripts in that table for preparation by the client. #126
 * Added option to drop indexes after database creation to keep the file small.
 * Vacuum and analyze option for database creation now defaults to true to get smaller and better organized files. #126
+* FSX/P3D: Added workaround for scenery sort order with add-on.xml files missing layer id.
+  Now forcing navaid updates to end of all scenery entries.
 * Extended database metadata with optional compiler_version, valid_through and data source columns.
 * Increased database minor version to 6.
 * Added flight plan export option for Majestic Dash. #140
