@@ -97,7 +97,7 @@ MainWindow::MainWindow()
                   "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
                   "<p>"
                     "<b>"
-                      "If you would like to show your appreciation you can donate "
+                      "If you would like to show your appreciation you can donate&nbsp;"
                       "<a href=\"%1\">here"
                       "</a>."
                     "</b>"
@@ -1773,7 +1773,7 @@ bool MainWindow::routeExportFpl()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as IEXG FPL Format"),
+      tr("Save Flightplan as IXEG FPL Format"),
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
       "fpl", "Route/Fpl",
       NavApp::getCurrentSimulatorBasePath() +
@@ -1801,7 +1801,7 @@ bool MainWindow::routeExportCorteIn()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan to corte.in for Flight Factor A320"),
+      tr("Save Flightplan to corte.in for Flight Factor Airbus"),
       tr("corte.in Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CORTEIN),
       ".in", "Route/CorteIn",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft", "corte.in",

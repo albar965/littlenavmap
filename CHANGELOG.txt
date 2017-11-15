@@ -26,7 +26,7 @@ Version 1.8.0.beta
 
 * Moved most flight export menus to sub-menu.
 * Added flight plan export for Majestic Dash. Currently limited to waypoints. #140
-* Added export for IEXG 737 flight plan format. #153
+* Added export for IXEG 737 flight plan format. #153
 * Flight plan export to Flight Factor Airbus added. #139
 * Enabled saving of the new X-Plane 11 FMS file format and added warning before saving since the
   format is not usable by X-Plane 11.05.

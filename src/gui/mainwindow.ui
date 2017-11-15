@@ -5491,7 +5491,7 @@
   </action>
   <action name="actionRouteSaveAsRte">
    <property name="text">
-    <string>E&amp;xport Flight Plan as PMDG &amp;RTE ...</string>
+    <string>Export Flight Plan as PMDG &amp;RTE ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as RTE file usable by PMDG aircraft</string>
@@ -5822,7 +5822,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</normaloff>:/littlenavmap/resources/icons/filesaveclean.svg</iconset>
    </property>
    <property name="text">
-    <string>E&amp;xport Flight Plan as clean PLN ...</string>
+    <string>Export Flight Plan as &amp;clean PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as PLN without any additional annotations</string>
@@ -5854,7 +5854,7 @@
   </action>
   <action name="actionRouteSaveAsGpx">
    <property name="text">
-    <string>E&amp;xport Flight Plan as GP&amp;X ...</string>
+    <string>Export Flight Plan as GP&amp;X ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan and flown track in GPS Exchange Format usable by Google Earth and many other Programs</string>
@@ -6010,7 +6010,7 @@
   </action>
   <action name="actionRouteSaveAsTxt">
    <property name="text">
-    <string>E&amp;xport Flight Plan as &amp;TXT ...</string>
+    <string>Export Flight Plan as &amp;TXT ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as Text File usable by JARDesign or Rotate Simulations aircraft</string>
@@ -6025,7 +6025,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>E&amp;xport Flight Plan as X-Plane FMS 3...</string>
+    <string>Export Flight Plan as X-Plane FMS &amp;3...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
@@ -6054,7 +6054,7 @@
   </action>
   <action name="actionRouteSaveAsFpr">
    <property name="text">
-    <string>E&amp;xport Flight Plan as &amp;Majestic Dash FPR...</string>
+    <string>Export Flight Plan as &amp;Majestic Dash FPR...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPR file usable Majestic Software MJC8 Q400</string>
@@ -6065,24 +6065,24 @@
   </action>
   <action name="actionRouteSaveAsFpl">
    <property name="text">
-    <string>E&amp;xport Flight Plan as IEXG &amp;FPL...</string>
+    <string>Export Flight Plan as IXEG &amp;FPL...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FPL file usable by the IEXG Boeing</string>
+    <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the IEXG Boeing</string>
+    <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
    </property>
   </action>
   <action name="actionRouteSaveAsCorteIn">
    <property name="text">
-    <string>E&amp;xport Flight Plan to &amp;corte.in for Flight Factor A320...</string>
+    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus...</string>
    </property>
    <property name="toolTip">
-    <string>Append flight plan to the corte.in file for the Flight Factor A320</string>
+    <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
    </property>
    <property name="statusTip">
-    <string>Append flight plan to the corte.in file for the Flight Factor A320</string>
+    <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
    </property>
   </action>
  </widget>
