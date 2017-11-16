@@ -4,6 +4,8 @@ Version 1.8.1.beta
 * Added cycle information to X-Plane menu item.
 * Menu item is not disabled instead of being hidden if only one simulator is installed. installed.
 * Fixed error in simulator menu where a menu item could be deselected resulting in no selection at all.
+* Updated links to online manual to point to 1.8 version.
+* Updated included PDF manual.
 
 Version 1.8.0.beta
 
