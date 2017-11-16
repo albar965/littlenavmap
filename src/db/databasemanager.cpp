@@ -381,6 +381,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
     if(hasSettings)
     {
+      NavApp::deleteSplashScreen();
       result = atools::gui::Dialog(nullptr).showQuestionMsgBox(
         lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
         tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
