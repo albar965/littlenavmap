@@ -7,6 +7,8 @@ airport information system for Flight Simulator X, Prepar3D and X-Plane.
 A widely configurable map display using the OpenStreetMap as a background map is only one option
 of many online or included offline maps.
 
+Navigraph provides updates for all navigation data. A cycle 1707 database is included.
+
 It supports approach and departure procedures, offers several automatic flight plan calculation options
 and multiple export formats like GFP, GPX, RTE, FLP and FMS as well as drag and drop
 flight plan editing on the map.
@@ -16,7 +18,7 @@ An elevation profile is shown for the flight plan allowing to find a safe cruise
 Search functionality allows to look for airports, navaids or procedures by a large amount of
 criteria also including a spatial search.
 
-The program can generate an ATS route string from flight plans and vice versa.
+The program can generate an route description string from flight plans and vice versa.
 
 Little Navmap supports FSX, FSX Steam Edition, Prepar3d Versions 2, 3, 4 and X-Plane
 
@@ -87,5 +89,5 @@ https://github.com/albar965/littlenavconnect
 Copyright 2015-2017 Alexander Barthel (albar965@mailbox.org).
 
 -------------------------------------------------------------------------------
-French translation copyright 2017 Patrick JUNG alias Patbest (patrickjung@laposte.net). 
+French translation copyright 2017 Patrick JUNG alias Patbest (patrickjung@laposte.net).
 

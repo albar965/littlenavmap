@@ -37,7 +37,7 @@ Version 1.8.0.beta
 * Fixed error where ARINC name of procedures was not loaded causing problems when exporting and loading flight plans.
 * Information dock window on tab "Runways/Helipads" can now display more than one ILS for a runway end (EDDF 25R/07L).
 
-* Fixed problem in ATS route string parser where an airway as an invalid first entry did not generate a warning message.
+* Fixed problem in route description parser where an airway as an invalid first entry did not generate a warning message.
 * Fixed error in route string parser which did not recognize STARs correctly.
 * Fixed error where first enroute waypoint contained an airway reference after calculating with SID in some cases.
   This caused problems when exporting some flight plan formats and in the route string parser.
@@ -78,7 +78,7 @@ Version 1.6.7
 * Fixed crash after startup when airport procedures changed.
 * Added adjustable limitation for maximum points of aircraft track
 * Added txt flight plan format usable by JARDesign or Rotate Simulations aircraft.
-* Fixed errors in ATS route string generation where a DCT was inserted after SID or before STAR
+* Fixed errors in route description generation where a DCT was inserted after SID or before STAR
   statement creating invalid routes.
 * Fixed problem where X-Plane basepath was not found as "save as" or "export" default path.
 * Fixes for translation support.

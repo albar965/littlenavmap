@@ -34,6 +34,7 @@
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "navapp.h"
+#include "gui/dialog.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -350,28 +351,21 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   bool hasApp = false, hasSettings = false, settingsNeedsPreparation = false;
 
   QDateTime appLastLoad = QDateTime::fromMSecsSinceEpoch(0), settingsLastLoad = QDateTime::fromMSecsSinceEpoch(0);
+  QString appCycle, settingsCycle;
+  QString appSource, settingsSource;
 
   // Open databases and get loading timestamp from metadata
   if(QFile::exists(appDb))
   {
     // Database in application directory
-    SqlDatabase tempDb(DATABASE_NAME_TEMP);
-    tempDb.setDatabaseName(appDb);
-    tempDb.open();
-    appLastLoad = DatabaseMeta(tempDb).getLastLoadTime();
-    closeDatabaseFile(&tempDb);
+    metaFromFile(&appCycle, &appLastLoad, nullptr, &appSource, appDb);
     hasApp = true;
   }
 
   if(QFile::exists(settingsDb))
   {
     // Database in settings directory
-    SqlDatabase tempDb(DATABASE_NAME_TEMP);
-    tempDb.setDatabaseName(settingsDb);
-    tempDb.open();
-    settingsLastLoad = DatabaseMeta(tempDb).getLastLoadTime();
-    settingsNeedsPreparation = SqlUtil(tempDb).hasTableAndRows("script");
-    closeDatabaseFile(&tempDb);
+    metaFromFile(&settingsCycle, &settingsLastLoad, &settingsNeedsPreparation, &settingsSource, settingsDb);
     hasSettings = true;
   }
 
@@ -383,53 +377,83 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(hasApp && (appLastLoad > settingsLastLoad))
   {
-    // We have a database in the application folder and it is newer than the one in the settings folder
-    QMessageBox *dialog =
-      showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    int result = QMessageBox::Yes;
 
-    bool resultRemove = true, resultCopy = false;
-    // Remove target
     if(hasSettings)
     {
-      resultRemove = QFile(settingsDb).remove();
-      qDebug() << "removed" << settingsDb << resultRemove;
+      result = atools::gui::Dialog(nullptr).showQuestionMsgBox(
+        lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
+        tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
+           "Overwrite your current navdata file with the new one?"
+           "<hr/>Current file to overwrite:<br/><br/>"
+           "<i>%1<br/><br/>"
+           "%2, cycle %3, compiled on %4</i>"
+           "<hr/>New file:<br/><br/>"
+           "<i>%5<br/><br/>"
+           "%6, cycle %7, compiled on %8</i><hr/><br/>"
+           ).
+        arg(settingsDb).
+        arg(settingsSource).
+        arg(settingsCycle).
+        arg(QLocale().toString(settingsLastLoad, QLocale::ShortFormat)).
+        arg(appDb).
+        arg(appSource).
+        arg(appCycle).
+        arg(QLocale().toString(appLastLoad, QLocale::ShortFormat)),
+        tr("Do not &show this dialog again and skip copying in the future."),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
     }
 
-    // Copy to target
-    if(resultRemove)
+    if(result == QMessageBox::Yes)
     {
-      dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-      atools::gui::Application::processEventsExtended();
-      resultCopy = QFile(appDb).copy(settingsDb);
-      qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
+      // We have a database in the application folder and it is newer than the one in the settings folder
+      QMessageBox *dialog =
+        showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+
+      bool resultRemove = true, resultCopy = false;
+      // Remove target
+      if(hasSettings)
+      {
+        resultRemove = QFile(settingsDb).remove();
+        qDebug() << "removed" << settingsDb << resultRemove;
+      }
+
+      // Copy to target
+      if(resultRemove)
+      {
+        dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        atools::gui::Application::processEventsExtended();
+        resultCopy = QFile(appDb).copy(settingsDb);
+        qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
+      }
+
+      // Create indexes and delete script afterwards
+      if(resultRemove && resultCopy)
+      {
+        SqlDatabase tempDb(DATABASE_NAME_TEMP);
+        openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+        dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        atools::gui::Application::processEventsExtended();
+        NavDatabase::runPreparationScript(tempDb);
+
+        dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        atools::gui::Application::processEventsExtended();
+        tempDb.analyze();
+        closeDatabaseFile(&tempDb);
+        settingsNeedsPreparation = false;
+      }
+      deleteSimpleProgressDialog(dialog);
+
+      if(!resultRemove)
+        QMessageBox::warning(nullptr, QApplication::applicationName(),
+                             tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                "Remove the database file manually and restart the program.").arg(settingsDb));
+
+      if(!resultCopy)
+        QMessageBox::warning(nullptr, QApplication::applicationName(),
+                             tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
+                                "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
     }
-
-    // Create indexes and delete script afterwards
-    if(resultRemove && resultCopy)
-    {
-      SqlDatabase tempDb(DATABASE_NAME_TEMP);
-      openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
-      dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-      atools::gui::Application::processEventsExtended();
-      NavDatabase::runPreparationScript(tempDb);
-
-      dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-      atools::gui::Application::processEventsExtended();
-      tempDb.analyze();
-      closeDatabaseFile(&tempDb);
-      settingsNeedsPreparation = false;
-    }
-    deleteSimpleProgressDialog(dialog);
-
-    if(!resultRemove)
-      QMessageBox::warning(nullptr, QApplication::applicationName(),
-                           tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
-                              "Remove the database file manually and restart the program.").arg(settingsDb));
-
-    if(!resultCopy)
-      QMessageBox::warning(nullptr, QApplication::applicationName(),
-                           tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
-                              "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
   }
 
   if(settingsNeedsPreparation && hasSettings)
@@ -466,6 +490,7 @@ void DatabaseManager::insertSimSwitchActions()
 
   // Create group to get radio button like behavior
   simDbGroup = new QActionGroup(ui->menuDatabase);
+  simDbGroup->setExclusive(true);
 
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.keys();
@@ -488,23 +513,22 @@ void DatabaseManager::insertSimSwitchActions()
   }
 
   int index = 1;
-  if(sims.size() > 1)
-  {
-    for(atools::fs::FsPaths::SimulatorType type : sims)
-      insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
+  for(atools::fs::FsPaths::SimulatorType type : sims)
+    insertSimSwitchAction(type, ui->actionDatabaseFiles, ui->menuDatabase, index++);
 
+  if(!sims.isEmpty())
     menuDbSeparator = ui->menuDatabase->insertSeparator(ui->actionDatabaseFiles);
-  }
+
+  if(actions.size() == 1)
+    // Noting to select if there is only one option
+    actions.first()->setDisabled(true);
 
   QString file = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
 
   if(!file.isEmpty())
   {
-    SqlDatabase tempDb(DATABASE_NAME_TEMP);
-    tempDb.setDatabaseName(file);
-    tempDb.open();
-    QString cycle = DatabaseMeta(tempDb).getAiracCycle();
-    closeDatabaseFile(&tempDb);
+    QString cycle;
+    metaFromFile(&cycle, nullptr, nullptr, nullptr, file);
 
     if(!cycle.isEmpty())
       cycle = tr(" - AIRAC Cycle %1").arg(cycle);
@@ -547,7 +571,15 @@ void DatabaseManager::insertSimSwitchActions()
 void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu,
                                             int index)
 {
-  QAction *action = new QAction("&" + QString::number(index) + " " + FsPaths::typeToName(type), menu);
+  QString cycle;
+  if(type == FsPaths::XPLANE11)
+  {
+    metaFromFile(&cycle, nullptr, nullptr, nullptr, buildDatabaseFileName(type));
+    if(!cycle.isEmpty())
+      cycle = tr(" - AIRAC Cycle %1").arg(cycle);
+  }
+
+  QAction *action = new QAction("&" + QString::number(index) + " " + FsPaths::typeToName(type) + cycle, menu);
   action->setStatusTip(tr("Switch to %1 database").arg(FsPaths::typeToName(type)));
   action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
   action->setCheckable(true);
@@ -606,9 +638,9 @@ void DatabaseManager::switchNavFromMainMenu()
 
 void DatabaseManager::switchSimFromMainMenu()
 {
-  qDebug() << Q_FUNC_INFO;
-
   QAction *action = dynamic_cast<QAction *>(sender());
+
+  qDebug() << Q_FUNC_INFO << (action != nullptr ? action->text() : "null");
 
   if(action != nullptr && currentFsType != action->data().value<atools::fs::FsPaths::SimulatorType>())
   {
@@ -626,6 +658,14 @@ void DatabaseManager::switchSimFromMainMenu()
     mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
 
     saveState();
+  }
+
+  // Check and uncheck manually since the QActionGroup is unreliable
+  for(QAction *act : actions)
+  {
+    QSignalBlocker blocker(act);
+    Q_UNUSED(blocker);
+    act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
 
@@ -1490,4 +1530,30 @@ void DatabaseManager::correctSimulatorType()
   // Correct if loading simulator is invalid - get the best installed
   if(selectedFsType == atools::fs::FsPaths::UNKNOWN || !simulators.getAllInstalled().contains(selectedFsType))
     selectedFsType = simulators.getBestInstalled();
+}
+
+void DatabaseManager::metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation,
+                                   QString *source, const QString& file)
+{
+  SqlDatabase tempDb(DATABASE_NAME_TEMP);
+  tempDb.setDatabaseName(file);
+  tempDb.setReadonly();
+  tempDb.open();
+  {
+    DatabaseMeta meta(tempDb);
+
+    if(cycle != nullptr)
+      *cycle = meta.getAiracCycle();
+
+    if(source != nullptr)
+      *source = meta.getDataSource();
+
+    if(compilationTime != nullptr)
+      *compilationTime = meta.getLastLoadTime();
+
+    if(settingsNeedsPreparation != nullptr)
+      *settingsNeedsPreparation = SqlUtil(tempDb).hasTableAndRows("script");
+  }
+
+  closeDatabaseFile(&tempDb);
 }

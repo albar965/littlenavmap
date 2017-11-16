@@ -2084,6 +2084,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS11_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_UPDATEFAILED, true);
+  s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }

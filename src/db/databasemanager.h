@@ -181,6 +181,9 @@ private:
   QMessageBox *showSimpleProgressDialog(const QString& message);
   void deleteSimpleProgressDialog(QMessageBox *messageBox);
 
+  /* Get cycle metadata from a database file */
+  void metaFromFile(QString* cycle, QDateTime* compilationTime, bool* settingsNeedsPreparation, QString* source, const QString& file);
+
   /* Database name for all loaded from simulators */
   const QString DATABASE_NAME = "LNMDB";
 
