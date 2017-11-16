@@ -316,7 +316,7 @@ A restart is required for the settings to take effect.</string>
           <string>Overrides any available translations and forces Little Navmap to use the English language for all windows and dialogs. A restart is required for the settings to take effect.</string>
          </property>
          <property name="text">
-          <string>Use &amp;English as user interface language independent of operating system language (restart reqired after change)</string>
+          <string>Use &amp;English as user interface language independent of operating system language (restart required after change)</string>
          </property>
         </widget>
        </item>
@@ -331,7 +331,7 @@ A restart is required for the settings to take effect.</string>
           <string>Overrides local settings like number and date formats and forces English formats which implies &quot;.&quot; as decimal separator, &quot;,&quot; as thousands separator, am/pm time and other changes. A restart is required for the settings to take effect.</string>
          </property>
          <property name="text">
-          <string>Use English &amp;number and date formats independent of computer locale (restart reqired after change)</string>
+          <string>Use English &amp;number and date formats independent of current computer settings (restart required after change)</string>
          </property>
         </widget>
        </item>
@@ -434,7 +434,7 @@ A restart is required for the settings to take effect.</string>
        <item row="9" column="0">
         <widget class="QLabel" name="labelOptionsGuiTheme">
          <property name="text">
-          <string>&amp;Style for graphical user interface (restart reqired after change):</string>
+          <string>&amp;Style for graphical user interface (restart required after change):</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsGuiTheme</cstring>
@@ -553,7 +553,7 @@ A restart is required for the settings to take effect.</string>
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
          </property>
          <property name="text">
-          <string>&amp;Avoid overwriting Flight Plan with non matching departure and destination</string>
+          <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
          </property>
          <property name="checked">
           <bool>true</bool>
