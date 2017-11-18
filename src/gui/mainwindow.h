@@ -260,8 +260,8 @@ private:
   RouteController *routeController = nullptr;
   atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
 
-  /* URL of the inline nav map legend */
-  QUrl legendUrl;
+  /* Filepath of the inline nav map legend */
+  QString legendFile;
 
   /* Combo boxes that are added to the toolbar */
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;

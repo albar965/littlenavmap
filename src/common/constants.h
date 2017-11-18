@@ -58,6 +58,9 @@ const QString HELP_ONLINE_URL(
 const QString HELP_ONLINE_TUTORIALS_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
 
+const QString HELP_ONLINE_LEGEND_URL(
+    "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
+
 const QLatin1Literal HELP_LEGEND_INLINE_URL("help/legend-${LANG}.html");
 
 const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");

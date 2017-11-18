@@ -320,7 +320,7 @@ void MainWindow::updateMap() const
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
-  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
+  if(!legendFile.isEmpty() && QFile::exists(legendFile))
   {
     ui->dockWidgetLegend->show();
     ui->dockWidgetLegend->raise();
@@ -330,7 +330,7 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openUrl(legendUrl);
+    helpHandler->openHelpUrl(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguages());
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
@@ -340,24 +340,24 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendUrl = HelpHandler::getHelpUrl(this, lnm::HELP_LEGEND_INLINE_URL, lnm::helpLanguages());
-  qDebug() << "legendUrl" << legendUrl;
-  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
-  {
-    qDebug() << "legendUrl opened";
-    QString legend;
-    QFile legendFile(legendUrl.toLocalFile());
-    if(legendFile.open(QIODevice::ReadOnly))
-    {
-      QTextStream stream(&legendFile);
-      legend.append(stream.readAll());
+  legendFile = HelpHandler::getHelpFile(lnm::HELP_LEGEND_INLINE_URL, lnm::helpLanguages());
+  qDebug() << "legendUrl" << legendFile;
 
-      QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
-      ui->textBrowserLegendNavInfo->setSearchPaths({searchPath});
-      ui->textBrowserLegendNavInfo->setText(legend);
-    }
-    else
-      errorHandler->handleIOError(legendFile, tr("While opening Navmap Legend file:"));
+  QString legendText;
+  QFile legend(legendFile);
+  if(legend.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&legend);
+    legendText.append(stream.readAll());
+
+    QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
+    ui->textBrowserLegendNavInfo->setSearchPaths({searchPath});
+    ui->textBrowserLegendNavInfo->setText(legendText);
+  }
+  else
+  {
+    qWarning() << "Error opening legend" << legendFile << legend.errorString();
+    legendFile.clear();
   }
 }
 
@@ -2027,7 +2027,7 @@ void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter types)
 {
   mapWidget->setShowMapAirspaces(types);
   mapWidget->updateMapObjectsShown();
-  setStatusMessage(tr("Map settigs changed."));
+  setStatusMessage(tr("Map settings changed."));
 }
 
 void MainWindow::resetMapObjectsShown()
@@ -2039,7 +2039,7 @@ void MainWindow::resetMapObjectsShown()
   mapWidget->updateMapObjectsShown();
   airspaceHandler->updateButtonsAndActions();
   profileWidget->update();
-  setStatusMessage(tr("Map settigs changed."));
+  setStatusMessage(tr("Map settings changed."));
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
@@ -2050,7 +2050,7 @@ void MainWindow::updateMapObjectsShown()
 
   mapWidget->updateMapObjectsShown();
   profileWidget->update();
-  setStatusMessage(tr("Map settigs changed."));
+  setStatusMessage(tr("Map settings changed."));
 }
 
 /* Map history has changed */
