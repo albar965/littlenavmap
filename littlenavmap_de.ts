@@ -663,7 +663,7 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="165"/>
-        <source>Will read also the inactive scenery entries when checked. 
+        <source>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -725,230 +725,241 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 <context>
     <name>DatabaseManager</name>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="253"/>
+        <location filename="src/db/databasemanager.cpp" line="254"/>
         <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="256"/>
+        <location filename="src/db/databasemanager.cpp" line="257"/>
         <source>You can reload the Scenery Library Database again after erasing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="260"/>
+        <location filename="src/db/databasemanager.cpp" line="261"/>
         <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="263"/>
+        <location filename="src/db/databasemanager.cpp" line="264"/>
         <source>You can reload these Scenery Library Databases again after erasing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="273"/>
+        <location filename="src/db/databasemanager.cpp" line="274"/>
         <source>&amp;No and Exit Application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="274"/>
+        <location filename="src/db/databasemanager.cpp" line="275"/>
         <source>&amp;Erase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="283"/>
+        <location filename="src/db/databasemanager.cpp" line="284"/>
         <source>Deleting ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="288"/>
+        <location filename="src/db/databasemanager.cpp" line="289"/>
         <source>Erasing database for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="308"/>
-        <location filename="src/db/databasemanager.cpp" line="426"/>
+        <location filename="src/db/databasemanager.cpp" line="309"/>
+        <location filename="src/db/databasemanager.cpp" line="450"/>
         <source>Deleting of database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="388"/>
-        <location filename="src/db/databasemanager.cpp" line="438"/>
-        <source>Preparing %1 Database ...</source>
+        <location filename="src/db/databasemanager.cpp" line="387"/>
+        <source>Your current navdata is older than the navdata included in the Little Navmap download archive.&lt;br/&gt;&lt;br/&gt;Overwrite your current navdata file with the new one?&lt;hr/&gt;Current file to overwrite:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, cycle %3, compiled on %4&lt;/i&gt;&lt;hr/&gt;New file:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, cycle %7, compiled on %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="401"/>
-        <source>Preparing %1 Database: Copying file ...</source>
+        <location filename="src/db/databasemanager.cpp" line="404"/>
+        <source>Do not &amp;show this dialog again and skip copying in the future.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="412"/>
+        <location filename="src/db/databasemanager.cpp" line="463"/>
+        <source>Preparing %1 Database ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/db/databasemanager.cpp" line="425"/>
+        <source>Preparing %1 Database: Copying file ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/db/databasemanager.cpp" line="436"/>
         <source>Preparing %1 Database: Creating indexes ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="416"/>
+        <location filename="src/db/databasemanager.cpp" line="440"/>
         <source>Preparing %1 Database: Analyzing ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="431"/>
+        <location filename="src/db/databasemanager.cpp" line="455"/>
         <source>Cannot copy database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="510"/>
+        <location filename="src/db/databasemanager.cpp" line="535"/>
+        <location filename="src/db/databasemanager.cpp" line="580"/>
         <source> - AIRAC Cycle %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="516"/>
+        <location filename="src/db/databasemanager.cpp" line="541"/>
         <source>Use %1 for &amp;all Features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="519"/>
+        <location filename="src/db/databasemanager.cpp" line="544"/>
         <source>Use all of %1 database features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="523"/>
+        <location filename="src/db/databasemanager.cpp" line="548"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="526"/>
+        <location filename="src/db/databasemanager.cpp" line="551"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="531"/>
+        <location filename="src/db/databasemanager.cpp" line="556"/>
         <source>Do &amp;not use %1 database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="534"/>
+        <location filename="src/db/databasemanager.cpp" line="559"/>
         <source>Do not use %1 database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="551"/>
+        <location filename="src/db/databasemanager.cpp" line="584"/>
         <source>Switch to %1 database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="584"/>
+        <location filename="src/db/databasemanager.cpp" line="617"/>
         <source>Enabled all features for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="589"/>
+        <location filename="src/db/databasemanager.cpp" line="622"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="594"/>
+        <location filename="src/db/databasemanager.cpp" line="627"/>
         <source>Disabled %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="626"/>
+        <location filename="src/db/databasemanager.cpp" line="659"/>
         <source>Switched to %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="829"/>
+        <location filename="src/db/databasemanager.cpp" line="870"/>
         <source>Copied %1 airspaces to the X-Plane scenery database.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="834"/>
+        <location filename="src/db/databasemanager.cpp" line="875"/>
         <source>X-Plane database has no airspace boundary table.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="839"/>
+        <location filename="src/db/databasemanager.cpp" line="880"/>
         <source>X-Plane database &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="843"/>
+        <location filename="src/db/databasemanager.cpp" line="884"/>
         <source>Airspace boundary table not found in currently selected database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="934"/>
-        <location filename="src/db/databasemanager.cpp" line="938"/>
+        <location filename="src/db/databasemanager.cpp" line="975"/>
+        <location filename="src/db/databasemanager.cpp" line="979"/>
         <source>Cannot read &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="986"/>
+        <location filename="src/db/databasemanager.cpp" line="1027"/>
         <source>%1 - Loading %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1032"/>
-        <location filename="src/db/databasemanager.cpp" line="1039"/>
+        <location filename="src/db/databasemanager.cpp" line="1073"/>
+        <location filename="src/db/databasemanager.cpp" line="1080"/>
         <source>Processed files:
 %1
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1049"/>
+        <location filename="src/db/databasemanager.cpp" line="1090"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1052"/>
+        <location filename="src/db/databasemanager.cpp" line="1093"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1060"/>
+        <location filename="src/db/databasemanager.cpp" line="1101"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1069"/>
+        <location filename="src/db/databasemanager.cpp" line="1110"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1074"/>
+        <location filename="src/db/databasemanager.cpp" line="1115"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1083"/>
+        <location filename="src/db/databasemanager.cpp" line="1124"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1088"/>
+        <location filename="src/db/databasemanager.cpp" line="1129"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1104"/>
+        <location filename="src/db/databasemanager.cpp" line="1145"/>
         <source>&amp;OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1189"/>
+        <location filename="src/db/databasemanager.cpp" line="1230"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1332"/>
-        <location filename="src/db/databasemanager.cpp" line="1341"/>
-        <location filename="src/db/databasemanager.cpp" line="1350"/>
+        <location filename="src/db/databasemanager.cpp" line="1373"/>
+        <location filename="src/db/databasemanager.cpp" line="1382"/>
+        <location filename="src/db/databasemanager.cpp" line="1391"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1371"/>
+        <location filename="src/db/databasemanager.cpp" line="1412"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3760,7 +3771,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5494"/>
-        <source>E&amp;xport Flight Plan as PMDG &amp;RTE ...</source>
+        <source>Export Flight Plan as PMDG &amp;RTE ...</source>
+        <oldsource>E&amp;xport Flight Plan as PMDG &amp;RTE ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3972,7 +3984,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5825"/>
-        <source>E&amp;xport Flight Plan as clean PLN ...</source>
+        <source>Export Flight Plan as &amp;clean PLN ...</source>
+        <oldsource>E&amp;xport Flight Plan as clean PLN ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3994,7 +4007,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5857"/>
-        <source>E&amp;xport Flight Plan as GP&amp;X ...</source>
+        <source>Export Flight Plan as GP&amp;X ...</source>
+        <oldsource>E&amp;xport Flight Plan as GP&amp;X ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4089,7 +4103,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6013"/>
-        <source>E&amp;xport Flight Plan as &amp;TXT ...</source>
+        <source>Export Flight Plan as &amp;TXT ...</source>
+        <oldsource>E&amp;xport Flight Plan as &amp;TXT ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4100,7 +4115,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6028"/>
-        <source>E&amp;xport Flight Plan as X-Plane FMS 3...</source>
+        <source>Export Flight Plan as X-Plane FMS &amp;3...</source>
+        <oldsource>E&amp;xport Flight Plan as X-Plane FMS 3...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4127,7 +4143,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6057"/>
-        <source>E&amp;xport Flight Plan as &amp;Majestic Dash FPR...</source>
+        <source>Export Flight Plan as &amp;Majestic Dash FPR...</source>
+        <oldsource>E&amp;xport Flight Plan as &amp;Majestic Dash FPR...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4138,24 +4155,28 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6068"/>
-        <source>E&amp;xport Flight Plan as IEXG &amp;FPL...</source>
+        <source>Export Flight Plan as IXEG &amp;FPL...</source>
+        <oldsource>E&amp;xport Flight Plan as IEXG &amp;FPL...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6071"/>
         <location filename="src/gui/mainwindow.ui" line="6074"/>
-        <source>Save flight plan as FPL file usable by the IEXG Boeing</source>
+        <source>Save flight plan as FPL file usable by the IXEG Boeing</source>
+        <oldsource>Save flight plan as FPL file usable by the IEXG Boeing</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6079"/>
-        <source>E&amp;xport Flight Plan to &amp;corte.in for Flight Factor A320...</source>
+        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus...</source>
+        <oldsource>E&amp;xport Flight Plan to &amp;corte.in for Flight Factor A320...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6082"/>
         <location filename="src/gui/mainwindow.ui" line="6085"/>
-        <source>Append flight plan to the corte.in file for the Flight Factor A320</source>
+        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
+        <oldsource>Append flight plan to the corte.in file for the Flight Factor A320</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4166,11 +4187,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.cpp" line="334"/>
         <source>Opened map legend in browser.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="360"/>
-        <source>While opening Navmap Legend file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4666,7 +4682,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1776"/>
-        <source>Save Flightplan as IEXG FPL Format</source>
+        <source>Save Flightplan as IXEG FPL Format</source>
+        <oldsource>Save Flightplan as IEXG FPL Format</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4681,7 +4698,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1804"/>
-        <source>Save Flightplan to corte.in for Flight Factor A320</source>
+        <source>Save Flightplan to corte.in for Flight Factor Airbus</source>
+        <oldsource>Save Flightplan to corte.in for Flight Factor A320</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4776,41 +4794,41 @@ Only JPG, PNG and BMP are allowed.</source>
         <location filename="src/gui/mainwindow.cpp" line="2030"/>
         <location filename="src/gui/mainwindow.cpp" line="2042"/>
         <location filename="src/gui/mainwindow.cpp" line="2053"/>
-        <source>Map settigs changed.</source>
+        <source>Map settings changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2088"/>
+        <location filename="src/gui/mainwindow.cpp" line="2089"/>
         <source>All message dialogs reset.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2116"/>
+        <location filename="src/gui/mainwindow.cpp" line="2117"/>
         <source>Options changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2153"/>
+        <location filename="src/gui/mainwindow.cpp" line="2154"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2165"/>
+        <location filename="src/gui/mainwindow.cpp" line="2166"/>
         <source>X-Plane</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2203"/>
+        <location filename="src/gui/mainwindow.cpp" line="2204"/>
         <source>Ready.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2531"/>
+        <location filename="src/gui/mainwindow.cpp" line="2532"/>
         <source>Really Quit?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2532"/>
+        <location filename="src/gui/mainwindow.cpp" line="2533"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7772,7 +7790,8 @@ A restart is required for the settings to take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="319"/>
-        <source>Use &amp;English as user interface language independent of operating system language (restart reqired after change)</source>
+        <source>Use &amp;English as user interface language independent of operating system language (restart required after change)</source>
+        <oldsource>Use &amp;English as user interface language independent of operating system language (restart reqired after change)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7789,7 +7808,8 @@ A restart is required for the settings to take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="334"/>
-        <source>Use English &amp;number and date formats independent of computer locale (restart reqired after change)</source>
+        <source>Use English &amp;number and date formats independent of current computer settings (restart required after change)</source>
+        <oldsource>Use English &amp;number and date formats independent of computer locale (restart reqired after change)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7820,7 +7840,8 @@ A restart is required for the settings to take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="437"/>
-        <source>&amp;Style for graphical user interface (restart reqired after change):</source>
+        <source>&amp;Style for graphical user interface (restart required after change):</source>
+        <oldsource>&amp;Style for graphical user interface (restart reqired after change):</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7865,13 +7886,14 @@ A restart is required for the settings to take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="552"/>
-        <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these. 
+        <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="556"/>
-        <source>&amp;Avoid overwriting Flight Plan with non matching departure and destination</source>
+        <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
+        <oldsource>&amp;Avoid overwriting Flight Plan with non matching departure and destination</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7982,7 +8004,7 @@ Smaller values will zoom in closer to an airport or navaid. </source>
     <message>
         <location filename="src/options/options.ui" line="764"/>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
-Smaller values will zoom in closer to an airport or navaid. 
+Smaller values will zoom in closer to an airport or navaid.
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -8657,7 +8679,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
     </message>
     <message>
         <location filename="src/options/options.ui" line="2404"/>
-        <source>Use online elevation data to display ground in flight plan elevation profile. 
+        <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
         <translation type="unfinished"></translation>
@@ -8675,7 +8697,7 @@ Source data has many errors.</source>
     <message>
         <location filename="src/options/options.ui" line="2422"/>
         <source>Recommended.
-Use Offline GLOBE Elevation Data. Can be downloaded for free. 
+Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</source>
         <translation type="unfinished"></translation>
@@ -11359,33 +11381,34 @@ Really use it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="68"/>
+        <location filename="src/db/databasemanager.cpp" line="69"/>
         <source>&lt;p&gt;&lt;big&gt;Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6&lt;/big&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="71"/>
+        <location filename="src/db/databasemanager.cpp" line="72"/>
         <source> AIRAC Cycle %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="73"/>
+        <location filename="src/db/databasemanager.cpp" line="74"/>
         <source>&lt;table&gt;&lt;tbody&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Files:&lt;/b&gt;&lt;/td&gt;    &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L6&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;VOR:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L8&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Markers:&lt;/b&gt;&lt;/td&gt;     &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L11&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Airports:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L7&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;ILS:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L9&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Waypoints:&lt;/b&gt;&lt;/td&gt;  &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L12&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;/td&gt;&lt;td width=&quot;60&quot;&gt;&lt;/td&gt;&lt;td width=&quot;60&quot;&gt;&lt;b&gt;NDB:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L10&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;  &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L13&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="121"/>
+        <location filename="src/db/databasemanager.cpp" line="122"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Time:&lt;/b&gt; %2&lt;br/&gt;%3%4&lt;b&gt;Errors:&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Found:&lt;/big&gt;&lt;/br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="128"/>
+        <location filename="src/db/databasemanager.cpp" line="129"/>
         <source>&lt;b&gt;Scenery:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;File:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Time:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Errors:&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Found:&lt;/big&gt;&lt;/br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="96"/>
-        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate &lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate &lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -14,6 +14,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #CONFIG *= debug_and_release debug_and_release_target
 
+# Use to debug release builds
+#CONFIG+=force_debug_info
+
 TARGET = littlenavmap
 TEMPLATE = app
 
