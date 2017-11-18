@@ -19,14 +19,24 @@
 
 #include "gui/helphandler.h"
 
+#include <options/optiondata.h>
+
+static QStringList supportedLanguages;
+
 namespace lnm {
 
 const QStringList helpLanguages()
 {
-  static QStringList supportedLanguages;
   if(supportedLanguages.isEmpty())
-    supportedLanguages = atools::gui::HelpHandler::getInstalledLanguages(
-      "help", "little-navmap-user-manual-([a-z]{2})\\.pdf");
+  {
+    if(OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE)
+      // Stick to English as forced in options
+      supportedLanguages.append("en");
+    else
+      // Otherwise determine manual language by installed PDF files
+      supportedLanguages = atools::gui::HelpHandler::getInstalledLanguages(
+        "help", "little-navmap-user-manual-([a-z]{2})\\.pdf");
+  }
 
   return supportedLanguages;
 }
