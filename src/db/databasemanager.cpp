@@ -605,6 +605,8 @@ void DatabaseManager::switchNavFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
 
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
   // Disconnect all queries
   emit preDatabaseLoad();
 
@@ -630,11 +632,14 @@ void DatabaseManager::switchNavFromMainMenu()
 
   openAllDatabases();
 
+  QGuiApplication::restoreOverrideCursor();
+
   emit postDatabaseLoad(currentFsType);
 
   mainWindow->setStatusMessage(text.arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
 
   saveState();
+
 }
 
 void DatabaseManager::switchSimFromMainMenu()
@@ -645,6 +650,8 @@ void DatabaseManager::switchSimFromMainMenu()
 
   if(action != nullptr && currentFsType != action->data().value<atools::fs::FsPaths::SimulatorType>())
   {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
     // Disconnect all queries
     emit preDatabaseLoad();
 
@@ -654,11 +661,14 @@ void DatabaseManager::switchSimFromMainMenu()
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
     openAllDatabases();
 
+    QGuiApplication::restoreOverrideCursor();
+
     // Reopen all with new database
     emit postDatabaseLoad(currentFsType);
     mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
 
     saveState();
+
   }
 
   // Check and uncheck manually since the QActionGroup is unreliable
@@ -1527,6 +1537,9 @@ void DatabaseManager::correctSimulatorType()
   if(currentFsType == atools::fs::FsPaths::UNKNOWN ||
      (!simulators.value(currentFsType).hasDatabase && !simulators.value(currentFsType).isInstalled))
     currentFsType = simulators.getBest();
+
+  if(currentFsType == atools::fs::FsPaths::UNKNOWN)
+    currentFsType = simulators.getBestInstalled();
 
   // Correct if loading simulator is invalid - get the best installed
   if(selectedFsType == atools::fs::FsPaths::UNKNOWN || !simulators.getAllInstalled().contains(selectedFsType))
