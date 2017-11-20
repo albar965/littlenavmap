@@ -704,7 +704,7 @@ Réessayera de se connecter si &quot;Connexion automatique&quot; est coché.</tr
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="165"/>
-        <source>Will read also the inactive scenery entries when checked.
+        <source>Will read also the inactive scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
@@ -859,47 +859,47 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/db/databasemanager.cpp" line="541"/>
         <source>Use %1 for &amp;all Features</source>
-        <translation type="unfinished">Utiliser %1 pour &amp;toutes les fonctions</translation>
+        <translation type="unfinished">Utiliser %1 pour toutes les fonctionn&amp;alités</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="544"/>
         <source>Use all of %1 database features</source>
-        <translation type="unfinished">Utiliser toutes les fonctionnalités de %1 la base de données</translation>
+        <translation type="unfinished">Utiliser toutes les fonctionnalités de la base de données %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="548"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
-        <translation type="unfinished">Utilisation de %1 pour les &amp;navaids et les procédures</translation>
+        <translation type="unfinished">Utiliser %1 pour les &amp;navaids et les procédures</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="551"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
-        <translation type="unfinished">N&apos;utiliser que les navaids, voies aériennes, espaces aériens et procédures activés de la base de données %1</translation>
+        <translation type="unfinished">N&apos;utiliser que des navaids, voies aériennes, espaces aériens et procédures à partir de la base de données %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="556"/>
         <source>Do &amp;not use %1 database</source>
-        <translation type="unfinished">N&apos;utilisez pas la base de do&amp;nnées %1</translation>
+        <translation type="unfinished">Utilise la nouvelle base de do&amp;nnées %1 installée ou rien</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="559"/>
         <source>Do not use %1 database</source>
-        <translation type="unfinished">N&apos;utilisez pas %1 la base de données</translation>
+        <translation type="unfinished">N&apos;utilisez pas la base de données %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="584"/>
         <source>Switch to %1 database</source>
-        <translation type="unfinished">Passer à %1 base de données</translation>
+        <translation type="unfinished">Passer à la base de données %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="617"/>
         <source>Enabled all features for %1.</source>
-        <translation type="unfinished">Activé toutes les fonctions pour %1.</translation>
+        <translation type="unfinished">Activer toutes les fonctionnalités pour %1.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="622"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
-        <translation type="unfinished">navaids, voies aériennes, espaces aériens et procédures activés pour %1.</translation>
+        <translation type="unfinished">Navaids, voies aériennes, espaces aériens et procédures activés pour %1.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="627"/>
@@ -3514,7 +3514,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <location filename="src/gui/mainwindow.ui" line="4867"/>
         <location filename="src/gui/mainwindow.ui" line="4870"/>
         <source>Enable or disable flight plan edit mode on map</source>
-        <translation type="unfinished">Activer ou désactiver le mode d&apos;édition du plan de vol sur la carte</translation>
+        <translation type="unfinished">Activer ou désactiver le mode édition du plan de vol sur la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4873"/>
@@ -3553,7 +3553,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <location filename="src/gui/mainwindow.ui" line="4907"/>
         <location filename="src/gui/mainwindow.ui" line="4910"/>
         <source>Reset all messages that were disabled with the &quot;do not show again&quot; button</source>
-        <translation type="unfinished">Réinitialiser tous les messages désactivés avec le bouton &quot;Ne plus afficher&quot;</translation>
+        <translation type="unfinished">Réinitialiser tous les messages qui ont été désactivés avec le bouton &quot;Ne plus afficher&quot;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4915"/>
@@ -4098,7 +4098,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <location filename="src/gui/mainwindow.ui" line="5687"/>
         <location filename="src/gui/mainwindow.ui" line="5690"/>
         <source>Activate Flight Plan Leg</source>
-        <translation type="unfinished">Activer l&apos;étape du Plan de Vol</translation>
+        <translation type="unfinished">Activer l&apos;étape du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5693"/>
@@ -4933,7 +4933,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
         <location filename="src/gui/mainwindow.cpp" line="2030"/>
         <location filename="src/gui/mainwindow.cpp" line="2042"/>
         <location filename="src/gui/mainwindow.cpp" line="2053"/>
-        <source>Map settings changed.</source>
+        <source>Map settigs changed.</source>
         <translation type="unfinished">Modification des paramètres de la carte.</translation>
     </message>
     <message>
@@ -5992,7 +5992,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1062"/>
         <source>Nearest Weather%2 - %1</source>
-        <translation type="unfinished">Météo la plus Proche %2 - %1</translation>
+        <translation type="unfinished">Météo la plus proche %2 - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1082"/>
@@ -7960,7 +7960,7 @@ Scène</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="552"/>
-        <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
+        <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these. 
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
         <oldsource>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</oldsource>
@@ -8085,13 +8085,13 @@ Des valeurs plus petites permettent de zoomer plus près d&apos;un aérodrome ou
     <message>
         <location filename="src/options/options.ui" line="764"/>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
-Smaller values will zoom in closer to an airport or navaid.
+Smaller values will zoom in closer to an airport or navaid. 
 </source>
         <oldsource>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
 Smaller values will zoom in closer to an airport or navaid.
 </oldsource>
         <translation type="unfinished">Distance du point de vue au-dessus de la surface de la terre lorsque vous effectuez un zoom après avoir sélectionné &quot;Afficher sur la carte&quot; ou en cliquant sur les liens de la carte dans les fenêtres d&apos;information.
-Les petites valeurs zoomeront plus près d&apos;un aérodrome ou d&apos;une aide à la navigation.
+Les petites valeurs zoomeront plus près d&apos;un aérodrome ou d&apos;une aide à la navigation. 
 </translation>
     </message>
     <message>
@@ -8246,7 +8246,7 @@ voies aériennes:</translation>
     <message>
         <location filename="src/options/options.ui" line="1389"/>
         <source>Active Leg Color</source>
-        <translation type="unfinished">Couleur Active des étapes</translation>
+        <translation type="unfinished">Couleur étape active</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1399"/>
@@ -8565,7 +8565,7 @@ lors de la transition entre l&apos;aérodrome et les voies aériennes.</translat
         <location filename="src/options/options.ui" line="1832"/>
         <location filename="src/options/options.ui" line="1835"/>
         <source>Enable this option to show the top of descent point on the map and in the elevation profile.</source>
-        <translation type="unfinished">Activez cette option pour afficher le début du point de descente sur la carte et dans le profil d&apos;altitude.</translation>
+        <translation type="unfinished">Activer cette option pour afficher le début du point de descente sur la carte et dans le profil d&apos;altitude.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1838"/>
@@ -8879,7 +8879,7 @@ Si ce champ est vide, le chemin par défaut du fichier Active Sky weather sera u
     </message>
     <message>
         <location filename="src/options/options.ui" line="2404"/>
-        <source>Use online elevation data to display ground in flight plan elevation profile.
+        <source>Use online elevation data to display ground in flight plan elevation profile. 
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
         <oldsource>Use online elevation data to display ground in flight plan elevation profile.
@@ -8902,7 +8902,7 @@ Les données sources comportent de nombreuses erreurs.</translation>
     <message>
         <location filename="src/options/options.ui" line="2422"/>
         <source>Recommended.
-Use Offline GLOBE Elevation Data. Can be downloaded for free.
+Use Offline GLOBE Elevation Data. Can be downloaded for free. 
 Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</source>
         <oldsource>Recommended.
@@ -9239,7 +9239,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1195"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not an Active Sky weather snapshot file.&lt;/span&gt;</source>
-        <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;N&apos;est pas un fichier de capture Active Sky weather.&lt;/span&gt;</translation>
+        <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;N&apos;est pas un fichier de capture Sky weather actif.&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1199"/>
@@ -9249,7 +9249,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1213"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
-        <translation type="unfinished">Aucune capture active Sky weather trouvé. Les METAR Active Sky ne sont pas disponibles.</translation>
+        <translation type="unfinished">Aucune capture active Sky weather trouvé. Les Sky METAR actif ne sont pas disponibles.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1216"/>
@@ -9259,7 +9259,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1219"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
-        <translation type="unfinished">Aucun fichier de capture active Sky weather sélectionné. Utiliser la valeur par défaut pour Sky Next Actif pour %1.</translation>
+        <translation type="unfinished">Aucun fichier de capture active Sky weather sélectionné. Utiliser la valeur par défaut pour Sky Next actif pour %1.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1223"/>
@@ -9279,12 +9279,12 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1245"/>
         <source>Open Active Sky Weather Snapshot File</source>
-        <translation type="unfinished">Ouvrir le Fichier Sky Weather Snapshot Actif</translation>
+        <translation type="unfinished">Ouvrir le fichier Sky Weather Snapshot actif</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1246"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
-        <translation type="unfinished">Activer Fichiers Sky Weather Snapshot %1;; Tous les fichiers (*)</translation>
+        <translation type="unfinished">Activer fchiers Sky Weather Snapshot %1;; Tous les fichiers (*)</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1260"/>
@@ -11017,7 +11017,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="434"/>
         <source>Military operations area. Needs clearance for IFR if active. Check for traffic advisories.</source>
-        <translation type="unfinished">Zone des opérations militaires. A besoin d&apos;une autorisation pour IFR si elle est active. Vérifiez les avis de circulation.</translation>
+        <translation type="unfinished">Zone des opérations militaires. A besoin d&apos;une autorisation pour IFR si il est actif. Vérifiez les avis de circulation.</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="435"/>
@@ -11282,7 +11282,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/proctypes.cpp" line="46"/>
         <source>Terminal Waypoint</source>
-        <translation type="unfinished">Waypoint Terminal</translation>
+        <translation type="unfinished">Waypoint terminal</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="52"/>
@@ -11654,7 +11654,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
         <location filename="src/gui/mainwindow.cpp" line="96"/>
         <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate &lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aérodrome et un système d&apos;information d&apos;aérodrome pour Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don &lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel
+        <translation type="unfinished">&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aérodrome et un système d&apos;information d&apos;aérodrome pour Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don &lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel 
 &lt;/a&gt;.&lt;/p&gt;&lt;p&gt;© 2017 Traduction Française par Patrick JUNG alias Patbest&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
@@ -11763,7 +11763,7 @@ MHz/kHz/Cha.</translation>
         <location filename="src/route/routecontroller.cpp" line="115"/>
         <source>Direct
 °M</source>
-        <translation type="unfinished">Directe
+        <translation type="unfinished">Direct
 °M</translation>
     </message>
     <message>
@@ -12030,7 +12030,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routecontroller.cpp" line="2028"/>
         <source>Move Waypoints</source>
-        <translation type="unfinished">Déplacer Waypoints</translation>
+        <translation type="unfinished">Déplacer waypoints</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2097"/>
@@ -12045,7 +12045,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routecontroller.cpp" line="2122"/>
         <source>Delete Waypoints</source>
-        <translation type="unfinished">Effacer Waypoints</translation>
+        <translation type="unfinished">Effacer waypoints</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2159"/>
@@ -12106,7 +12106,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routecontroller.cpp" line="2458"/>
         <source>Add Waypoint</source>
-        <translation type="unfinished">Ajouter Waypoint</translation>
+        <translation type="unfinished">Ajouter waypoint</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2493"/>
@@ -12116,7 +12116,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routecontroller.cpp" line="2557"/>
         <source>Change Waypoint</source>
-        <translation type="unfinished">Changer Waypoint</translation>
+        <translation type="unfinished">Changer waypoint</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2606"/>
@@ -12237,7 +12237,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routecontroller.cpp" line="3274"/>
         <source>Direct</source>
-        <translation type="unfinished">Directe</translation>
+        <translation type="unfinished">Direct</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3278"/>
@@ -12864,7 +12864,7 @@ ETD et ETA sont ignorés. ALTERNATES ne fonctionne pas en combinaison avec une p
     <message>
         <location filename="src/common/weatherreporter.cpp" line="477"/>
         <source>Active Sky</source>
-        <translation type="unfinished">Active Ciel</translation>
+        <translation type="unfinished">Active ciel</translation>
     </message>
     <message>
         <location filename="src/common/weatherreporter.cpp" line="629"/>
