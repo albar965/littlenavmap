@@ -12,10 +12,10 @@ QT       += core gui sql xml network svg printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-#CONFIG *= debug_and_release debug_and_release_target
+# CONFIG *= debug_and_release debug_and_release_target
 
 # Use to debug release builds
-#CONFIG+=force_debug_info
+# CONFIG+=force_debug_info
 
 TARGET = littlenavmap
 TEMPLATE = app
@@ -322,11 +322,12 @@ unix:!macx {
     $${MARBLE_BASE}/lib/marble/plugins/libPn2Plugin.so \
     $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
     $$OUT_PWD/plugins &&
+  copydata.commands += mkdir -p $$OUT_PWD/translations &&
+  copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD/translations &&
+  copydata.commands += cp -avfu $$PWD/../atools/*.qm $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/magdec $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/../atools/*.qm $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
 
@@ -353,7 +354,6 @@ unix:!macx {
   DEPLOY_DIR=\"$$PWD/../deploy/Little Navmap\"
   DEPLOY_DIR_LIB=\"$$PWD/../deploy/Little Navmap/lib\"
 
-  deploy.commands = cp -vf $$PWD/../atools/*.qm $$OUT_PWD &&
   deploy.commands += rm -Rfv $${DEPLOY_DIR} &&
   deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB} &&
   deploy.commands += mkdir -pv $${DEPLOY_DIR}/iconengines &&
@@ -366,9 +366,12 @@ unix:!macx {
   deploy.commands += cp -Rvf $${OUT_PWD}/plugins $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/data $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/help $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/translations $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/magdec $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $${DEPLOY_DIR} &&
-  deploy.commands += cp -avfu $$OUT_PWD/*.qm $${DEPLOY_DIR} &&
+  deploy.commands += cp -vfa $${QT_HOME}/translations/qt_??.qm  $${DEPLOY_DIR}/translations &&
+  deploy.commands += cp -vfa $${QT_HOME}/translations/qt_??_??.qm  $${DEPLOY_DIR}/translations &&
+  deploy.commands += cp -vfa $${QT_HOME}/translations/qtbase*.qm  $${DEPLOY_DIR}/translations &&
   deploy.commands += cp -Rvf $${PWD}/../little_navmap_db $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $${DEPLOY_DIR} &&
   deploy.commands += chmod -v a+x $${DEPLOY_DIR}/littlenavmap.sh &&
@@ -478,6 +481,7 @@ win32 {
 
   deploy.commands = rmdir /s /q $${DEPLOY_DIR_WIN} &
   deploy.commands += mkdir $${DEPLOY_DIR_WIN} &&
+  deploy.commands += mkdir $${DEPLOY_DIR_WIN}\\translations &&
   deploy.commands += mkdir $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCachePlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCompassFloatItem$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
@@ -495,8 +499,8 @@ win32 {
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${WINPWD}\\*.qm $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${WINPWD}\\..\\atools\\*.qm $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${WINPWD}\\*.qm $${DEPLOY_DIR_WIN}\\translations &&
+  deploy.commands += xcopy $${WINPWD}\\..\\atools\\*.qm $${DEPLOY_DIR_WIN}\\translations &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\..\\little_navmap_db $${DEPLOY_DIR_WIN}\\little_navmap_db &&
   deploy.commands += xcopy $${WINPWD}\\littlenavmap.exe.simconnect $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\help $${DEPLOY_DIR_WIN}\\help &&
