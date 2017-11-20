@@ -59,11 +59,11 @@ const QString HELP_ONLINE_TUTORIALS_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
 
 const QString HELP_ONLINE_LEGEND_URL(
-    "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
+  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
 
-const QLatin1Literal HELP_LEGEND_INLINE_URL("help/legend-${LANG}.html");
+const QLatin1Literal HELP_LEGEND_INLINE_FILE("help/legend-${LANG}.html");
 
-const QLatin1Literal HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
+const QLatin1Literal HELP_OFFLINE_FILE("help/little-navmap-user-manual-${LANG}.pdf");
 
 const QLatin1Literal HELP_DONTATE_URL("https://albar965.github.io/donate.html");
 
@@ -280,7 +280,8 @@ const unsigned char DEFAULT_MAINWINDOW_STATE[841] =
 
 /* Supported languages for the online help system. Will be determined by the
  * installation of offline PDF manual. */
-const QStringList helpLanguages();
+const QStringList helpLanguagesOnline();
+const QStringList helpLanguagesOffline();
 
 } // namespace lnm
 

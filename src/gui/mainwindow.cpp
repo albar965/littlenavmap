@@ -330,7 +330,7 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openHelpUrl(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguages());
+    helpHandler->openHelpUrl(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguagesOnline());
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
@@ -340,7 +340,7 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendFile = HelpHandler::getHelpFile(lnm::HELP_LEGEND_INLINE_URL, lnm::helpLanguages());
+  legendFile = HelpHandler::getHelpFile(lnm::HELP_LEGEND_INLINE_FILE, lnm::helpLanguagesOffline());
   qDebug() << "legendUrl" << legendFile;
 
   QString legendText;
@@ -369,12 +369,12 @@ void MainWindow::checkForUpdates()
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages());
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguagesOnline());
 }
 
 void MainWindow::showOnlineTutorials()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguages());
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguagesOnline());
 }
 
 void MainWindow::showDonationPage()
@@ -384,7 +384,7 @@ void MainWindow::showDonationPage()
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_URL, lnm::helpLanguages());
+  HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_FILE, lnm::helpLanguagesOffline());
 }
 
 /* Show marble legend */
@@ -400,7 +400,7 @@ void MainWindow::showMapLegend()
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguages());
+    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguagesOnline());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1235,7 +1235,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     return true;
   }
   else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html", lnm::helpLanguages());
+    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html", lnm::helpLanguagesOnline());
   // else cancel
 
   saveAs = false;

@@ -21,24 +21,40 @@
 
 #include <options/optiondata.h>
 
-static QStringList supportedLanguages;
+static QStringList supportedLanguagesOnline, supportedLanguagesOffline;
 
 namespace lnm {
 
-const QStringList helpLanguages()
+const QStringList helpLanguagesOnline()
 {
-  if(supportedLanguages.isEmpty())
+  if(supportedLanguagesOnline.isEmpty())
   {
     if(OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE)
       // Stick to English as forced in options
-      supportedLanguages.append("en");
+      supportedLanguagesOnline.append("en");
     else
       // Otherwise determine manual language by installed PDF files
-      supportedLanguages = atools::gui::HelpHandler::getInstalledLanguages(
+      supportedLanguagesOnline = atools::gui::HelpHandler::getInstalledLanguages(
+        "help", "little-navmap-user-manual-([a-z]{2})\\.online");
+  }
+
+  return supportedLanguagesOnline;
+}
+
+const QStringList helpLanguagesOffline()
+{
+  if(supportedLanguagesOffline.isEmpty())
+  {
+    if(OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE)
+      // Stick to English as forced in options
+      supportedLanguagesOffline.append("en");
+    else
+      // Otherwise determine manual language by installed PDF files
+      supportedLanguagesOffline = atools::gui::HelpHandler::getInstalledLanguages(
         "help", "little-navmap-user-manual-([a-z]{2})\\.pdf");
   }
 
-  return supportedLanguages;
+  return supportedLanguagesOffline;
 }
 
 } // namespace lnm
