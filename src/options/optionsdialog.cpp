@@ -209,14 +209,18 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Add additional night mode
   ui->comboBoxOptionsGuiTheme->addItem("Night", "Fusion");
 
-  // Add stylesheet for better checkbox visibility
-  stylesheets.append(QString("QCheckBox { background-color: %1; border: 1px solid %2; }").
-                     arg(darkPalette.color(QPalette::Window).lighter(400).name()).
-                     arg(darkPalette.color(QPalette::Window).lighter(400).name()) +
-                     QLatin1Literal("QCheckBox::indicator:checked "
-                                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
-                     QLatin1Literal("QCheckBox::indicator:unchecked "
-                                    "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }"));
+  // Add stylesheet for better checkbox radio button and toolbutton visibility
+  stylesheets.append(
+    QLatin1Literal("QCheckBox::indicator:checked "
+                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
+    QLatin1Literal("QCheckBox::indicator:unchecked "
+                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }") +
+    QLatin1Literal("QRadioButton::indicator:checked "
+                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
+    QLatin1Literal("QRadioButton::indicator:unchecked "
+                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
+    QString("QToolButton:checked { background-color: %1;}").arg(darkPalette.color(QPalette::Window).lighter(600).name())
+    );
 
   // Store dark palette settings a in a separate ini file
   QString filename = Settings::instance().getConfigFilename("_nightstyle.ini");
