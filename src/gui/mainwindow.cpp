@@ -2138,7 +2138,7 @@ void MainWindow::mainWindowShown()
     if(!databaseManager->hasSimulatorDatabases())
     {
       // Show the scenery database dialog on first start
-#ifdef Q_OS_WIN32
+#ifndef Q_OS_WIN32
       if(databaseManager->hasInstalledSimulators())
         // No databases but simulators let the user create new databases
         databaseManager->run();
@@ -2168,7 +2168,7 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguages());
+          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguagesOnline());
         else if(result == QMessageBox::Open)
           databaseManager->run();
       }
