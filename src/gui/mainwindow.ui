@@ -28,7 +28,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -710,10 +710,10 @@
                <item>
                 <widget class="QComboBox" name="comboBoxAirportRatingSearch">
                  <property name="toolTip">
-                  <string>Airports that have a minmum star rating</string>
+                  <string>Airports that have a minimum star rating</string>
                  </property>
                  <property name="statusTip">
-                  <string>Airports that have a minmum star rating</string>
+                  <string>Airports that have a minimum star rating</string>
                  </property>
                  <property name="frame">
                   <bool>true</bool>
@@ -1718,10 +1718,10 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Minmum range of a VOR or NDB</string>
+                <string>Minimum range of a VOR or NDB</string>
                </property>
                <property name="statusTip">
-                <string>Minmum range of a VOR or NDB</string>
+                <string>Minimum range of a VOR or NDB</string>
                </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
@@ -4471,7 +4471,7 @@
     <string>Delete all selected flight plan legs</string>
    </property>
    <property name="shortcut">
-    <string>Del</string>
+    <string notr="true">Del</string>
    </property>
   </action>
   <action name="actionRouteLegUp">

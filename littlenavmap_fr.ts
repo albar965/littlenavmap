@@ -892,59 +892,59 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <translation type="unfinished">Passer à la base de données %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="617"/>
+        <location filename="src/db/databasemanager.cpp" line="619"/>
         <source>Enabled all features for %1.</source>
         <translation type="unfinished">Activer toutes les fonctionnalités pour %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="622"/>
+        <location filename="src/db/databasemanager.cpp" line="624"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation type="unfinished">Navaids, voies aériennes, espaces aériens et procédures activés pour %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="627"/>
+        <location filename="src/db/databasemanager.cpp" line="629"/>
         <source>Disabled %1.</source>
         <translation type="unfinished">Désactivé %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="659"/>
+        <location filename="src/db/databasemanager.cpp" line="668"/>
         <source>Switched to %1.</source>
         <translation type="unfinished">Basculé sur%1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="870"/>
+        <location filename="src/db/databasemanager.cpp" line="880"/>
         <source>Copied %1 airspaces to the X-Plane scenery database.</source>
         <translation type="unfinished">Copie d&apos;espaces aériens%1 dans la base de données des scènes X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="875"/>
+        <location filename="src/db/databasemanager.cpp" line="885"/>
         <source>X-Plane database has no airspace boundary table.</source>
         <translation type="unfinished">La base de données X-Plane n&apos;a pas de table de limite d&apos;espace aérien.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="880"/>
+        <location filename="src/db/databasemanager.cpp" line="890"/>
         <source>X-Plane database &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">La base de données X-Plane &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="884"/>
+        <location filename="src/db/databasemanager.cpp" line="894"/>
         <source>Airspace boundary table not found in currently selected database</source>
         <translation type="unfinished">La table des limites de l&apos;espace aérien ne se trouve pas dans la base de données sélectionnée</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="975"/>
-        <location filename="src/db/databasemanager.cpp" line="979"/>
+        <location filename="src/db/databasemanager.cpp" line="985"/>
+        <location filename="src/db/databasemanager.cpp" line="989"/>
         <source>Cannot read &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Ne peut pas lire &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1027"/>
+        <location filename="src/db/databasemanager.cpp" line="1037"/>
         <source>%1 - Loading %2</source>
-        <translation type="unfinished">%1 - Chargement %2</translation>
+        <translation type="unfinished">%1 - Chargement des données de %2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1073"/>
-        <location filename="src/db/databasemanager.cpp" line="1080"/>
+        <location filename="src/db/databasemanager.cpp" line="1083"/>
+        <location filename="src/db/databasemanager.cpp" line="1090"/>
         <source>Processed files:
 %1
 </source>
@@ -953,37 +953,37 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
 </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1090"/>
+        <location filename="src/db/databasemanager.cpp" line="1100"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation type="unfinished">&lt;h3&gt;Trouvé %1 erreurs dans %2 entrées de scène lors du chargement de la base de données de scène&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1093"/>
+        <location filename="src/db/databasemanager.cpp" line="1103"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <translation type="unfinished">&lt;b&gt;Si vous souhaitez signaler cette erreur, joignez les fichiers journaux et de configuration à votre rapport, ajoutez toutes les autres informations disponibles et envoyez-les à l&apos;une des adresses de contact ci-dessous.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1101"/>
+        <location filename="src/db/databasemanager.cpp" line="1111"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation type="unfinished">&lt;hr/&gt;Certains fichiers ou répertoires de scènes n&apos;ont pas pu être lus.&lt;br/&gt;Vous devriez vérifier si les aérodromes des scènes concernées s&apos;affichent correctement et afficher les informations correctes.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1110"/>
+        <location filename="src/db/databasemanager.cpp" line="1120"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation type="unfinished">&lt;b&gt;Plus d&apos;entrées de scène ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1115"/>
+        <location filename="src/db/databasemanager.cpp" line="1125"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished">&lt;b&gt;Titre de Scène: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1124"/>
+        <location filename="src/db/databasemanager.cpp" line="1134"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation type="unfinished">&lt;b&gt;Plus de fichiers ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1129"/>
+        <location filename="src/db/databasemanager.cpp" line="1139"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation type="unfinished">&lt;b&gt;Fichier:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Erreur:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
@@ -992,24 +992,24 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <translation type="obsolete">&lt;b&gt;Fichier:&lt;/b&gt; &lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Erreur:&lt;/b&gt; &lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1145"/>
+        <location filename="src/db/databasemanager.cpp" line="1155"/>
         <source>&amp;OK</source>
         <translation type="unfinished">&amp;OK</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1230"/>
+        <location filename="src/db/databasemanager.cpp" line="1240"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
         <translation type="unfinished">&lt;big&gt;Terminé.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1373"/>
-        <location filename="src/db/databasemanager.cpp" line="1382"/>
-        <location filename="src/db/databasemanager.cpp" line="1391"/>
+        <location filename="src/db/databasemanager.cpp" line="1383"/>
+        <location filename="src/db/databasemanager.cpp" line="1392"/>
+        <location filename="src/db/databasemanager.cpp" line="1401"/>
         <source>None</source>
         <translation type="unfinished">Aucun</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1412"/>
+        <location filename="src/db/databasemanager.cpp" line="1422"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;big&gt;Actuellement chargé:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
@@ -1172,7 +1172,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/gui/mainwindow.ui" line="53"/>
         <source>E&amp;xport Flight Plan to other Formats</source>
-        <translation type="unfinished">Plan de vol d&apos;e&amp;xportation vers d&apos;autres formats</translation>
+        <translation type="unfinished">E&amp;xportation du plan de vol vers d&apos;autres formats</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="92"/>
@@ -1467,8 +1467,9 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/gui/mainwindow.ui" line="713"/>
         <location filename="src/gui/mainwindow.ui" line="716"/>
-        <source>Airports that have a minmum star rating</source>
-        <translation type="unfinished">Sélection des aérodromes par évaluation</translation>
+        <source>Airports that have a minimum star rating</source>
+        <oldsource>Airports that have a minmum star rating</oldsource>
+        <translation type="unfinished">Aérodromes ayant un minimum d&apos;étoiles</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="723"/>
@@ -1581,7 +1582,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/gui/mainwindow.ui" line="865"/>
         <source>At least one Helipad</source>
-        <translation type="unfinished">Au moins un hélisurface</translation>
+        <translation type="unfinished">Au moins une hélisurface</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="870"/>
@@ -1872,7 +1873,8 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/gui/mainwindow.ui" line="1721"/>
         <location filename="src/gui/mainwindow.ui" line="1724"/>
-        <source>Minmum range of a VOR or NDB</source>
+        <source>Minimum range of a VOR or NDB</source>
+        <oldsource>Minmum range of a VOR or NDB</oldsource>
         <translation type="unfinished">Portée minimale d&apos;un VOR ou NDB</translation>
     </message>
     <message>
@@ -2750,13 +2752,13 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/gui/mainwindow.ui" line="3925"/>
         <source>Map Position &amp;Back</source>
-        <translation type="unfinished">Placer la carte en &amp;arrière-plan</translation>
+        <translation type="unfinished">&amp;Revenir sur la position de la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3928"/>
         <location filename="src/gui/mainwindow.ui" line="3931"/>
         <source>Go back to the last map position</source>
-        <translation type="unfinished">Retourner à la dernière position sur la carte</translation>
+        <translation type="unfinished">Revenir à la position précédente de la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3934"/>
@@ -2766,13 +2768,13 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/gui/mainwindow.ui" line="3943"/>
         <source>Map Position &amp;Forward</source>
-        <translation type="unfinished">Placer la carte en &amp;avant-plan</translation>
+        <translation type="unfinished">&amp;Avancer sur la position de la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3946"/>
         <location filename="src/gui/mainwindow.ui" line="3949"/>
         <source>Go forward to the next map position</source>
-        <translation type="unfinished">Avancez jusqu&apos;à la position de la carte suivante</translation>
+        <translation type="unfinished">Avancer à la position suivante de la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3952"/>
@@ -3154,9 +3156,8 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <translation type="unfinished">Supprimer toutes les étapes du plan de vol sélectionné</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="4474"/>
         <source>Del</source>
-        <translation type="unfinished">Eff</translation>
+        <translation type="obsolete">Eff</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4483"/>
@@ -3199,7 +3200,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <location filename="src/gui/mainwindow.ui" line="4522"/>
         <location filename="src/gui/mainwindow.ui" line="4525"/>
         <source>Delete this airport, navaid or map position from flight plan</source>
-        <translation type="unfinished">Supprimer cette position d&apos;aérodrome, de navaid ou de carte du plan de vol</translation>
+        <translation type="unfinished">Supprimer cette aérodrome, ce navaid ou cette carte du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4534"/>
@@ -4318,9 +4319,8 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <translation type="unfinished">Légende carte ouverte dans le navigateur.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="360"/>
         <source>While opening Navmap Legend file:</source>
-        <translation type="unfinished">Lors de l&apos;ouverture du fichier de légende Navmap:</translation>
+        <translation type="obsolete">Lors de l&apos;ouverture du fichier de légende Navmap:</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="396"/>
@@ -4933,7 +4933,8 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
         <location filename="src/gui/mainwindow.cpp" line="2030"/>
         <location filename="src/gui/mainwindow.cpp" line="2042"/>
         <location filename="src/gui/mainwindow.cpp" line="2053"/>
-        <source>Map settigs changed.</source>
+        <source>Map settings changed.</source>
+        <oldsource>Map settigs changed.</oldsource>
         <translation type="unfinished">Modification des paramètres de la carte.</translation>
     </message>
     <message>
@@ -5007,7 +5008,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="1303"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1412"/>
         <source>Flight Plan position:</source>
-        <translation type="unfinished">Position du plan de vol n°:</translation>
+        <translation type="unfinished">Position sur plan de vol id:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="177"/>
@@ -9168,131 +9169,131 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <translation type="obsolete">Ne montrez plus ce dialogue.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="503"/>
+        <location filename="src/options/optionsdialog.cpp" line="507"/>
         <source>Reset all options to default?</source>
         <translation type="unfinished">Réinitialiser toutes les options par défaut?</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="752"/>
+        <location filename="src/options/optionsdialog.cpp" line="756"/>
         <source>Success. Result:
 %1</source>
         <translation type="unfinished">Réussi avec succès... Résultat ci-dessous:
 %1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="754"/>
+        <location filename="src/options/optionsdialog.cpp" line="758"/>
         <source>Failed. Reason:
 %1</source>
         <translation type="unfinished">Echoué. Motif:
 %1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="763"/>
+        <location filename="src/options/optionsdialog.cpp" line="767"/>
         <source>Open Directory to exclude from Scenery Loading</source>
         <translation type="unfinished">Ouvrir le répertoire pour exclure du chargement des scènes</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="789"/>
+        <location filename="src/options/optionsdialog.cpp" line="793"/>
         <source>Open Directory to exclude from Add-On Recognition</source>
         <translation type="unfinished">Répertoire ouvert à exclure de la reconnaissance des modules complémentaires</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1127"/>
+        <location filename="src/options/optionsdialog.cpp" line="1131"/>
         <source>Open GLOBE data directory</source>
         <translation type="unfinished">Ouvrir le répertoire de données GLOBE</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1149"/>
+        <location filename="src/options/optionsdialog.cpp" line="1153"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Directory does not exist.&lt;/span&gt;</source>
         <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Le répertoire n&apos;existe pas.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1152"/>
+        <location filename="src/options/optionsdialog.cpp" line="1156"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not a directory.&lt;/span&gt;</source>
         <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;N&apos;est pas un répertoire.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1155"/>
+        <location filename="src/options/optionsdialog.cpp" line="1159"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No valid GLOBE data found.&lt;/span&gt;</source>
         <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Aucune donnée GLOBE valide trouvée.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1158"/>
+        <location filename="src/options/optionsdialog.cpp" line="1162"/>
         <source>Directory and files are valid.</source>
         <translation type="unfinished">Le répertoire et les fichiers sont valides.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1161"/>
+        <location filename="src/options/optionsdialog.cpp" line="1165"/>
         <source>No directory selected.</source>
         <translation type="unfinished">Aucun répertoire sélectionné.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1189"/>
+        <location filename="src/options/optionsdialog.cpp" line="1193"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;File does not exist.&lt;/span&gt;</source>
         <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Le fichier n&apos;existe pas.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1192"/>
+        <location filename="src/options/optionsdialog.cpp" line="1196"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not a file.&lt;/span&gt;</source>
         <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;N&apos;est pas un fichier.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1195"/>
+        <location filename="src/options/optionsdialog.cpp" line="1199"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not an Active Sky weather snapshot file.&lt;/span&gt;</source>
         <translation type="unfinished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;N&apos;est pas un fichier de capture Sky weather actif.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1199"/>
+        <location filename="src/options/optionsdialog.cpp" line="1203"/>
         <source>Weather snapshot file is valid. Using this one for all simulators</source>
         <translation type="unfinished">Le fichier capture météo est valide. Utilisation de celui-ci pour tous les simulateurs</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1213"/>
+        <location filename="src/options/optionsdialog.cpp" line="1217"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation type="unfinished">Aucune capture active Sky weather trouvé. Les Sky METAR actif ne sont pas disponibles.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1216"/>
+        <location filename="src/options/optionsdialog.cpp" line="1220"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation type="unfinished">Utiliser une capture météo par défaut après confirmation du changement.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1219"/>
+        <location filename="src/options/optionsdialog.cpp" line="1223"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation type="unfinished">Aucun fichier de capture active Sky weather sélectionné. Utiliser la valeur par défaut pour Sky Next actif pour %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1223"/>
+        <location filename="src/options/optionsdialog.cpp" line="1227"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation type="unfinished">Aucun fichier de capture active Sky weather sélectionné. Utiliser la valeur par défaut pour AS16 pour %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1228"/>
+        <location filename="src/options/optionsdialog.cpp" line="1232"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation type="unfinished">Aucun fichier de capture active Sky weather sélectionné. Utiliser la valeur par défaut pour ASP4 pour %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1234"/>
+        <location filename="src/options/optionsdialog.cpp" line="1238"/>
         <source>X-Plane is selected in the Scenery Library menu. Active Sky weather not available.</source>
         <translation type="unfinished">X-Plane est sélectionné dans le menu Bibliothèque de Scènes. Sky weather n&apos;est pas disponible.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1245"/>
+        <location filename="src/options/optionsdialog.cpp" line="1249"/>
         <source>Open Active Sky Weather Snapshot File</source>
         <translation type="unfinished">Ouvrir le fichier Sky Weather Snapshot actif</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1246"/>
+        <location filename="src/options/optionsdialog.cpp" line="1250"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
         <translation type="unfinished">Activer fchiers Sky Weather Snapshot %1;; Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1260"/>
+        <location filename="src/options/optionsdialog.cpp" line="1264"/>
         <source>Memory cache cleared.</source>
         <translation type="unfinished">Cache mémoire effacé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1269"/>
+        <location filename="src/options/optionsdialog.cpp" line="1273"/>
         <source>Clear the disk cache?
 All files in the directory &quot;%1&quot; will be deleted.
 This process will run in background and can take a while.</source>
@@ -9301,12 +9302,12 @@ Tous les fichiers du répertoire &quot;%1&quot; seront supprimés.
 Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1278"/>
+        <location filename="src/options/optionsdialog.cpp" line="1282"/>
         <source>Disk cache cleared.</source>
         <translation type="unfinished">Cache disque effacé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1292"/>
+        <location filename="src/options/optionsdialog.cpp" line="1296"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <translation type="unfinished">Erreur lors de l&apos;ouverture de l&apos;URL d&apos;aide &quot;%1&quot;</translation>
     </message>
@@ -10940,7 +10941,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="396"/>
         <source>Caution</source>
-        <translation type="unfinished">Avertissement</translation>
+        <translation type="unfinished">Mise en garde</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="402"/>
@@ -10950,7 +10951,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="403"/>
         <source>Glider Prohibited</source>
-        <translation type="unfinished">Planeur Interdit</translation>
+        <translation type="unfinished">Interdit au vol à voile</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="404"/>
@@ -11057,7 +11058,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="446"/>
         <source>Sailplane Area.</source>
-        <translation type="unfinished">Zone de planeur.</translation>
+        <translation type="unfinished">Zone de vol à voile.</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="590"/>
@@ -12222,12 +12223,12 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routecontroller.cpp" line="3262"/>
         <source>Low Altitude</source>
-        <translation type="unfinished">Basse Altitude</translation>
+        <translation type="unfinished">Basse altitude</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3266"/>
         <source>High Altitude</source>
-        <translation type="unfinished">Haute Altitude</translation>
+        <translation type="unfinished">Haute altitude</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3270"/>

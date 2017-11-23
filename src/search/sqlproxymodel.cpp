@@ -50,7 +50,7 @@ void SqlProxyModel::clearDistanceFilter()
   centerPos = Pos();
 }
 
-/* Does the filtering by minmum and maximum distance and direction */
+/* Does the filtering by minimum and maximum distance and direction */
 bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   Q_UNUSED(sourceParent);

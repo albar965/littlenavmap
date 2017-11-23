@@ -663,8 +663,10 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="165"/>
-        <source>Will read also the inactive scenery entries when checked.
+        <source>Will read also the inactive scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
+        <oldsource>Will read also the inactive scenery entries when checked.
+Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -848,118 +850,118 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="617"/>
+        <location filename="src/db/databasemanager.cpp" line="619"/>
         <source>Enabled all features for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="622"/>
+        <location filename="src/db/databasemanager.cpp" line="624"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="627"/>
+        <location filename="src/db/databasemanager.cpp" line="629"/>
         <source>Disabled %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="659"/>
+        <location filename="src/db/databasemanager.cpp" line="668"/>
         <source>Switched to %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="870"/>
+        <location filename="src/db/databasemanager.cpp" line="880"/>
         <source>Copied %1 airspaces to the X-Plane scenery database.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="875"/>
+        <location filename="src/db/databasemanager.cpp" line="885"/>
         <source>X-Plane database has no airspace boundary table.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="880"/>
+        <location filename="src/db/databasemanager.cpp" line="890"/>
         <source>X-Plane database &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="884"/>
+        <location filename="src/db/databasemanager.cpp" line="894"/>
         <source>Airspace boundary table not found in currently selected database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="975"/>
-        <location filename="src/db/databasemanager.cpp" line="979"/>
+        <location filename="src/db/databasemanager.cpp" line="985"/>
+        <location filename="src/db/databasemanager.cpp" line="989"/>
         <source>Cannot read &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1027"/>
+        <location filename="src/db/databasemanager.cpp" line="1037"/>
         <source>%1 - Loading %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1073"/>
-        <location filename="src/db/databasemanager.cpp" line="1080"/>
+        <location filename="src/db/databasemanager.cpp" line="1083"/>
+        <location filename="src/db/databasemanager.cpp" line="1090"/>
         <source>Processed files:
 %1
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1090"/>
+        <location filename="src/db/databasemanager.cpp" line="1100"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1093"/>
+        <location filename="src/db/databasemanager.cpp" line="1103"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1101"/>
+        <location filename="src/db/databasemanager.cpp" line="1111"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1110"/>
+        <location filename="src/db/databasemanager.cpp" line="1120"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1115"/>
+        <location filename="src/db/databasemanager.cpp" line="1125"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1124"/>
+        <location filename="src/db/databasemanager.cpp" line="1134"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1129"/>
+        <location filename="src/db/databasemanager.cpp" line="1139"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1145"/>
+        <location filename="src/db/databasemanager.cpp" line="1155"/>
         <source>&amp;OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1230"/>
+        <location filename="src/db/databasemanager.cpp" line="1240"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1373"/>
-        <location filename="src/db/databasemanager.cpp" line="1382"/>
-        <location filename="src/db/databasemanager.cpp" line="1391"/>
+        <location filename="src/db/databasemanager.cpp" line="1383"/>
+        <location filename="src/db/databasemanager.cpp" line="1392"/>
+        <location filename="src/db/databasemanager.cpp" line="1401"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1412"/>
+        <location filename="src/db/databasemanager.cpp" line="1422"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1405,7 +1407,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="713"/>
         <location filename="src/gui/mainwindow.ui" line="716"/>
-        <source>Airports that have a minmum star rating</source>
+        <source>Airports that have a minimum star rating</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1806,7 +1808,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="1721"/>
         <location filename="src/gui/mainwindow.ui" line="1724"/>
-        <source>Minmum range of a VOR or NDB</source>
+        <source>Minimum range of a VOR or NDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3050,11 +3052,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <location filename="src/gui/mainwindow.ui" line="4468"/>
         <location filename="src/gui/mainwindow.ui" line="4471"/>
         <source>Delete all selected flight plan legs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="4474"/>
-        <source>Del</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7886,8 +7883,10 @@ A restart is required for the settings to take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="552"/>
-        <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
+        <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these. 
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
+        <oldsource>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
+The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8004,8 +8003,11 @@ Smaller values will zoom in closer to an airport or navaid. </source>
     <message>
         <location filename="src/options/options.ui" line="764"/>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
-Smaller values will zoom in closer to an airport or navaid.
+Smaller values will zoom in closer to an airport or navaid. 
 </source>
+        <oldsource>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
+Smaller values will zoom in closer to an airport or navaid.
+</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8679,9 +8681,12 @@ If this field is empty, the default Active Sky weather file path will be used wh
     </message>
     <message>
         <location filename="src/options/options.ui" line="2404"/>
-        <source>Use online elevation data to display ground in flight plan elevation profile.
+        <source>Use online elevation data to display ground in flight plan elevation profile. 
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
+        <oldsource>Use online elevation data to display ground in flight plan elevation profile.
+Has a higher resolution than the offline data source but updates are slow.
+Source data has many errors.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8697,9 +8702,13 @@ Source data has many errors.</source>
     <message>
         <location filename="src/options/options.ui" line="2422"/>
         <source>Recommended.
-Use Offline GLOBE Elevation Data. Can be downloaded for free.
+Use Offline GLOBE Elevation Data. Can be downloaded for free. 
 Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</source>
+        <oldsource>Recommended.
+Use Offline GLOBE Elevation Data. Can be downloaded for free.
+Resolution is lower than the online source but updates are very fast.
+Has a 30 arc second grid (approximately 900 meter near the equator).</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8939,141 +8948,141 @@ Changes only settings that can be done with this dialog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="503"/>
+        <location filename="src/options/optionsdialog.cpp" line="507"/>
         <source>Reset all options to default?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="752"/>
+        <location filename="src/options/optionsdialog.cpp" line="756"/>
         <source>Success. Result:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="754"/>
+        <location filename="src/options/optionsdialog.cpp" line="758"/>
         <source>Failed. Reason:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="763"/>
+        <location filename="src/options/optionsdialog.cpp" line="767"/>
         <source>Open Directory to exclude from Scenery Loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="789"/>
+        <location filename="src/options/optionsdialog.cpp" line="793"/>
         <source>Open Directory to exclude from Add-On Recognition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1127"/>
+        <location filename="src/options/optionsdialog.cpp" line="1131"/>
         <source>Open GLOBE data directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1149"/>
+        <location filename="src/options/optionsdialog.cpp" line="1153"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Directory does not exist.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1152"/>
+        <location filename="src/options/optionsdialog.cpp" line="1156"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not a directory.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1155"/>
+        <location filename="src/options/optionsdialog.cpp" line="1159"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No valid GLOBE data found.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1158"/>
+        <location filename="src/options/optionsdialog.cpp" line="1162"/>
         <source>Directory and files are valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1161"/>
+        <location filename="src/options/optionsdialog.cpp" line="1165"/>
         <source>No directory selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1189"/>
+        <location filename="src/options/optionsdialog.cpp" line="1193"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;File does not exist.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1192"/>
+        <location filename="src/options/optionsdialog.cpp" line="1196"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not a file.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1195"/>
+        <location filename="src/options/optionsdialog.cpp" line="1199"/>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not an Active Sky weather snapshot file.&lt;/span&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1199"/>
+        <location filename="src/options/optionsdialog.cpp" line="1203"/>
         <source>Weather snapshot file is valid. Using this one for all simulators</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1213"/>
+        <location filename="src/options/optionsdialog.cpp" line="1217"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1216"/>
+        <location filename="src/options/optionsdialog.cpp" line="1220"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1219"/>
+        <location filename="src/options/optionsdialog.cpp" line="1223"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1223"/>
+        <location filename="src/options/optionsdialog.cpp" line="1227"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1228"/>
+        <location filename="src/options/optionsdialog.cpp" line="1232"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1234"/>
+        <location filename="src/options/optionsdialog.cpp" line="1238"/>
         <source>X-Plane is selected in the Scenery Library menu. Active Sky weather not available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1245"/>
+        <location filename="src/options/optionsdialog.cpp" line="1249"/>
         <source>Open Active Sky Weather Snapshot File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1246"/>
+        <location filename="src/options/optionsdialog.cpp" line="1250"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1260"/>
+        <location filename="src/options/optionsdialog.cpp" line="1264"/>
         <source>Memory cache cleared.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1269"/>
+        <location filename="src/options/optionsdialog.cpp" line="1273"/>
         <source>Clear the disk cache?
 All files in the directory &quot;%1&quot; will be deleted.
 This process will run in background and can take a while.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1278"/>
+        <location filename="src/options/optionsdialog.cpp" line="1282"/>
         <source>Disk cache cleared.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1292"/>
+        <location filename="src/options/optionsdialog.cpp" line="1296"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
