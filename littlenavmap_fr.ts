@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_FR" sourcelanguage="en_GB">
+<TS version="2.0" language="fr_FR" sourcelanguage="en_GB">
 <context>
     <name>AirportSearch</name>
     <message>
@@ -332,7 +332,7 @@ scène</translation>
     <message>
         <location filename="src/connect/connectclient.cpp" line="179"/>
         <source>Connected (%1)</source>
-        <translation type="unfinished">Vous êtes connecté à (%1)</translation>
+        <translation type="unfinished">Vous êtes maintenant connecté à (%1)</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="180"/>
@@ -460,7 +460,7 @@ Va réessayer.</translation>
         <location filename="src/connect/connectdialog.ui" line="244"/>
         <location filename="src/connect/connectdialog.ui" line="247"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer aircraft</source>
-        <translation type="unfinished">Décocher pour désactiver la récupération et la transmission de l&apos;IA ou des aéronefs multijoueurs</translation>
+        <translation type="unfinished">Décocher pour désactiver la récupération et la transmission de l&apos;AI ou des aéronefs multijoueurs</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="34"/>
@@ -6216,7 +6216,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1367"/>
         <source>Flight Plan position </source>
-        <translation type="unfinished">Position plan de vol </translation>
+        <translation type="unfinished">Position sur plan de vol </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1371"/>
@@ -6365,7 +6365,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1656"/>
         <source>Flight Plan position: </source>
-        <translation type="unfinished">Position plan de vol: </translation>
+        <translation type="unfinished">Position sur plan de vol id: </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1663"/>
@@ -6462,7 +6462,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1741"/>
         <source>User Aircraft</source>
-        <translation type="unfinished">Aéronef utilisateur</translation>
+        <translation type="unfinished">Aéronef de l&apos;Utilisateur</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1743"/>
@@ -6476,14 +6476,29 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
         <translation type="unfinished"> Inconnu</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1751"/>
+        <source> Aircraft</source>
+        <translation type="unfinished"> Aéronef</translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1754"/>
+        <source> Helicopter</source>
+        <translation type="unfinished"> Hélicoptère</translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1757"/>
+        <source> Ship</source>
+        <translation type="unfinished"> Navire</translation>
+    </message>
+    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1770"/>
         <source>AI / Multiplayer%1 - %2 of %3 Vehicles</source>
-        <translation type="unfinished">AI / Multijoueurs%1 - %2 de %3 utilisateur(s)</translation>
+        <translation type="unfinished">AI / Multijoueurs%1 - %2 de %3 véhicule(s)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1772"/>
         <source>AI / Multiplayer%1</source>
-        <translation type="unfinished">AI / Multijoueurs%1</translation>
+        <translation type="unfinished">%1 AI / Multijoueurs</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1775"/>
@@ -6977,7 +6992,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2360"/>
         <source>AI / Multiplayer Vehicle</source>
-        <translation type="unfinished">AI / Véhicule Multijoueur</translation>
+        <translation type="unfinished">Véhicule AI / Multijoueur</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2394"/>
@@ -7282,7 +7297,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1457"/>
         <source>User Aircraft</source>
-        <translation type="unfinished">Aéronef utilisateur</translation>
+        <translation type="unfinished">Aéronef de l&apos;utilisateur</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1533"/>
@@ -8181,7 +8196,7 @@ lignes de mesure:</translation>
     <message>
         <location filename="src/options/options.ui" line="1078"/>
         <source>&amp;User aircraft:</source>
-        <translation type="unfinished">Aéronef &amp;utilisateur:</translation>
+        <translation type="unfinished">Aéronef de l&apos;&amp;utilisateur:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1094"/>
@@ -8252,7 +8267,7 @@ voies aériennes:</translation>
     <message>
         <location filename="src/options/options.ui" line="1399"/>
         <source>Display Options</source>
-        <translation type="unfinished">Option d&apos;affichage</translation>
+        <translation type="unfinished">Options d&apos;affichage</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1430"/>
@@ -9054,7 +9069,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="134"/>
         <source>User Aircraft</source>
-        <translation type="unfinished">Aéronef utilisateur</translation>
+        <translation type="unfinished">Aéronef de l&apos;utilisateur</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="135"/>
@@ -9065,7 +9080,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <location filename="src/options/optionsdialog.cpp" line="136"/>
         <location filename="src/options/optionsdialog.cpp" line="160"/>
         <source>Registration</source>
-        <translation type="unfinished">Inscription</translation>
+        <translation type="unfinished">Enregistrement</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="137"/>
@@ -9106,7 +9121,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <location filename="src/options/optionsdialog.cpp" line="144"/>
         <location filename="src/options/optionsdialog.cpp" line="166"/>
         <source>Climb- and Sinkrate</source>
-        <translation type="unfinished">Montée et Inclinaison</translation>
+        <translation type="unfinished">Taux de montée et de descente</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="145"/>
@@ -9153,7 +9168,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="158"/>
         <source>AI / Multiplayer Aircraft</source>
-        <translation type="unfinished">AI / Aéronef multijoueur</translation>
+        <translation type="unfinished">Aéronef AI / Multijoueur</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="159"/>
@@ -10855,37 +10870,37 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="380"/>
         <source>Class A</source>
-        <translation type="unfinished">Classe A</translation>
+        <translation type="unfinished">Classe A (Espace contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="381"/>
         <source>Class B</source>
-        <translation type="unfinished">Classe B</translation>
+        <translation type="unfinished">Classe B (Espace contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="382"/>
         <source>Class C</source>
-        <translation type="unfinished">Classe C</translation>
+        <translation type="unfinished">Classe C (Espace contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="383"/>
         <source>Class D</source>
-        <translation type="unfinished">Classe D</translation>
+        <translation type="unfinished">Classe D (Espace contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="384"/>
         <source>Class E</source>
-        <translation type="unfinished">Classe E</translation>
+        <translation type="unfinished">Classe E (Espace contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="385"/>
         <source>Class F</source>
-        <translation type="unfinished">Classe F</translation>
+        <translation type="unfinished">Classe F (Espace non contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="386"/>
         <source>Class G</source>
-        <translation type="unfinished">Classe G</translation>
+        <translation type="unfinished">Classe G (Espace non contrôlé)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="392"/>
@@ -11624,7 +11639,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
     <message>
         <location filename="src/common/updatehandler.cpp" line="192"/>
         <source>No Updates available.</source>
-        <translation type="unfinished">Aucune mise à jour disponible.</translation>
+        <translation type="unfinished">Vous avez déjà la dernière version.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="69"/>

@@ -1748,13 +1748,13 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     switch(aircraft.getCategory())
     {
       case atools::fs::sc::AIRPLANE:
-        type = " Aircraft";
+        type = tr(" Aircraft");
         break;
       case atools::fs::sc::HELICOPTER:
-        type = " Helicopter";
+        type = tr(" Helicopter");
         break;
       case atools::fs::sc::BOAT:
-        type = " Ship";
+        type = tr(" Ship");
         break;
       case atools::fs::sc::UNKNOWN:
         type.clear();
