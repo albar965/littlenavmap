@@ -1083,6 +1083,10 @@ const proc::MapProcedureLegs& MapWidget::getProcedureHighlight() const
 
 void MapWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << approach;
+#endif
+
   cancelDragAll();
   screenIndex->getProcedureHighlight() = approach;
   screenIndex->updateRouteScreenGeometry(currentViewBoundingBox);

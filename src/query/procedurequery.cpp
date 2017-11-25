@@ -269,6 +269,17 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       leg.magvar = leg.navaids.vors.first().magvar;
       leg.navId = leg.navaids.vors.first().id;
     }
+    else
+    {
+      // Try ILS if VOR or DME could not be found
+      mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, airport.position);
+      if(!leg.navaids.ils.isEmpty())
+      {
+        leg.fixPos = leg.navaids.ils.first().position;
+        leg.magvar = leg.navaids.ils.first().magvar;
+        leg.navId = leg.navaids.ils.first().id;
+      }
+    }
   }
   else if(leg.fixType == "N" || leg.fixType == "TN")
   {
@@ -280,7 +291,23 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       leg.navId = leg.navaids.ndbs.first().id;
     }
   }
-  else if(leg.fixType == "L")
+  else if(leg.fixType == "R")
+  {
+    runwayEndByName(leg.navaids, leg.fixIdent, airport);
+    leg.fixPos = leg.navaids.runwayEnds.isEmpty() ? airport.position : leg.navaids.runwayEnds.first().position;
+    leg.navId = -1;
+  }
+  else if(leg.fixType == "A")
+  {
+    mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent, QString(), airport.ident, airport.position);
+    if(!leg.navaids.airports.isEmpty())
+    {
+      leg.fixPos = leg.navaids.airports.first().position;
+      leg.magvar = leg.navaids.airports.first().magvar;
+      leg.navId = leg.navaids.airports.first().id;
+    }
+  }
+  else if(leg.fixType == "L" || leg.fixType.isEmpty() /* Workaround for missing navaid type in DFD */)
   {
     mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, airport.position);
     if(!leg.navaids.ils.isEmpty())
@@ -299,22 +326,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
         leg.magvar = leg.navaids.vors.first().magvar;
         leg.navId = leg.navaids.vors.first().id;
       }
-    }
-  }
-  else if(leg.fixType == "R")
-  {
-    runwayEndByName(leg.navaids, leg.fixIdent, airport);
-    leg.fixPos = leg.navaids.runwayEnds.isEmpty() ? airport.position : leg.navaids.runwayEnds.first().position;
-    leg.navId = -1;
-  }
-  else if(leg.fixType == "A")
-  {
-    mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent, QString(), airport.ident, airport.position);
-    if(!leg.navaids.airports.isEmpty())
-    {
-      leg.fixPos = leg.navaids.airports.first().position;
-      leg.magvar = leg.navaids.airports.first().magvar;
-      leg.navId = leg.navaids.airports.first().id;
     }
   }
 
@@ -344,6 +355,19 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = recResult.vors.first().magvar;
     }
+    else
+    {
+      // ILS as fallback
+      mapObjectByIdent(recResult, map::ILS, leg.recFixIdent, QString(), airport.ident, airport.position);
+      if(!recResult.ils.isEmpty())
+      {
+        leg.recFixPos = recResult.ils.first().position;
+        leg.recNavId = recResult.ils.first().id;
+
+        if(!(leg.magvar < map::INVALID_MAGVAR))
+          leg.magvar = recResult.ils.first().magvar;
+      }
+    }
   }
   else if(leg.recFixType == "N" || leg.recFixType == "TN")
   {
@@ -357,7 +381,13 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
         leg.magvar = recResult.ndbs.first().magvar;
     }
   }
-  else if(leg.recFixType == "L")
+  else if(leg.recFixType == "R")
+  {
+    runwayEndByName(recResult, leg.recFixIdent, airport);
+    leg.recFixPos = recResult.runwayEnds.isEmpty() ? airport.position : recResult.runwayEnds.first().position;
+    leg.recNavId = -1;
+  }
+  else if(leg.recFixType == "L" || leg.recFixType.isEmpty() /* Workaround for missing navaid type in DFD */)
   {
     mapObjectByIdent(recResult, map::ILS, leg.recFixIdent, QString(), airport.ident, airport.position);
     if(!recResult.ils.isEmpty())
@@ -381,12 +411,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
           leg.magvar = recResult.vors.first().magvar;
       }
     }
-  }
-  else if(leg.recFixType == "R")
-  {
-    runwayEndByName(recResult, leg.recFixIdent, airport);
-    leg.recFixPos = recResult.runwayEnds.isEmpty() ? airport.position : recResult.runwayEnds.first().position;
-    leg.recNavId = -1;
   }
 }
 
@@ -430,7 +454,7 @@ void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObje
                                       const Pos& sortByDistancePos)
 {
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
-                                map::INVALID_DISTANCE_VALUE, true /* airport from nav database */);
+                                atools::geo::nmToMeter(200.f), true /* airport from nav database */);
   if(result.isEmpty(type))
     // Try again in 200 nm radius by excluding the region - result sorted by distance
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,

@@ -528,11 +528,16 @@ void DatabaseManager::insertSimSwitchActions()
 
   if(!file.isEmpty())
   {
-    QString cycle;
-    metaFromFile(&cycle, nullptr, nullptr, nullptr, file);
+    QString cycle, source;
+    QDateTime date;
+    metaFromFile(&cycle, &date, nullptr, &source, file);
 
     if(!cycle.isEmpty())
       cycle = tr(" - AIRAC Cycle %1").arg(cycle);
+
+#ifdef DEBUG_INFORMATION
+    cycle += " (" + date.toString() + " | " + source + ")";
+#endif
 
     QString dbname = FsPaths::typeToName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu("&" + QString::number(index) + " " + dbname + cycle);
@@ -865,7 +870,7 @@ void DatabaseManager::copyAirspaces()
                                                       true /* named bindings */));
 
           // Copy from one database to another
-          std::function<bool(SqlQuery&, SqlQuery&)> func =
+          std::function<bool(SqlQuery&, SqlQuery &)> func =
             [](SqlQuery&, SqlQuery& to) -> bool
             {
               // use an invalid value for file_id to avoid display in information window
