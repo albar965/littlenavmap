@@ -86,6 +86,12 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, float& x, float& 
 bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size,
                                bool *isHidden) const
 {
+  if(!coords.isValid())
+  {
+    line = QLineF();
+    return false;
+  }
+
   double x, y;
   bool hidden1, hidden2, visible1, visible2;
   visible1 = wToS(coords.getPos1(), x, y, size, &hidden1);
@@ -103,6 +109,12 @@ bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, co
 bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size,
                                bool *isHidden) const
 {
+  if(!coords.isValid())
+  {
+    x = y = 0.;
+    return false;
+  }
+
   bool hidden;
   bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0, DEG), x, y, size, &hidden);
   if(isHidden != nullptr)

@@ -37,10 +37,10 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
 {
   visibleStartPoints.resize(points.size() + 1);
 
-  int x1, y1;
   for(int i = 0; i < points.size(); i++)
   {
-    bool visibleStart = converter->wToS(points.at(i), x1, y1);
+    int x1 = 0, y1 = 0;
+    bool visibleStart = points.at(i).isValid() ? converter->wToS(points.at(i), x1, y1) : false;
     visibleStartPoints.setBit(i, visibleStart);
     startPoints.append(QPointF(x1, y1));
   }
@@ -55,13 +55,15 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   for(int i = 0; i < lines.size(); i++)
   {
     const Line& line = lines.at(i);
-    converter->wToS(line.getPos1(), x1, y1);
-    converter->wToS(line.getPos2(), x2, y2);
 
     if(!fast)
     {
+      converter->wToS(line.getPos1(), x1, y1);
+      converter->wToS(line.getPos2(), x2, y2);
+
       int lineLength = atools::geo::simpleDistance(x1, y1, x2, y2);
-      if(lineLength > MIN_LENGTH_FOR_TEXT)
+
+      if(line.isValid() && lineLength > MIN_LENGTH_FOR_TEXT)
       {
         // Build text
         QString text = routeTexts.at(i);
@@ -184,6 +186,9 @@ bool TextPlacement::findTextPos(const Pos& pos1, const Pos& pos2,
 bool TextPlacement::findTextPos(const Pos& pos1, const Pos& pos2, float distanceMeter,
                                 int textWidth, int textHeight, int& x, int& y, float *bearing)
 {
+  if(!pos1.isValid() || !pos2.isValid())
+    return false;
+
   int size = std::max(textWidth, textHeight);
   Pos center = pos1.interpolate(pos2, distanceMeter, 0.5);
   bool visible = converter->wToS(center, x, y);
@@ -251,6 +256,9 @@ bool TextPlacement::findTextPos(const Pos& pos1, const Pos& pos2, float distance
 bool TextPlacement::findTextPosRhumb(const Pos& pos1, const Pos& pos2,
                                      float distanceMeter, int textWidth, int textHeight, int& x, int& y)
 {
+  if(!pos1.isValid() || !pos2.isValid())
+    return false;
+
   Pos center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5);
   bool visible = converter->wToS(center, x, y);
   if(visible && painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))

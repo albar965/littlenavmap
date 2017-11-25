@@ -57,8 +57,8 @@ void MapPainterRoute::render(PaintContext *context)
 
   // Draw the approach preview if any selected in the search tab
   if(context->mapLayer->isApproach())
-    paintApproach(context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
-                  true /* preview */);
+    paintProcedure(context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
+                   true /* preview */);
 
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     paintTopOfDescent(context);
@@ -189,16 +189,16 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Draw arrival and departure procedures ============================
   const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
   if(route->hasAnyDepartureProcedure())
-    paintApproach(context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
-                  flightplanProcedureColor, false /* preview */);
+    paintProcedure(context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
+                   flightplanProcedureColor, false /* preview */);
 
   if(route->hasAnyStarProcedure())
-    paintApproach(context, route->getStarLegs(), route->getStarLegsOffset(),
-                  flightplanProcedureColor, false /* preview */);
+    paintProcedure(context, route->getStarLegs(), route->getStarLegsOffset(),
+                   flightplanProcedureColor, false /* preview */);
 
   if(route->hasAnyArrivalProcedure())
-    paintApproach(context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
-                  flightplanProcedureColor, false /* preview */);
+    paintProcedure(context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
+                   flightplanProcedureColor, false /* preview */);
 
 #ifdef DEBUG_ROUTE_PAINT
   context->painter->save();
@@ -256,8 +256,8 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 }
 
 /* Draw approaches and transitions selected in the tree view */
-void MapPainterRoute::paintApproach(const PaintContext *context, const proc::MapProcedureLegs& legs,
-                                    int legsRouteOffset, const QColor& color, bool preview)
+void MapPainterRoute::paintProcedure(const PaintContext *context, const proc::MapProcedureLegs& legs,
+                                     int legsRouteOffset, const QColor& color, bool preview)
 {
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
@@ -324,7 +324,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
 
   if(!context->drawFast)
   {
-    // Build text strings for along the line ===========================
+    // Build text strings for drawing along the line ===========================
     QStringList approachTexts;
     QVector<Line> lines;
     QVector<QColor> textColors;
@@ -393,12 +393,12 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
   if(!preview && leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
     return;
 
+  if(!leg.line.isValid())
+    return;
+
   const proc::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
 
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
-
-  if(!leg.line.isValid())
-    return;
 
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
   QLineF line;
@@ -615,6 +615,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
 void MapPainterRoute::paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
                                        QLineF line, const proc::MapProcedureLeg& leg)
 {
+  if(!prevLeg->line.getPos2().isValid() || !leg.line.getPos1().isValid())
+    return;
+
   QLineF lineDraw(line.p2(), line.p1());
 
   // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
@@ -624,22 +627,27 @@ void MapPainterRoute::paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLi
   lineDraw.setPoints(lineDraw.p2(), lineDraw.p1());
 
   // Calculate distance to control points
-  float dist = prevLeg->line.getPos2().distanceMeterToRhumb(leg.line.getPos1()) * 3 / 4;
+  float dist = prevLeg->line.getPos2().distanceMeterToRhumb(leg.line.getPos1());
 
-  // Calculate bezier control points by extending the last and next line
-  QLineF ctrl1(lastLine.p1(), lastLine.p2());
-  ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
-  QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
-  ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
+  if(dist < atools::geo::Pos::INVALID_VALUE)
+  {
+    dist = dist * 3 / 4;
 
-  // Draw a bow connecting the two lines
-  QPainterPath path;
-  path.moveTo(lastLine.p2());
-  path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
-  painter->drawPath(path);
+    // Calculate bezier control points by extending the last and next line
+    QLineF ctrl1(lastLine.p1(), lastLine.p2());
+    ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
+    QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
+    ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
 
-  painter->drawLine(lineDraw);
-  lastLine = lineDraw;
+    // Draw a bow connecting the two lines
+    QPainterPath path;
+    path.moveTo(lastLine.p2());
+    path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
+    painter->drawPath(path);
+
+    painter->drawLine(lineDraw);
+    lastLine = lineDraw;
+  }
 }
 
 QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg,
