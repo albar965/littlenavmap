@@ -554,7 +554,7 @@ struct MapMarker
 /* ILS */
 struct MapIls
 {
-  QString ident, name;
+  QString ident, name, region;
   int id; /* database id ils.ils_id */
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;

@@ -315,6 +315,11 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       leg.fixPos = leg.navaids.ils.first().position;
       leg.magvar = leg.navaids.ils.first().magvar;
       leg.navId = leg.navaids.ils.first().id;
+
+      if(leg.fixRegion.isEmpty())
+        leg.fixRegion = leg.navaids.ils.first().region;
+      if(leg.fixType.isEmpty())
+        leg.fixType = "L";
     }
     else
     {
@@ -325,6 +330,11 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
         leg.fixPos = leg.navaids.vors.first().position;
         leg.magvar = leg.navaids.vors.first().magvar;
         leg.navId = leg.navaids.vors.first().id;
+
+        if(leg.fixRegion.isEmpty())
+          leg.fixRegion = leg.navaids.vors.first().region;
+        if(leg.fixType.isEmpty())
+          leg.fixType = "V";
       }
     }
   }
@@ -397,6 +407,12 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = recResult.ils.first().magvar;
+
+      if(leg.recFixRegion.isEmpty())
+        leg.recFixRegion = recResult.ils.first().region;
+
+      if(leg.recFixType.isEmpty())
+        leg.recFixType = "L";
     }
     else
     {
@@ -409,6 +425,12 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
         if(!(leg.magvar < map::INVALID_MAGVAR))
           leg.magvar = recResult.vors.first().magvar;
+
+        if(leg.recFixRegion.isEmpty())
+          leg.recFixRegion = recResult.vors.first().region;
+
+        if(leg.recFixType.isEmpty())
+          leg.recFixType = "V";
       }
     }
   }
