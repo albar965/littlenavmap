@@ -1,3 +1,14 @@
+Version 1.8.2.beta
+
+* Fixed crashes and freezes with invalid or incomplete procedures.
+
+from atools version 2.8.2.beta
+
+* DFD compiler now estimates if holding is given in time or distance for procedure legs.
+* DFD compiler now always sets region for fixes where it was missing for procedure legs.
+* Solved problem where fix was not set for DME distance and radial terminated procedure legs.
+  Now copying recommended fix.
+
 Version 1.8.1.beta
 
 * Fixed problem where no simulator was selected on first startup causing crashes when loading flight plans.
