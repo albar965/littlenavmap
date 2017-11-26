@@ -480,9 +480,18 @@ bool MapProcedureLeg::hasInvalidRef() const
 
 bool MapProcedureLeg::hasErrorRef() const
 {
-  return (!fixIdent.isEmpty() && !fixPos.isValid()) ||
-         (!recFixIdent.isEmpty() && !recFixPos.isValid() &&
-          atools::contains(type, {proc::ARC_TO_FIX, CONSTANT_RADIUS_ARC}));
+  // Check for required recommended fix - required as it is used here, not by ARINC definition
+  if(atools::contains(type, {proc::ARC_TO_FIX, CONSTANT_RADIUS_ARC,
+                             proc::COURSE_TO_RADIAL_TERMINATION, HEADING_TO_RADIAL_TERMINATION,
+                             proc::COURSE_TO_DME_DISTANCE, proc::HEADING_TO_DME_DISTANCE_TERMINATION}) &&
+     (recFixIdent.isEmpty() || !recFixPos.isValid()))
+    return true;
+
+  // If there is a fix it should be resolved
+  if(!fixIdent.isEmpty() && !fixPos.isValid())
+    return true;
+
+  return false;
 }
 
 float MapProcedureLeg::legTrueCourse() const

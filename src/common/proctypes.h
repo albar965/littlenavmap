@@ -257,7 +257,7 @@ struct MapProcedureLeg
   proc::ProcedureLegType type = INVALID_LEG_TYPE;
   proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Any of the PROCEDURE_* types*/
 
-  int approachId, transitionId, legId, navId, recNavId;
+  int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
   float course,
         distance /* Distance from source in nm */,
