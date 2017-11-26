@@ -19,7 +19,7 @@ export FILENAME=`date "+20%y%m%d-%H%M"`
   zip -r LittleNavconnect.zip "Little Navconnect.app" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt
 
-  scp LittleXpconnect.zip darkon:/data/alex/Public/LittleXpconnect-macOS-${FILENAME}.zip
-  scp LittleNavconnect.zip darkon:/data/alex/Public/LittleNavconnect-macOS-${FILENAME}.zip
-  scp LittleNavmap.zip darkon:/data/alex/Public/LittleNavmap-macOS-${FILENAME}.zip
+  scp LittleXpconnect.zip darkon:/data/alex/Public/Releases/LittleXpconnect-macOS-${FILENAME}.zip
+  scp LittleNavconnect.zip darkon:/data/alex/Public/Releases/LittleNavconnect-macOS-${FILENAME}.zip
+  scp LittleNavmap.zip darkon:/data/alex/Public/Releases/LittleNavmap-macOS-${FILENAME}.zip
 )

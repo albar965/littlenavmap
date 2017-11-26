@@ -1,7 +1,8 @@
 Version 1.8.2.beta
 
 * Fixed crashes and freezes with invalid or incomplete procedures.
-* Updated English manual.
+* Fixed error detection for invalid procedure legs.
+* Updated English manual and French translation.
 
 from atools version 2.8.2.beta
 

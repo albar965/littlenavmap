@@ -18,12 +18,12 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavconnect.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\darkon\public\LittleNavconnect-win-%FILEDATE%.zip
+del \\darkon\public\Releases\LittleNavconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleNavconnect.zip \\darkon\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\frida\public\LittleNavconnect-win-%FILEDATE%.zip
+del \\frida\public\Releases\LittleNavconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleNavconnect.zip \\frida\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -36,12 +36,12 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleXpconnect.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\darkon\public\LittleXpconnect-win-%FILEDATE%.zip
+del \\darkon\public\Releases\LittleXpconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleXpconnect.zip \\darkon\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\frida\public\LittleXpconnect-win-%FILEDATE%.zip
+del \\frida\public\Releases\LittleXpconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleXpconnect.zip \\frida\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -54,12 +54,12 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavmap.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\darkon\public\LittleNavmap-win-%FILEDATE%.zip
+del \\darkon\public\Releases\LittleNavmap-%FILEDATE%.zip
+copy /Y /Z /B LittleNavmap.zip \\darkon\public\Releases\LittleNavmap-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\frida\public\LittleNavmap-win-%FILEDATE%.zip
+del \\frida\public\Releases\LittleNavmap-%FILEDATE%.zip
+copy /Y /Z /B LittleNavmap.zip \\frida\public\Releases\LittleNavmap-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 popd
