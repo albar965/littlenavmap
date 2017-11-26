@@ -6462,7 +6462,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1741"/>
         <source>User Aircraft</source>
-        <translation type="unfinished">Aéronef de l&apos;Utilisateur</translation>
+        <translation type="unfinished">Aéronef de l&apos;utilisateur</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1743"/>
@@ -6493,12 +6493,12 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1770"/>
         <source>AI / Multiplayer%1 - %2 of %3 Vehicles</source>
-        <translation type="unfinished">AI / Multijoueurs%1 - %2 de %3 véhicule(s)</translation>
+        <translation type="unfinished">%1 AI / Multijoueur - %2 de %3 appareil(s)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1772"/>
         <source>AI / Multiplayer%1</source>
-        <translation type="unfinished">%1 AI / Multijoueurs</translation>
+        <translation type="unfinished">%1 AI / Multijoueur</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1775"/>
@@ -6584,7 +6584,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1873"/>
         <source>Flight Plan Progress</source>
-        <translation type="unfinished">Progression du Plan de Vol</translation>
+        <translation type="unfinished">Progression du plan de vol</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1880"/>
