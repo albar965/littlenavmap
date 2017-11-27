@@ -1065,8 +1065,9 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     else if(type == proc::COURSE_TO_FIX)
     {
       // Calculate the leading extended position to the fix
-      Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance),
-                                         opposedCourseDeg(leg.legTrueCourse())).normalize();
+      Pos extended = leg.fixPos.endpoint(
+        nmToMeter(leg.distance > 0 ? leg.distance : 1.f /* Fix for missing distance */),
+        opposedCourseDeg(leg.legTrueCourse())).normalize();
       atools::geo::LineDistance result;
       lastPos.distanceMeterToLine(extended, leg.fixPos, result);
 
