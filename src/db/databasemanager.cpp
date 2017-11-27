@@ -368,92 +368,98 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     metaFromFile(&settingsCycle, &settingsLastLoad, &settingsNeedsPreparation, &settingsSource, settingsDb);
     hasSettings = true;
   }
+  int appCycleNum = appCycle.toInt();
+  int settingsCycleNum = settingsCycle.toInt();
 
-  qInfo() << Q_FUNC_INFO << "settings database" << settingsDb << settingsLastLoad;
-  qInfo() << Q_FUNC_INFO << "app database" << appDb << appLastLoad;
+  qInfo() << Q_FUNC_INFO << "settings database" << settingsDb << settingsLastLoad << settingsCycle;
+  qInfo() << Q_FUNC_INFO << "app database" << appDb << appLastLoad << appCycle;
   qInfo() << Q_FUNC_INFO << "hasApp" << hasApp
           << "hasSettings" << hasSettings
           << "settingsNeedsPreparation" << settingsNeedsPreparation;
 
-  if(hasApp && (appLastLoad > settingsLastLoad))
+  if(hasApp)
   {
     int result = QMessageBox::Yes;
 
-    if(hasSettings)
+    // Compare cycles first and then compilation time
+    if(appCycleNum > settingsCycleNum || (appCycleNum == settingsCycleNum && appLastLoad > settingsLastLoad))
     {
-      NavApp::deleteSplashScreen();
-      result = atools::gui::Dialog(nullptr).showQuestionMsgBox(
-        lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
-        tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
-           "Overwrite your current navdata file with the new one?"
-           "<hr/>Current file to overwrite:<br/><br/>"
-           "<i>%1<br/><br/>"
-           "%2, cycle %3, compiled on %4</i>"
-           "<hr/>New file:<br/><br/>"
-           "<i>%5<br/><br/>"
-           "%6, cycle %7, compiled on %8</i><hr/><br/>"
-           ).
-        arg(settingsDb).
-        arg(settingsSource).
-        arg(settingsCycle).
-        arg(QLocale().toString(settingsLastLoad, QLocale::ShortFormat)).
-        arg(appDb).
-        arg(appSource).
-        arg(appCycle).
-        arg(QLocale().toString(appLastLoad, QLocale::ShortFormat)),
-        tr("Do not &show this dialog again and skip copying in the future."),
-        QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
-    }
-
-    if(result == QMessageBox::Yes)
-    {
-      // We have a database in the application folder and it is newer than the one in the settings folder
-      QMessageBox *dialog =
-        showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-
-      bool resultRemove = true, resultCopy = false;
-      // Remove target
       if(hasSettings)
       {
-        resultRemove = QFile(settingsDb).remove();
-        qDebug() << "removed" << settingsDb << resultRemove;
+        NavApp::deleteSplashScreen();
+        result = atools::gui::Dialog(nullptr).showQuestionMsgBox(
+          lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
+          tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
+             "Overwrite your current navdata file with the new one?"
+             "<hr/>Current file to overwrite:<br/><br/>"
+             "<i>%1<br/><br/>"
+             "%2, cycle %3, compiled on %4</i>"
+             "<hr/>New file:<br/><br/>"
+             "<i>%5<br/><br/>"
+             "%6, cycle %7, compiled on %8</i><hr/><br/>"
+             ).
+          arg(settingsDb).
+          arg(settingsSource).
+          arg(settingsCycle).
+          arg(QLocale().toString(settingsLastLoad, QLocale::ShortFormat)).
+          arg(appDb).
+          arg(appSource).
+          arg(appCycle).
+          arg(QLocale().toString(appLastLoad, QLocale::ShortFormat)),
+          tr("Do not &show this dialog again and skip copying in the future."),
+          QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
       }
 
-      // Copy to target
-      if(resultRemove)
+      if(result == QMessageBox::Yes)
       {
-        dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-        atools::gui::Application::processEventsExtended();
-        resultCopy = QFile(appDb).copy(settingsDb);
-        qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
+        // We have a database in the application folder and it is newer than the one in the settings folder
+        QMessageBox *dialog =
+          showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+
+        bool resultRemove = true, resultCopy = false;
+        // Remove target
+        if(hasSettings)
+        {
+          resultRemove = QFile(settingsDb).remove();
+          qDebug() << "removed" << settingsDb << resultRemove;
+        }
+
+        // Copy to target
+        if(resultRemove)
+        {
+          dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          atools::gui::Application::processEventsExtended();
+          resultCopy = QFile(appDb).copy(settingsDb);
+          qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
+        }
+
+        // Create indexes and delete script afterwards
+        if(resultRemove && resultCopy)
+        {
+          SqlDatabase tempDb(DATABASE_NAME_TEMP);
+          openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+          dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          atools::gui::Application::processEventsExtended();
+          NavDatabase::runPreparationScript(tempDb);
+
+          dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          atools::gui::Application::processEventsExtended();
+          tempDb.analyze();
+          closeDatabaseFile(&tempDb);
+          settingsNeedsPreparation = false;
+        }
+        deleteSimpleProgressDialog(dialog);
+
+        if(!resultRemove)
+          QMessageBox::warning(nullptr, QApplication::applicationName(),
+                               tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                  "Remove the database file manually and restart the program.").arg(settingsDb));
+
+        if(!resultCopy)
+          QMessageBox::warning(nullptr, QApplication::applicationName(),
+                               tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
+                                  "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
       }
-
-      // Create indexes and delete script afterwards
-      if(resultRemove && resultCopy)
-      {
-        SqlDatabase tempDb(DATABASE_NAME_TEMP);
-        openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
-        dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-        atools::gui::Application::processEventsExtended();
-        NavDatabase::runPreparationScript(tempDb);
-
-        dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
-        atools::gui::Application::processEventsExtended();
-        tempDb.analyze();
-        closeDatabaseFile(&tempDb);
-        settingsNeedsPreparation = false;
-      }
-      deleteSimpleProgressDialog(dialog);
-
-      if(!resultRemove)
-        QMessageBox::warning(nullptr, QApplication::applicationName(),
-                             tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
-                                "Remove the database file manually and restart the program.").arg(settingsDb));
-
-      if(!resultCopy)
-        QMessageBox::warning(nullptr, QApplication::applicationName(),
-                             tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
-                                "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
     }
   }
 

@@ -796,8 +796,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
           ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirportNav.ident).arg(text));
-
-
       }
     }
   }
@@ -1023,6 +1021,12 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
     restrictions.append("/" + proc::speedRestrictionTextShort(leg.speedRestriction));
 
   QString remarkStr = proc::procedureLegRemark(leg);
+
+#ifdef DEBUG_INFORMATION
+  remarkStr += QString(" | leg_id = %1 approach_id = %2 transition_id = %3 nav_id = %4").
+               arg(leg.legId).arg(leg.approachId).arg(leg.transitionId).arg(leg.navId);
+#endif
+
   texts << restrictions << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
   texts << remarkStr;
