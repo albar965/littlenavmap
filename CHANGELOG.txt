@@ -1,3 +1,9 @@
+Version 1.8.3
+
+* Comparing AIRAC cycle numbers before overwriting approach now.
+* Workaround for invalid course to fix procedure legs with missing distance which resulted in
+  distorted procedure display.
+
 Version 1.8.2.beta
 
 * Fixed crashes and freezes with invalid or incomplete procedures.
