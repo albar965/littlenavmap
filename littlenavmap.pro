@@ -480,7 +480,6 @@ win32 {
   CONFIG(release, debug|release):DLL_SUFFIX=
 
   deploy.commands = rmdir /s /q $${DEPLOY_DIR_WIN} &
-  deploy.commands += mkdir $${DEPLOY_DIR_WIN} &&
   deploy.commands += mkdir $${DEPLOY_DIR_WIN}\\translations &&
   deploy.commands += mkdir $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCachePlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
