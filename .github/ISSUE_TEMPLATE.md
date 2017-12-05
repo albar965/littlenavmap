@@ -29,4 +29,4 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 **Delete this text _after reading_ before posting the issue.**
 
-[code-of-conduct]: CODE_OF_CONDUCT.md
+[code-of-conduct]: https://github.com/albar965/littlenavmap/blob/master/.github/CODE_OF_CONDUCT.md
