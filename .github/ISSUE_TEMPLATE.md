@@ -6,6 +6,8 @@ All issues for _atools_, _Little Navconnect_, _Little Xpconnect_ are collected i
 
 Note that almost all _Little Navmap_ dialogs allow to copy formatted text. Simply click and drag the mouse in the dialog to mark the text. Use `Ctrl+C` or context menu to copy to the clipboard. Make screenshots only if relevant for the issue like drawing errors.
 
+Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
+
 **Please read before writing an issue**
 
 ## If you'd like to report an error:
@@ -26,3 +28,5 @@ Note that almost all _Little Navmap_ dialogs allow to copy formatted text. Simpl
 * Provide a clear description and attach screenshots, file examples or documentation links that help me to understand and implement the feature.
 
 **Delete this text _after reading_ before posting the issue.**
+
+[code-of-conduct]: CODE_OF_CONDUCT.md
