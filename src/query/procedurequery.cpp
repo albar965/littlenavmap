@@ -1490,6 +1490,7 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   if(type & proc::PROCEDURE_STAR)
   {
     properties.remove(pln::STAR);
+    properties.remove(pln::STARRW);
     properties.remove(pln::STARDISTANCE);
     properties.remove(pln::STARSIZE);
   }
@@ -1554,6 +1555,7 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
     if(!starLegs.isEmpty() && !starLegs.approachFixIdent.isEmpty())
     {
       properties.insert(pln::STAR, starLegs.approachFixIdent);
+      properties.insert(pln::STARRW, starLegs.runwayEnd.name);
       properties.insert(pln::STARDISTANCE, QString::number(starLegs.approachDistance, 'f', 1));
       properties.insert(pln::STARSIZE, QString::number(starLegs.approachLegs.size()));
     }
