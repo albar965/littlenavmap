@@ -10,8 +10,6 @@ QT       += core gui sql xml network svg printsupport
 # multimediawidgets network opengl printsupport qml qmltest x11extras quick script scripttools
 # sensors serialport sql svg testlib uitools webkit webkitwidgets widgets winextras xml xmlpatterns
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 # CONFIG *= debug_and_release debug_and_release_target
 
 # Use to debug release builds
@@ -39,14 +37,22 @@ win32 {
 unix:!macx {
   QT_HOME=/home/alex/Qt/5.9.1/gcc_64
   MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
+
+  # Use relative path to current .so directory to search for shared libraries
+  # Makes the shell script and setting LD_LIBRARY_PATH redundant
+  QMAKE_RPATHDIR=.
+  QMAKE_RPATHDIR+=./lib
+
+  # Search path for the Marble widget so while linking
+  QMAKE_RPATHLINKDIR=/home/alex/Programme/Marble-$${CONF_TYPE}/lib
 }
 
 # Mac OS X ==================
 macx {
   MARBLE_BASE=/Users/alex/Programme/Marble-$${CONF_TYPE}
 
-  # Compatibility down to OS X Mountain Lion 10.8
-  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+  # Compatibility down to OS X 10.10
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
 }
 
 # End of configuration section
@@ -356,12 +362,12 @@ unix:!macx {
 
   deploy.commands += rm -Rfv $${DEPLOY_DIR} &&
   deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB} &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR}/iconengines &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR}/platforms &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR}/platformthemes &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR}/printsupport &&
-  deploy.commands += mkdir -pv $${DEPLOY_DIR}/sqldrivers &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/iconengines &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/platformthemes &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/printsupport &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/sqldrivers &&
   deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.so* $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/plugins $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/data $${DEPLOY_DIR} &&
@@ -374,27 +380,28 @@ unix:!macx {
   deploy.commands += cp -vfa $${QT_HOME}/translations/qtbase*.qm  $${DEPLOY_DIR}/translations &&
   deploy.commands += cp -Rvf $${PWD}/../little_navmap_db $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $${DEPLOY_DIR} &&
+  deploy.commands += cp -vf $$PWD/desktop/qt.conf $${DEPLOY_DIR} &&
   deploy.commands += chmod -v a+x $${DEPLOY_DIR}/littlenavmap.sh &&
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/README.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/LICENSE.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $${DEPLOY_DIR} &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/iconengines/libqsvgicon.so*  $${DEPLOY_DIR}/iconengines &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqgif.so*  $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjp2.so*  $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjpeg.so*  $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqsvg.so*  $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwbmp.so*  $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwebp.so*  $${DEPLOY_DIR}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqeglfs.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqlinuxfb.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimal.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimalegl.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqoffscreen.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqxcb.so*  $${DEPLOY_DIR}/platforms &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk*.so*  $${DEPLOY_DIR}/platformthemes &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/printsupport/libcupsprintersupport.so*  $${DEPLOY_DIR}/printsupport &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/sqldrivers/libqsqlite.so*  $${DEPLOY_DIR}/sqldrivers &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/iconengines/libqsvgicon.so*  $${DEPLOY_DIR_LIB}/iconengines &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqgif.so*  $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjp2.so*  $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjpeg.so*  $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqsvg.so*  $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwbmp.so*  $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwebp.so*  $${DEPLOY_DIR_LIB}/imageformats &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqeglfs.so*  $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqlinuxfb.so*  $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimal.so*  $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqminimalegl.so*  $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqoffscreen.so*  $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platforms/libqxcb.so*  $${DEPLOY_DIR_LIB}/platforms &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk*.so*  $${DEPLOY_DIR_LIB}/platformthemes &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/printsupport/libcupsprintersupport.so*  $${DEPLOY_DIR_LIB}/printsupport &&
+  deploy.commands += cp -vfa $${QT_HOME}/plugins/sqldrivers/libqsqlite.so*  $${DEPLOY_DIR_LIB}/sqldrivers &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicudata.so*  $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicui18n.so*  $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicuuc.so*  $${DEPLOY_DIR_LIB} &&
