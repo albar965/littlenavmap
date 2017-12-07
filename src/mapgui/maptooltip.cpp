@@ -23,6 +23,7 @@
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "route/route.h"
+#include "options/optiondata.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -53,6 +54,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // Avoid unreadable icons for some linux distributions that have a black tooltip background
   QColor iconBackColor(QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase));
 #endif
+
+  opts::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
   HtmlBuilder html(false);
   HtmlInfoBuilder info(mainWindow, false);
@@ -92,94 +95,103 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     numEntries++;
   }
 
-  for(const proc::MapProcedurePoint& ap : procPoints)
+  if(opts & opts::TOOLTIP_NAVAID)
   {
-    if(checkText(html, numEntries))
-      return html.getHtml();
+    for(const proc::MapProcedurePoint& ap : procPoints)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.hr();
+      if(!html.isEmpty())
+        html.hr();
 
-    html.p();
-    info.procedurePointText(ap, html);
-    html.pEnd();
-    numEntries++;
+      html.p();
+      info.procedurePointText(ap, html);
+      html.pEnd();
+      numEntries++;
+    }
   }
 
-  for(const MapAirport& airport : mapSearchResult.airports)
+  if(opts & opts::TOOLTIP_AIRPORT)
   {
-    if(checkText(html, numEntries))
-      return html.getHtml();
+    for(const MapAirport& airport : mapSearchResult.airports)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.hr();
+      if(!html.isEmpty())
+        html.hr();
 
-    map::WeatherContext currentWeatherContext;
+      map::WeatherContext currentWeatherContext;
 
-    html.p();
-    mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
-    info.airportText(airport, currentWeatherContext, html, &route, iconBackColor);
-    html.pEnd();
-    numEntries++;
+      html.p();
+      mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
+      info.airportText(airport, currentWeatherContext, html, &route, iconBackColor);
+      html.pEnd();
+      numEntries++;
+    }
   }
 
-  for(const MapVor& vor : mapSearchResult.vors)
+  if(opts & opts::TOOLTIP_NAVAID)
   {
-    if(checkText(html, numEntries))
-      return html.getHtml();
+    for(const MapVor& vor : mapSearchResult.vors)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.hr();
+      if(!html.isEmpty())
+        html.hr();
 
-    html.p();
-    info.vorText(vor, html, iconBackColor);
-    html.pEnd();
-    numEntries++;
+      html.p();
+      info.vorText(vor, html, iconBackColor);
+      html.pEnd();
+      numEntries++;
+    }
+
+    for(const MapNdb& ndb : mapSearchResult.ndbs)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.ndbText(ndb, html, iconBackColor);
+      html.pEnd();
+      numEntries++;
+    }
+
+    for(const MapWaypoint& wp : mapSearchResult.waypoints)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.waypointText(wp, html, iconBackColor);
+      html.pEnd();
+      numEntries++;
+    }
+
+    for(const MapMarker& m : mapSearchResult.markers)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.markerText(m, html);
+      html.pEnd();
+      numEntries++;
+    }
   }
 
-  for(const MapNdb& ndb : mapSearchResult.ndbs)
-  {
-    if(checkText(html, numEntries))
-      return html.getHtml();
-
-    if(!html.isEmpty())
-      html.hr();
-
-    html.p();
-    info.ndbText(ndb, html, iconBackColor);
-    html.pEnd();
-    numEntries++;
-  }
-
-  for(const MapWaypoint& wp : mapSearchResult.waypoints)
-  {
-    if(checkText(html, numEntries))
-      return html.getHtml();
-
-    if(!html.isEmpty())
-      html.hr();
-
-    html.p();
-    info.waypointText(wp, html, iconBackColor);
-    html.pEnd();
-    numEntries++;
-  }
-
-  for(const MapMarker& m : mapSearchResult.markers)
-  {
-    if(checkText(html, numEntries))
-      return html.getHtml();
-
-    if(!html.isEmpty())
-      html.hr();
-
-    html.p();
-    info.markerText(m, html);
-    html.pEnd();
-    numEntries++;
-  }
-
-  if(airportDiagram)
+  if(airportDiagram && opts & opts::TOOLTIP_AIRPORT)
   {
     for(const MapAirport& ap : mapSearchResult.towers)
     {
@@ -222,46 +234,52 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
-  for(const MapUserpoint& up : mapSearchResult.userPoints)
+  if(opts & opts::TOOLTIP_NAVAID)
   {
-    if(checkText(html, numEntries))
-      return html.getHtml();
+    for(const MapUserpoint& up : mapSearchResult.userPoints)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.hr();
+      if(!html.isEmpty())
+        html.hr();
 
-    html.p();
-    info.userpointText(up, html);
-    html.pEnd();
-    numEntries++;
+      html.p();
+      info.userpointText(up, html);
+      html.pEnd();
+      numEntries++;
+    }
+
+    for(const MapAirway& airway : mapSearchResult.airways)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.airwayText(airway, html);
+      html.pEnd();
+      numEntries++;
+    }
   }
 
-  for(const MapAirway& airway : mapSearchResult.airways)
+  if(opts & opts::TOOLTIP_AIRSPACE)
   {
-    if(checkText(html, numEntries))
-      return html.getHtml();
+    for(const MapAirspace& up : mapSearchResult.airspaces)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
 
-    if(!html.isEmpty())
-      html.hr();
+      if(!html.isEmpty())
+        html.hr();
 
-    html.p();
-    info.airwayText(airway, html);
-    html.pEnd();
-    numEntries++;
-  }
-
-  for(const MapAirspace& up : mapSearchResult.airspaces)
-  {
-    if(checkText(html, numEntries))
-      return html.getHtml();
-
-    if(!html.isEmpty())
-      html.hr();
-
-    html.p();
-    info.airspaceText(up, html, iconBackColor);
-    html.pEnd();
-    numEntries++;
+      html.p();
+      info.airspaceText(up, html, iconBackColor);
+      html.pEnd();
+      numEntries++;
+    }
   }
 
   return html.getHtml();

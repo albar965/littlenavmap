@@ -180,6 +180,17 @@ enum DisplayOption
 Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptions);
 
+enum DisplayTooltipOption
+{
+  TOOLTIP_NONE = 0,
+  TOOLTIP_AIRPORT = 1 << 1,
+  TOOLTIP_NAVAID = 1 << 2,
+  TOOLTIP_AIRSPACE = 1 << 3
+};
+
+Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayTooltipOptions);
+
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
 {
@@ -552,6 +563,11 @@ public:
     return displayOptions;
   }
 
+  opts::DisplayTooltipOptions getDisplayTooltipOptions() const
+  {
+    return displayTooltipOptions;
+  }
+
   int getDisplayThicknessRangeDistance() const
   {
     return displayThicknessRangeDistance;
@@ -787,6 +803,9 @@ private:
     opts::ITEM_AI_AIRCRAFT_REGISTRATION | opts::ITEM_AI_AIRCRAFT_TYPE |
     opts::ITEM_AI_AIRCRAFT_AIRLINE | opts::ITEM_AI_AIRCRAFT_GS |
     opts::ITEM_AI_AIRCRAFT_ALTITUDE;
+
+  opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
+                                                      opts::TOOLTIP_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;
   opts::UpdateChannels updateChannels = opts::STABLE;

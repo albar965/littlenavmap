@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1006</width>
-    <height>442</height>
+    <width>1004</width>
+    <height>488</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -618,6 +618,9 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
           <string>General</string>
          </property>
          <layout class="QGridLayout" name="gridLayoutOptionsMapLower">
+          <property name="verticalSpacing">
+           <number>2</number>
+          </property>
           <item row="2" column="1">
            <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
             <property name="toolTip">
@@ -714,6 +717,9 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
           </property>
           <property name="bottomMargin">
            <number>1</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>2</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="labelOptionsMapZoomShowMapDouble">
@@ -816,6 +822,9 @@ Smaller values will zoom in closer to an airport or navaid.
           <property name="bottomMargin">
            <number>1</number>
           </property>
+          <property name="verticalSpacing">
+           <number>2</number>
+          </property>
           <item row="2" column="0">
            <widget class="QLabel" name="labelOptionsMapTooltipRect">
             <property name="text">
@@ -898,17 +907,92 @@ Smaller values will allow a finer selection.</string>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QGroupBox" name="groupBoxMapSensitivity_2">
+         <property name="title">
+          <string>Tooltips</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+         <layout class="QGridLayout" name="gridLayout_17">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>2</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsMapTooltipAirport">
+            <property name="toolTip">
+             <string>Show tooltips for airports, parking, towers and helipads when hovering the cursor over the map</string>
+            </property>
+            <property name="statusTip">
+             <string>Show tooltips for airports, parking, towers and helipads when hovering the cursor over the map</string>
+            </property>
+            <property name="text">
+             <string>Show for &amp;airports</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsMapTooltipNavaid">
+            <property name="toolTip">
+             <string>Show tooltips for waypoints, VOR, NDB and airways when hovering the cursor over the map</string>
+            </property>
+            <property name="statusTip">
+             <string>Show tooltips for waypoints, VOR, NDB and airways when hovering the cursor over the map</string>
+            </property>
+            <property name="text">
+             <string>Show for &amp;navaids and airways</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsMapTooltipAirspace">
+            <property name="toolTip">
+             <string>Show tooltips for airspaces when hovering the cursor over the map</string>
+            </property>
+            <property name="statusTip">
+             <string>Show tooltips for airspaces when hovering the cursor over the map</string>
+            </property>
+            <property name="text">
+             <string>Show for air&amp;spaces</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -2651,6 +2735,9 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
   <tabstop>spinBoxOptionsMapClickRect</tabstop>
   <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipNavaid</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipAirspace</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>

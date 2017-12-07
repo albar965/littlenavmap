@@ -243,6 +243,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsGuiOverrideLanguage);
   widgets.append(ui->checkBoxOptionsGuiOverrideLocale);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
+  widgets.append(ui->checkBoxOptionsMapTooltipAirport);
+  widgets.append(ui->checkBoxOptionsMapTooltipNavaid);
+  widgets.append(ui->checkBoxOptionsMapTooltipAirspace);
   widgets.append(ui->checkBoxOptionsRouteEastWestRule);
   widgets.append(ui->comboBoxOptionsRouteAltitudeRuleType);
   widgets.append(ui->checkBoxOptionsRoutePreferNdb);
@@ -891,6 +894,10 @@ void OptionsDialog::widgetsToOptionData()
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
+  data.displayTooltipOptions.setFlag(opts::TOOLTIP_AIRPORT, ui->checkBoxOptionsMapTooltipAirport->isChecked());
+  data.displayTooltipOptions.setFlag(opts::TOOLTIP_NAVAID, ui->checkBoxOptionsMapTooltipNavaid->isChecked());
+  data.displayTooltipOptions.setFlag(opts::TOOLTIP_AIRSPACE, ui->checkBoxOptionsMapTooltipAirspace->isChecked());
+
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
@@ -1009,6 +1016,10 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
+
+  ui->checkBoxOptionsMapTooltipAirport->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRPORT));
+  ui->checkBoxOptionsMapTooltipNavaid->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_NAVAID));
+  ui->checkBoxOptionsMapTooltipAirspace->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRSPACE));
 
   QString txt;
   for(int val : data.mapRangeRings)
