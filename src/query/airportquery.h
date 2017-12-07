@@ -94,7 +94,7 @@ public:
                             const atools::geo::Pos& position);
 
   /* Get best start position for an airport. This is the longest preferrably hard surfaced primary runway end */
-  void getBestStartPositionForAirport(map::MapStart& start, int airportId);
+  void getBestStartPositionForAirport(map::MapStart& start, int airportId, const QString& runwayName);
 
   /* Get a completely filled runway list for the airport */
   const QList<map::MapRunway> *getRunways(int airportId);

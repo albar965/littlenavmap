@@ -24,6 +24,7 @@
 #include "gui/helphandler.h"
 #include "query/procedurequery.h"
 #include "common/constants.h"
+#include "fs/db/databasemeta.h"
 #include "common/formatter.h"
 #include "search/proceduresearch.h"
 #include "common/unit.h"
@@ -203,7 +204,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionRouteShowApproaches,
                     ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteActivateLeg});
 
-  void (RouteController::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
+  void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
   connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
@@ -1011,7 +1012,8 @@ bool RouteController::saveFlightplan(bool cleanExport)
     QHash<QString, QString>& properties = flightplan.getProperties();
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
-    properties.insert(pln::NAVDATA, NavApp::getCurrentSimulatorShortName());
+    properties.insert(pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
+    properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
     properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycleNav());
 
     // Save PLN, FLP or FMS
@@ -1631,7 +1633,8 @@ void RouteController::activateLegTriggered()
 
 void RouteController::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "FLIGHTPLAN.html", lnm::helpLanguagesOnline());
+  atools::gui::HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "FLIGHTPLAN.html",
+                                        lnm::helpLanguagesOnline());
 }
 
 void RouteController::nothingSelectedTriggered()
@@ -3363,9 +3366,12 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
 
     if(force || (!route.hasDepartureParking() && !route.hasDepartureStart()))
     {
+      QString dep, arr;
+      route.getRunwayNames(dep, arr);
+
       // Reset departure position to best runway
       map::MapStart start;
-      airportQuery->getBestStartPositionForAirport(start, routeLeg.getAirport().id);
+      airportQuery->getBestStartPositionForAirport(start, routeLeg.getAirport().id, dep);
 
       // Check if the airport has a start position - sone add-on airports don't
       if(start.isValid())
