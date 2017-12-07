@@ -43,11 +43,8 @@
 #include <QSplashScreen>
 #include <QSslSocket>
 #include <QStyleFactory>
-
-#if defined(Q_OS_WIN32)
 #include <QSharedMemory>
 #include <QMessageBox>
-#endif
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -178,6 +175,18 @@ int main(int argc, char *argv[])
     Unit::initTranslateableTexts();
     map::initTranslateableTexts();
     proc::initTranslateableTexts();
+
+#if defined(Q_OS_MACOS)
+    // Check for minimum macOS version 10.10
+    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_10)
+    {
+      NavApp::deleteSplashScreen();
+      QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
+                            QObject::tr("%1 needs at least macOS Yosemite version 10.10 or newer.").
+                            arg(QApplication::applicationName()));
+      return 1;
+    }
+#endif
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
