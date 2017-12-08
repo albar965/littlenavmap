@@ -379,9 +379,7 @@ unix:!macx {
   deploy.commands += cp -vfa $${QT_HOME}/translations/qt_??_??.qm  $${DEPLOY_DIR}/translations &&
   deploy.commands += cp -vfa $${QT_HOME}/translations/qtbase*.qm  $${DEPLOY_DIR}/translations &&
   deploy.commands += cp -Rvf $${PWD}/../little_navmap_db $${DEPLOY_DIR} &&
-  deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $$PWD/desktop/qt.conf $${DEPLOY_DIR} &&
-  deploy.commands += chmod -v a+x $${DEPLOY_DIR}/littlenavmap.sh &&
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/README.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/LICENSE.txt $${DEPLOY_DIR} &&
