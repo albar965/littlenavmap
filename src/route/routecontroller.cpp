@@ -1017,7 +1017,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycleNav());
 
     // Save PLN, FLP or FMS
-    flightplan.save(routeFilename, NavApp::getDatabaseAiracCycleSim(), cleanExport /* clean */);
+    flightplan.save(routeFilename, NavApp::getDatabaseAiracCycleNav(), cleanExport /* clean */);
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
       // Old format is always saved as new after question dialog
