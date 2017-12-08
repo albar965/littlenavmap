@@ -2138,7 +2138,7 @@ void MainWindow::mainWindowShown()
     if(!databaseManager->hasSimulatorDatabases())
     {
       // Show the scenery database dialog on first start
-#ifndef Q_OS_WIN32
+#ifdef Q_OS_WIN32
       if(databaseManager->hasInstalledSimulators())
         // No databases but simulators let the user create new databases
         databaseManager->run();
