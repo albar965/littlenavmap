@@ -1120,6 +1120,27 @@ void MainWindow::routeCenter()
   }
 }
 
+bool MainWindow::routeSaveCheckFMS11Warnings()
+{
+  if(NavApp::getDatabaseAiracCycleNav().isEmpty() &&
+     NavApp::getRoute().getFlightplan().getFileFormat() == atools::fs::pln::FMS11)
+  {
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
+                                            tr(
+                                              "Database contains no AIRAC cycle information which is "
+                                              "required for the X-Plane FSM 11 flight plan format.<br/><br/>"
+                                              "This can happen if you save a flight plan based on FSX or Prepar3D scenery.<br/><br/>"
+                                              "Really continue?"),
+                                            tr("Do not &show this dialog again and save in the future."),
+                                            QMessageBox::Yes | QMessageBox::No,
+                                            QMessageBox::No, QMessageBox::Yes);
+
+    if(result == QMessageBox::No)
+      return false;
+  }
+  return true;
+}
+
 /* Display warning dialogs depending on format to save and allow to cancel out or save as */
 bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat)
 {
@@ -1259,7 +1280,7 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
     if(validateDepartureAndDestination)
     {
       NavApp::deleteSplashScreen();
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_WARNING,
                                               tr("Flight Plan must have a valid airport as "
                                                  "start and destination and "
                                                  "will not be usable by the Simulator."),
@@ -1286,7 +1307,7 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
         // Airport has parking but no one is selected
 
         int result = dialog->showQuestionMsgBox(
-          lnm::ACTIONS_SHOWROUTEPARKINGWARNING,
+          lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
           tr("The start airport has parking spots but no parking was selected for this Flight Plan"),
           tr("Do not show this dialog again and save Flight Plan in the future."),
           BUTTONS, QMessageBox::Yes, QMessageBox::Save);
@@ -1501,8 +1522,12 @@ bool MainWindow::routeSave()
 {
   atools::fs::pln::FileFormat format = NavApp::getRoute().getFlightplan().getFileFormat();
 
+  if(!routeSaveCheckFMS11Warnings())
+    return false;
+
   if(routeController->getCurrentRouteFilename().isEmpty() || !routeController->doesFilenameMatchRoute(format))
   {
+    // No filename or plan has changed - save as
     if(format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11)
       return routeSaveAsFms(format);
     else if(format == atools::fs::pln::FLP)
@@ -1608,6 +1633,9 @@ bool MainWindow::routeSaveAsFms11()
 bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
 {
   bool saveAs = true;
+
+  if(!routeSaveCheckFMS11Warnings())
+    return false;
 
   bool save = routeSaveCheckWarnings(saveAs, format);
 
@@ -2069,13 +2097,13 @@ void MainWindow::resetMessages()
   Settings& s = Settings::instance();
 
   // Show all message dialogs again
-  s.setValue(lnm::ACTIONS_SHOWDISCONNECTINFO, true);
+  s.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
   s.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
-  s.setValue(lnm::ACTIONS_SHOWQUIT, true);
+  s.setValue(lnm::ACTIONS_SHOW_QUIT, true);
   s.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWRESETVIEW, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_PROC_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
@@ -2530,7 +2558,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWQUIT,
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT,
                                               tr("Really Quit?"),
                                               tr("Do not &show this dialog again."),
                                               QMessageBox::Yes | QMessageBox::No,

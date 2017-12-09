@@ -437,7 +437,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
     if(socket->error() == QAbstractSocket::RemoteHostClosedError)
     {
       // Nicely closed on the other end
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWDISCONNECTINFO,
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_DISCONNECT_INFO,
                                                      tr("Remote end closed connection."),
                                                      tr("Do not &show this dialog again."));
     }

@@ -72,13 +72,14 @@ const QLatin1Literal OPTIONS_UPDATE_DEFAULT_URL("https://albar965.github.io/litt
 // ======== Options ================================================================
 
 /* State of "do not show again" dialog buttons */
-const QLatin1Literal ACTIONS_SHOWDISCONNECTINFO("Actions/ShowDisconnectInfo");
+const QLatin1Literal ACTIONS_SHOW_DISCONNECT_INFO("Actions/ShowDisconnectInfo");
 const QLatin1Literal ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
-const QLatin1Literal ACTIONS_SHOWQUIT("Actions/ShowQuit");
+const QLatin1Literal ACTIONS_SHOW_QUIT("Actions/ShowQuit");
 const QLatin1Literal ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
-const QLatin1Literal ACTIONS_SHOWRESETVIEW("Actions/ShowResetView");
-const QLatin1Literal ACTIONS_SHOWROUTEPARKINGWARNING("Actions/ShowRouteParkingWarning");
-const QLatin1Literal ACTIONS_SHOWROUTEWARNING("Actions/ShowRouteWarning");
+const QLatin1Literal ACTIONS_SHOW_RESET_VIEW("Actions/ShowResetView");
+const QLatin1Literal ACTIONS_SHOWROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
+const QLatin1Literal ACTIONS_SHOWROUTE_WARNING("Actions/ShowRouteWarning");
+const QLatin1Literal ACTIONS_SHOWROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
 const QLatin1Literal ACTIONS_SHOWROUTE_ERROR("Actions/ShowRouteError");
 const QLatin1Literal ACTIONS_SHOWROUTE_PROC_ERROR("Actions/ShowRouteProcedureError");
 const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChanged");

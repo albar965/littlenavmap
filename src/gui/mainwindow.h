@@ -251,7 +251,10 @@ private:
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
   void updateAirspaceTypes(map::MapAirspaceFilter types);
   void resetWindowLayout();
+
   bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
+  bool routeSaveCheckFMS11Warnings();
+
   void checkForUpdates();
 
   /* Original unchanged window title */
