@@ -303,6 +303,7 @@ signals:
 
   /* Set parking position, departure, destination for flight plan from context menu */
   void routeSetParkingStart(map::MapParking parking);
+  void routeSetHelipadStart(map::MapHelipad helipad);
 
   /* Set route departure or destination from context menu */
   void routeSetStart(map::MapAirport ap);

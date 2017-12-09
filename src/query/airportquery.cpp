@@ -384,6 +384,16 @@ void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
     start = map::MapStart();
 }
 
+void AirportQuery::getStartById(map::MapStart& start, int startId)
+{
+  startByIdQuery->bindValue(":id", startId);
+  startByIdQuery->exec();
+
+  if(startByIdQuery->next())
+    mapTypesFactory->fillStart(startByIdQuery->record(), start);
+  startByIdQuery->finish();
+}
+
 void AirportQuery::getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId,
                                              const QString& name, int number)
 {
@@ -629,6 +639,11 @@ void AirportQuery::initQueries()
     "from start s where s.airport_id = :airportId "
     "order by s.type desc, s.runway_name");
 
+  startByIdQuery = new SqlQuery(db);
+  startByIdQuery->prepare(
+    "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty "
+    "from start s where start_id = :id");
+
   parkingTypeAndNumberQuery = new SqlQuery(db);
   parkingTypeAndNumberQuery->prepare(
     "select " + parkingQueryBase +
@@ -640,7 +655,7 @@ void AirportQuery::initQueries()
 
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
-    "select h.surface, h.type, h.length, h.width, "
+    "select h.helipad_id, h.start_id, h.surface, h.type, h.length, h.width, h.airport_id, "
     " h.heading, h.is_transparent, h.is_closed, h.lonx, h.laty, s.number as start_number, s.runway_name as runway_name "
     " from helipad h "
     " left outer join start s on s.start_id = h.start_id "
@@ -692,6 +707,8 @@ void AirportQuery::deInitQueries()
 
   delete startQuery;
   startQuery = nullptr;
+  delete startByIdQuery;
+  startByIdQuery = nullptr;
 
   delete parkingTypeAndNumberQuery;
   parkingTypeAndNumberQuery = nullptr;

@@ -335,7 +335,7 @@ struct MapHelipad
 {
   QString surface, type, runwayName;
   atools::geo::Pos position;
-  int length, width, heading, start;
+  int id, startId, airportId, length, width, heading, start;
   bool closed, transparent;
 
   bool isValid() const
@@ -350,7 +350,7 @@ struct MapHelipad
 
   int getId() const
   {
-    return -1;
+    return id;
   }
 
 };

@@ -872,6 +872,7 @@ void MainWindow::connectAllSlots()
   // Route editing
   connect(mapWidget, &MapWidget::routeSetStart, routeController, &RouteController::routeSetDeparture);
   connect(mapWidget, &MapWidget::routeSetParkingStart, routeController, &RouteController::routeSetParking);
+  connect(mapWidget, &MapWidget::routeSetHelipadStart, routeController, &RouteController::routeSetHelipad);
   connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
@@ -1235,7 +1236,8 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     return true;
   }
   else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html", lnm::helpLanguagesOnline());
+    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html",
+                                          lnm::helpLanguagesOnline());
   // else cancel
 
   saveAs = false;

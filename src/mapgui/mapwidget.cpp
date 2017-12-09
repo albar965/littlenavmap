@@ -1278,6 +1278,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  // ===================================================================================
   // Texts with % will be replaced save them and let the ActionTextSaver restore them on return
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
@@ -1288,6 +1289,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionMapEditUserWaypoint});
   Q_UNUSED(textSaver);
 
+  // ===================================================================================
   // Build menu - add actions
   QMenu menu;
   menu.addAction(ui->actionMapShowInformation);
@@ -1364,7 +1366,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   ui->actionMapEditUserWaypoint->setEnabled(false);
 
-  // Get objects near position
+  // Get objects near position =============================================================
   map::MapSearchResult result;
   QList<proc::MapProcedurePoint> procPoints;
   screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result, procPoints);
@@ -1378,6 +1380,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapUserpoint *userpoint = nullptr;
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
+  map::MapHelipad *helipad = nullptr;
   map::MapAirspace *airspace = nullptr;
 
   // Get only one object of each type
@@ -1389,6 +1392,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     airport = &result.airports.first();
   if(!result.parkings.isEmpty())
     parking = &result.parkings.first();
+  if(!result.helipads.isEmpty() && result.helipads.first().startId != -1)
+    // Only helipads with start position are allowed
+    helipad = &result.helipads.first();
   if(!result.vors.isEmpty())
     vor = &result.vors.first();
   if(!result.ndbs.isEmpty())
@@ -1406,8 +1412,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() +
                   result.userPoints.size() + result.airways.size()) > 1 && airport == nullptr;
 
-  bool isAircraft = false;
+  // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
+  bool isAircraft = false;
   QString informationText, measureText, rangeRingText, departureText, departureParkingText, destinationText,
           addRouteText, searchText;
 
@@ -1434,13 +1441,24 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText = measureText = departureText
                                       = destinationText = addRouteText = searchText = map::airportText(*airport);
 
+  int departureParkingAirportId = -1;
+  if(helipad != nullptr)
+  {
+    departureParkingAirportId = helipad->airportId;
+    departureParkingText = tr("Helipad %1").arg(helipad->runwayName);
+  }
+
   if(parking != nullptr)
   {
+    departureParkingAirportId = parking->airportId;
     if(parking->number == -1)
       departureParkingText = map::parkingName(parking->name);
     else
       departureParkingText = map::parkingName(parking->name) + " " + QLocale().toString(parking->number);
+  }
 
+  if(departureParkingAirportId != -1)
+  {
     informationText.clear();
     measureText.clear();
     rangeRingText.clear();
@@ -1498,21 +1516,20 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "set airport as start/dest"
-  if(airport != nullptr || parking != nullptr)
+  if(airport != nullptr || departureParkingAirportId != -1)
   {
     QString airportText(departureText);
 
-    if(parking != nullptr)
+    if(departureParkingAirportId != -1)
     {
       // Get airport for parking
       map::MapAirport parkAp;
-      airportQuery->getAirportById(parkAp, parking->airportId);
+      airportQuery->getAirportById(parkAp, departureParkingAirportId);
       airportText = map::airportText(parkAp) + " / ";
     }
 
     ui->actionRouteAirportStart->setEnabled(true);
-    ui->actionRouteAirportStart->setText(
-      ui->actionRouteAirportStart->text().arg(airportText + departureParkingText));
+    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(airportText + departureParkingText));
 
     if(airport != nullptr)
     {
@@ -1604,7 +1621,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
 
-  if(parking == nullptr && !measureText.isEmpty())
+  if(parking == nullptr && helipad == nullptr && !measureText.isEmpty())
   {
     // Set text to measure "from airport" etc.
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(measureText));
@@ -1756,6 +1773,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = parking->id;
         type = map::PARKING;
       }
+      else if(helipad != nullptr)
+      {
+        id = helipad->id;
+        type = map::HELIPAD;
+      }
       else if(vor != nullptr)
       {
         id = vor->id;
@@ -1781,9 +1803,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
       if(action == ui->actionRouteAirportStart && parking != nullptr)
         emit routeSetParkingStart(*parking);
+      else if(action == ui->actionRouteAirportStart && helipad != nullptr)
+        emit routeSetHelipadStart(*helipad);
       else if(action == ui->actionRouteAddPos || action == ui->actionRouteAppendPos)
       {
-        if(parking != nullptr)
+        if(parking != nullptr || helipad != nullptr)
         {
           // Adjust values in case user selected "add" on a parking position
           type = map::USER;

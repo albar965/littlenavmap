@@ -2195,9 +2195,19 @@ void RouteController::select(QList<int>& rows, int offset)
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
+void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
+{
+  qDebug() << Q_FUNC_INFO << "route set helipad id" << helipad.id;
+
+  map::MapStart start;
+  airportQuery->getStartById(start, helipad.startId);
+
+  routeSetStartPosition(start);
+}
+
 void RouteController::routeSetParking(const map::MapParking& parking)
 {
-  qDebug() << "route set parking id" << parking.id;
+  qDebug() << Q_FUNC_INFO << "route set parking id" << parking.id;
 
   RouteCommand *undoCommand = nullptr;
 
@@ -2224,12 +2234,9 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-
   updateTableModel();
-
   postChange(undoCommand);
   NavApp::updateWindowTitle();
-
   emit routeChanged(true);
 
   NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.first().getIdent()).
@@ -2242,6 +2249,16 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   qDebug() << "route set start id" << start.id;
 
   RouteCommand *undoCommand = preChange(tr("Set Start Position"));
+
+  if(route.isEmpty() || route.first().getMapObjectType() != map::AIRPORT ||
+     route.first().getId() != start.airportId)
+  {
+    // No route, no start airport or different airport
+    map::MapAirport ap;
+    airportQuery->getAirportById(ap, start.airportId);
+    routeSetDepartureInternal(ap);
+    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+  }
 
   // No need to update airport since this is called from dialog only
 
@@ -2257,9 +2274,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-
   updateTableModel();
-
   postChange(undoCommand);
   NavApp::updateWindowTitle();
   emit routeChanged(true);

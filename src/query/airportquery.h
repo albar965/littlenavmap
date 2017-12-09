@@ -92,6 +92,7 @@ public:
    */
   void getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
                             const atools::geo::Pos& position);
+  void getStartById(map::MapStart& start, int startId);
 
   /* Get best start position for an airport. This is the longest preferrably hard surfaced primary runway end */
   void getBestStartPositionForAirport(map::MapStart& start, int airportId, const QString& runwayName);
@@ -151,7 +152,8 @@ private:
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
-                        *parkingQuery = nullptr, *startQuery = nullptr, *helipadQuery = nullptr,
+                        *parkingQuery = nullptr, *startQuery = nullptr, *startByIdQuery = nullptr,
+                        *helipadQuery = nullptr,
                         *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
                         *parkingTypeAndNumberQuery = nullptr,
                         *parkingNameQuery = nullptr;

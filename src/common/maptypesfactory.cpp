@@ -321,11 +321,11 @@ void MapTypesFactory::fillHelipad(const SqlRecord& record, map::MapHelipad& heli
 {
   helipad.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
 
-  if(record.isNull("start_number"))
-    helipad.start = -1;
-  else
-    helipad.start = record.value("start_number").toInt();
+  helipad.start = record.isNull("start_number") ? -1 : record.value("start_number").toInt();
 
+  helipad.id = record.valueInt("helipad_id");
+  helipad.startId = record.isNull("start_id") ? -1 : record.valueInt("start_id");
+  helipad.airportId = record.valueInt("airport_id");
   helipad.runwayName = record.value("runway_name").toString();
   helipad.width = record.value("width").toInt();
   helipad.length = record.value("length").toInt();
@@ -387,10 +387,8 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway
   airway.sequence = record.valueInt("sequence_no");
   airway.fromWaypointId = record.valueInt("from_waypoint_id");
   airway.toWaypointId = record.valueInt("to_waypoint_id");
-  airway.from = Pos(record.valueFloat("from_lonx"),
-                    record.valueFloat("from_laty"));
-  airway.to = Pos(record.valueFloat("to_lonx"),
-                  record.valueFloat("to_laty"));
+  airway.from = Pos(record.valueFloat("from_lonx"), record.valueFloat("from_laty"));
+  airway.to = Pos(record.valueFloat("to_lonx"), record.valueFloat("to_laty"));
 
   float north = std::max(airway.from.getLatY(), airway.to.getLatY());
   float south = std::min(airway.from.getLatY(), airway.to.getLatY());

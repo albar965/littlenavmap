@@ -169,6 +169,7 @@ public:
   /* Set departure parking position. If the airport of the parking spot is different to
    * the current departure it will be replaced too. */
   void routeSetParking(const map::MapParking& parking);
+  void routeSetHelipad(const map::MapHelipad& helipad);
 
   /* Shows the dialog to select departure parking or start position.
    *  @return true if position was set. false is dialog was canceled. */
