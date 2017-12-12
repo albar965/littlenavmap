@@ -101,7 +101,7 @@ bool isSoftSurface(const QString& surface);
 /* Airport type not including runways (have to queried separately) */
 struct MapAirport
 {
-  QString ident, /* ICAO ident*/ name;
+  QString ident, /* ICAO ident*/ name, region;
   int id; /* Database id airport.airport_id */
   int longestRunwayLength = 0, longestRunwayHeading = 0;
   int rating = -1;
@@ -125,6 +125,7 @@ struct MapAirport
   bool noRunways() const;
   bool tower() const;
   bool addon() const;
+  bool is3d() const;
   bool anyFuel() const;
   bool complete() const;
   bool towerObject() const;

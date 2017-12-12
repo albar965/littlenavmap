@@ -789,6 +789,11 @@ bool MapAirport::addon() const
   return flags.testFlag(AP_ADDON);
 }
 
+bool MapAirport::is3d() const
+{
+  return flags.testFlag(AP_3D);
+}
+
 bool MapAirport::procedure() const
 {
   return flags.testFlag(AP_PROCEDURE);

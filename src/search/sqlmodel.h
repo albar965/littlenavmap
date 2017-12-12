@@ -172,8 +172,8 @@ private:
   virtual void sort(int column, Qt::SortOrder order) override;
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue);
-  QString buildColumnList();
-  QString buildWhere();
+  QString buildColumnList(const atools::sql::SqlRecord& tableCols);
+  QString buildWhere(const atools::sql::SqlRecord& tableCols);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();

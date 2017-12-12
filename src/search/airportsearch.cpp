@@ -110,11 +110,12 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
 
   QStringList ratingCondMap;
   ratingCondMap << QString()
-                << ">=1"
-                << ">=2"
-                << ">=3"
-                << ">=4"
-                << "=5";
+                << "rating >= 1"
+                << "rating >= 2"
+                << "rating >= 3"
+                << "rating >= 4"
+                << "rating = 5"
+                << "is_3d > 0 /*is_3d*/"; // Add required column for this query as comment - will be checked if available
 
   QStringList rampCondMap;
   rampCondMap << QString()
@@ -153,9 +154,9 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
   append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
-  append(Column("country", ui->lineEditAirportCountrySearch, tr("Country\nArea Code")).filter()).
+  append(Column("country", ui->lineEditAirportCountrySearch, tr("Country or\nArea Code")).filter()).
 
-  append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).indexCondMap(ratingCondMap)).
+  append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).
 
   append(Column("altitude", tr("Elevation\n%alt%")).
          convertFunc(Unit::altFeetF)).

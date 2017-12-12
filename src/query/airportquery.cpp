@@ -22,6 +22,7 @@
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
+#include "sql/sqldatabase.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
 #include "fs/common/xpgeometry.h"
@@ -535,6 +536,39 @@ bool AirportQuery::runwayCompare(const map::MapRunway& r1, const map::MapRunway&
     return s1 < s2;
 }
 
+QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
+{
+  // Common select statements
+  QStringList airportQueryBase({
+    "airport_id",
+    "ident",
+    "name",
+    "rating",
+    "has_avgas",
+    "has_jetfuel", "has_tower_object",
+    "tower_frequency", "atis_frequency", "awos_frequency", "asos_frequency", "unicom_frequency",
+    "is_closed", "is_military", "is_addon",
+    "num_apron", "num_taxi_path",
+    "num_parking_gate", "num_parking_ga_ramp", "num_parking_cargo", "num_parking_mil_cargo", "num_parking_mil_combat",
+    "num_runway_end_vasi", "num_runway_end_als", "num_boundary_fence", "num_runway_end_closed",
+    "num_approach", "num_runway_hard", "num_runway_soft", "num_runway_water", "num_runway_light", "num_runway_end_ils",
+    "num_helipad",
+    "longest_runway_length", "longest_runway_heading",
+    "mag_var",
+    "tower_lonx", "tower_laty",
+    "altitude",
+    "lonx", "laty",
+    "left_lonx", "top_laty", "right_lonx", "bottom_laty"
+  });
+
+  SqlRecord aprec = db->record("airport");
+  if(aprec.contains("region"))
+    airportQueryBase.append("region");
+  if(aprec.contains("is_3d"))
+    airportQueryBase.append("is_3d");
+  return airportQueryBase;
+}
+
 void AirportQuery::initQueries()
 {
   // Common where clauses
@@ -542,18 +576,7 @@ void AirportQuery::initQueries()
   static const QString whereIdentRegion("ident = :ident and region like :region");
   static const QString whereLimit("limit " + QString::number(queryRowLimit));
 
-  // Common select statements
-  static const QString airportQueryBase(
-    "airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, has_tower_object, "
-    "tower_frequency, atis_frequency, awos_frequency, asos_frequency, unicom_frequency, "
-    "is_closed, is_military, is_addon, num_apron, num_taxi_path, "
-    "num_parking_gate,  num_parking_ga_ramp,  num_parking_cargo,  num_parking_mil_cargo,  num_parking_mil_combat, "
-    "num_runway_end_vasi,  num_runway_end_als,  num_boundary_fence, num_runway_end_closed, "
-    "num_approach, num_runway_hard, num_runway_soft, num_runway_water, "
-    "num_runway_light, num_runway_end_ils, num_helipad, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
+  QStringList const airportQueryBase = airportColumns(db);
 
   static const QString airportQueryBaseOverview(
     "airport_id, ident, name, "
@@ -592,7 +615,7 @@ void AirportQuery::initQueries()
   deInitQueries();
 
   airportByIdQuery = new SqlQuery(db);
-  airportByIdQuery->prepare("select " + airportQueryBase + " from airport where airport_id = :id ");
+  airportByIdQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where airport_id = :id ");
 
   airportAdminByIdQuery = new SqlQuery(db);
   airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
@@ -604,7 +627,7 @@ void AirportQuery::initQueries()
   airportProcByIdentQuery->prepare("select num_approach from airport where ident = :ident");
 
   airportByIdentQuery = new SqlQuery(db);
-  airportByIdentQuery->prepare("select " + airportQueryBase + " from airport where ident = :ident ");
+  airportByIdentQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where ident = :ident ");
 
   airportCoordsByIdentQuery = new SqlQuery(db);
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");

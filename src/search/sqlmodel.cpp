@@ -29,6 +29,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QSqlError>
+#include <QRegularExpression>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -340,6 +341,7 @@ QString SqlModel::sortOrderToSql(Qt::SortOrder order)
 /* Do own sorting in the SQL model */
 void SqlModel::sort(int column, Qt::SortOrder order)
 {
+
   QString colname = getSqlRecord().fieldName(column);
   if(columns->getColumn(colname)->isNoSort())
     return;
@@ -352,11 +354,18 @@ void SqlModel::sort(int column, Qt::SortOrder order)
 }
 
 /* Build full list of columns to query */
-QString SqlModel::buildColumnList()
+QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 {
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
+    if(!col->isDistance() && !tableCols.contains(col->getColumnName()))
+    {
+      // Skip not existing columns for backwards compatibility
+      qWarning() << Q_FUNC_INFO << columns->getTablename() + "." + col->getColumnName() << "does not exist";
+      continue;
+    }
+
     if(col->isDistance())
       // Add null for special distance columns
       colNames.append("null as " + col->getColumnName());
@@ -381,9 +390,10 @@ QString SqlModel::buildColumnList()
 /* Create SQL query and set it into the model */
 void SqlModel::buildQuery()
 {
-  QString queryCols = buildColumnList();
+  atools::sql::SqlRecord tableCols = db->record(columns->getTablename());
+  QString queryCols = buildColumnList(tableCols);
 
-  QString queryWhere = buildWhere();
+  QString queryWhere = buildWhere(tableCols);
 
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
@@ -392,7 +402,12 @@ void SqlModel::buildQuery()
   {
     Q_ASSERT(col != nullptr);
 
-    if(!(col->getSortFuncAsc().isEmpty() && col->getSortFuncDesc().isEmpty()))
+    if(!tableCols.contains(orderByCol))
+    {
+      // Skip not existing columns for backwards compatibility
+      qWarning() << Q_FUNC_INFO << columns->getTablename() + "." + col->getColumnName() << "does not exist";
+    }
+    else if(!(col->getSortFuncAsc().isEmpty() && col->getSortFuncDesc().isEmpty()))
     {
       // Use sort functions to have null values at end of the list - will avoid indexes
       if(orderByOrder == "asc")
@@ -436,13 +451,27 @@ void SqlModel::buildQuery()
 }
 
 /* Build where statement */
-QString SqlModel::buildWhere()
+QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols)
 {
+  const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
   QString queryWhere;
 
   int numCond = 0;
   for(const WhereCondition& cond : whereConditionMap)
   {
+    // Extract the required column from the comment in the operator and  check if it exists in the table
+    QString checkCol = cond.col->getColumnName();
+    QRegularExpressionMatch match = REQUIRED_COL_MATCH.match(cond.oper);
+    if(match.hasMatch())
+      checkCol = match.captured(1);
+
+    if(!tableCols.contains(checkCol))
+    {
+      // Skip not existing columns for backwards compatibility
+      qWarning() << Q_FUNC_INFO << columns->getTablename() + "." + cond.col->getColumnName() << "does not exist";
+      continue;
+    }
+
     if(numCond++ > 0)
       queryWhere += " " + WHERE_OPERATOR + " ";
 

@@ -124,6 +124,8 @@ public:
 
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
 
+  static QStringList airportColumns(const atools::sql::SqlDatabase *db);
+
 private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query, bool reverse,

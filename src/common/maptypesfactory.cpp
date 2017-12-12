@@ -54,6 +54,8 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
 
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
                            record.valueFloat("altitude"));
+
+    airport.region = record.valueStr("region", QString());
   }
   else
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
@@ -151,6 +153,7 @@ map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, 
   flags |= airportFlag(record, "is_closed", AP_CLOSED);
   flags |= airportFlag(record, "is_military", AP_MIL);
   flags |= airportFlag(record, "is_addon", AP_ADDON);
+  flags |= airportFlag(record, "is_3d", AP_3D);
   flags |= airportFlag(record, "num_runway_hard", AP_HARD);
   flags |= airportFlag(record, "num_runway_soft", AP_SOFT);
   flags |= airportFlag(record, "num_runway_water", AP_WATER);
@@ -194,7 +197,7 @@ map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, 
 map::MapAirportFlags MapTypesFactory::airportFlag(const SqlRecord& record, const QString& field,
                                                   map::MapAirportFlags flag)
 {
-  if(record.isNull(field) || record.valueInt(field) == 0)
+  if(!record.contains(field) || record.isNull(field) || record.valueInt(field) == 0)
     return AP_NONE;
   else
     return flag;

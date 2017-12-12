@@ -1088,17 +1088,7 @@ void MapQuery::initQueries()
   static const QString whereLimit("limit " + QString::number(queryMaxRows));
 
   // Common select statements
-  static const QString airportQueryBase(
-    "airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, has_tower_object, "
-    "tower_frequency, atis_frequency, awos_frequency, asos_frequency, unicom_frequency, "
-    "is_closed, is_military, is_addon, num_apron, num_taxi_path, "
-    "num_parking_gate,  num_parking_ga_ramp,  num_parking_cargo,  num_parking_mil_cargo,  num_parking_mil_combat, "
-    "num_runway_end_vasi,  num_runway_end_als,  num_boundary_fence, num_runway_end_closed, "
-    "num_approach, num_runway_hard, num_runway_soft, num_runway_water, "
-    "num_runway_light, num_runway_end_ils, num_helipad, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
+  QStringList const airportQueryBase = AirportQuery::airportColumns(db);
 
   static const QString airportQueryBaseOverview(
     "airport_id, ident, name, "
@@ -1185,7 +1175,7 @@ void MapQuery::initQueries()
 
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
-    "select " + airportQueryBase + " from airport where " + whereRect +
+    "select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
     " and longest_runway_length >= :minlength order by rating desc, longest_runway_length desc "
     + whereLimit);
 
