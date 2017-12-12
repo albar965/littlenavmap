@@ -61,6 +61,125 @@ RouteString::~RouteString()
 {
 }
 
+QString RouteString::createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options)
+{
+  if(route.isEmpty())
+    return QString();
+
+#ifdef DEBUG_INFORMATION
+
+  return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper() + "\n\n" +
+         "GTN:" + createGfpStringForRouteInternalProc(route) + "\n\n" +
+         "GFP:" + createGfpStringForRouteInternal(route);
+
+#else
+  return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper();
+
+#endif
+}
+
+QString RouteString::createGfpStringForRoute(const Route& route, bool procedures)
+{
+  if(route.isEmpty())
+    return QString();
+
+  return procedures ? createGfpStringForRouteInternalProc(route) : createGfpStringForRouteInternal(route);
+}
+
+/*
+ * Flight plan to depart from KPDX airport and arrive in KHIO through
+ * Airway 448 and 204 using Runway 13 for final RNAV approach:
+ * FPN/RI:DA:KPDX:D:LAVAA5.YKM:R:10R:F:YKM.V448.GEG.V204.HQM:F:SEA,N47261W 122186:AA:KHIO:A:HELNS5.SEA(13O):AP:R13
+ *
+ * Flight plan from KSLE to two user waypoints and then returning for the ILS approach to runway 31 via JAIME:
+ * FPN/RI:F:KSLE:F:N45223W121419:F:N42568W122067:AA:KSLE:AP:I31.JAIME
+ */
+QString RouteString::createGfpStringForRouteInternalProc(const Route& route)
+{
+  QString retval;
+
+  QStringList string = createStringForRouteInternal(route, 0, rs::GFP | rs::GFP_COORDS | rs::DCT);
+
+  qDebug() << Q_FUNC_INFO << string;
+
+  // Remove any useless DCTs
+  if(!string.isEmpty() && string.last() == "DCT")
+    string.removeLast();
+  if(!string.isEmpty() && string.first() == "DCT")
+    string.removeFirst();
+
+  if(!string.isEmpty())
+  {
+    // Loop through waypoints and airways
+    if(string.size() > 2)
+    {
+      for(int i = 0; i < string.size() - 1; i++)
+      {
+        const QString& str = string.at(i);
+        if((i % 2) == 0)
+          // Is a waypoint
+          retval += str;
+        else
+        {
+          // Is a airway or direct
+          if(str == "DCT")
+            retval += ":F:";
+          else
+            retval += "." + str + ".";
+        }
+      }
+    }
+    else
+      retval += ":F:";
+
+    retval += string.last();
+  }
+
+  // Add procedures and airports
+  QString sid, sidTrans, star, starTrans, departureRw, approachRw, starRw;
+  route.getSidStarNames(sid, sidTrans, star, starTrans);
+  route.getRunwayNames(departureRw, approachRw);
+  starRw = route.getStarRunwayName();
+
+  // Departure ===============================
+  if(!string.isEmpty())
+    retval.prepend(":F:");
+
+  if(route.hasAnyDepartureProcedure())
+    // Add SID and departure airport
+    retval.prepend("FPN/RI:DA:" + route.first().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()) +
+                   ":D:" + sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans) +
+                   (departureRw.isEmpty() ? QString() : ":R:" + departureRw));
+  else
+    // Add departure airport only
+    retval.prepend("FPN/RI:F:" + route.first().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()));
+
+  if(route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure())
+  {
+    // Arrival airport
+    retval.append(":AA:" + route.last().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()));
+
+    // STAR ===============================
+    if(route.hasAnyStarProcedure())
+      retval.append(":A:" + star + (starTrans.isEmpty() ? QString() : "." + starTrans) +
+                    (starRw.isEmpty() ? QString() : "(" + starRw + ")"));
+
+    // Approach ===============================
+    if(route.hasAnyArrivalProcedure())
+    {
+      QString apprArinc, apprTrans;
+      route.getArrivalNames(apprArinc, apprTrans);
+      retval.append(":AP:" + apprArinc + (apprTrans.isEmpty() ? QString() : "." + apprTrans));
+    }
+  }
+  else
+    // Arrival airport only
+    retval.append(":F:" + route.last().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()));
+
+  qDebug() << Q_FUNC_INFO << retval;
+  return retval.toUpper();
+}
+
 /*
  *  Flight Plan File Guidelines
  *
@@ -85,7 +204,7 @@ RouteString::~RouteString()
  *
  * FPN/RI:F:KTEB:F:LGA:F:JFK:F:HOFFI:F:HTO:F:MONTT:F:OFTUR:F:KMVY
  */
-QString RouteString::createGfpStringForRoute(const Route& route)
+QString RouteString::createGfpStringForRouteInternal(const Route& route)
 {
   QString retval;
 
@@ -103,13 +222,8 @@ QString RouteString::createGfpStringForRoute(const Route& route)
           // Is a waypoint
           retval += str;
         else
-        {
           // Is a airway or direct
-          if(str == "DCT")
-            retval += ":F:";
-          else
-            retval += "." + str + ".";
-        }
+          retval += str == "DCT" ? ":F:" : "." + str + ".";
       }
     }
     else
@@ -119,11 +233,6 @@ QString RouteString::createGfpStringForRoute(const Route& route)
   }
   qDebug() << Q_FUNC_INFO << retval;
   return retval.toUpper();
-}
-
-QString RouteString::createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options)
-{
-  return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper();
 }
 
 QStringList RouteString::createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options)
@@ -139,9 +248,12 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
   bool hasSid = ((options& rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
   bool hasStar = ((options& rs::SID_STAR) && !star.isEmpty()) || (options & rs::SID_STAR_GENERIC);
-
+  bool gfpCoords = options.testFlag(rs::GFP_COORDS);
   bool firstDct = true;
-  QString lastAw, lastId;
+
+  QString lastAirway, lastId;
+  atools::geo::Pos lastPos;
+  map::MapObjectTypes lastType = map::NONE;
   int lastIndex = 0;
   for(int i = 0; i < route.size(); i++)
   {
@@ -166,7 +278,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       // Do not use  airway string if not found in database
       if(!lastId.isEmpty())
       {
-        retval.append(lastId);
+        retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
           // Add runway after departure
@@ -183,17 +295,19 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     }
     else
     {
-      if(airway != lastAw)
+      if(airway != lastAirway)
       {
         // Airways change add last ident of the last airway
-        retval.append(lastId);
+        retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
         retval.append(airway);
       }
       // else Airway is the same skip waypoint
     }
 
     lastId = ident;
-    lastAw = airway;
+    lastPos = leg.getPosition();
+    lastType = leg.getMapObjectType();
+    lastAirway = airway;
     lastIndex = i;
   }
 
@@ -228,21 +342,21 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
     else if(options & rs::SID_STAR_GENERIC)
       retval.append("STAR");
-
-    // Add destination airport
-    if(options & rs::START_AND_DEST)
-      retval.append(lastId);
-
-    if(options & rs::APPROACH && !arrivalArincName.isEmpty())
-    {
-      retval.append(arrivalArincName);
-      if(!arrivalTransition.isEmpty())
-        retval.append(arrivalTransition);
-    }
-
-    if(options & rs::FLIGHTLEVEL)
-      retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));
   }
+
+  // Add destination airport
+  if(options & rs::START_AND_DEST)
+    retval.append(lastId + (gfpCoords ? "," + coords::toGfpFormat(lastPos) : QString()));
+
+  if(options & rs::APPROACH && !arrivalArincName.isEmpty())
+  {
+    retval.append(arrivalArincName);
+    if(!arrivalTransition.isEmpty())
+      retval.append(arrivalTransition);
+  }
+
+  if(options & rs::FLIGHTLEVEL)
+    retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));
 
   qDebug() << Q_FUNC_INFO << retval;
 

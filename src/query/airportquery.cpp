@@ -150,6 +150,26 @@ bool AirportQuery::hasProcedures(const QString& ident) const
   return retval;
 }
 
+void AirportQuery::getAirportRegion(map::MapAirport& airport)
+{
+  if(!airport.region.isEmpty())
+    return;
+
+  // Use smallest manhattan distance to airport
+  SqlQuery query(db);
+  query.prepare("select w.region from waypoint w "
+                "where w.region is not null "
+                "order by (abs(:lonx - w.lonx) + abs(:laty - w.laty)) limit 1");
+
+  query.bindValue(":lonx", airport.position.getLonX());
+  query.bindValue(":laty", airport.position.getLatY());
+
+  query.exec();
+  if(query.next())
+    airport.region = query.valueStr(0);
+  query.finish();
+}
+
 bool AirportQuery::hasProcedures(int airportId) const
 {
   bool retval = false;

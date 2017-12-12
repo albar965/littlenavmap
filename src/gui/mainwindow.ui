@@ -53,6 +53,8 @@
       <string>E&amp;xport Flight Plan to other Formats</string>
      </property>
      <addaction name="actionRouteSaveAsGfp"/>
+     <addaction name="actionRouteSaveAsRxpGtn"/>
+     <addaction name="actionRouteSaveAsRxpGns"/>
      <addaction name="actionRouteSaveAsRte"/>
      <addaction name="actionRouteSaveAsTxt"/>
      <addaction name="actionRouteSaveAsFpr"/>
@@ -5375,10 +5377,10 @@
     <string>Export Flight Plan as &amp;Garmin GTN GFP ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as Garmin Flight Plan format usable by GTN 650/750</string>
+    <string>Save flight plan as Garmin Flight Plan format usable by the Flight1 GTN 650/750</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as Garmin Flight Plan format usable by GTN 650/750</string>
+    <string>Save flight plan as Garmin Flight Plan format usable by the Flight1 GTN 650/750</string>
    </property>
   </action>
   <action name="actionRouteAdjustAltitude">
@@ -6088,6 +6090,28 @@
    </property>
    <property name="statusTip">
     <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsRxpGtn">
+   <property name="text">
+    <string>Export Flight Plan as &amp;GFP for Reality XP GTN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsRxpGns">
+   <property name="text">
+    <string>Export Flight Plan to &amp;FPL for the Reality XP GNS ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
    </property>
   </action>
  </widget>

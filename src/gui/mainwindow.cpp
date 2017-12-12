@@ -730,6 +730,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsFpl, &QAction::triggered, this, &MainWindow::routeExportFpl);
   connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, this, &MainWindow::routeExportCorteIn);
 
+  connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, this, &MainWindow::routeExportRxpGns);
+  connect(ui->actionRouteSaveAsRxpGtn, &QAction::triggered, this, &MainWindow::routeExportRxpGtn);
+
   connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
   connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
 
@@ -1449,8 +1452,8 @@ void MainWindow::routeOpen()
   if(routeCheckForChanges())
   {
     QString routeFile = dialog->openFileDialog(
-      tr("Open Flightplan"),
-      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+      tr("Open Flight Plan"),
+      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
       "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath());
 
@@ -1472,8 +1475,8 @@ void MainWindow::routeOpen()
 void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(
-    tr("Append Flightplan"),
-    tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+    tr("Append Flight Plan"),
+    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
     "Route/" + NavApp::getCurrentSimulatorShortName(),
     NavApp::getCurrentSimulatorFilesPath());
 
@@ -1569,8 +1572,8 @@ bool MainWindow::routeSaveAsPln()
   if(routeValidate(true /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as PLN Format"),
-      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
+      tr("Save Flight Plan as PLN Format"),
+      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename());
@@ -1601,7 +1604,7 @@ bool MainWindow::routeSaveAsFlp()
   else if(save)
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as FLP Format"),
+      tr("Save Flight Plan as FLP Format"),
       tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
       "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
       routeController->buildDefaultFilenameShort(QString(), ".flp"));
@@ -1651,7 +1654,7 @@ bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as X-Plane FMS Format"),
+      tr("Save Flight Plan as X-Plane FMS Format"),
       tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
       "fms", "Route/Fms", xpBasePath,
       routeController->buildDefaultFilenameShort(QString(), ".fms"));
@@ -1676,8 +1679,8 @@ bool MainWindow::routeExportClean()
   if(routeValidate(true /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Clean Flightplan without Annotations"),
-      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
+      tr("Save Clean Flight Plan without Annotations"),
+      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
       routeController->buildDefaultFilename(tr(" Clean")));
 
@@ -1697,13 +1700,85 @@ bool MainWindow::routeExportClean()
 }
 
 /* Called from menu or toolbar by action */
+bool MainWindow::routeExportRxpGns()
+{
+  // Save flight plan as FPL file usable by the GNS 530W/430W V2 - XML format
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString path;
+
+#ifdef Q_OS_WIN32
+    path = "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL";
+#else
+    path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+                              "Garmin", "GNS Trainer Data", "GNS", "FPL"});
+#endif
+
+    bool mkdir = QDir(path).mkpath(path);
+    qInfo() << "mkdir" << path << "result" << mkdir;
+
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan as FPL for Reality XP GNS"),
+      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
+      "fpl", "Route/RxpGns", path,
+      routeController->buildDefaultFilenameShort("", ".fpl"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->exportFlighplanAsRxpGns(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as FPL."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* Called from menu or toolbar by action */
+bool MainWindow::routeExportRxpGtn()
+{
+  // Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString path;
+
+#ifdef Q_OS_WIN32
+    path = "C:\\ProgramData\\Garmin\\Trainers\\GTN\\FPLN";
+#else
+    path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+                              "Garmin", "Trainers", "GTN", "FPLN"});
+#endif
+
+    bool mkdir = QDir(path).mkpath(path);
+    qInfo() << "mkdir" << path << "result" << mkdir;
+
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan as GFP for Reality XP GTN"),
+      tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
+      "gfp", "Route/RxpGfp", path,
+      routeController->buildDefaultFilenameShort("_", ".gfp"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->exportFlighplanAsRxpGtn(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as GFP."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* Called from menu or toolbar by action */
 bool MainWindow::routeExportGfp()
 {
   // <FSX/P3D>/F1GTN/FPL.
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as Garmin GFP Format"),
+      tr("Save Flight Plan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
@@ -1727,7 +1802,7 @@ bool MainWindow::routeExportTxt()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as TXT Format"),
+      tr("Save Flight Plan as TXT Format"),
       tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
       routeController->buildDefaultFilenameShort(QString(), ".txt"));
@@ -1749,7 +1824,7 @@ bool MainWindow::routeExportRte()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as PMDG RTE Format"),
+      tr("Save Flight Plan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
@@ -1774,7 +1849,7 @@ bool MainWindow::routeExportFpr()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as Majestic Dash FPR..."),
+      tr("Save Flight Plan as Majestic Dash FPR..."),
       tr("FPR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPR),
       "fpr", "Route/Fpr",
       NavApp::getCurrentSimulatorBasePath() +
@@ -1803,7 +1878,7 @@ bool MainWindow::routeExportFpl()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan as IXEG FPL Format"),
+      tr("Save Flight Plan as IXEG FPL Format"),
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
       "fpl", "Route/Fpl",
       NavApp::getCurrentSimulatorBasePath() +
@@ -1831,7 +1906,7 @@ bool MainWindow::routeExportCorteIn()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flightplan to corte.in for Flight Factor Airbus"),
+      tr("Save Flight Plan to corte.in for Flight Factor Airbus"),
       tr("corte.in Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CORTEIN),
       ".in", "Route/CorteIn",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft", "corte.in",
@@ -1854,7 +1929,7 @@ bool MainWindow::routeExportGpx()
   if(routeValidate(false /* validate parking */, false /* validate departure and destination */))
   {
     QString title = NavApp::getAircraftTrack().isEmpty() ?
-                    tr("Save Flightplan as GPX Format") : tr("Save Flightplan and Track as GPX Format");
+                    tr("Save Flight Plan as GPX Format") : tr("Save Flightplan and Track as GPX Format");
 
     QString routeFile = dialog->saveFileDialog(
       title,

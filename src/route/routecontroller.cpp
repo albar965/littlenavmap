@@ -832,7 +832,7 @@ bool RouteController::exportFlighplanAsClean(const QString& filename)
 bool RouteController::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(route);
+  QString gfp = RouteString().createGfpStringForRoute(route, false /* procedures */);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -890,6 +890,49 @@ bool RouteController::exportFlighplanAsRte(const QString& filename)
   return true;
 }
 
+bool RouteController::exportFlighplanAsRxpGns(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  try
+  {
+    // Regions are required for the export
+    route.updateAirportRegions();
+    route.getFlightplan().saveGarminGns(filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
+bool RouteController::exportFlighplanAsRxpGtn(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  QString gfp = RouteString().createGfpStringForRoute(route, true /* procedures */);
+
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    QByteArray utf8 = gfp.toUtf8();
+    file.write(utf8.data(), utf8.size());
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving GFP file:"));
+    return false;
+  }
+}
+
 bool RouteController::exportFlighplanAsFpr(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
@@ -913,7 +956,6 @@ bool RouteController::exportFlighplanAsFpr(const QString& filename)
 
 bool RouteController::exportFlighplanAsCorteIn(const QString& filename)
 {
-
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteString().createStringForRoute(route, 0.f,
                                                    rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
@@ -952,7 +994,6 @@ bool RouteController::exportFlighplanAsCorteIn(const QString& filename)
     atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to corte.in file:"));
     return false;
   }
-
 }
 
 bool RouteController::exportFlighplanAsGpx(const QString& filename)

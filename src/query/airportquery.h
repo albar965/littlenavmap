@@ -72,6 +72,11 @@ public:
   bool hasProcedures(int airportId) const;
   bool hasProcedures(const QString& ident) const;
 
+  /* Get the region for airports where it is missing. This uses an expensive query to get the
+   * region from the nearest waypoints. Region is set in MapAirport.
+   * This is a workaround for missing information and not precise. */
+  void getAirportRegion(map::MapAirport& airport);
+
   /*
    * Get a parking spot of an airport by name and number
    * @param parkings result

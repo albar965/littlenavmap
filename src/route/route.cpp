@@ -22,6 +22,7 @@
 #include "common/unit.h"
 #include "route/flightplanentrybuilder.h"
 #include "query/procedurequery.h"
+#include "query/airportquery.h"
 #include "navapp.h"
 
 #include <QRegularExpression>
@@ -152,6 +153,16 @@ void Route::getRunwayNames(QString& departure, QString& arrival) const
     arrival = starLegs.runwayEnd.name;
   else
     arrival.clear();
+}
+
+const QString& Route::getStarRunwayName() const
+{
+  return starLegs.runwayEnd.name;
+}
+
+const QString& Route::getApproachRunwayName() const
+{
+  return arrivalLegs.runwayEnd.name;
 }
 
 void Route::getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const
@@ -860,6 +871,20 @@ void Route::updateAll()
   updateMagvar();
   updateDistancesAndCourse();
   updateBoundingRect();
+}
+
+void Route::updateAirportRegions()
+{
+  int i = 0;
+  for(RouteLeg& leg : *this)
+  {
+    if(leg.getMapObjectType() == map::AIRPORT)
+    {
+      NavApp::getAirportQuerySim()->getAirportRegion(leg.getAirport());
+      flightplan.getEntries()[i].setIcaoRegion(leg.getAirport().region);
+    }
+    i++;
+  }
 }
 
 int Route::adjustedActiveLeg() const

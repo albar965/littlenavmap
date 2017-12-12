@@ -140,6 +140,11 @@ public:
     return airport;
   }
 
+  map::MapAirport& getAirport()
+  {
+    return airport;
+  }
+
   /* Get parking or empty parking object if parking is not assigned. Use position.isValid to check for empty */
   const map::MapParking& getDepartureParking() const
   {

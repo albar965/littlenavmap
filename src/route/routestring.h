@@ -48,13 +48,14 @@ enum RouteStringOption
   ALT_AND_SPEED = 1 << 2, /* Add altitude and speed restriction */
   SID_STAR = 1 << 3, /* Add sid, star and transition names if selected */
   SID_STAR_GENERIC = 1 << 4, /* Always add SID and STAR keyword */
-  GFP = 1 << 5, /* Produce Garmin flight plan format */
+  GFP = 1 << 5, /* Produce Garmin flight plan format using special coordinate format */
   NO_AIRWAYS = 1 << 6, /* Add all waypoints instead of from/airway/to triplet */
 
   SID_STAR_SPACE = 1 << 7, /* Separate SID/STAR and transition with space. Not ATS compliant. */
   RUNWAY = 1 << 8, /* Add departure runway if available. Not ATS compliant. */
   APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. */
   FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
+  GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
 
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };
@@ -63,6 +64,11 @@ Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
 }
 
+/*
+ * This class implementes the conversion from ATS route descriptions to flight plans and vice versa.
+ * Additional functionality is available to generate route strings for various export formats.
+ * Error and warning messages are collected while parsing and can be extracted afterwards.
+ */
 class RouteString
 {
   Q_DECLARE_TR_FUNCTIONS(RouteString)
@@ -81,9 +87,12 @@ public:
   /*
    * Create a route string in garming flight plan format (GFP):
    * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
+   *
+   * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
    */
-  QString createGfpStringForRoute(const Route& route);
+  QString createGfpStringForRoute(const Route& route, bool procedures);
 
+  /* Create a flight plan for the given route string and include speed and altitude if given */
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
                              float& speedKts, bool& altIncluded);
@@ -93,6 +102,7 @@ public:
     return messages;
   }
 
+  /* Remove all invalid characters and simplify string */
   static QStringList cleanRouteString(const QString& string);
 
   void setPlaintextMessages(bool value)
@@ -101,6 +111,7 @@ public:
   }
 
 private:
+  /* Internal parsing structure which holds all found potential candidates from a search */
   struct ParseEntry
   {
     QString item, airway;
@@ -119,6 +130,13 @@ private:
                         QList<map::MapWaypoint>& airwayWaypoints);
 
   QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
+
+  /* Garming GFP format */
+  QString createGfpStringForRouteInternal(const Route& route);
+
+  /* Garming GFP format with procedures */
+  QString createGfpStringForRouteInternalProc(const Route& route);
+
   void findWaypoints(map::MapSearchResult& result, const QString& item);
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);

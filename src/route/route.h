@@ -203,8 +203,13 @@ public:
 
   /* Get the various procedure names */
   void getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const;
+
+  /* Arrival rw is either STAR or approach */
   void getRunwayNames(QString& departure, QString& arrival) const;
   void getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const;
+
+  const QString& getStarRunwayName() const;
+  const QString& getApproachRunwayName() const;
 
   /* Assign and update internal indexes for approach legs. Depending if legs are type SID, STAR,
    * transition or approach they are added at the end of start of the route
@@ -258,6 +263,10 @@ public:
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */
   void updateAll();
+
+  /* Use a expensive heuristic to update the missing regions in all airports
+   * before export for formats which need it. */
+  void updateAirportRegions();
 
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);

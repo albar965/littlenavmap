@@ -211,6 +211,8 @@ private:
   bool routeExportFpr();
   bool routeExportFpl();
   bool routeExportCorteIn();
+  bool routeExportRxpGns();
+  bool routeExportRxpGtn();
 
   void routeCenter();
   bool routeCheckForChanges();
