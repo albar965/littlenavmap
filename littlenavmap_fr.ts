@@ -4715,12 +4715,6 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <translation type="unfinished">Créer un nouveau plan de vol vide.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1429"/>
-        <source>Created new flight plan.</source>
-        <oldsource>Open Flightplan</oldsource>
-        <translation type="unfinished">Ouvrir plan de vol</translation>
-    </message>
-    <message>
         <source>Flightplan Files %1;;All Files (*)</source>
         <translation type="obsolete">Fichiers Plan de Vol %1;;Tous les Fichiers (*)</translation>
     </message>

@@ -4565,12 +4565,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1429"/>
-        <source>Created new flight plan.</source>
-        <oldsource>Open Flightplan</oldsource>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/gui/mainwindow.cpp" line="1467"/>
         <location filename="src/gui/mainwindow.cpp" line="1507"/>
         <source>Flight plan opened.</source>
