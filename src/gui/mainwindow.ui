@@ -55,6 +55,7 @@
      <addaction name="actionRouteSaveAsGfp"/>
      <addaction name="actionRouteSaveAsRxpGtn"/>
      <addaction name="actionRouteSaveAsRxpGns"/>
+     <addaction name="separator"/>
      <addaction name="actionRouteSaveAsRte"/>
      <addaction name="actionRouteSaveAsTxt"/>
      <addaction name="actionRouteSaveAsFpr"/>

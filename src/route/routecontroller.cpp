@@ -832,7 +832,8 @@ bool RouteController::exportFlighplanAsClean(const QString& filename)
 bool RouteController::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(route, false /* procedures */);
+  QString gfp = RouteString().createGfpStringForRoute(route, false /* procedures */,
+                                                      OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -898,7 +899,8 @@ bool RouteController::exportFlighplanAsRxpGns(const QString& filename)
   {
     // Regions are required for the export
     route.updateAirportRegions();
-    route.getFlightplan().saveGarminGns(filename);
+    route.getFlightplan().saveGarminGns(filename,
+                                        OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
   }
   catch(atools::Exception& e)
   {
@@ -916,7 +918,8 @@ bool RouteController::exportFlighplanAsRxpGns(const QString& filename)
 bool RouteController::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(route, true /* procedures */);
+  QString gfp = RouteString().createGfpStringForRoute(route, true /* procedures */,
+                                                      OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))

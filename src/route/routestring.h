@@ -56,6 +56,7 @@ enum RouteStringOption
   APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. */
   FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
+  USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
 
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };
@@ -90,7 +91,7 @@ public:
    *
    * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
    */
-  QString createGfpStringForRoute(const Route& route, bool procedures);
+  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption);
 
   /* Create a flight plan for the given route string and include speed and altitude if given */
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
@@ -132,10 +133,10 @@ private:
   QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
 
   /* Garming GFP format */
-  QString createGfpStringForRouteInternal(const Route& route);
+  QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption);
 
   /* Garming GFP format with procedures */
-  QString createGfpStringForRouteInternalProc(const Route& route);
+  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
 
   void findWaypoints(map::MapSearchResult& result, const QString& item);
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);

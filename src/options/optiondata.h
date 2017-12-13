@@ -135,7 +135,10 @@ enum Flag
   GUI_OVERRIDE_LANGUAGE = 1 << 28,
 
   /* checkBoxOptionsGuiOverrideLocale */
-  GUI_OVERRIDE_LOCALE = 1 << 29
+  GUI_OVERRIDE_LOCALE = 1 << 29,
+
+  /* checkBoxOptionsRouteExportUserWpt */
+  ROUTE_GARMIN_USER_WPT = 1 << 30
 
 };
 

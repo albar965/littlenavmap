@@ -1886,138 +1886,7 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        <string>Flight Plan</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
-         <property name="toolTip">
-          <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
-when transitioning from airport to airway.</string>
-         </property>
-         <property name="text">
-          <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" alignment="Qt::AlignVCenter">
-        <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
-         <property name="text">
-          <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
-         </property>
-         <property name="buddy">
-          <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsShowTod">
-         <property name="toolTip">
-          <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
-         </property>
-         <property name="statusTip">
-          <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
-         </property>
-         <property name="text">
-          <string>Draw top of descent point on map and in elevation profile</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
-         <property name="toolTip">
-          <string>Rounds up flight plan cruise altitude according to selected rule.</string>
-         </property>
-         <property name="statusTip">
-          <string/>
-         </property>
-         <property name="text">
-          <string>&amp;Use simplified rule to determine cruise altitude</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsRouteTodRule">
-         <property name="toolTip">
-          <string/>
-         </property>
-         <property name="showGroupSeparator" stdset="0">
-          <bool>true</bool>
-         </property>
-         <property name="suffix">
-          <string> %dist% per 1000 %alt%</string>
-         </property>
-         <property name="decimals">
-          <number>1</number>
-         </property>
-         <property name="minimum">
-          <double>0.200000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>10.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>0.100000000000000</double>
-         </property>
-         <property name="value">
-          <double>3.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="labelOptionsRouteTodRule">
-         <property name="text">
-          <string>&amp;Rule of thumb to calculate top of descent:</string>
-         </property>
-         <property name="buddy">
-          <cstring>doubleSpinBoxOptionsRouteTodRule</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" alignment="Qt::AlignVCenter">
-        <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
-         <property name="toolTip">
-          <string>The red line value is always rounded up to the next 500 ft.
-Note that this value does not affect flight plan calculation or saving of flight plans.</string>
-         </property>
-         <property name="showGroupSeparator" stdset="0">
-          <bool>true</bool>
-         </property>
-         <property name="suffix">
-          <string> %alt%</string>
-         </property>
-         <property name="maximum">
-          <number>10000</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>1000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
-         <property name="toolTip">
-          <string>Prefer nearest NDB that is part of an airway instead the nearest waypoint
-when transitioning from airport to airway.</string>
-         </property>
-         <property name="text">
-          <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
+       <item row="8" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -2030,28 +1899,194 @@ when transitioning from airport to airway.</string>
          </property>
         </spacer>
        </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="comboBoxOptionsRouteAltitudeRuleType">
-         <property name="toolTip">
-          <string>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
+       <item row="7" column="0">
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Saving and Export</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QCheckBox" name="checkBoxOptionsRouteExportUserWpt">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This saves all waypoints as user defined waypoints when exporting flight plans for a Garmin unit. &lt;br/&gt;This avoids locked waypoints due to different AIRAC cycles and affects the export functions below: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Export Flight Plan as Garmin GTN GFP ... &lt;/li&gt;
+&lt;li&gt;Export Flight Plan to FPL for the Reality XP GNS ... &lt;/li&gt;
+&lt;li&gt;Export Flight Plan as GFP for Reality XP GTN ...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;b&gt;Note that is not possible to export procedures if this is enabled.&lt;/b&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>&amp;Export navaids and airports as user defined waypoints for Garmin GTN and GNS to avoid locked waypoints</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Flight Plan Calculation</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_18">
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsShowTod">
+            <property name="toolTip">
+             <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
+            </property>
+            <property name="statusTip">
+             <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
+            </property>
+            <property name="text">
+             <string>Draw top of descent point on map and in elevation profile</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
+            <property name="toolTip">
+             <string>Rounds up flight plan cruise altitude according to selected rule.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>&amp;Use simplified rule to determine cruise altitude</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="comboBoxOptionsRouteAltitudeRuleType">
+            <property name="toolTip">
+             <string>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
 North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>East / West</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>North / South (e.g. Italy, France and Portugal)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>South / North (e.g. New Zealand)</string>
-          </property>
-         </item>
+            </property>
+            <item>
+             <property name="text">
+              <string>East / West</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>North / South (e.g. Italy, France and Portugal)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>South / North (e.g. New Zealand)</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
+            <property name="toolTip">
+             <string>Prefer nearest NDB that is part of an airway instead the nearest waypoint
+when transitioning from airport to airway.</string>
+            </property>
+            <property name="text">
+             <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
+            <property name="text">
+             <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
+            <property name="toolTip">
+             <string>The red line value is always rounded up to the next 500 ft.
+Note that this value does not affect flight plan calculation or saving of flight plans.</string>
+            </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string> %alt%</string>
+            </property>
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>1000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
+            <property name="toolTip">
+             <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
+when transitioning from airport to airway.</string>
+            </property>
+            <property name="text">
+             <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelOptionsRouteTodRule">
+            <property name="text">
+             <string>&amp;Rule of thumb to calculate top of descent:</string>
+            </property>
+            <property name="buddy">
+             <cstring>doubleSpinBoxOptionsRouteTodRule</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsRouteTodRule">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="showGroupSeparator" stdset="0">
+             <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string> %dist% per 1000 %alt%</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>0.200000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>10.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>3.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -2776,6 +2811,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>checkBoxOptionsShowTod</tabstop>
   <tabstop>doubleSpinBoxOptionsRouteTodRule</tabstop>
+  <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>

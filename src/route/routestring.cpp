@@ -69,8 +69,10 @@ QString RouteString::createStringForRoute(const Route& route, float speed, rs::R
 #ifdef DEBUG_INFORMATION
 
   return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper() + "\n\n" +
-         "GTN:" + createGfpStringForRouteInternalProc(route) + "\n\n" +
-         "GFP:" + createGfpStringForRouteInternal(route);
+         "GTN:\n" + createGfpStringForRouteInternalProc(route, false) + "\n" +
+         "GTN UWP:\n" + createGfpStringForRouteInternalProc(route, true) + "\n\n" +
+         "GFP:\n" + createGfpStringForRouteInternal(route, false) + "\n" +
+         "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
 
 #else
   return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper();
@@ -78,15 +80,19 @@ QString RouteString::createStringForRoute(const Route& route, float speed, rs::R
 #endif
 }
 
-QString RouteString::createGfpStringForRoute(const Route& route, bool procedures)
+QString RouteString::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption)
 {
   if(route.isEmpty())
     return QString();
 
-  return procedures ? createGfpStringForRouteInternalProc(route) : createGfpStringForRouteInternal(route);
+  return procedures ?
+         createGfpStringForRouteInternalProc(route, userWaypointOption) :
+         createGfpStringForRouteInternal(route, userWaypointOption);
 }
 
 /*
+ * Used for Reality XP GTN export
+ *
  * Flight plan to depart from KPDX airport and arrive in KHIO through
  * Airway 448 and 204 using Runway 13 for final RNAV approach:
  * FPN/RI:DA:KPDX:D:LAVAA5.YKM:R:10R:F:YKM.V448.GEG.V204.HQM:F:SEA,N47261W 122186:AA:KHIO:A:HELNS5.SEA(13O):AP:R13
@@ -94,11 +100,18 @@ QString RouteString::createGfpStringForRoute(const Route& route, bool procedures
  * Flight plan from KSLE to two user waypoints and then returning for the ILS approach to runway 31 via JAIME:
  * FPN/RI:F:KSLE:F:N45223W121419:F:N42568W122067:AA:KSLE:AP:I31.JAIME
  */
-QString RouteString::createGfpStringForRouteInternalProc(const Route& route)
+QString RouteString::createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption)
 {
   QString retval;
 
-  QStringList string = createStringForRouteInternal(route, 0, rs::GFP | rs::GFP_COORDS | rs::DCT);
+  rs::RouteStringOptions opts = rs::NONE;
+  if(userWaypointOption)
+    opts = rs::GFP | rs::GFP_COORDS | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
+  else
+    opts = rs::GFP | rs::GFP_COORDS | rs::DCT;
+
+  // Get string without start and destination
+  QStringList string = createStringForRouteInternal(route, 0, opts);
 
   qDebug() << Q_FUNC_INFO << string;
 
@@ -136,33 +149,44 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route)
   }
 
   // Add procedures and airports
-  QString sid, sidTrans, star, starTrans, departureRw, approachRw, starRw;
+  QString sid, sidTrans, star, starTrans, departureRw, approachRwDummy, starRw;
   route.getSidStarNames(sid, sidTrans, star, starTrans);
-  route.getRunwayNames(departureRw, approachRw);
+  route.getRunwayNames(departureRw, approachRwDummy);
   starRw = route.getStarRunwayName();
 
   // Departure ===============================
-  if(!string.isEmpty())
+  if(!retval.isEmpty() && !retval.startsWith(":F:"))
     retval.prepend(":F:");
 
-  if(route.hasAnyDepartureProcedure())
+  if(route.hasAnyDepartureProcedure() && !userWaypointOption)
+  {
+    if(!departureRw.isEmpty() && !(departureRw.endsWith("L") || departureRw.endsWith("C") || departureRw.endsWith("R")))
+      departureRw.append("O");
+
     // Add SID and departure airport
-    retval.prepend("FPN/RI:DA:" + route.first().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()) +
+    retval.prepend("FPN/RI:DA:" + route.first().getIdent() +
                    ":D:" + sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans) +
                    (departureRw.isEmpty() ? QString() : ":R:" + departureRw));
+  }
   else
-    // Add departure airport only
-    retval.prepend("FPN/RI:F:" + route.first().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()));
-
-  if(route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure())
   {
-    // Arrival airport
-    retval.append(":AA:" + route.last().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()));
+    // Add departure airport only - no coordinates since these are not accurate
+    retval.prepend("FPN/RI:F:" + route.first().getIdent());
+  }
+
+  if((route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
+  {
+    // Arrival airport - no coordinates
+    retval.append(":AA:" + route.last().getIdent());
 
     // STAR ===============================
     if(route.hasAnyStarProcedure())
+    {
+      if(!starRw.isEmpty() && !(starRw.endsWith("L") || starRw.endsWith("C") || starRw.endsWith("R")))
+        starRw.append("O");
       retval.append(":A:" + star + (starTrans.isEmpty() ? QString() : "." + starTrans) +
                     (starRw.isEmpty() ? QString() : "(" + starRw + ")"));
+    }
 
     // Approach ===============================
     if(route.hasAnyArrivalProcedure())
@@ -173,14 +197,20 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route)
     }
   }
   else
-    // Arrival airport only
-    retval.append(":F:" + route.last().getIdent() + "," + coords::toGfpFormat(route.first().getPosition()));
+  {
+    if(!retval.endsWith(":F:"))
+      retval.append(":F:");
+    // Arrival airport only - no coordinates since these are not accurate
+    retval.append(route.last().getIdent());
+  }
 
   qDebug() << Q_FUNC_INFO << retval;
   return retval.toUpper();
 }
 
 /*
+ * Used for Flight1 GTN export
+ *
  *  Flight Plan File Guidelines
  *
  * Garmin uses a text based flight plan format that is derived from the IMI/IEI
@@ -204,11 +234,19 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route)
  *
  * FPN/RI:F:KTEB:F:LGA:F:JFK:F:HOFFI:F:HTO:F:MONTT:F:OFTUR:F:KMVY
  */
-QString RouteString::createGfpStringForRouteInternal(const Route& route)
+QString RouteString::createGfpStringForRouteInternal(const Route& route, bool userWaypointOption)
 {
   QString retval;
 
-  QStringList string = createStringForRouteInternal(route, 0, rs::GFP | rs::START_AND_DEST | rs::DCT);
+  rs::RouteStringOptions opts = rs::NONE;
+  if(userWaypointOption)
+    opts = rs::GFP | rs::START_AND_DEST | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
+  else
+    opts = rs::GFP | rs::START_AND_DEST | rs::DCT;
+
+  // Get string including start and destination
+  QStringList string = createStringForRouteInternal(route, 0, opts);
+
   if(!string.isEmpty())
   {
     retval += "FPN/RI:F:" + string.first();
@@ -249,6 +287,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   bool hasSid = ((options& rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
   bool hasStar = ((options& rs::SID_STAR) && !star.isEmpty()) || (options & rs::SID_STAR_GENERIC);
   bool gfpCoords = options.testFlag(rs::GFP_COORDS);
+  bool userWpt = options.testFlag(rs::USR_WPT);
   bool firstDct = true;
 
   QString lastAirway, lastId;
@@ -278,7 +317,10 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       // Do not use  airway string if not found in database
       if(!lastId.isEmpty())
       {
-        retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
+        if(userWpt && lastIndex > 0)
+          retval.append(coords::toGfpFormat(lastPos));
+        else
+          retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
           // Add runway after departure
@@ -298,7 +340,11 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       if(airway != lastAirway)
       {
         // Airways change add last ident of the last airway
-        retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
+        if(userWpt && lastIndex > 0)
+          retval.append(coords::toGfpFormat(lastPos));
+        else
+          retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
+
         retval.append(airway);
       }
       // else Airway is the same skip waypoint
