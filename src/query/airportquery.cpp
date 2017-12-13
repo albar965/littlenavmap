@@ -362,7 +362,7 @@ void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
   query.prepare(
     "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty from ("
     // Get start positions by number
-    "select s.start_id, s.airport_id, s.type, s.heading, s.number, null as runway_name, s.altitude, s.lonx, s.laty "
+    "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
     "from start s where s.airport_id = :airportId and s.number = :number "
     "union "
     // Get runway start positions by runway name
