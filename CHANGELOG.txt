@@ -1,3 +1,50 @@
+Version 1.8.4
+
+Reloading the database is hightly recommended to avoid problems when saving flight plans.
+
+* Added flight plan export for Reality XP GTN and GNS units.
+* Added option to save Garmin flight plans with user defined waypoints only to avoid
+  locked waypoints on AIRAC cycle mismatch.
+* Added search for X-Plane 3D airport flag in rating dropdown list.
+* Added display for new airport region where available.
+* Changed route description text field to monospaced font and changed wrapping for word to any for better readability.
+* Added options to disable tooltips for selected map features: airports, navaids or airspaces.
+* Helipads can now be selected as a start position on the map.
+* Now using correct AIRAC cycle from nav database when writing FMS files. Used simulator version previously which
+  could result in X-Plane warnings.
+* Added warning dialog when AIRAC cycle is not available when saving flight plans in X-Plane FMS 11 format.
+* Departure runway is now correctly assigned according to SID runway when loading from formats
+  which do not support departure parking (e.g. FMS or FPL).
+* Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing.
+* Fixed issue where helipad name was not loaded correctly from FSX PLN files in certain cases.
+* Fixed Linux build to avoid problems with shared libraries on some platforms.
+* Removed unneeded startup script for Linux. Program executable can now be started directly from any directory without
+  setting library path.
+* macOS compatibility changed since program does not work on 10.9 and below due to Qt requirements.
+  Now at least version 10.10 is required. Now showing error dialog if macOS is too old.
+  Program now refuses to run on Mavericks or older.
+* Fixed warning dialog for Linux and macOS which should show up only on Windows first startup.
+* Made program more tolerant for older database files.
+* Small adjustment to taxiway labels to show more often.
+
+Updated translation files, French manual and legend.
+
+from atools version 2.8.4
+* Fixed problem where translations for second and third languages were loaded for some regions.
+* Solved problem where translation files were loaded mixed in some cases.
+* Logging library paths now for debugging.
+* Added Garmin GNS XML flight plan export.
+* Added option to save GNS XML flightplans with user defined waypoints.
+* Column "arinc_name" in table "approaches" is now filled for SID and STAR to get runway
+  information for multiple or all. Needed for future fixes of albar965/littlenavmap#179.
+* Added new columns "region" and "is_3d" (X-Plane) in airport table. Adapted all compilers to fill it.
+* Database minor version bumped up to 8.
+* Made flight plan format detection more tolerant for FMS 11 with missing cycle information.
+* Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing. albar965/littlenavmap#173
+* Fixed invalid Majestic Dash FPR flight plan file export on Windows and added error check for invalid file size.
+* Fixed problem with wrong directory selection if default does not exist in dialog tools.
+* Updated French translation.
+
 Version 1.8.3
 
 * Comparing AIRAC cycle numbers before overwriting approach now.
