@@ -1234,7 +1234,7 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="307"/>
-        <location filename="src/gui/mainwindow.cpp" line="2039"/>
+        <location filename="src/gui/mainwindow.cpp" line="2043"/>
         <source>Airports</source>
         <translation>Flughäfen</translation>
     </message>
@@ -1795,7 +1795,7 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1459"/>
-        <location filename="src/gui/mainwindow.cpp" line="2044"/>
+        <location filename="src/gui/mainwindow.cpp" line="2048"/>
         <source>Navaids</source>
         <translation>Navigationshilfen</translation>
     </message>
@@ -4636,12 +4636,6 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation>Neuer leerer Flugplan wurde erstellt.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1429"/>
-        <source>Created new flight plan.</source>
-        <oldsource>Open Flightplan</oldsource>
-        <translation type="unfinished">Flugplan öffnen</translation>
-    </message>
-    <message>
         <source>Flightplan Files %1;;All Files (*)</source>
         <translation type="vanished">Flugplandateien %1;;Alle Dateien (*)</translation>
     </message>
@@ -4723,14 +4717,14 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="vanished">Flugplan im Garmin GFP Format exportieren</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1758"/>
-        <location filename="src/gui/mainwindow.cpp" line="1782"/>
+        <location filename="src/gui/mainwindow.cpp" line="1762"/>
+        <location filename="src/gui/mainwindow.cpp" line="1786"/>
         <source>Garmin GFP Files %1;;All Files (*)</source>
         <translation>Garmin GFP Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1766"/>
-        <location filename="src/gui/mainwindow.cpp" line="1791"/>
+        <location filename="src/gui/mainwindow.cpp" line="1770"/>
+        <location filename="src/gui/mainwindow.cpp" line="1795"/>
         <source>Flight plan saved as GFP.</source>
         <translation>Flugplan wurde als GFP gespeichert.</translation>
     </message>
@@ -4739,12 +4733,12 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="vanished">Flugplan im TXT Format speichern</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1806"/>
+        <location filename="src/gui/mainwindow.cpp" line="1810"/>
         <source>Text Files %1;;All Files (*)</source>
         <translation>Textdateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1814"/>
+        <location filename="src/gui/mainwindow.cpp" line="1818"/>
         <source>Flight plan saved as TXT.</source>
         <translation>Flugplan wurde als TXT gespeichert.</translation>
     </message>
@@ -4753,12 +4747,12 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="vanished">Flugplan im PMDG RTE Format speichern</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1828"/>
+        <location filename="src/gui/mainwindow.cpp" line="1832"/>
         <source>RTE Files %1;;All Files (*)</source>
         <translation>RTE Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1837"/>
+        <location filename="src/gui/mainwindow.cpp" line="1841"/>
         <source>Flight plan saved as RTE.</source>
         <translation>Flugplan wurde als RTE gespeichert.</translation>
     </message>
@@ -4767,12 +4761,12 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="vanished">Flugplan als Majestic Dash FPR speichern...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1853"/>
+        <location filename="src/gui/mainwindow.cpp" line="1857"/>
         <source>FPR Files %1;;All Files (*)</source>
         <translation>FPR Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1867"/>
+        <location filename="src/gui/mainwindow.cpp" line="1871"/>
         <source>Flight plan saved as FPR.</source>
         <translation>Flugplan wurde als FPR gespeichert.</translation>
     </message>
@@ -4782,14 +4776,14 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="vanished">Flugplan im IXEG FPL Format speichern</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1722"/>
-        <location filename="src/gui/mainwindow.cpp" line="1882"/>
+        <location filename="src/gui/mainwindow.cpp" line="1724"/>
+        <location filename="src/gui/mainwindow.cpp" line="1886"/>
         <source>FPL Files %1;;All Files (*)</source>
         <translation>FPL Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1730"/>
-        <location filename="src/gui/mainwindow.cpp" line="1896"/>
+        <location filename="src/gui/mainwindow.cpp" line="1732"/>
+        <location filename="src/gui/mainwindow.cpp" line="1900"/>
         <source>Flight plan saved as FPL.</source>
         <translation>Flugplan wurde als FPL gespeichert.</translation>
     </message>
@@ -4799,17 +4793,17 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="vanished">Flugplan als corte.in für Flight Factor Airbus speichern</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1910"/>
+        <location filename="src/gui/mainwindow.cpp" line="1914"/>
         <source>corte.in Files %1;;All Files (*)</source>
         <translation>corte.in Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1919"/>
+        <location filename="src/gui/mainwindow.cpp" line="1923"/>
         <source>Flight plan saved to corte.in.</source>
         <translation>Flugplan wurde als corte.in gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1827"/>
+        <location filename="src/gui/mainwindow.cpp" line="1831"/>
         <source>Save Flight Plan as PMDG RTE Format</source>
         <oldsource>Save Flightplan as GPX Format</oldsource>
         <translation type="unfinished">Flugplan im GPX Format speichern</translation>
@@ -4853,158 +4847,158 @@ Hilfreich wenn Sie Werkzeige benutzen um bestimmte Szenerien für jeden Flug zu 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1721"/>
+        <location filename="src/gui/mainwindow.cpp" line="1723"/>
         <source>Save Flight Plan as FPL for Reality XP GNS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1757"/>
+        <location filename="src/gui/mainwindow.cpp" line="1761"/>
         <source>Save Flight Plan as GFP for Reality XP GTN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1781"/>
+        <location filename="src/gui/mainwindow.cpp" line="1785"/>
         <source>Save Flight Plan as Garmin GFP Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1805"/>
+        <location filename="src/gui/mainwindow.cpp" line="1809"/>
         <source>Save Flight Plan as TXT Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1852"/>
+        <location filename="src/gui/mainwindow.cpp" line="1856"/>
         <source>Save Flight Plan as Majestic Dash FPR...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1881"/>
+        <location filename="src/gui/mainwindow.cpp" line="1885"/>
         <source>Save Flight Plan as IXEG FPL Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1909"/>
+        <location filename="src/gui/mainwindow.cpp" line="1913"/>
         <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1932"/>
+        <location filename="src/gui/mainwindow.cpp" line="1936"/>
         <source>Save Flightplan and Track as GPX Format</source>
         <translation>Flugplan und Kurs im GPX Format speichern</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1932"/>
+        <location filename="src/gui/mainwindow.cpp" line="1936"/>
         <source>Save Flight Plan as GPX Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1936"/>
+        <location filename="src/gui/mainwindow.cpp" line="1940"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>GPX Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1945"/>
+        <location filename="src/gui/mainwindow.cpp" line="1949"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Flugplan wurde als GPX gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1947"/>
+        <location filename="src/gui/mainwindow.cpp" line="1951"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Flugplan und Kurs wurden als GPX gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1960"/>
+        <location filename="src/gui/mainwindow.cpp" line="1964"/>
         <source>Google Earth KML files removed from map.</source>
         <translation>Google Earth KML Dateien wurden von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1967"/>
+        <location filename="src/gui/mainwindow.cpp" line="1971"/>
         <source>Google Earth KML</source>
         <translation>Google Earth KML</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1968"/>
+        <location filename="src/gui/mainwindow.cpp" line="1972"/>
         <source>Google Earth KML %1;;All Files (*)</source>
         <translation>Google Earth KML %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1977"/>
-        <location filename="src/gui/mainwindow.cpp" line="1991"/>
+        <location filename="src/gui/mainwindow.cpp" line="1981"/>
+        <location filename="src/gui/mainwindow.cpp" line="1995"/>
         <source>Google Earth KML file opened.</source>
         <translation>Google Earth KML Datei geöffnet.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1980"/>
-        <location filename="src/gui/mainwindow.cpp" line="1996"/>
+        <location filename="src/gui/mainwindow.cpp" line="1984"/>
+        <location filename="src/gui/mainwindow.cpp" line="2000"/>
         <source>Opening Google Earth KML file failed.</source>
         <translation>Öffnen von Google Earth KML Datei fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2003"/>
+        <location filename="src/gui/mainwindow.cpp" line="2007"/>
         <source>Save Map as Image</source>
         <translation>Karte als Bild speichern</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2003"/>
+        <location filename="src/gui/mainwindow.cpp" line="2007"/>
         <source>Image Files %1;;All Files (*)</source>
         <translation>Bilder %1;; Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2005"/>
+        <location filename="src/gui/mainwindow.cpp" line="2009"/>
         <source>Little Navmap Screenshot.jpg</source>
         <translation>Little Navmap Screenshot.jpg</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2017"/>
+        <location filename="src/gui/mainwindow.cpp" line="2021"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
         <translation>Fehler beim Speichern der Bildes.
 Nur JPG, PNG und BMP sind erlaubt.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2035"/>
+        <location filename="src/gui/mainwindow.cpp" line="2039"/>
         <source>%1 of %2 %3 selected, %4 visible.</source>
         <translation>%1 von %2 %3 ausgewählt, %4 sichtbar.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2135"/>
-        <location filename="src/gui/mainwindow.cpp" line="2147"/>
-        <location filename="src/gui/mainwindow.cpp" line="2158"/>
+        <location filename="src/gui/mainwindow.cpp" line="2139"/>
+        <location filename="src/gui/mainwindow.cpp" line="2151"/>
+        <location filename="src/gui/mainwindow.cpp" line="2162"/>
         <source>Map settings changed.</source>
         <translation>Karteneinstellungen wurden verändert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2194"/>
+        <location filename="src/gui/mainwindow.cpp" line="2198"/>
         <source>All message dialogs reset.</source>
         <translation>Alle Meldungsdialoge zurücksetzen.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2222"/>
+        <location filename="src/gui/mainwindow.cpp" line="2226"/>
         <source>Options changed.</source>
         <translation>Optionen wurden geändert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2259"/>
+        <location filename="src/gui/mainwindow.cpp" line="2263"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Konnte auf diesem Computer keine&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition oder&lt;/li&gt;&lt;li&gt;Prepar3D Installation&lt;/li&gt;&lt;/ul&gt;finden. Es wurde auch keine Szeneriebiblithekendatenbanken gefunden.&lt;br/&gt;&lt;br/&gt;Sie können eine andere Little Navmap Szeneriebibliotheksdatenbank von einem anderen Computer kopieren.&lt;br/&gt;Klicken Sie auf den Hilfe Knopf für mehr Informationen.&lt;br/&gt;&lt;br/&gt;Wenn Sie X-Plane 11 installiert haben, können Sie zum Szeneriebibiotheks Ladedialog gehen in dem Sie auf den X-Plane Knopf klicken.&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2271"/>
+        <location filename="src/gui/mainwindow.cpp" line="2275"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2309"/>
+        <location filename="src/gui/mainwindow.cpp" line="2313"/>
         <source>Ready.</source>
         <translation>Bereit.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2637"/>
+        <location filename="src/gui/mainwindow.cpp" line="2641"/>
         <source>Really Quit?</source>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2638"/>
+        <location filename="src/gui/mainwindow.cpp" line="2642"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
