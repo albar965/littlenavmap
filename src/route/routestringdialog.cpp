@@ -41,7 +41,11 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   ui->setupUi(this);
 
-  ui->plainTextEditRouteString->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+  QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+#if defined(Q_OS_MACOS)
+  fixedFont.setPointSizeF(fixedFont.pointSizeF() * 1.2);
+#endif
+  ui->plainTextEditRouteString->setFont(fixedFont);
   ui->plainTextEditRouteString->setWordWrapMode(QTextOption::WrapAnywhere);
 
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create Flight &Plan"));
