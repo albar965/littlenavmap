@@ -8271,7 +8271,7 @@ Des valeurs plus petites permettent une sélection plus fine.</translation>
     <message>
         <location filename="src/options/options.ui" line="912"/>
         <source>Tooltips</source>
-        <translation type="unfinished">Conseils pratiques</translation>
+        <translation type="unfinished">Infobulles</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="936"/>
@@ -8293,7 +8293,7 @@ Des valeurs plus petites permettent une sélection plus fine.</translation>
     <message>
         <location filename="src/options/options.ui" line="971"/>
         <source>Show for &amp;navaids and airways</source>
-        <translation type="unfinished">Afficher pour &amp;navaids et voies aériennes</translation>
+        <translation type="unfinished">Afficher pour les &amp;navaids et voies aériennes</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="981"/>
