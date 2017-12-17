@@ -296,7 +296,7 @@ void InfoQuery::initQueries()
   airwayQuery->prepare("select * from airway where airway_id = :id");
 
   runwayQuery = new SqlQuery(db);
-  runwayQuery->prepare("select * from runway where airport_id = :id");
+  runwayQuery->prepare("select * from runway where airport_id = :id order by heading");
 
   runwayEndQuery = new SqlQuery(db);
   runwayEndQuery->prepare("select * from runway_end where runway_end_id = :id");
@@ -304,10 +304,10 @@ void InfoQuery::initQueries()
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare("select h.*, s.number as start_number, s.runway_name from helipad h "
                         " left outer join start s on s.start_id= h.start_id "
-                        " where h.airport_id = :id");
+                        " where h.airport_id = :id order by s.runway_name");
 
   startQuery = new SqlQuery(db);
-  startQuery->prepare("select * from start where airport_id = :id");
+  startQuery->prepare("select * from start where airport_id = :id order by type asc, runway_name");
 
   ilsQuerySim = new SqlQuery(db);
   ilsQuerySim->prepare("select * from ils where loc_runway_end_id = :id");
@@ -337,7 +337,7 @@ void InfoQuery::initQueries()
   approachQuery->prepare("select a.runway_name, r.runway_end_id, a.* from approach a "
                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
                          "where a.airport_id = :id "
-                         "order by a.runway_name, a.type");
+                         "order by a.runway_name, a.type, a.fix_ident");
 
   transitionQuery = new SqlQuery(dbNav);
   transitionQuery->prepare("select * from transition where approach_id = :id order by fix_ident");
