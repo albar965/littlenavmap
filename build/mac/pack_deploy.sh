@@ -10,13 +10,13 @@ export FILENAME=`date "+20%y%m%d-%H%M"`
 
   rm -rfv LittleNavmap.zip LittleNavconnect.zip LittleXpconnect.zip
 
-  zip -r LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect" \
+  zip -r -y -9 LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt \
          README-LittleNavmap.txt CHANGELOG-LittleNavmap.txt
 
-  zip -r LittleXpconnect.zip "Little Xpconnect"
+  zip -r -y -9 LittleXpconnect.zip "Little Xpconnect"
 
-  zip -r LittleNavconnect.zip "Little Navconnect.app" \
+  zip -r -y -9 LittleNavconnect.zip "Little Navconnect.app" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt
 
   scp LittleXpconnect.zip darkon:/data/alex/Public/Releases/LittleXpconnect-macOS-${FILENAME}.zip

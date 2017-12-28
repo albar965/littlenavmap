@@ -5,13 +5,15 @@ Reloading the database is hightly recommended to avoid problems when saving flig
 * Added flight plan export for Reality XP GTN and GNS units.
 * Added option to save Garmin flight plans with user defined waypoints only to avoid
   locked waypoints on AIRAC cycle mismatch.
-* Added search for X-Plane 3D airport flag in rating dropdown list.
-* Added display for new airport region where available.
+* Added search for X-Plane 3D airport flag in rating dropdown list. Needs scenery database reload.
+* Added display for new airport region where available. Needs scenery database reload.
+* Now displaying runway names for SIDs and STARs with reference to multiple parallel or all runways in procedure search.
+  Partial solution for #179. Needs scenery database reload.
 * Changed route description text field to monospaced font and changed wrapping for word to any for better readability.
 * Added options to disable tooltips for selected map features: airports, navaids or airspaces.
 * Helipads can now be selected as a start position on the map.
 * Now using correct AIRAC cycle from nav database when writing FMS files. Used simulator version previously which
-  could result in X-Plane warnings.
+  could result in X-Plane warnings. Needs scenery database reload
 * Added warning dialog when AIRAC cycle is not available when saving flight plans in X-Plane FMS 11 format.
 * Departure runway is now correctly assigned according to SID runway when loading from formats
   which do not support departure parking (e.g. FMS or FPL).
@@ -36,13 +38,15 @@ from atools version 2.8.4
 * Added Garmin GNS XML flight plan export.
 * Added option to save GNS XML flightplans with user defined waypoints.
 * Column "arinc_name" in table "approaches" is now filled for SID and STAR to get runway
-  information for multiple or all. Needed for future fixes of albar965/littlenavmap#179.
-* Added new columns "region" and "is_3d" (X-Plane) in airport table. Adapted all compilers to fill it.
+  information for multiple or all. Needed for future fixes of albar965/littlenavmap#179. Needs scenery database reload
+* Added new columns "region" and "is_3d" (X-Plane) in airport table. Adapted all compilers to fill it. Needs scenery database reload
 * Database minor version bumped up to 8.
 * Made flight plan format detection more tolerant for FMS 11 with missing cycle information.
 * Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing. albar965/littlenavmap#173
 * Fixed invalid Majestic Dash FPR flight plan file export on Windows and added error check for invalid file size.
-* Fixed problem with wrong directory selection if default does not exist in dialog tools.
+* Fixed problem with wrong directory selection if default directory does not exist for file dialog.
+* Number of ALS is now correctly assigned to airports in X-Plane data compiler.
+  This resulted in many airports having an ALS indication where none is.
 * Updated French translation.
 
 Version 1.8.3

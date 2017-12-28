@@ -112,6 +112,7 @@ public:
   QVariant getRawData(int row, const QString& colname) const;
 
   /* Sets the SQL query into the model. This will start the query and fetch data from the database. */
+  void updateSqlQuery();
   void resetSqlQuery();
 
   /* Set a filter for objects within the given bounding rectangle */

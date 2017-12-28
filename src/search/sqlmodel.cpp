@@ -428,6 +428,10 @@ void SqlModel::buildQuery()
   totalRowCount = 0;
   QString queryCount = "select count(1) from " + columns->getTablename() + " " + queryWhere;
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << currentSqlQuery;
+#endif
+
   try
   {
     // Count total rows
@@ -603,6 +607,11 @@ void SqlModel::fetchMore(const QModelIndex& parent)
 QVariant SqlModel::getRawData(int row, const QString& colname) const
 {
   return getRawData(row, getSqlRecord().indexOf(colname));
+}
+
+void SqlModel::updateSqlQuery()
+{
+  buildQuery();
 }
 
 QVariant SqlModel::getRawData(int row, int col) const

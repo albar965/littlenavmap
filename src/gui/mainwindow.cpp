@@ -1708,7 +1708,8 @@ bool MainWindow::routeExportRxpGns()
     QString path;
 
 #ifdef Q_OS_WIN32
-    path = "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL";
+    QString gnsPath(qgetenv("GNSAPPDATA"));
+    path = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
                               "Garmin", "GNS Trainer Data", "GNS", "FPL"});
@@ -1746,7 +1747,8 @@ bool MainWindow::routeExportRxpGtn()
     QString path;
 
 #ifdef Q_OS_WIN32
-    path = "C:\\ProgramData\\Garmin\\Trainers\\GTN\\FPLN";
+    QString gtnPath(qgetenv("GTNSIMDATA"));
+    path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN\\FPLN" : gtnPath + "\\FPLN";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
                               "Garmin", "Trainers", "GTN", "FPLN"});

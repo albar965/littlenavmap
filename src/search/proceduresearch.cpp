@@ -398,14 +398,58 @@ void ProcedureSearch::fillApproachTreeWidget()
             break;
         }
 
+        // Resolve parallel runway assignments
+        QString allRunwayText = tr("All");
+        QStringList sidStarArincNames;
+        if((type& proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR))
+        {
+          // arinc_name - added with database minor version 8
+          QString arincName = recApp.valueStr("arinc_name", QString());
+          if(arincName == "ALL")
+            sidStarArincNames.append(allRunwayText);
+          else if(arincName.contains(QRegularExpression("^RW[0-9]{2}B$")))
+          {
+            // Check which runways are assigned from values like "RW12B"
+            arincName = arincName.mid(2, 2);
+            if(runwayNames.contains(arincName + "L"))
+              sidStarArincNames.append(arincName + "L");
+            if(runwayNames.contains(arincName + "R"))
+              sidStarArincNames.append(arincName + "R");
+            if(runwayNames.contains(arincName + "C"))
+              sidStarArincNames.append(arincName + "C");
+          }
+#ifdef DEBUG_INFORMATION
+          else if(!arincName.isEmpty())
+            sidStarArincNames.append("(" + arincName + ")");
+#endif
+        }
+
         QString rwnamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
-        filterOk &= rwname == rwnamefilter || ui->comboBoxProcedureRunwayFilter->currentIndex() == 0;
+        int rwnameindex = ui->comboBoxProcedureRunwayFilter->currentIndex();
+
+        if(rwnameindex == 0)
+          // All selected
+          filterOk &= true;
+        else if(rwnamefilter.isEmpty())
+          // No rwy selected
+          filterOk &= rwname.isEmpty() && sidStarArincNames.isEmpty();
+        else
+        {
+          filterOk &= rwname == rwnamefilter || // name equal
+                      (!sidStarArincNames.isEmpty() && sidStarArincNames.contains(rwnamefilter)) ||
+                      sidStarArincNames.contains(allRunwayText);
+        }
 
         if(filterOk)
         {
           // Add an extra field with the best airport runway name
           recApp.appendField("airport_runway_name", QVariant::String);
           recApp.setValue("airport_runway_name", rwname);
+
+          recApp.appendField("sid_star_arinc_name", QVariant::String);
+          if(((type& proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR)) && rwname.isEmpty())
+            recApp.setValue("sid_star_arinc_name", sidStarArincNames.join("/"));
+
           sorted.append(recApp);
         }
       }
@@ -948,6 +992,7 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
   }
 
   approachType += " " + recApp.valueStr("airport_runway_name");
+  approachType += " " + recApp.valueStr("sid_star_arinc_name", QString());
 
   QString altStr;
   // if(recApp.valueFloat("altitude") > 0.f)
@@ -1282,10 +1327,20 @@ bool ProcedureSearch::procedureSortFunc(const atools::sql::SqlRecord& rec1, cons
   {
     QString rwname1(rec1.valueStr("airport_runway_name"));
     QString rwname2(rec2.valueStr("airport_runway_name"));
+
     // Order by runway name
     if(rwname1 == rwname2)
-      // Order by fix_ident
-      return rec1.valueStr("fix_ident") < rec2.valueStr("fix_ident");
+    {
+      QString ident1(rec1.valueStr("fix_ident"));
+      QString ident2(rec2.valueStr("fix_ident"));
+
+      if(ident1 == ident2)
+        // Order by name + runway name
+        return rec1.valueStr("sid_star_arinc_name") < rec2.valueStr("sid_star_arinc_name");
+      else
+        // Order by fix_ident
+        return ident1 < ident2;
+    }
     else
       return rwname1 < rwname2;
   }

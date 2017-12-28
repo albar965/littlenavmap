@@ -64,6 +64,7 @@ void SqlController::postDatabaseLoad()
     viewSetModel(proxyModel);
   else
     viewSetModel(model);
+  model->updateSqlQuery();
   model->resetSqlQuery();
   model->fillHeaderData();
 }
