@@ -49,7 +49,7 @@ namespace lnm {
 
 // ======== URLs ================================================================
 // "master" or "release/1.4"
-const QLatin1Literal HELP_BRANCH("release/1.8"); // VERSION_NUMBER
+const QLatin1Literal HELP_BRANCH("master"); // VERSION_NUMBER
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
 const QString HELP_ONLINE_URL(
