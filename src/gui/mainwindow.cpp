@@ -1371,6 +1371,10 @@ void MainWindow::updateWindowTitle()
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
 
+#ifdef DEBUG_INFORMATION
+  newTitle += QString(" / %1 (%2)").arg(NavApp::applicationVersion()).arg(GIT_REVISION);
+#endif
+
   setWindowTitle(newTitle);
 }
 
