@@ -27,7 +27,7 @@ CONFIG(release, debug|release):CONF_TYPE=release
 
 # Windows ==================
 win32 {
-  QT_HOME=C:\\Qt\\5.9.1\\mingw53_32
+  QT_HOME=C:\\Qt\\5.9.3\\mingw53_32
   OPENSSL=C:\\OpenSSL-Win32
   GIT_BIN='C:\\Git\\bin\\git'
   MARBLE_BASE="c:\\Projekte\\marble-$${CONF_TYPE}"
@@ -35,7 +35,7 @@ win32 {
 
 # Linux ==================
 unix:!macx {
-  QT_HOME=/home/alex/Qt/5.9.1/gcc_64
+  QT_HOME=/home/alex/Qt/5.9.3/gcc_64
   MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
 
   # Use relative path to current .so directory to search for shared libraries
@@ -386,7 +386,6 @@ unix:!macx {
   deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $${DEPLOY_DIR} &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/iconengines/libqsvgicon.so*  $${DEPLOY_DIR_LIB}/iconengines &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqgif.so*  $${DEPLOY_DIR_LIB}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjp2.so*  $${DEPLOY_DIR_LIB}/imageformats &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjpeg.so*  $${DEPLOY_DIR_LIB}/imageformats &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqsvg.so*  $${DEPLOY_DIR_LIB}/imageformats &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwbmp.so*  $${DEPLOY_DIR_LIB}/imageformats &&
