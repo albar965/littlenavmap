@@ -49,6 +49,7 @@ unix:!macx {
 
 # Mac OS X ==================
 macx {
+  QT_HOME=/Users/alex/Qt/5.9.1/clang_64
   MARBLE_BASE=/Users/alex/Programme/Marble-$${CONF_TYPE}
 
   # Compatibility down to OS X 10.10
@@ -457,7 +458,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
-  deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite &&
+  deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $${DEPLOY_APP} &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -fv $$PWD/README.txt $${DEPLOY_DIR}/README-LittleNavmap.txt &&
