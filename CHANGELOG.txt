@@ -1,3 +1,10 @@
+Version 1.8.5
+
+* Updated from Qt 5.9.1 to 5.9.3
+
+from atools version 2.8.5
+* Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. albar965/littlenavmap#202
+
 Version 1.8.4
 
 Reloading the database is hightly recommended to avoid problems when saving flight plans.
