@@ -349,7 +349,7 @@ macx {
   copydata.commands += cp -vf $$PWD/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/../atools/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
-  cleandata.commands = rm -Rvf $$OUT_PWD/help $$PWD/magdec $$OUT_PWD/data $$OUT_PWD/plugins
+  cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/magdec $$OUT_PWD/data $$OUT_PWD/plugins
 }
 
 # =====================================================================
