@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="it_IT">
+<TS version="2.1" language="pt_BR">
 <context>
     <name>AirportSearch</name>
     <message>
@@ -665,8 +665,6 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
         <location filename="src/db/databasedialog.ui" line="165"/>
         <source>Will read also the inactive scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <oldsource>Will read also the inactive scenery entries when checked.
-Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3695,28 +3693,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="6098"/>
-        <source>Export Flight Plan as &amp;GFP for Reality XP GTN ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="6101"/>
-        <location filename="src/gui/mainwindow.ui" line="6104"/>
-        <source>Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="6109"/>
-        <source>Export Flight Plan to &amp;FPL for the Reality XP GNS ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="6112"/>
-        <location filename="src/gui/mainwindow.ui" line="6115"/>
-        <source>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/gui/mainwindow.ui" line="5393"/>
         <source>Adjust Flight Plan Altitude</source>
         <translation type="unfinished"></translation>
@@ -3796,7 +3772,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="5502"/>
         <source>Export Flight Plan as PMDG &amp;RTE ...</source>
-        <oldsource>E&amp;xport Flight Plan as PMDG &amp;RTE ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4009,7 +3984,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="5833"/>
         <source>Export Flight Plan as &amp;clean PLN ...</source>
-        <oldsource>E&amp;xport Flight Plan as clean PLN ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4032,7 +4006,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="5865"/>
         <source>Export Flight Plan as GP&amp;X ...</source>
-        <oldsource>E&amp;xport Flight Plan as GP&amp;X ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4128,7 +4101,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6021"/>
         <source>Export Flight Plan as &amp;TXT ...</source>
-        <oldsource>E&amp;xport Flight Plan as &amp;TXT ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4140,7 +4112,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6036"/>
         <source>Export Flight Plan as X-Plane FMS &amp;3...</source>
-        <oldsource>E&amp;xport Flight Plan as X-Plane FMS 3...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4168,7 +4139,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6065"/>
         <source>Export Flight Plan as &amp;Majestic Dash FPR...</source>
-        <oldsource>E&amp;xport Flight Plan as &amp;Majestic Dash FPR...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4180,27 +4150,45 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6076"/>
         <source>Export Flight Plan as IXEG &amp;FPL...</source>
-        <oldsource>E&amp;xport Flight Plan as IEXG &amp;FPL...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6079"/>
         <location filename="src/gui/mainwindow.ui" line="6082"/>
         <source>Save flight plan as FPL file usable by the IXEG Boeing</source>
-        <oldsource>Save flight plan as FPL file usable by the IEXG Boeing</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6087"/>
         <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus...</source>
-        <oldsource>E&amp;xport Flight Plan to &amp;corte.in for Flight Factor A320...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6090"/>
         <location filename="src/gui/mainwindow.ui" line="6093"/>
         <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
-        <oldsource>Append flight plan to the corte.in file for the Flight Factor A320</oldsource>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="6098"/>
+        <source>Export Flight Plan as &amp;GFP for Reality XP GTN ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="6101"/>
+        <location filename="src/gui/mainwindow.ui" line="6104"/>
+        <source>Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="6109"/>
+        <source>Export Flight Plan to &amp;FPL for the Reality XP GNS ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="6112"/>
+        <location filename="src/gui/mainwindow.ui" line="6115"/>
+        <source>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4565,9 +4553,27 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.cpp" line="1455"/>
+        <source>Open Flight Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1456"/>
+        <location filename="src/gui/mainwindow.cpp" line="1479"/>
+        <location filename="src/gui/mainwindow.cpp" line="1576"/>
+        <location filename="src/gui/mainwindow.cpp" line="1683"/>
+        <source>Flight Plan Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/gui/mainwindow.cpp" line="1467"/>
         <location filename="src/gui/mainwindow.cpp" line="1507"/>
         <source>Flight plan opened.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1478"/>
+        <source>Append Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4587,6 +4593,16 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.cpp" line="1575"/>
+        <source>Save Flight Plan as PLN Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1607"/>
+        <source>Save Flight Plan as FLP Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/gui/mainwindow.cpp" line="1608"/>
         <source>FLP Files %1;;All Files (*)</source>
         <translation type="unfinished"></translation>
@@ -4594,6 +4610,11 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1618"/>
         <source>Flight plan saved as FLP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1657"/>
+        <source>Save Flight Plan as X-Plane FMS Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4607,6 +4628,11 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.cpp" line="1682"/>
+        <source>Save Clean Flight Plan without Annotations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/gui/mainwindow.cpp" line="1685"/>
         <source> Clean</source>
         <translation type="unfinished"></translation>
@@ -4617,45 +4643,8 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1764"/>
-        <location filename="src/gui/mainwindow.cpp" line="1788"/>
-        <source>Garmin GFP Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1772"/>
-        <location filename="src/gui/mainwindow.cpp" line="1797"/>
-        <source>Flight plan saved as GFP.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1812"/>
-        <source>Text Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1820"/>
-        <source>Flight plan saved as TXT.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1834"/>
-        <source>RTE Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1843"/>
-        <source>Flight plan saved as RTE.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1859"/>
-        <source>FPR Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1873"/>
-        <source>Flight plan saved as FPR.</source>
+        <location filename="src/gui/mainwindow.cpp" line="1724"/>
+        <source>Save Flight Plan as FPL for Reality XP GNS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4671,67 +4660,20 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1916"/>
-        <source>corte.in Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1925"/>
-        <source>Flight plan saved to corte.in.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1833"/>
-        <source>Save Flight Plan as PMDG RTE Format</source>
-        <oldsource>Save Flightplan as GPX Format</oldsource>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1455"/>
-        <source>Open Flight Plan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1456"/>
-        <location filename="src/gui/mainwindow.cpp" line="1479"/>
-        <location filename="src/gui/mainwindow.cpp" line="1576"/>
-        <location filename="src/gui/mainwindow.cpp" line="1683"/>
-        <source>Flight Plan Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1478"/>
-        <source>Append Flight Plan</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1575"/>
-        <source>Save Flight Plan as PLN Format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1607"/>
-        <source>Save Flight Plan as FLP Format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1657"/>
-        <source>Save Flight Plan as X-Plane FMS Format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1682"/>
-        <source>Save Clean Flight Plan without Annotations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.cpp" line="1724"/>
-        <source>Save Flight Plan as FPL for Reality XP GNS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/gui/mainwindow.cpp" line="1763"/>
         <source>Save Flight Plan as GFP for Reality XP GTN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1764"/>
+        <location filename="src/gui/mainwindow.cpp" line="1788"/>
+        <source>Garmin GFP Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1772"/>
+        <location filename="src/gui/mainwindow.cpp" line="1797"/>
+        <source>Flight plan saved as GFP.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4745,8 +4687,43 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.cpp" line="1812"/>
+        <source>Text Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1820"/>
+        <source>Flight plan saved as TXT.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1833"/>
+        <source>Save Flight Plan as PMDG RTE Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1834"/>
+        <source>RTE Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1843"/>
+        <source>Flight plan saved as RTE.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/gui/mainwindow.cpp" line="1858"/>
         <source>Save Flight Plan as Majestic Dash FPR...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1859"/>
+        <source>FPR Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1873"/>
+        <source>Flight plan saved as FPR.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4760,13 +4737,23 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1938"/>
-        <source>Save Flightplan and Track as GPX Format</source>
+        <location filename="src/gui/mainwindow.cpp" line="1916"/>
+        <source>corte.in Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1925"/>
+        <source>Flight plan saved to corte.in.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1938"/>
         <source>Save Flight Plan as GPX Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="1938"/>
+        <source>Save Flightplan and Track as GPX Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4925,6 +4912,19 @@ Only JPG, PNG and BMP are allowed.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="179"/>
         <source>State or Province:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="181"/>
+        <source>Country or Area Code:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="183"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1317"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1374"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1418"/>
+        <source>Region:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6094,19 +6094,6 @@ Only JPG, PNG and BMP are allowed.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1312"/>
         <source>DME only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="183"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1317"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1374"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1418"/>
-        <source>Region:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="181"/>
-        <source>Country or Area Code:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7864,7 +7851,6 @@ A restart is required for the settings to take effect.</source>
     <message>
         <location filename="src/options/options.ui" line="319"/>
         <source>Use &amp;English as user interface language independent of operating system language (restart required after change)</source>
-        <oldsource>Use &amp;English as user interface language independent of operating system language (restart reqired after change)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7882,7 +7868,6 @@ A restart is required for the settings to take effect.</source>
     <message>
         <location filename="src/options/options.ui" line="334"/>
         <source>Use English &amp;number and date formats independent of current computer settings (restart required after change)</source>
-        <oldsource>Use English &amp;number and date formats independent of computer locale (restart reqired after change)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7914,7 +7899,6 @@ A restart is required for the settings to take effect.</source>
     <message>
         <location filename="src/options/options.ui" line="437"/>
         <source>&amp;Style for graphical user interface (restart required after change):</source>
-        <oldsource>&amp;Style for graphical user interface (restart reqired after change):</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7961,14 +7945,11 @@ A restart is required for the settings to take effect.</source>
         <location filename="src/options/options.ui" line="552"/>
         <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these. 
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
-        <oldsource>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
-The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="556"/>
         <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
-        <oldsource>&amp;Avoid overwriting Flight Plan with non matching departure and destination</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8081,9 +8062,6 @@ Smaller values will zoom in closer to an airport or navaid. </source>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
 Smaller values will zoom in closer to an airport or navaid. 
 </source>
-        <oldsource>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
-Smaller values will zoom in closer to an airport or navaid.
-</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8496,22 +8474,6 @@ Bigger values will update map only when aircraft reaches map boundary.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2040"/>
-        <source>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
-when transitioning from airport to airway.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2044"/>
-        <source>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2007"/>
-        <source>&amp;Minimum altitude buffer to ground in elevation profile (red line):</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="1937"/>
         <location filename="src/options/options.ui" line="1940"/>
         <source>Enable this option to show the top of descent point on the map and in the elevation profile.</source>
@@ -8530,38 +8492,6 @@ when transitioning from airport to airway.</source>
     <message>
         <location filename="src/options/options.ui" line="1959"/>
         <source>&amp;Use simplified rule to determine cruise altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2070"/>
-        <source> %dist% per 1000 %alt%</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2054"/>
-        <source>&amp;Rule of thumb to calculate top of descent:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2017"/>
-        <source>The red line value is always rounded up to the next 500 ft.
-Note that this value does not affect flight plan calculation or saving of flight plans.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2024"/>
-        <source> %alt%</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="1993"/>
-        <source>Prefer nearest NDB that is part of an airway instead the nearest waypoint
-when transitioning from airport to airway.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="1997"/>
-        <source>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8584,6 +8514,54 @@ South / North: Same as North / South but reverses odd and even.</source>
     <message>
         <location filename="src/options/options.ui" line="1985"/>
         <source>South / North (e.g. New Zealand)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="1993"/>
+        <source>Prefer nearest NDB that is part of an airway instead the nearest waypoint
+when transitioning from airport to airway.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="1997"/>
+        <source>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2007"/>
+        <source>&amp;Minimum altitude buffer to ground in elevation profile (red line):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2017"/>
+        <source>The red line value is always rounded up to the next 500 ft.
+Note that this value does not affect flight plan calculation or saving of flight plans.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2024"/>
+        <source> %alt%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2040"/>
+        <source>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
+when transitioning from airport to airway.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2044"/>
+        <source>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2054"/>
+        <source>&amp;Rule of thumb to calculate top of descent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="2070"/>
+        <source> %dist% per 1000 %alt%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8825,9 +8803,6 @@ If this field is empty, the default Active Sky weather file path will be used wh
         <source>Use online elevation data to display ground in flight plan elevation profile. 
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
-        <oldsource>Use online elevation data to display ground in flight plan elevation profile.
-Has a higher resolution than the offline data source but updates are slow.
-Source data has many errors.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8846,10 +8821,6 @@ Source data has many errors.</oldsource>
 Use Offline GLOBE Elevation Data. Can be downloaded for free. 
 Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</source>
-        <oldsource>Recommended.
-Use Offline GLOBE Elevation Data. Can be downloaded for free.
-Resolution is lower than the online source but updates are very fast.
-Has a 30 arc second grid (approximately 900 meter near the equator).</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11563,7 +11534,6 @@ Really use it?</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="96"/>
         <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
-        <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate &lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -1230,7 +1230,7 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="307"/>
-        <location filename="src/gui/mainwindow.cpp" line="2043"/>
+        <location filename="src/gui/mainwindow.cpp" line="2045"/>
         <source>Airports</source>
         <translation>Luchthavens</translation>
     </message>
@@ -1784,7 +1784,7 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1459"/>
-        <location filename="src/gui/mainwindow.cpp" line="2048"/>
+        <location filename="src/gui/mainwindow.cpp" line="2050"/>
         <source>Navaids</source>
         <translation>Navaids</translation>
     </message>
@@ -4712,14 +4712,14 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation type="vanished">Bewaar Vluchtplan als Garmin GFP Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1762"/>
-        <location filename="src/gui/mainwindow.cpp" line="1786"/>
+        <location filename="src/gui/mainwindow.cpp" line="1764"/>
+        <location filename="src/gui/mainwindow.cpp" line="1788"/>
         <source>Garmin GFP Files %1;;All Files (*)</source>
         <translation>Garmin GFP Bestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1770"/>
-        <location filename="src/gui/mainwindow.cpp" line="1795"/>
+        <location filename="src/gui/mainwindow.cpp" line="1772"/>
+        <location filename="src/gui/mainwindow.cpp" line="1797"/>
         <source>Flight plan saved as GFP.</source>
         <translation>Vluchtplan bewaard als GFP.</translation>
     </message>
@@ -4728,12 +4728,12 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation type="vanished">Bewaar Vluchtplan als TXT Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1810"/>
+        <location filename="src/gui/mainwindow.cpp" line="1812"/>
         <source>Text Files %1;;All Files (*)</source>
         <translation>Tekstbestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1818"/>
+        <location filename="src/gui/mainwindow.cpp" line="1820"/>
         <source>Flight plan saved as TXT.</source>
         <translation>Vluchtplan bewaard als TXT.</translation>
     </message>
@@ -4742,12 +4742,12 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation type="vanished">Bewaar Vluchtplan als PMDG RTE Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1832"/>
+        <location filename="src/gui/mainwindow.cpp" line="1834"/>
         <source>RTE Files %1;;All Files (*)</source>
         <translation>RTE Bestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1841"/>
+        <location filename="src/gui/mainwindow.cpp" line="1843"/>
         <source>Flight plan saved as RTE.</source>
         <translation>Vluchtplan bewaard als RTE.</translation>
     </message>
@@ -4756,12 +4756,12 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation type="vanished">Bewaar Vluchtplan als Majestic Dash FPR...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1857"/>
+        <location filename="src/gui/mainwindow.cpp" line="1859"/>
         <source>FPR Files %1;;All Files (*)</source>
         <translation>FPR Bestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1871"/>
+        <location filename="src/gui/mainwindow.cpp" line="1873"/>
         <source>Flight plan saved as FPR.</source>
         <translation>Vluchtplan bewaard als FPR.</translation>
     </message>
@@ -4770,14 +4770,14 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation type="vanished">Bewaar Vluchtplan als IXEG FPL Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1724"/>
-        <location filename="src/gui/mainwindow.cpp" line="1886"/>
+        <location filename="src/gui/mainwindow.cpp" line="1725"/>
+        <location filename="src/gui/mainwindow.cpp" line="1888"/>
         <source>FPL Files %1;;All Files (*)</source>
         <translation>FPL Bestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1732"/>
-        <location filename="src/gui/mainwindow.cpp" line="1900"/>
+        <location filename="src/gui/mainwindow.cpp" line="1733"/>
+        <location filename="src/gui/mainwindow.cpp" line="1902"/>
         <source>Flight plan saved as FPL.</source>
         <translation>Vluchtplan bewaard als FPL.</translation>
     </message>
@@ -4786,17 +4786,17 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation type="vanished">Bewaar.Vluchtplan als corte.in voor Flight Factor Airbus</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1914"/>
+        <location filename="src/gui/mainwindow.cpp" line="1916"/>
         <source>corte.in Files %1;;All Files (*)</source>
         <translation>corte.in Bestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1923"/>
+        <location filename="src/gui/mainwindow.cpp" line="1925"/>
         <source>Flight plan saved to corte.in.</source>
         <translation>Vluchtplan bewaard als corte.in.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1831"/>
+        <location filename="src/gui/mainwindow.cpp" line="1833"/>
         <source>Save Flight Plan as PMDG RTE Format</source>
         <oldsource>Save Flightplan as GPX Format</oldsource>
         <translation>Bewaar.Vluchtplan als PMDG RTE Formaat</translation>
@@ -4840,158 +4840,158 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
         <translation>Bewaar Schoon Vluchtplan zonder.Bemerkingen</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1723"/>
+        <location filename="src/gui/mainwindow.cpp" line="1724"/>
         <source>Save Flight Plan as FPL for Reality XP GNS</source>
         <translation>Bewaar Vluchtplan als FPL voor Reality XP GNS</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1761"/>
+        <location filename="src/gui/mainwindow.cpp" line="1763"/>
         <source>Save Flight Plan as GFP for Reality XP GTN</source>
         <translation>Bewaar Vluchtplan als GFP voor Reality XP GTN</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1785"/>
+        <location filename="src/gui/mainwindow.cpp" line="1787"/>
         <source>Save Flight Plan as Garmin GFP Format</source>
         <translation>Bewaar Vluchtplan als Garmin GFP Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1809"/>
+        <location filename="src/gui/mainwindow.cpp" line="1811"/>
         <source>Save Flight Plan as TXT Format</source>
         <translation>Bewaar Vluchtplan als TXT Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1856"/>
+        <location filename="src/gui/mainwindow.cpp" line="1858"/>
         <source>Save Flight Plan as Majestic Dash FPR...</source>
         <translation>Bewaar Vluchtplan als Majectic Dash FPR...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1885"/>
+        <location filename="src/gui/mainwindow.cpp" line="1887"/>
         <source>Save Flight Plan as IXEG FPL Format</source>
         <translation>Bewaar Vluchtplan als IXE FPL Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1913"/>
+        <location filename="src/gui/mainwindow.cpp" line="1915"/>
         <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
         <translation>Bewaar Vluchtplan als corte.in voor Flight Factor Airbus</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1936"/>
+        <location filename="src/gui/mainwindow.cpp" line="1938"/>
         <source>Save Flightplan and Track as GPX Format</source>
         <translation>Bewaar.Vluchtplan en Route als GPX Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1936"/>
+        <location filename="src/gui/mainwindow.cpp" line="1938"/>
         <source>Save Flight Plan as GPX Format</source>
         <translation>Bewaar Vluchtplan als GPX Formaat</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1940"/>
+        <location filename="src/gui/mainwindow.cpp" line="1942"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>GPX Bestanden %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1949"/>
+        <location filename="src/gui/mainwindow.cpp" line="1951"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Vluchtplan bewaard als GPX.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1951"/>
+        <location filename="src/gui/mainwindow.cpp" line="1953"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Vluchtplan en route bewaard als GPX.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1964"/>
+        <location filename="src/gui/mainwindow.cpp" line="1966"/>
         <source>Google Earth KML files removed from map.</source>
         <translation>Google Earth KML bestanden verwijderd uit de kaart.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1971"/>
+        <location filename="src/gui/mainwindow.cpp" line="1973"/>
         <source>Google Earth KML</source>
         <translation>Google Earth KML</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1972"/>
+        <location filename="src/gui/mainwindow.cpp" line="1974"/>
         <source>Google Earth KML %1;;All Files (*)</source>
         <translation>Google Earth KML %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1981"/>
-        <location filename="src/gui/mainwindow.cpp" line="1995"/>
+        <location filename="src/gui/mainwindow.cpp" line="1983"/>
+        <location filename="src/gui/mainwindow.cpp" line="1997"/>
         <source>Google Earth KML file opened.</source>
         <translation>Google Earth KML bestand geopend.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1984"/>
-        <location filename="src/gui/mainwindow.cpp" line="2000"/>
+        <location filename="src/gui/mainwindow.cpp" line="1986"/>
+        <location filename="src/gui/mainwindow.cpp" line="2002"/>
         <source>Opening Google Earth KML file failed.</source>
         <translation>Fout bij het openen van Google Earth KML bestand.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2007"/>
+        <location filename="src/gui/mainwindow.cpp" line="2009"/>
         <source>Save Map as Image</source>
         <translation>Bewaar Kaart als Afbeelding</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2007"/>
+        <location filename="src/gui/mainwindow.cpp" line="2009"/>
         <source>Image Files %1;;All Files (*)</source>
         <translation>Bestanden Afbeeldingen %1;;Alle Bestanden (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2009"/>
+        <location filename="src/gui/mainwindow.cpp" line="2011"/>
         <source>Little Navmap Screenshot.jpg</source>
         <translation>Little Navmap Momentopname jpg</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2021"/>
+        <location filename="src/gui/mainwindow.cpp" line="2023"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
         <translation>Fout bij het opslaan van afbeelding.
 Alleen JPG, PNG en BMP zijn toegestaan.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2039"/>
+        <location filename="src/gui/mainwindow.cpp" line="2041"/>
         <source>%1 of %2 %3 selected, %4 visible.</source>
         <translation>%1 of %2 %3 geselecteerd, %4 zichtbaar.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2139"/>
-        <location filename="src/gui/mainwindow.cpp" line="2151"/>
-        <location filename="src/gui/mainwindow.cpp" line="2162"/>
+        <location filename="src/gui/mainwindow.cpp" line="2141"/>
+        <location filename="src/gui/mainwindow.cpp" line="2153"/>
+        <location filename="src/gui/mainwindow.cpp" line="2164"/>
         <source>Map settings changed.</source>
         <translation>Instellingen kaart gewijzigd.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2198"/>
+        <location filename="src/gui/mainwindow.cpp" line="2200"/>
         <source>All message dialogs reset.</source>
         <translation>Alle berichtdialogen teruggezet.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2226"/>
+        <location filename="src/gui/mainwindow.cpp" line="2228"/>
         <source>Options changed.</source>
         <translation>Opties gewijzigd.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2263"/>
+        <location filename="src/gui/mainwindow.cpp" line="2265"/>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Kan geen&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition of&lt;/li&gt;&lt;li&gt;Prepar3D installatie&lt;/li&gt;&lt;/ul&gt;op deze computer vinden. Bijkomend, geen scenery library databases werden gevonden.&lt;br/&gt;&lt;br/&gt;Je kan een Navmap scenery library database bestand laden van een andere computer.&lt;br/&gt;Druk op de hulp knop voor meer informatie over dit.&lt;br/&gt;&lt;br/&gt;Als je X-Plane 11 geinstalleerd hebt kan can je naar de scenery library laden dialoog gaan door te klikken op de X-Plane knop onderaan.&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2275"/>
+        <location filename="src/gui/mainwindow.cpp" line="2277"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2313"/>
+        <location filename="src/gui/mainwindow.cpp" line="2315"/>
         <source>Ready.</source>
         <translation>Klaar.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2641"/>
+        <location filename="src/gui/mainwindow.cpp" line="2643"/>
         <source>Really Quit?</source>
         <translation>Werkelijk Afsluiten?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2642"/>
+        <location filename="src/gui/mainwindow.cpp" line="2644"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Toon deze &amp;dialoog niet meer.</translation>
     </message>
@@ -9603,131 +9603,136 @@ Dit proces zal in de achtergrond uitgevoerd worden en kan een tijdje duren.</tra
         <translation>Start- of Landingsbaan %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="447"/>
+        <location filename="src/search/proceduresearch.cpp" line="402"/>
+        <source>All</source>
+        <translation type="unfinished">Alle</translation>
+    </message>
+    <message>
+        <location filename="src/search/proceduresearch.cpp" line="491"/>
         <source>No airport selected.</source>
         <translation>Geen luchthaven geselecteerd.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="451"/>
+        <location filename="src/search/proceduresearch.cpp" line="495"/>
         <source>No procedure found.</source>
         <translation>Geen procedure gevonden.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="453"/>
+        <location filename="src/search/proceduresearch.cpp" line="497"/>
         <source>%1 has no procedure.</source>
         <translation>%1 heeft geen procedure.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="526"/>
+        <location filename="src/search/proceduresearch.cpp" line="570"/>
         <source>Description</source>
         <translation>Beschrijving</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="527"/>
+        <location filename="src/search/proceduresearch.cpp" line="571"/>
         <source>Ident</source>
         <translation>Ident</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="528"/>
+        <location filename="src/search/proceduresearch.cpp" line="572"/>
         <source>Restriction
 %1/%2</source>
         <translation>Beperking
 %1/%2</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="529"/>
+        <location filename="src/search/proceduresearch.cpp" line="573"/>
         <source>Course
 °M</source>
         <translation>Koers
 °M</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="530"/>
+        <location filename="src/search/proceduresearch.cpp" line="574"/>
         <source>Dist./Time
 %1/min</source>
         <translation>Afstand/Tijd
 %1/min</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="531"/>
+        <location filename="src/search/proceduresearch.cpp" line="575"/>
         <source>Remarks</source>
         <translation>Opmerkingen</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="780"/>
+        <location filename="src/search/proceduresearch.cpp" line="824"/>
         <source>Position</source>
         <translation>Positie</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="790"/>
+        <location filename="src/search/proceduresearch.cpp" line="834"/>
         <source>Insert %1 into Flight Plan</source>
         <translation>Voeg %1 toe in Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="794"/>
+        <location filename="src/search/proceduresearch.cpp" line="838"/>
         <source>Use %1 and %2 as Destination</source>
         <translation>Gebruik %1 en %2 als Bestemming</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="798"/>
+        <location filename="src/search/proceduresearch.cpp" line="842"/>
         <source>Use %1 and %2 as Departure</source>
         <translation>Gebruik %1 en %2 als Vertrek</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="807"/>
-        <location filename="src/search/proceduresearch.cpp" line="808"/>
+        <location filename="src/search/proceduresearch.cpp" line="851"/>
+        <location filename="src/search/proceduresearch.cpp" line="852"/>
         <source>Procedure</source>
         <translation>Procedure</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="840"/>
+        <location filename="src/search/proceduresearch.cpp" line="884"/>
         <source>Tree view reset to defaults.</source>
         <translation>Boomstructuur hersteld naar standaardwaarden.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="856"/>
+        <location filename="src/search/proceduresearch.cpp" line="900"/>
         <source>Procedure has errors and will not display correctly.
 Really use it?</source>
         <translation>Procedure met fouten. Zal niet correct weergegeven worden.
 Werkelijk gebruiken?</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="858"/>
+        <location filename="src/search/proceduresearch.cpp" line="902"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>&amp;Toon dit dialoogvenster niet meer.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="936"/>
+        <location filename="src/search/proceduresearch.cpp" line="980"/>
         <source>SID</source>
         <translation>SID</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="938"/>
+        <location filename="src/search/proceduresearch.cpp" line="982"/>
         <source>STAR</source>
         <translation>STAR</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="941"/>
+        <location filename="src/search/proceduresearch.cpp" line="985"/>
         <source>Approach </source>
         <translation>Approach </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="947"/>
+        <location filename="src/search/proceduresearch.cpp" line="991"/>
         <source> (GPS Overlay)</source>
         <translation> (GPS Overlap)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="981"/>
+        <location filename="src/search/proceduresearch.cpp" line="1026"/>
         <source>Transition</source>
         <translation>Transitie</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="986"/>
+        <location filename="src/search/proceduresearch.cpp" line="1031"/>
         <source> (Full)</source>
         <translation> (Volledig)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="988"/>
+        <location filename="src/search/proceduresearch.cpp" line="1033"/>
         <source> (DME)</source>
         <translation> (DME)</translation>
     </message>
@@ -12563,52 +12568,52 @@ ETD en ETA worden niet meegeteld. ALTERNATES werken niet in combinatie met een S
         <translation>Routebeschrijving van vluchtplan niet gelezen.</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="47"/>
+        <location filename="src/route/routestringdialog.cpp" line="51"/>
         <source>Create Flight &amp;Plan</source>
         <translation>Creëer Vlucht&amp;Plan</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="54"/>
+        <location filename="src/route/routestringdialog.cpp" line="58"/>
         <source>Add departure and destination airport</source>
         <translation>Voeg vertrek- en bestemmingsluchthaven toe</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="59"/>
+        <location filename="src/route/routestringdialog.cpp" line="63"/>
         <source>Add DCT (direct) instructions</source>
         <translation>Voeg DCT (direct) instructies toe</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="64"/>
+        <location filename="src/route/routestringdialog.cpp" line="68"/>
         <source>Add cruise speed and altitude instruction</source>
         <translation>Voeg cruise snelheid en hoogte-instructies toe</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="71"/>
+        <location filename="src/route/routestringdialog.cpp" line="75"/>
         <source>Add SID and STAR</source>
         <translation>Voeg SID en STAR toe</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="77"/>
+        <location filename="src/route/routestringdialog.cpp" line="81"/>
         <source>Add generic SID and STAR</source>
         <translation>Voeg authentieke SID en STAR toe</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="82"/>
+        <location filename="src/route/routestringdialog.cpp" line="86"/>
         <source>Add Waypoints instead of Airways</source>
         <translation>Voeg Waypoints toe in plaats van Airways</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="182"/>
+        <location filename="src/route/routestringdialog.cpp" line="186"/>
         <source>Found %1 waypoints. Flight plan from &lt;b&gt;%3 (%4)&lt;/b&gt; to &lt;b&gt;%5 (%6)&lt;/b&gt;.&lt;br/&gt;Distance is %2.&lt;br/&gt;</source>
         <translation>%1 waypoints gevonden. Vluchtplan van &lt;b&gt;%3 (%4)&lt;/b&gt; to &lt;b&gt;%5 (%6)&lt;/b&gt;.&lt;br/&gt;Afstand is %2.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="192"/>
+        <location filename="src/route/routestringdialog.cpp" line="196"/>
         <source>Found departure procedure &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
         <translation>Vertrek procedure gevonden &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.cpp" line="196"/>
+        <location filename="src/route/routestringdialog.cpp" line="200"/>
         <source>Found arrival procedure &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
         <translation>Aankomst procedure gevonden &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
