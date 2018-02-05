@@ -280,7 +280,7 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="156"/>
         <source>X-Plane</source>
-        <translation type="unfinished">X-Plane</translation>
+        <translation>X-Plane</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="158"/>
@@ -300,117 +300,119 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="179"/>
         <source>Connected (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Connesso (%1)</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="180"/>
         <source>Connected to local flight simulator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>Connesso al simulatore di volo locale (%1).</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="194"/>
         <location filename="src/connect/connectclient.cpp" line="356"/>
         <location filename="src/connect/connectclient.cpp" line="484"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>Disconnesso</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="194"/>
         <source>Disconnected from local flight simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Disconnesso dal simulatore di volo locale.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="242"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Attenzione</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="356"/>
         <source>Autoconnect switched off.</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoconnessione disattiva.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="391"/>
         <source>Connecting (%1)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione (%1)...</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="392"/>
         <source>Trying to connect to local flight simulator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>Provo a collegarmi con il simulatore di volo locale (%1).</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="410"/>
         <location filename="src/connect/connectclient.cpp" line="491"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>Connessione...</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="411"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Provo a collegarmi con il simulatore di volo remoto su &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="441"/>
         <source>Remote end closed connection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lato Remoto ha chiuso la connessione.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="442"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non &amp;mostrare di nuovo questo finestra dialogo.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="446"/>
         <source>Error in server connection: %1 (%2).%3</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore connessione server: %1 (%2).%3</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="449"/>
         <source>
 Will retry to connect.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Riproverò a connettere.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="485"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Disconnesso dal simulatore di volo remoto su &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="492"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore durante la connessione a &quot;%1&quot;: %2 (%3).
+Riproverò.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="497"/>
         <source>Connect Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore Connessione</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="498"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nella connessione al server &quot;%1&quot;: %2 (%3)</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="541"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore scrivendo la risposta a Little Navconnect: %1.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="559"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Connesso</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="560"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connesso al simulatore di volo remoto a &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="590"/>
         <source>Error reading data from Little Navconnect: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore leggendo dati da Little Navconnect: %1.</translation>
     </message>
 </context>
 <context>
@@ -418,7 +420,7 @@ Will retry.</source>
     <message>
         <location filename="src/connect/connectdialog.ui" line="14"/>
         <source>Little Navmap - Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - Connetti</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="28"/>
@@ -426,35 +428,36 @@ Will retry.</source>
         <location filename="src/connect/connectdialog.ui" line="244"/>
         <location filename="src/connect/connectdialog.ui" line="247"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleziona per disabilitare lo scaricamento e la trasmissione degli aerei AI e multigiocatore</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="34"/>
         <location filename="src/connect/connectdialog.ui" line="250"/>
         <source>Fetch AI or multiplayer &amp;aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Scarica gli &amp;aerei AI o multigiocatore</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="44"/>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi il &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;name host&lt;/span&gt; o &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;indirizzo IP&lt;/span&gt; che Little Navconnect mostrerà all&apos;avvio.
+Usa il tuo nome computer X-Plane se stai usando il plugin Little Xpconnect per X-Plane.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="48"/>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.\nUse your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi il &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;name host&lt;/span&gt; o &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;indirizzo IP&lt;/span&gt; che Little Navconnect mostrerà all&apos;avvio.\nUsa il tuo nome computer X-Plane se stai usando il plugin Little Xpconnect per X-Plane.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="67"/>
         <location filename="src/connect/connectdialog.ui" line="70"/>
         <source>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti direttamente ai simulatori di volo FSX o Prepar3D sulla stessa macchina usando SimConnect.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="73"/>
         <source>Connect directly to a &amp;local FSX or Prepar3D flight simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti direttamente a un simulatore di volo FSX o Prepar3D &amp;locale</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="86"/>
@@ -464,7 +467,7 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
     <message>
         <location filename="src/connect/connectdialog.ui" line="105"/>
         <source>Delete the current hostname or IP address from the list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi il nome host o indirizzo IP corrente dalla lista.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="119"/>
@@ -472,7 +475,9 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
         <source>Allowed range is 50 milliseconds up to 1 second.
 Little Navmap fetches data from the flight simulator using this time interval.
 Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;intervallo permesso è da 50 millisecondi fino a secondo.
+Little Navmap scarica dati dal simulatore di volo usando questo intervallo di tempo.
+Valori inferiori risulteranno in un movimento più fluido dell&apos;aereo ma potrebbe potenzialmente provocare saltelli.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="124"/>
@@ -484,99 +489,103 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <location filename="src/connect/connectdialog.ui" line="143"/>
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi la &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;porta&lt;/span&gt; che Little Navconnect mostrerà all&apos;avvio.
+Usa il tuo nome computer X-Plane se stai usando il plugin Little Xpconnect di X-Plane.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="147"/>
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.\nUse your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi la &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;porta&lt;/span&gt; che Little Navconnect mostrerà all&apos;avvio.\nUsa il tuo nome computer X-Plane se stai usando il plugin Little Xpconnect di X-Plane.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="163"/>
         <location filename="src/connect/connectdialog.ui" line="196"/>
         <source>&amp;Update time interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervallo di &amp;aggiornamento:</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="176"/>
         <source>&amp;Hostname or IP address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome &amp;host o indirizzo IP:</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="209"/>
         <location filename="src/connect/connectdialog.ui" line="212"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer ships</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleziona per disabilitare lo scaricamento e la trasmissione di navi AI o multigiocatore</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="215"/>
         <source>Fetch AI or multiplayer &amp;ships</source>
-        <translation type="unfinished"></translation>
+        <translation>Scarica &amp;navi AI o multigiocatore</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="225"/>
         <location filename="src/connect/connectdialog.ui" line="228"/>
         <source>Connect directly to X-Plane on the same computer using the Little Xpconnect plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti direttamente a X-Plane sulla stessa macchina usando il plugin Little Xpconnect.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="231"/>
         <source>Connect directly to a local &amp;X-Plane simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti direttamente a un simulatore &amp;X-Plane locale</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="291"/>
         <location filename="src/connect/connectdialog.ui" line="294"/>
         <source>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti un FSX, Prepar3D o X-Plane su un computer remoto usando Little Navconnect.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="297"/>
         <source>Connect to a &amp;remote flight simulator via Little Navconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti a un simulatore di volo &amp;remoto usando Little Navconnect</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="316"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti automaticamente un dato indirizzo e porta di un simulatore remoto o ad un simulatore di volo locale.
+Devi cliccare &quot;Connetti&quot; per avviare i tentativi di connessione continui.
+Deselezionando fermerà immediatamente tutti i tentativi di connessione.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="321"/>
         <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nUnchecking this will stop all automatic connection attempts immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti automaticamente un dato indirizzo e porta di un simulatore remoto o ad un simulatore di volo locale.\nDevi cliccare &quot;Connetti&quot; per avviare i tentativi di connessione continui.\nDeselezionando fermerà immediatamente tutti i tentativi di connessione.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="324"/>
         <source>Connect &amp;automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti &amp;automaticamente</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="57"/>
         <source>&amp;Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Connetti</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="59"/>
         <source>Connect to a local or remote simulator.
 Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Connetti a un simulatore locale o remoto.
+Proverà a connettersi se è selezionato &quot;Connetti automaticamente&quot;.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="63"/>
         <source>&amp;Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Disconnetti</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="65"/>
         <source>Disconnect from a local or remote simulator and stop all reconnect attempts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Disconnetti da un simulatore locale o remoto e ferma tutti i tentativi di riconnessione.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="68"/>
         <source>Close the dialog without changing the current connection status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi la finestra dialogo senza cambiare lo stato delle connessioni attive.</translation>
     </message>
 </context>
 <context>
@@ -597,69 +606,69 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
     <message>
         <location filename="src/db/databasedialog.ui" line="14"/>
         <source>Little Navmap - Load Scenery Library</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - Carica Libreria Scenari</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="53"/>
         <location filename="src/db/databasedialog.ui" line="56"/>
         <source>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il nome del file scenery.cfg. Questo &lt;b&gt;non&lt;/b&gt; è quello nella directory base.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="66"/>
         <source>&amp;Flight Simulator Base Path:</source>
-        <translation type="unfinished"></translation>
+        <translation>Percorso Base &amp;Flight Simulator:</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="76"/>
         <source>Scenery &amp;Configuration File:</source>
-        <translation type="unfinished"></translation>
+        <translation>File &amp;Configurazione Scenari:</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="86"/>
         <location filename="src/db/databasedialog.ui" line="89"/>
         <source>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il percorso alla directory base del simulatore di volo.&lt;br/&gt;E&apos; quello che contiene la directory &quot;scenery&quot; e i file fsx.exe o p3d.exe.&lt;br/&gt;Per X-Plane è il percorso che contiene X-Plane.exe.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="99"/>
         <location filename="src/db/databasedialog.ui" line="102"/>
         <source>Select the scenery.cfg file for the given simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona il file scenery.cfg per un dato simulatore.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="105"/>
         <location filename="src/db/databasedialog.ui" line="118"/>
         <source>S&amp;elect ...</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;elezionare ...</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="112"/>
         <location filename="src/db/databasedialog.ui" line="115"/>
         <source>Select the base path for the given simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona il percorso base di un dato simulatore.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="125"/>
         <location filename="src/db/databasedialog.ui" line="128"/>
         <source>Choose the simulator which scenery library you want to load.</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli il simulatore di cui vuoi caricare la libreria scenari.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="135"/>
         <location filename="src/db/databasedialog.ui" line="138"/>
         <source>Reset paths to the default values for the given flight simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta percorso al valore di default per un dato simulatore di volo.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="141"/>
         <source>&amp;Reset Paths</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta Percorsi</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="148"/>
         <source>&amp;Simulator:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Simulatore:</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="165"/>
@@ -667,53 +676,54 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>Quando spuntato leggerà anche gli scenari inattivi, 
+Utile se usi utility che disabilitano o abilitano certi scenari per ogni volo.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="169"/>
         <source>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation type="unfinished"></translation>
+        <translation>Quando spuntato leggerà anche gli scenari inattivi.  Utile se usi utility che disabilitano o abilitano certi scenari per ogni volo.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="172"/>
         <source>Read &amp;inactive Scenery Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Legge Scenari d&amp;isattivi</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="179"/>
         <location filename="src/db/databasedialog.ui" line="182"/>
         <source>Read add-on.xml scenery packages of Prepar3D v3 and v4.</source>
-        <translation type="unfinished"></translation>
+        <translation>Legge pacchetti di scenari add-on.xml da Prepar3D v3 e v4.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="185"/>
         <source>Read Prepar3D add-on.xml packages</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricarica pacchetti di Prepar3D add-on.xml</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="43"/>
         <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Carica</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="63"/>
         <source>&lt;b&gt;No Simulator Found and no database found.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Nessun Simulatore Trovato e nessun databse trovato.&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="124"/>
         <source>Select Flight Simulator Basepath</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona Percorso base del Simulatore di Volo</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="136"/>
         <source>Open Scenery Configuration File</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri File Configurazione Scenari</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="137"/>
         <source>Scenery Configuration Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Files Configurazione Scenari %1;;Tutti i Files (*)</translation>
     </message>
 </context>
 <context>
@@ -9436,112 +9446,116 @@ This process will run in background and can take a while.</source>
         <location filename="src/search/proceduresearch.cpp" line="144"/>
         <location filename="src/search/proceduresearch.cpp" line="267"/>
         <source>No Airport selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun Aeroporto selezionato.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="315"/>
         <source>All Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>Tutte le Piste</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="346"/>
         <source>No Runway</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna Pista</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="348"/>
         <source>Runway %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista %1</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="447"/>
         <source>No airport selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun aeroporto selezionato.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="451"/>
         <source>No procedure found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna procedura trovata.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="453"/>
         <source>%1 has no procedure.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 non ha procedure.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="526"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Descrizione</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="527"/>
         <source>Ident</source>
-        <translation type="unfinished"></translation>
+        <translation>Ident</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="528"/>
         <source>Restriction
 %1/%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Restrizione
+%1/%2</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="529"/>
         <source>Course
 °M</source>
-        <translation type="unfinished"></translation>
+        <translation>Prua
+°M</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="530"/>
         <source>Dist./Time
 %1/min</source>
-        <translation type="unfinished"></translation>
+        <translation>Dist./Tempo
+%1/min</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="531"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>Note</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="780"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="790"/>
         <source>Insert %1 into Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci %1 nel Piano di Volo</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="794"/>
         <source>Use %1 and %2 as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa %1 e %2 come Destinazione</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="798"/>
         <source>Use %1 and %2 as Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa %1 e %2 come Partenza</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="807"/>
         <location filename="src/search/proceduresearch.cpp" line="808"/>
         <source>Procedure</source>
-        <translation type="unfinished"></translation>
+        <translation>Procedura</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="840"/>
         <source>Tree view reset to defaults.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta al default la Vista ad albero.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="856"/>
         <source>Procedure has errors and will not display correctly.
 Really use it?</source>
-        <translation type="unfinished"></translation>
+        <translation>La procedura contiene errori e non si visualizzerà correttamente.
+Usare veramente?</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="858"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non &amp;mostrare nuovamente questa finestra dialogo.</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="936"/>
@@ -12281,22 +12295,22 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routestring.cpp" line="975"/>
         <source>Replacing STAR instruction with DCT (direct).</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituzione istruzioni STAR con DCT (diretto).</translation>
     </message>
     <message>
         <location filename="src/route/routestring.cpp" line="982"/>
         <source>Ignoring invalid speed and altitude instruction %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoro velocità non valida e istruzioni di altitudine %1.</translation>
     </message>
     <message>
         <location filename="src/route/routestring.cpp" line="990"/>
         <source>Ignoring speed and altitude at waypoint %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoro velocità e altitudine al waypoint %1.</translation>
     </message>
     <message>
         <location filename="src/route/routestring.cpp" line="997"/>
         <source>Ignoring time for airport %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignoro orario per l&apos;aeroporto %1.</translation>
     </message>
 </context>
 <context>
@@ -12304,7 +12318,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routestringdialog.ui" line="20"/>
         <source>Little Navmap - New Flight Plan from Route Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - Nuovo Piano di Volo da Descrizione Percorso</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="45"/>
@@ -12313,59 +12327,63 @@ FROM and TO airports are required, everything else is optional.
 ENROUTE is a space separated list of navaids, airway/navaid combinations or user defined waypoints.
 ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR procedure.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Il Formato è: FROM[ETD] [SPEEDALT] [SID][.TRANS] [ENROUTE] [STAR][.TRANS] TO[ETA] [ALTERNATES]
+Gli aeroporti FROM e TO sono obbligatori, il resto è opzionale.
+ENROUTE è una lista separata da spazi di radioaiuti, aerovie/radioaiuti combinati o waypoint definiti dall&apos;utente.
+ETD ed ETA sono ignorati. ALTERNATES non funziona in combinazione con una procedura STAR.
+</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="55"/>
         <source>Enter flight plan route description.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci una descrizione del piano di volo.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="77"/>
         <source>Copy the flight plan route description to the clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiare la descrizione del piano di volo negli appunti.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="80"/>
         <source>&amp;To Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Al Blocco appunti</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="93"/>
         <source>Paste flight plan route description from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Incolla descrizione del piano di volo dagli appunti.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="96"/>
         <source>&amp;From Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dagli appunti</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="103"/>
         <location filename="src/route/routestringdialog.ui" line="106"/>
         <source>Update the string from the current flight plan after option changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna la stringa dal piano di volo corrente dopo i cambi opzioni.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="109"/>
         <source>Update from Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna da &amp;Piano di Volo</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="122"/>
         <source>Read the flight plan route description.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leggi la descrizione del piano di volo.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="125"/>
         <source>&amp;Read Route Description</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Leggi Descrizione Percorso</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="132"/>
         <location filename="src/route/routestringdialog.ui" line="135"/>
         <source>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea un piano di volo VFR (Visual Flight Rules) o IFR (Instrument Flight Rules)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="139"/>
@@ -12381,67 +12399,67 @@ ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR proce
         <location filename="src/route/routestringdialog.ui" line="152"/>
         <location filename="src/route/routestringdialog.ui" line="155"/>
         <source>Options for generated route string</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni della stringa percorso generata</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="181"/>
         <source>Display messages, warnings or errors when reading the route description.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualizza messaggi, warn o errori quando legge la descrizione del percorso.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="187"/>
         <source>Flight plan route description not read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Descrizione piano di volo non letta.</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="47"/>
         <source>Create Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea &amp;Piano di Volo</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="54"/>
         <source>Add departure and destination airport</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi aeroporto di partenza e destinazione</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="59"/>
         <source>Add DCT (direct) instructions</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi istruzioni DCT (diretto)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="64"/>
         <source>Add cruise speed and altitude instruction</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi velocità di crociera e istruzioni di altitudine</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="71"/>
         <source>Add SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi SID e STAR</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="77"/>
         <source>Add generic SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi SID e STAR generiche</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="82"/>
         <source>Add Waypoints instead of Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Waypoints al posto delle Aerovie</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="182"/>
         <source>Found %1 waypoints. Flight plan from &lt;b&gt;%3 (%4)&lt;/b&gt; to &lt;b&gt;%5 (%6)&lt;/b&gt;.&lt;br/&gt;Distance is %2.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Trovati %1 waypoints. Piano di volo da &lt;b&gt;%3 (%4)&lt;/b&gt; a &lt;b&gt;%5 (%6)&lt;/b&gt;.&lt;br/&gt;Distanza %2.&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="192"/>
         <source>Found departure procedure &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Trovata procedura di partenza &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="196"/>
         <source>Found arrival procedure &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Trovata procedura di arrivo &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
 </context>
 <context>
