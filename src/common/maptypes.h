@@ -637,6 +637,11 @@ struct MapSearchResult
 
   bool isEmpty(const map::MapObjectTypes& types) const;
 
+  bool hasAirports() const
+  {
+    return !airports.isEmpty();
+  }
+
   bool hasVor() const
   {
     return !vors.isEmpty();

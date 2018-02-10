@@ -32,6 +32,7 @@
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using map::MapSearchResult;
+using atools::geo::Pos;
 namespace coords = atools::fs::util;
 
 const static int MAX_WAYPOINT_DISTANCE_NM = 1000;
@@ -66,7 +67,7 @@ QString RouteString::createStringForRoute(const Route& route, float speed, rs::R
   if(route.isEmpty())
     return QString();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_STRING
 
   return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper() + "\n\n" +
          "GTN:\n" + createGfpStringForRouteInternalProc(route, false) + "\n" +
@@ -291,7 +292,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   bool firstDct = true;
 
   QString lastAirway, lastId;
-  atools::geo::Pos lastPos;
+  Pos lastPos;
   map::MapObjectTypes lastType = map::NONE;
   int lastIndex = 0;
   for(int i = 0; i < route.size(); i++)
@@ -460,7 +461,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, atools::roundToInt(flightplan.getDistanceNm() * 1.5f)));
 
   // Collect all navaids, airports and coordinates
-  atools::geo::Pos lastPos(flightplan.getDeparturePosition());
+  Pos lastPos(flightplan.getDeparturePosition());
   QList<ParseEntry> resultList;
   for(const QString& item : cleanItems)
   {
@@ -485,6 +486,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   removeEmptyResults(resultList);
 
   // Now build the flight plan
+  lastPos = flightplan.getDeparturePosition();
   for(int i = 0; i < resultList.size(); i++)
   {
     const QString& item = resultList.at(i).item;
@@ -503,6 +505,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
           FlightplanEntry entry;
 
           // Will fetch objects in order: airport, waypoint, vor, ndb
+          // Only waypoints are relevant since airways are used here
           entryBuilder->entryFromWaypoint(wp, entry, true);
 
           if(entry.getPosition().isValid())
@@ -522,6 +525,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       FlightplanEntry entry;
       if(!result.userPoints.isEmpty())
       {
+        // User entries are always a perfect match
         // Convert a coordinate to a user defined waypoint
         entryBuilder->buildFlightplanEntry(result.userPoints.first().position, result, entry, true);
 
@@ -529,7 +533,8 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
         entry.setWaypointId(item);
       }
       else
-        entryBuilder->buildFlightplanEntry(result, entry, true);
+        // Get nearest navaid, whatever it is
+        buildEntryForResult(entry, result, lastPos);
 
       if(entry.getPosition().isValid())
       {
@@ -550,6 +555,77 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   qDebug() << flightplan;
 #endif
   return true;
+}
+
+void RouteString::buildEntryForResult(FlightplanEntry& entry, const MapSearchResult& result,
+                                      const atools::geo::Pos& nearestPos)
+{
+  MapSearchResult newResult;
+  resultWithClosest(newResult, result, nearestPos, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT);
+  entryBuilder->buildFlightplanEntry(newResult, entry, true);
+}
+
+void RouteString::resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
+                                    const atools::geo::Pos& nearestPos, map::MapObjectTypes types)
+{
+  struct DistData
+  {
+    map::MapObjectTypes type;
+    int index;
+    atools::geo::Pos pos;
+
+    const atools::geo::Pos& getPosition() const
+    {
+      return pos;
+    }
+
+  };
+
+  // Add all elements to the list
+  QList<DistData> sorted;
+
+  if(types & map::WAYPOINT)
+  {
+    for(int i = 0; i < result.waypoints.size(); i++)
+      sorted.append({map::WAYPOINT, i, result.waypoints.at(i).getPosition()});
+  }
+
+  if(types & map::VOR)
+  {
+    for(int i = 0; i < result.vors.size(); i++)
+      sorted.append({map::VOR, i, result.vors.at(i).getPosition()});
+  }
+
+  if(types & map::NDB)
+  {
+    for(int i = 0; i < result.ndbs.size(); i++)
+      sorted.append({map::NDB, i, result.ndbs.at(i).getPosition()});
+  }
+
+  if(types & map::AIRPORT)
+  {
+    for(int i = 0; i < result.airports.size(); i++)
+      sorted.append({map::AIRPORT, i, result.airports.at(i).getPosition()});
+  }
+
+  if(!sorted.isEmpty())
+  {
+    // Sort the list by distance - closest first
+    maptools::sortByDistance(sorted, nearestPos);
+
+    // Get the first and closest element
+    const DistData& nearest = sorted.first();
+
+    // Add the closest to the result
+    if(nearest.type == map::WAYPOINT)
+      resultWithClosest.waypoints.append(result.waypoints.at(nearest.index));
+    else if(nearest.type == map::VOR)
+      resultWithClosest.vors.append(result.vors.at(nearest.index));
+    else if(nearest.type == map::NDB)
+      resultWithClosest.ndbs.append(result.ndbs.at(nearest.index));
+    else if(nearest.type == map::AIRPORT)
+      resultWithClosest.airports.append(result.airports.at(nearest.index));
+  }
 }
 
 QStringList RouteString::cleanRouteString(const QString& string)
@@ -926,7 +1002,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
   if(item.length() > 5)
   {
     // User defined waypoint
-    atools::geo::Pos pos = coords::fromAnyWaypointFormat(item);
+    Pos pos = coords::fromAnyWaypointFormat(item);
     if(pos.isValid())
     {
       map::MapUserpoint user;
@@ -941,7 +1017,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
     if(item.length() == 5 && result.waypoints.isEmpty())
     {
       // Try NAT waypoint (a few of these are also in the database)
-      atools::geo::Pos pos = coords::fromAnyWaypointFormat(item);
+      Pos pos = coords::fromAnyWaypointFormat(item);
       if(pos.isValid())
       {
         map::MapUserpoint user;

@@ -138,6 +138,13 @@ private:
   /* Garming GFP format with procedures */
   QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
 
+  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
+                           const atools::geo::Pos& nearestPos);
+
+  /* Get a result set with the single closest element */
+  void resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
+                         const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
+
   void findWaypoints(map::MapSearchResult& result, const QString& item);
   void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
@@ -153,6 +160,7 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
   bool plaintextMessages = false;
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H

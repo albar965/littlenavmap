@@ -65,9 +65,9 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
 
   auto it = std::remove_if(list.begin(), list.end(),
                            [ = ](const TYPE &type)->bool
-                           {
-                             return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
-                           });
+    {
+      return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
+    });
 
   if(it != list.end())
     list.erase(it, list.end());
@@ -83,9 +83,9 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxD
 
   auto it = std::remove_if(list.begin(), list.end(),
                            [ = ](const TYPE &type)->bool
-                           {
-                             return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
-                           });
+    {
+      return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
+    });
 
   if(it != list.end())
     list.erase(it, list.end());
@@ -101,11 +101,11 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
 
   auto it = std::remove_if(list.begin(), list.end(),
                            [ = ](const TYPE &type)->bool
-                           {
-                             int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
-                             int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
-                             return atools::absInt(crs - crs2) > 120;
-                           });
+    {
+      int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
+      int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
+      return atools::absInt(crs - crs2) > 120;
+    });
 
   if(it != list.end())
     list.erase(it, list.end());
@@ -121,9 +121,9 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
 
   std::sort(list.begin(), list.end(),
             [ = ](const TYPE &t1, const TYPE &t2)->bool
-            {
-              return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
-            });
+    {
+      return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
+    });
 }
 
 /* Functions will stop adding of number of elements exceeds this value */
@@ -141,13 +141,13 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, 
   {
     auto it = std::lower_bound(list.begin(), list.end(), type,
                                [ = ](const TYPE &a1, const TYPE &a2)->bool
-                               {
-                                 int x1, y1, x2, y2;
-                                 conv.wToS(a1.getPosition(), x1, y1);
-                                 conv.wToS(a2.getPosition(), x2, y2);
-                                 return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-                                 atools::geo::manhattanDistance(x2, y2, xs, ys);
-                               });
+      {
+        int x1, y1, x2, y2;
+        conv.wToS(a1.getPosition(), x1, y1);
+        conv.wToS(a2.getPosition(), x2, y2);
+        return atools::geo::manhattanDistance(x1, y1, xs, ys) <
+        atools::geo::manhattanDistance(x2, y2, xs, ys);
+      });
     list.insert(it, type);
 
     if(ids != nullptr)
@@ -162,13 +162,13 @@ void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<TYPE>& l
 {
   auto it = std::lower_bound(list.begin(), list.end(), type,
                              [ = ](const TYPE &a1, const TYPE &a2)->bool
-                             {
-                               int x1, y1, x2, y2;
-                               conv.wToS(a1.towerCoords, x1, y1);
-                               conv.wToS(a2.towerCoords, x2, y2);
-                               return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-                               atools::geo::manhattanDistance(x2, y2, xs, ys);
-                             });
+    {
+      int x1, y1, x2, y2;
+      conv.wToS(a1.towerCoords, x1, y1);
+      conv.wToS(a2.towerCoords, x2, y2);
+      return atools::geo::manhattanDistance(x1, y1, xs, ys) <
+      atools::geo::manhattanDistance(x2, y2, xs, ys);
+    });
   list.insert(it, type);
 }
 
