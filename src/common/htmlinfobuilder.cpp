@@ -1841,6 +1841,9 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
     html.row2(tr("Max Gross Weight:"), Unit::weightLbs(userAircraft.getAirplaneMaxGrossWeightLbs()));
     html.row2(tr("Gross Weight:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs()));
     html.row2(tr("Empty Weight:"), Unit::weightLbs(userAircraft.getAirplaneEmptyWeightLbs()));
+    html.row2(tr("Total Payload:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs() -
+                                                    userAircraft.getAirplaneEmptyWeightLbs() -
+                                                    userAircraft.getFuelTotalWeightLbs()));
 
     html.row2(tr("Fuel:"), Unit::weightLbs(userAircraft.getFuelTotalWeightLbs()) + ", " +
               Unit::volGallon(userAircraft.getFuelTotalQuantityGallons()));
@@ -1877,6 +1880,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
+  float neededFuelWeight = INVALID_WEIGHT_VALUE, neededFuelVol = INVALID_VOLUME_VALUE;
+
   float toTod = map::INVALID_DISTANCE_VALUE;
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
@@ -1888,21 +1893,28 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(activeLegCorrected != map::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
-      head(html, tr("Flight Plan Progress"));
+      if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f &&
+         userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
+      {
+        neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
+        neededFuelVol = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowGPH();
+      }
+
       html.table();
+      timeAndDate(userAircaft, html);
+      html.tableEnd();
 
       // Route distances ===============================================================
       if(distToDestNm < map::INVALID_DISTANCE_VALUE)
       {
-        // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
-        QString destinationText(tr("To Destination:"));
+        head(html, tr("Destination"));
+        html.table();
+        QString destinationText(tr("Distance to:"));
 
         if(route.isActiveMissed())
           destinationText = tr("To End of Missed Approach:");
 
         html.row2(destinationText, Unit::distNm(distToDestNm));
-
-        timeAndDate(userAircaft, html);
 
         if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
         {
@@ -1911,29 +1923,63 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           html.row2(tr("Arrival Time:"), locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
                     arrival.timeZoneAbbreviation());
           html.row2(tr("En route Time:"), formatter::formatMinutesHoursLong(timeToDestination));
+
+          if(userAircaft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+          {
+            if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f &&
+               userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED &&
+               neededFuelVol < INVALID_VOLUME_VALUE && neededFuelWeight < INVALID_WEIGHT_VALUE)
+            {
+              html.row2(tr("Gross Weight at:"),
+                        Unit::weightLbs(userAircaft->getAirplaneTotalWeightLbs() - neededFuelWeight));
+              html.row2(tr("Fuel at:"),
+                        Unit::weightLbs(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight) + tr(", ") +
+                        Unit::volGallon(userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
+            }
+          }
+
         }
+        html.tableEnd();
       }
 
       if(route.size() > 1)
       {
+        head(html, tr("Top of Descent"));
+        html.table();
         // if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
         // Top of descent  ===============================================================
-        html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
+        html.row2(tr("ToD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
         if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
           toTod = route.getTopOfDescentFromStart() - distFromStartNm;
 
         if(toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE)
         {
-          QString timeStr;
+          QStringList todTexts;
+          todTexts.append(Unit::distNm(toTod));
+
+          float fuelAtTod = INVALID_WEIGHT_VALUE, fuelVolAtTod = INVALID_VOLUME_VALUE;
           if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED &&
              aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-            timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
+          {
+            float timeToTod = toTod / aircraft.getGroundSpeedKts();
+            todTexts.append(formatter::formatMinutesHoursLong(timeToTod));
 
-          html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+            if(userAircaft != nullptr)
+            {
+              fuelAtTod = userAircaft->getFuelTotalWeightLbs() - userAircaft->getFuelFlowPPH() * timeToTod;
+              fuelVolAtTod = userAircaft->getFuelTotalQuantityGallons() - userAircaft->getFuelFlowGPH() * timeToTod;
+            }
+          }
+
+          html.row2(tr("Distance to:"), todTexts.join(tr(", ")));
+
+          if(fuelAtTod < INVALID_WEIGHT_VALUE && fuelVolAtTod < INVALID_VOLUME_VALUE)
+            html.row2(tr("Fuel at:"),
+                      Unit::weightLbs(fuelAtTod) + tr(", ") + Unit::volGallon(fuelVolAtTod));
         }
+        html.tableEnd();
       }
-      html.tableEnd();
 
       // Next leg ====================================================
       QString apprText;
@@ -2146,16 +2192,6 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         float distanceRemaining = hoursRemaining * aircraft.getGroundSpeedKts();
         html.row2(tr("Endurance:"), formatter::formatMinutesHoursLong(hoursRemaining) + tr(", ") +
                   Unit::distNm(distanceRemaining));
-      }
-
-      if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f &&
-         userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
-      {
-        float neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
-        float neededFuelVol = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowGPH();
-        html.row2(tr("Fuel at Destination:"),
-                  Unit::weightLbs(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight) + ", " +
-                  Unit::volGallon(userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
       }
     }
 
