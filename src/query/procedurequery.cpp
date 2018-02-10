@@ -476,11 +476,11 @@ void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObje
                                       const Pos& sortByDistancePos)
 {
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
-                                atools::geo::nmToMeter(200.f), true /* airport from nav database */);
+                                atools::geo::nmToMeter(1000.f), true /* airport from nav database */);
   if(result.isEmpty(type))
     // Try again in 200 nm radius by excluding the region - result sorted by distance
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
-                                  atools::geo::nmToMeter(200.f), true /* airport from nav database */);
+                                  atools::geo::nmToMeter(1000.f), true /* airport from nav database */);
 }
 
 void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
