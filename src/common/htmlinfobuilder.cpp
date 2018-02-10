@@ -1165,16 +1165,24 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     QString windDir, windVar;
 
     if(parsed.getWindDir() >= 0.f)
+      // Wind direction given
       windDir = locale.toString(normalizeCourse(parsed.getWindDir() - airport.magvar), 'f', 0) + tr("°M") + tr(", ");
-    else if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
+
+    if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
+      // Wind direction range given (additionally to dir in some cases)
       windVar = tr(", variable ") +
                 locale.toString(normalizeCourse(parsed.getWindRangeFrom() - airport.magvar), 'f', 0) +
                 tr(" to ") +
                 locale.toString(normalizeCourse(parsed.getWindRangeTo() - airport.magvar), 'f', 0) + tr("°M");
-    else
+    else if(parsed.getWindDir() == -1)
       windDir = tr("Variable, ");
 
-    html.row2(tr("Wind:"), windDir + Unit::speedMeterPerSec(parsed.getWindSpeedMeterPerSec()) + windVar);
+    float windMeterPerSec = parsed.getWindSpeedMeterPerSec();
+    QString windSpeedStr;
+    if(windMeterPerSec < INVALID_METAR_VALUE)
+      windSpeedStr = Unit::speedMeterPerSec(windMeterPerSec);
+
+    html.row2(tr("Wind:"), windDir + windSpeedStr + windVar);
   }
 
   if(parsed.getGustSpeedMeterPerSec() < INVALID_METAR_VALUE)
@@ -1241,9 +1249,15 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(hasClouds)
   {
     for(const atools::fs::weather::MetarCloud& cloud : parsed.getClouds())
-      html.row2(cloud.getCoverageString(),
-                cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR ?
-                Unit::altMeter(cloud.getAltitudeMeter()) : QString());
+    {
+      float altMeter = cloud.getAltitudeMeter();
+      QString altStr;
+
+      if(altMeter < INVALID_METAR_VALUE && cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR)
+        altStr = Unit::altMeter(altMeter);
+
+      html.row2(cloud.getCoverageString(), altStr);
+    }
   }
   html.tableEnd();
 
@@ -1265,15 +1279,15 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   if(!parsed.isValid())
   {
-    html.p(tr("Report is not valid. Raw and clean METAR were:"),
-           atools::util::html::BOLD, Qt::red);
+    // Print error report if invalid
+    html.p(tr("Report is not valid. Raw and clean METAR were:"), atools::util::html::BOLD, Qt::red);
     html.pre(metar.getMetar());
-    html.pre(metar.getCleanMetar());
+    if(metar.getMetar() != metar.getCleanMetar())
+      html.pre(metar.getCleanMetar());
   }
 
   if(!parsed.getUnusedData().isEmpty())
-    html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().
-    text(parsed.getUnusedData()).pEnd();
+    html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().text(parsed.getUnusedData()).pEnd();
 
 #ifdef DEBUG_INFORMATION
   html.p().small(tr("Source: %1").arg(metar.getMetar())).pEnd();
