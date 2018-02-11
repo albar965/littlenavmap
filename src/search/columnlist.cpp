@@ -184,7 +184,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     // Values should match the GUI values
     minDistanceWidget->setValue(0);
     minDistanceWidget->setMinimum(0);
-    minDistanceWidget->setMaximum(3000);
+    minDistanceWidget->setMaximum(8000);
   }
 
   if(maxDistanceWidget != nullptr)
@@ -192,7 +192,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     // Values should match the GUI values
     maxDistanceWidget->setValue(100);
     maxDistanceWidget->setMinimum(100);
-    maxDistanceWidget->setMaximum(3000);
+    maxDistanceWidget->setMaximum(8000);
   }
   if(distanceDirectionWidget != nullptr)
     distanceDirectionWidget->setCurrentIndex(0);

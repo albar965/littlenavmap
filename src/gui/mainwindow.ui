@@ -1237,7 +1237,7 @@
                 <string> %dist%</string>
                </property>
                <property name="maximum">
-                <number>3000</number>
+                <number>8000</number>
                </property>
                <property name="singleStep">
                 <number>100</number>
@@ -1284,7 +1284,7 @@
                 <number>100</number>
                </property>
                <property name="maximum">
-                <number>3000</number>
+                <number>8000</number>
                </property>
                <property name="singleStep">
                 <number>100</number>
