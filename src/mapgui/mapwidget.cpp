@@ -1213,7 +1213,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     menu.addSeparator();
     {
       QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                                    menuPrefix + "Userpoint" + menuSuffix, this);
+                                    menuPrefix + tr("Userpoint") + menuSuffix, this);
       action->setData(QVariantList({-1, map::USER}));
       menu.addAction(action);
     }

@@ -1853,7 +1853,7 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
 
 void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, HtmlBuilder& html) const
 {
-  html.row2(tr("Time and Date:"),
+  html.row2(tr("Date and Time:"),
             locale.toString(userAircaft->getZuluTime(), QLocale::ShortFormat) +
             tr(" ") +
             userAircaft->getZuluTime().timeZoneAbbreviation());
