@@ -367,7 +367,6 @@ private:
   map::PosCourse activePos;
   int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
       arrivalLegsOffset = map::INVALID_INDEX_VALUE;
-
 };
 
 QDebug operator<<(QDebug out, const Route& route);

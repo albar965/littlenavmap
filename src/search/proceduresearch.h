@@ -45,6 +45,8 @@ class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QMainWindow;
+class QMenu;
+class QAction;
 class ProcedureQuery;
 class AirportQuery;
 class HtmlInfoBuilder;
@@ -89,13 +91,19 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Add the complete procedure to the route */
-  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
 
   /* Show information info window on navaid on double click */
   void showInformation(map::MapSearchResult result);
 
 private:
   friend class TreeEventFilter;
+
+  struct ProcData
+  {
+    proc::MapProcedureRef procedureRef;
+    QStringList sidStarRunways; // Only filled for all or parallel runway assignments in SID and STAR
+  };
 
   enum FilterIndex
   {
@@ -160,12 +168,15 @@ private:
 
   static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
+
+  QVector<QAction *> buildRunwaySubmenu(QMenu& menu, const ProcData& procData);
+
   void fetchSingleTransitionId(proc::MapProcedureRef& ref);
   QString approachAndTransitionText(const QTreeWidgetItem *item);
   void clearSelectionTriggered();
 
   // item's types are the indexes into this array with approach, transition and leg ids
-  QVector<proc::MapProcedureRef> itemIndex;
+  QVector<ProcData> itemIndex;
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set

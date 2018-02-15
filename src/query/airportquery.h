@@ -106,6 +106,7 @@ public:
   const QList<map::MapRunway> *getRunways(int airportId);
   QStringList getRunwayNames(int airportId);
   void getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
+  map::MapRunwayEnd getRunwayEndByName(int airportId, const QString& runway);
 
   const QList<map::MapApron> *getAprons(int airportId);
 

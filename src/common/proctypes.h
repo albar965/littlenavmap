@@ -24,6 +24,7 @@
 #include "geo/linestring.h"
 
 #include <QColor>
+#include <QRegularExpression>
 #include <QString>
 
 /*
@@ -353,6 +354,12 @@ struct MapProcedureLeg
 
 QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);
 
+/* True if e.g. "RW10B" for a SID or STAR which means that 10L, 10C and 10R can be used. */
+bool hasSidStarParallelRunways(const QString& approachArincName);
+
+/* True if "ALL" for a SID or STAR. Means SID/STAR can be used for all runways of an airport. */
+bool hasSidStarAllRunways(const QString& approachArincName);
+
 /* All legs for a arrival or departure including STAR, transition and approach in order or
  * legs for SID only.
  * SID contains all in approach and legs transition fields.
@@ -389,6 +396,22 @@ struct MapProcedureLegs
   int size() const
   {
     return transitionLegs.size() + approachLegs.size();
+  }
+
+  /* If it has arinc names like "ALL" or "RW10B" */
+  bool hasSidOrStarMultipleRunways() const
+  {
+    return hasSidOrStarAllRunways() || hasSidOrStarParallelRunways();
+  }
+
+  bool hasSidOrStarParallelRunways() const
+  {
+    return proc::hasSidStarParallelRunways(approachArincName);
+  }
+
+  bool hasSidOrStarAllRunways() const
+  {
+    return proc::hasSidStarAllRunways(approachArincName);
   }
 
   /* first in list is transition and then approach  or STAR only.

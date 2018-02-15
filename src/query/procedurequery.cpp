@@ -541,7 +541,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport&
     qDebug() << "buildApproachEntries" << airport.ident << "approachId" << approachId;
 
     MapProcedureLegs *legs = buildApproachLegs(airport, approachId);
-    postProcessLegs(airport, *legs);
+    postProcessLegs(airport, *legs, true /*addArtificialLegs*/);
 
     for(int i = 0; i < legs->size(); i++)
       approachLegIndex.insert(legs->at(i).legId, std::make_pair(approachId, i));
@@ -602,7 +602,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     }
     transitionQuery->finish();
 
-    postProcessLegs(airport, *legs);
+    postProcessLegs(airport, *legs, true /*addArtificialLegs*/);
 
     for(int i = 0; i < legs->size(); ++i)
       transitionLegIndex.insert(legs->at(i).legId, std::make_pair(transitionId, i));
@@ -676,8 +676,19 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   return legs;
 }
 
-void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
+void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
+                                     bool addArtificialLegs)
 {
+  // Clear lists so this method can run twice on a legs object
+  for(MapProcedureLeg& leg : legs.approachLegs)
+  {
+    leg.displayText.clear();
+    leg.remarks.clear();
+    leg.geometry.clear();
+    leg.line.setPos1(Pos());
+    leg.line.setPos2(Pos());
+  }
+
   // Update the mapTypes
   assignType(legs);
 
@@ -687,7 +698,8 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   processLegs(legs);
 
   // Add artificial legs (not in the database) that end at the runway
-  processArtificialLegs(airport, legs);
+  if(addArtificialLegs)
+    processArtificialLegs(airport, legs);
 
   // Calculate intercept terminators
   processCourseInterceptLegs(legs);
@@ -1143,7 +1155,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     }
     // ===========================================================
     else if(contains(type, {proc::DIRECT_TO_FIX, proc::INITIAL_FIX, proc::START_OF_PROCEDURE,
-                            proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
+                            proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC,
+                            proc::DIRECT_TO_RUNWAY}))
     {
       curPos = leg.fixPos;
     }
@@ -1639,9 +1652,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
 
     starId = findApproachId(destination, approachIdByNameQuery, "A", QString(), /*No runway*/ distance, size);
     if(starId == -1)
-    {
       qWarning() << "Loading of STAR" << star << "failed";
-    }
   }
   return starId;
 }
@@ -1835,7 +1846,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     {
       const proc::MapProcedureLegs *legs = getApproachLegs(departure, sidApprId);
       if(legs != nullptr)
+      {
         departureLegs = *legs;
+        // Assign runway to the legs copy if procedure has parallel or all runway reference
+        insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
+      }
       else
         qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidApprId;
     }
@@ -1869,7 +1884,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     {
       const proc::MapProcedureLegs *legs = getApproachLegs(destination, starId);
       if(legs != nullptr)
+      {
         starLegs = *legs;
+        // Assign runway if procedure has parallel or all runway reference
+        insertSidStarRunway(starLegs, properties.value(pln::STARRW));
+      }
       else
         qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starId;
     }
@@ -1911,10 +1930,112 @@ int ProcedureQuery::findApproachId(const map::MapAirport& airport, atools::sql::
   return findProcedureLegId(airport, query, suffix, runway, distance, size, false);
 }
 
+bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwayFromQuery,
+                                     const QString& arincName, const QStringList& airportRunways) const
+{
+  if(runway.isEmpty())
+    // Nothing to match - get all procedures
+    return true;
+
+  if(runway == runwayFromQuery)
+    return true;
+
+  return doesSidStarRunwayMatch(runway, arincName, airportRunways);
+}
+
+bool ProcedureQuery::doesSidStarRunwayMatch(const QString& runway, const QString& arincName,
+                                            const QStringList& airportRunways) const
+{
+  if(proc::hasSidStarAllRunways(arincName))
+    // SID or STAR for all runways - otherwise arinc name will not match anyway
+    return true;
+
+  if(proc::hasSidStarParallelRunways(arincName))
+  {
+    // Check which runways are assigned from values like "RW12B"
+    QString rwBaseName = arincName.mid(2, 2);
+    if(airportRunways.contains(runway) && runway == rwBaseName + "L")
+      return true;
+
+    if(airportRunways.contains(runway) && runway == rwBaseName + "R")
+      return true;
+
+    if(airportRunways.contains(runway) && runway == rwBaseName + "C")
+      return true;
+  }
+
+  return false;
+}
+
+QString ProcedureQuery::anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways) const
+{
+  if(proc::hasSidStarParallelRunways(arincName))
+  {
+    // Check which runways are assigned from values like "RW12B"
+    QString rwBaseName = arincName.mid(2, 2);
+
+    for(const QString& aprw:airportRunways)
+    {
+      if(aprw == rwBaseName + "L")
+        return aprw;
+
+      if(aprw == rwBaseName + "R")
+        return aprw;
+
+      if(aprw == rwBaseName + "C")
+        return aprw;
+    }
+  }
+
+  return airportRunways.first();
+}
+
+void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QString& runway)
+{
+  if(legs.hasSidOrStarMultipleRunways())
+  {
+    QStringList runwayNames = airportQueryNav->getRunwayNames(legs.ref.airportId);
+    if(runway.isEmpty())
+      // Assign first matching runway for this sid if not assigned yet
+      legs.procedureRunway = anyMatchingRunwayForSidStar(legs.approachArincName, runwayNames);
+    else
+      // Assign given runway
+      legs.procedureRunway = runway;
+
+    legs.runwayEnd = airportQueryNav->getRunwayEndByName(legs.ref.airportId, legs.procedureRunway);
+
+    if(legs.runwayEnd.isValid())
+    {
+      // Check for any legs of type runway and assign runway.
+      for(int i = 0; i < legs.approachLegs.size(); i++)
+      {
+        MapProcedureLeg& leg = legs.approachLegs[i];
+        if(leg.fixType == "R" && leg.fixIdent == "RW")
+        {
+          // Update data for unknown runway to known runway
+          leg.fixIdent = "RW" + legs.procedureRunway;
+          leg.fixPos = legs.runwayEnd.position;
+          leg.line = Line(legs.runwayEnd.position);
+          leg.geometry = LineString(legs.runwayEnd.position);
+          leg.navaids.runwayEnds.clear();
+          leg.navaids.runwayEnds.append(legs.runwayEnd);
+        }
+      }
+
+      // Re-calculate all legs, positions and distances again
+      postProcessLegs(airportQueryNav->getAirportById(legs.ref.airportId), legs, false /*addArtificialLegs*/);
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot get runway for" << legs.procedureRunway;
+  }
+}
+
 int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                                        const QString& suffix, const QString& runway,
                                        float distance, int size, bool transition)
 {
+  QStringList airportRunways = airportQueryNav->getRunwayNames(airport.id);
+
   int procedureId = -1;
   QVector<int> ids;
   query->exec();
@@ -1923,7 +2044,10 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
     if(!transition && (suffix != query->value("suffix").toString() ||
                        // Runway will be compared directly to the approach and not the airport runway
-                       (!runway.isEmpty() && runway != query->value("runway_name").toString())))
+                       !doesRunwayMatch(runway,
+                                        query->valueStr("runway_name"),
+                                        query->valueStr("arinc_name"),
+                                        airportRunways)))
       continue;
 
     ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
@@ -1937,8 +2061,11 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     while(query->next())
     {
       // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
-      if(!transition && ( // Runway will be compared directly to the approach and not the airport runway
-           (!runway.isEmpty() && runway != query->value("runway_name").toString())))
+      if(!transition && // Runway will be compared directly to the approach and not the airport runway
+         !doesRunwayMatch(runway,
+                          query->valueStr("runway_name"),
+                          query->valueStr("arinc_name"),
+                          airportRunways))
         continue;
 
       ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());

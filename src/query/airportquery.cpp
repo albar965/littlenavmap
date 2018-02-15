@@ -539,8 +539,26 @@ QStringList AirportQuery::getRunwayNames(int airportId)
   {
     for(const map::MapRunway& runway : *aprunways)
       runwayNames << runway.primaryName << runway.secondaryName;
+    runwayNames.sort();
   }
   return runwayNames;
+}
+
+map::MapRunwayEnd AirportQuery::getRunwayEndByName(int airportId, const QString& runway)
+{
+  const QList<map::MapRunway> *aprunways = getRunways(airportId);
+  if(aprunways != nullptr)
+  {
+    for(const map::MapRunway& mr : *aprunways)
+    {
+      if(mr.primaryName == runway)
+        return getRunwayEndById(mr.primaryEndId);
+
+      if(mr.secondaryName == runway)
+        return getRunwayEndById(mr.secondaryEndId);
+    }
+  }
+  return map::MapRunwayEnd();
 }
 
 /* Compare runways to put betters ones (hard surface, longer) at the end of a list */

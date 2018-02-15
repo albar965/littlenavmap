@@ -28,6 +28,8 @@
 
 namespace proc  {
 
+static QRegularExpression PARALLEL_REGEXP("^RW[0-9]{2}B$");
+
 static QHash<QString, QString> approachFixTypeToStr;
 static QHash<QString, QString> approachTypeToStr;
 static QHash<ProcedureLegType, QString> approachLegTypeToStr;
@@ -598,6 +600,16 @@ void MapProcedureLegs::clearTransition()
   transitionDistance = 0.f;
   transitionType.clear();
   transitionFixIdent.clear();
+}
+
+bool hasSidStarParallelRunways(const QString& approachArincName)
+{
+  return approachArincName.contains(PARALLEL_REGEXP);
+}
+
+bool hasSidStarAllRunways(const QString& approachArincName)
+{
+  return approachArincName == "ALL";
 }
 
 const MapProcedureLeg *proc::MapProcedureLegs::approachLegById(int legId) const

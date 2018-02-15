@@ -707,6 +707,8 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
                                                                  route.last().getAirport(),
                                                                  arrival, star, departure))
   {
+    // SID/STAR with multiple runways are already assigned
+
     route.setDepartureProcedureLegs(departure);
     route.setStarProcedureLegs(star);
     route.setArrivalProcedureLegs(arrival);
@@ -2437,7 +2439,7 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
   updateStartPositionBestRunway(false /* force */, false /* undo */);
 }
 
-void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
+void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)
 {
   qDebug() << Q_FUNC_INFO /* << legs*/;
 
@@ -2461,7 +2463,11 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
     }
     // Will take care of the flight plan entries too
     if(legs.mapType & proc::PROCEDURE_STAR)
+    {
+      // Assign runway for SID/STAR than can have multiple runways
+      NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
       route.setStarProcedureLegs(legs);
+    }
     if(legs.mapType & proc::PROCEDURE_ARRIVAL)
       route.setArrivalProcedureLegs(legs);
 
@@ -2475,6 +2481,9 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
       route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
       routeSetDepartureInternal(airportSim);
     }
+    // Assign runway for SID/STAR than can have multiple runways
+    NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
+
     // Will take care of the flight plan entries too
     route.setDepartureProcedureLegs(legs);
     route.updateProcedureLegs(entryBuilder);
@@ -3182,6 +3191,8 @@ QString RouteController::buildFlightplanLabel(bool html) const
 
   if(!flightplan.isEmpty())
   {
+    QString starRunway, approachRunway;
+
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
@@ -3236,7 +3247,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
         else
         {
           boldTextFlag << false << true << false;
-          procedureText.append(tr("Depart runway "));
+          procedureText.append(tr("Depart runway"));
           procedureText.append(departureLegs.runwayEnd.name);
           procedureText.append(tr("via SID"));
         }
@@ -3250,20 +3261,41 @@ QString RouteController::buildFlightplanLabel(bool html) const
         if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL)
         {
           boldTextFlag << false;
-          procedureText.append(tr(". "));
+          procedureText.append(tr("."));
         }
       }
 
       // Add arrival procedures procedure to text
+      // STAR
       if(!starLegs.isEmpty())
       {
         boldTextFlag << false << true;
-        procedureText.append(tr("From STAR"));
+        procedureText.append(tr("Arrive via STAR"));
 
         QString star(starLegs.approachFixIdent);
         if(!starLegs.transitionFixIdent.isEmpty())
           star += "." + starLegs.transitionFixIdent;
         procedureText.append(star);
+
+        starRunway = starLegs.procedureRunway;
+
+        if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+        {
+          boldTextFlag << false << true;
+          procedureText.append(tr("at runway"));
+          procedureText.append(starLegs.procedureRunway);
+        }
+        else if(!starLegs.procedureRunway.isEmpty())
+        {
+          boldTextFlag << false;
+          procedureText.append(tr("(<b>%1</b>)").arg(starLegs.procedureRunway));
+        }
+
+        if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+        {
+          boldTextFlag << false;
+          procedureText.append(tr("."));
+        }
       }
 
       if(arrivalLegs.mapType & proc::PROCEDURE_TRANSITION)
@@ -3285,9 +3317,19 @@ QString RouteController::buildFlightplanLabel(bool html) const
         procedureText.append(arrivalLegs.approachFixIdent);
 
         // Add runway for approach
-        boldTextFlag << false << true;
-        procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
+        boldTextFlag << false << true << false;
+        procedureText.append(procedureText.isEmpty() ? tr("At runway") : tr("at runway"));
         procedureText.append(arrivalLegs.runwayEnd.name);
+        procedureText.append(tr("."));
+
+        approachRunway = arrivalLegs.runwayEnd.name;
+      }
+
+      if(!approachRunway.isEmpty() && !starRunway.isEmpty() && approachRunway != starRunway)
+      {
+        boldTextFlag << true;
+        procedureText.append(tr("<br/><span style=\"color: #ff0000; font-weight:bold\">"
+                                  "Runway mismatch: %1 &ne; %2.</span>").arg(starRunway).arg(approachRunway));
       }
 
       if(html)
