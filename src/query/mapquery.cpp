@@ -624,15 +624,15 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, true /* reverse */, lazy, false /* overview */);
+      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */);
 
     case layer::MEDIUM:
       // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, false /* reverse */, lazy, true /* overview */);
+      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */);
 
     case layer::LARGE:
       // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, false /* reverse */, lazy, true /* overview */);
+      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */);
 
   }
   return nullptr;
@@ -967,7 +967,7 @@ const LineString *MapQuery::getAirspaceGeometry(int boundaryId)
  * @return pointer to the airport cache
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                      atools::sql::SqlQuery *query, bool reverse,
+                                                      atools::sql::SqlQuery *query,
                                                       bool lazy, bool overview)
 {
   if(airportCache.list.isEmpty() && !lazy)
@@ -985,10 +985,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         else
           mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, false /* nav */);
 
-        if(reverse)
-          airportCache.list.prepend(ap);
-        else
-          airportCache.list.append(ap);
+        airportCache.list.append(ap);
       }
     }
   }
@@ -1176,7 +1173,7 @@ void MapQuery::initQueries()
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
     "select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
-    " and longest_runway_length >= :minlength order by rating desc, longest_runway_length desc "
+    " and longest_runway_length >= :minlength "
     + whereLimit);
 
   airportMediumByRectQuery = new SqlQuery(db);

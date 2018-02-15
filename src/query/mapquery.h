@@ -208,7 +208,7 @@ private:
                                 float maxDistance, bool airportFromNavDatabase);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                              atools::sql::SqlQuery *query, bool reverse,
+                                              atools::sql::SqlQuery *query,
                                               bool lazy, bool overview);
 
   void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,

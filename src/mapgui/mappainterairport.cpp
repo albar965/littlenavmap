@@ -52,24 +52,22 @@ MapPainterAirport::~MapPainterAirport()
 
 void MapPainterAirport::render(PaintContext *context)
 {
+  typedef std::pair<const MapAirport *, QPointF> PaintAirportType;
+
   // Get all airports from the route and add them to the map
-  QHash<int, const MapAirport *> airportMap; // Collect all airports from route and bounding rectangle
-  QSet<int> routeAirportIds; // Airport ids from departure and destination
+  QSet<int> routeAirportIdMap; // Collect all airports from route and bounding rectangle
 
   if(context->objectTypes.testFlag(map::FLIGHTPLAN))
   {
     for(const RouteLeg& routeLeg : *route)
     {
       if(routeLeg.getMapObjectType() == map::AIRPORT)
-      {
-        airportMap.insert(routeLeg.getAirport().id, &routeLeg.getAirport());
-        routeAirportIds.insert(routeLeg.getAirport().id);
-      }
+        routeAirportIdMap.insert(routeLeg.getAirport().id);
     }
   }
 
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
-     (!context->mapLayerEffective->isAirportDiagram()) && airportMap.isEmpty())
+     (!context->mapLayerEffective->isAirportDiagram()) && routeAirportIdMap.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
@@ -83,68 +81,87 @@ void MapPainterAirport::render(PaintContext *context)
   else
     airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate);
 
-  for(const MapAirport& ap : *airportCache)
-    airportMap.insert(ap.id, &ap);
-
-  if(airportMap.isEmpty())
-    // Nothing found in bounding rectangle and route
-    return;
-
   // Collect all airports that are visible
-  QList<const MapAirport *> visibleAirports;
-  QList<QPointF> visiblePoints;
-  for(const MapAirport *airport : airportMap.values())
+  QList<PaintAirportType> visibleAirports;
+  for(const MapAirport& airport : *airportCache)
   {
     // Either part of the route or enabled in the actions/menus/toolbar
-    if(!airport->isVisible(context->objectTypes) && !routeAirportIds.contains(airport->id))
+    if(!airport.isVisible(context->objectTypes) && !routeAirportIdMap.contains(airport.id))
       continue;
 
     // Avoid drawing too many airports during animation when zooming out
-    if(airport->longestRunwayLength >= context->mapLayer->getMinRunwayLength())
+    if(airport.longestRunwayLength >= context->mapLayer->getMinRunwayLength())
     {
       float x, y;
       bool hidden;
-      bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding), &hidden);
+      bool visible = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
       if(!hidden)
       {
         if(!visible && context->mapLayer->isAirportOverviewRunway())
           // Check bounding rect for visibility if relevant - not for point symbols
-          visible = airport->bounding.overlaps(context->viewportRect);
+          visible = airport.bounding.overlaps(context->viewportRect);
 
-        airport->bounding.overlaps(context->viewportRect);
+        airport.bounding.overlaps(context->viewportRect);
 
         if(visible)
-        {
-          visibleAirports.append(airport);
-          visiblePoints.append(QPointF(x, y));
-        }
+          visibleAirports.append(std::make_pair(&airport, QPointF(x, y)));
       }
     }
   }
 
+  std::sort(visibleAirports.begin(), visibleAirports.end(),
+            [](const PaintAirportType& pap1, const PaintAirportType& pap2) -> bool {
+    // returns ​true if the first argument is less than (i.e. is ordered before) the second.
+    // ">" puts true behind
+    const MapAirport *ap1 = pap1.first, *ap2 = pap2.first;
+
+    if(ap1->empty() == ap2->empty()) // Draw empty on bottom
+    {
+      if(ap1->waterOnly() == ap2->waterOnly()) // Then water
+      {
+        if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
+        {
+          if(ap1->softOnly() == ap2->softOnly()) // Soft airports
+          {
+            // if(ap1->rating == ap2->rating)
+            return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
+            // else
+            // return ap1->rating < ap2->rating; // Larger value to end of list - drawn on top
+          }
+          else
+            return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
+        }
+        else
+          return ap1->helipadOnly() > ap2->helipadOnly();
+      }
+      else
+        return ap1->waterOnly() > ap2->waterOnly();
+    }
+    else
+      return ap1->empty() > ap2->empty();
+  });
+
   if(context->mapLayerEffective->isAirportDiagram())
   {
     // In diagram mode draw background first to avoid overwriting other airports
-    for(const MapAirport *airport : visibleAirports)
-      drawAirportDiagramBackround(context, *airport);
+    for(const PaintAirportType& airport : visibleAirports)
+      drawAirportDiagramBackround(context, *airport.first);
   }
 
   // Draw the diagrams first
-  for(int i = 0; i < visibleAirports.size(); i++)
+  for(const PaintAirportType& airport : visibleAirports)
   {
-    const MapAirport *airport = visibleAirports.at(i);
-
     // Airport diagram is not influenced by detail level
     if(context->mapLayerEffective->isAirportDiagram())
-      drawAirportDiagram(context, *airport);
+      drawAirportDiagram(context, *airport.first);
   }
 
   // Add airport symbols on top of diagrams
   for(int i = 0; i < visibleAirports.size(); i++)
   {
-    const MapAirport *airport = visibleAirports.at(i);
-    const QPointF& pt = visiblePoints.at(i);
+    const MapAirport *airport = visibleAirports.at(i).first;
+    const QPointF& pt = visibleAirports.at(i).second;
     const MapLayer *layer = context->mapLayer;
 
     // Airport diagram is not influenced by detail level
@@ -153,7 +170,7 @@ void MapPainterAirport::render(PaintContext *context)
       drawAirportSymbolOverview(context, *airport, pt.x(), pt.y());
 
     // More detailed symbol will be drawn by the route painter - so skip here
-    if(!routeAirportIds.contains(airport->id))
+    if(!routeAirportIdMap.contains(airport->id))
     {
       // Symbol will be omitted for runway overview
       drawAirportSymbol(context, *airport, pt.x(), pt.y());
