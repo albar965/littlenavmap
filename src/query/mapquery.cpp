@@ -983,9 +983,11 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         map::MapAirport ap;
         if(overview)
           // Fill only a part of the object
-          mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata);
+          mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
+                                                  NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
         else
-          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata);
+          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
+                                       NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
 
         airportCache.list.append(ap);
       }

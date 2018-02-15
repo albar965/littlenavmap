@@ -24,6 +24,7 @@
 #include "common/symbolpainter.h"
 #include "sql/sqlrecord.h"
 #include "common/maptypesfactory.h"
+#include "navapp.h"
 
 #include <QPainter>
 
@@ -57,7 +58,8 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   // Get airport from the SQL model
   map::MapAirport ap;
-  mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true /* complete */, false /* nav */);
+  mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true /* complete */, false /* nav */,
+                               NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
 
   // Create a style copy
   QStyleOptionViewItem opt(option);

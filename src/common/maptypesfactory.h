@@ -60,10 +60,10 @@ public:
    * based on incomplete records in the search.
    * @param nav filled from third party nav database
    */
-  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav);
+  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav, bool xplane);
 
   /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
-  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool nav);
+  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane);
 
   /*
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)

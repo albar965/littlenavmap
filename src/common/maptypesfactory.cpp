@@ -36,10 +36,12 @@ MapTypesFactory::~MapTypesFactory()
 
 }
 
-void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav)
+void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
+                                  bool xplane)
 {
   fillAirportBase(record, airport, complete);
   airport.navdata = nav;
+  airport.xplane = xplane;
 
   if(complete)
   {
@@ -61,10 +63,11 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
-void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport, bool nav)
+void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane)
 {
   fillAirportBase(record, airport, true);
   airport.navdata = nav;
+  airport.xplane = xplane;
 
   airport.flags = fillAirportFlags(record, true);
   airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);

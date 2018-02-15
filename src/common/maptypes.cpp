@@ -21,6 +21,7 @@
 #include "geo/calculations.h"
 #include "common/unit.h"
 #include "options/optiondata.h"
+#include "navapp.h"
 
 #include <QDataStream>
 #include <QHash>
@@ -778,7 +779,7 @@ bool MapAirport::closedRunways() const
 
 bool MapAirport::emptyDraw() const
 {
-  if(navdata)
+  if(NavApp::isNavdataOnly())
     return false;
 
   return emptyDraw(OptionData::instance());
@@ -786,12 +787,12 @@ bool MapAirport::emptyDraw() const
 
 bool MapAirport::emptyDraw(const OptionData& od) const
 {
-  if(navdata)
+  if(NavApp::isNavdataOnly())
     return false;
 
   if(od.getFlags() & opts::MAP_EMPTY_AIRPORTS)
   {
-    if(od.getFlags2() & opts::MAP_EMPTY_AIRPORTS_3D)
+    if(od.getFlags2() & opts::MAP_EMPTY_AIRPORTS_3D && xplane)
       return !is3d() && !addon() && !waterOnly();
     else
       return empty() && !waterOnly();
@@ -875,8 +876,7 @@ bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
   if(addon() && objectTypes.testFlag(map::AIRPORT_ADDON))
     return true;
 
-  if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS &&
-     empty() && !waterOnly() && !objectTypes.testFlag(map::AIRPORT_EMPTY))
+  if(emptyDraw() && !objectTypes.testFlag(map::AIRPORT_EMPTY))
     return false;
 
   if(hard() && !objectTypes.testFlag(map::AIRPORT_HARD))

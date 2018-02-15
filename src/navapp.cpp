@@ -278,6 +278,11 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorBasePath(type);
 }
 
+bool NavApp::isNavdataOnly()
+{
+  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
+}
+
 QString NavApp::getCurrentSimulatorShortName()
 {
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());

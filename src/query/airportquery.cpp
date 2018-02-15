@@ -26,6 +26,7 @@
 #include "common/maptools.h"
 #include "settings/settings.h"
 #include "fs/common/xpgeometry.h"
+#include "navapp.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
@@ -97,7 +98,8 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airportByIdQuery->bindValue(":id", airportId);
     airportByIdQuery->exec();
     if(airportByIdQuery->next())
-      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true, navdata);
+      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true, navdata,
+                                   NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
     airportByIdQuery->finish();
 
     airport = *ap;
@@ -118,7 +120,8 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
     airportByIdentQuery->bindValue(":ident", ident);
     airportByIdentQuery->exec();
     if(airportByIdentQuery->next())
-      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true, navdata);
+      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true, navdata,
+                                   NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
     airportByIdentQuery->finish();
 
     airport = *ap;

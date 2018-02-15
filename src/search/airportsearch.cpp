@@ -491,7 +491,8 @@ void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
       rec.setValue(2, controller->getRawData(row, "laty"));
 
       // Not fully populated
-      factory.fillAirport(rec, ap, false /* complete */, false /* nav */);
+      factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
+                          NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
       result.airports.append(ap);
     }
   }
