@@ -1419,7 +1419,7 @@ void ProcedureQuery::initQueries()
                                    "where fix_ident like :fixident and type like :type and airport_ident = :apident");
 
     approachIdByArincNameQuery = new SqlQuery(dbNav);
-    approachIdByArincNameQuery->prepare("select approach_id, suffix, runway_name from approach "
+    approachIdByArincNameQuery->prepare("select approach_id, suffix, arinc_name, runway_name from approach "
                                         "where arinc_name like :arincname and airport_ident = :apident");
   }
   else
@@ -2046,7 +2046,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
                        // Runway will be compared directly to the approach and not the airport runway
                        !doesRunwayMatch(runway,
                                         query->valueStr("runway_name"),
-                                        query->valueStr("arinc_name"),
+                                        query->valueStr("arinc_name", QString()),
                                         airportRunways)))
       continue;
 
