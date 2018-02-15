@@ -27,6 +27,7 @@
 #include "common/maptools.h"
 #include "settings/settings.h"
 #include "fs/common/xpgeometry.h"
+#include "db/databasemanager.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
@@ -972,6 +973,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
+    bool navdata = NavApp::getDatabaseManager()->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, query);
@@ -981,9 +983,9 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         map::MapAirport ap;
         if(overview)
           // Fill only a part of the object
-          mapTypesFactory->fillAirportForOverview(query->record(), ap);
+          mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata);
         else
-          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, false /* nav */);
+          mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata);
 
         airportCache.list.append(ap);
       }
