@@ -110,13 +110,14 @@ void MapPainterAirport::render(PaintContext *context)
     }
   }
 
+  const OptionData& od = OptionData::instance();
   std::sort(visibleAirports.begin(), visibleAirports.end(),
-            [](const PaintAirportType& pap1, const PaintAirportType& pap2) -> bool {
+            [od](const PaintAirportType& pap1, const PaintAirportType& pap2) -> bool {
     // returns ​true if the first argument is less than (i.e. is ordered before) the second.
     // ">" puts true behind
     const MapAirport *ap1 = pap1.first, *ap2 = pap2.first;
 
-    if(ap1->empty() == ap2->empty()) // Draw empty on bottom
+    if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
     {
       if(ap1->waterOnly() == ap2->waterOnly()) // Then water
       {
@@ -139,7 +140,7 @@ void MapPainterAirport::render(PaintContext *context)
         return ap1->waterOnly() > ap2->waterOnly();
     }
     else
-      return ap1->empty() > ap2->empty();
+      return ap1->emptyDraw(od) > ap2->emptyDraw(od);
   });
 
   if(context->mapLayerEffective->isAirportDiagram())

@@ -607,6 +607,27 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
   return airportQueryBase;
 }
 
+QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase *db)
+{
+  // Common select statements
+  QStringList airportQueryBase({
+    "airport_id", "ident", "name",
+    "has_avgas", "has_jetfuel",
+    "tower_frequency",
+    "is_closed", "is_military", "is_addon", "rating",
+    "num_runway_hard", "num_runway_soft", "num_runway_water", "num_helipad",
+    "longest_runway_length", "longest_runway_heading", "mag_var",
+    "lonx", "laty", "left_lonx", "top_laty", "right_lonx", "bottom_laty "
+  });
+
+  SqlRecord aprec = db->record("airport_medium");
+  if(aprec.contains("region"))
+    airportQueryBase.append("region");
+  if(aprec.contains("is_3d"))
+    airportQueryBase.append("is_3d");
+  return airportQueryBase;
+}
+
 void AirportQuery::initQueries()
 {
   // Common where clauses
@@ -615,15 +636,7 @@ void AirportQuery::initQueries()
   static const QString whereLimit("limit " + QString::number(queryRowLimit));
 
   QStringList const airportQueryBase = airportColumns(db);
-
-  static const QString airportQueryBaseOverview(
-    "airport_id, ident, name, "
-    "has_avgas, has_jetfuel, "
-    "tower_frequency, "
-    "is_closed, is_military, is_addon, rating, "
-    "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
+  QStringList const airportQueryBaseOverview = airportOverviewColumns(db);
 
   static const QString airwayQueryBase(
     "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "

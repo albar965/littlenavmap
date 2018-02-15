@@ -669,7 +669,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
       atts |= textatt::ROUTE_BG_COLOR;
 
     int transparency = diagram ? 130 : 255;
-    if(airport.empty() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
+    if(airport.emptyDraw())
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))

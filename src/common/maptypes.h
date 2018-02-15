@@ -31,6 +31,8 @@
 #include <QColor>
 #include <QString>
 
+class OptionData;
+
 namespace proc {
 
 struct MapProcedurePoint;
@@ -132,12 +134,18 @@ struct MapAirport
   bool apron() const;
   bool taxiway() const;
   bool parking() const;
-  bool empty() const;
   bool als() const;
   bool vasi() const;
   bool fence() const;
   bool closedRunways() const;
   bool procedure() const;
+
+  /* Check if airport should be drawn empty */
+  bool emptyDraw() const;
+  bool emptyDraw(const OptionData& od) const;
+
+  /* Check if airport has any scenery elements */
+  bool empty() const;
 
   bool isValid() const
   {

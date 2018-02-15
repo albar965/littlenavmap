@@ -243,6 +243,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsGuiOverrideLanguage);
   widgets.append(ui->checkBoxOptionsGuiOverrideLocale);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
+  widgets.append(ui->checkBoxOptionsMapEmptyAirports3D);
   widgets.append(ui->checkBoxOptionsMapTooltipAirport);
   widgets.append(ui->checkBoxOptionsMapTooltipNavaid);
   widgets.append(ui->checkBoxOptionsMapTooltipAirspace);
@@ -410,6 +411,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->pushButtonOptionsStartupCheckUpdate, &QPushButton::clicked,
           this, &OptionsDialog::checkUpdateClicked);
+
+  connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled,
+          this, &OptionsDialog::mapEmptyAirportsClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -613,6 +617,7 @@ void OptionsDialog::restoreState()
   widgetsToOptionData();
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
+  mapEmptyAirportsClicked(false);
   applyStyle();
   updateButtonColors();
 }
@@ -831,6 +836,12 @@ void OptionsDialog::simUpdatesConstantClicked(bool state)
   ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
 }
 
+void OptionsDialog::mapEmptyAirportsClicked(bool state)
+{
+  Q_UNUSED(state);
+  ui->checkBoxOptionsMapEmptyAirports3D->setEnabled(ui->checkBoxOptionsMapEmptyAirports->isChecked());
+}
+
 /* Convert the range ring string to an int vector */
 QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
 {
@@ -893,6 +904,8 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
+
+  toFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts::MAP_EMPTY_AIRPORTS_3D);
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
@@ -1018,6 +1031,9 @@ void OptionsDialog::optionDataToWidgets()
 
   fromFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
+
+  fromFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts::MAP_EMPTY_AIRPORTS_3D);
+
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
 
   ui->checkBoxOptionsMapTooltipAirport->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRPORT));
@@ -1135,6 +1151,34 @@ void OptionsDialog::fromFlags(QCheckBox *checkBox, opts::Flags flag)
 void OptionsDialog::fromFlags(QRadioButton *radioButton, opts::Flags flag)
 {
   radioButton->setChecked(OptionData::instanceInternal().flags & flag);
+}
+
+/* Add flag from checkbox to OptionData flags */
+void OptionsDialog::toFlags2(QCheckBox *checkBox, opts::Flags2 flag)
+{
+  if(checkBox->isChecked())
+    OptionData::instanceInternal().flags2 |= flag;
+  else
+    OptionData::instanceInternal().flags2 &= ~flag;
+}
+
+/* Add flag from radio button to OptionData flags */
+void OptionsDialog::toFlags2(QRadioButton *radioButton, opts::Flags2 flag)
+{
+  if(radioButton->isChecked())
+    OptionData::instanceInternal().flags2 |= flag;
+  else
+    OptionData::instanceInternal().flags2 &= ~flag;
+}
+
+void OptionsDialog::fromFlags2(QCheckBox *checkBox, opts::Flags2 flag)
+{
+  checkBox->setChecked(OptionData::instanceInternal().flags2 & flag);
+}
+
+void OptionsDialog::fromFlags2(QRadioButton *radioButton, opts::Flags2 flag)
+{
+  radioButton->setChecked(OptionData::instanceInternal().flags2 & flag);
 }
 
 void OptionsDialog::offlineDataSelectClicked()

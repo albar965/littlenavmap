@@ -74,7 +74,7 @@ QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine);
 
 const QColor& colorForAirport(const map::MapAirport& ap)
 {
-  if(ap.empty() && !ap.waterOnly() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
+  if(ap.emptyDraw())
     return airportEmptyColor;
   else if(ap.tower())
     return toweredAirportColor;

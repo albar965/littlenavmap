@@ -25,6 +25,8 @@
 namespace opts {
 enum Flag
 {
+  NO_FLAGS = 0,
+
   /* Reload KML files on startup.
    * ui->checkBoxOptionsStartupLoadKml  */
   STARTUP_LOAD_KML = 1 << 0,
@@ -139,11 +141,23 @@ enum Flag
 
   /* checkBoxOptionsRouteExportUserWpt */
   ROUTE_GARMIN_USER_WPT = 1 << 30
-
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
+
+/* Extension from flags to avoid overflow */
+enum Flag2
+{
+  NO_FLAGS2 = 0,
+
+  /* Treat empty airports special.
+   * ui->checkBoxOptionsMapEmptyAirports3D */
+  MAP_EMPTY_AIRPORTS_3D = 1 << 0
+};
+
+Q_DECLARE_FLAGS(Flags2, Flag2);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags2);
 
 /* Changing these option values will also change the saved values thus invalidatin user settings */
 enum DisplayOption
@@ -316,6 +330,11 @@ public:
   opts::Flags getFlags() const
   {
     return flags;
+  }
+
+  opts::Flags2 getFlags2() const
+  {
+    return flags2;
   }
 
   opts::UnitDist getUnitDist() const
@@ -653,6 +672,8 @@ private:
     opts::FLIGHT_PLAN_SHOW_TOD |
     opts::CACHE_USE_ONLINE_ELEVATION
   ;
+
+  opts::Flags2 flags2 = opts::NO_FLAGS2;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});

@@ -131,6 +131,7 @@ public:
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
 
   static QStringList airportColumns(const atools::sql::SqlDatabase *db);
+  static QStringList airportOverviewColumns(const atools::sql::SqlDatabase* db);
 
 private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
@@ -169,7 +170,7 @@ private:
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr;
   atools::sql::SqlQuery *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr;
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
-                        *airportProcByIdentQuery = nullptr;
+  *airportProcByIdentQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTQUERY_H

@@ -1086,15 +1086,7 @@ void MapQuery::initQueries()
 
   // Common select statements
   QStringList const airportQueryBase = AirportQuery::airportColumns(db);
-
-  static const QString airportQueryBaseOverview(
-    "airport_id, ident, name, "
-    "has_avgas, has_jetfuel, "
-    "tower_frequency, "
-    "is_closed, is_military, is_addon, rating, "
-    "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
+  QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(db);
 
   static const QString airwayQueryBase(
     "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
@@ -1178,11 +1170,11 @@ void MapQuery::initQueries()
 
   airportMediumByRectQuery = new SqlQuery(db);
   airportMediumByRectQuery->prepare(
-    "select " + airportQueryBaseOverview + "from airport_medium where " + whereRect + " " + whereLimit);
+    "select " + airportQueryBaseOverview.join(", ") + " from airport_medium where " + whereRect + " " + whereLimit);
 
   airportLargeByRectQuery = new SqlQuery(db);
   airportLargeByRectQuery->prepare(
-    "select " + airportQueryBaseOverview + "from airport_large where " + whereRect + " " + whereLimit);
+    "select " + airportQueryBaseOverview.join(", ") + " from airport_large where " + whereRect + " " + whereLimit);
 
   // Runways > 4000 feet for simplyfied runway overview
   runwayOverviewQuery = new SqlQuery(db);

@@ -776,9 +776,34 @@ bool MapAirport::closedRunways() const
   return flags.testFlag(AP_RW_CLOSED);
 }
 
+bool MapAirport::emptyDraw() const
+{
+  if(navdata)
+    return false;
+
+  return emptyDraw(OptionData::instance());
+}
+
+bool MapAirport::emptyDraw(const OptionData& od) const
+{
+  if(navdata)
+    return false;
+
+  if(od.getFlags() & opts::MAP_EMPTY_AIRPORTS)
+  {
+    if(od.getFlags2() & opts::MAP_EMPTY_AIRPORTS_3D)
+      return !is3d() && !addon() && !waterOnly();
+    else
+      return empty() && !waterOnly();
+  }
+  else
+    return false;
+}
+
 bool MapAirport::empty() const
 {
   if(rating == -1)
+    // Not calculated
     return !parking() && !taxiway() && !apron() && !addon();
   else
     return rating == 0;

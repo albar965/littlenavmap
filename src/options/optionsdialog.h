@@ -67,11 +67,15 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();
   void optionDataToWidgets();
+
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
   void toFlags(QRadioButton *radioButton, opts::Flags flag);
-
   void fromFlags(QCheckBox *checkBox, opts::Flags flag);
   void fromFlags(QRadioButton *radioButton, opts::Flags flag);
+  void toFlags2(QCheckBox *checkBox, opts::Flags2 flag);
+  void toFlags2(QRadioButton *radioButton, opts::Flags2 flag);
+  void fromFlags2(QCheckBox *checkBox, opts::Flags2 flag);
+  void fromFlags2(QRadioButton *radioButton, opts::Flags2 flag);
 
   void selectActiveSkyPathClicked();
   void clearMemCachedClicked();
@@ -113,6 +117,7 @@ private:
   void updateCacheElevationStates();
   void offlineDataSelectClicked();
   void checkUpdateClicked();
+  void mapEmptyAirportsClicked(bool state);
 
   QVector<int> ringStrToVector(const QString& string) const;
 
