@@ -1840,7 +1840,14 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
     html.table();
     html.row2(tr("Max Gross Weight:"), Unit::weightLbs(userAircraft.getAirplaneMaxGrossWeightLbs()));
     html.row2(tr("Gross Weight:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs()));
+
+    html.row2(QString());
     html.row2(tr("Empty Weight:"), Unit::weightLbs(userAircraft.getAirplaneEmptyWeightLbs()));
+
+    html.row2(QString());
+    html.row2(tr("Zero Fuel Weight:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs() -
+                                                       userAircraft.getFuelTotalWeightLbs()));
+
     html.row2(tr("Total Payload:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs() -
                                                     userAircraft.getAirplaneEmptyWeightLbs() -
                                                     userAircraft.getFuelTotalWeightLbs()));
