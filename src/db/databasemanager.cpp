@@ -1081,6 +1081,8 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   atools::fs::NavDatabaseErrors errors;
 
+  qInfo() << Q_FUNC_INFO << navDatabaseOpts;
+
   try
   {
     atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors, GIT_REVISION);
