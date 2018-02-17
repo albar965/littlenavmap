@@ -1599,7 +1599,8 @@ bool MainWindow::routeSaveAsPln()
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
-      routeController->buildDefaultFilename());
+      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
+      routeController->buildDefaultFilenameShort("_", ".pln") : routeController->buildDefaultFilename());
 
     if(!routeFile.isEmpty())
     {
@@ -1705,7 +1706,9 @@ bool MainWindow::routeExportClean()
       tr("Save Clean Flight Plan without Annotations"),
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
-      routeController->buildDefaultFilename(tr(" Clean")));
+
+      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
+      routeController->buildDefaultFilenameShort("_", ".pln") : routeController->buildDefaultFilename(tr(" Clean")));
 
     if(!routeFile.isEmpty())
     {

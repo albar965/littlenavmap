@@ -153,7 +153,11 @@ enum Flag2
 
   /* Treat empty airports special.
    * ui->checkBoxOptionsMapEmptyAirports3D */
-  MAP_EMPTY_AIRPORTS_3D = 1 << 0
+  MAP_EMPTY_AIRPORTS_3D = 1 << 0,
+
+  /* Save PLN using short names
+   * ui->checkBoxOptionsRouteShortName */
+  ROUTE_SAVE_SHORT_NAME = 2 << 0
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);

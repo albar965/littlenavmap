@@ -244,6 +244,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsGuiOverrideLocale);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports3D);
+  widgets.append(ui->checkBoxOptionsRouteShortName);
   widgets.append(ui->checkBoxOptionsMapTooltipAirport);
   widgets.append(ui->checkBoxOptionsMapTooltipNavaid);
   widgets.append(ui->checkBoxOptionsMapTooltipAirspace);
@@ -909,6 +910,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
   toFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts::MAP_EMPTY_AIRPORTS_3D);
+  toFlags2(ui->checkBoxOptionsRouteShortName, opts::ROUTE_SAVE_SHORT_NAME);
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
@@ -1040,6 +1042,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
   fromFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts::MAP_EMPTY_AIRPORTS_3D);
+  fromFlags2(ui->checkBoxOptionsRouteShortName, opts::ROUTE_SAVE_SHORT_NAME);
 
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
 
