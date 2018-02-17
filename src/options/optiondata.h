@@ -208,6 +208,17 @@ enum DisplayTooltipOption
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayTooltipOptions);
 
+enum DisplayClickOption
+{
+  CLICK_NONE = 0,
+  CLICK_AIRPORT = 1 << 1,
+  CLICK_NAVAID = 1 << 2,
+  CLICK_AIRSPACE = 1 << 3
+};
+
+Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayClickOptions);
+
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
 {
@@ -590,6 +601,11 @@ public:
     return displayTooltipOptions;
   }
 
+  opts::DisplayClickOptions getDisplayClickOptions() const
+  {
+    return displayClickOptions;
+  }
+
   int getDisplayThicknessRangeDistance() const
   {
     return displayThicknessRangeDistance;
@@ -830,6 +846,7 @@ private:
 
   opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
                                                       opts::TOOLTIP_NAVAID;
+  opts::DisplayClickOptions displayClickOptions = opts::CLICK_AIRPORT | opts::CLICK_AIRSPACE | opts::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;
   opts::UpdateChannels updateChannels = opts::STABLE;

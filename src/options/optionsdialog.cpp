@@ -247,6 +247,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsMapTooltipAirport);
   widgets.append(ui->checkBoxOptionsMapTooltipNavaid);
   widgets.append(ui->checkBoxOptionsMapTooltipAirspace);
+  widgets.append(ui->checkBoxOptionsMapClickAirport);
+  widgets.append(ui->checkBoxOptionsMapClickNavaid);
+  widgets.append(ui->checkBoxOptionsMapClickAirspace);
   widgets.append(ui->checkBoxOptionsRouteEastWestRule);
   widgets.append(ui->comboBoxOptionsRouteAltitudeRuleType);
   widgets.append(ui->checkBoxOptionsRoutePreferNdb);
@@ -913,6 +916,10 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_NAVAID, ui->checkBoxOptionsMapTooltipNavaid->isChecked());
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_AIRSPACE, ui->checkBoxOptionsMapTooltipAirspace->isChecked());
 
+  data.displayClickOptions.setFlag(opts::CLICK_AIRPORT, ui->checkBoxOptionsMapClickAirport->isChecked());
+  data.displayClickOptions.setFlag(opts::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
+  data.displayClickOptions.setFlag(opts::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
+
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
@@ -1039,6 +1046,10 @@ void OptionsDialog::optionDataToWidgets()
   ui->checkBoxOptionsMapTooltipAirport->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRPORT));
   ui->checkBoxOptionsMapTooltipNavaid->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_NAVAID));
   ui->checkBoxOptionsMapTooltipAirspace->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRSPACE));
+
+  ui->checkBoxOptionsMapClickAirport->setChecked(data.displayClickOptions.testFlag(opts::CLICK_AIRPORT));
+  ui->checkBoxOptionsMapClickNavaid->setChecked(data.displayClickOptions.testFlag(opts::CLICK_NAVAID));
+  ui->checkBoxOptionsMapClickAirspace->setChecked(data.displayClickOptions.testFlag(opts::CLICK_AIRSPACE));
 
   QString txt;
   for(int val : data.mapRangeRings)

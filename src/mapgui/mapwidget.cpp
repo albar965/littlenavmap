@@ -2774,6 +2774,28 @@ void MapWidget::handleInfoClick(QPoint pos)
   QList<proc::MapProcedurePoint> procPoints;
   screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result, procPoints);
 
+  // Remove all undesired features
+  opts::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
+  if(!(opts & opts::CLICK_AIRPORT))
+  {
+    result.airports.clear();
+    result.airportIds.clear();
+  }
+
+  if(!(opts & opts::CLICK_NAVAID))
+  {
+    result.vors.clear();
+    result.vorIds.clear();
+    result.ndbs.clear();
+    result.ndbIds.clear();
+    result.waypoints.clear();
+    result.waypointIds.clear();
+    result.airways.clear();
+  }
+
+  if(!(opts & opts::CLICK_AIRSPACE))
+    result.airspaces.clear();
+
   emit showInformation(result);
 }
 
