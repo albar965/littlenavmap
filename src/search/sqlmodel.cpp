@@ -471,6 +471,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
   QString queryWhere;
 
   QHash<QString, WhereCondition> whereConditions;
+  bool hasNonOverride = false;
 
   // Check for columns that override all other search options
   for(const QString& key : whereConditionMap.keys())
@@ -487,6 +488,8 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
           whereConditions.insert(key, cond);
           overrideColumns.append(cond.col);
         }
+        else
+          hasNonOverride = true;
       }
       else
       {
@@ -496,9 +499,16 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
           whereConditions.insert(key, cond);
           overrideColumns.append(cond.col);
         }
+        else
+          hasNonOverride = true;
       }
     }
+    else
+      hasNonOverride = true;
   }
+
+  if(!hasNonOverride)
+    overrideColumns.clear();
 
   if(whereConditions.isEmpty())
     // No overrides found use all columns
