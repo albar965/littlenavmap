@@ -258,6 +258,7 @@ private:
   bool routeSaveCheckFMS11Warnings();
 
   void checkForUpdates();
+  void updateClock() const;
 
   /* Original unchanged window title */
   QString mainWindowTitle;
@@ -278,7 +279,7 @@ private:
 
   /* Status bar labels */
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel,
-         *connectStatusLabel;
+         *connectStatusLabel, *timeLabel;
 
   /* List of status bar messages (currently only one) */
   QStringList statusMessages;
@@ -317,6 +318,7 @@ private:
   bool databasesErased = false;
 
   QString aboutMessage;
+  QTimer clockTimer;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

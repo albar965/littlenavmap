@@ -231,6 +231,10 @@ MainWindow::MainWindow()
     updateLegend();
     updateWindowTitle();
 
+    clockTimer.setInterval(1000);
+    connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
+    clockTimer.start();
+
     qDebug() << "MainWindow Constructor done";
   }
   // Exit application if something goes wrong
@@ -247,6 +251,8 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
+
+  clockTimer.stop();
 
   NavApp::setShuttingDown(true);
 
@@ -315,6 +321,12 @@ MainWindow::~MainWindow()
 void MainWindow::updateMap() const
 {
   mapWidget->update();
+}
+
+void MainWindow::updateClock() const
+{
+  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d hh:mm:ssZ"));
+  timeLabel->setToolTip(tr("Day of month and UTC time.\n%1").arg(QDateTime::currentDateTimeUtc().toString()));
 }
 
 /* Show map legend and bring information dock to front */
@@ -623,6 +635,12 @@ void MainWindow::setupUi()
   mapPosLabel->setMinimumWidth(240);
   mapPosLabel->setToolTip(tr("Cursor position on map."));
   ui->statusBar->addPermanentWidget(mapPosLabel);
+
+  timeLabel = new QLabel();
+  timeLabel->setAlignment(Qt::AlignCenter);
+  timeLabel->setMinimumWidth(50);
+  timeLabel->setToolTip(tr("Day of month and UTC time."));
+  ui->statusBar->addPermanentWidget(timeLabel);
 }
 
 void MainWindow::connectAllSlots()
