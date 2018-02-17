@@ -50,6 +50,10 @@ public:
   /* Column can be used in filters */
   Column& filter(bool b = true);
 
+  /* Column like ident can override other filters */
+  Column& override(bool b = true);
+  Column& minOverrideLength(int val = -1);
+
   /* Table can not be sorted by this column */
   Column& noSort(bool b = true);
 
@@ -95,6 +99,11 @@ public:
   bool isFilter() const
   {
     return colCanBeFiltered;
+  }
+
+  bool isOverride() const
+  {
+    return colCanOverride;
   }
 
   bool isNoSort() const
@@ -228,6 +237,11 @@ public:
     return unitConvert;
   }
 
+  int getMinOverrideLength() const
+  {
+    return colMinOverrideLength;
+  }
+
 private:
   friend class ColumnList;
 
@@ -247,12 +261,16 @@ private:
   /* Condition list used for combo boxes */
   QStringList colIndexConditionMap;
 
+  /* Minimum length of search term to start override mode */
+  int colMinOverrideLength = -1;
+
   int index = -1;
 
   /* Function to convert from default units to widget units */
   std::function<float(float value)> unitConvert = nullptr;
 
   bool colCanBeFiltered = false;
+  bool colCanOverride = false;
   bool colCanNotBeSorted = false;
   bool colIsNoDefaultColumn = false;
   bool colIsDefaultSortColumn = false;

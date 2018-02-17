@@ -40,6 +40,18 @@ Column& Column::filter(bool b)
   return *this;
 }
 
+Column& Column::override(bool b)
+{
+  colCanOverride = b;
+  return *this;
+}
+
+Column& Column::minOverrideLength(int val)
+{
+  colMinOverrideLength = val;
+  return *this;
+}
+
 Column& Column::noSort(bool b)
 {
   colCanNotBeSorted = b;

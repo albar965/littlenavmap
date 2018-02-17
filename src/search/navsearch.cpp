@@ -159,6 +159,8 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIn
   append(Column("laty").hidden())
   ;
 
+  ui->labelNavSearchOverride->hide();
+
   // Add icon delegate for the ident column
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
@@ -172,6 +174,23 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIn
 NavSearch::~NavSearch()
 {
   delete iconDelegate;
+}
+
+void NavSearch::overrideMode(const QStringList& overrideColumnTitles)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(overrideColumnTitles.isEmpty())
+  {
+    ui->labelNavSearchOverride->hide();
+    ui->labelNavSearchOverride->clear();
+  }
+  else
+  {
+    ui->labelNavSearchOverride->show();
+    ui->labelNavSearchOverride->setText(tr("%1 overriding all other search options.").
+                                        arg(overrideColumnTitles.join(" and ")));
+  }
 }
 
 void NavSearch::connectSearchSlots()
@@ -215,6 +234,8 @@ void NavSearch::connectSearchSlots()
                                               {ui->lineNavScenerySearch});
     updateButtonMenu();
   });
+
+  connect(controller->getSqlModel(), &SqlModel::overrideMode, this, &NavSearch::overrideMode);
 }
 
 void NavSearch::saveState()

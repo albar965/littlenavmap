@@ -62,6 +62,7 @@ private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+  void overrideMode(const QStringList& overrideColumnTitles);
 
   static const QSet<QString> NUMBER_COLUMNS;
 

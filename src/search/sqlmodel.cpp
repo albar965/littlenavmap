@@ -131,7 +131,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
       check->setCheckState(val ? Qt::Unchecked : Qt::Checked);
     }
   }
-  whereConditionMap.insert(whereCol, {whereOp, whereValue, colDescr});
+  whereConditionMap.insert(whereCol, {whereOp, whereValue, whereValue, colDescr});
 }
 
 /* Changes the whereConditionMap. Removes, replaces or adds where conditions based on input */
@@ -238,11 +238,12 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
       // Replace values in existing condition
       whereConditionMap[colName].oper = oper;
       whereConditionMap[colName].value = newVariant;
+      whereConditionMap[colName].valueRaw = value;
       whereConditionMap[colName].col = col;
     }
     else
       // Insert new condition
-      whereConditionMap.insert(colName, {oper, newVariant, col});
+      whereConditionMap.insert(colName, {oper, newVariant, value, col});
   }
   buildQuery();
 }
@@ -393,7 +394,8 @@ void SqlModel::buildQuery()
   atools::sql::SqlRecord tableCols = db->record(columns->getTablename());
   QString queryCols = buildColumnList(tableCols);
 
-  QString queryWhere = buildWhere(tableCols);
+  QVector<const Column *> overrideColumns;
+  QString queryWhere = buildWhere(tableCols, overrideColumns);
 
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
@@ -432,6 +434,14 @@ void SqlModel::buildQuery()
   qDebug() << Q_FUNC_INFO << currentSqlQuery;
 #endif
 
+  QStringList overrideColumnTitles;
+  if(!overrideColumns.isEmpty())
+  {
+    for(const Column *ocol : overrideColumns)
+      overrideColumnTitles.append(ocol->getDisplayName());
+  }
+  emit overrideMode(overrideColumnTitles);
+
   try
   {
     // Count total rows
@@ -455,13 +465,47 @@ void SqlModel::buildQuery()
 }
 
 /* Build where statement */
-QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols)
+QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns)
 {
   const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
   QString queryWhere;
 
+  QHash<QString, WhereCondition> whereConditions;
+
+  // Check for columns that override all other search options
+  for(const QString& key : whereConditionMap.keys())
+  {
+    const WhereCondition& cond = whereConditionMap.value(key);
+
+    if(cond.col->isOverride())
+    {
+      if(cond.col->getMinOverrideLength() == -1)
+      {
+        // Length not given - simply check if valid
+        if(cond.value.isValid())
+        {
+          whereConditions.insert(key, cond);
+          overrideColumns.append(cond.col);
+        }
+      }
+      else
+      {
+        // Check if minimum length for overriding is satisfied
+        if(cond.valueRaw.toString().size() >= cond.col->getMinOverrideLength())
+        {
+          whereConditions.insert(key, cond);
+          overrideColumns.append(cond.col);
+        }
+      }
+    }
+  }
+
+  if(whereConditions.isEmpty())
+    // No overrides found use all columns
+    whereConditions = whereConditionMap;
+
   int numCond = 0;
-  for(const WhereCondition& cond : whereConditionMap)
+  for(const WhereCondition& cond : whereConditions)
   {
     // Extract the required column from the comment in the operator and  check if it exists in the table
     QString checkCol = cond.col->getColumnName();

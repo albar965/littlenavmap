@@ -145,8 +145,8 @@ public:
    * @param role Data role
    * @return a variant. Mostly string for display role.
    */
-  typedef std::function<QVariant(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
-                                 const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
+  typedef std::function<QVariant(int colIndex, int rowIndex, const Column * col, const QVariant &roleValue,
+                                 const QVariant &displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
 
   /*
    * Sets a data callback that is called for each table cell and the given item data roles.
@@ -159,6 +159,9 @@ signals:
   /* Emitted when more data was fetched */
   void fetchedMore();
 
+  /* One or more columns overrides all other search options */
+  void overrideMode(const QStringList& overrideColumnTitles);
+
 private:
   // Hide the record method
   using QSqlQueryModel::record;
@@ -166,7 +169,8 @@ private:
   struct WhereCondition
   {
     QString oper; /* operator (like, not like) */
-    QVariant value; /* Condition value */
+    QVariant value; /* Condition value including % or other SQL characters */
+    QVariant valueRaw; /* Raw value as entered in the search form */
     const Column *col; /* Column descriptor */
   };
 
@@ -174,7 +178,7 @@ private:
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
-  QString buildWhere(const atools::sql::SqlRecord& tableCols);
+  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();

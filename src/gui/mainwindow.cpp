@@ -883,6 +883,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 
   connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
+
   connect(searchController->getAirportSearch(), &SearchBaseTable::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
   connect(searchController->getNavSearch(), &SearchBaseTable::selectionChanged,

@@ -1450,6 +1450,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="labelAirportSearchOverride">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -2163,6 +2170,13 @@
            </item>
            <item>
             <widget class="QLabel" name="labelNavSearchStatus">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelNavSearchOverride">
              <property name="text">
               <string/>
              </property>

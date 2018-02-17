@@ -149,7 +149,8 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
   append(Column("airport_id").hidden()).
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
-  append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort()).
+  append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort().
+         override().minOverrideLength(3)).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
@@ -232,6 +233,8 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
   append(Column("laty", tr("Latitude")).hidden())
   ;
 
+  ui->labelAirportSearchOverride->hide();
+
   // Add icon delegate for the ident column
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
@@ -245,6 +248,23 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
 AirportSearch::~AirportSearch()
 {
   delete iconDelegate;
+}
+
+void AirportSearch::overrideMode(const QStringList& overrideColumnTitles)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(overrideColumnTitles.isEmpty())
+  {
+    ui->labelAirportSearchOverride->hide();
+    ui->labelAirportSearchOverride->clear();
+  }
+  else
+  {
+    ui->labelAirportSearchOverride->show();
+    ui->labelAirportSearchOverride->setText(tr("%1 overriding all other search options.").
+                                            arg(overrideColumnTitles.join(" and ")));
+  }
 }
 
 void AirportSearch::connectSearchSlots()
@@ -330,6 +350,8 @@ void AirportSearch::connectSearchSlots()
                                               {ui->lineAirportScenerySearch});
     updateButtonMenu();
   });
+
+  connect(controller->getSqlModel(), &SqlModel::overrideMode, this, &AirportSearch::overrideMode);
 }
 
 void AirportSearch::saveState()
