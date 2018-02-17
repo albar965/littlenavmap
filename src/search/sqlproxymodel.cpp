@@ -55,6 +55,9 @@ bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourcePar
 {
   Q_UNUSED(sourceParent);
 
+  if(sourceSqlModel->isOverrideModeActive())
+    return true;
+
   Pos pos = buildPos(sourceRow);
   float heading = normalizeCourse(centerPos.angleDegTo(pos));
 
@@ -93,6 +96,9 @@ bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourcePar
 
 bool SqlProxyModel::matchDistance(const Pos& pos) const
 {
+  if(sourceSqlModel->isOverrideModeActive())
+    return true;
+
   float distMeter = pos.distanceMeterTo(centerPos);
   return distMeter >= minDistMeter && distMeter <= maxDistMeter;
 }

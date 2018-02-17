@@ -155,6 +155,11 @@ public:
    */
   void setDataCallback(const DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles);
 
+  bool isOverrideModeActive() const
+  {
+    return overrideModeActive;
+  }
+
 signals:
   /* Emitted when more data was fetched */
   void fetchedMore();
@@ -213,6 +218,9 @@ private:
 
   QWidget *parentWidget;
   int totalRowCount = 0;
+
+  /* Set by buildWhere. Will ignore all other filter options */
+  bool overrideModeActive = false;
 
 };
 

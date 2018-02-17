@@ -510,6 +510,8 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
   if(!hasNonOverride)
     overrideColumns.clear();
 
+  overrideModeActive = !overrideColumns.isEmpty();
+
   if(whereConditions.isEmpty())
     // No overrides found use all columns
     whereConditions = whereConditionMap;
@@ -543,7 +545,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       queryWhere += buildWhereValue(cond);
   }
 
-  if(boundingRect.isValid())
+  if(boundingRect.isValid() && !overrideModeActive)
   {
     QString rectCond;
     if(boundingRect.crossesAntiMeridian())
