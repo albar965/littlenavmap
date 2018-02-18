@@ -163,11 +163,16 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   textPlacement.calculateTextPositions(positions);
   textPlacement.calculateTextAlongLines(lines, routeTexts);
   painter->save();
-  painter->setBackgroundMode(Qt::OpaqueMode);
+  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+    painter->setBackgroundMode(Qt::TransparentMode);
+  else
+    painter->setBackgroundMode(Qt::OpaqueMode);
+
   painter->setBackground(mapcolors::routeTextBackgroundColor);
   painter->setPen(mapcolors::routeTextColor);
   textPlacement.drawTextAlongLines();
   painter->restore();
+  painter->setBackgroundMode(Qt::OpaqueMode);
 
   context->szFont(context->textSizeFlightplan);
   // ================================================================================
@@ -248,9 +253,13 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
       if(context->mapLayer->isAirportRouteInfo())
         tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
+      int transparency = 255;
+      if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+        transparency = 0;
+
       symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
                              pt.x() + radius, pt.y() + radius,
-                             textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+                             textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
     }
   }
 }
@@ -959,6 +968,9 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
   if(context->mapLayer->isAirportRouteInfo())
     flags |= textflags::NAME | textflags::INFO;
 
+  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+    flags |= textflags::NO_BACKGROUND;
+
   symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts, flags, size,
                                  context->mapLayerEffective->isAirportDiagram(),
                                  context->mapLayer->getMaxTextLength());
@@ -988,7 +1000,14 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isVorRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true, additionalText);
+  bool fill = true;
+  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  {
+    flags |= textflags::NO_BACKGROUND;
+    fill = false;
+  }
+
+  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
 void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y, bool preview)
@@ -1013,7 +1032,14 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isNdbRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true, additionalText);
+  bool fill = true;
+  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  {
+    flags |= textflags::NO_BACKGROUND;
+    fill = false;
+  }
+
+  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y, bool preview)
@@ -1035,7 +1061,14 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
   if(context->mapLayer->isWaypointRouteName())
     flags |= textflags::IDENT;
 
-  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true, additionalText);
+  bool fill = true;
+  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+  {
+    flags |= textflags::NO_BACKGROUND;
+    fill = false;
+  }
+
+  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
 /* paint intermediate approach point */
@@ -1068,8 +1101,12 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
   if(drawAsRoute)
     atts |= textatt::ROUTE_BG_COLOR;
 
+  int transparency = 255;
+  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+    transparency = 0;
+
   if(!texts.isEmpty() && context->mapLayer->isWaypointRouteName())
-    symbolPainter->textBox(context->painter, texts, color, x + size / 2 + 2, y, atts, 255);
+    symbolPainter->textBox(context->painter, texts, color, x + size / 2 + 2, y, atts, transparency);
 }
 
 void MapPainterRoute::drawSymbols(const PaintContext *context,

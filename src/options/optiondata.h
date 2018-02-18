@@ -157,7 +157,19 @@ enum Flag2
 
   /* Save PLN using short names
    * ui->checkBoxOptionsRouteShortName */
-  ROUTE_SAVE_SHORT_NAME = 2 << 0
+  ROUTE_SAVE_SHORT_NAME = 1 << 1,
+
+  /* ui->checkBoxOptionsMapAirportText */
+  MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
+
+  /* ui->checkBoxOptionsMapNavaidText */
+  MAP_NAVAID_TEXT_BACKGROUND = 1 << 3,
+
+  /* ui->checkBoxOptionsMapFlightplanText */
+  MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
+
+  /* ui->checkBoxOptionsMapAirportBoundary */
+  MAP_AIRPORT_BOUNDARY = 1 << 5
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -693,7 +705,8 @@ private:
     opts::CACHE_USE_ONLINE_ELEVATION
   ;
 
-  opts::Flags2 flags2 = opts::NO_FLAGS2;
+  opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
+                        opts::MAP_AIRPORT_BOUNDARY;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});

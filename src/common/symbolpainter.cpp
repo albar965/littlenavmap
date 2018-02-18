@@ -675,6 +675,9 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
     if(!flags.testFlag(textflags::ABS_POS))
       x += size + 2.f;
 
+    if(flags & textflags::NO_BACKGROUND)
+      transparency = 0;
+
     textBoxF(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
   }
 }

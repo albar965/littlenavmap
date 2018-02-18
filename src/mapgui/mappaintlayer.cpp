@@ -393,6 +393,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.thicknessRangeDistance = od.getDisplayThicknessRangeDistance() / 100.f;
 
       context.dispOpts = od.getDisplayOptions();
+      context.flags = od.getFlags();
+      context.flags2 = od.getFlags2();
 
       if(mapWidget->viewContext() == Marble::Still)
       {

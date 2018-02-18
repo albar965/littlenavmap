@@ -143,7 +143,7 @@ void MapPainterAirport::render(PaintContext *context)
       return ap1->emptyDraw(od) > ap2->emptyDraw(od);
   });
 
-  if(context->mapLayerEffective->isAirportDiagram())
+  if(context->mapLayerEffective->isAirportDiagram() && context->flags2 & opts::MAP_AIRPORT_BOUNDARY)
   {
     // In diagram mode draw background first to avoid overwriting other airports
     for(const PaintAirportType& airport : visibleAirports)
@@ -186,6 +186,9 @@ void MapPainterAirport::render(PaintContext *context)
         flags |= textflags::IDENT;
       else if(layer->isAirportName())
         flags |= textflags::NAME;
+
+      if(!(context->flags2 & opts::MAP_AIRPORT_TEXT_BACKGROUND))
+        flags |= textflags::NO_BACKGROUND;
 
       context->szFont(context->textSizeAirport);
       symbolPainter->drawAirportText(context->painter, *airport, pt.x(), pt.y(), context->dispOpts,
@@ -811,15 +814,29 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
             else
               text = QLocale().toString(parking.number);
           }
-          else
+          else if(!parking.name.isEmpty())
           {
             // X-Plane style names
-            if(parking.name.size() <= 4 || context->mapLayerEffective->isAirportDiagramDetail3())
-              // Use short name
+            if(parking.name.size() <= 5 || context->mapLayerEffective->isAirportDiagramDetail3())
+              // Use short name or full name when zoomed in enough
               text = parking.name;
-            else if(!parking.name.isEmpty())
-              // Use first character only
-              text = parking.name.at(0);
+            else
+            {
+              bool ok;
+              int num = parking.name.section(" ", -1, -1).toInt(&ok);
+
+              if(ok)
+                // Use first character and last number
+                text = parking.name.at(0) + QString::number(num);
+              else
+              {
+                QString firstWord = parking.name.section(" ", 0, 0);
+                if(firstWord.size() <= 5)
+                  text = firstWord;
+                else
+                  text = firstWord.left(4) + ".";
+              }
+            }
           }
 
           pt.setY(pt.y() + metrics.ascent() / 2);

@@ -51,16 +51,17 @@ namespace textflags {
 /* Flags that determine what information is added to an icon */
 enum TextFlag
 {
-  NONE = 0x00,
-  IDENT = 0x01, /* Draw airport or navaid ICAO ident */
-  TYPE = 0x02, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
-  FREQ = 0x04, /* Draw navaid frequency */
-  NAME = 0x08,
-  MORSE = 0x10, /* Draw navaid morse code */
-  INFO = 0x20, /* Additional airport information like tower frequency, etc. */
-  ROUTE_TEXT = 0x40, /* Object is part of route */
-  ABS_POS = 0x80, /* Use absolute text positioning */
-  ALL = 0xff
+  NONE = 0x0000,
+  IDENT = 0x0001, /* Draw airport or navaid ICAO ident */
+  TYPE = 0x0002, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
+  FREQ = 0x0004, /* Draw navaid frequency */
+  NAME = 0x0008,
+  MORSE = 0x0010, /* Draw navaid morse code */
+  INFO = 0x0020, /* Additional airport information like tower frequency, etc. */
+  ROUTE_TEXT = 0x0040, /* Object is part of route */
+  ABS_POS = 0x0080, /* Use absolute text positioning */
+  NO_BACKGROUND = 0x0100, /* No background */
+  ALL = 0x00ff
 };
 
 Q_DECLARE_FLAGS(TextFlags, TextFlag);
@@ -116,7 +117,8 @@ public:
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
                          bool isAirportDiagram, bool fast);
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                       opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram, int maxTextLength);
+                       opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram,
+                       int maxTextLength);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
