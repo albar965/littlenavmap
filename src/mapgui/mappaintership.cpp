@@ -54,7 +54,7 @@ void MapPainterShip::render(PaintContext *context)
       {
         if(ac.getCategory() == atools::fs::sc::BOAT &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
-          paintAiVehicle(context, ac);
+          paintAiVehicle(context, ac, false /* force label */);
       }
     }
   }

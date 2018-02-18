@@ -1843,8 +1843,6 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
 
     html.row2(QString());
     html.row2(tr("Empty Weight:"), Unit::weightLbs(userAircraft.getAirplaneEmptyWeightLbs()));
-
-    html.row2(QString());
     html.row2(tr("Zero Fuel Weight:"), Unit::weightLbs(userAircraft.getAirplaneTotalWeightLbs() -
                                                        userAircraft.getFuelTotalWeightLbs()));
 
