@@ -1159,6 +1159,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!parsed.getReportTypeString().isEmpty())
     html.row2(tr("Report type: "), parsed.getReportTypeString());
 
+  bool hasWind = false;
   // Wind =============================================================
   if(parsed.getWindSpeedMeterPerSec() > 0.f)
   {
@@ -1183,10 +1184,14 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
       windSpeedStr = Unit::speedMeterPerSec(windMeterPerSec);
 
     html.row2(tr("Wind:"), windDir + windSpeedStr + windVar);
+    hasWind = true;
   }
 
   if(parsed.getGustSpeedMeterPerSec() < INVALID_METAR_VALUE)
+  {
+    hasWind = true;
     html.row2(tr("Wind gusts:"), Unit::speedMeterPerSec(parsed.getGustSpeedMeterPerSec()));
+  }
 
   // Temperature  =============================================================
   float temp = parsed.getTemperatureC();
@@ -1226,6 +1231,9 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   if(!hasClouds)
     html.row2(tr("No clouds"));
+
+  if(!hasWind)
+    html.row2(tr("No wind"));
 
   // Other conditions =============================================================
   const QStringList& weather = parsed.getWeather();
@@ -1914,20 +1922,25 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       {
         head(html, tr("Destination"));
         html.table();
-        QString destinationText(tr("Distance to:"));
+
+        bool timeAvailable = aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED;
+        float timeToDestination = 0.f;
+        if(timeAvailable)
+          timeToDestination = distToDestNm / aircraft.getGroundSpeedKts();
+
+        QString destinationText = timeAvailable ? tr("Distance and Time:") : tr("Distance:");
 
         if(route.isActiveMissed())
           destinationText = tr("To End of Missed Approach:");
 
-        html.row2(destinationText, Unit::distNm(distToDestNm));
+        html.row2(destinationText, Unit::distNm(distToDestNm) +
+                  (timeAvailable ? tr(", ") + formatter::formatMinutesHoursLong(timeToDestination) : QString()));
 
-        if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+        if(timeAvailable)
         {
-          float timeToDestination = distToDestNm / aircraft.getGroundSpeedKts();
           QDateTime arrival = userAircaft->getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
           html.row2(tr("Arrival Time:"), locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
                     arrival.timeZoneAbbreviation());
-          html.row2(tr("En route Time:"), formatter::formatMinutesHoursLong(timeToDestination));
 
           if(userAircaft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
           {
@@ -1935,9 +1948,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED &&
                neededFuelVol < INVALID_VOLUME_VALUE && neededFuelWeight < INVALID_WEIGHT_VALUE)
             {
-              html.row2(tr("Gross Weight at:"),
+              html.row2(tr("Gross Weight:"),
                         Unit::weightLbs(userAircaft->getAirplaneTotalWeightLbs() - neededFuelWeight));
-              html.row2(tr("Fuel at:"),
+              html.row2(tr("Fuel:"),
                         Unit::weightLbs(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight) + tr(", ") +
                         Unit::volGallon(userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
             }
@@ -1953,7 +1966,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.table();
         // if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
         // Top of descent  ===============================================================
-        html.row2(tr("ToD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
+        html.row2(tr("To Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
         if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
           toTod = route.getTopOfDescentFromStart() - distFromStartNm;
@@ -1977,10 +1990,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             }
           }
 
-          html.row2(tr("Distance to:"), todTexts.join(tr(", ")));
+          if(todTexts.size() == 1)
+            html.row2(tr("Distance:"), todTexts.first());
+          else
+            html.row2(tr("Distance and Time:"), todTexts.join(tr(", ")));
 
           if(fuelAtTod < INVALID_WEIGHT_VALUE && fuelVolAtTod < INVALID_VOLUME_VALUE)
-            html.row2(tr("Fuel at:"),
+            html.row2(tr("Fuel:"),
                       Unit::weightLbs(fuelAtTod) + tr(", ") + Unit::volGallon(fuelVolAtTod));
         }
         html.tableEnd();
