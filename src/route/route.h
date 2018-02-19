@@ -72,9 +72,16 @@ public:
   int getDestinationIndexBeforeProcedure() const;
   const RouteLeg& getDestinationBeforeProcedure() const;
 
+  /* map::INVALID_INDEX_VALUE if no active.
+   * 1 for first leg to route.size() - 1 for active legs */
   int getActiveLegIndex() const
   {
     return activeLeg;
+  }
+
+  bool isActiveValid() const
+  {
+    return activeLeg > 0 && activeLeg < size();
   }
 
   /* Get active leg or null if this is none */

@@ -98,6 +98,7 @@ private:
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();
   void flightplanActiveColorClicked();
+  void flightplanPassedColorClicked();
   void flightplanProcedureColorClicked();
   void trailColorClicked();
 
@@ -121,7 +122,7 @@ private:
 
   QVector<int> ringStrToVector(const QString& string) const;
 
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
+  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;

@@ -169,7 +169,11 @@ enum Flag2
   MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
 
   /* ui->checkBoxOptionsMapAirportBoundary */
-  MAP_AIRPORT_BOUNDARY = 1 << 5
+  MAP_AIRPORT_BOUNDARY = 1 << 5,
+
+  /* ui->checkBoxOptionsMapFlightplanDimPassed */
+  MAP_ROUTE_DIM_PASSED = 1 << 6
+
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -602,6 +606,11 @@ public:
     return flightplanActiveColor;
   }
 
+  const QColor& getFlightplanPassedSegmentColor() const
+  {
+    return flightplanPassedColor;
+  }
+
   const QColor& getTrailColor() const
   {
     return trailColor;
@@ -846,7 +855,7 @@ private:
   // spinBoxSimMaxTrackPoints
   int aircraftTrackMaxPoints = 20000;
 
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
+  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;

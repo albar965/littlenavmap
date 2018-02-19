@@ -337,6 +337,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsMapNavaidText);
   widgets.append(ui->checkBoxOptionsMapFlightplanText);
   widgets.append(ui->checkBoxOptionsMapAirportBoundary);
+  widgets.append(ui->checkBoxOptionsMapFlightplanDimPassed);
 
   doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
   doubleSpinBoxOptionsMapZoomShowMapMenuSuffix = ui->doubleSpinBoxOptionsMapZoomShowMapMenu->suffix();
@@ -408,6 +409,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::flightplanActiveColorClicked);
   connect(ui->pushButtonOptionsDisplayTrailColor, &QPushButton::clicked,
           this, &OptionsDialog::trailColorClicked);
+  connect(ui->pushButtonOptionsDisplayFlightplanPassedColor, &QPushButton::clicked,
+          this, &OptionsDialog::flightplanPassedColorClicked);
 
   connect(ui->radioButtonCacheUseOffineElevation, &QRadioButton::clicked,
           this, &OptionsDialog::updateCacheElevationStates);
@@ -571,6 +574,7 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, flightplanColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR, flightplanProcedureColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, flightplanPassedColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
 
   settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
@@ -596,6 +600,8 @@ void OptionsDialog::restoreState()
     settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR, QColor(255, 150, 0)).value<QColor>();
   flightplanActiveColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, QColor(Qt::magenta)).value<QColor>();
+  flightplanPassedColor =
+    settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, QColor(Qt::gray)).value<QColor>();
   trailColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
@@ -636,6 +642,7 @@ void OptionsDialog::updateButtonColors()
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanColor, flightplanColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanProcedureColor, flightplanProcedureColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanPassedColor, flightplanPassedColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
 }
 
@@ -739,6 +746,16 @@ void OptionsDialog::flightplanActiveColorClicked()
   if(col.isValid())
   {
     flightplanActiveColor = col;
+    updateButtonColors();
+  }
+}
+
+void OptionsDialog::flightplanPassedColorClicked()
+{
+  QColor col = QColorDialog::getColor(flightplanPassedColor, mainWindow);
+  if(col.isValid())
+  {
+    flightplanPassedColor = col;
     updateButtonColors();
   }
 }
@@ -878,6 +895,7 @@ void OptionsDialog::widgetsToOptionData()
   data.flightplanColor = flightplanColor;
   data.flightplanProcedureColor = flightplanProcedureColor;
   data.flightplanActiveColor = flightplanActiveColor;
+  data.flightplanPassedColor = flightplanPassedColor;
   data.trailColor = trailColor;
   displayOptWidgetToOptionData();
 
@@ -921,6 +939,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapNavaidText, opts::MAP_NAVAID_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapFlightplanText, opts::MAP_ROUTE_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAirportBoundary, opts::MAP_AIRPORT_BOUNDARY);
+  toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
@@ -1015,6 +1034,7 @@ void OptionsDialog::optionDataToWidgets()
   flightplanColor = data.flightplanColor;
   flightplanProcedureColor = data.flightplanProcedureColor;
   flightplanActiveColor = data.flightplanActiveColor;
+  flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
   displayOptDataToWidget();
 
@@ -1058,6 +1078,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags2(ui->checkBoxOptionsMapNavaidText, opts::MAP_NAVAID_TEXT_BACKGROUND);
   fromFlags2(ui->checkBoxOptionsMapFlightplanText, opts::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(ui->checkBoxOptionsMapAirportBoundary, opts::MAP_AIRPORT_BOUNDARY);
+  fromFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
 
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
 
