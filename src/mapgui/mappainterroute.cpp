@@ -371,7 +371,7 @@ void MapPainterRoute::paintProcedure(const PaintContext *context, const proc::Ma
   }
 
   // Paint active leg if in range for this procedure
-  if(!preview && activeProcLeg >= 0 && activeProcLeg < legs.size())
+  if(!preview && activeValid && activeProcLeg >= 0 && activeProcLeg < legs.size())
   {
     painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen);
     paintApproachSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
