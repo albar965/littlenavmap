@@ -1627,7 +1627,7 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
   if(!sidTrans.isEmpty() && sidId != -1)
   {
     transitionIdByNameQuery->bindValue(":fixident", sidTrans);
-    transitionIdByNameQuery->bindValue(":type", "F");
+    transitionIdByNameQuery->bindValue(":type", "%");
     transitionIdByNameQuery->bindValue(":apprid", sidId);
 
     sidTransId = findTransitionId(departure, transitionIdByNameQuery, distance, size);
@@ -1667,7 +1667,7 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
   if(!starTrans.isEmpty() && starId != -1)
   {
     transitionIdByNameQuery->bindValue(":fixident", starTrans);
-    transitionIdByNameQuery->bindValue(":type", "F");
+    transitionIdByNameQuery->bindValue(":type", "%");
     transitionIdByNameQuery->bindValue(":apprid", starId);
 
     starTransId = findTransitionId(destination, transitionIdByNameQuery, distance, size);
