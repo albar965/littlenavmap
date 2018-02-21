@@ -28,7 +28,8 @@
 using atools::fs::sc::SimConnectAircraft;
 
 const int NUM_CLOSEST_AI_LABELS = 5;
-const int DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
+const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
+const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
 MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapScale *mapScale)
   : MapPainterVehicle(mapWidget, mapScale)
@@ -63,29 +64,39 @@ void MapPainterAircraft::render(PaintContext *context)
     // Draw AI aircraft
     if(context->objectTypes & map::AIRCRAFT_AI && context->mapLayer->isAiAircraftLarge())
     {
-      typedef std::pair<const SimConnectAircraft *, float> AiDistType;
+      struct AiDistType
+      {
+        const SimConnectAircraft *aircraft;
+        float distanceLateralMeter, distanceVerticalFt;
+      };
+
       QVector<AiDistType> aiSorted;
 
       for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
-        aiSorted.append(std::make_pair(&ac, pos.distanceMeterTo(ac.getPosition())));
+        aiSorted.append({&ac,
+                         pos.distanceMeterTo(ac.getPosition()),
+                         std::abs(pos.getAltitude() - ac.getPosition().getAltitude())});
 
       std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
                                                      const AiDistType& ai2) -> bool
       {
         // returns ​true if the first argument is less than (i.e. is ordered before) the second.
-        return ai1.second > ai2.second;
+        return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
       });
 
       int num = aiSorted.size();
       for(const AiDistType& adt : aiSorted)
       {
-        const SimConnectAircraft& ac = *adt.first;
+        const SimConnectAircraft& ac = *adt.aircraft;
 
         if(ac.getCategory() != atools::fs::sc::BOAT &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_AIRCRAFT_SIZE || context->mapLayer->isAiAircraftSmall()) &&
            (!ac.isOnGround() || context->mapLayer->isAiAircraftGround()))
         {
-          paintAiVehicle(context, ac, --num < NUM_CLOSEST_AI_LABELS && adt.second < DIST_METER_CLOSEST_AI_LABELS);
+          paintAiVehicle(context, ac,
+                         --num < NUM_CLOSEST_AI_LABELS &&
+                         adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
+                         adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
         }
       }
     }
