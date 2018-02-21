@@ -422,7 +422,10 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
                                       trueNorthPoint - QPointF(-10, 20)}));
 
     // Aircraft track and heading line ======================================================
-    float stepsizeNm = atools::calculateSteps(radiusNm, 6.f);
+    // Convert to selected display unit
+    float radiusUnit = Unit::distNmF(radiusNm);
+    float stepsizeUnit = atools::calculateSteps(radiusUnit, 6.f);
+    float stepsizeNm = Unit::rev(stepsizeUnit, Unit::distNmF);
     if(hasAircraft)
     {
       painter->setPen(rosePenSmall);
@@ -500,7 +503,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       {
         QPointF s = wToSF(pos.endpoint(atools::geo::nmToMeter(i * stepsizeNm), trackTrue));
         if(!s.isNull())
-          symbolPainter->textBoxF(painter, {QString::number(i * stepsizeNm)}, painter->pen(),
+          symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
                                   s.x(), s.y(), textatt::CENTER);
       }
 
