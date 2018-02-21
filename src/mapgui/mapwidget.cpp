@@ -261,6 +261,7 @@ void MapWidget::updateMapObjectsShown()
                      ui->actionShowAirspaces->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
+  setShowMapFeatures(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
@@ -495,6 +496,9 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraft->blockSignals(true);
   ui->actionMapShowAircraft->setChecked(true);
   ui->actionMapShowAircraft->blockSignals(false);
+  ui->actionMapShowCompassRose->blockSignals(true);
+  ui->actionMapShowCompassRose->setChecked(false);
+  ui->actionMapShowCompassRose->blockSignals(false);
   ui->actionMapAircraftCenter->blockSignals(true);
   ui->actionMapAircraftCenter->setChecked(true);
   ui->actionMapAircraftCenter->blockSignals(false);

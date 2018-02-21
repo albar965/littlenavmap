@@ -168,5 +168,6 @@
         <file>resources/icons/checkbox_dark_checked.png</file>
         <file>resources/icons/radiobutton_dark_unchecked.png</file>
         <file>resources/icons/radiobutton_dark_checked.png</file>
+        <file>resources/icons/compassrose.svg</file>
     </qresource>
 </RCC>

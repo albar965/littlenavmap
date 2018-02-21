@@ -391,6 +391,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.thicknessFlightplan = od.getDisplayThicknessFlightplan() / 100.f;
       context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
       context.thicknessRangeDistance = od.getDisplayThicknessRangeDistance() / 100.f;
+      context.thicknessCompassRose = od.getDisplayThicknessCompassRose() / 100.f;
 
       context.dispOpts = od.getDisplayOptions();
       context.flags = od.getFlags();

@@ -51,6 +51,9 @@ QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
 
+QColor compassRoseColor(Qt::darkRed);
+QColor compassRoseTextColor(Qt::black);
+
 /* Elevation profile colors and pens */
 QColor profileSkyColor(QColor(204, 204, 255));
 QColor profileSkyDarkColor(QColor(100, 100, 160));
@@ -493,6 +496,8 @@ void syncColors()
   syncColor(colorSettings, "DistanceGreatCircleColor", distanceColor);
   syncColor(colorSettings, "RangeRingColor", rangeRingColor);
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
+  syncColor(colorSettings, "CompassRoseColor", compassRoseColor);
+  syncColor(colorSettings, "CompassRoseTextColor", compassRoseTextColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Profile");

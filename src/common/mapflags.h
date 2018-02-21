@@ -69,6 +69,7 @@ enum MapObjectType
   PROCEDURE = 1 << 23, /* General procedure leg */
   AIRSPACE = 1 << 24, /* General airspace boundary */
   HELIPAD = 1 << 25, /* Helipads on airports */
+  COMPASS_ROSE = 1 << 26, /* Compass rose */
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,

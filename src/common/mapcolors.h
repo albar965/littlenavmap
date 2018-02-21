@@ -57,6 +57,8 @@ extern QColor airwayTextColor;
 extern QColor distanceRhumbColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
+extern QColor compassRoseColor;
+extern QColor compassRoseTextColor;
 extern QColor distanceColor;
 
 /* Elevation profile colors and pens */

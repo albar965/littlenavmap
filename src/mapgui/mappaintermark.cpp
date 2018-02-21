@@ -36,8 +36,9 @@
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
-const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);
-const atools::geo::Pos MAG_SOUTH_POLE_2007 = atools::geo::Pos(137.684f, -64.497f, 0.f);
+const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
+const float MIN_COMPASS_ROSE_RADIUS_NM = 2.f;
+const double MIN_VIEW_DISTANCE_COMPASS_ROSE_KM = 6400.;
 
 using namespace Marble;
 using namespace atools::geo;
@@ -64,7 +65,7 @@ void MapPainterMark::render(PaintContext *context)
   paintRangeRings(context);
   paintDistanceMarkers(context);
   paintRouteDrag(context);
-  // paintMagneticPoles(context);
+  paintCompassRose(context);
 }
 
 /* Draw black yellow cross for search distance marker */
@@ -84,31 +85,6 @@ void MapPainterMark::paintMark(const PaintContext *context)
     context->painter->setPen(mapcolors::markFillPen);
     context->painter->drawLine(x, y - size2, x, y + size2);
     context->painter->drawLine(x - size2, y, x + size2, y);
-  }
-}
-
-/* Draw two indications for the magnetic poles in 2007 */
-void MapPainterMark::paintMagneticPoles(const PaintContext *context)
-{
-  GeoPainter *painter = context->painter;
-
-  painter->setPen(mapcolors::magneticPolePen);
-
-  int size = context->sz(context->symbolSizeNavaid, 5);
-
-  int x, y;
-  if(wToS(MAG_NORTH_POLE_2007, x, y))
-  {
-    painter->drawEllipse(x, y, size, size);
-    symbolPainter->textBox(painter, {tr("Magnetic North"), tr("2007")},
-                           painter->pen(), x + size, y, textatt::NONE, 0);
-  }
-
-  if(wToS(MAG_SOUTH_POLE_2007, x, y))
-  {
-    painter->drawEllipse(x, y, size, size);
-    symbolPainter->textBox(painter, {tr("Magnetic South"), tr("2007")},
-                           painter->pen(), x + size, y, textatt::NONE, 0);
   }
 }
 
@@ -317,12 +293,6 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
           color = mapcolors::ndbSymbolColor;
           textColor = mapcolors::ndbSymbolColor;
         }
-        // ILS is currently not used
-        // else if(rings.type == maptypes::ILS)
-        // {
-        // color = mapcolors::ilsSymbolColor;
-        // textColor = mapcolors::ilsTextColor;
-        // }
 
         painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
@@ -359,6 +329,190 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
             painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           }
         }
+      }
+    }
+  }
+}
+
+/* Draw a compass rose for the user aircraft with tick marks. */
+void MapPainterMark::paintCompassRose(const PaintContext *context)
+{
+  if(context->objectTypes & map::COMPASS_ROSE && mapWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
+  {
+    atools::util::PainterContextSaver saver(context->painter);
+    Q_UNUSED(saver);
+
+    Marble::GeoPainter *painter = context->painter;
+    atools::geo::Pos pos = mapWidget->getUserAircraft().getPosition();
+
+    // Use either aircraft position or viewport center
+    QRect viewport = painter->viewport();
+    bool hasAircraft = pos.isValid();
+    if(!hasAircraft)
+      pos = sToW(viewport.center());
+
+    // Get vertical and horizontal dimensions and calculate size
+    Line horiz(context->viewportRect.getLeftCenter(), context->viewportRect.getRightCenter());
+    Line vert(context->viewportRect.getTopCenter(), context->viewportRect.getBottomCenter());
+
+    float h = horiz.lengthMeter();
+    float v = vert.lengthMeter();
+    if(h < 1000.f)
+      h = v;
+
+    float radiusMeter = std::min(h, v) / 2.f * 0.8f;
+
+    radiusMeter = std::min(radiusMeter, atools::geo::nmToMeter(MAX_COMPASS_ROSE_RADIUS_NM));
+    radiusMeter = std::max(radiusMeter, atools::geo::nmToMeter(MIN_COMPASS_ROSE_RADIUS_NM));
+
+    float radiusNm = atools::geo::meterToNm(radiusMeter);
+
+    painter->setBrush(Qt::NoBrush);
+    float lineWidth = context->szF(context->thicknessCompassRose, 2);
+    QPen rosePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+    QPen rosePenSmall(QBrush(mapcolors::compassRoseColor), lineWidth / 8.f, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+    QPen headingLinePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::DotLine, Qt::RoundCap,
+                        Qt::MiterJoin);
+    painter->setPen(rosePen);
+
+    // Draw outer big circle
+    int xt, yt;
+    paintCircle(context->painter, pos, atools::geo::meterToNm(radiusMeter), context->drawFast, xt, yt);
+
+    // Draw small center circle if no aircraft
+    QPointF centerPoint = wToSF(pos);
+    if(!centerPoint.isNull() && !hasAircraft)
+      painter->drawEllipse(centerPoint, 5, 5);
+
+    // Collect points for tick marks and labels
+    float magVar = hasAircraft ? mapWidget->getUserAircraft().getMagVarDeg() : NavApp::getMagVar(pos);
+    QVector<Pos> endpoints;
+    QVector<QPointF> endpointsScreen;
+    for(float angle = 0.f; angle < 360.f; angle += 5)
+    {
+      endpoints.append(pos.endpoint(radiusMeter, magVar + angle));
+      endpointsScreen.append(wToSF(endpoints.last()));
+    }
+
+    // Draw tick marks ======================================================
+    for(int i = 0; i < 360 / 5; i++)
+    {
+      if((i % (90 / 5)) == 0) // 90 degree ticks
+      {
+        drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.8f), endpoints.at(i)));
+      }
+      else if((i % (45 / 5)) == 0) // 45 degree ticks
+        drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.84f), endpoints.at(i)));
+      else if((i % (10 / 5)) == 0) // 10 degree ticks
+      {
+        if(mapWidget->distance() < 3200 /* km */)
+          drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.92f), endpoints.at(i)));
+      }
+      else if(mapWidget->distance() < 6400 /* km */) // 5 degree ticks
+        drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.95f), endpoints.at(i)));
+    }
+
+    painter->setBrush(QBrush(Qt::white));
+    // Calculate and draw triangle for true north ======================================================
+    Pos trueNorth = pos.endpoint(radiusMeter, 0);
+    QPointF trueNorthPoint = wToSF(trueNorth);
+
+    if(!trueNorthPoint.isNull())
+      painter->drawPolygon(QPolygonF({trueNorthPoint, trueNorthPoint - QPointF(10, 20),
+                                      trueNorthPoint - QPointF(-10, 20)}));
+
+    // Aircraft track and heading line ======================================================
+    float stepsizeNm = atools::calculateSteps(radiusNm, 6.f);
+    if(hasAircraft)
+    {
+      painter->setPen(rosePenSmall);
+      for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+        paintCircle(context->painter, pos, i * stepsizeNm, context->drawFast, xt, yt);
+
+      // Solid track line
+      painter->setPen(rosePen);
+      float trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
+      Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue);
+      drawLine(context, Line(pos, trueTrackPos));
+
+      // Dotted heading line
+      float headingTrue = mapWidget->getUserAircraft().getHeadingDegTrue();
+      Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue);
+      painter->setPen(headingLinePen);
+      drawLine(context, Line(pos, trueHeadingPos));
+      painter->setPen(rosePen);
+    }
+
+    // Draw labels for four directions ======================================================
+    context->szFont(1.4f);
+    painter->setPen(mapcolors::compassRoseTextColor);
+
+    for(int i = 0; i < 360 / 5; i++)
+    {
+      if((i % (90 / 5)) == 0)
+      {
+        if(mapWidget->distance() < 6400 /* km */)
+        {
+          if(!endpointsScreen.at(i).isNull())
+          {
+            QString text;
+            if(i == 0)
+              text = tr("N", "North");
+            else if(i == 90 / 5)
+              text = tr("E", "East");
+            else if(i == 180 / 5)
+              text = tr("S", "South");
+            else if(i == 270 / 5)
+              text = tr("W", "West");
+
+            symbolPainter->textBoxF(painter, {text}, painter->pen(),
+                                    endpointsScreen.at(i).x(), endpointsScreen.at(i).y(), textatt::CENTER);
+          }
+        }
+      }
+    }
+
+    // Draw small 15 deg labels ======================================================
+    if(mapWidget->distance() < 1600 /* km */)
+    {
+      // Reduce font size
+      context->szFont(0.8f);
+      for(int i = 0; i < 360 / 5; i++)
+      {
+        if((i % (15 / 5)) == 0 && !((i % (90 / 5)) == 0))
+        {
+          // All 15 deg but not at 90 deg boundaries
+          symbolPainter->textBoxF(painter, {QString::number(i * 5)}, painter->pen(),
+                                  endpointsScreen.at(i).x(), endpointsScreen.at(i).y(), textatt::CENTER);
+        }
+      }
+    }
+
+    // Aircraft track line end text and distance labels along track line ======================================================
+    if(hasAircraft)
+    {
+      // Solid track line
+      float trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
+
+      // Distance labels along track line
+      context->szFont(0.8f);
+      for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+      {
+        QPointF s = wToSF(pos.endpoint(atools::geo::nmToMeter(i * stepsizeNm), trackTrue));
+        if(!s.isNull())
+          symbolPainter->textBoxF(painter, {QString::number(i * stepsizeNm)}, painter->pen(),
+                                  s.x(), s.y(), textatt::CENTER);
+      }
+
+      // Aircraft track label at end of track line ======================================================
+      QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
+      if(!trueTrackTextPoint.isNull())
+      {
+        context->szFont(1.f);
+        QString text =
+          tr("%1°M").arg(QString::number(atools::roundToInt(mapWidget->getUserAircraft().getTrackDegMag())));
+        symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), trueTrackTextPoint.x(),
+                                trueTrackTextPoint.y(), textatt::CENTER | textatt::ROUTE_BG_COLOR);
       }
     }
   }

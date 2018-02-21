@@ -854,6 +854,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
+  connect(ui->actionMapShowCompassRose, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -2521,7 +2522,8 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                          ui->actionShowAirspaces,
-                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                         ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                          ui->actionMapShowAircraftTrack,
                          ui->actionInfoApproachShowMissedAppr});
@@ -2643,7 +2645,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                     ui->actionShowAirspaces,
-                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                    ui->actionMapAircraftCenter,
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,

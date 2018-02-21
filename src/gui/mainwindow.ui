@@ -211,6 +211,7 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowCompassRose"/>
     <addaction name="actionMapShowAircraftAi"/>
     <addaction name="actionMapShowAircraftAiBoat"/>
     <addaction name="separator"/>
@@ -2935,6 +2936,7 @@
    <addaction name="separator"/>
    <addaction name="actionMapShowAircraft"/>
    <addaction name="actionMapShowAircraftTrack"/>
+   <addaction name="actionMapShowCompassRose"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowAircraftAi"/>
    <addaction name="actionMapShowAircraftAiBoat"/>
@@ -5597,6 +5599,9 @@
    <property name="statusTip">
     <string>Show missed approach legs on the map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+M</string>
+   </property>
   </action>
   <action name="actionInfoApproachesForAirport">
    <property name="icon">
@@ -6127,6 +6132,30 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+   </property>
+  </action>
+  <action name="actionMapShowCompassRose">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/compassrose.svg</normaloff>:/littlenavmap/resources/icons/compassrose.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Compass Rose</string>
+   </property>
+   <property name="toolTip">
+    <string>Show compass rose around user aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Center simulator aircraft on map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+C</string>
    </property>
   </action>
  </widget>

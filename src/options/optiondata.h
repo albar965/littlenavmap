@@ -636,6 +636,11 @@ public:
     return displayThicknessRangeDistance;
   }
 
+  int getDisplayThicknessCompassRose() const
+  {
+    return displayThicknessCompassRose;
+  }
+
   float getRouteTodRule() const
   {
     return routeTodRule;
@@ -851,6 +856,9 @@ private:
 
   // spinBoxOptionsDisplayThicknessRangeDistance
   int displayThicknessRangeDistance = 100;
+
+  // spinBoxOptionsDisplayThicknessCompassRose
+  int displayThicknessCompassRose = 100;
 
   // spinBoxSimMaxTrackPoints
   int aircraftTrackMaxPoints = 20000;

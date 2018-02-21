@@ -79,6 +79,7 @@ struct PaintContext
   float textSizeAirport = 1.f;
   float thicknessTrail = 1.f;
   float thicknessRangeDistance = 1.f;
+  float thicknessCompassRose = 1.f;
 
   // Needs to be larger than number of highest level airports
   static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 4000;
@@ -155,11 +156,14 @@ protected:
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
-                   int radiusNm, bool fast, int& xtext, int& ytext);
+                   float radiusNm, bool fast, int& xtext, int& ytext);
 
   void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
   void drawLine(const PaintContext *context, const atools::geo::Line& line);
+
+  /* No GC and no rhumb */
+  void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
 
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left);
 

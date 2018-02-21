@@ -48,7 +48,7 @@ private:
   void paintRangeRings(const PaintContext *context);
   void paintDistanceMarkers(const PaintContext *context);
   void paintRouteDrag(const PaintContext *context);
-  void paintMagneticPoles(const PaintContext *context);
+  void paintCompassRose(const PaintContext *context);
 
 };
 

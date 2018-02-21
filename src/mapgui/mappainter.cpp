@@ -66,7 +66,7 @@ MapPainter::~MapPainter()
   delete symbolPainter;
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, int radiusNm, bool fast,
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast,
                              int& xtext, int& ytext)
 {
   QRect vpRect(painter->viewport());
@@ -75,7 +75,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, int radi
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
 
-  int radiusMeter = nmToMeter(radiusNm);
+  float radiusMeter = nmToMeter(radiusNm);
 
   int step = 360 / numPoints;
   int x1, y1, x2 = -1, y2 = -1;
@@ -177,6 +177,17 @@ void MapPainter::drawLineString(const PaintContext *context, const Marble::GeoDa
     ls << linestring.at(i - 1) << linestring.at(i);
     context->painter->drawPolyline(ls);
   }
+}
+
+void MapPainter::drawLineStraight(const PaintContext *context, const atools::geo::Line& line)
+{
+  double x1, y1, x2, y2;
+  bool visible1 = wToS(line.getPos1(), x1, y1);
+
+  bool visible2 = wToS(line.getPos2(), x2, y2);
+
+  if(visible1 || visible2)
+    context->painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
 }
 
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
