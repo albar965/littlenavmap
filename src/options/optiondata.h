@@ -172,7 +172,10 @@ enum Flag2
   MAP_AIRPORT_BOUNDARY = 1 << 5,
 
   /* ui->checkBoxOptionsMapFlightplanDimPassed */
-  MAP_ROUTE_DIM_PASSED = 1 << 6
+  MAP_ROUTE_DIM_PASSED = 1 << 6,
+
+  /* ui->checkBoxOptionsSimDoNotFollowOnScroll */
+  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7
 
 };
 
@@ -681,6 +684,11 @@ public:
     return aircraftTrackMaxPoints;
   }
 
+  int getSimNoFollowAircraftOnScrollSeconds() const
+  {
+    return simNoFollowAircraftOnScroll;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -720,7 +728,7 @@ private:
   ;
 
   opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
-                        opts::MAP_AIRPORT_BOUNDARY;
+                        opts::MAP_AIRPORT_BOUNDARY | opts::ROUTE_NO_FOLLOW_ON_MOVE;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
@@ -862,6 +870,9 @@ private:
 
   // spinBoxSimMaxTrackPoints
   int aircraftTrackMaxPoints = 20000;
+
+  // spinBoxSimDoNotFollowOnScrollTime
+  int simNoFollowAircraftOnScroll = 10;
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 

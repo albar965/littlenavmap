@@ -49,6 +49,7 @@ class MapTooltip;
 class QRubberBand;
 class MapScreenIndex;
 class Route;
+class MapVisible;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
@@ -89,7 +90,7 @@ public:
   void restoreState();
 
   /* Jump to position on the map using the given zoom distance (if not equal -1) */
-  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
+  void showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick);
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -353,7 +354,6 @@ private:
   virtual void leaveEvent(QEvent *) override;
 
   void updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point);
-  void updateVisibleObjectsStatusBar();
 
   void handleInfoClick(QPoint pos);
   bool loadKml(const QString& filename, bool center);
@@ -362,6 +362,10 @@ private:
   void cancelDragDistance();
   void cancelDragRoute();
   void elevationDisplayTimerTimeout();
+
+  void jumpBackToAircraftTimeout();
+  void startJumpBackToAircraftDelay();
+  void jumpBackToAircraftCancel();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
@@ -393,6 +397,7 @@ private:
 
   MainWindow *mainWindow;
   MapPaintLayer *paintLayer;
+  MapVisible *mapVisible;
   MapQuery *mapQuery;
   AirportQuery *airportQuery;
   MapScreenIndex *screenIndex = nullptr;
@@ -416,7 +421,7 @@ private:
   QHash<QString, QAction *> mapOverlays;
 
   /* Need to check if the zoom and position was changed by the map history to avoid recursion */
-  bool changedByHistory = false;
+  bool noStoreInHistory = false;
 
   /* Values used to check if view has changed */
   Marble::GeoDataLatLonAltBox currentViewBoundingBox;
@@ -428,6 +433,12 @@ private:
 
   /* Delay display of elevation display to avoid lagging mouse movements */
   QTimer elevationDisplayTimer;
+
+  QTimer jumpBackToAircraftTimer;
+  double jumpBackToAircraftDistance = 0.;
+  atools::geo::Pos jumpBackToAircraftPos;
+  bool jumpBackToAircraftActive = false;
+
 };
 
 Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

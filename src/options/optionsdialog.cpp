@@ -339,6 +339,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsMapFlightplanText);
   widgets.append(ui->checkBoxOptionsMapAirportBoundary);
   widgets.append(ui->checkBoxOptionsMapFlightplanDimPassed);
+  widgets.append(ui->checkBoxOptionsSimDoNotFollowOnScroll);
+  widgets.append(ui->spinBoxSimDoNotFollowOnScrollTime);
 
   doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
   doubleSpinBoxOptionsMapZoomShowMapMenuSuffix = ui->doubleSpinBoxOptionsMapZoomShowMapMenu->suffix();
@@ -427,6 +429,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled,
           this, &OptionsDialog::mapEmptyAirportsClicked);
+
+  connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled,
+          this, &OptionsDialog::simNoFollowAircraftOnScrollClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -634,6 +639,7 @@ void OptionsDialog::restoreState()
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
   mapEmptyAirportsClicked(false);
+  simNoFollowAircraftOnScrollClicked(false);
   applyStyle();
   updateButtonColors();
 }
@@ -869,6 +875,12 @@ void OptionsDialog::mapEmptyAirportsClicked(bool state)
   ui->checkBoxOptionsMapEmptyAirports3D->setEnabled(ui->checkBoxOptionsMapEmptyAirports->isChecked());
 }
 
+void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
+{
+  Q_UNUSED(state);
+  ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked());
+}
+
 /* Convert the range ring string to an int vector */
 QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
 {
@@ -941,6 +953,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapFlightplanText, opts::MAP_ROUTE_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAirportBoundary, opts::MAP_AIRPORT_BOUNDARY);
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
+  toFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
@@ -975,6 +988,7 @@ void OptionsDialog::widgetsToOptionData()
   else if(ui->radioButtonOptionsSimUpdateMedium->isChecked())
     data.simUpdateRate = opts::MEDIUM;
 
+  data.simNoFollowAircraftOnScroll = ui->spinBoxSimDoNotFollowOnScrollTime->value();
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
   data.aircraftTrackMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
 
@@ -1081,6 +1095,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags2(ui->checkBoxOptionsMapFlightplanText, opts::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(ui->checkBoxOptionsMapAirportBoundary, opts::MAP_AIRPORT_BOUNDARY);
   fromFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
+  fromFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
 
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
 
@@ -1130,6 +1145,7 @@ void OptionsDialog::optionDataToWidgets()
       break;
   }
 
+  ui->spinBoxSimDoNotFollowOnScrollTime->setValue(data.simNoFollowAircraftOnScroll);
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
   ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrackMaxPoints);
 

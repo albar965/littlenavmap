@@ -87,6 +87,7 @@ private:
   void removeDatabaseExcludePathClicked();
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
+  void simNoFollowAircraftOnScrollClicked(bool state);
 
   void showDiskCacheClicked();
   void updateDatabaseButtonState();

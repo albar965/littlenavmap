@@ -208,7 +208,8 @@ SOURCES += src/main.cpp\
     src/query/airportquery.cpp \
     src/query/infoquery.cpp \
     src/query/mapquery.cpp \
-    src/query/procedurequery.cpp
+    src/query/procedurequery.cpp \
+    src/mapgui/mapvisible.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -293,7 +294,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/query/airportquery.h \
     src/query/infoquery.h \
     src/query/mapquery.h \
-    src/query/procedurequery.h
+    src/query/procedurequery.h \
+    src/mapgui/mapvisible.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
