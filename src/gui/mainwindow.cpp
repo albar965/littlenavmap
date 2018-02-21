@@ -633,8 +633,14 @@ void MainWindow::setupUi()
   mapPosLabel = new QLabel();
   mapPosLabel->setAlignment(Qt::AlignCenter);
   mapPosLabel->setMinimumWidth(240);
-  mapPosLabel->setToolTip(tr("Cursor position on map."));
+  mapPosLabel->setToolTip(tr("Coordinates and elevation at cursor position."));
   ui->statusBar->addPermanentWidget(mapPosLabel);
+
+  magvarLabel = new QLabel();
+  magvarLabel->setAlignment(Qt::AlignCenter);
+  magvarLabel->setMinimumWidth(40);
+  magvarLabel->setToolTip(tr("Magnetic declination at cursor position."));
+  ui->statusBar->addPermanentWidget(magvarLabel);
 
   timeLabel = new QLabel();
   timeLabel->setAlignment(Qt::AlignCenter);
@@ -1358,15 +1364,19 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
+    magvarLabel->setText(map::magvarText(NavApp::getMagVar(pos), true /* short text */));
+
 #ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
     mapPosLabel->setText(text);
-
   }
   else
+  {
     mapPosLabel->setText(tr("No position"));
+    magvarLabel->clear();
+  }
 }
 
 /* Updates main window title with simulator type, flight plan name and change status */

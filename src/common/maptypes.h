@@ -803,7 +803,7 @@ QString airwayAltText(const MapAirway& airway);
 /* Short for map display */
 QString airwayAltTextShort(const MapAirway& airway);
 
-QString magvarText(float magvar);
+QString magvarText(float magvar, bool shortText = false);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);

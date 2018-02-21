@@ -1100,7 +1100,7 @@ bool MapObjectRef::operator!=(const MapObjectRef& other) const
   return !operator==(other);
 }
 
-QString magvarText(float magvar)
+QString magvarText(float magvar, bool shortText)
 {
   QString num = QLocale().toString(std::abs(magvar), 'f', 1);
 
@@ -1114,10 +1114,10 @@ QString magvarText(float magvar)
       num.chop(2);
 
     if(magvar < -0.04f)
-      return QObject::tr("%1° West").arg(num);
+      return QObject::tr("%1°%2").arg(num).arg(shortText ? QObject::tr("W") : QObject::tr(" West"));
     else if(magvar > 0.04f)
       // positive" (or "easterly") variation
-      return QObject::tr("%1° East").arg(num);
+      return QObject::tr("%1°%2").arg(num).arg(shortText ? QObject::tr("E") : QObject::tr(" East"));
     else
       return QObject::tr("0°");
   }

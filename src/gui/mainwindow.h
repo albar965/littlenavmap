@@ -278,8 +278,8 @@ private:
   PrintSupport *printSupport = nullptr;
 
   /* Status bar labels */
-  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel,
-         *connectStatusLabel, *timeLabel;
+  QLabel *mapDistanceLabel = nullptr, *mapPosLabel = nullptr, *magvarLabel = nullptr, *renderStatusLabel = nullptr,
+         *detailLabel = nullptr, *messageLabel = nullptr, *connectStatusLabel = nullptr, *timeLabel = nullptr;
 
   /* List of status bar messages (currently only one) */
   QStringList statusMessages;
