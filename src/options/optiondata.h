@@ -175,7 +175,10 @@ enum Flag2
   MAP_ROUTE_DIM_PASSED = 1 << 6,
 
   /* ui->checkBoxOptionsSimDoNotFollowOnScroll */
-  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7
+  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7,
+
+  /* ui->checkBoxOptionsSimCenterLeg */
+  ROUTE_AUTOZOOM = 1 << 8
 
 };
 
@@ -728,7 +731,7 @@ private:
   ;
 
   opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
-                        opts::MAP_AIRPORT_BOUNDARY | opts::ROUTE_NO_FOLLOW_ON_MOVE;
+                        opts::MAP_AIRPORT_BOUNDARY;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});

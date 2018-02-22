@@ -441,6 +441,9 @@ private:
   atools::geo::Pos jumpBackToAircraftPos;
   bool jumpBackToAircraftActive = false;
 
+#ifdef DEBUG_MOVING_AIRPLANE
+  void debugMovingPlane(QMouseEvent* event);
+#endif
 };
 
 Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);
