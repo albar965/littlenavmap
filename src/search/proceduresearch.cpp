@@ -528,7 +528,8 @@ void ProcedureSearch::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).save({ui->comboBoxProcedureSearchFilter,
-                                              ui->comboBoxProcedureRunwayFilter});
+                                              ui->comboBoxProcedureRunwayFilter,
+                                              ui->actionSearchProcedureFollowSelection});
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -558,7 +559,8 @@ void ProcedureSearch::restoreState()
   {
     Ui::MainWindow *ui = NavApp::getMainUi();
     WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter,
-                                                   ui->comboBoxProcedureRunwayFilter});
+                                                   ui->comboBoxProcedureRunwayFilter,
+                                                   ui->actionSearchProcedureFollowSelection});
 
     fillApproachTreeWidget();
     if(currentAirportNav.isValid() && currentAirportNav.procedure())
@@ -640,11 +642,18 @@ void ProcedureSearch::itemSelectionChanged()
       {
         fetchSingleTransitionId(ref);
         emit procedureSelected(ref);
+
+        if(!ref.isLeg() && NavApp::getMainUi()->actionSearchProcedureFollowSelection->isChecked())
+          showEntry(item, false /* double click*/, true /* zoom */);
       }
 
       if(ref.isLeg())
+      {
         // Highlight legs
         emit procedureLegSelected(ref);
+        if(NavApp::getMainUi()->actionSearchProcedureFollowSelection->isChecked())
+          showEntry(item, false /* double click*/, false /* zoom */);
+      }
       else
         // Remove leg highlight
         emit procedureLegSelected(proc::MapProcedureRef());
@@ -691,7 +700,7 @@ void ProcedureSearch::updateApproachItem(QTreeWidgetItem *apprItem, int transiti
 void ProcedureSearch::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   Q_UNUSED(column);
-  showEntry(item, true);
+  showEntry(item, true/* double click*/, true /* zoom */);
 }
 
 /* Load all approach or transition legs on demand - approaches and transitions are loaded after selecting the airport */
@@ -879,6 +888,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionInfoApproachShow);
   menu.addSeparator();
 
+  menu.addAction(ui->actionSearchProcedureFollowSelection);
+  menu.addSeparator();
+
   QVector<QAction *> runwayActions;
   if(procData.sidStarRunways.isEmpty())
     menu.addAction(ui->actionInfoApproachAttach);
@@ -917,7 +929,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachClear)
     clearSelectionTriggered();
   else if(action == ui->actionInfoApproachShow)
-    showEntry(item, false);
+    showEntry(item, false/* double click*/, true /* zoom */);
   else if(action == ui->actionInfoApproachAttach || runwayActions.contains(action))
   {
     if(procedureLegs != nullptr)
@@ -996,7 +1008,7 @@ QVector<QAction *> ProcedureSearch::buildRunwaySubmenu(QMenu& menu, const ProcDa
   return actions;
 }
 
-void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
+void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -1017,7 +1029,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
     if(leg != nullptr)
     {
-      emit showPos(leg->line.getPos2(), 0.f, doubleClick);
+      emit showPos(leg->line.getPos2(), zoom ? 0.f : map::INVALID_DISTANCE_VALUE, doubleClick);
 
       if(doubleClick && (leg->navaids.hasNdb() || leg->navaids.hasVor() || leg->navaids.hasWaypoints()))
         emit showInformation(leg->navaids);

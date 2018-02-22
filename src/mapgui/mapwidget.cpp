@@ -767,7 +767,8 @@ void MapWidget::showPos(const atools::geo::Pos& pos, float distanceNm, bool doub
                                         OptionData::instance().getMapZoomShowClick() :
                                         OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
-  setDistance(dst);
+  if(dst < map::INVALID_DISTANCE_VALUE)
+    setDistance(dst);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
 

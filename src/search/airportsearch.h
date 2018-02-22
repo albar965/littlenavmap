@@ -57,6 +57,7 @@ private:
   virtual void saveViewState(bool distSearchActive) override;
   virtual void restoreViewState(bool distSearchActive) override;
   virtual void updatePushButtons() override;
+  QAction *followModeAction() override;
 
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
@@ -74,6 +75,7 @@ private:
 
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

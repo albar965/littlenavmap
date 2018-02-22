@@ -6152,10 +6152,66 @@
     <string>Show compass rose around user aircraft</string>
    </property>
    <property name="statusTip">
-    <string>Center simulator aircraft on map</string>
+    <string>Show compass rose around user aircraft</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+C</string>
+   </property>
+  </action>
+  <action name="actionRouteFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected flight plan waypoint on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected flight plan waypoint on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchAirportFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected airport on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected airport on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchProcedureFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected procedure on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected procedure on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchNavaidFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected navaid on the map</string>
    </property>
   </action>
  </widget>

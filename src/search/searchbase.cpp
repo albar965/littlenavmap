@@ -499,7 +499,7 @@ void SearchBaseTable::reconnectSelectionModel()
 {
   if(view->selectionModel() != nullptr)
   {
-    void (SearchBaseTable::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
+    void (SearchBaseTable::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
       &SearchBaseTable::tableSelectionChanged;
 
     connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
@@ -534,6 +534,9 @@ void SearchBaseTable::tableSelectionChanged()
   updatePushButtons();
 
   emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
+
+  if(sm != nullptr && sm->currentIndex().isValid() && followModeAction()->isChecked())
+    emit showPos(controller->getGeoPos(sm->currentIndex()), map::INVALID_DISTANCE_VALUE, false);
 }
 
 void SearchBaseTable::preDatabaseLoad()
@@ -764,6 +767,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   if(navType == map::AIRPORT)
     menu.addAction(ui->actionSearchShowApproaches);
   menu.addAction(ui->actionSearchShowOnMap);
+  menu.addSeparator();
+
+  menu.addAction(followModeAction());
   menu.addSeparator();
 
   menu.addAction(ui->actionSearchFilterIncluding);

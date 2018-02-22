@@ -440,7 +440,7 @@ void RouteController::saveState()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType,
-                                                  ui->spinBoxRouteAlt});
+                                                  ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
 
   atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
 }
@@ -461,7 +461,7 @@ void RouteController::restoreState()
   updateTableHeaders();
 
   atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
-  state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
+  state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {
@@ -1819,6 +1819,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteActivateLeg);
   menu.addSeparator();
 
+  menu.addAction(ui->actionRouteFollowSelection);
+  menu.addSeparator();
+
   menu.addAction(ui->actionRouteLegUp);
   menu.addAction(ui->actionRouteLegDown);
   menu.addAction(ui->actionRouteDeleteLeg);
@@ -1967,6 +1970,9 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
   emit routeSelectionChanged(selectedRows, model->rowCount());
+
+  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm != nullptr && sm->currentIndex().isValid())
+    emit showPos(route.at(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false);
 }
 
 /* Called by undo command */

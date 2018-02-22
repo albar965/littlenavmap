@@ -244,7 +244,7 @@ void NavSearch::saveState()
   widgetState.save(navSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save(ui->horizontalLayoutNavDistanceSearch);
+  widgetState.save({ui->horizontalLayoutNavDistanceSearch, ui->actionSearchNavaidFollowSelection});
   saveViewState(ui->checkBoxNavDistSearch->isChecked());
 }
 
@@ -260,7 +260,7 @@ void NavSearch::restoreState()
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
     Ui::MainWindow *ui = NavApp::getMainUi();
-    widgetState.restore(ui->horizontalLayoutNavDistanceSearch);
+    widgetState.restore({ui->horizontalLayoutNavDistanceSearch, ui->actionSearchNavaidFollowSelection});
     restoreViewState(ui->checkBoxNavDistSearch->isChecked());
 
     bool distSearchChecked = ui->checkBoxNavDistSearch->isChecked();
@@ -456,4 +456,9 @@ void NavSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
   NavApp::getMainUi()->pushButtonNavSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
+}
+
+QAction *NavSearch::followModeAction()
+{
+  return NavApp::getMainUi()->actionSearchNavaidFollowSelection;
 }

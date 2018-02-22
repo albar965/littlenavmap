@@ -140,7 +140,7 @@ private:
   void setItemStyle(QTreeWidgetItem *item, const proc::MapProcedureLeg& leg);
 
   /* Show transition, approach or waypoint on map */
-  void showEntry(QTreeWidgetItem *item, bool doubleClick);
+  void showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom);
 
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);

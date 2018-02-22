@@ -37,6 +37,7 @@ class Column;
 class ViewEventFilter;
 class LineEditEventFilter;
 class QLineEdit;
+class QAction;
 
 namespace atools {
 namespace sql {
@@ -107,7 +108,7 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Show point object (airport) on double click or menu selection */
-  void showPos(const atools::geo::Pos& pos, int zoom, bool doubleClick);
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
   /* Search center changed in context menu */
   void changeSearchMark(const atools::geo::Pos& pos);
@@ -134,6 +135,7 @@ protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;
   virtual void updatePushButtons() = 0;
+  virtual QAction *followModeAction() = 0;
 
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */
   void initViewAndController(atools::sql::SqlDatabase *db);

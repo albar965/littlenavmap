@@ -360,7 +360,7 @@ void AirportSearch::saveState()
   widgetState.save(airportSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save(ui->horizontalLayoutAirportDistanceSearch);
+  widgetState.save({ui->horizontalLayoutAirportDistanceSearch, ui->actionSearchAirportFollowSelection});
   saveViewState(ui->checkBoxAirportDistSearch->isChecked());
 }
 
@@ -375,7 +375,7 @@ void AirportSearch::restoreState()
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
     Ui::MainWindow *ui = NavApp::getMainUi();
-    widgetState.restore(ui->horizontalLayoutAirportDistanceSearch);
+    widgetState.restore({ui->horizontalLayoutAirportDistanceSearch, ui->actionSearchAirportFollowSelection});
     restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
 
     if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
@@ -590,4 +590,9 @@ void AirportSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
   NavApp::getMainUi()->pushButtonAirportSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
+}
+
+QAction *AirportSearch::followModeAction()
+{
+  return NavApp::getMainUi()->actionSearchAirportFollowSelection;
 }
