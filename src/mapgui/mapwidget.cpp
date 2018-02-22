@@ -405,7 +405,7 @@ void MapWidget::historyNext()
   const MapPosHistoryEntry& entry = history.next();
   if(entry.isValid())
   {
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
 
     setDistance(entry.getDistance());
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
@@ -420,7 +420,7 @@ void MapWidget::historyBack()
   const MapPosHistoryEntry& entry = history.back();
   if(entry.isValid())
   {
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
 
     setDistance(entry.getDistance());
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
@@ -754,7 +754,7 @@ void MapWidget::showPos(const atools::geo::Pos& pos, float distanceNm, bool doub
 
   hideTooltip();
   showAircraft(false);
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
 
   float dst = distanceNm;
 
@@ -775,7 +775,7 @@ void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 
   hideTooltip();
   showAircraft(false);
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
 
   float w = rect.getWidthDegree();
   float h = rect.getHeightDegree();
@@ -832,7 +832,7 @@ void MapWidget::showSearchMark()
 
   if(searchMarkPos.isValid())
   {
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
     setDistance(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF)));
     centerOn(searchMarkPos.getLonX(), searchMarkPos.getLatY(), false);
     mainWindow->setStatusMessage(tr("Showing distance search center."));
@@ -841,11 +841,26 @@ void MapWidget::showSearchMark()
 
 void MapWidget::showAircraft(bool centerAircraftChecked)
 {
-  qDebug() << "NavMapWidget::showAircraft" << screenIndex->getUserAircraft().getPosition();
+  qDebug() << Q_FUNC_INFO;
 
-  if(centerAircraftChecked && screenIndex->getUserAircraft().getPosition().isValid())
-    centerOn(screenIndex->getUserAircraft().getPosition().getLonX(),
-             screenIndex->getUserAircraft().getPosition().getLatY(), false);
+  if(!(OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
+  {
+    // Keep old behavior if jump back to aircraft is disabled
+
+    // Adapt the menu item status if this method was not called by the action
+    QAction *acAction = mainWindow->getUi()->actionMapAircraftCenter;
+    if(acAction->isEnabled())
+    {
+      acAction->blockSignals(true);
+      acAction->setChecked(centerAircraftChecked);
+      acAction->blockSignals(false);
+      qDebug() << "Aircraft center set to" << centerAircraftChecked;
+    }
+
+    if(centerAircraftChecked && screenIndex->getUserAircraft().getPosition().isValid())
+      centerOn(screenIndex->getUserAircraft().getPosition().getLonX(),
+               screenIndex->getUserAircraft().getPosition().getLatY(), false);
+  }
 }
 
 void MapWidget::showHome()
@@ -853,7 +868,7 @@ void MapWidget::showHome()
   qDebug() << "NavMapWidget::showHome" << homePos;
 
   hideTooltip();
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
   showAircraft(false);
   if(!atools::almostEqual(homeDistance, 0.))
     // Only center position is valid
@@ -861,7 +876,7 @@ void MapWidget::showHome()
 
   if(homePos.isValid())
   {
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
     centerOn(homePos.getLonX(), homePos.getLatY(), false);
     mainWindow->setStatusMessage(tr("Showing home position."));
   }
@@ -1053,7 +1068,7 @@ void MapWidget::highlightProfilePoint(const atools::geo::Pos& pos)
 void MapWidget::connectedToSimulator()
 {
   qDebug() << Q_FUNC_INFO;
-  // aircraftTrack.clearTrack();
+  jumpBackToAircraftCancel();
   update();
 }
 
@@ -1063,6 +1078,7 @@ void MapWidget::disconnectedFromSimulator()
   // Clear all data on disconnect
   screenIndex->updateSimData(atools::fs::sc::SimConnectData());
   mapVisible->updateVisibleObjectsStatusBar();
+  jumpBackToAircraftCancel();
   update();
 }
 
@@ -1938,11 +1954,11 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()),
                           {Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down}))
         // Movement starts delay every time
-        startJumpBackToAircraftDelay();
+        jumpBackToAircraftStart();
 
       if(jumpBackToAircraftActive)
         // Only delay if already active
-        startJumpBackToAircraftDelay();
+        jumpBackToAircraftStart();
 
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
          (keyEvent->modifiers() & Qt::ControlModifier))
@@ -1959,7 +1975,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
 
   if(e->type() == QEvent::Wheel && jumpBackToAircraftActive)
     // Only delay if already active
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
 
   if(e->type() == QEvent::MouseButtonDblClick)
   {
@@ -2091,7 +2107,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
 
     // Currently dragging a measurement line
     if(cursor().shape() != Qt::CrossCursor)
@@ -2112,7 +2128,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
   else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
   {
-    startJumpBackToAircraftDelay();
+    jumpBackToAircraftStart();
 
     // Currently dragging a flight plan leg
     if(cursor().shape() != Qt::CrossCursor)
@@ -2158,7 +2174,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
         setCursor(cursorShape);
     }
     else
-      startJumpBackToAircraftDelay();
+      jumpBackToAircraftStart();
   }
 }
 
@@ -2166,7 +2182,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 {
   hideTooltip();
 
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
 
   // Remember mouse position to check later if mouse was moved during click (drag map scroll)
   mouseMoved = event->pos();
@@ -2198,7 +2214,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   hideTooltip();
 
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
 
   if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
   {
@@ -2334,7 +2350,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
   qDebug() << "mouseDoubleClickEvent";
 
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
 
   if(mouseState != mw::NONE)
     return;
@@ -2403,7 +2419,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
     // First menu key press after dragging - enable context menu again
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
-  startJumpBackToAircraftDelay();
+  jumpBackToAircraftStart();
 }
 
 const QList<int>& MapWidget::getRouteHighlights() const
@@ -2633,13 +2649,14 @@ void MapWidget::setMapDetail(int factor)
   mainWindow->setStatusMessage(tr("Map detail level changed."));
 }
 
-void MapWidget::startJumpBackToAircraftDelay()
+void MapWidget::jumpBackToAircraftStart()
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
 
-  if(mainWindow->getUi()->actionMapAircraftCenter->isChecked())
+  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
+     NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
   {
     if(!jumpBackToAircraftActive)
     {
@@ -2669,7 +2686,8 @@ void MapWidget::jumpBackToAircraftTimeout()
 
   jumpBackToAircraftActive = false;
 
-  if(mainWindow->getUi()->actionMapAircraftCenter->isChecked())
+  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
+     NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
   {
     hideTooltip();
     setDistance(jumpBackToAircraftDistance);

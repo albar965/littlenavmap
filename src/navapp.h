@@ -94,6 +94,7 @@ public:
   static Ui::MainWindow *getMainUi();
 
   static bool isConnected();
+  static bool isUserAircraftValid();
 
   static map::MapObjectTypes getShownMapFeatures();
   static map::MapAirspaceFilter getShownMapAirspaces();

@@ -878,6 +878,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::showAircraft);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::jumpBackToAircraftCancel);
 
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);

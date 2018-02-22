@@ -291,6 +291,9 @@ public:
 
   void resetSettingActionsToDefault();
 
+  /* Stop timer and cancel any jumping back */
+  void jumpBackToAircraftCancel();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);
@@ -364,8 +367,7 @@ private:
   void elevationDisplayTimerTimeout();
 
   void jumpBackToAircraftTimeout();
-  void startJumpBackToAircraftDelay();
-  void jumpBackToAircraftCancel();
+  void jumpBackToAircraftStart();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;

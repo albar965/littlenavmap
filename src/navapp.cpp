@@ -223,6 +223,11 @@ bool NavApp::isConnected()
   return NavApp::getConnectClient()->isConnected();
 }
 
+bool NavApp::isUserAircraftValid()
+{
+  return mainWindow->getMapWidget()->getUserAircraft().getPosition().isValid();
+}
+
 AirportQuery *NavApp::getAirportQuerySim()
 {
   return airportQuerySim;
