@@ -1022,7 +1022,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       }
 
       bool mapUpdated = false;
-      if(centerAircraft) // centering required by button
+      if(centerAircraft && !contextMenuActive) // centering required by button but not while menu is open
       {
         if(!curPosVisible || // Not visible on world map
            posHasChanged || // Significant change in position might require zooming or re-centering
@@ -1376,6 +1376,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(mouseState != mw::NONE)
     return;
+
+  // Disable any automatic scrolling
+  contextMenuActive = true;
 
   QPoint point;
   if(event->reason() == QContextMenuEvent::Keyboard)
@@ -1754,6 +1757,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(menuPos);
+
+  contextMenuActive = false;
 
   if(action != nullptr)
     qDebug() << Q_FUNC_INFO << "selected" << action->text();
@@ -2744,13 +2749,13 @@ void MapWidget::setMapDetail(int factor)
 
 void MapWidget::jumpBackToAircraftStart()
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
-#endif
-
   if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
      NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
   {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO;
+#endif
+
     if(!jumpBackToAircraftActive)
     {
       // Do not update position if already active
@@ -2767,24 +2772,36 @@ void MapWidget::jumpBackToAircraftStart()
 
 void MapWidget::jumpBackToAircraftCancel()
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   jumpBackToAircraftTimer.stop();
   jumpBackToAircraftActive = false;
 }
 
 void MapWidget::jumpBackToAircraftTimeout()
 {
+  if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive)
+  {
+    // Restart as long as menu is active or user is dragging around
+    jumpBackToAircraftStart();
+  }
+  else
+  {
+    jumpBackToAircraftActive = false;
+
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 #endif
 
-  jumpBackToAircraftActive = false;
-
-  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
-     NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
-  {
-    hideTooltip();
-    setDistance(jumpBackToAircraftDistance);
-    centerOn(jumpBackToAircraftPos.getLonX(), jumpBackToAircraftPos.getLatY(), false);
-    mainWindow->setStatusMessage(tr("Jumped back to aircraft."));
+    if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
+       NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+    {
+      hideTooltip();
+      setDistance(jumpBackToAircraftDistance);
+      centerOn(jumpBackToAircraftPos.getLonX(), jumpBackToAircraftPos.getLatY(), false);
+      mainWindow->setStatusMessage(tr("Jumped back to aircraft."));
+    }
   }
 }

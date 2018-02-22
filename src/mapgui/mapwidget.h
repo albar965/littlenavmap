@@ -384,6 +384,7 @@ private:
   QPoint mouseMoved;
   MapThemeComboIndex currentComboIndex = INVALID;
   mw::MouseStates mouseState = mw::NONE;
+  bool contextMenuActive = false;
   /* Current position when dragging a flight plan point or leg */
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom /* First fixed point of route drag */,
@@ -442,7 +443,8 @@ private:
   bool jumpBackToAircraftActive = false;
 
 #ifdef DEBUG_MOVING_AIRPLANE
-  void debugMovingPlane(QMouseEvent* event);
+  void debugMovingPlane(QMouseEvent *event);
+
 #endif
 };
 
