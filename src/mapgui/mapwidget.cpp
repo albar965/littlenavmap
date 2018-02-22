@@ -1035,15 +1035,15 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
             setUpdatesEnabled(false);
             if(centerAircraftAndLeg)
             {
-              QRect aircraftWpRect = atools::geo::rectToSquare(QRect(curPos, nextWpPos));
+              QRect aircraftWpRect = QRect(curPos, nextWpPos).normalized();
 
-              bool rectTooSmall = std::max(aircraftWpRect.width(), aircraftWpRect.height()) <
-                                  std::max(width(), height()) / MAX_SQUARE_FACTOR_FOR_CENTER_LEG;
+              bool rectTooSmall = aircraftWpRect.width() < width() / MAX_SQUARE_FACTOR_FOR_CENTER_LEG &&
+                                  aircraftWpRect.height() < height() / MAX_SQUARE_FACTOR_FOR_CENTER_LEG;
 
               // Check if the rectangle from aircraft and waypoint overlaps with a shrinked screen rectangle
               // to check if it is still centered
               QRect innerRect = widgetRect.adjusted(width() / 4, height() / 4, -width() / 4, -height() / 4);
-              bool centered = innerRect.intersects(aircraftWpRect);
+              bool centered = innerRect.intersects(atools::geo::rectToSquare(aircraftWpRect));
 
               if(distance() < MIN_ZOOM_FOR_CENTER_LEG + 1.)
                 rectTooSmall = false;
