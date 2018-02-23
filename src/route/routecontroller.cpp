@@ -3084,7 +3084,8 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
       const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
 
       // Sequence only for airborne airplanes
-      if(!aircraft.isOnGround())
+      // Use more than one parameter since first X-Plane data packets are unreliable
+      if(aircraft.isFlying())
       {
         map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
         int previousRouteLeg = route.getActiveLegIndexCorrected();
