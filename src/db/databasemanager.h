@@ -28,6 +28,9 @@
 namespace atools {
 namespace fs {
 class NavDatabaseProgress;
+namespace userdata {
+class UserdataManager;
+}
 }
 }
 
@@ -84,8 +87,10 @@ public:
   /* Opens a Sqlite database. If the database is new or does not contain a schema an empty schema is created.
    * Will not return if an exception is caught during opening. */
   void openAllDatabases();
+  void openUserDatabase();
+  void closeUserDatabase();
 
-  /* Close database.
+  /* Close all simulator databases - not the user database.
    * Will not return if an exception is caught during opening. */
   void closeDatabases();
 
@@ -129,6 +134,16 @@ public:
     return navDatabaseStatus;
   }
 
+  atools::fs::userdata::UserdataManager *getUserdataManager() const
+  {
+    return userdataManager;
+  }
+
+  atools::sql::SqlDatabase *getDatabaseUser() const
+  {
+    return databaseUser;
+  }
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
@@ -141,7 +156,7 @@ signals:
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
-  void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly);
+  void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
   void closeDatabaseFile(atools::sql::SqlDatabase *db);
 
   void restoreState();
@@ -182,13 +197,15 @@ private:
   void deleteSimpleProgressDialog(QMessageBox *messageBox);
 
   /* Get cycle metadata from a database file */
-  void metaFromFile(QString* cycle, QDateTime* compilationTime, bool* settingsNeedsPreparation, QString* source, const QString& file);
+  void metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation, QString *source,
+                    const QString& file);
 
   /* Database name for all loaded from simulators */
   const QString DATABASE_NAME = "LNMDB";
 
   /* Navaid database e.g. from Navigraph */
   const QString DATABASE_NAME_NAV = "LNMDBNAV";
+  const QString DATABASE_NAME_USER = "LNMDBUSER";
 
   const QString DATABASE_NAME_TEMP = "LNMTEMPDB";
   const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
@@ -200,7 +217,8 @@ private:
 
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *databaseSim = nullptr /* Database for simulator content */,
-                           *databaseNav = nullptr /* Database for third party navigation data */;
+                           *databaseNav = nullptr /* Database for third party navigation data */,
+                           *databaseUser = nullptr /* Database for user data */;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
@@ -230,6 +248,7 @@ private:
   QString databaseMetaText, databaseAiracCycleText, databaseInfoText, databaseLoadingText,
           databaseTimeText;
 
+  atools::fs::userdata::UserdataManager *userdataManager = nullptr;
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H

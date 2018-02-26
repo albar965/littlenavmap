@@ -39,6 +39,7 @@ class ElevationProvider;
 class AircraftTrack;
 class QSplashScreen;
 class UpdateHandler;
+class UserdataController;
 
 namespace atools {
 
@@ -47,6 +48,10 @@ class Pos;
 }
 
 namespace fs {
+
+namespace userdata {
+class UserdataManager;
+}
 
 namespace common {
 class MagDecReader;
@@ -128,6 +133,10 @@ public:
   /* External update from navaids or same as above */
   static atools::sql::SqlDatabase *getDatabaseNav();
 
+  static atools::fs::userdata::UserdataManager *getUserdataManager();
+
+  static atools::sql::SqlDatabase *getDatabaseUser();
+
   static ElevationProvider *getElevationProvider();
 
   static WeatherReporter *getWeatherReporter();
@@ -167,6 +176,8 @@ public:
 
   static UpdateHandler *getUpdateHandler();
 
+  static UserdataController* getUserdataController();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
@@ -178,7 +189,7 @@ private:
   static ConnectClient *connectClient;
   static DatabaseManager *databaseManager;
   static atools::fs::common::MagDecReader *magDecReader;
-
+  static UserdataController *userdataController;
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
   static atools::fs::db::DatabaseMeta *databaseMeta;

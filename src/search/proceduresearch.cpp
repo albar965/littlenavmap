@@ -106,7 +106,7 @@ TreeEventFilter::~TreeEventFilter()
 
 }
 
-ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
+ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, SearchTabIndex tabWidgetIndex)
   : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam), mainWindow(main)
 {
   infoQuery = NavApp::getInfoQuery();
@@ -700,7 +700,7 @@ void ProcedureSearch::updateApproachItem(QTreeWidgetItem *apprItem, int transiti
 void ProcedureSearch::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   Q_UNUSED(column);
-  showEntry(item, true/* double click*/, true /* zoom */);
+  showEntry(item, true /* double click*/, true /* zoom */);
 }
 
 /* Load all approach or transition legs on demand - approaches and transitions are loaded after selecting the airport */
@@ -929,7 +929,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachClear)
     clearSelectionTriggered();
   else if(action == ui->actionInfoApproachShow)
-    showEntry(item, false/* double click*/, true /* zoom */);
+    showEntry(item, false /* double click*/, true /* zoom */);
   else if(action == ui->actionInfoApproachAttach || runwayActions.contains(action))
   {
     if(procedureLegs != nullptr)

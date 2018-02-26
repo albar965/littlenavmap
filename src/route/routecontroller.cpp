@@ -970,17 +970,7 @@ bool RouteController::exportFlighplanAsCorteIn(const QString& filename)
               arg(route.getFlightplan().getDepartureIdent()).arg(route.getFlightplan().getDestinationIdent()));
 
   // Check if we have to insert an endl first
-  bool endsWithEol = false;
-  QFile tmp(filename);
-  if(tmp.open(QFile::ReadOnly))
-  {
-    tmp.seek(tmp.size() - 1);
-    char lastChar = '\0';
-    tmp.read(&lastChar, 1);
-    tmp.close();
-
-    endsWithEol = lastChar == '\n' || lastChar == '\r';
-  }
+  bool endsWithEol = atools::fileEndsWithEol(filename);
 
   // Append string to file
   QFile file(filename);

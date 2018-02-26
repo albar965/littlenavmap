@@ -102,6 +102,8 @@ public:
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);
+  static QString coordsLatY(const atools::geo::Pos& pos);
+  static QString coordsLonX(const atools::geo::Pos& pos);
 
   static void optionsChanged();
 

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_NAVSEARCH_H
-#define LITTLENAVMAP_NAVSEARCH_H
+#ifndef LITTLENAVMAP_USERDATASEARCH_H
+#define LITTLENAVMAP_USERDATASEARCH_H
 
 #include "search/searchbase.h"
 
@@ -29,7 +29,7 @@ class ColumnList;
 class QAction;
 class QMainWindow;
 class Column;
-class NavIconDelegate;
+class UserIconDelegate;
 
 namespace atools {
 namespace sql {
@@ -38,16 +38,16 @@ class SqlDatabase;
 }
 
 /*
- * Navaid (VOR, NDB, and waypoint) search tab including all search widgets and the result table view.
+ * Search tab for user defined waypoints including all search widgets and the result table view.
  */
-class NavSearch :
+class UserdataSearch :
   public SearchBaseTable
 {
   Q_OBJECT
 
 public:
-  NavSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex);
-  virtual ~NavSearch();
+  UserdataSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex);
+  virtual ~UserdataSearch();
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;
@@ -56,6 +56,10 @@ public:
   virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
+
+signals:
+  void editUserpoints(const QVector<int>& ids);
+  void deleteUserpoints(const QVector<int>& ids);
 
 private:
   virtual void updateButtonMenu() override;
@@ -70,15 +74,23 @@ private:
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
 
+  /* Edit button clicked */
+  void editUserpointsTriggered();
+
+  /* Delete button clicked */
+  void deleteUserpointsTriggered();
+
+  QVector<int> selectedMapObjectIds() const;
+
   /* All layouts, lines and drop down menu items */
-  QList<QObject *> navSearchWidgets;
+  QList<QObject *> userdataSearchWidgets;
 
   /* All drop down menu actions */
-  QList<QAction *> navSearchMenuActions;
+  QList<QAction *> userdataSearchMenuActions;
 
-  /* Draw navaid icon into ident table column */
-  NavIconDelegate *iconDelegate = nullptr;
+  /* Draw type icon into type table column */
+  UserIconDelegate *iconDelegate = nullptr;
 
 };
 
-#endif // LITTLENAVMAP_NAVSEARCH_H
+#endif // LITTLENAVMAP_USERDATASEARCH_H

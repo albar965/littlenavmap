@@ -489,6 +489,31 @@ struct MapUserpoint
 
 };
 
+/* User defined waypoint from the user database */
+struct MapUserdataPoint
+{
+  QString name, ident, type, description, tags;
+  int id;
+  float magvar;
+  atools::geo::Pos position;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
 /* Airway type */
 enum MapAirwayType
 {
@@ -640,6 +665,9 @@ struct MapSearchResult
 
   /* User defined route points */
   QList<MapUserpoint> userPoints;
+
+  /* User defined waypoints */
+  QList<MapUserdataPoint> userdataPoints;
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;

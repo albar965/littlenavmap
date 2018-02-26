@@ -27,6 +27,7 @@ class AbstractSearch;
 class AirportSearch;
 class NavSearch;
 class ProcedureSearch;
+class UserdataSearch;
 class ColumnList;
 class QTableView;
 class QTabWidget;
@@ -43,6 +44,7 @@ namespace map {
 struct MapSearchResult;
 
 }
+
 /*
  * Manages all search tabs.
  */
@@ -78,6 +80,13 @@ public:
     return procedureSearch;
   }
 
+  void createUserdataSearch(QTableView *tableView);
+
+  UserdataSearch *getUserdataSearch() const
+  {
+    return userdataSearch;
+  }
+
   /* Disconnect and reconnect all queries if a new database is loaded or changed */
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -97,17 +106,22 @@ public:
   /* Options have changed. Update table font, empty airport handling etc. */
   void optionsChanged();
 
+  /* Refresh after import or changes */
+  void refreshUserdata();
+
 private:
   void tabChanged(int index);
   void postCreateSearch(AbstractSearch *search);
   void helpPressed();
   void helpPressedProcedure();
+  void helpPressedUserdata();
 
   MapQuery *mapQuery;
 
   AirportSearch *airportSearch = nullptr;
   NavSearch *navSearch = nullptr;
   ProcedureSearch *procedureSearch = nullptr;
+  UserdataSearch *userdataSearch = nullptr;
 
   QMainWindow *mainWindow;
   QTabWidget *tabWidget = nullptr;

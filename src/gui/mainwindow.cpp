@@ -44,6 +44,7 @@
 #include "route/routecontroller.h"
 #include "gui/filehistoryhandler.h"
 #include "search/airportsearch.h"
+#include "search/userdatasearch.h"
 #include "search/navsearch.h"
 #include "mapgui/maplayersettings.h"
 #include "search/searchcontroller.h"
@@ -57,6 +58,7 @@
 #include "query/procedurequery.h"
 #include "search/proceduresearch.h"
 #include "gui/airspacetoolbarhandler.h"
+#include "userdata/userdatacontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -196,6 +198,7 @@ MainWindow::MainWindow()
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
     searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
+    searchController->createUserdataSearch(ui->tableViewUserdata);
 
     qDebug() << "MainWindow Creating InfoController";
     infoController = new InfoController(this);
@@ -896,6 +899,8 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::searchSelectionChanged);
   connect(searchController->getNavSearch(), &SearchBaseTable::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
+  connect(searchController->getUserdataSearch(), &SearchBaseTable::selectionChanged,
+          this, &MainWindow::searchSelectionChanged);
 
   connect(ui->actionRouteSelectParking, &QAction::triggered, routeController, &RouteController::selectDepartureParking);
 
@@ -981,6 +986,18 @@ void MainWindow::connectAllSlots()
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
+
+  // User data
+  connect(ui->actionUserdataClearDatabase, &QAction::triggered,
+          NavApp::getUserdataController(), &UserdataController::clearDatabase);
+  connect(ui->actionUserdataImportCSV, &QAction::triggered,
+          NavApp::getUserdataController(), &UserdataController::importCsv);
+
+  connect(NavApp::getUserdataController(), &UserdataController::refreshUserdataSearch,
+          searchController, &SearchController::refreshUserdata);
+  connect(ui->actionUserdataShowSearch, &QAction::triggered,
+          NavApp::getUserdataController(), &UserdataController::showSearch);
+
 }
 
 /* Update the info weather */
@@ -2078,15 +2095,20 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
 {
   QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;
-  if(source == searchController->getAirportSearch())
+  if(source->getTabIndex() == SEARCH_AIRPORT)
   {
     type = tr("Airports");
     ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
   }
-  else if(source == searchController->getNavSearch())
+  else if(source->getTabIndex() == SEARCH_NAV)
   {
     type = tr("Navaids");
     ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+  }
+  else if(source->getTabIndex() == SEARCH_USER)
+  {
+    type = tr("Userpoints");
+    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
   }
 
   map::MapSearchResult result;

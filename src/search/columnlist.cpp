@@ -48,6 +48,11 @@ void ColumnList::clear()
   distanceCheckBox = nullptr;
 }
 
+bool ColumnList::isDistanceCheckBoxChecked() const
+{
+  return distanceCheckBox != nullptr ? distanceCheckBox->isChecked() : false;
+}
+
 void ColumnList::updateUnits()
 {
   // Replace widget suffices and table headers
@@ -157,23 +162,23 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     // Reset widgets assigned to columns
     if(!exceptColNames.contains(cd->getColumnName()))
     {
-      if(QLineEdit * le = cd->getLineEditWidget())
+      if(QLineEdit *le = cd->getLineEditWidget())
         le->setText(QString());
-      if(QComboBox * cb = cd->getComboBoxWidget())
+      if(QComboBox *cb = cd->getComboBoxWidget())
         cb->setCurrentIndex(0);
-      if(QCheckBox * check = cd->getCheckBoxWidget())
+      if(QCheckBox *check = cd->getCheckBoxWidget())
       {
         if(check->isTristate())
           check->setCheckState(Qt::PartiallyChecked);
         else
           check->setCheckState(Qt::Unchecked);
       }
-      if(QSpinBox * spin = cd->getSpinBoxWidget())
+      if(QSpinBox *spin = cd->getSpinBoxWidget())
         spin->setValue(0);
 
-      if(QSpinBox * maxspin = cd->getMaxSpinBoxWidget())
+      if(QSpinBox *maxspin = cd->getMaxSpinBoxWidget())
         maxspin->setValue(maxspin->maximum());
-      if(QSpinBox * minspin = cd->getMinSpinBoxWidget())
+      if(QSpinBox *minspin = cd->getMinSpinBoxWidget())
         minspin->setValue(minspin->minimum());
     }
   }

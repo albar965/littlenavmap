@@ -35,6 +35,7 @@
 #include "ui_mainwindow.h"
 #include "navapp.h"
 #include "gui/dialog.h"
+#include "fs/userdata/userdatamanager.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -173,9 +174,16 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
 
   databaseSim = new SqlDatabase(DATABASE_NAME);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
+  databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+
+  openUserDatabase();
+  userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
+  if(!userdataManager->hasSchema())
+    userdataManager->createSchema();
 }
 
 DatabaseManager::~DatabaseManager()
@@ -185,13 +193,18 @@ DatabaseManager::~DatabaseManager()
 
   delete databaseDialog;
   delete progressDialog;
+  delete userdataManager;
 
   closeDatabases();
+  closeUserDatabase();
+
   delete databaseSim;
   delete databaseNav;
+  delete databaseUser;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
+  SqlDatabase::removeDatabase(DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
 }
@@ -437,7 +450,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         if(resultRemove && resultCopy)
         {
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
-          openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+          openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
           dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
           NavDatabase::runPreparationScript(tempDb);
@@ -469,7 +482,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
 
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
-    openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+    openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
     NavDatabase::runPreparationScript(tempDb);
     tempDb.analyze();
     closeDatabaseFile(&tempDb);
@@ -691,6 +704,20 @@ void DatabaseManager::switchSimFromMainMenu()
   }
 }
 
+void DatabaseManager::openUserDatabase()
+{
+  QString databaseNameUser = databaseDirectory +
+                             QDir::separator() + lnm::DATABASE_PREFIX +
+                             "userdata" + lnm::DATABASE_SUFFIX;
+
+  openDatabaseFile(databaseUser, databaseNameUser, false /* readonly */, false /* createSchema */);
+}
+
+void DatabaseManager::closeUserDatabase()
+{
+  closeDatabaseFile(databaseUser);
+}
+
 void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
@@ -702,11 +729,12 @@ void DatabaseManager::openAllDatabases()
     navDbFile = simDbFile;
   // else if(usingNavDatabase == MIXED)
 
-  openDatabaseFile(databaseSim, simDbFile, true /* readonly */);
-  openDatabaseFile(databaseNav, navDbFile, true /* readonly */);
+  openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
+  openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
 }
 
-void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly)
+void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
+                                       bool createSchema)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
@@ -736,18 +764,21 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
 
     db->setAutocommit(autocommit);
 
-    if(!hasSchema(db))
+    if(createSchema)
     {
-      if(db->isReadonly())
+      if(!hasSchema(db))
       {
-        // Reopen database read/write
-        db->close();
-        db->setReadonly(false);
-        db->open(DATABASE_PRAGMAS);
-      }
+        if(db->isReadonly())
+        {
+          // Reopen database read/write
+          db->close();
+          db->setReadonly(false);
+          db->open(DATABASE_PRAGMAS);
+        }
 
-      createEmptySchema(db);
-      db->commit();
+        createEmptySchema(db);
+        db->commit();
+      }
     }
 
     if(readonly && !db->isReadonly())
@@ -956,7 +987,7 @@ bool DatabaseManager::runInternal()
             qInfo() << "Removed" << (tempFilename + "-journal");
 
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
-          openDatabaseFile(&tempDb, tempFilename, false /* readonly */);
+          openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
 
           if(loadScenery(&tempDb))
           {

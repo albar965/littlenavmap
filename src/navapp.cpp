@@ -30,6 +30,7 @@
 #include "common/elevationprovider.h"
 #include "fs/common/magdecreader.h"
 #include "common/updatehandler.h"
+#include "userdata/userdatacontroller.h"
 
 #include "ui_mainwindow.h"
 
@@ -54,6 +55,7 @@ QSplashScreen *NavApp::splashScreen = nullptr;
 
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
+UserdataController *NavApp::userdataController = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -101,10 +103,10 @@ void NavApp::init(MainWindow *mainWindowParam)
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
   procedureQuery->initQueries();
 
-  qDebug() << "MainWindow Creating ConnectClient";
+  userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
+
   connectClient = new ConnectClient(mainWindow);
 
-  qDebug() << "MainWindow Creating UpdateCheck";
   updateHandler = new UpdateHandler(mainWindow);
   // The check will be called on main window shown
 }
@@ -117,6 +119,10 @@ void NavApp::initElevationProvider()
 void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
+
+  qDebug() << Q_FUNC_INFO << "delete userdataController";
+  delete userdataController;
+  userdataController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete updateHandler";
   delete updateHandler;
@@ -311,6 +317,16 @@ atools::sql::SqlDatabase *NavApp::getDatabaseSim()
 atools::sql::SqlDatabase *NavApp::getDatabaseNav()
 {
   return getDatabaseManager()->getDatabaseNav();
+}
+
+UserdataController *NavApp::getUserdataController()
+{
+  return userdataController;
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseUser()
+{
+  return databaseManager->getDatabaseUser();
 }
 
 ElevationProvider *NavApp::getElevationProvider()

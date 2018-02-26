@@ -25,17 +25,18 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 #include "ui_mainwindow.h"
+#include "search/userdatasearch.h"
 #include "common/constants.h"
 #include "search/proceduresearch.h"
 #include "options/optiondata.h"
+#include "userdata/userdatacontroller.h"
 
 #include <QTabWidget>
 #include <QUrl>
 
 using atools::gui::HelpHandler;
 
-SearchController::SearchController(QMainWindow *parent,
-                                   QTabWidget *tabWidgetSearch)
+SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearch)
   : mapQuery(NavApp::getMapQuery()), mainWindow(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
@@ -43,6 +44,8 @@ SearchController::SearchController(QMainWindow *parent,
           this, &SearchController::helpPressed);
   connect(NavApp::getMainUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
+  connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
+          this, &SearchController::helpPressedUserdata);
   connect(NavApp::getMainUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedProcedure);
 }
@@ -52,6 +55,7 @@ SearchController::~SearchController()
   delete airportSearch;
   delete navSearch;
   delete procedureSearch;
+  delete userdataSearch;
 }
 
 void SearchController::getSelectedMapObjects(map::MapSearchResult& result) const
@@ -73,6 +77,11 @@ void SearchController::helpPressed()
 void SearchController::helpPressedProcedure()
 {
   HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHPROCS.html", lnm::helpLanguagesOnline());
+}
+
+void SearchController::helpPressedUserdata()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHUSERDATA.html", lnm::helpLanguagesOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */
@@ -101,19 +110,40 @@ void SearchController::restoreState()
 
 void SearchController::createAirportSearch(QTableView *tableView)
 {
-  airportSearch = new AirportSearch(mainWindow, tableView, 0);
+  airportSearch = new AirportSearch(mainWindow, tableView, SEARCH_AIRPORT);
   postCreateSearch(airportSearch);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
 {
-  navSearch = new NavSearch(mainWindow, tableView, 1);
+  navSearch = new NavSearch(mainWindow, tableView, SEARCH_NAV);
   postCreateSearch(navSearch);
+}
+
+void SearchController::createUserdataSearch(QTableView *tableView)
+{
+  userdataSearch = new UserdataSearch(mainWindow, tableView, SEARCH_USER);
+  postCreateSearch(userdataSearch);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  // Connect the extra add buttons and action
+  connect(ui->pushButtonUserdataAdd, &QPushButton::clicked,
+          NavApp::getUserdataController(), &UserdataController::addUserpoint);
+  connect(ui->actionUserdataAdd, &QAction::triggered,
+          NavApp::getUserdataController(), &UserdataController::addUserpoint);
+
+  // Get edit and delete signals from user search action and pushbuttons
+  connect(userdataSearch, &UserdataSearch::editUserpoints,
+          NavApp::getUserdataController(), &UserdataController::editUserpoints);
+  connect(userdataSearch, &UserdataSearch::deleteUserpoints,
+          NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
+
 }
 
 void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
 {
-  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, 2);
+  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, SEARCH_PROC);
   postCreateSearch(procedureSearch);
 }
 
@@ -142,6 +172,11 @@ void SearchController::postDatabaseLoad()
     search->postDatabaseLoad();
 }
 
+void SearchController::refreshUserdata()
+{
+  userdataSearch->refreshData();
+}
+
 void SearchController::showInSearch(map::MapObjectTypes type, const QString& ident,
                                     const QString& region, const QString& airportIdent)
 {
@@ -154,6 +189,7 @@ void SearchController::showInSearch(map::MapObjectTypes type, const QString& ide
       airportSearch->resetSearch();
       airportSearch->filterByIdent(ident);
       break;
+
     case map::NDB:
     case map::VOR:
     case map::WAYPOINT:
@@ -161,6 +197,13 @@ void SearchController::showInSearch(map::MapObjectTypes type, const QString& ide
       navSearch->resetSearch();
       navSearch->filterByIdent(ident, region, airportIdent);
       break;
+
+    case map::USERDATA:
+      // Shown in user search tab
+      userdataSearch->resetSearch();
+      userdataSearch->filterByIdent(ident, region, airportIdent);
+      break;
+
     case map::ILS:
     case map::MARKER:
     case map::NONE:

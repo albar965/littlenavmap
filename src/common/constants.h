@@ -138,6 +138,7 @@ const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView
 const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
+const QLatin1Literal SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");
@@ -202,6 +203,10 @@ const QLatin1Literal FILE_PATTERN_FLP("(*.flp)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
+
+const QLatin1Literal FILE_PATTERN_CSV("(*.csv)");
+const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
+const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 #else
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
@@ -217,6 +222,10 @@ const QLatin1Literal FILE_PATTERN_FLP("(*.flp *.Flp *.FLP)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
+
+const QLatin1Literal FILE_PATTERN_CSV("(*.csv *.Csv *.CSV)");
+const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
+const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 

@@ -68,7 +68,7 @@ class SearchBaseTable :
 
 public:
   /* Class will take ownership of columnList */
-  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, int tabWidgetIndex);
+  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, SearchTabIndex tabWidgetIndex);
   virtual ~SearchBaseTable();
 
   /* Disconnect and reconnect queries on database change */
@@ -103,6 +103,9 @@ public:
 
   void nothingSelectedTriggered();
 
+  /* Refresh table after updates in the database */
+  void refreshData();
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -135,6 +138,8 @@ protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;
   virtual void updatePushButtons() = 0;
+
+  /* Return the action that defines follow mode */
   virtual QAction *followModeAction() = 0;
 
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */

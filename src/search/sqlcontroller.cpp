@@ -69,6 +69,11 @@ void SqlController::postDatabaseLoad()
   model->fillHeaderData();
 }
 
+void SqlController::refreshData()
+{
+  model->resetSqlQuery();
+}
+
 void SqlController::filterIncluding(const QModelIndex& index)
 {
   view->clearSelection();
@@ -518,9 +523,19 @@ QVector<const Column *> SqlController::getCurrentColumns() const
 
 void SqlController::initRecord(atools::sql::SqlRecord& rec)
 {
+  rec.clear();
   atools::sql::SqlRecord from = model->getSqlRecord();
   for(int i = 0; i < from.count(); i++)
     rec.appendField(from.fieldName(i), from.fieldType(i));
+}
+
+bool SqlController::hasRow(int row)
+{
+  int srow = row;
+  if(proxyModel != nullptr)
+    srow = toSource(proxyModel->index(row, 0)).row();
+
+  return model->hasIndex(srow, 0);
 }
 
 void SqlController::fillRecord(int row, atools::sql::SqlRecord& rec)

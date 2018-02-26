@@ -174,6 +174,12 @@ public:
 
   void updateHeaderData();
 
+  /* Update query on changes in the database */
+  void refreshData();
+
+  /* True if the row exists in the model */
+  bool hasRow(int row);
+
 private:
   void viewSetModel(QAbstractItemModel *newModel);
 

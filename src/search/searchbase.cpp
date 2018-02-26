@@ -109,7 +109,8 @@ private:
   SearchBaseTable *searchBase;
 };
 
-SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, int tabWidgetIndex)
+SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                                 SearchTabIndex tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
@@ -242,13 +243,13 @@ void SearchBaseTable::updateTableSelection()
 void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 {
   qDebug() << "new mark" << mark;
-  if(columns->getDistanceCheckBox()->isChecked() && mark.isValid())
+  if(columns->isDistanceCheckBoxChecked() && mark.isValid())
     updateDistanceSearch();
 }
 
 void SearchBaseTable::updateDistanceSearch()
 {
-  if(columns->getDistanceCheckBox()->isChecked() &&
+  if(columns->isDistanceCheckBoxChecked() &&
      NavApp::getMapWidget()->getSearchMarkPos().isValid())
   {
     // Currently running distance search - update result
@@ -410,8 +411,7 @@ void SearchBaseTable::updateFromMaxSpinBox(int value, const Column *col)
     valMax = atools::roundToInt(Unit::rev(valMax, col->getUnitConvert()));
   }
 
-  controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin),
-                                    atools::roundToInt(valMax));
+  controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin), atools::roundToInt(valMax));
   col->getMinSpinBoxWidget()->setMaximum(value);
 
 }
@@ -561,6 +561,11 @@ void SearchBaseTable::resetView()
     updatePushButtons();
     NavApp::setStatusMessage(tr("Table view reset to defaults."));
   }
+}
+
+void SearchBaseTable::refreshData()
+{
+  controller->refreshData();
 }
 
 void SearchBaseTable::resetSearch()
@@ -728,9 +733,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionMapNavaidRange->setEnabled(navType == map::VOR || navType == map::NDB);
 
   ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
-                                    navType == map::WAYPOINT || navType == map::AIRPORT);
+                                    navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERDATA);
   ui->actionRouteAppendPos->setEnabled(navType == map::VOR || navType == map::NDB ||
-                                       navType == map::WAYPOINT || navType == map::AIRPORT);
+                                       navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERDATA);
 
   ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == map::AIRPORT);
@@ -768,6 +773,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionSearchShowApproaches);
   menu.addAction(ui->actionSearchShowOnMap);
   menu.addSeparator();
+
+  // Add extra menu items in the user defined waypoint table - these are already connected
+  if(getTabIndex() == SEARCH_USER)
+  {
+    menu.addAction(ui->actionUserdataAdd);
+    menu.addAction(ui->actionUserdataEdit);
+    menu.addAction(ui->actionUserdataDelete);
+    menu.addSeparator();
+  }
 
   menu.addAction(followModeAction());
   menu.addSeparator();
@@ -961,6 +975,12 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   {
     // Airport table
     navType = map::AIRPORT;
+    id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
+  }
+  else if(columns->getTablename() == "userdata")
+  {
+    // User data
+    navType = map::USERDATA;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else

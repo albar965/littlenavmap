@@ -15,17 +15,33 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "search/abstractsearch.h"
+#ifndef LITTLENAVMAP_USERICONDELEGATE_H
+#define LITTLENAVMAP_USERICONDELEGATE_H
 
-#include <QMainWindow>
+#include <QStyledItemDelegate>
 
-AbstractSearch::AbstractSearch(QMainWindow *parent, SearchTabIndex tabWidgetIndex)
-  : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent)
+class ColumnList;
+class SymbolPainter;
+
+/*
+ * Paints userdata icons into the "type" cell of the search result table view.
+ */
+class UserIconDelegate :
+  public QStyledItemDelegate
 {
+  Q_OBJECT
 
-}
+public:
+  UserIconDelegate(const ColumnList *columns);
+  virtual ~UserIconDelegate();
 
-AbstractSearch::~AbstractSearch()
-{
+private:
+  const ColumnList *cols;
+  SymbolPainter *symbolPainter;
 
-}
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
+                     const QModelIndex& index) const override;
+
+};
+
+#endif // LITTLENAVMAP_USERICONDELEGATE_H

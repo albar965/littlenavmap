@@ -209,7 +209,11 @@ SOURCES += src/main.cpp\
     src/query/infoquery.cpp \
     src/query/mapquery.cpp \
     src/query/procedurequery.cpp \
-    src/mapgui/mapvisible.cpp
+    src/mapgui/mapvisible.cpp \
+    src/search/userdatasearch.cpp \
+    src/search/usericondelegate.cpp \
+    src/userdata/userdatacontroller.cpp \
+    src/userdata/userdatadialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -295,7 +299,11 @@ HEADERS  += src/gui/mainwindow.h \
     src/query/infoquery.h \
     src/query/mapquery.h \
     src/query/procedurequery.h \
-    src/mapgui/mapvisible.h
+    src/mapgui/mapvisible.h \
+    src/search/userdatasearch.h \
+    src/search/usericondelegate.h \
+    src/userdata/userdatacontroller.h \
+    src/userdata/userdatadialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -306,7 +314,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/route/routestringdialog.ui \
     src/route/userwaypointdialog.ui \
     src/db/databaseerrordialog.ui \
-    src/gui/updatedialog.ui
+    src/gui/updatedialog.ui \
+    src/userdata/userdatadialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

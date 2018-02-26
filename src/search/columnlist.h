@@ -97,6 +97,8 @@ public:
     return distanceCheckBox;
   }
 
+  bool isDistanceCheckBoxChecked() const;
+
   const QString& getIdColumnName() const
   {
     return idColumn;

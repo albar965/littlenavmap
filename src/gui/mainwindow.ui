@@ -247,10 +247,28 @@
     <addaction name="actionReloadSceneryCopyAirspaces"/>
     <addaction name="actionReloadScenery"/>
    </widget>
+   <widget class="QMenu" name="menuUserdata">
+    <property name="title">
+     <string>&amp;Userdata</string>
+    </property>
+    <addaction name="actionUserdataShowSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataImportCSV"/>
+    <addaction name="actionUserdataImportUserfixDat"/>
+    <addaction name="actionUserdataImportGarminGTN"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataExportCSV"/>
+    <addaction name="actionUserdataExportUserfixDat"/>
+    <addaction name="actionUserdataExportGarminGTN"/>
+    <addaction name="actionUserdataExportXmlBgl"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataClearDatabase"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuMap"/>
    <addaction name="menuDatabase"/>
+   <addaction name="menuUserdata"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
@@ -300,6 +318,11 @@
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -2351,6 +2374,378 @@
            <attribute name="headerMinimumSectionSize">
             <number>3</number>
            </attribute>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabUserdata">
+        <attribute name="title">
+         <string>Userdata</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutUserdata">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataIdent">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Short ident of the user defined waypoint</string>
+             </property>
+             <property name="statusTip">
+              <string>Short ident of the user defined waypoint</string>
+             </property>
+             <property name="maxLength">
+              <number>8</number>
+             </property>
+             <property name="placeholderText">
+              <string>Ident</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Type of the user defined waypoint which will defined the used icon</string>
+             </property>
+             <property name="statusTip">
+              <string>Type of the user defined waypoint which will defined the used icon</string>
+             </property>
+             <property name="placeholderText">
+              <string>Type</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataName">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Name</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataAdd">
+             <property name="toolTip">
+              <string>Add a new user defined waypoint</string>
+             </property>
+             <property name="statusTip">
+              <string>Add a new user defined waypoint</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/moredetails.svg</normaloff>:/littlenavmap/resources/icons/moredetails.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataEdit">
+             <property name="toolTip">
+              <string>Edit one or more user defined waypoints</string>
+             </property>
+             <property name="statusTip">
+              <string>Edit one or more user defined waypoints</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataDel">
+             <property name="toolTip">
+              <string>Remove one or more user defined waypoints</string>
+             </property>
+             <property name="statusTip">
+              <string>Remove one or more user defined waypoints</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataClearSelection">
+             <property name="toolTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataHelp">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for the userdata search tab</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="toolButtonUserdata">
+             <property name="toolTip">
+              <string>Show or hide search options</string>
+             </property>
+             <property name="statusTip">
+              <string>Show or hide search options</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::InstantPopup</enum>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="lineUserdataMore">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutUserdataMore">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataDescription">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Description</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataTags">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Tags</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataFilepath">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>File name and path it this waypoint was imported from a file</string>
+             </property>
+             <property name="statusTip">
+              <string>File name and path it this waypoint was imported from a file</string>
+             </property>
+             <property name="placeholderText">
+              <string>Import file name and path</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTableView" name="tableViewUserdata">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>3</number>
+           </attribute>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelUserdata">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelUserdataOverride">
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
         </layout>
@@ -6212,6 +6607,138 @@
    </property>
    <property name="statusTip">
     <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchUserdataFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected point on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionUserdataSearchShowAllOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>All</string>
+   </property>
+   <property name="toolTip">
+    <string>Show all or no additional search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show all or no additional navaid search options</string>
+   </property>
+  </action>
+  <action name="actionUserdataSearchShowMoreOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>More search options</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show navaid distance search options</string>
+   </property>
+  </action>
+  <action name="actionUserdataShowSearch">
+   <property name="text">
+    <string>&amp;Show Search</string>
+   </property>
+  </action>
+  <action name="actionUserdataImportCSV">
+   <property name="text">
+    <string>Import &amp;CSV ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataImportUserfixDat">
+   <property name="text">
+    <string>Import &amp;X-Plane user_fix.dat ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataImportGarminGTN">
+   <property name="text">
+    <string>Import &amp;Garmin GTN ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportCSV">
+   <property name="text">
+    <string>Export &amp;CSV ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportUserfixDat">
+   <property name="text">
+    <string>Export &amp;X-Plane user_fix.dat ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportGarminGTN">
+   <property name="text">
+    <string>Export &amp;Garmin GTN ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportXmlBgl">
+   <property name="text">
+    <string>Export &amp;XML for FSX/P3D BGL Compiler ...</string>
+   </property>
+  </action>
+  <action name="actionUserdataClearDatabase">
+   <property name="text">
+    <string>Clear database</string>
+   </property>
+  </action>
+  <action name="actionUserdataEdit">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
+  <action name="actionUserdataAdd">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/moredetails.svg</normaloff>:/littlenavmap/resources/icons/moredetails.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Ins</string>
+   </property>
+  </action>
+  <action name="actionUserdataDelete">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Userpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

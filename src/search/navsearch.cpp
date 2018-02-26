@@ -34,7 +34,7 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex)
+NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -252,7 +252,6 @@ void NavSearch::restoreState()
 {
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
     widgetState.restore(navSearchWidgets);
 
