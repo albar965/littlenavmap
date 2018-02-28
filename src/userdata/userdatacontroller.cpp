@@ -25,6 +25,7 @@
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "userdata/userdatadialog.h"
+#include "userdata/userdataicons.h"
 
 #include <QDebug>
 
@@ -32,11 +33,14 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   : manager(userdataManager), mainWindow(parent)
 {
   dialog = new atools::gui::Dialog(mainWindow);
+  icons = new UserdataIcons(mainWindow);
+  icons->loadIcons();
 }
 
 UserdataController::~UserdataController()
 {
   delete dialog;
+  delete icons;
 }
 
 void UserdataController::showSearch()
@@ -51,7 +55,7 @@ void UserdataController::addUserpoint()
 {
   qDebug() << Q_FUNC_INFO;
 
-  UserdataDialog dlg(mainWindow, ud::ADD);
+  UserdataDialog dlg(mainWindow, ud::ADD, icons);
   dlg.setRecord(manager->emptyRecord());
   int retval = dlg.exec();
   if(retval == QDialog::Accepted)
@@ -71,7 +75,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
   atools::sql::SqlRecord rec = manager->record(ids.first());
   if(!rec.isEmpty())
   {
-    UserdataDialog dlg(mainWindow, ids.size() > 1 ? ud::EDIT_MULTIPLE : ud::EDIT_ONE);
+    UserdataDialog dlg(mainWindow, ids.size() > 1 ? ud::EDIT_MULTIPLE : ud::EDIT_ONE, icons);
     dlg.setRecord(rec);
     int retval = dlg.exec();
     if(retval == QDialog::Accepted)

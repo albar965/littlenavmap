@@ -40,6 +40,7 @@ class AircraftTrack;
 class QSplashScreen;
 class UpdateHandler;
 class UserdataController;
+class UserdataIcons;
 
 namespace atools {
 
@@ -134,6 +135,7 @@ public:
   static atools::sql::SqlDatabase *getDatabaseNav();
 
   static atools::fs::userdata::UserdataManager *getUserdataManager();
+  static UserdataIcons *getUserdataIcons();
 
   static atools::sql::SqlDatabase *getDatabaseUser();
 
@@ -176,7 +178,9 @@ public:
 
   static UpdateHandler *getUpdateHandler();
 
-  static UserdataController* getUserdataController();
+  static UserdataController *getUserdataController();
+
+  static atools::fs::common::MagDecReader *getMagDecReader();
 
 private:
   /* Database query helpers and caches */

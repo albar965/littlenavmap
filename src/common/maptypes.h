@@ -494,7 +494,6 @@ struct MapUserdataPoint
 {
   QString name, ident, type, description, tags;
   int id;
-  float magvar;
   atools::geo::Pos position;
 
   bool isValid() const

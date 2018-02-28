@@ -22,6 +22,7 @@
 
 class ColumnList;
 class SymbolPainter;
+class UserdataIcons;
 
 /*
  * Paints userdata icons into the "type" cell of the search result table view.
@@ -32,7 +33,7 @@ class UserIconDelegate :
   Q_OBJECT
 
 public:
-  UserIconDelegate(const ColumnList *columns);
+  UserIconDelegate(const ColumnList *columns, UserdataIcons *userdataIcons);
   virtual ~UserIconDelegate();
 
 private:
@@ -42,6 +43,7 @@ private:
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override;
 
+  UserdataIcons *icons;
 };
 
 #endif // LITTLENAVMAP_USERICONDELEGATE_H

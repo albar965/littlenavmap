@@ -26,12 +26,13 @@
 #include "common/unit.h"
 #include "gui/helphandler.h"
 #include "navapp.h"
+#include "userdata/userdataicons.h"
 
 #include <QPushButton>
 #include <QDateTime>
 
-UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode) :
-  QDialog(parent), editMode(mode), ui(new Ui::UserdataDialog)
+UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons) :
+  QDialog(parent), editMode(mode), ui(new Ui::UserdataDialog), icons(userdataIcons)
 {
   ui->setupUi(this);
 
@@ -59,7 +60,6 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode) :
   ui->checkBoxUserdataAltitude->setVisible(showCheckbox);
   ui->checkBoxUserdataDescription->setVisible(showCheckbox);
   ui->checkBoxUserdataIdent->setVisible(showCheckbox);
-  ui->checkBoxUserdataMagvar->setVisible(showCheckbox);
   ui->checkBoxUserdataName->setVisible(showCheckbox);
   ui->checkBoxUserdataTags->setVisible(showCheckbox);
   ui->checkBoxUserdataType->setVisible(showCheckbox);
@@ -75,7 +75,6 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode) :
   connect(ui->checkBoxUserdataAltitude, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataDescription, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataIdent, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
-  connect(ui->checkBoxUserdataMagvar, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataName, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataTags, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataType, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
@@ -149,7 +148,6 @@ void UserdataDialog::updateWidgets()
     ui->spinBoxUserdataAltitude->setEnabled(ui->checkBoxUserdataAltitude->isChecked());
     ui->textEditUserdataDescription->setEnabled(ui->checkBoxUserdataDescription->isChecked());
     ui->lineEditUserdataIdent->setEnabled(ui->checkBoxUserdataIdent->isChecked());
-    ui->doubleSpinBoxUserdataMagvar->setEnabled(ui->checkBoxUserdataMagvar->isChecked());
     ui->lineEditUserdataName->setEnabled(ui->checkBoxUserdataName->isChecked());
     ui->lineEditUserdataTags->setEnabled(ui->checkBoxUserdataTags->isChecked());
     ui->comboBoxUserdataType->setEnabled(ui->checkBoxUserdataType->isChecked());
@@ -160,7 +158,6 @@ void UserdataDialog::updateWidgets()
       ui->checkBoxUserdataAltitude->isChecked() |
       ui->checkBoxUserdataDescription->isChecked() |
       ui->checkBoxUserdataIdent->isChecked() |
-      ui->checkBoxUserdataMagvar->isChecked() |
       ui->checkBoxUserdataName->isChecked() |
       ui->checkBoxUserdataTags->isChecked() |
       ui->checkBoxUserdataType->isChecked() |
@@ -171,13 +168,12 @@ void UserdataDialog::updateWidgets()
 
 void UserdataDialog::recordToDialog()
 {
-  ui->comboBoxUserdataType->setCurrentText(record->valueStr("type"));
+  fillTypeComboBox(record->valueStr("type"));
   ui->lineEditUserdataName->setText(record->valueStr("name"));
   ui->lineEditUserdataIdent->setText(record->valueStr("ident"));
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
   ui->spinBoxUserdataVisible->setValue(record->valueInt("visible_from"));
-  ui->doubleSpinBoxUserdataMagvar->setValue(record->valueDouble("mag_var"));
   ui->spinBoxUserdataAltitude->setValue(record->valueInt("altitude"));
   ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
                                                                     record->valueFloat("laty"))));
@@ -253,11 +249,6 @@ void UserdataDialog::dialogToRecord()
   else if(editMode == ud::EDIT_MULTIPLE)
     record->remove("visible_from");
 
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataMagvar->isChecked())
-    record->setValue("mag_var", ui->doubleSpinBoxUserdataMagvar->value());
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("mag_var");
-
   if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataAltitude->isChecked())
     record->setValue("altitude", ui->spinBoxUserdataAltitude->value());
   else if(editMode == ud::EDIT_MULTIPLE)
@@ -268,5 +259,25 @@ void UserdataDialog::dialogToRecord()
     atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text());
     record->setValue("lonx", pos.getLonX());
     record->setValue("laty", pos.getLatY());
+  }
+}
+
+void UserdataDialog::fillTypeComboBox(const QString& type)
+{
+  // Fill default types and icons
+  ui->comboBoxUserdataType->clear();
+  int size = ui->comboBoxUserdataType->iconSize().height();
+  for(const QString& t : icons->getAllTypes())
+    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(t, size)), t);
+
+  int index = ui->comboBoxUserdataType->findText(type);
+  if(index != -1)
+    // Current type does match - set index
+    ui->comboBoxUserdataType->setCurrentIndex(index);
+  else
+  {
+    // Current type does not match - add to list and set default icon
+    ui->comboBoxUserdataType->insertItem(0, QIcon(*icons->getIconPixmap(type, size)), type);
+    ui->comboBoxUserdataType->setCurrentIndex(0);
   }
 }

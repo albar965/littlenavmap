@@ -181,7 +181,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   databaseUser = new SqlDatabase(DATABASE_NAME_USER);
 
   openUserDatabase();
-  userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
+  userdataManager = new atools::fs::userdata::UserdataManager(databaseUser, NavApp::getMagDecReader());
   if(!userdataManager->hasSchema())
     userdataManager->createSchema();
 }

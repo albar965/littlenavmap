@@ -79,7 +79,6 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   append(Column("last_edit_timestamp", tr("Last Edit"))).
   append(Column("import_timestamp", tr("Imported"))).
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
-  append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("import_file_path", ui->lineEditUserdataFilepath, tr("Imported\nfrom File")).filter()).
 
@@ -90,7 +89,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   ui->labelUserdataOverride->hide();
 
   // Add icon delegate for the ident column
-  iconDelegate = new UserIconDelegate(columns);
+  iconDelegate = new UserIconDelegate(columns, NavApp::getUserdataIcons());
   view->setItemDelegateForColumn(columns->getColumn("type")->getIndex(), iconDelegate);
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseUser());
@@ -257,8 +256,6 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   if(col->getColumnName() == "altitude")
     return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
            Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
-  else if(col->getColumnName() == "mag_var")
-    return map::magvarText(displayRoleValue.toFloat());
   else if(col->getColumnName() == "import_timestamp" || col->getColumnName() == "last_edit_timestamp")
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
@@ -299,7 +296,6 @@ void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
         obj.type = rec.valueStr("type");
         obj.description = rec.valueStr("description");
         obj.tags = rec.valueStr("tags");
-        obj.magvar = rec.valueFloat("mag_var");
         obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
 
         result.userdataPoints.append(obj);

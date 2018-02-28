@@ -34,6 +34,7 @@ class UserdataManager;
 }
 
 class MainWindow;
+class UserdataIcons;
 
 /*
  * Methods to edit, add, delete, import and export userdata.
@@ -77,6 +78,11 @@ public:
   /* Show search tab and raise window */
   void  showSearch();
 
+  UserdataIcons *getUserdataIcons() const
+  {
+    return icons;
+  }
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch();
@@ -85,6 +91,7 @@ private:
   atools::fs::userdata::UserdataManager *manager;
   atools::gui::Dialog *dialog;
   MainWindow *mainWindow;
+  UserdataIcons *icons;
 };
 
 #endif // USERDATACONTROLLER_H

@@ -20,11 +20,12 @@
 #include "search/sqlmodel.h"
 #include "common/symbolpainter.h"
 #include "sql/sqlrecord.h"
+#include "userdata/userdataicons.h"
 
 #include <QPainter>
 
-UserIconDelegate::UserIconDelegate(const ColumnList *columns)
-  : cols(columns)
+UserIconDelegate::UserIconDelegate(const ColumnList *columns, UserdataIcons *userdataIcons)
+  : cols(columns), icons(userdataIcons)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -52,12 +53,9 @@ void UserIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opti
   // Draw the text
   QStyledItemDelegate::paint(painter, opt, index);
 
-  // Get nav type from SQL model
+  // Get icon type from SQL model
   QString type = sqlModel->getSqlRecord(idx.row()).valueStr("type");
 
-  int symbolSize = option.rect.height() - 4;
-  int x = option.rect.x() + symbolSize;
-  int y = option.rect.y() + symbolSize / 2 + 2;
-
-  symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false, false);
+  // Draw icon
+  painter->drawPixmap(option.rect.x() + 2, option.rect.y() + 1, *icons->getIconPixmap(type, option.rect.height() - 2));
 }

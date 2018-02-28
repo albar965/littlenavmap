@@ -319,9 +319,19 @@ atools::sql::SqlDatabase *NavApp::getDatabaseNav()
   return getDatabaseManager()->getDatabaseNav();
 }
 
+UserdataIcons *NavApp::getUserdataIcons()
+{
+  return userdataController->getUserdataIcons();
+}
+
 UserdataController *NavApp::getUserdataController()
 {
   return userdataController;
+}
+
+atools::fs::common::MagDecReader *NavApp::getMagDecReader()
+{
+  return magDecReader;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()

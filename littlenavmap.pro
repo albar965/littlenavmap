@@ -213,7 +213,8 @@ SOURCES += src/main.cpp\
     src/search/userdatasearch.cpp \
     src/search/usericondelegate.cpp \
     src/userdata/userdatacontroller.cpp \
-    src/userdata/userdatadialog.cpp
+    src/userdata/userdatadialog.cpp \
+    src/userdata/userdataicons.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -303,7 +304,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/userdatasearch.h \
     src/search/usericondelegate.h \
     src/userdata/userdatacontroller.h \
-    src/userdata/userdatadialog.h
+    src/userdata/userdatadialog.h \
+    src/userdata/userdataicons.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

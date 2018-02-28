@@ -169,5 +169,18 @@
         <file>resources/icons/radiobutton_dark_unchecked.png</file>
         <file>resources/icons/radiobutton_dark_checked.png</file>
         <file>resources/icons/compassrose.svg</file>
+        <file>resources/icons/userdata_Pin.svg</file>
+        <file>resources/icons/userdata_Flag.svg</file>
+        <file>resources/icons/userdata_Marker.svg</file>
+        <file>resources/icons/userdata_Location.svg</file>
+        <file>resources/icons/userdata_VRP.svg</file>
+        <file>resources/icons/userdata_Closed.svg</file>
+        <file>resources/icons/userdata_POI.svg</file>
+        <file>resources/icons/userdata_IFR.svg</file>
+        <file>resources/icons/userdata_Bookmark.svg</file>
+        <file>resources/icons/userdata_Obstacle.svg</file>
+        <file>resources/icons/userdata_Seaport.svg</file>
+        <file>resources/icons/userdata_Airstrip.svg</file>
+        <file>resources/icons/userdata_Helipad.svg</file>
     </qresource>
 </RCC>

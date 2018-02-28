@@ -46,6 +46,8 @@ enum UserdataDialogMode
 
 }
 
+class UserdataIcons;
+
 /*
  * Dialog allows to edit one or more userdata records.
  */
@@ -55,7 +57,7 @@ class UserdataDialog :
   Q_OBJECT
 
 public:
-  UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode);
+  UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons);
   virtual ~UserdataDialog();
 
   /* Get changed data. If mode is EDIT_MULTIPLE only a part of the columns are set */
@@ -81,9 +83,12 @@ private:
   /* Update the coordinate status message */
   void coordsEdited(const QString& text);
 
+  void fillTypeComboBox(const QString& type);
+
   atools::sql::SqlRecord *record;
   ud::UserdataDialogMode editMode;
   Ui::UserdataDialog *ui;
+  UserdataIcons *icons;
 
 };
 
