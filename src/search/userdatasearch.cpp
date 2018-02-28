@@ -289,15 +289,7 @@ void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
         // qDebug() << Q_FUNC_INFO << rec;
 
         map::MapUserdataPoint obj;
-
-        obj.id = rec.valueInt("userdata_id");
-        obj.ident = rec.valueStr("ident");
-        obj.name = rec.valueStr("name");
-        obj.type = rec.valueStr("type");
-        obj.description = rec.valueStr("description");
-        obj.tags = rec.valueStr("tags");
-        obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
-
+        MapTypesFactory().fillUserdataPoint(rec, obj);
         result.userdataPoints.append(obj);
       }
     }

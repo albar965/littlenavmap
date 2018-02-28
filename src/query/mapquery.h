@@ -58,7 +58,8 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav);
+  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
+           atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
   /* Convert airport instances from/to simulator and third party nav databases */
@@ -173,6 +174,10 @@ public:
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
+  /* Similar to getAirports but no caching since user points can change */
+  const QList<map::MapUserdataPoint> getUserdataPoint(const Marble::GeoDataLatLonBox& rect, QStringList types,
+                                                      float distance);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
@@ -184,7 +189,7 @@ private:
   template<typename TYPE>
   struct SimpleRectCache
   {
-    typedef std::function<bool (const MapLayer *curLayer, const MapLayer *mapLayer)> LayerCompareFunc;
+    typedef std::function<bool (const MapLayer * curLayer, const MapLayer * mapLayer)> LayerCompareFunc;
 
     /*
      * @param rect bounding rectangle - all objects inside this rectangle are returned
@@ -221,7 +226,7 @@ private:
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
   MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *db, *dbNav;
+  atools::sql::SqlDatabase *db, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
   SimpleRectCache<map::MapAirport> airportCache;
@@ -250,8 +255,8 @@ private:
                         *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
                         *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr,
                         *airspaceByRectBelowAltQuery = nullptr, *airspaceByRectAboveAltQuery = nullptr,
-                        *airspaceByRectAtAltQuery = nullptr,
-                        *airspaceLinesByIdQuery = nullptr;
+                        *airspaceByRectAtAltQuery = nullptr, *airspaceLinesByIdQuery = nullptr,
+                        *userdataPointByRectQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr,
                         *ilsByIdentQuery = nullptr;

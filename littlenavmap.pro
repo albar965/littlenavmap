@@ -214,7 +214,8 @@ SOURCES += src/main.cpp\
     src/search/usericondelegate.cpp \
     src/userdata/userdatacontroller.cpp \
     src/userdata/userdatadialog.cpp \
-    src/userdata/userdataicons.cpp
+    src/userdata/userdataicons.cpp \
+    src/mapgui/mappainteruser.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -305,7 +306,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/usericondelegate.h \
     src/userdata/userdatacontroller.h \
     src/userdata/userdatadialog.h \
-    src/userdata/userdataicons.h
+    src/userdata/userdataicons.h \
+    src/mapgui/mappainteruser.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

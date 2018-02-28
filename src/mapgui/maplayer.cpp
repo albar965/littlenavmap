@@ -401,15 +401,39 @@ MapLayer& MapLayer::aiAircraftText(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::maxTextLength(int size)
+MapLayer& MapLayer::airportMaxTextLength(int size)
 {
-  maximumTextLength = size;
+  maximumTextLengthAirport = size;
   return *this;
 }
 
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::userpoint(bool value)
+{
+  layerUserpoint = value;
+  return *this;
+}
+
+MapLayer& MapLayer::userpointInfo(bool value)
+{
+  layerUserpointInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::userpoinSymbolSize(int size)
+{
+  layerUserpointSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::userpointMaxTextLength(int length)
+{
+  maximumTextLengthUserpoint = length;
   return *this;
 }
 

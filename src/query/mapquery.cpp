@@ -55,8 +55,8 @@ struct MapAirspaceCoordinate
   QString type;
 };
 
-MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav)
-  : QObject(parent), db(sqlDb), dbNav(sqlDbNav)
+MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
+  : QObject(parent), db(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -720,6 +720,34 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
   return &ndbCache.list;
 }
 
+const QList<map::MapUserdataPoint> MapQuery::getUserdataPoint(const GeoDataLatLonBox& rect, QStringList types,
+                                                              float distance)
+{
+  // No caching here since points can change
+  QList<map::MapUserdataPoint> retval;
+  for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+  {
+    bindCoordinatePointInRect(r, userdataPointByRectQuery);
+    userdataPointByRectQuery->bindValue(":dist", distance);
+
+    if(types.isEmpty())
+      types.append("%");
+
+    for(const QString& type : types)
+    {
+      userdataPointByRectQuery->bindValue(":type", type);
+      userdataPointByRectQuery->exec();
+      while(userdataPointByRectQuery->next())
+      {
+        map::MapUserdataPoint userPoint;
+        mapTypesFactory->fillUserdataPoint(userdataPointByRectQuery->record(), userPoint);
+        retval.append(userPoint);
+      }
+    }
+  }
+  return retval;
+}
+
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                   bool lazy)
 {
@@ -1196,6 +1224,11 @@ void MapQuery::initQueries()
   ndbsByRectQuery = new SqlQuery(dbNav);
   ndbsByRectQuery->prepare("select " + ndbQueryBase + " from ndb where " + whereRect + " " + whereLimit);
 
+  userdataPointByRectQuery = new SqlQuery(dbUser);
+  userdataPointByRectQuery->prepare("select * from userdata "
+                                    "where " + whereRect + " and visible_from > :dist and type like :type " +
+                                    whereLimit);
+
   markersByRectQuery = new SqlQuery(dbNav);
   markersByRectQuery->prepare(
     "select marker_id, type, ident, heading, lonx, laty "
@@ -1317,6 +1350,9 @@ void MapQuery::deInitQueries()
   ilsByRectQuery = nullptr;
   delete airwayByRectQuery;
   airwayByRectQuery = nullptr;
+
+  delete userdataPointByRectQuery;
+  userdataPointByRectQuery = nullptr;
 
   delete airspaceByRectQuery;
   airspaceByRectQuery = nullptr;

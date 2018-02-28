@@ -62,6 +62,7 @@ struct PaintContext
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
+  float distance; /* Zoom distance in NM */
 
   opts::DisplayOptions dispOpts;
   opts::Flags flags;

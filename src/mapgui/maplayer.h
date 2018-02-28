@@ -107,11 +107,19 @@ public:
   /* Display only airport that have a minimum runway length in feet */
   MapLayer& minRunwayLength(int length);
 
+  MapLayer& airportMaxTextLength(int size);
+
   /* Waypoint options */
   MapLayer& waypoint(bool value = true);
   MapLayer& waypointName(bool value = true);
   MapLayer& waypointRouteName(bool value = true);
   MapLayer& waypointSymbolSize(int size);
+
+  /* User defined points */
+  MapLayer& userpoint(bool value = true);
+  MapLayer& userpointInfo(bool value = true);
+  MapLayer& userpoinSymbolSize(int size);
+  MapLayer& userpointMaxTextLength(int length);
 
   /* VOR options */
   MapLayer& vor(bool value = true);
@@ -162,9 +170,6 @@ public:
 
   MapLayer& aiAircraftGroundText(bool value = true);
   MapLayer& aiAircraftText(bool value = true);
-
-  /* Only for airport texts */
-  MapLayer& maxTextLength(int size);
 
   bool operator<(const MapLayer& other) const;
 
@@ -338,6 +343,21 @@ public:
     return layerMarkerInfo;
   }
 
+  bool isUserpoint() const
+  {
+    return layerUserpoint;
+  }
+
+  bool isUserpointInfo() const
+  {
+    return layerUserpointInfo;
+  }
+
+  int getUserPointSymbolSize() const
+  {
+    return layerUserpointSymbolSize;
+  }
+
   bool isIls() const
   {
     return layerIls;
@@ -464,9 +484,14 @@ public:
     return layerAiAircraftText;
   }
 
-  int getMaxTextLength() const
+  int getMaxTextLengthAirport() const
   {
-    return maximumTextLength;
+    return maximumTextLengthAirport;
+  }
+
+  int getMaxTextLengthUserpoint() const
+  {
+    return maximumTextLengthUserpoint;
   }
 
 private:
@@ -479,13 +504,14 @@ private:
        layerAirportDiagram = false,
        layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false, layerAirportDiagramDetail3 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
-       layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false;
+       layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false,
+       layerUserpoint = false;
   int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;
 
   bool layerWaypoint = false, layerWaypointName = false,
        layerVor = false, layerVorIdent = false, layerVorInfo = false, layerVorLarge = false,
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
-       layerMarker = false, layerMarkerInfo = false,
+       layerMarker = false, layerMarkerInfo = false, layerUserpointInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false,
        layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false, layerAirwayInfo = false;
 
@@ -495,9 +521,10 @@ private:
   bool layerWaypointRouteName = false;
 
   int layerWaypointSymbolSize = 8, layerVorSymbolSize = 8, layerNdbSymbolSize = 8,
-      layerMarkerSymbolSize = 8;
+      layerMarkerSymbolSize = 8, layerUserpointSymbolSize = 16;
 
-  int maximumTextLength = 16;
+  int maximumTextLengthAirport = 16;
+  int maximumTextLengthUserpoint = 10;
 
   bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFir = false, layerAirspaceRestricted =
     false, layerAirspaceSpecial = false, layerAirspaceOther = false;

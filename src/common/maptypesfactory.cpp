@@ -306,6 +306,17 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
     vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 }
 
+void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserdataPoint& obj)
+{
+  obj.id = rec.valueInt("userdata_id");
+  obj.ident = rec.valueStr("ident");
+  obj.name = rec.valueStr("name");
+  obj.type = rec.valueStr("type");
+  obj.description = rec.valueStr("description");
+  obj.tags = rec.valueStr("tags");
+  obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
+}
+
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
 {
   ndb.id = record.valueInt("ndb_id");

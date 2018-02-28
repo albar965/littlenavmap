@@ -1056,7 +1056,7 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
 
   symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts, flags, size,
                                  context->mapLayerEffective->isAirportDiagram(),
-                                 context->mapLayer->getMaxTextLength());
+                                 context->mapLayer->getMaxTextLengthAirport());
 }
 
 void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj, bool preview)
@@ -1250,7 +1250,7 @@ void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
           break;
         case map::USER:
           paintText(context, mapcolors::routeUserPointColor, x, y,
-                    {atools::elideTextShort(obj.getIdent(), context->mapLayer->getMaxTextLength())},
+                    {atools::elideTextShort(obj.getIdent(), context->mapLayer->getMaxTextLengthAirport())},
                     true /* draw as route */);
           break;
         case map::AIRPORT:

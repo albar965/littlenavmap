@@ -29,18 +29,32 @@ class SqlRecord;
 
 namespace map {
 struct MapAirport;
+
 struct MapRunway;
+
 struct MapRunwayEnd;
+
 struct MapVor;
+
 struct MapNdb;
+
 struct MapWaypoint;
+
 struct MapAirway;
+
 struct MapIls;
+
 struct MapParking;
+
 struct MapAirspace;
+
 struct MapStart;
+
 struct MapHelipad;
+
 struct MapMarker;
+
+struct MapUserdataPoint;
 
 }
 
@@ -60,7 +74,8 @@ public:
    * based on incomplete records in the search.
    * @param nav filled from third party nav database
    */
-  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav, bool xplane);
+  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
+                   bool xplane);
 
   /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
   void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane);
@@ -89,6 +104,8 @@ public:
   void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace);
 
   void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
+
+  void fillUserdataPoint(const atools::sql::SqlRecord& rec, map::MapUserdataPoint& obj);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);

@@ -81,6 +81,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   NavApp::mainWindow = mainWindowParam;
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases();
+  userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
 
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
@@ -88,7 +89,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
 
-  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
+  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(),
+                          databaseManager->getDatabaseNav(), databaseManager->getDatabaseUser());
   mapQuery->initQueries();
 
   airportQuerySim = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
@@ -102,8 +104,6 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
   procedureQuery->initQueries();
-
-  userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
 
   connectClient = new ConnectClient(mainWindow);
 

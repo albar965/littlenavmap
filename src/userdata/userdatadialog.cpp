@@ -43,9 +43,15 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   {
     showCheckbox = false;
     showLatLon = true;
+
+    if(mode == ud::EDIT_ONE)
+      setWindowTitle(QApplication::applicationName() + tr(" - Edit User defined point"));
+    else if(mode == ud::ADD)
+      setWindowTitle(QApplication::applicationName() + tr(" - Add User defined point"));
   }
   else if(mode == ud::EDIT_MULTIPLE)
   {
+    setWindowTitle(QApplication::applicationName() + tr(" - Edit User defined points"));
     showCheckbox = true;
     showLatLon = false;
   }

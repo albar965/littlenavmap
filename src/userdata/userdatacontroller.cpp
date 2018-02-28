@@ -114,15 +114,18 @@ void UserdataController::importCsv()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString file = dialog->openFileDialog(
-    tr("Open User defined Waypoint CSV File"),
+  QStringList files = dialog->openFileDialogMulti(
+    tr("Open User defined Waypoint CSV File(s)"),
     tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), "Userdata/Csv");
 
-  if(!file.isEmpty())
+  for(const QString& file:files)
   {
-    manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
-    emit refreshUserdataSearch();
+    if(!file.isEmpty())
+      manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
   }
+
+  if(!files.isEmpty())
+    emit refreshUserdataSearch();
 }
 
 void UserdataController::exportCsv()

@@ -196,7 +196,7 @@ void MapPainterAirport::render(PaintContext *context)
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagram(),
-                                     context->mapLayer->getMaxTextLength());
+                                     context->mapLayer->getMaxTextLengthAirport());
     }
   }
 }
