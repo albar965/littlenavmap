@@ -950,8 +950,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QPoint diff = curPos - conv.wToS(last.getPosition());
   const OptionData& od = OptionData::instance();
   QRect widgetRect = rect();
+  QRect widgetRectSmall = widgetRect.adjusted(widgetRect.width() / 10, widgetRect.height() / 10,
+                                              -widgetRect.width() / 10, -widgetRect.height() / 10);
 
   bool wasEmpty = aircraftTrack.isEmpty();
+
+  curPosVisible &= widgetRectSmall.contains(curPos);
 
   if(aircraftTrack.appendTrackPos(ac.getPosition(), ac.getZuluTime(), ac.isOnGround()))
     emit aircraftTrackPruned();
@@ -1020,6 +1024,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       {
         nextWp = route.getActiveLeg() != nullptr ? route.getActiveLeg()->getPosition() : Pos();
         nextWpPos = conv.wToS(nextWp, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
+        nextWpPosVisible &= widgetRectSmall.contains(nextWpPos);
       }
 
       bool mapUpdated = false;
@@ -1050,6 +1055,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
               if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
               {
+                setUpdatesEnabled(false);
+
+                Rect rect(nextWp);
+                rect.extend(ac.getPosition());
 #ifdef DEBUG_INFORMATION
                 qDebug() << Q_FUNC_INFO
                          << "curPosVisible" << curPosVisible
@@ -1061,14 +1070,16 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 qDebug() << "innerRect" << innerRect;
                 qDebug() << "widgetRect" << widgetRect;
                 qDebug() << "aircraftWpRect" << aircraftWpRect;
+                qDebug() << "rect" << rect;
 #endif
-                setUpdatesEnabled(false);
 
-                Rect rect(nextWp);
-                rect.extend(ac.getPosition());
-                centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(),
-                                          rect.getEast(), rect.getWest(),
-                                          GeoDataCoordinates::Degree), false);
+                if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
+                  centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(),
+                                            rect.getEast(), rect.getWest(),
+                                            GeoDataCoordinates::Degree), false);
+                else if(rect.isValid())
+                  centerOn(rect.getEast(), rect.getNorth());
+
                 if(distance() < MIN_ZOOM_FOR_CENTER_LEG)
                   setDistance(MIN_ZOOM_FOR_CENTER_LEG);
                 mapUpdated = true;
