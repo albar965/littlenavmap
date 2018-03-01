@@ -71,6 +71,16 @@ void UserdataIcons::loadIcons()
     loadIcon(entry);
 }
 
+QString UserdataIcons::getIconPath(const QString& type) const
+{
+  return typeMap.value(type, ":/littlenavmap/resources/icons/userdata_" + DEFAULT_TYPE + ".svg");
+}
+
+QString UserdataIcons::getDefaultType(const QString& type)
+{
+  return typeMap.key(type, DEFAULT_TYPE);
+}
+
 void UserdataIcons::loadIcon(const QFileInfo& entry)
 {
   static QRegularExpression typeRegexp("userdata_(.+)\\.svg");

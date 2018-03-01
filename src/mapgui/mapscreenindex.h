@@ -157,11 +157,6 @@ public:
     simData = data;
   }
 
-  bool isUserAircraftMoving() const
-  {
-    return isUserAircraftValid() && simData.getUserAircraft().getGroundSpeedKts() > 5;
-  }
-
   bool isUserAircraftValid() const
   {
     return simData.getUserAircraft().getPosition().isValid();

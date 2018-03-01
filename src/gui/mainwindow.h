@@ -180,6 +180,8 @@ private:
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 
   void updateMapObjectsShown();
+
+  /* Reset drawing settings */
   void resetMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);

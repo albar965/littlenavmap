@@ -31,6 +31,7 @@
 #include "mapgui/mappainterroute.h"
 #include "mapgui/mappainteruser.h"
 #include "mapgui/mapscale.h"
+#include "userdata/userdatacontroller.h"
 #include "route/route.h"
 #include "geo/calculations.h"
 #include "options/optiondata.h"
@@ -388,6 +389,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.mapScrollDetail = mapScrollDetail;
       context.distance = atools::geo::meterToNm(static_cast<float>(mapWidget->distance() * 1000.));
 
+      context.userPointTypes = NavApp::getUserdataController()->getSelectedTypes();
+      context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
+      context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
+
       // Copy default font
       context.defaultFont = painter->font();
       context.defaultFont.setBold(true);
@@ -448,6 +453,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
             mapPainterAirport->render(&context);
 
           if(!context.isOverflow())
+            mapPainterUser->render(&context);
+
+          if(!context.isOverflow())
             mapPainterNav->render(&context);
         }
         else
@@ -457,15 +465,15 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
             mapPainterIls->render(&context);
 
           if(!context.isOverflow())
+            mapPainterUser->render(&context);
+
+          if(!context.isOverflow())
             mapPainterNav->render(&context);
 
           if(!context.isOverflow())
             mapPainterAirport->render(&context);
         }
       }
-
-      if(!context.isOverflow())
-        mapPainterUser->render(&context);
 
       // if(!context.isOverflow()) always paint route even if number of objets is too large
       mapPainterRoute->render(&context);

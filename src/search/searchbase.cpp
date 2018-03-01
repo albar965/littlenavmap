@@ -733,9 +733,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionMapNavaidRange->setEnabled(navType == map::VOR || navType == map::NDB);
 
   ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
-                                    navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERDATA);
+                                    navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERPOINT);
   ui->actionRouteAppendPos->setEnabled(navType == map::VOR || navType == map::NDB ||
-                                       navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERDATA);
+                                       navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERPOINT);
 
   ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == map::AIRPORT);
@@ -959,6 +959,8 @@ void SearchBaseTable::showOnMapTriggered()
           emit showPos(result.ndbs.first().getPosition(), 0.f, false);
         else if(!result.waypoints.isEmpty())
           emit showPos(result.waypoints.first().getPosition(), 0.f, false);
+        else if(!result.userdataPoints.isEmpty())
+          emit showPos(result.userdataPoints.first().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing navaid on map."));
       }
     }
@@ -980,7 +982,7 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   else if(columns->getTablename() == "userdata")
   {
     // User data
-    navType = map::USERDATA;
+    navType = map::USERPOINT;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else

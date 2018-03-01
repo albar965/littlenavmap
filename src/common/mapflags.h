@@ -61,7 +61,7 @@ enum MapObjectType
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */
-  USER = 1 << 18, /* Flight plan user waypoint */
+  USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,
   RUNWAYEND = 1 << 20,
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
@@ -70,7 +70,7 @@ enum MapObjectType
   AIRSPACE = 1 << 24, /* General airspace boundary */
   HELIPAD = 1 << 25, /* Helipads on airports */
   COMPASS_ROSE = 1 << 26, /* Compass rose */
-  USERDATA = 1 << 27, /* A user defined waypoint */
+  USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,

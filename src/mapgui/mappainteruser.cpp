@@ -57,20 +57,20 @@ void MapPainterUser::render(PaintContext *context)
 
   context->szFont(context->textSizeNavaid);
 
-  bool drawWaypoint = context->mapLayer->isUserpoint() && context->objectTypes.testFlag(map::USERDATA);
-  if(drawWaypoint && !context->isOverflow())
-  {
-    // If airways are drawn we also have to go through waypoints
-    const QList<MapUserdataPoint> userpoints = mapQuery->getUserdataPoint(curBox, {}, context->distance);
-    paintUserpoints(context, userpoints, context->drawFast);
-  }
+  if(context->mapLayer->isUserpoint() &&
+     (!context->userPointTypes.isEmpty() || context->userPointTypeUnknown) && !context->isOverflow())
+    paintUserpoints(context,
+                    mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
+                                                context->userPointTypeUnknown,
+                                                context->distance), context->drawFast);
 }
 
-void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserdataPoint>& userpoints, bool drawFast)
+void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserpoint>& userpoints, bool drawFast)
 {
   bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+  UserdataIcons *icons = NavApp::getUserdataIcons();
 
-  for(const MapUserdataPoint& userpoint : userpoints)
+  for(const MapUserpoint& userpoint : userpoints)
   {
     float x, y;
     bool visible = wToS(userpoint.position, x, y);
@@ -80,20 +80,27 @@ void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserd
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getUserPointSymbolSize());
-      context->painter->drawPixmap(QPointF(x - size / 2, y - size / 2),
-                                   *NavApp::getUserdataIcons()->getIconPixmap(userpoint.type, size));
-
-      if(context->mapLayer->isUserpointInfo() && !drawFast)
+      if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
-        int maxTextLength = context->mapLayer->getMaxTextLengthUserpoint();
+        int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getUserPointSymbolSize());
+        context->painter->drawPixmap(QPointF(x - size / 2, y - size / 2),
+                                     *icons->getIconPixmap(userpoint.type, size));
 
-        QString ident = atools::elideTextShort(userpoint.ident, maxTextLength);
-        QString name = userpoint.name != userpoint.ident ?
-                       atools::elideTextShort(userpoint.name, maxTextLength) : QString();
+        if(context->mapLayer->isUserpointInfo() && !drawFast)
+        {
+          int maxTextLength = context->mapLayer->getMaxTextLengthUserpoint();
 
-        symbolPainter->textBoxF(context->painter, {ident, name}, QPen(Qt::black),
-                                x + size / 2, y, textatt::LEFT, fill ? 255 : 0);
+          // Avoid showing same text twice
+          QStringList texts;
+          texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
+          QString name = userpoint.name != userpoint.ident ?
+                         atools::elideTextShort(userpoint.name, maxTextLength) : QString();
+          if(!name.isEmpty())
+            texts.append(name);
+
+          symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black),
+                                  x + size / 2, y, textatt::LEFT, fill ? 255 : 0);
+        }
       }
     }
   }

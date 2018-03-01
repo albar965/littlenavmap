@@ -75,7 +75,6 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
 
-  append(Column("channel", tr("Channel"))).
   append(Column("last_edit_timestamp", tr("Last Edit"))).
   append(Column("import_timestamp", tr("Imported"))).
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
@@ -288,7 +287,7 @@ void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
         controller->fillRecord(row, rec);
         // qDebug() << Q_FUNC_INFO << rec;
 
-        map::MapUserdataPoint obj;
+        map::MapUserpoint obj;
         MapTypesFactory().fillUserdataPoint(rec, obj);
         result.userdataPoints.append(obj);
       }

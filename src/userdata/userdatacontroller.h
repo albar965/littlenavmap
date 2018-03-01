@@ -19,6 +19,7 @@
 #define USERDATACONTROLLER_H
 
 #include <QObject>
+#include <QVector>
 
 namespace atools {
 namespace gui {
@@ -35,6 +36,8 @@ class UserdataManager;
 
 class MainWindow;
 class UserdataIcons;
+class QToolButton;
+class QAction;
 
 /*
  * Methods to edit, add, delete, import and export userdata.
@@ -62,8 +65,8 @@ public:
   void exportCsv();
 
   /* Import and export user_fix.dat file from X-Plane */
-  void importXplane();
-  void exportXplane();
+  void importUserFixDat();
+  void exportUserFixDat();
 
   /* Import and export Garmin GTN user waypoint database */
   void importGarmin();
@@ -78,20 +81,68 @@ public:
   /* Show search tab and raise window */
   void  showSearch();
 
+  /* Get icon manager */
   UserdataIcons *getUserdataIcons() const
   {
     return icons;
+  }
+
+  /* Get the given type or the default type if unknown */
+  QString getDefaultType(const QString& type);
+
+  /* Add toolbar button and actions. Also adds actions to menu. Call this only once. */
+  void addToolbarButton();
+
+  void saveState();
+  void restoreState();
+
+  /* Reset display settings to show all */
+  void resetSettingsToDefault();
+
+  /* Get currently in menu selected types for display */
+  const QStringList& getSelectedTypes() const
+  {
+    return selectedTypes;
+  }
+
+  /* Get all registered types as found by icon manager */
+  QStringList getAllTypes() const;
+
+  /* Show unknown types*/
+  bool isSelectedUnknownType() const
+  {
+    return selectedUnknownType;
   }
 
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch();
 
+  /* Issue a redraw of the map */
+  void userdataChanged();
+
 private:
+  /* Called by any action */
+  void toolbarActionTriggered();
+
+  /* Copy class state to actions and vice versa */
+  void typesToActions();
+  void actionsToTypes();
+
+  /* Currently in actions selected types */
+  QStringList selectedTypes;
+  bool selectedUnknownType = false;
+
   atools::fs::userdata::UserdataManager *manager;
   atools::gui::Dialog *dialog;
   MainWindow *mainWindow;
   UserdataIcons *icons;
+
+  // Buttons and actions for toolbar and menu
+  QToolButton *userdataToolButton = nullptr;
+  QAction *actionAll = nullptr, *actionNone = nullptr, *actionUnknown = nullptr;
+  QVector<QAction *> actions;
+
 };
 
 #endif // USERDATACONTROLLER_H

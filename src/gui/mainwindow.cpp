@@ -213,6 +213,9 @@ MainWindow::MainWindow()
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
 
+    // Add user defined points toolbar button and submenu items
+    NavApp::getUserdataController()->addToolbarButton();
+
     qDebug() << "MainWindow Reading settings";
     restoreStateMain();
 
@@ -455,7 +458,7 @@ void MainWindow::setupUi()
   ui->toolbarMapOptions->addWidget(mapProjectionComboBox);
 
   // Projection menu items
-  actionGroupMapProjection = new QActionGroup(ui->menuMapProjection);
+  actionGroupMapProjection = new QActionGroup(ui->menuViewProjection);
   ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
   ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
 
@@ -478,7 +481,7 @@ void MainWindow::setupUi()
   ui->toolbarMapOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
-  actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
+  actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenStreetMap->setData(MapWidget::OPENSTREETMAP);
 
@@ -520,7 +523,7 @@ void MainWindow::setupUi()
     mapThemeComboBox->addItem(name, dgmlFile.filePath());
 
     // Create action for map/theme submenu
-    QAction *action = ui->menuMapTheme->addAction(name);
+    QAction *action = ui->menuViewTheme->addAction(name);
     action->setCheckable(true);
     action->setToolTip(helptext);
     action->setStatusTip(helptext);
@@ -703,25 +706,73 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
-  connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(searchController->getAirportSearch(), &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(
-    searchController->getAirportSearch(), &AirportSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
-          infoController, &InfoController::showInformation);
-  connect(searchController->getAirportSearch(), &AirportSearch::showProcedures,
+  // Airport search ===================================================================================
+  AirportSearch *airportSearch = searchController->getAirportSearch();
+  connect(airportSearch, &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
+  connect(airportSearch, &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(airportSearch, &AirportSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(airportSearch, &AirportSearch::showInformation, infoController, &InfoController::showInformation);
+  connect(airportSearch, &AirportSearch::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
+  connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
+  connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+  connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
+  // Nav search ===================================================================================
+  NavSearch *navSearch = searchController->getNavSearch();
+  connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(navSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+
+  // Userdata search ===================================================================================
+  UserdataSearch *userSearch = searchController->getUserdataSearch();
+  connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(userSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+
+  // User data ===================================================================================
+  UserdataController *userdataController = NavApp::getUserdataController();
+  connect(ui->actionUserdataClearDatabase, &QAction::triggered, userdataController, &UserdataController::clearDatabase);
+  connect(ui->actionUserdataShowSearch, &QAction::triggered, userdataController, &UserdataController::showSearch);
+
+  // Import ================
+  connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
+  connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController,
+          &UserdataController::importGarmin);
+  connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController,
+          &UserdataController::importUserFixDat);
+
+  // Export ================
+  connect(ui->actionUserdataExportCSV, &QAction::triggered, userdataController, &UserdataController::exportCsv);
+  connect(ui->actionUserdataExportGarminGTN, &QAction::triggered, userdataController,
+          &UserdataController::exportGarmin);
+  connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController,
+          &UserdataController::exportUserFixDat);
+
+  connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
+  connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
+
+  // Approach controller ===================================================================
+  ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
+  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
+  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
+  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
+  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
+          &RouteController::routeAttachProcedure);
+  connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
-
-  connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(searchController->getNavSearch(), &NavSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(searchController->getNavSearch(), &NavSearch::showInformation,
-          infoController, &InfoController::showInformation);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
@@ -895,13 +946,6 @@ void MainWindow::connectAllSlots()
 
   connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
 
-  connect(searchController->getAirportSearch(), &SearchBaseTable::selectionChanged,
-          this, &MainWindow::searchSelectionChanged);
-  connect(searchController->getNavSearch(), &SearchBaseTable::selectionChanged,
-          this, &MainWindow::searchSelectionChanged);
-  connect(searchController->getUserdataSearch(), &SearchBaseTable::selectionChanged,
-          this, &MainWindow::searchSelectionChanged);
-
   connect(ui->actionRouteSelectParking, &QAction::triggered, routeController, &RouteController::selectDepartureParking);
 
   // Route editing
@@ -911,16 +955,6 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
-
-  connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDeparture,
-          routeController, &RouteController::routeSetDeparture);
-  connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDestination,
-          routeController, &RouteController::routeSetDestination);
-  connect(searchController->getAirportSearch(), &SearchBaseTable::routeAdd,
-          routeController, &RouteController::routeAdd);
-
-  connect(searchController->getNavSearch(), &SearchBaseTable::routeAdd,
-          routeController, &RouteController::routeAdd);
 
   // Messages about database query result status
   connect(mapWidget, &MapWidget::resultTruncated, this, &MainWindow::resultTruncated);
@@ -975,29 +1009,7 @@ void MainWindow::connectAllSlots()
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
-  // Approach controller ===================================================================
-  ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
-  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
-  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
-  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
-          &RouteController::routeAttachProcedure);
-  connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
-
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
-
-  // User data
-  connect(ui->actionUserdataClearDatabase, &QAction::triggered,
-          NavApp::getUserdataController(), &UserdataController::clearDatabase);
-  connect(ui->actionUserdataImportCSV, &QAction::triggered,
-          NavApp::getUserdataController(), &UserdataController::importCsv);
-
-  connect(NavApp::getUserdataController(), &UserdataController::refreshUserdataSearch,
-          searchController, &SearchController::refreshUserdata);
-  connect(ui->actionUserdataShowSearch, &QAction::triggered,
-          NavApp::getUserdataController(), &UserdataController::showSearch);
-
 }
 
 /* Update the info weather */
@@ -2207,6 +2219,8 @@ void MainWindow::resetMapObjectsShown()
 
   mapWidget->resetSettingActionsToDefault();
   mapWidget->resetSettingsToDefault();
+  NavApp::getUserdataController()->resetSettingsToDefault();
+
   mapWidget->updateMapObjectsShown();
   airspaceHandler->updateButtonsAndActions();
   profileWidget->update();
@@ -2426,8 +2440,8 @@ void MainWindow::updateActionStates()
       emptyAirportSeparator = ui->toolbarMapOptions->insertSeparator(ui->actionMapShowVor);
     }
 
-    if(!ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->menuMap->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+    if(!ui->menuMapView->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuMapView->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
   }
   else
   {
@@ -2442,8 +2456,8 @@ void MainWindow::updateActionStates()
       emptyAirportSeparator = nullptr;
     }
 
-    if(ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);
+    if(ui->menuMapView->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuMapView->removeAction(ui->actionMapShowEmptyAirports);
   }
 
 #ifdef DEBUG_MOVING_AIRPLANE
@@ -2533,6 +2547,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "MainWindow restoring state of mapWidget";
   mapWidget->restoreState();
 
+  qDebug() << "MainWindow restoring state of userdataControlle";
+  NavApp::getUserdataController()->restoreState();
+
   qDebug() << "MainWindow restoring state of routeController";
   routeController->restoreState();
 
@@ -2602,6 +2619,10 @@ void MainWindow::saveStateMain()
   qDebug() << "mapWidget";
   if(mapWidget != nullptr)
     mapWidget->saveState();
+
+  qDebug() << "mapWidget";
+  if(NavApp::getUserdataController() != nullptr)
+    NavApp::getUserdataController()->saveState();
 
   qDebug() << "routeController";
   if(routeController != nullptr)

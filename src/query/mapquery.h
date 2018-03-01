@@ -97,6 +97,7 @@ public:
   map::MapIls getIlsById(int id);
   map::MapWaypoint getWaypointById(int id);
   map::MapAirspace getAirspaceById(int airspaceId);
+  map::MapUserpoint getUserdataPointById(int id);
 
   /*
    * Get a map object by type, ident and region
@@ -175,8 +176,8 @@ public:
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
   /* Similar to getAirports but no caching since user points can change */
-  const QList<map::MapUserdataPoint> getUserdataPoint(const Marble::GeoDataLatLonBox& rect, QStringList types,
-                                                      float distance);
+  const QList<map::MapUserpoint> getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types, const QStringList& typesAll,
+                                                       bool unknownType, float distance);
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -263,7 +264,8 @@ private:
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
                         *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
-                        *ilsByIdQuery = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+                        *ilsByIdQuery = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr,
+                        *userdataPointByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
                         *airwayByIdQuery = nullptr,

@@ -182,5 +182,6 @@
         <file>resources/icons/userdata_Seaport.svg</file>
         <file>resources/icons/userdata_Airstrip.svg</file>
         <file>resources/icons/userdata_Helipad.svg</file>
+        <file>resources/icons/userdata_Cabin.svg</file>
     </qresource>
 </RCC>

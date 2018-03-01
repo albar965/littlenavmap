@@ -205,7 +205,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   for(const map::MapAirspaceFlags& flag : flags)
     allFlags |= flag;
 
-  ui->menuAirspaces->addSeparator();
+  ui->menuViewAirspaces->addSeparator();
 
   QToolButton *button = new QToolButton(ui->toolBarAirspaces);
   button->setIcon(QIcon(icon));
@@ -224,6 +224,8 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   {
     // Add all on / all off menu items
     QAction *action = new QAction(tr("All"), button);
+    action->setToolTip(tr("Enable all airspaces in this category"));
+    action->setStatusTip(action->toolTip());
     map::MapAirspaceFilter filterOn;
     filterOn.types = allTypes;
     filterOn.flags = map::AIRSPACE_ALL_ON | allFlags;
@@ -233,6 +235,8 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
     connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
 
     action = new QAction(tr("None"), button);
+    action->setToolTip(tr("Disable all airspaces in this category"));
+    action->setStatusTip(action->toolTip());
     map::MapAirspaceFilter filterOff;
     filterOff.types = allTypes;
     filterOff.flags = map::AIRSPACE_ALL_OFF | allFlags;
@@ -267,7 +271,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
       airspaceActions.append(action);
       if(!groupActions)
         connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
-      ui->menuAirspaces->addAction(action);
+      ui->menuViewAirspaces->addAction(action);
     }
   }
   else
@@ -290,7 +294,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
       airspaceActions.append(action);
       if(!groupActions)
         connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
-      ui->menuAirspaces->addAction(action);
+      ui->menuViewAirspaces->addAction(action);
     }
   }
 

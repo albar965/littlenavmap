@@ -198,7 +198,7 @@ void SearchController::showInSearch(map::MapObjectTypes type, const QString& ide
       navSearch->filterByIdent(ident, region, airportIdent);
       break;
 
-    case map::USERDATA:
+    case map::USERPOINT:
       // Shown in user search tab
       userdataSearch->resetSearch();
       userdataSearch->filterByIdent(ident, region, airportIdent);

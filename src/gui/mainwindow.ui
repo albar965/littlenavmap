@@ -141,84 +141,15 @@
     <property name="title">
      <string>&amp;Map</string>
     </property>
-    <widget class="QMenu" name="menuMapProjection">
-     <property name="title">
-      <string>&amp;Projection</string>
-     </property>
-     <addaction name="actionMapProjectionMercator"/>
-     <addaction name="actionMapProjectionSpherical"/>
-    </widget>
-    <widget class="QMenu" name="menuMapTheme">
-     <property name="title">
-      <string>&amp;Theme</string>
-     </property>
-     <addaction name="actionMapThemeOpenStreetMap"/>
-     <addaction name="actionMapThemeOpenStreetMapRoads"/>
-     <addaction name="actionMapThemeOpenTopoMap"/>
-     <addaction name="actionMapThemeStamenTerrain"/>
-     <addaction name="actionMapThemeCartoLight"/>
-     <addaction name="actionMapThemeCartoDark"/>
-     <addaction name="separator"/>
-     <addaction name="actionMapThemeSimple"/>
-     <addaction name="actionMapThemePlain"/>
-     <addaction name="actionMapThemeAtlas"/>
-     <addaction name="separator"/>
-    </widget>
-    <widget class="QMenu" name="menuAirspaces">
-     <property name="title">
-      <string>Air&amp;spaces</string>
-     </property>
-     <addaction name="actionShowAirspaces"/>
-    </widget>
-    <widget class="QMenu" name="menuDetails">
-     <property name="title">
-      <string>Details</string>
-     </property>
-     <addaction name="actionMapMoreDetails"/>
-     <addaction name="actionMapDefaultDetails"/>
-     <addaction name="actionMapLessDetails"/>
-    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapResetSettings"/>
     <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
     <addaction name="separator"/>
     <addaction name="actionMapBack"/>
     <addaction name="actionMapNext"/>
-    <addaction name="separator"/>
-    <addaction name="menuDetails"/>
-    <addaction name="menuMapProjection"/>
-    <addaction name="menuMapTheme"/>
-    <addaction name="menuAirspaces"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowAddonAirports"/>
-    <addaction name="actionMapShowAirports"/>
-    <addaction name="actionMapShowSoftAirports"/>
-    <addaction name="actionMapShowEmptyAirports"/>
-    <addaction name="actionMapShowVor"/>
-    <addaction name="actionMapShowNdb"/>
-    <addaction name="actionMapShowWp"/>
-    <addaction name="actionMapShowIls"/>
-    <addaction name="actionMapShowVictorAirways"/>
-    <addaction name="actionMapShowJetAirways"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowRoute"/>
-    <addaction name="actionInfoApproachShowMissedAppr"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowAircraft"/>
-    <addaction name="actionMapShowAircraftTrack"/>
-    <addaction name="actionMapShowCompassRose"/>
-    <addaction name="actionMapShowAircraftAi"/>
-    <addaction name="actionMapShowAircraftAiBoat"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowGrid"/>
-    <addaction name="actionMapShowCities"/>
-    <addaction name="actionMapShowHillshading"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -264,9 +195,91 @@
     <addaction name="separator"/>
     <addaction name="actionUserdataClearDatabase"/>
    </widget>
+   <widget class="QMenu" name="menuMapView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuViewDetails">
+     <property name="title">
+      <string>&amp;Details</string>
+     </property>
+     <addaction name="actionMapMoreDetails"/>
+     <addaction name="actionMapDefaultDetails"/>
+     <addaction name="actionMapLessDetails"/>
+    </widget>
+    <widget class="QMenu" name="menuViewAirspaces">
+     <property name="title">
+      <string>&amp;Airspaces</string>
+     </property>
+     <addaction name="actionShowAirspaces"/>
+    </widget>
+    <widget class="QMenu" name="menuViewProjection">
+     <property name="title">
+      <string>&amp;Projection</string>
+     </property>
+     <addaction name="actionMapProjectionMercator"/>
+     <addaction name="actionMapProjectionSpherical"/>
+    </widget>
+    <widget class="QMenu" name="menuViewTheme">
+     <property name="title">
+      <string>&amp;Theme</string>
+     </property>
+     <addaction name="actionMapThemeOpenStreetMap"/>
+     <addaction name="actionMapThemeOpenStreetMapRoads"/>
+     <addaction name="actionMapThemeOpenTopoMap"/>
+     <addaction name="actionMapThemeStamenTerrain"/>
+     <addaction name="actionMapThemeCartoLight"/>
+     <addaction name="actionMapThemeCartoDark"/>
+     <addaction name="separator"/>
+     <addaction name="actionMapThemeSimple"/>
+     <addaction name="actionMapThemePlain"/>
+     <addaction name="actionMapThemeAtlas"/>
+    </widget>
+    <widget class="QMenu" name="menuViewUserpoints">
+     <property name="title">
+      <string>Userpoints</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="actionMapResetSettings"/>
+    <addaction name="menuViewDetails"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowAddonAirports"/>
+    <addaction name="actionMapShowAirports"/>
+    <addaction name="actionMapShowSoftAirports"/>
+    <addaction name="actionMapShowEmptyAirports"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowVor"/>
+    <addaction name="actionMapShowNdb"/>
+    <addaction name="actionMapShowWp"/>
+    <addaction name="actionMapShowIls"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowVictorAirways"/>
+    <addaction name="actionMapShowJetAirways"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewAirspaces"/>
+    <addaction name="menuViewUserpoints"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowRoute"/>
+    <addaction name="actionInfoApproachShowMissedAppr"/>
+    <addaction name="actionMapShowAircraft"/>
+    <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowCompassRose"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowAircraftAi"/>
+    <addaction name="actionMapShowAircraftAiBoat"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowGrid"/>
+    <addaction name="actionMapShowCities"/>
+    <addaction name="actionMapShowHillshading"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewProjection"/>
+    <addaction name="menuViewTheme"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuMap"/>
+   <addaction name="menuMapView"/>
    <addaction name="menuDatabase"/>
    <addaction name="menuUserdata"/>
    <addaction name="menuTools"/>
@@ -2380,7 +2393,7 @@
        </widget>
        <widget class="QWidget" name="tabUserdata">
         <attribute name="title">
-         <string>Userdata</string>
+         <string>Userpoints</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_12">
          <property name="spacing">
@@ -2415,10 +2428,10 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Short ident of the user defined waypoint</string>
+              <string>Short ident of the userpoint</string>
              </property>
              <property name="statusTip">
-              <string>Short ident of the user defined waypoint</string>
+              <string>Short ident of the userpoint</string>
              </property>
              <property name="maxLength">
               <number>8</number>
@@ -2440,10 +2453,10 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Type of the user defined waypoint which will defined the used icon</string>
+              <string>Type of the userpoint which will defined the used icon</string>
              </property>
              <property name="statusTip">
-              <string>Type of the user defined waypoint which will defined the used icon</string>
+              <string>Type of the userpoint which will defined the used icon</string>
              </property>
              <property name="placeholderText">
               <string>Type</string>
@@ -2472,10 +2485,10 @@
            <item>
             <widget class="QPushButton" name="pushButtonUserdataAdd">
              <property name="toolTip">
-              <string>Add a new user defined waypoint</string>
+              <string>Add a new userpoint</string>
              </property>
              <property name="statusTip">
-              <string>Add a new user defined waypoint</string>
+              <string>Add a new userpoint</string>
              </property>
              <property name="text">
               <string/>
@@ -2489,10 +2502,10 @@
            <item>
             <widget class="QPushButton" name="pushButtonUserdataEdit">
              <property name="toolTip">
-              <string>Edit one or more user defined waypoints</string>
+              <string>Edit one or more userpoints</string>
              </property>
              <property name="statusTip">
-              <string>Edit one or more user defined waypoints</string>
+              <string>Edit one or more userpoints</string>
              </property>
              <property name="text">
               <string/>
@@ -2506,10 +2519,10 @@
            <item>
             <widget class="QPushButton" name="pushButtonUserdataDel">
              <property name="toolTip">
-              <string>Remove one or more user defined waypoints</string>
+              <string>Remove one or more userpoints</string>
              </property>
              <property name="statusTip">
-              <string>Remove one or more user defined waypoints</string>
+              <string>Remove one or more userpoints</string>
              </property>
              <property name="text">
               <string/>
@@ -6232,7 +6245,7 @@
     <string>Reset the map display settings back to the default values</string>
    </property>
    <property name="statusTip">
-    <string>Reset sort order, column order and column sizes to default</string>
+    <string>Reset the map display settings back to the default values</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+R</string>

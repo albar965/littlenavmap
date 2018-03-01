@@ -26,6 +26,8 @@
 #include "ui_mainwindow.h"
 #include "userdata/userdatadialog.h"
 #include "userdata/userdataicons.h"
+#include "settings/settings.h"
+#include "options/optiondata.h"
 
 #include <QDebug>
 
@@ -51,6 +53,157 @@ void UserdataController::showSearch()
   ui->tabWidgetSearch->setCurrentIndex(3);
 }
 
+QString UserdataController::getDefaultType(const QString& type)
+{
+  return icons->getDefaultType(type);
+}
+
+void UserdataController::addToolbarButton()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  QToolButton *button = new QToolButton(ui->toolbarMapOptions);
+
+  // Create and add toolbar button =====================================
+  button->setIcon(QIcon(":/littlenavmap/resources/icons/userdata_POI.svg"));
+  button->setPopupMode(QToolButton::InstantPopup);
+  button->setToolTip(tr("Select userpoints for display"));
+  button->setStatusTip(button->toolTip());
+  button->setCheckable(true);
+  userdataToolButton = button;
+
+  // Insert before show route
+  ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, button);
+  ui->toolbarMapOptions->insertSeparator(ui->actionMapShowRoute);
+
+  // Create and add select all action =====================================
+  actionAll = new QAction(tr("All"), button);
+  actionAll->setToolTip(tr("Enable all userpoints"));
+  actionAll->setStatusTip(actionAll->toolTip());
+  button->addAction(actionAll);
+  connect(actionAll, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+
+  // Create and add select none action =====================================
+  actionNone = new QAction(tr("None"), button);
+  actionNone->setToolTip(tr("Disable all userpoints"));
+  actionNone->setStatusTip(actionAll->toolTip());
+  button->addAction(actionNone);
+  connect(actionNone, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+
+  // Create and add select unknown action =====================================
+  actionUnknown = new QAction(tr("Unknown Types"), button);
+  actionUnknown->setToolTip(tr("Enable or disable unknown userpoint types"));
+  actionUnknown->setStatusTip(tr("Enable or disable unknown userpoint types"));
+  actionUnknown->setCheckable(true);
+  button->addAction(actionUnknown);
+  ui->menuViewUserpoints->addAction(actionUnknown);
+  ui->menuViewUserpoints->addSeparator();
+  connect(actionUnknown, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+
+  // Create and add select an action for each registered type =====================================
+  for(const QString& type : icons->getAllTypes())
+  {
+    QIcon icon(icons->getIconPath(type));
+    QAction *action = new QAction(icon, type, button);
+    action->setData(QVariant(type));
+    action->setCheckable(true);
+    button->addAction(action);
+    ui->menuViewUserpoints->addAction(action);
+    connect(action, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+    actions.append(action);
+  }
+}
+
+void UserdataController::toolbarActionTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QAction *action = dynamic_cast<QAction *>(sender());
+  if(action != nullptr)
+  {
+    if(action == actionAll)
+    {
+      // Select all buttons
+      actionUnknown->setChecked(true);
+      for(QAction *a : actions)
+        if(a->data().type() == QVariant::String)
+          a->setChecked(true);
+    }
+    else if(action == actionNone)
+    {
+      // Deselect all buttons
+      actionUnknown->setChecked(false);
+      for(QAction *a : actions)
+        if(a->data().type() == QVariant::String)
+          a->setChecked(false);
+    }
+    // Copy action state to class data
+    actionsToTypes();
+  }
+  emit userdataChanged();
+}
+
+void UserdataController::actionsToTypes()
+{
+  // Copy state for known types
+  selectedTypes.clear();
+  for(QAction *action : actions)
+  {
+    if(action->isChecked())
+      selectedTypes.append(action->data().toString());
+  }
+
+  selectedUnknownType = actionUnknown->isChecked();
+  userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
+  qDebug() << Q_FUNC_INFO << selectedTypes;
+}
+
+void UserdataController::typesToActions()
+{
+  // Copy state for known types
+  for(QAction *action : actions)
+    action->setChecked(selectedTypes.contains(action->data().toString()));
+  actionUnknown->setChecked(selectedUnknownType);
+  userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
+}
+
+void UserdataController::saveState()
+{
+  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA, selectedTypes);
+  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_UNKNOWN, selectedUnknownType);
+}
+
+void UserdataController::restoreState()
+{
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  {
+    QStringList list = atools::settings::Settings::instance().valueStrList(lnm::MAP_USERDATA);
+    selectedUnknownType = atools::settings::Settings::instance().valueBool(lnm::MAP_USERDATA_UNKNOWN);
+
+    // Remove all types from the restored list which were not found in the list of registered types
+    const QStringList& availableTypes = icons->getAllTypes();
+    for(const QString& type : list)
+    {
+      if(availableTypes.contains(type))
+        selectedTypes.append(type);
+    }
+  }
+  else
+    resetSettingsToDefault();
+  typesToActions();
+}
+
+void UserdataController::resetSettingsToDefault()
+{
+  selectedTypes.append(icons->getAllTypes());
+  selectedUnknownType = true;
+  typesToActions();
+}
+
+QStringList UserdataController::getAllTypes() const
+{
+  return icons->getAllTypes();
+}
+
 void UserdataController::addUserpoint()
 {
   qDebug() << Q_FUNC_INFO;
@@ -64,7 +217,8 @@ void UserdataController::addUserpoint()
     manager->insertByRecord(dlg.getRecord());
     manager->commit();
     emit refreshUserdataSearch();
-    mainWindow->setStatusMessage(tr("User defined waypoint added."));
+    emit userdataChanged();
+    mainWindow->setStatusMessage(tr("Userpoint added."));
   }
 }
 
@@ -85,7 +239,8 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
       manager->commit();
 
       emit refreshUserdataSearch();
-      mainWindow->setStatusMessage(tr("%n user defined waypoint(s) updated.", "", ids.size()));
+      emit userdataChanged();
+      mainWindow->setStatusMessage(tr("%n userpoint(s) updated.", "", ids.size()));
     }
   }
   else
@@ -106,7 +261,8 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
     manager->commit();
 
     emit refreshUserdataSearch();
-    mainWindow->setStatusMessage(tr("%n user defined waypoint(s) deleted.", "", ids.size()));
+    emit userdataChanged();
+    mainWindow->setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
   }
 }
 
@@ -115,7 +271,7 @@ void UserdataController::importCsv()
   qDebug() << Q_FUNC_INFO;
 
   QStringList files = dialog->openFileDialogMulti(
-    tr("Open User defined Waypoint CSV File(s)"),
+    tr("Open Userpoint CSV File(s)"),
     tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), "Userdata/Csv");
 
   for(const QString& file:files)
@@ -134,13 +290,13 @@ void UserdataController::exportCsv()
 
 }
 
-void UserdataController::importXplane()
+void UserdataController::importUserFixDat()
 {
   qDebug() << Q_FUNC_INFO;
 
 }
 
-void UserdataController::exportXplane()
+void UserdataController::exportUserFixDat()
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -170,7 +326,7 @@ void UserdataController::clearDatabase()
 
   QMessageBox::StandardButton retval =
     QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Really delete all user defined waypoints?\n\nThis cannot be undone."));
+                          tr("Really delete all userpoints?\n\nThis cannot be undone."));
 
   if(retval == QMessageBox::Yes)
   {

@@ -414,6 +414,12 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
+  else if(type == map::USERPOINT)
+  {
+    map::MapUserpoint userPoint = getUserdataPointById(id);
+    if(userPoint.isValid())
+      result.userdataPoints.append(userPoint);
+  }
   else if(type == map::ILS)
   {
     map::MapIls ils = getIlsById(id);
@@ -478,6 +484,17 @@ map::MapWaypoint MapQuery::getWaypointById(int id)
     mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
   waypointByIdQuery->finish();
   return wp;
+}
+
+map::MapUserpoint MapQuery::getUserdataPointById(int id)
+{
+  map::MapUserpoint up;
+  userdataPointByIdQuery->bindValue(":id", id);
+  userdataPointByIdQuery->exec();
+  if(userdataPointByIdQuery->next())
+    mapTypesFactory->fillUserdataPoint(userdataPointByIdQuery->record(), up);
+  userdataPointByIdQuery->finish();
+  return up;
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
@@ -720,28 +737,50 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
   return &ndbCache.list;
 }
 
-const QList<map::MapUserdataPoint> MapQuery::getUserdataPoint(const GeoDataLatLonBox& rect, QStringList types,
-                                                              float distance)
+const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
+                                                               const QStringList& typesAll, bool unknownType,
+                                                               float distance)
 {
-  // No caching here since points can change
-  QList<map::MapUserdataPoint> retval;
-  for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+  // No caching here since points can change and the dataset is usually small
+  QList<map::MapUserpoint> retval;
+
+  // Display either unknown or any type
+  if(unknownType || !types.isEmpty())
   {
-    bindCoordinatePointInRect(r, userdataPointByRectQuery);
-    userdataPointByRectQuery->bindValue(":dist", distance);
+    bool allTypesSelected = types == typesAll;
 
-    if(types.isEmpty())
-      types.append("%");
-
-    for(const QString& type : types)
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      userdataPointByRectQuery->bindValue(":type", type);
-      userdataPointByRectQuery->exec();
-      while(userdataPointByRectQuery->next())
+      bindCoordinatePointInRect(r, userdataPointByRectQuery);
+      userdataPointByRectQuery->bindValue(":dist", distance);
+
+      QStringList queryTypes;
+      if(unknownType || (allTypesSelected && unknownType))
+        // Either query all unknows too and filter later or all and unknown are selected
+        queryTypes.append("%");
+      else
+        queryTypes = types;
+
+      for(const QString& queryType : queryTypes)
       {
-        map::MapUserdataPoint userPoint;
-        mapTypesFactory->fillUserdataPoint(userdataPointByRectQuery->record(), userPoint);
-        retval.append(userPoint);
+        userdataPointByRectQuery->bindValue(":type", queryType);
+        userdataPointByRectQuery->exec();
+        while(userdataPointByRectQuery->next())
+        {
+          if(unknownType && !allTypesSelected)
+          {
+            // Need to filter manually here
+            QString pointType = userdataPointByRectQuery->valueStr("type");
+
+            // Ignore if not unknown and not in selected types
+            if(typesAll.contains(pointType) && !types.contains(pointType))
+              continue;
+          }
+
+          map::MapUserpoint userPoint;
+          mapTypesFactory->fillUserdataPoint(userdataPointByRectQuery->record(), userPoint);
+          retval.append(userPoint);
+        }
       }
     }
   }
@@ -1191,6 +1230,9 @@ void MapQuery::initQueries()
   waypointByIdQuery = new SqlQuery(dbNav);
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from waypoint where waypoint_id = :id");
 
+  userdataPointByIdQuery = new SqlQuery(dbUser);
+  userdataPointByIdQuery->prepare("select * from userdata where userdata_id = :id");
+
   ilsByIdQuery = new SqlQuery(db);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
@@ -1401,6 +1443,9 @@ void MapQuery::deInitQueries()
 
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
+
+  delete userdataPointByIdQuery;
+  userdataPointByIdQuery = nullptr;
 
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;

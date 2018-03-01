@@ -19,7 +19,7 @@
 #define USER_ICONMANAGER_H
 
 #include <QCache>
-#include <QHash>
+#include <QMap>
 #include <QObject>
 
 class MainWindow;
@@ -49,13 +49,22 @@ public:
     return typeMap.keys();
   }
 
+  bool hasType(const QString& type) const
+  {
+    return typeMap.contains(type);
+  }
+
+  QString getIconPath(const QString& type) const;
+
+  QString getDefaultType(const QString& type);
+
 private:
   void loadIcon(const QFileInfo& entry);
 
   MainWindow *mainWindow;
 
   /* Maps type to filepath */
-  QHash<QString, QString> typeMap;
+  QMap<QString, QString> typeMap;
 
   /* Maps type name and size to pixmap */
   typedef  std::pair<QString, int> PixmapCacheKey;
