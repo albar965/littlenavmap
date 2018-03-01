@@ -57,12 +57,12 @@ void MapPainterUser::render(PaintContext *context)
 
   context->szFont(context->textSizeNavaid);
 
-  if(context->mapLayer->isUserpoint() &&
-     (!context->userPointTypes.isEmpty() || context->userPointTypeUnknown) && !context->isOverflow())
-    paintUserpoints(context,
-                    mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                                context->userPointTypeUnknown,
-                                                context->distance), context->drawFast);
+  // if(context->mapLayer->isUserpoint() &&
+  // (!context->userPointTypes.isEmpty() || context->userPointTypeUnknown) && !context->isOverflow())
+  paintUserpoints(context,
+                  mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
+                                              context->userPointTypeUnknown,
+                                              context->distance), context->drawFast);
 }
 
 void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserpoint>& userpoints, bool drawFast)

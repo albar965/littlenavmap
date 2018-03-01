@@ -523,11 +523,11 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     {
       // Add a single waypoint from direct
       FlightplanEntry entry;
-      if(!result.userPoints.isEmpty())
+      if(!result.userPointsRoute.isEmpty())
       {
         // User entries are always a perfect match
         // Convert a coordinate to a user defined waypoint
-        entryBuilder->buildFlightplanEntry(result.userPoints.first().position, result, entry, true);
+        entryBuilder->buildFlightplanEntry(result.userPointsRoute.first().position, result, entry, true);
 
         // Use the original string as name but limit it for fs
         entry.setWaypointId(item);
@@ -894,12 +894,12 @@ void RouteString::filterWaypoints(MapSearchResult& result, atools::geo::Pos& las
   maptools::sortByDistance(result.ndbs, lastPos);
   maptools::removeByDistance(result.ndbs, lastPos, maxDistance);
 
-  maptools::sortByDistance(result.userPoints, lastPos);
-  maptools::removeByDistance(result.userPoints, lastPos, maxDistance);
+  maptools::sortByDistance(result.userPointsRoute, lastPos);
+  maptools::removeByDistance(result.userPointsRoute, lastPos, maxDistance);
 
-  if(!result.userPoints.isEmpty())
+  if(!result.userPointsRoute.isEmpty())
     // User points have preference since they can be clearly identified
-    lastPos = result.userPoints.first().position;
+    lastPos = result.userPointsRoute.first().position;
   else if(!result.airports.isEmpty())
     lastPos = result.airports.first().position;
   else if(!result.waypoints.isEmpty())
@@ -1007,7 +1007,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
     {
       map::MapUserpointRoute user;
       user.position = pos;
-      result.userPoints.append(user);
+      result.userPointsRoute.append(user);
     }
   }
   else
@@ -1022,7 +1022,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
       {
         map::MapUserpointRoute user;
         user.position = pos;
-        result.userPoints.append(user);
+        result.userPointsRoute.append(user);
       }
     }
   }

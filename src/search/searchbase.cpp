@@ -959,8 +959,8 @@ void SearchBaseTable::showOnMapTriggered()
           emit showPos(result.ndbs.first().getPosition(), 0.f, false);
         else if(!result.waypoints.isEmpty())
           emit showPos(result.waypoints.first().getPosition(), 0.f, false);
-        else if(!result.userdataPoints.isEmpty())
-          emit showPos(result.userdataPoints.first().getPosition(), 0.f, false);
+        else if(!result.userpoints.isEmpty())
+          emit showPos(result.userpoints.first().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing navaid on map."));
       }
     }

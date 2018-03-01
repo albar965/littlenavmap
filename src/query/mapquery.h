@@ -176,8 +176,9 @@ public:
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
   /* Similar to getAirports but no caching since user points can change */
-  const QList<map::MapUserpoint> getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types, const QStringList& typesAll,
-                                                       bool unknownType, float distance);
+  const QList<map::MapUserpoint> getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
+                                                   const QStringList& typesAll,
+                                                   bool unknownType, float distance);
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -232,6 +233,7 @@ private:
   /* Simple bounding rectangle caches */
   SimpleRectCache<map::MapAirport> airportCache;
   SimpleRectCache<map::MapWaypoint> waypointCache;
+  SimpleRectCache<map::MapUserpoint> userpointCache;
   SimpleRectCache<map::MapVor> vorCache;
   SimpleRectCache<map::MapNdb> ndbCache;
   SimpleRectCache<map::MapMarker> markerCache;

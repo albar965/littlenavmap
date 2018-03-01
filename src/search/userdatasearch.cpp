@@ -289,7 +289,7 @@ void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 
         map::MapUserpoint obj;
         MapTypesFactory().fillUserdataPoint(rec, obj);
-        result.userdataPoints.append(obj);
+        result.userpoints.append(obj);
       }
     }
   }

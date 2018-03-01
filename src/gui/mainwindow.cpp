@@ -729,7 +729,6 @@ void MainWindow::connectAllSlots()
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
-  connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
   connect(userSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);

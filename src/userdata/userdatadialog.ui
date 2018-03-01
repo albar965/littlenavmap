@@ -67,7 +67,7 @@
      <item row="5" column="2">
       <widget class="QLineEdit" name="lineEditUserdataTags">
        <property name="toolTip">
-        <string>List of tags. 
+        <string>List of tags.
 Will be used as two letter ICAO region code when exporting to X-Plane &quot;user_fix.dat&quot; or FSX/P3D BGL-XML</string>
        </property>
        <property name="statusTip">
@@ -234,7 +234,7 @@ Will be used as two letter ICAO region code when exporting to X-Plane &quot;user
      <item row="7" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataAltitude">
        <property name="toolTip">
-        <string>Check to change altitude or elevation for all selected waypoints</string>
+        <string>Check to change elevation for all selected waypoints</string>
        </property>
        <property name="text">
         <string/>

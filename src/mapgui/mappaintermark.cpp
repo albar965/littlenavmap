@@ -127,6 +127,8 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     positions.append(vor.position);
   for(const MapNdb& ndb : highlightResults.ndbs)
     positions.append(ndb.position);
+  for(const MapUserpoint& user : highlightResults.userpoints)
+    positions.append(user.position);
 
   GeoPainter *painter = context->painter;
   if(context->mapLayerEffective->isAirport())

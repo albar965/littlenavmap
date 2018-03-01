@@ -43,6 +43,7 @@ using map::MapMarker;
 using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
+using map::MapUserpoint;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
@@ -418,7 +419,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   {
     map::MapUserpoint userPoint = getUserdataPointById(id);
     if(userPoint.isValid())
-      result.userdataPoints.append(userPoint);
+      result.userpoints.append(userPoint);
   }
   else if(type == map::ILS)
   {
@@ -559,6 +560,17 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
+    }
+  }
+
+  if(mapLayer->isUserpoint())
+  {
+    for(int i = userpointCache.list.size() - 1; i >= 0; i--)
+    {
+      const MapUserpoint& wp = userpointCache.list.at(i);
+      if(conv.wToS(wp.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.userpoints, &result.userpointIds, xs, ys, wp);
     }
   }
 
@@ -738,11 +750,12 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 }
 
 const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
-                                                               const QStringList& typesAll, bool unknownType,
-                                                               float distance)
+                                                           const QStringList& typesAll, bool unknownType,
+                                                           float distance)
 {
   // No caching here since points can change and the dataset is usually small
   QList<map::MapUserpoint> retval;
+  userpointCache.clear();
 
   // Display either unknown or any type
   if(unknownType || !types.isEmpty())
@@ -780,6 +793,9 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
           map::MapUserpoint userPoint;
           mapTypesFactory->fillUserdataPoint(userdataPointByRectQuery->record(), userPoint);
           retval.append(userPoint);
+
+          // Cache has to be kept for map screen index
+          userpointCache.list.append(userPoint);
         }
       }
     }

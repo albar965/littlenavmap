@@ -235,6 +235,8 @@ void InfoController::saveState()
     refs.append({ndb.id, map::NDB});
   for(const map::MapWaypoint& waypoint : currentSearchResult.waypoints)
     refs.append({waypoint.id, map::WAYPOINT});
+  for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
+    refs.append({userpoint.id, map::USERPOINT});
   for(const map::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, map::AIRWAY});
   for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
@@ -441,7 +443,8 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
   }
 
   // Navaids ================================================================
-  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty())
+  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty() ||
+     !result.userpoints.isEmpty())
   {
     // if any navaids are to be shown clear search result before
     currentSearchResult.vors.clear();
@@ -452,6 +455,8 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
     currentSearchResult.runwayEnds.clear();
     currentSearchResult.waypoints.clear();
     currentSearchResult.waypointIds.clear();
+    currentSearchResult.userpoints.clear();
+    currentSearchResult.userpointIds.clear();
     currentSearchResult.airways.clear();
   }
 
@@ -482,6 +487,16 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
 
     currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html, iconBackColor);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapUserpoint& userpoint: result.userpoints)
+  {
+    qDebug() << "Found waypoint" << userpoint.ident;
+
+    currentSearchResult.userpoints.append(userpoint);
+    infoBuilder->userpointText(userpoint, html);
     html.br();
     foundNavaid = true;
   }

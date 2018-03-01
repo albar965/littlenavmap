@@ -179,7 +179,7 @@ void UserdataDialog::recordToDialog()
   ui->lineEditUserdataIdent->setText(record->valueStr("ident"));
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
-  ui->spinBoxUserdataVisible->setValue(record->valueInt("visible_from"));
+  ui->spinBoxUserdataVisible->setValue(Unit::distNmF(record->valueInt("visible_from")));
   ui->spinBoxUserdataAltitude->setValue(record->valueInt("altitude"));
   ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
                                                                     record->valueFloat("laty"))));
@@ -251,7 +251,7 @@ void UserdataDialog::dialogToRecord()
   record->setValue("last_edit_timestamp", QDateTime::currentDateTime());
 
   if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataVisible->isChecked())
-    record->setValue("visible_from", ui->spinBoxUserdataVisible->value());
+    record->setValue("visible_from", Unit::rev(ui->spinBoxUserdataVisible->value(), Unit::distNmF));
   else if(editMode == ud::EDIT_MULTIPLE)
     record->remove("visible_from");
 

@@ -30,6 +30,8 @@
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
+#include "userdata/userdataicons.h"
+#include "fs/userdata/userdatamanager.h"
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
 #include "fs/util/morsecode.h"
@@ -1412,9 +1414,70 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
 #endif
 }
 
+void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const
+{
+  QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
+  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.nbsp().nbsp();
+
+  atools::sql::SqlRecord rec = NavApp::getUserdataManager()->record(userpoint.id);
+
+  navaidTitle(html, tr("Userpoint"));
+
+  if(info)
+  {
+    // Add map link if not tooltip
+    html.nbsp().nbsp();
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
+           arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), atools::util::html::LINK_NO_UL);
+    html.br();
+  }
+
+  html.table();
+  // Be cautious with user defined data and adapt it for HTML display
+  html.row2If(tr("Type:"), adjustText(userpoint.type), atools::util::html::NO_ENTITIES);
+  html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
+  html.row2If(tr("Name:"), adjustText(userpoint.name), atools::util::html::NO_ENTITIES);
+  html.row2If(tr("Description:"), adjustText(userpoint.description), atools::util::html::NO_ENTITIES);
+  html.row2If(tr("Tags:"), adjustText(userpoint.tags), atools::util::html::NO_ENTITIES);
+  if(!rec.isNull("altitude"))
+    html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));
+
+  if(info)
+    addCoordinates(userpoint.position, html);
+  html.tableEnd();
+
+  if(info)
+  {
+    html.br();
+    html.table();
+    if(!rec.isNull("visible_from"))
+      html.row2If(tr("Visible from :"), Unit::distNm(rec.valueFloat("visible_from")));
+
+    html.row2(tr("Last Edit:"), rec.value("last_edit_timestamp").toDateTime().toString());
+    if(!rec.isNull("import_timestamp"))
+      html.row2(tr("Imported:"), rec.value("import_timestamp").toDateTime().toString());
+    html.tableEnd();
+  }
+
+  if(info && !rec.isNull("import_file_path"))
+  {
+    head(html, tr("File"));
+    html.table();
+    html.row2(tr("Imported from:"), filepathText(rec.valueStr("import_file_path")),
+              atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+    html.tableEnd();
+  }
+
+#ifdef DEBUG_INFORMATION
+  html.p().small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).pEnd();
+#endif
+}
+
 void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background) const
 {
   const SqlRecord *rec = nullptr;
+
   if(info && infoQuery != nullptr)
     rec = infoQuery->getWaypointInformation(waypoint.id);
 
@@ -1544,10 +1607,8 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
 
   html.row2(tr("Max altitude:"), maxAlt);
 
-  if(!airspace.comName.isEmpty())
-    html.row2(tr("COM:"), formatter::capNavString(airspace.comName));
-  if(!airspace.comType.isEmpty())
-    html.row2(tr("COM Type:"), map::comTypeName(airspace.comType));
+  html.row2If(tr("COM:"), formatter::capNavString(airspace.comName));
+  html.row2If(tr("COM Type:"), map::comTypeName(airspace.comType));
   if(airspace.comFrequency > 0)
     html.row2(tr("COM Frequency:"), locale.toString(airspace.comFrequency / 1000., 'f', 3) + tr(" MHz"));
   html.tableEnd();
@@ -1600,8 +1661,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
   QString altTxt = map::airwayAltText(airway);
 
-  if(!altTxt.isEmpty())
-    html.row2(tr("Altitude for this segment:"), altTxt);
+  html.row2If(tr("Altitude for this segment:"), altTxt);
 
   html.row2(tr("Segment length:"), Unit::distMeter(airway.from.distanceMeterTo(airway.to)));
 
@@ -1675,9 +1735,9 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
     html.brText(tr("Airline Codes: ") + parking.airlineCodes);
 }
 
-void HtmlInfoBuilder::userpointText(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
+void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
-  head(html, tr("User point: ") + userpoint.name);
+  head(html, tr("User Flight Plan Point: ") + userpoint.name);
   if(userpoint.routeIndex >= 0)
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
@@ -2505,14 +2565,17 @@ QString HtmlInfoBuilder::filepathText(const QString& filepath) const
 void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const
 {
   if(rec != nullptr)
-  {
-    atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f));
-    html.row2(tr("Coordinates:"), Unit::coords(pos));
+    addCoordinates(atools::geo::Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)),
+                   html);
+}
+
+void HtmlInfoBuilder::addCoordinates(const atools::geo::Pos& pos, HtmlBuilder& html) const
+{
+  html.row2(tr("Coordinates:"), Unit::coords(pos));
 
 #ifdef DEBUG_INFORMATION
-    html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()));
+  html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()));
 #endif
-  }
 }
 
 void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
@@ -2604,4 +2667,10 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
     // Add METAR suffix for tooltip
     html.row2(heading + (info ? tr(":") : tr(" METAR:")), fsMetar ? m.getCleanMetar() : metar);
   }
+}
+
+QString HtmlInfoBuilder::adjustText(const QString& text) const
+{
+  static QRegularExpression LINEFEED_REGEXP("[\\n\\r\\f]");
+  return text.toHtmlEscaped().replace(LINEFEED_REGEXP, "<br/>");
 }

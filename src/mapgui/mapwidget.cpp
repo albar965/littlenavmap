@@ -1534,8 +1534,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ndb = &result.ndbs.first();
   if(!result.waypoints.isEmpty())
     waypoint = &result.waypoints.first();
-  if(!result.userPoints.isEmpty())
-    userpoint = &result.userPoints.first();
+  if(!result.userPointsRoute.isEmpty())
+    userpoint = &result.userPointsRoute.first();
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
   if(!result.airspaces.isEmpty())
@@ -1543,7 +1543,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // Add "more" text if multiple navaids will be added to the information panel
   bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() +
-                  result.userPoints.size() + result.airways.size()) > 1 && airport == nullptr;
+                  result.userPointsRoute.size() + result.airways.size()) > 1 && airport == nullptr;
 
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
@@ -2492,8 +2492,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.ndbs.first().position, 0.f, true);
     else if(!mapSearchResult.waypoints.isEmpty())
       showPos(mapSearchResult.waypoints.first().position, 0.f, true);
-    else if(!mapSearchResult.userPoints.isEmpty())
-      showPos(mapSearchResult.userPoints.first().position, 0.f, true);
+    else if(!mapSearchResult.userPointsRoute.isEmpty())
+      showPos(mapSearchResult.userPointsRoute.first().position, 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
   }
 }

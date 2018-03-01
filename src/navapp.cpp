@@ -319,6 +319,11 @@ atools::sql::SqlDatabase *NavApp::getDatabaseNav()
   return getDatabaseManager()->getDatabaseNav();
 }
 
+atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()
+{
+  return databaseManager->getUserdataManager();
+}
+
 UserdataIcons *NavApp::getUserdataIcons()
 {
   return userdataController->getUserdataIcons();

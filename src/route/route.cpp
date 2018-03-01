@@ -624,7 +624,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         up.name = leg.getIdent() + " (not found)";
         up.position = leg.getPosition();
         up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userPoints.append(up);
+        mapobjects.userPointsRoute.append(up);
       }
 
       if(leg.getMapObjectType() == map::USERPOINTROUTE)
@@ -635,7 +635,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         up.name = leg.getIdent();
         up.position = leg.getPosition();
         up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userPoints.append(up);
+        mapobjects.userPointsRoute.append(up);
       }
 
       if(leg.isAnyProcedure())

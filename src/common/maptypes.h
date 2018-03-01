@@ -663,10 +663,11 @@ struct MapSearchResult
   QList<MapAirspace> airspaces;
 
   /* User defined route points */
-  QList<MapUserpointRoute> userPoints;
+  QList<MapUserpointRoute> userPointsRoute;
 
   /* User defined waypoints */
-  QList<MapUserpoint> userdataPoints;
+  QList<MapUserpoint> userpoints;
+  QSet<int> userpointIds; /* Ids used to deduplicate */
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;

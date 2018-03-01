@@ -35,23 +35,43 @@ class MainWindow;
 
 namespace map {
 struct MapAirport;
+
 struct MapVor;
+
 struct MapNdb;
+
 struct MapWaypoint;
+
 struct MapAirway;
+
 struct MapAirspace;
+
 struct MapMarker;
+
 struct MapAirport;
+
 struct MapParking;
+
 struct MapHelipad;
+
 struct MapStart;
+
 struct MapUserpointRoute;
+
 struct MapProcedurePoint;
+
 struct MapProcedureRef;
+
+struct MapUserpoint;
 
 }
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
+
 namespace fs {
 namespace util {
 class MorseCode;
@@ -158,6 +178,9 @@ public:
   void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html,
                     QColor background) const;
 
+  /* Description for user defined points */
+  void userpointText(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.
    * @param airway
@@ -200,7 +223,7 @@ public:
    * @param userpoint
    * @param html Result containing HTML snippet
    */
-  void userpointText(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
   void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
 
@@ -229,6 +252,7 @@ private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
+  void addCoordinates(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
@@ -242,7 +266,8 @@ private:
   void rowForBool(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                   const QString& msg, bool expected = false) const;
 
-  void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec, float hdgPrim,
+  void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec,
+                     float hdgPrim,
                      float length) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
@@ -273,6 +298,9 @@ private:
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
   QString filepathText(const QString& filepath) const;
   QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
+
+  /* Escape entities and replace linefeeds with <br/> */
+  QString adjustText(const QString& text) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;

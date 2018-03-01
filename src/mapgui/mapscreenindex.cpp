@@ -338,7 +338,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               shown &
                               (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT |
-                               map::MARKER | map::AIRWAYJ | map::AIRWAYV),
+                               map::MARKER | map::AIRWAYJ | map::AIRWAYV | map::USERPOINT),
                               xs, ys, maxDistance, result);
 
   // Update all incomplete objects, especially from search
@@ -373,6 +373,11 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
+
+  for(const map::MapUserpoint& obj : highlights.userpoints)
+    if(conv.wToS(obj.position, x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        insertSortedByDistance(conv, result.userpoints, &result.userpointIds, xs, ys, obj);
 
   for(const map::MapIls& obj : highlights.ils)
     if(conv.wToS(obj.position, x, y))
