@@ -464,7 +464,7 @@ struct MapAirwayWaypoint
 };
 
 /* User defined waypoint of a flight plan */
-struct MapUserpoint
+struct MapUserpointRoute
 {
   QString name;
   int id; /* Sequence number as it was added to the flight plan */
@@ -490,7 +490,7 @@ struct MapUserpoint
 };
 
 /* User defined waypoint from the user database */
-struct MapUserdataPoint
+struct MapUserpoint
 {
   QString name, ident, type, description, tags;
   int id;
@@ -663,10 +663,10 @@ struct MapSearchResult
   QList<MapAirspace> airspaces;
 
   /* User defined route points */
-  QList<MapUserpoint> userPoints;
+  QList<MapUserpointRoute> userPoints;
 
   /* User defined waypoints */
-  QList<MapUserdataPoint> userdataPoints;
+  QList<MapUserpoint> userdataPoints;
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
@@ -821,7 +821,7 @@ QString vorType(const map::MapVor& vor);
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
-QString userpointText(const map::MapUserpoint& userpoint);
+QString userpointText(const map::MapUserpointRoute& userpoint);
 QString airwayText(const map::MapAirway& airway);
 
 /* Altitude text for airways */
@@ -856,7 +856,7 @@ Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapUserpoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapSearchResult, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);

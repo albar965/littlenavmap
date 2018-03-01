@@ -68,7 +68,7 @@ QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
       flags.append("AIRCRAFT_AI_BOAT");
     if(type & AIRCRAFT_TRACK)
       flags.append("AIRCRAFT_TRACK");
-    if(type & USER)
+    if(type & USERPOINTROUTE)
       flags.append("USER");
     if(type & PARKING)
       flags.append("PARKING");

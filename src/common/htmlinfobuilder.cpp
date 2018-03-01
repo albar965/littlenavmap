@@ -1675,7 +1675,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
     html.brText(tr("Airline Codes: ") + parking.airlineCodes);
 }
 
-void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const
+void HtmlInfoBuilder::userpointText(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
   head(html, tr("User point: ") + userpoint.name);
   if(userpoint.routeIndex >= 0)

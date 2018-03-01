@@ -43,7 +43,7 @@ const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
 const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,6})(\\.([A-Z0-9]{1,6}))?$");
 
 const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT |
-                                             map::VOR | map::NDB | map::USER |
+                                             map::VOR | map::NDB | map::USERPOINTROUTE |
                                              map::AIRWAY);
 
 const static QString SPANERR("<span style=\"color: #ff0000; font-weight:600\">");
@@ -309,7 +309,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     const QString& airway = leg.getAirwayName();
     QString ident = leg.getIdent();
 
-    if(leg.getMapObjectType() == map::USER)
+    if(leg.getMapObjectType() == map::USERPOINTROUTE)
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
       ident = (options& rs::GFP) ? coords::toGfpFormat(leg.getPosition()) : coords::toDegMinFormat(leg.getPosition());
 
@@ -321,7 +321,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
         if(userWpt && lastIndex > 0)
           retval.append(coords::toGfpFormat(lastPos));
         else
-          retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
+          retval.append(lastId + (gfpCoords && lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
           // Add runway after departure
@@ -344,7 +344,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
         if(userWpt && lastIndex > 0)
           retval.append(coords::toGfpFormat(lastPos));
         else
-          retval.append(lastId + (gfpCoords && lastType != map::USER ? "," + coords::toGfpFormat(lastPos) : QString()));
+          retval.append(lastId + (gfpCoords && lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         retval.append(airway);
       }
@@ -1005,7 +1005,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
     Pos pos = coords::fromAnyWaypointFormat(item);
     if(pos.isValid())
     {
-      map::MapUserpoint user;
+      map::MapUserpointRoute user;
       user.position = pos;
       result.userPoints.append(user);
     }
@@ -1020,7 +1020,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
       Pos pos = coords::fromAnyWaypointFormat(item);
       if(pos.isValid())
       {
-        map::MapUserpoint user;
+        map::MapUserpointRoute user;
         user.position = pos;
         result.userPoints.append(user);
       }

@@ -306,7 +306,7 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
     vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 }
 
-void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserdataPoint& obj)
+void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint& obj)
 {
   obj.id = rec.valueInt("userdata_id");
   obj.ident = rec.valueStr("ident");

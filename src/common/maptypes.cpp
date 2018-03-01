@@ -1032,7 +1032,7 @@ QString waypointText(const MapWaypoint& waypoint)
   return QObject::tr("Waypoint %1").arg(waypoint.ident);
 }
 
-QString userpointText(const MapUserpoint& userpoint)
+QString userpointText(const MapUserpointRoute& userpoint)
 {
   return QObject::tr("User point %1").arg(userpoint.name);
 }
@@ -1179,7 +1179,7 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & map::AIRWAY && !airways.isEmpty();
   filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
   filled |= types & map::ILS && !ils.isEmpty();
-  filled |= types & map::USER && !userPoints.isEmpty();
+  filled |= types & map::USERPOINTROUTE && !userPoints.isEmpty();
   return !filled;
 }
 

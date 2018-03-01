@@ -23,7 +23,7 @@
 #include "common/maptypes.h"
 
 /*
- * Draws VOR, NDB, markers, waypoints and airways. Flight plan navaids are drawn separately in MapPainterRoute.
+ * Draws userpoints. Does not use caching to avoid update problems when changing data.
  */
 class MapPainterUser :
   public MapPainter
@@ -37,7 +37,7 @@ public:
   virtual void render(PaintContext *context) override;
 
 private:
-  void paintUserpoints(PaintContext *context, const QList<map::MapUserdataPoint>& userpoints, bool drawFast);
+  void paintUserpoints(PaintContext *context, const QList<map::MapUserpoint>& userpoints, bool drawFast);
 
 };
 

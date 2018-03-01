@@ -1728,7 +1728,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     ui->actionRouteShowInformation->setEnabled(routeLeg->isValid() &&
                                                routeLeg->isRoute() &&
-                                               routeLeg->getMapObjectType() != map::USER &&
+                                               routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
                                                routeLeg->getMapObjectType() != map::INVALID);
 
     ui->actionRouteShowApproaches->setEnabled(false);
@@ -1787,7 +1787,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
   ui->actionMapEditUserWaypoint->setEnabled(routeLeg != nullptr &&
-                                            routeLeg->getMapObjectType() == map::USER);
+                                            routeLeg->getMapObjectType() == map::USERPOINTROUTE);
   ui->actionMapEditUserWaypoint->setText(tr("Edit Name of User Waypoint"));
 
   QList<int> selectedRouteLegIndexes;
@@ -2849,7 +2849,7 @@ QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
     icon = ndbIcon;
   else if(leg.getWaypoint().isValid())
     icon = waypointIcon;
-  else if(leg.getMapObjectType() == map::USER)
+  else if(leg.getMapObjectType() == map::USERPOINTROUTE)
     icon = userpointIcon;
   else if(leg.getMapObjectType() == map::INVALID)
     icon = invalidIcon;

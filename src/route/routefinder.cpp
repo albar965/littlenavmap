@@ -298,7 +298,7 @@ map::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
 
     case nw::DEPARTURE:
     case nw::DESTINATION:
-      return map::USER;
+      return map::USERPOINTROUTE;
 
     case nw::NONE:
       break;

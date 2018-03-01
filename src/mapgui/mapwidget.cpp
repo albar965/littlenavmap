@@ -1263,7 +1263,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
   {
     // Nothing at the position - add userpoint
     qDebug() << "add userpoint";
-    type = map::USER;
+    type = map::USERPOINTROUTE;
   }
   else if(totalSize == 1)
   {
@@ -1344,7 +1344,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     {
       QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
                                     menuPrefix + tr("Userpoint") + menuSuffix, this);
-      action->setData(QVariantList({-1, map::USER}));
+      action->setData(QVariantList({-1, map::USERPOINTROUTE}));
       menu.addAction(action);
     }
 
@@ -1367,11 +1367,11 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     mouseState &= ~mw::DRAG_POST_MENU;
   }
 
-  if(type == map::USER)
+  if(type == map::USERPOINTROUTE)
     // Get position for new user point from from screen
     pos = conv.sToW(newPoint.x(), newPoint.y());
 
-  if((id != -1 && type != map::NONE) || type == map::USER)
+  if((id != -1 && type != map::NONE) || type == map::USERPOINTROUTE)
   {
     if(leg != -1)
       emit routeAdd(id, pos, type, leg);
@@ -1510,7 +1510,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapVor *vor = nullptr;
   map::MapNdb *ndb = nullptr;
   map::MapWaypoint *waypoint = nullptr;
-  map::MapUserpoint *userpoint = nullptr;
+  map::MapUserpointRoute *userpoint = nullptr;
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
   map::MapHelipad *helipad = nullptr;
@@ -1645,7 +1645,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     routeText = map::userpointText(*userpoint);
     routeIndex = userpoint->routeIndex;
-    deleteType = map::USER;
+    deleteType = map::USERPOINTROUTE;
   }
 
   // Update "set airport as start/dest"
@@ -1932,7 +1932,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         if(userpoint != nullptr)
           id = userpoint->id;
-        type = map::USER;
+        type = map::USERPOINTROUTE;
         position = pos;
       }
 
@@ -1945,7 +1945,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         if(parking != nullptr || helipad != nullptr)
         {
           // Adjust values in case user selected "add" on a parking position
-          type = map::USER;
+          type = map::USERPOINTROUTE;
           id = -1;
         }
 

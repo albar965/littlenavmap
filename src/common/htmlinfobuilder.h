@@ -45,7 +45,7 @@ struct MapAirport;
 struct MapParking;
 struct MapHelipad;
 struct MapStart;
-struct MapUserpoint;
+struct MapUserpointRoute;
 struct MapProcedurePoint;
 struct MapProcedureRef;
 
@@ -200,7 +200,7 @@ public:
    * @param userpoint
    * @param html Result containing HTML snippet
    */
-  void userpointText(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointText(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
   void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
 

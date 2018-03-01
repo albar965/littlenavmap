@@ -1210,7 +1210,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
           // name and region not found in database
           paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y, preview);
           break;
-        case map::USER:
+        case map::USERPOINTROUTE:
           paintUserpoint(context, x, y, preview);
           break;
         case map::AIRPORT:
@@ -1248,7 +1248,7 @@ void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
         case map::INVALID:
           paintText(context, mapcolors::routeInvalidPointColor, x, y, {obj.getIdent()}, true /* draw as route */);
           break;
-        case map::USER:
+        case map::USERPOINTROUTE:
           paintText(context, mapcolors::routeUserPointColor, x, y,
                     {atools::elideTextShort(obj.getIdent(), context->mapLayer->getMaxTextLengthAirport())},
                     true /* draw as route */);

@@ -54,7 +54,7 @@ struct MapHelipad;
 
 struct MapMarker;
 
-struct MapUserdataPoint;
+struct MapUserpoint;
 
 }
 
@@ -105,7 +105,7 @@ public:
 
   void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
 
-  void fillUserdataPoint(const atools::sql::SqlRecord& rec, map::MapUserdataPoint& obj);
+  void fillUserdataPoint(const atools::sql::SqlRecord& rec, map::MapUserpoint& obj);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);

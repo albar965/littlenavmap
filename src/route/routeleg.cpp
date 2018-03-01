@@ -301,7 +301,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     // =============================== Navaid user coordinates
     case atools::fs::pln::entry::USER:
       valid = true;
-      type = map::USER;
+      type = map::USERPOINTROUTE;
       flightplanEntry->setIcaoIdent(QString());
       flightplanEntry->setIcaoRegion(QString());
       flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
@@ -486,7 +486,7 @@ QString RouteLeg::getMapObjectTypeName() const
     return tr("ILS");
   else if(runwayEnd.isValid())
     return tr("Runway");
-  else if(type == map::USER)
+  else if(type == map::USERPOINTROUTE)
     return EMPTY_STRING;
   else
     return EMPTY_STRING;

@@ -619,7 +619,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
 
       if(leg.getMapObjectType() == map::INVALID)
       {
-        map::MapUserpoint up;
+        map::MapUserpointRoute up;
         up.routeIndex = i;
         up.name = leg.getIdent() + " (not found)";
         up.position = leg.getPosition();
@@ -627,9 +627,9 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         mapobjects.userPoints.append(up);
       }
 
-      if(leg.getMapObjectType() == map::USER)
+      if(leg.getMapObjectType() == map::USERPOINTROUTE)
       {
-        map::MapUserpoint up;
+        map::MapUserpointRoute up;
         up.id = i;
         up.routeIndex = i;
         up.name = leg.getIdent();
@@ -687,7 +687,7 @@ bool Route::hasUserWaypoints() const
 {
   for(const RouteLeg& leg : *this)
   {
-    if(leg.getMapObjectType() == map::USER)
+    if(leg.getMapObjectType() == map::USERPOINTROUTE)
       return true;
   }
   return false;

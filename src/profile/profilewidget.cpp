@@ -466,7 +466,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
       symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 14, flags, 10, true);
     }
-    else if(type == map::USER)
+    else if(type == map::USERPOINTROUTE)
     {
       symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,

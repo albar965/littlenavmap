@@ -179,7 +179,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
     else if(!result.ndbs.isEmpty())
       moType = map::NDB;
     else if(userPos.isValid())
-      moType = map::USER;
+      moType = map::USERPOINTROUTE;
   }
 
   if(moType == map::AIRPORT)
@@ -190,7 +190,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
     entryFromVor(result.vors.first(), entry);
   else if(moType == map::NDB)
     entryFromNdb(result.ndbs.first(), entry);
-  else if(moType == map::USER)
+  else if(moType == map::USERPOINTROUTE)
     entryFromUserPos(userPos, entry);
   else
     qWarning() << "Unknown Map object type" << moType;
