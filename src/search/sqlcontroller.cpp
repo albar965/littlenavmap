@@ -119,10 +119,10 @@ void SqlController::filterBySpinBox(const Column *col, int value)
   searchParamsChanged = true;
 }
 
-void SqlController::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SqlController::filterByRecord(const atools::sql::SqlRecord& record)
 {
   view->clearSelection();
-  model->filterByIdent(ident, region, airportIdent);
+  model->filterByRecord(record);
   searchParamsChanged = true;
 }
 

@@ -754,6 +754,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController,
           &UserdataController::exportUserFixDat);
 
+  connect(userdataController, &UserdataController::userdataChanged, infoController,
+          &InfoController::updateAllInformation);
   connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
 
@@ -863,6 +865,14 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showApproaches,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
+  connect(mapWidget, &MapWidget::addUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(mapWidget, &MapWidget::editUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
+  connect(mapWidget, &MapWidget::deleteUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);
+  connect(mapWidget, &MapWidget::moveUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::moveUserpointFromMap);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;

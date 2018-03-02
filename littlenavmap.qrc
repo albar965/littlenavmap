@@ -169,19 +169,24 @@
         <file>resources/icons/radiobutton_dark_unchecked.png</file>
         <file>resources/icons/radiobutton_dark_checked.png</file>
         <file>resources/icons/compassrose.svg</file>
-        <file>resources/icons/userdata_Pin.svg</file>
-        <file>resources/icons/userdata_Flag.svg</file>
-        <file>resources/icons/userdata_Marker.svg</file>
-        <file>resources/icons/userdata_Location.svg</file>
-        <file>resources/icons/userdata_VRP.svg</file>
-        <file>resources/icons/userdata_Closed.svg</file>
-        <file>resources/icons/userdata_POI.svg</file>
-        <file>resources/icons/userdata_IFR.svg</file>
-        <file>resources/icons/userdata_Bookmark.svg</file>
-        <file>resources/icons/userdata_Obstacle.svg</file>
-        <file>resources/icons/userdata_Seaport.svg</file>
-        <file>resources/icons/userdata_Airstrip.svg</file>
-        <file>resources/icons/userdata_Helipad.svg</file>
-        <file>resources/icons/userdata_Cabin.svg</file>
+        <file>resources/icons/userpoint_Pin.svg</file>
+        <file>resources/icons/userpoint_Flag.svg</file>
+        <file>resources/icons/userpoint_Marker.svg</file>
+        <file>resources/icons/userpoint_Location.svg</file>
+        <file>resources/icons/userpoint_VRP.svg</file>
+        <file>resources/icons/userpoint_Closed.svg</file>
+        <file>resources/icons/userpoint_POI.svg</file>
+        <file>resources/icons/userpoint_IFR.svg</file>
+        <file>resources/icons/userpoint_Bookmark.svg</file>
+        <file>resources/icons/userpoint_Obstacle.svg</file>
+        <file>resources/icons/userpoint_Seaport.svg</file>
+        <file>resources/icons/userpoint_Airstrip.svg</file>
+        <file>resources/icons/userpoint_Helipad.svg</file>
+        <file>resources/icons/userpoint_Cabin.svg</file>
+        <file>resources/icons/userdata_add.svg</file>
+        <file>resources/icons/userdata_edit.svg</file>
+        <file>resources/icons/userdata_delete.svg</file>
+        <file>resources/icons/userpoint_Error.svg</file>
+        <file>resources/icons/userdata_move.svg</file>
     </qresource>
 </RCC>

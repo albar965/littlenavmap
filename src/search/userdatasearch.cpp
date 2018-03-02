@@ -163,6 +163,15 @@ void UserdataSearch::connectSearchSlots()
 
   connect(ui->pushButtonUserdataDel, &QPushButton::clicked, this, &UserdataSearch::deleteUserpointsTriggered);
   connect(ui->actionUserdataDelete, &QAction::triggered, this, &UserdataSearch::deleteUserpointsTriggered);
+
+  connect(ui->pushButtonUserdataAdd, &QPushButton::clicked, this, &UserdataSearch::addUserpointTriggered);
+  connect(ui->actionUserdataAdd, &QAction::triggered, this, &UserdataSearch::addUserpointTriggered);
+}
+
+void UserdataSearch::addUserpointTriggered()
+{
+  QVector<int> ids = selectedMapObjectIds();
+  emit addUserpoint(ids.isEmpty() ? -1 : ids.first(), atools::geo::EMPTY_POS);
 }
 
 void UserdataSearch::editUserpointsTriggered()

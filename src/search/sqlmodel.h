@@ -124,7 +124,7 @@ public:
   void setSort(const QString& colname, Qt::SortOrder order);
 
   /* Reset search and filter by ident, region and airport */
-  void filterByIdent(const QString& ident, const QString& region, const QString& airportIdent);
+  void filterByRecord(const atools::sql::SqlRecord& record);
 
   /* Get empty record (no data) containing field/column information */
   atools::sql::SqlRecord getSqlRecord() const;

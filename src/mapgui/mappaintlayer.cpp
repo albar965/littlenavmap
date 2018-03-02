@@ -311,7 +311,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint(false).userpointInfo(false).
+         userpoint().userpointInfo(false).
          airportMaxTextLength(16)).
 
   // Display only points for airports until the cutoff limit
@@ -326,7 +326,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint(false).userpointInfo(false).
+         userpoint().userpointInfo(false).
          airportMaxTextLength(16)).
 
   // Make sure that there is always an layer
@@ -453,9 +453,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
             mapPainterAirport->render(&context);
 
           if(!context.isOverflow())
-            mapPainterUser->render(&context);
-
-          if(!context.isOverflow())
             mapPainterNav->render(&context);
         }
         else
@@ -465,15 +462,15 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
             mapPainterIls->render(&context);
 
           if(!context.isOverflow())
-            mapPainterUser->render(&context);
-
-          if(!context.isOverflow())
             mapPainterNav->render(&context);
 
           if(!context.isOverflow())
             mapPainterAirport->render(&context);
         }
       }
+
+      if(!context.isOverflow())
+        mapPainterUser->render(&context);
 
       // if(!context.isOverflow()) always paint route even if number of objets is too large
       mapPainterRoute->render(&context);

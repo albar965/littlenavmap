@@ -27,7 +27,7 @@ class QFileInfo;
 
 /*
  * Maintains and caches the icons for user defined data types.
- * Icons with pattern userdata_*.svg are taken from the resources and can be overloaded from the configuration directory.
+ * Icons with pattern userpoint_*.svg are taken from the resources and can be overloaded from the configuration directory.
  * New types can be added by adding new icons with above pattern where * is recognized as the new type.
  */
 class UserdataIcons :

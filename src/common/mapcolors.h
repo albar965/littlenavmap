@@ -142,9 +142,11 @@ const QColor highlightColorFast = QColor(Qt::darkYellow);
 const QColor highlightApproachColor = QColor(150, 150, 255);
 const QColor highlightApproachColorFast = QColor(0, 0, 150);
 
+/* Flight plan or userpoint cross line colors */
+const QColor mapDragColor = QColor(Qt::darkYellow);
+
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
-const QColor routeDragColor = QColor(Qt::darkYellow);
 
 const QColor routeProcedurePreviewOutlineColor = QColor(Qt::black);
 const QColor routeProcedurePreviewColor = QColor(0, 180, 255);

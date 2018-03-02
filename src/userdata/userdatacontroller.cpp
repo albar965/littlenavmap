@@ -28,6 +28,7 @@
 #include "userdata/userdataicons.h"
 #include "settings/settings.h"
 #include "options/optiondata.h"
+#include "common/maptypes.h"
 
 #include <QDebug>
 
@@ -37,12 +38,14 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   dialog = new atools::gui::Dialog(mainWindow);
   icons = new UserdataIcons(mainWindow);
   icons->loadIcons();
+  lastAddedRecord = new atools::sql::SqlRecord();
 }
 
 UserdataController::~UserdataController()
 {
   delete dialog;
   delete icons;
+  delete lastAddedRecord;
 }
 
 void UserdataController::showSearch()
@@ -64,7 +67,7 @@ void UserdataController::addToolbarButton()
   QToolButton *button = new QToolButton(ui->toolbarMapOptions);
 
   // Create and add toolbar button =====================================
-  button->setIcon(QIcon(":/littlenavmap/resources/icons/userdata_POI.svg"));
+  button->setIcon(QIcon(":/littlenavmap/resources/icons/userpoint_POI.svg"));
   button->setPopupMode(QToolButton::InstantPopup);
   button->setToolTip(tr("Select userpoints for display"));
   button->setStatusTip(button->toolTip());
@@ -176,8 +179,11 @@ void UserdataController::restoreState()
 {
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
-    QStringList list = atools::settings::Settings::instance().valueStrList(lnm::MAP_USERDATA);
-    selectedUnknownType = atools::settings::Settings::instance().valueBool(lnm::MAP_USERDATA_UNKNOWN);
+    atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+    // Enable all as default
+    QStringList list = settings.valueStrList(lnm::MAP_USERDATA, getAllTypes());
+    selectedUnknownType = settings.valueBool(lnm::MAP_USERDATA_UNKNOWN, true);
 
     // Remove all types from the restored list which were not found in the list of registered types
     const QStringList& availableTypes = icons->getAllTypes();
@@ -204,15 +210,121 @@ QStringList UserdataController::getAllTypes() const
   return icons->getAllTypes();
 }
 
-void UserdataController::addUserpoint()
+void UserdataController::addUserpointFromMap(const map::MapSearchResult& result, atools::geo::Pos pos)
+{
+  qDebug() << Q_FUNC_INFO;
+  if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
+    // No prefill start empty dialog of with last added data
+    addUserpoint(-1, pos);
+  else
+  {
+    // Prepare the dialog prefill data
+    atools::sql::SqlRecord prefill = manager->emptyRecord();
+    if(result.hasAirports())
+    {
+      const map::MapAirport& ap = result.airports.first();
+
+      prefill.appendFieldAndValue("ident", ap.ident)
+      .appendFieldAndValue("name", ap.name)
+      .appendFieldAndValue("tags", ap.region);
+      pos = ap.position;
+    }
+    else if(result.hasVor())
+    {
+      const map::MapVor& vor = result.vors.first();
+      prefill.appendFieldAndValue("ident", vor.ident)
+      .appendFieldAndValue("name", map::vorText(vor))
+      .appendFieldAndValue("tags", vor.region);
+      pos = vor.position;
+    }
+    else if(result.hasNdb())
+    {
+      const map::MapNdb& ndb = result.ndbs.first();
+      prefill.appendFieldAndValue("ident", ndb.ident)
+      .appendFieldAndValue("name", map::ndbText(ndb))
+      .appendFieldAndValue("tags", ndb.region);
+      pos = ndb.position;
+    }
+    else if(result.hasWaypoints())
+    {
+      const map::MapWaypoint& wp = result.waypoints.first();
+      prefill.appendFieldAndValue("ident", wp.ident)
+      .appendFieldAndValue("name", map::waypointText(wp))
+      .appendFieldAndValue("tags", wp.region);
+      pos = wp.position;
+    }
+
+    prefill.appendFieldAndValue("altitude", pos.getAltitude()).appendFieldAndValue("type", "Bookmark");
+
+    addUserpointInternal(-1, pos, prefill);
+  }
+}
+
+void UserdataController::deleteUserpointFromMap(int id)
+{
+  deleteUserpoints({id});
+}
+
+void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint)
+{
+  atools::sql::SqlRecord rec;
+  rec.appendFieldAndValue("lonx", userpoint.position.getLonX());
+  rec.appendFieldAndValue("laty", userpoint.position.getLatY());
+
+  // Change coordinate columns for id
+  manager->updateByRecord(rec, {userpoint.id});
+  manager->commit();
+
+  // No need to update search
+  emit userdataChanged();
+  mainWindow->setStatusMessage(tr("Userpoint moved."));
+}
+
+void UserdataController::editUserpointFromMap(const map::MapSearchResult& result)
+{
+  qDebug() << Q_FUNC_INFO;
+  editUserpoints({result.userpoints.first().id});
+}
+
+void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
+{
+  addUserpointInternal(id, pos, atools::sql::SqlRecord());
+}
+
+void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos,
+                                              const atools::sql::SqlRecord& prefill)
 {
   qDebug() << Q_FUNC_INFO;
 
+  atools::sql::SqlRecord rec;
+
+  if(id != -1 /*&& lastAddedRecord->isEmpty()*/)
+    // Get prefill from given database id
+    rec = manager->record(id);
+  else
+    // Use last added dataset
+    rec = *lastAddedRecord;
+
+  if(!prefill.isEmpty())
+    // Use given record
+    rec = prefill;
+
+  if(rec.isEmpty())
+    // Otherwise fill nothing
+    rec = manager->emptyRecord();
+
+  if(pos.isValid())
+    // Take coordinates for prefill if given
+    rec.appendFieldAndValue("lonx", pos.getLonX()).appendFieldAndValue("laty", pos.getLatY());
+
   UserdataDialog dlg(mainWindow, ud::ADD, icons);
-  dlg.setRecord(manager->emptyRecord());
+
+  dlg.setRecord(rec);
   int retval = dlg.exec();
   if(retval == QDialog::Accepted)
   {
+    *lastAddedRecord = dlg.getRecord();
+
     // Add to database
     manager->insertByRecord(dlg.getRecord());
     manager->commit();
@@ -253,7 +365,7 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
 
   QMessageBox::StandardButton retval =
     QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Delete %n defined waypoint(s)?", "", ids.size()));
+                          tr("Delete %n userpoint(s)?", "", ids.size()));
 
   if(retval == QMessageBox::Yes)
   {

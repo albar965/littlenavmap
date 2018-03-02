@@ -22,6 +22,13 @@
 #include <QVector>
 
 namespace atools {
+namespace sql {
+class SqlRecord;
+}
+
+namespace geo {
+class Pos;
+}
 namespace gui {
 class Dialog;
 class ErrorHandler;
@@ -32,6 +39,13 @@ namespace userdata {
 class UserdataManager;
 }
 }
+}
+
+namespace map {
+struct MapSearchResult;
+
+struct MapUserpoint;
+
 }
 
 class MainWindow;
@@ -52,7 +66,7 @@ public:
   virtual ~UserdataController();
 
   /* Show add dialog and add to the database if accepted */
-  void addUserpoint();
+  void addUserpoint(int id, const atools::geo::Pos& pos);
 
   /* Show edit dialog and save changes to the database if accepted for the given ids*/
   void editUserpoints(const QVector<int>& ids);
@@ -114,6 +128,12 @@ public:
     return selectedUnknownType;
   }
 
+  /* Add userpoint from map and prefill with result data */
+  void addUserpointFromMap(const map::MapSearchResult& result, atools::geo::Pos pos);
+  void editUserpointFromMap(const map::MapSearchResult& result);
+  void deleteUserpointFromMap(int id);
+  void moveUserpointFromMap(const map::MapUserpoint& userpoint);
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch();
@@ -128,6 +148,7 @@ private:
   /* Copy class state to actions and vice versa */
   void typesToActions();
   void actionsToTypes();
+  void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefill);
 
   /* Currently in actions selected types */
   QStringList selectedTypes;
@@ -142,6 +163,7 @@ private:
   QToolButton *userdataToolButton = nullptr;
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionUnknown = nullptr;
   QVector<QAction *> actions;
+  atools::sql::SqlRecord *lastAddedRecord = nullptr;
 
 };
 

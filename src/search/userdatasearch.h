@@ -58,6 +58,7 @@ public:
   virtual void postDatabaseLoad() override;
 
 signals:
+  void addUserpoint(int id, const atools::geo::Pos& pos);
   void editUserpoints(const QVector<int>& ids);
   void deleteUserpoints(const QVector<int>& ids);
 
@@ -79,6 +80,9 @@ private:
 
   /* Delete button clicked */
   void deleteUserpointsTriggered();
+
+  /* Add button */
+  void addUserpointTriggered();
 
   QVector<int> selectedMapObjectIds() const;
 

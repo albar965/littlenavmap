@@ -130,9 +130,8 @@ public:
   /* Get the database id for the row at the index or -1 if the index is not valid */
   int getIdForRow(const QModelIndex& index);
 
-  /* Reset search and filter by ident, region and airport */
-  void filterByIdent(const QString& ident, const QString& region = QString(),
-                     const QString& airportIdent = QString());
+  /* Reset search and filter by fields in record */
+  void filterByRecord(const atools::sql::SqlRecord& record);
 
   /* Start or end distance search depending if center is valid or not */
   void filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,

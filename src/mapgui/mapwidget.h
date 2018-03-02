@@ -30,6 +30,10 @@
 #include <marble/MarbleWidget.h>
 
 namespace atools {
+namespace sql {
+class SqlRecord;
+}
+
 namespace geo {
 class Pos;
 class Rect;
@@ -55,15 +59,23 @@ namespace mw {
 /* State of click, drag and drop actions on the map */
 enum MouseState
 {
-  NONE = 0x00, /* Nothing */
-  DRAG_DISTANCE = 0x01, /* A new distance measurement line is dragged */
-  DRAG_CHANGE_DISTANCE = 0x02, /* A present distance measurement line is changed dragging */
-  DRAG_ROUTE_LEG = 0x04, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 0x08, /* Changing the flight plan by replacing a present waypoint */
-  DRAG_POST = 0x10, /* Mouse released - all done */
-  DRAG_POST_MENU = 0x20, /* A menu is opened after selecting multiple objects.
-                          * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 0x40 /* Right mousebutton clicked - cancel all actions */
+  NONE = 0x0000, /* Nothing */
+
+  DRAG_DISTANCE = 0x0001, /* A new distance measurement line is dragged */
+  DRAG_CHANGE_DISTANCE = 0x0002, /* A present distance measurement line is changed dragging */
+
+  DRAG_ROUTE_LEG = 0x0004, /* Changing a flight plan leg by adding a new point */
+  DRAG_ROUTE_POINT = 0x0008, /* Changing the flight plan by replacing a present waypoint */
+
+  DRAG_USER_POINT = 0x0010, /* Moving a userpoint around */
+
+  DRAG_POST = 0x0020, /* Mouse released - all done */
+  DRAG_POST_MENU = 0x0040, /* A menu is opened after selecting multiple objects.
+                            * Avoid cancelling all drag when loosing focus */
+  DRAG_POST_CANCEL = 0x0080, /* Right mousebutton clicked - cancel all actions */
+
+  DRAG_ALL = mw::DRAG_DISTANCE | mw::DRAG_CHANGE_DISTANCE | mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
+             mw::DRAG_USER_POINT
 };
 
 Q_DECLARE_FLAGS(MouseStates, MouseState);
@@ -169,6 +181,9 @@ public:
   /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
    * if dragging departure or destination */
   void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
+
+  /* Get source and current position while dragging a userpoint */
+  void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
@@ -302,8 +317,7 @@ signals:
   void searchMarkChanged(const atools::geo::Pos& mark);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const QString& ident, const QString& region,
-                    const QString& airportIdent);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
 
   /* Set parking position, departure, destination for flight plan from context menu */
   void routeSetParkingStart(map::MapParking parking);
@@ -324,6 +338,14 @@ signals:
 
   /* Show information about objects from single click or context menu */
   void showInformation(map::MapSearchResult result);
+
+  /* Add user point and pass result to it so it can prefill the dialog */
+  void addUserpointFromMap(map::MapSearchResult result, const atools::geo::Pos& pos);
+  void editUserpointFromMap(map::MapSearchResult result);
+  void deleteUserpointFromMap(int id);
+
+  /* Passed point with updated coordinates */
+  void moveUserpointFromMap(const map::MapUserpoint& point);
 
   /* Show approaches from context menu */
   void showApproaches(map::MapAirport airport);
@@ -365,6 +387,7 @@ private:
   void cancelDragDistance();
   void cancelDragRoute();
   void elevationDisplayTimerTimeout();
+  void cancelDragUserpoint();
 
   void jumpBackToAircraftTimeout();
   void jumpBackToAircraftStart();
@@ -383,14 +406,21 @@ private:
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
   MapThemeComboIndex currentComboIndex = INVALID;
+
   mw::MouseStates mouseState = mw::NONE;
   bool contextMenuActive = false;
+
   /* Current position when dragging a flight plan point or leg */
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom /* First fixed point of route drag */,
                    routeDragTo /* Second fixed point of route drag */;
   int routeDragPoint = -1 /* Index of changed point */,
       routeDragLeg = -1 /* index of changed leg */;
+
+  /* Current position and pixmap when drawing userpoint on map */
+  QPoint userpointDragCur;
+  map::MapUserpoint userpointDrag;
+  QPixmap userpointDragPixmap;
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;

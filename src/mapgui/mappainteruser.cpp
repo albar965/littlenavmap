@@ -57,8 +57,7 @@ void MapPainterUser::render(PaintContext *context)
 
   context->szFont(context->textSizeNavaid);
 
-  // if(context->mapLayer->isUserpoint() &&
-  // (!context->userPointTypes.isEmpty() || context->userPointTypeUnknown) && !context->isOverflow())
+  // Always call paint to fill cache
   paintUserpoints(context,
                   mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
                                               context->userPointTypeUnknown,

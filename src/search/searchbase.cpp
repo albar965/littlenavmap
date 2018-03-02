@@ -201,9 +201,9 @@ void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
   csvExporter = new CsvExporter(mainWindow, controller);
 }
 
-void SearchBaseTable::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SearchBaseTable::filterByRecord(const atools::sql::SqlRecord& record)
 {
-  controller->filterByIdent(ident, region, airportIdent);
+  controller->filterByRecord(record);
 }
 
 void SearchBaseTable::optionsChanged()
@@ -735,7 +735,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
                                     navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERPOINT);
   ui->actionRouteAppendPos->setEnabled(navType == map::VOR || navType == map::NDB ||
-                                       navType == map::WAYPOINT || navType == map::AIRPORT || navType == map::USERPOINT);
+                                       navType == map::WAYPOINT || navType == map::AIRPORT ||
+                                       navType == map::USERPOINT);
 
   ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == map::AIRPORT);

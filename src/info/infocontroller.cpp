@@ -363,7 +363,7 @@ void InfoController::updateAllInformation()
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(const map::MapSearchResult& result, bool showWindows)
+void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -491,9 +491,12 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
     foundNavaid = true;
   }
 
-  for(const map::MapUserpoint& userpoint: result.userpoints)
+  for(map::MapUserpoint userpoint: result.userpoints)
   {
     qDebug() << "Found waypoint" << userpoint.ident;
+
+    // Get updated object in case of changes in the database
+    mapQuery->updateUserdataPoint(userpoint);
 
     currentSearchResult.userpoints.append(userpoint);
     infoBuilder->userpointText(userpoint, html);

@@ -64,8 +64,10 @@ void MapPainterMark::render(PaintContext *context)
   paintHome(context);
   paintRangeRings(context);
   paintDistanceMarkers(context);
-  paintRouteDrag(context);
   paintCompassRose(context);
+
+  paintRouteDrag(context);
+  paintUserpointDrag(context);
 }
 
 /* Draw black yellow cross for search distance marker */
@@ -667,6 +669,17 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   }
 }
 
+void MapPainterMark::paintUserpointDrag(const PaintContext *context)
+{
+  // Get screen position an pixmap
+  QPoint cur;
+  QPixmap pixmap;
+  mapWidget->getUserpointDragPoints(cur, pixmap);
+
+  if(!cur.isNull() && mapWidget->rect().contains(cur) && !pixmap.isNull())
+    context->painter->drawPixmap(cur.x() - pixmap.width() / 2, cur.y() - pixmap.height() / 2, pixmap);
+}
+
 /* Draw route dragging/moving lines */
 void MapPainterMark::paintRouteDrag(const PaintContext *context)
 {
@@ -691,7 +704,7 @@ void MapPainterMark::paintRouteDrag(const PaintContext *context)
 
       if(linestring.size() > 1)
       {
-        context->painter->setPen(QPen(mapcolors::routeDragColor, 3, Qt::SolidLine, Qt::RoundCap,
+        context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap,
                                       Qt::RoundJoin));
         context->painter->drawPolyline(linestring);
       }

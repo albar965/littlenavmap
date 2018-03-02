@@ -73,6 +73,7 @@ private:
   void updateWidgets();
   void acceptClicked();
   void helpClicked();
+  void resetClicked();
 
   /* Move widget data to the SQL record */
   void dialogToRecord();

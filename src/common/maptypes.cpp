@@ -1032,7 +1032,12 @@ QString waypointText(const MapWaypoint& waypoint)
   return QObject::tr("Waypoint %1").arg(waypoint.ident);
 }
 
-QString userpointText(const MapUserpointRoute& userpoint)
+QString userpointText(const MapUserpoint& userpoint)
+{
+  return QObject::tr("Userpoint %1").arg(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident);
+}
+
+QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
   return QObject::tr("User point %1").arg(userpoint.name);
 }

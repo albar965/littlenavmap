@@ -62,18 +62,18 @@ void UserdataIcons::loadIcons()
 {
   // First get new and overloaded icons from the configuration directory
   QDir configDir(atools::settings::Settings::instance().getPath());
-  for(const QFileInfo& entry : configDir.entryInfoList({"userdata_*.svg"}))
+  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg"}))
     loadIcon(entry);
 
   // Get default icons from resources if not already loaded before
   QDir resourceDir(":/littlenavmap/resources/icons");
-  for(const QFileInfo& entry : resourceDir.entryInfoList({"userdata_*.svg"}))
+  for(const QFileInfo& entry : resourceDir.entryInfoList({"userpoint_*.svg"}))
     loadIcon(entry);
 }
 
 QString UserdataIcons::getIconPath(const QString& type) const
 {
-  return typeMap.value(type, ":/littlenavmap/resources/icons/userdata_" + DEFAULT_TYPE + ".svg");
+  return typeMap.value(type, ":/littlenavmap/resources/icons/userpoint_" + DEFAULT_TYPE + ".svg");
 }
 
 QString UserdataIcons::getDefaultType(const QString& type)
@@ -83,7 +83,7 @@ QString UserdataIcons::getDefaultType(const QString& type)
 
 void UserdataIcons::loadIcon(const QFileInfo& entry)
 {
-  static QRegularExpression typeRegexp("userdata_(.+)\\.svg");
+  static QRegularExpression typeRegexp("userpoint_(.+)\\.svg");
   QString name = atools::settings::Settings::instance().getOverloadedPath(entry.filePath());
 
   QRegularExpressionMatch match = typeRegexp.match(entry.fileName());

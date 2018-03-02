@@ -34,6 +34,9 @@
 UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons) :
   QDialog(parent), editMode(mode), ui(new Ui::UserdataDialog), icons(userdataIcons)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::ApplicationModal);
+
   ui->setupUi(this);
 
   record = new atools::sql::SqlRecord();
@@ -91,6 +94,8 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   connect(ui->buttonBoxUserdata, &QDialogButtonBox::accepted, this, &UserdataDialog::acceptClicked);
   connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Help), &QPushButton::clicked,
           this, &UserdataDialog::helpClicked);
+  connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Reset), &QPushButton::clicked,
+          this, &UserdataDialog::resetClicked);
   connect(ui->buttonBoxUserdata, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
   updateWidgets();
@@ -127,6 +132,41 @@ void UserdataDialog::helpClicked()
     NavApp::getMainWindow(), lnm::HELP_ONLINE_URL + "EDITUSERDATA.html", lnm::helpLanguagesOnline());
 }
 
+void UserdataDialog::resetClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(editMode == ud::EDIT_MULTIPLE)
+  {
+    // Reset checkboxes to unchecked
+    ui->checkBoxUserdataAltitude->setChecked(false);
+    ui->checkBoxUserdataDescription->setChecked(false);
+    ui->checkBoxUserdataIdent->setChecked(false);
+    ui->checkBoxUserdataName->setChecked(false);
+    ui->checkBoxUserdataTags->setChecked(false);
+    ui->checkBoxUserdataType->setChecked(false);
+    ui->checkBoxUserdataVisible->setChecked(false);
+  }
+
+  if(editMode == ud::ADD)
+  {
+    // Clear all except coordinates
+    ui->comboBoxUserdataType->setCurrentIndex(0);
+    ui->lineEditUserdataIdent->clear();
+    ui->lineEditUserdataName->clear();
+    ui->lineEditUserdataTags->clear();
+    ui->spinBoxUserdataAltitude->setValue(0.);
+    ui->spinBoxUserdataVisible->setValue(250);
+    ui->textEditUserdataDescription->clear();
+  }
+  else if(editMode == ud::EDIT_MULTIPLE || editMode == ud::EDIT_ONE)
+  {
+    recordToDialog();
+    qDebug() << Q_FUNC_INFO << *record;
+  }
+  // ui->lineEditUserdataLatLon->clear();
+}
+
 void UserdataDialog::acceptClicked()
 {
   // Copy widget data to record
@@ -148,6 +188,8 @@ void UserdataDialog::setRecord(const atools::sql::SqlRecord& sqlRecord)
 
 void UserdataDialog::updateWidgets()
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(editMode == ud::EDIT_MULTIPLE)
   {
     // Enable or disable edit widgets depending in check box status
@@ -174,17 +216,27 @@ void UserdataDialog::updateWidgets()
 
 void UserdataDialog::recordToDialog()
 {
+  qDebug() << Q_FUNC_INFO;
+
   fillTypeComboBox(record->valueStr("type"));
+
   ui->lineEditUserdataName->setText(record->valueStr("name"));
   ui->lineEditUserdataIdent->setText(record->valueStr("ident"));
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
-  ui->spinBoxUserdataVisible->setValue(Unit::distNmF(record->valueInt("visible_from")));
-  ui->spinBoxUserdataAltitude->setValue(record->valueInt("altitude"));
-  ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
-                                                                    record->valueFloat("laty"))));
 
-#ifdef DEBUG_INFORMATION
+  if(!record->isNull("visible_from"))
+    ui->spinBoxUserdataVisible->setValue(Unit::distNmF(record->valueInt("visible_from")));
+  else
+    ui->spinBoxUserdataVisible->setValue(Unit::distNmF(250.f));
+
+  ui->spinBoxUserdataAltitude->setValue(record->valueInt("altitude"));
+
+  if(!record->isNull("lonx") && !record->isNull("laty"))
+    ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
+                                                                      record->valueFloat("laty"))));
+
+#ifdef DEBUG_INFORMATION_DISABLED
   if(editMode == ud::ADD)
   {
     ui->lineEditUserdataIdent->setText(QString("TEST%1").arg(qrand() / (RAND_MAX / 100)));
@@ -200,6 +252,8 @@ void UserdataDialog::recordToDialog()
 
 void UserdataDialog::dialogToRecord()
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(editMode == ud::EDIT_MULTIPLE || editMode == ud::EDIT_ONE)
   {
     if(editMode == ud::EDIT_MULTIPLE)

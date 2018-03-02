@@ -49,6 +49,7 @@ private:
   void paintDistanceMarkers(const PaintContext *context);
   void paintRouteDrag(const PaintContext *context);
   void paintCompassRose(const PaintContext *context);
+  void paintUserpointDrag(const PaintContext *context);
 
 };
 

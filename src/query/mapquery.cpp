@@ -487,6 +487,11 @@ map::MapWaypoint MapQuery::getWaypointById(int id)
   return wp;
 }
 
+void MapQuery::updateUserdataPoint(map::MapUserpoint& userpoint)
+{
+  userpoint = getUserdataPointById(userpoint.id);
+}
+
 map::MapUserpoint MapQuery::getUserdataPointById(int id)
 {
   map::MapUserpoint up;

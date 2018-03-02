@@ -2495,7 +2495,7 @@
              </property>
              <property name="icon">
               <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/moredetails.svg</normaloff>:/littlenavmap/resources/icons/moredetails.svg</iconset>
+               <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
              </property>
             </widget>
            </item>
@@ -2512,7 +2512,7 @@
              </property>
              <property name="icon">
               <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+               <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
              </property>
             </widget>
            </item>
@@ -2529,7 +2529,7 @@
              </property>
              <property name="icon">
               <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
+               <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
              </property>
             </widget>
            </item>
@@ -3461,7 +3461,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetAircraft">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabAircraftInfo">
         <attribute name="title">
@@ -6718,10 +6718,13 @@
   <action name="actionUserdataEdit">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Edit Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit Userpoint</string>
    </property>
    <property name="shortcut">
     <string>Return</string>
@@ -6730,19 +6733,22 @@
   <action name="actionUserdataAdd">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/moredetails.svg</normaloff>:/littlenavmap/resources/icons/moredetails.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Add Userpoint</string>
    </property>
+   <property name="statusTip">
+    <string>Add Userpoint</string>
+   </property>
    <property name="shortcut">
-    <string>Ctrl+Ins</string>
+    <string>Ins</string>
    </property>
   </action>
   <action name="actionUserdataDelete">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete Userpoint</string>
@@ -6750,8 +6756,71 @@
    <property name="toolTip">
     <string>Delete Userpoint</string>
    </property>
+   <property name="statusTip">
+    <string>Delete Userpoint</string>
+   </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataAdd">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Add Userpoint</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataEdit">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit Userpoint</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataDelete">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete Userpoint</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataMove">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_move.svg</normaloff>:/littlenavmap/resources/icons/userdata_move.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Move Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Move Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Move Userpoint</string>
    </property>
   </action>
  </widget>

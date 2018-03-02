@@ -31,6 +31,7 @@
 #include "connect/connectclient.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "route/route.h"
+#include "userdata/userdataicons.h"
 #include "route/routecontroller.h"
 #include "atools.h"
 #include "query/mapquery.h"
@@ -46,6 +47,7 @@
 #include "common/unit.h"
 #include "gui/widgetstate.h"
 #include "gui/application.h"
+#include "sql/sqlrecord.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -90,6 +92,7 @@ using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
 using atools::geo::Rect;
 using atools::geo::Pos;
+using atools::sql::SqlRecord;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::almostNotEqual;
@@ -376,6 +379,12 @@ map::MapAirspaceFilter MapWidget::getShownAirspaces() const
 map::MapAirspaceFilter MapWidget::getShownAirspaceTypesByLayer() const
 {
   return paintLayer->getShownAirspacesTypesByLayer();
+}
+
+void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
+{
+  cur = userpointDragCur;
+  pixmap = userpointDragPixmap;
 }
 
 void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
@@ -1419,7 +1428,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionMapShowInformation, ui->actionMapShowApproaches,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest,
-                                          ui->actionMapEditUserWaypoint});
+                                          ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
+                                          ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
+                                          ui->actionMapUserdataMove});
   Q_UNUSED(textSaver);
 
   // ===================================================================================
@@ -1448,6 +1459,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionRouteAppendPos);
   menu.addAction(ui->actionRouteDeleteWaypoint);
   menu.addAction(ui->actionMapEditUserWaypoint);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionMapUserdataAdd);
+  menu.addAction(ui->actionMapUserdataEdit);
+  menu.addAction(ui->actionMapUserdataMove);
+  menu.addAction(ui->actionMapUserdataDelete);
   menu.addSeparator();
 
   menu.addAction(ui->actionShowInSearch);
@@ -1482,6 +1499,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapMeasureRhumbDistance->setEnabled(visibleOnMap);
   ui->actionMapRangeRings->setEnabled(visibleOnMap);
 
+  ui->actionMapUserdataAdd->setEnabled(visibleOnMap);
+  ui->actionMapUserdataEdit->setEnabled(false);
+  ui->actionMapUserdataDelete->setEnabled(false);
+  ui->actionMapUserdataMove->setEnabled(false);
+
   ui->actionMapHideRangeRings->setEnabled(!screenIndex->getRangeMarks().isEmpty() ||
                                           !screenIndex->getDistanceMarks().isEmpty());
   ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
@@ -1510,12 +1532,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapVor *vor = nullptr;
   map::MapNdb *ndb = nullptr;
   map::MapWaypoint *waypoint = nullptr;
-  map::MapUserpointRoute *userpoint = nullptr;
+  map::MapUserpointRoute *userpointRoute = nullptr;
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
   map::MapHelipad *helipad = nullptr;
   map::MapAirspace *airspace = nullptr;
+  map::MapUserpoint *userpoint = nullptr;
 
+  // ===================================================================================
   // Get only one object of each type
   if(result.userAircraft.getPosition().isValid())
     userAircraft = &result.userAircraft;
@@ -1535,21 +1559,23 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.waypoints.isEmpty())
     waypoint = &result.waypoints.first();
   if(!result.userPointsRoute.isEmpty())
-    userpoint = &result.userPointsRoute.first();
+    userpointRoute = &result.userPointsRoute.first();
+  if(!result.userpoints.isEmpty())
+    userpoint = &result.userpoints.first();
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
   if(!result.airspaces.isEmpty())
     airspace = &result.airspaces.first();
 
   // Add "more" text if multiple navaids will be added to the information panel
-  bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() +
+  bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() + result.userpoints.size() +
                   result.userPointsRoute.size() + result.airways.size()) > 1 && airport == nullptr;
 
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
   bool isAircraft = false;
   QString informationText, measureText, rangeRingText, departureText, departureParkingText, destinationText,
-          addRouteText, searchText;
+          addRouteText, searchText, editUserpointText;
 
   if(airspace != nullptr)
     informationText = tr("Airspace");
@@ -1557,9 +1583,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(airway != nullptr)
     informationText = map::airwayText(*airway);
 
-  if(userpoint != nullptr)
+  if(userpointRoute != nullptr)
     // No show information on user point
     informationText.clear();
+
+  if(userpoint != nullptr)
+    editUserpointText = informationText = measureText = addRouteText = searchText = map::userpointText(*userpoint);
 
   if(waypoint != nullptr)
     informationText = measureText = addRouteText = searchText = map::waypointText(*waypoint);
@@ -1613,6 +1642,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     isAircraft = true;
   }
 
+  // ===================================================================================
   // Build "delete from flight plan" text
   int routeIndex = -1;
   map::MapObjectTypes deleteType = map::NONE;
@@ -1641,13 +1671,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     routeIndex = waypoint->routeIndex;
     deleteType = map::WAYPOINT;
   }
-  else if(userpoint != nullptr && userpoint->routeIndex != -1)
+  else if(userpointRoute != nullptr && userpointRoute->routeIndex != -1)
   {
-    routeText = map::userpointText(*userpoint);
-    routeIndex = userpoint->routeIndex;
+    routeText = map::userpointRouteText(*userpointRoute);
+    routeIndex = userpointRoute->routeIndex;
     deleteType = map::USERPOINTROUTE;
   }
 
+  // ===================================================================================
   // Update "set airport as start/dest"
   if(airport != nullptr || departureParkingAirportId != -1)
   {
@@ -1678,9 +1709,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
 
+  // ===================================================================================
   // Update "show information" for airports, navaids, airways and airspaces
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
-     airway != nullptr || airspace != nullptr)
+     airway != nullptr || airspace != nullptr || userpoint != nullptr)
   {
     ui->actionMapShowInformation->setEnabled(true);
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().
@@ -1697,8 +1729,32 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
 
-  // Update "show in search" and "add to route" only for airports an navaids
+  // ===================================================================================
+  // Update "edit userpoint" and "add userpoint"
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr)
+    ui->actionMapUserdataAdd->setText(ui->actionMapUserdataAdd->text().arg(informationText));
+  else
+    ui->actionMapUserdataAdd->setText(ui->actionMapUserdataAdd->text().arg(QString()));
+
+  if(userpoint != nullptr)
+  {
+    ui->actionMapUserdataEdit->setEnabled(true);
+    ui->actionMapUserdataEdit->setText(ui->actionMapUserdataEdit->text().arg(editUserpointText));
+    ui->actionMapUserdataDelete->setEnabled(true);
+    ui->actionMapUserdataDelete->setText(ui->actionMapUserdataDelete->text().arg(editUserpointText));
+    ui->actionMapUserdataMove->setEnabled(true);
+    ui->actionMapUserdataMove->setText(ui->actionMapUserdataMove->text().arg(editUserpointText));
+  }
+  else
+  {
+    ui->actionMapUserdataEdit->setText(ui->actionMapUserdataEdit->text().arg(QString()));
+    ui->actionMapUserdataDelete->setText(ui->actionMapUserdataDelete->text().arg(QString()));
+    ui->actionMapUserdataMove->setText(ui->actionMapUserdataMove->text().arg(QString()));
+  }
+
+  // ===================================================================================
+  // Update "show in search" and "add to route" only for airports an navaids
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || userpoint != nullptr)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
@@ -1737,7 +1793,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(QString()));
 
   // Update "name user waypoint"
-  if(routeIndex != -1 && userpoint != nullptr)
+  if(routeIndex != -1 && userpointRoute != nullptr)
   {
     ui->actionMapEditUserWaypoint->setEnabled(true);
     ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(routeText));
@@ -1792,22 +1848,37 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       if(airport != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(0);
-        emit showInSearch(map::AIRPORT, airport->ident, QString(), QString());
+        emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident));
       }
       else if(vor != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(map::VOR, vor->ident, vor->region, QString() /*, vor->airportIdent*/);
+        emit showInSearch(map::VOR, SqlRecord().
+                          appendFieldAndValue("ident", vor->ident).
+                          appendFieldAndValue("region", vor->region));
       }
       else if(ndb != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(map::NDB, ndb->ident, ndb->region, QString() /*, ndb->airportIdent*/);
+        emit showInSearch(map::NDB, SqlRecord().
+                          appendFieldAndValue("ident", ndb->ident).
+                          appendFieldAndValue("region", ndb->region));
       }
       else if(waypoint != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(map::WAYPOINT, waypoint->ident, waypoint->region, QString() /*, waypoint->airportIdent*/);
+        emit showInSearch(map::WAYPOINT, SqlRecord().
+                          appendFieldAndValue("ident", waypoint->ident).
+                          appendFieldAndValue("region", waypoint->region));
+      }
+      else if(userpoint != nullptr)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(3);
+        emit showInSearch(map::USERPOINT, SqlRecord().
+                          appendFieldAndValue("ident", userpoint->ident).
+                          appendFieldAndValue("name", userpoint->name).
+                          appendFieldAndValue("type", userpoint->type).
+                          appendFieldAndValue("tags", userpoint->tags));
       }
     }
     else if(action == ui->actionMapNavaidRange)
@@ -1930,8 +2001,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else
       {
-        if(userpoint != nullptr)
-          id = userpoint->id;
+        if(userpointRoute != nullptr)
+          id = userpointRoute->id;
         type = map::USERPOINTROUTE;
         position = pos;
       }
@@ -1963,6 +2034,25 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else if(action == ui->actionMapShowApproaches)
       emit showApproaches(*airport);
+    else if(action == ui->actionMapUserdataAdd)
+      emit addUserpointFromMap(result, pos);
+    else if(action == ui->actionMapUserdataEdit)
+      emit editUserpointFromMap(result);
+    else if(action == ui->actionMapUserdataDelete)
+      emit deleteUserpointFromMap(userpoint->id);
+    else if(action == ui->actionMapUserdataMove)
+    {
+      if(userpoint != nullptr)
+      {
+        userpointDragPixmap = *NavApp::getUserdataIcons()->getIconPixmap(userpoint->type,
+                                                                         paintLayer->getMapLayer()->getUserPointSymbolSize());
+        userpointDragCur = point;
+        userpointDrag = *userpoint;
+        // Start mouse dragging and disable context menu so we can catch the right button click as cancel
+        mouseState = mw::DRAG_USER_POINT;
+        setContextMenuPolicy(Qt::PreventContextMenu);
+      }
+    }
   }
 }
 
@@ -2137,11 +2227,26 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
 void MapWidget::cancelDragAll()
 {
   cancelDragRoute();
+  cancelDragUserpoint();
   cancelDragDistance();
 
   mouseState = mw::NONE;
   setViewContext(Marble::Still);
   update();
+}
+
+/* Stop userpoint editing and reset coordinates and pixmap */
+void MapWidget::cancelDragUserpoint()
+{
+  if(mouseState & mw::DRAG_USER_POINT)
+  {
+    if(cursor().shape() != Qt::ArrowCursor)
+      setCursor(Qt::ArrowCursor);
+
+    userpointDragCur = QPoint();
+    userpointDrag = map::MapUserpoint();
+    userpointDragPixmap = QPixmap();
+  }
 }
 
 /* Stop route editing and reset all coordinates */
@@ -2211,7 +2316,9 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   debugMovingPlane(event);
 #endif
 
-  if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
+  qreal lon = 0., lat = 0.;
+  bool visible = false;
+  if(mouseState & mw::DRAG_ALL)
   {
     jumpBackToAircraftStart();
 
@@ -2219,35 +2326,27 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(cursor().shape() != Qt::CrossCursor)
       setCursor(Qt::CrossCursor);
 
-    qreal lon, lat;
-    bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-    if(visible)
-    {
-      // Position is valid update the distance mark continuously
-      if(!screenIndex->getDistanceMarks().isEmpty())
-        screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
-    }
+    visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+  }
 
-    // Force fast updates while dragging
-    setViewContext(Marble::Animation);
-    update();
+  if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
+  {
+    // Position is valid update the distance mark continuously
+    if(visible && !screenIndex->getDistanceMarks().isEmpty())
+      screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
+
   }
   else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
   {
-    jumpBackToAircraftStart();
-
-    // Currently dragging a flight plan leg
-    if(cursor().shape() != Qt::CrossCursor)
-      setCursor(Qt::CrossCursor);
-
-    qreal lon, lat;
-    bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
     if(visible)
       // Update current point
       routeDragCur = QPoint(event->pos().x(), event->pos().y());
-
-    setViewContext(Marble::Animation);
-    update();
+  }
+  else if(mouseState & mw::DRAG_USER_POINT)
+  {
+    if(visible)
+      // Update current point
+      userpointDragCur = QPoint(event->pos().x(), event->pos().y());
   }
   else if(mouseState == mw::NONE)
   {
@@ -2282,6 +2381,13 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     else
       jumpBackToAircraftStart();
   }
+
+  if(mouseState & mw::DRAG_ALL)
+  {
+    // Force fast updates while dragging
+    setViewContext(Marble::Animation);
+    update();
+  }
 }
 
 void MapWidget::mousePressEvent(QMouseEvent *event)
@@ -2296,8 +2402,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
   // Remember mouse position to check later if mouse was moved during click (drag map scroll)
   mouseMoved = event->pos();
-  if(mouseState == mw::DRAG_DISTANCE || mouseState == mw::DRAG_CHANGE_DISTANCE ||
-     mouseState == mw::DRAG_ROUTE_POINT || mouseState == mw::DRAG_ROUTE_LEG)
+  if(mouseState & mw::DRAG_ALL)
   {
     if(cursor().shape() != Qt::ArrowCursor)
       setCursor(Qt::ArrowCursor);
@@ -2370,6 +2475,31 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
+  }
+  else if(mouseState & mw::DRAG_USER_POINT)
+  {
+    // End userpoint dragging
+    if(mouseState & mw::DRAG_POST)
+    {
+      // Ending route dragging - update route
+      qreal lon, lat;
+      bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+      if(visible)
+      {
+        // Create a copy before cancel
+        map::MapUserpoint newUserpoint = userpointDrag;
+        newUserpoint.position = Pos(lon, lat);
+        emit moveUserpointFromMap(newUserpoint);
+      }
+    }
+
+    cancelDragUserpoint();
+
+    // End all dragging
+    mouseState = mw::NONE;
+    setViewContext(Marble::Still);
+    update();
+
   }
   else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
   {

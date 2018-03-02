@@ -98,6 +98,7 @@ public:
   map::MapWaypoint getWaypointById(int id);
   map::MapAirspace getAirspaceById(int airspaceId);
   map::MapUserpoint getUserdataPointById(int id);
+  void updateUserdataPoint(map::MapUserpoint& userpoint);
 
   /*
    * Get a map object by type, ident and region

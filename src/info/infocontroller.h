@@ -107,7 +107,7 @@ private:
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(const map::MapSearchResult& result, bool showWindows);
+  void showInformationInternal(map::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
   void currentTabChanged(int index);

@@ -67,19 +67,10 @@ void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
   buildQuery();
 }
 
-void SqlModel::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SqlModel::filterByRecord(const atools::sql::SqlRecord& record)
 {
-  // Build filter conditions
-  filterBy(false, "ident", ident);
-
-  if(!region.isEmpty() && columns->getColumn("region") != nullptr)
-    filterBy(false, "region", region);
-
-  if(!airportIdent.isEmpty() && columns->getColumn("airport_ident") != nullptr)
-    filterBy(false, "airport_ident", airportIdent);
-
-  // Build and run query
-  buildQuery();
+  for(int i = 0; i < record.count(); i++)
+    filterBy(false /* exclude */, record.fieldName(i), record.value(i));
 }
 
 /* Filter by value at index (context menu in table view) */

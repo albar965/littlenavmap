@@ -822,7 +822,8 @@ QString vorType(const map::MapVor& vor);
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
-QString userpointText(const map::MapUserpointRoute& userpoint);
+QString userpointRouteText(const map::MapUserpointRoute& userpoint);
+QString userpointText(const MapUserpoint& userpoint);
 QString airwayText(const map::MapAirway& airway);
 
 /* Altitude text for airways */

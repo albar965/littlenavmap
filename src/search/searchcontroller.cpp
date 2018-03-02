@@ -24,6 +24,7 @@
 #include "search/navsearch.h"
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
+#include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 #include "search/userdatasearch.h"
 #include "common/constants.h"
@@ -125,19 +126,13 @@ void SearchController::createUserdataSearch(QTableView *tableView)
   userdataSearch = new UserdataSearch(mainWindow, tableView, SEARCH_USER);
   postCreateSearch(userdataSearch);
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  // Connect the extra add buttons and action
-  connect(ui->pushButtonUserdataAdd, &QPushButton::clicked,
-          NavApp::getUserdataController(), &UserdataController::addUserpoint);
-  connect(ui->actionUserdataAdd, &QAction::triggered,
-          NavApp::getUserdataController(), &UserdataController::addUserpoint);
-
   // Get edit and delete signals from user search action and pushbuttons
   connect(userdataSearch, &UserdataSearch::editUserpoints,
           NavApp::getUserdataController(), &UserdataController::editUserpoints);
   connect(userdataSearch, &UserdataSearch::deleteUserpoints,
           NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
+  connect(userdataSearch, &UserdataSearch::addUserpoint,
+          NavApp::getUserdataController(), &UserdataController::addUserpoint);
 
 }
 
@@ -177,17 +172,16 @@ void SearchController::refreshUserdata()
   userdataSearch->refreshData();
 }
 
-void SearchController::showInSearch(map::MapObjectTypes type, const QString& ident,
-                                    const QString& region, const QString& airportIdent)
+void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record)
 {
-  qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
+  qDebug() << Q_FUNC_INFO << record;
 
   switch(type)
   {
     case map::AIRPORT:
       // Shown in airport tab
       airportSearch->resetSearch();
-      airportSearch->filterByIdent(ident);
+      airportSearch->filterByRecord(record);
       break;
 
     case map::NDB:
@@ -195,13 +189,13 @@ void SearchController::showInSearch(map::MapObjectTypes type, const QString& ide
     case map::WAYPOINT:
       // Shown in navaid tab
       navSearch->resetSearch();
-      navSearch->filterByIdent(ident, region, airportIdent);
+      navSearch->filterByRecord(record);
       break;
 
     case map::USERPOINT:
       // Shown in user search tab
       userdataSearch->resetSearch();
-      userdataSearch->filterByIdent(ident, region, airportIdent);
+      userdataSearch->filterByRecord(record);
       break;
 
     case map::ILS:

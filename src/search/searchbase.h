@@ -42,6 +42,7 @@ class QAction;
 namespace atools {
 namespace sql {
 class SqlDatabase;
+class SqlRecord;
 }
 
 namespace geo {
@@ -82,8 +83,7 @@ public:
   void searchMarkChanged(const atools::geo::Pos& mark);
 
   /* Set the search filter to ident, region, airport ident and update the search result */
-  void filterByIdent(const QString& ident, const QString& region = QString(),
-                     const QString& airportIdent = QString());
+  void filterByRecord(const atools::sql::SqlRecord& record);
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;
