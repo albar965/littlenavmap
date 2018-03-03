@@ -76,8 +76,9 @@ public:
   /* Get magvar from all known objects */
   void updateMagvar();
 
-  /* Change user defined waypoint name */
+  /* Change user defined waypoint name and position */
   void updateUserName(const QString& name);
+  void updateUserPosition(const atools::geo::Pos& pos);
 
   /* Set parking and start position. Does not modify the flight plan entry. */
   void setDepartureParking(const map::MapParking& departureParking);

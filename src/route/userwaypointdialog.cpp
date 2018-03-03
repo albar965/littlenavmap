@@ -15,12 +15,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "userwaypointdialog.h"
+#include "route/userwaypointdialog.h"
 #include "ui_userwaypointdialog.h"
 
-#include <QRegularExpressionValidator>
+#include "geo/pos.h"
+#include "common/unit.h"
+#include "common/formatter.h"
+#include "fs/util/coordinates.h"
 
-UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name)
+#include <QPushButton>
+
+UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name, const atools::geo::Pos& pos)
   : QDialog(parent), ui(new Ui::UserWaypointDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -29,6 +34,9 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name)
   ui->setupUi(this);
 
   ui->lineEditRouteUserWaypoint->setText(name);
+  ui->lineEditRouteUserWaypointLatLon->setText(Unit::coords(pos));
+
+  connect(ui->lineEditRouteUserWaypointLatLon, &QLineEdit::textChanged, this, &UserWaypointDialog::coordsEdited);
 }
 
 UserWaypointDialog::~UserWaypointDialog()
@@ -39,4 +47,19 @@ UserWaypointDialog::~UserWaypointDialog()
 QString UserWaypointDialog::getName() const
 {
   return ui->lineEditRouteUserWaypoint->text();
+}
+
+atools::geo::Pos UserWaypointDialog::getPos() const
+{
+  return atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+}
+
+void UserWaypointDialog::coordsEdited(const QString& text)
+{
+  Q_UNUSED(text);
+
+  QString message;
+  bool valid = formatter::checkCoordinates(message, ui->lineEditRouteUserWaypointLatLon->text());
+  ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Ok)->setEnabled(valid);
+  ui->labelRouteUserWaypointCoordStatus->setText(message);
 }

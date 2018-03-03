@@ -1907,7 +1907,7 @@ void RouteController::activateLegManually(int index)
 
 void RouteController::editUserWaypointName(int index)
 {
-  UserWaypointDialog dialog(mainWindow, route.at(index).getIdent());
+  UserWaypointDialog dialog(mainWindow, route.at(index).getIdent(), route.at(index).getPosition());
   if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
   {
     RouteCommand *undoCommand = nullptr;
@@ -1916,6 +1916,8 @@ void RouteController::editUserWaypointName(int index)
     undoCommand = preChange(tr("Waypoint Name Change"));
 
     route[index].updateUserName(dialog.getName());
+    route[index].updateUserPosition(dialog.getPos());
+
     model->item(index, rc::IDENT)->setText(dialog.getName());
     postChange(undoCommand);
 

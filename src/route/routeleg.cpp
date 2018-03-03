@@ -422,6 +422,11 @@ void RouteLeg::updateUserName(const QString& name)
   flightplan->getEntries()[index].setWaypointId(name);
 }
 
+void RouteLeg::updateUserPosition(const atools::geo::Pos& pos)
+{
+  flightplan->getEntries()[index].setPosition(pos);
+}
+
 int RouteLeg::getId() const
 {
   if(type == map::INVALID)

@@ -5897,13 +5897,13 @@
      <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit Name for %1</string>
+    <string>Edit Flight Plan %1</string>
    </property>
    <property name="toolTip">
-    <string>Edit user waypoint name</string>
+    <string>Edit user waypoint name and position</string>
    </property>
    <property name="statusTip">
-    <string>Edit user waypoint name</string>
+    <string>Edit user waypoint name and position</string>
    </property>
   </action>
   <action name="actionHelpContentsOffline">
