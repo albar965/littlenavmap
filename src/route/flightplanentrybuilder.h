@@ -41,6 +41,8 @@ struct MapVor;
 
 struct MapWaypoint;
 
+struct MapUserpoint;
+
 struct MapSearchResult;
 
 }
@@ -65,7 +67,7 @@ public:
 
   void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            map::MapObjectTypes type = map::NONE);
+                            map::MapObjectTypes type);
 
   void buildFlightplanEntry(const map::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
@@ -83,6 +85,8 @@ public:
 
   void entryFromWaypoint(const map::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
                          bool resolveWaypoints) const;
+
+  void entryFromUserpoint(const map::MapUserpoint& userpoint, atools::fs::pln::FlightplanEntry& entry);
 
   int getCurUserpointNumber() const
   {

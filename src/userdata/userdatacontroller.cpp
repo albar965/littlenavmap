@@ -226,6 +226,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
 
       prefill.appendFieldAndValue("ident", ap.ident)
       .appendFieldAndValue("name", ap.name)
+      .appendFieldAndValue("type", "Airport")
       .appendFieldAndValue("tags", ap.region);
       pos = ap.position;
     }
@@ -234,6 +235,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapVor& vor = result.vors.first();
       prefill.appendFieldAndValue("ident", vor.ident)
       .appendFieldAndValue("name", map::vorText(vor))
+      .appendFieldAndValue("type", "IFR")
       .appendFieldAndValue("tags", vor.region);
       pos = vor.position;
     }
@@ -242,6 +244,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapNdb& ndb = result.ndbs.first();
       prefill.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
+      .appendFieldAndValue("type", "IFR")
       .appendFieldAndValue("tags", ndb.region);
       pos = ndb.position;
     }
@@ -250,11 +253,14 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapWaypoint& wp = result.waypoints.first();
       prefill.appendFieldAndValue("ident", wp.ident)
       .appendFieldAndValue("name", map::waypointText(wp))
+      .appendFieldAndValue("type", "IFR")
       .appendFieldAndValue("tags", wp.region);
       pos = wp.position;
     }
+    else
+      prefill.appendFieldAndValue("type", UserdataDialog::DEFAULT_TYPE);
 
-    prefill.appendFieldAndValue("altitude", pos.getAltitude()).appendFieldAndValue("type", "Bookmark");
+    prefill.appendFieldAndValue("altitude", pos.getAltitude());
 
     addUserpointInternal(-1, pos, prefill);
   }

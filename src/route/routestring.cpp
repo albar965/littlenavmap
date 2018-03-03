@@ -321,7 +321,9 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
         if(userWpt && lastIndex > 0)
           retval.append(coords::toGfpFormat(lastPos));
         else
-          retval.append(lastId + (gfpCoords && lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
+          retval.append(lastId +
+                        (gfpCoords &&
+                         lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
           // Add runway after departure
@@ -344,7 +346,9 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
         if(userWpt && lastIndex > 0)
           retval.append(coords::toGfpFormat(lastPos));
         else
-          retval.append(lastId + (gfpCoords && lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
+          retval.append(lastId +
+                        (gfpCoords &&
+                         lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         retval.append(airway);
       }
@@ -527,7 +531,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       {
         // User entries are always a perfect match
         // Convert a coordinate to a user defined waypoint
-        entryBuilder->buildFlightplanEntry(result.userPointsRoute.first().position, result, entry, true);
+        entryBuilder->buildFlightplanEntry(result.userPointsRoute.first().position, result, entry, true, map::NONE);
 
         // Use the original string as name but limit it for fs
         entry.setWaypointId(item);

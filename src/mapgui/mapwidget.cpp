@@ -1994,6 +1994,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = ndb->id;
         type = map::NDB;
       }
+      else if(userpoint != nullptr)
+      {
+        id = userpoint->id;
+        type = map::USERPOINT;
+      }
       else if(waypoint != nullptr)
       {
         id = waypoint->id;

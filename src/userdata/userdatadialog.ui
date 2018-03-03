@@ -154,21 +154,20 @@ Will be used as two letter ICAO region code when exporting to X-Plane &quot;user
      <item row="9" column="2">
       <widget class="QLineEdit" name="lineEditUserdataLatLon">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;Recognized coordinate formats:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Degrees, minutes and seconds : N49° 26' 41.57&quot; E9° 12' 5.49&quot; or 49° 26' 41.57&quot; N 9° 12' 5.49&quot; E&lt;/li&gt;
-&lt;li&gt;Degrees and minutes: N54* 16.82' W008* 35.95', N 52 33.58 E 13 17.26 or 49° 26.69' N 9° 12.09' E&lt;/li&gt;
-&lt;li&gt;Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°&lt;/li&gt;
-&lt;li&gt;Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502&lt;/li&gt;
-&lt;li&gt;Degrees only 46N078W&lt;/li&gt;
-&lt;li&gt;Degrees and minutes 4620N07805W&lt;/li&gt;
-&lt;li&gt;Degrees, minutes and seconds 481200N0112842E (Skyvector)&lt;/li&gt;
-&lt;li&gt;Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&lt;/li&gt;
-&lt;li&gt;NAT type 5020N&lt;/li&gt;
-&lt;/ul&gt;
+        <string>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26' 41.57&quot; E9° 12' 5.49&quot; or 49° 26' 41.57&quot; N 9° 12' 5.49&quot; E
+- Degrees and minutes: N54* 16.82' W008* 35.95', N 52 33.58 E 13 17.26 or 49° 26.69' N 9° 12.09' E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
+Degree, minute and second signs can be omitted for above formats. Latitude has to be first value. N/S and E/W designators are required.
 
-&lt;/body&gt;&lt;/html&gt;</string>
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000
+- NAT type 5020N 
+Formats above have to be given exactly as shown
+</string>
        </property>
       </widget>
      </item>

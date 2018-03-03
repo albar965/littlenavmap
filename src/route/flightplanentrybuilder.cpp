@@ -20,6 +20,7 @@
 #include "common/proctypes.h"
 #include "fs/pln/flightplan.h"
 #include "fs/pln/flightplanentry.h"
+#include "fs/util/fsutil.h"
 #include "query/mapquery.h"
 #include "navapp.h"
 
@@ -60,6 +61,20 @@ void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, F
   entry.setIcaoIdent(QString());
   entry.setWaypointId("WP" + QString::number(curUserpointNumber++));
   entry.setMagvar(NavApp::getMagVar(userPos));
+}
+
+/* create a flight plan entry from userpoint */
+void FlightplanEntryBuilder::entryFromUserpoint(const map::MapUserpoint& userpoint, FlightplanEntry& entry)
+{
+  entry.setPosition(userpoint.position);
+  entry.setWaypointType(atools::fs::pln::entry::USER);
+
+  if(!userpoint.ident.isEmpty())
+    entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(userpoint.ident, 10));
+  else
+    entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(userpoint.name, 10));
+
+  entry.setMagvar(NavApp::getMagVar(userpoint.position));
 }
 
 void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntry& entry) const
@@ -170,14 +185,17 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
 
   if(moType == map::NONE)
   {
-    if(!result.airports.isEmpty())
+    // Determine type if not given
+    if(result.hasAirports())
       moType = map::AIRPORT;
-    else if(!result.waypoints.isEmpty())
+    else if(result.hasWaypoints())
       moType = map::WAYPOINT;
-    else if(!result.vors.isEmpty())
+    else if(result.hasVor())
       moType = map::VOR;
-    else if(!result.ndbs.isEmpty())
+    else if(result.hasNdb())
       moType = map::NDB;
+    else if(result.hasUserpoints())
+      moType = map::USERPOINT;
     else if(userPos.isValid())
       moType = map::USERPOINTROUTE;
   }
@@ -190,6 +208,8 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
     entryFromVor(result.vors.first(), entry);
   else if(moType == map::NDB)
     entryFromNdb(result.ndbs.first(), entry);
+  else if(moType == map::USERPOINT)
+    entryFromUserpoint(result.userpoints.first(), entry);
   else if(moType == map::USERPOINTROUTE)
     entryFromUserPos(userPos, entry);
   else
@@ -200,7 +220,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapSearchResult& re
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
-  buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints);
+  buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints, map::NONE);
 }
 
 void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& leg,

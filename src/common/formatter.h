@@ -24,6 +24,9 @@ class QElapsedTimer;
 
 namespace formatter {
 
+/* Checks if the lat long coordinate string is valid and returns an error message or a message for validity checking*/
+bool checkCoordinates(QString& message, const QString& text);
+
 /* Capitalize the string using exceptions for any aviation acronyms */
 QString capNavString(const QString& str);
 

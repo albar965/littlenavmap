@@ -6,25 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>222</width>
-    <height>88</height>
+    <width>331</width>
+    <height>130</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Edit User Waypoint Name</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <widget class="QLabel" name="labelRouteUserWaypoint">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypointLatLon">
      <property name="text">
-      <string>Enter name for user waypoint:</string>
+      <string>&amp;Latitude and Longitude:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRouteUserWaypointLatLon</cstring>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QLineEdit" name="lineEditRouteUserWaypoint"/>
-   </item>
-   <item>
+   <item row="5" column="1">
     <widget class="QDialogButtonBox" name="buttonBoxRouteUserWaypoint">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -34,8 +34,48 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="lineEditRouteUserWaypoint"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEditRouteUserWaypointLatLon"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelRouteUserWaypoint">
+     <property name="text">
+      <string>&amp;Name of user waypoint:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRouteUserWaypoint</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="labelRouteUserWaypointCoordStatus">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditRouteUserWaypoint</tabstop>
+  <tabstop>lineEditRouteUserWaypointLatLon</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

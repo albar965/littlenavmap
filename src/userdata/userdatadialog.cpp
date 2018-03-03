@@ -21,6 +21,7 @@
 #include "sql/sqlrecord.h"
 #include "geo/pos.h"
 #include "common/constants.h"
+#include "common/formatter.h"
 #include "gui/mainwindow.h"
 #include "fs/util/coordinates.h"
 #include "common/unit.h"
@@ -30,6 +31,8 @@
 
 #include <QPushButton>
 #include <QDateTime>
+
+const QLatin1Literal UserdataDialog::DEFAULT_TYPE("Bookmark");
 
 UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons) :
   QDialog(parent), editMode(mode), ui(new Ui::UserdataDialog), icons(userdataIcons)
@@ -50,7 +53,10 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
     if(mode == ud::EDIT_ONE)
       setWindowTitle(QApplication::applicationName() + tr(" - Edit Userpoint"));
     else if(mode == ud::ADD)
+    {
       setWindowTitle(QApplication::applicationName() + tr(" - Add Userpoint"));
+      ui->comboBoxUserdataType->setCurrentText(DEFAULT_TYPE);
+    }
   }
   else if(mode == ud::EDIT_MULTIPLE)
   {
@@ -109,21 +115,12 @@ UserdataDialog::~UserdataDialog()
 
 void UserdataDialog::coordsEdited(const QString& text)
 {
-  atools::geo::Pos pos = atools::fs::util::fromAnyFormat(text);
+  Q_UNUSED(text);
 
-  if(pos.isValid())
-  {
-    QString coords = Unit::coords(pos);
-    if(coords != text)
-      ui->labelUserdataCoordStatus->setText(tr("Coordinates are valid: %1").arg(coords));
-    else
-      // Same as in line edit. No need to show again
-      ui->labelUserdataCoordStatus->setText(tr("Coordinates are valid."));
-  }
-  else
-    // Show red warning
-    ui->labelUserdataCoordStatus->setText(tr(
-                                            "<span style=\"font-weight: bold; color: red;\">Coordinates are not valid.</span>"));
+  QString message;
+  bool valid = formatter::checkCoordinates(message, ui->lineEditUserdataLatLon->text());
+  ui->buttonBoxUserdata->button(QDialogButtonBox::Ok)->setEnabled(valid);
+  ui->labelUserdataCoordStatus->setText(message);
 }
 
 void UserdataDialog::helpClicked()
@@ -151,7 +148,7 @@ void UserdataDialog::resetClicked()
   if(editMode == ud::ADD)
   {
     // Clear all except coordinates
-    ui->comboBoxUserdataType->setCurrentIndex(0);
+    ui->comboBoxUserdataType->setCurrentIndex(ui->comboBoxUserdataType->findText(DEFAULT_TYPE));
     ui->lineEditUserdataIdent->clear();
     ui->lineEditUserdataName->clear();
     ui->lineEditUserdataTags->clear();
@@ -160,25 +157,21 @@ void UserdataDialog::resetClicked()
     ui->textEditUserdataDescription->clear();
   }
   else if(editMode == ud::EDIT_MULTIPLE || editMode == ud::EDIT_ONE)
-  {
     recordToDialog();
-    qDebug() << Q_FUNC_INFO << *record;
-  }
-  // ui->lineEditUserdataLatLon->clear();
 }
 
 void UserdataDialog::acceptClicked()
 {
   // Copy widget data to record
   dialogToRecord();
-  qDebug() << *record;
+  qDebug() << Q_FUNC_INFO << record;
 
   QDialog::accept();
 }
 
 void UserdataDialog::setRecord(const atools::sql::SqlRecord& sqlRecord)
 {
-  qDebug() << sqlRecord;
+  qDebug() << Q_FUNC_INFO << sqlRecord;
 
   *record = sqlRecord;
 
@@ -188,8 +181,6 @@ void UserdataDialog::setRecord(const atools::sql::SqlRecord& sqlRecord)
 
 void UserdataDialog::updateWidgets()
 {
-  qDebug() << Q_FUNC_INFO;
-
   if(editMode == ud::EDIT_MULTIPLE)
   {
     // Enable or disable edit widgets depending in check box status
@@ -235,19 +226,7 @@ void UserdataDialog::recordToDialog()
   if(!record->isNull("lonx") && !record->isNull("laty"))
     ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
                                                                       record->valueFloat("laty"))));
-
-#ifdef DEBUG_INFORMATION_DISABLED
-  if(editMode == ud::ADD)
-  {
-    ui->lineEditUserdataIdent->setText(QString("TEST%1").arg(qrand() / (RAND_MAX / 100)));
-    ui->lineEditUserdataName->setText(QString("Test name %1").arg(qrand()));
-    ui->textEditUserdataDescription->setText(QString("Test description %1").arg(qrand()));
-    ui->comboBoxUserdataType->setCurrentText("TST");
-    // ui->lineEditUserdataLatLon->setText("E9° 12' 5.49\" N49° 26' 41.57\"");
-    ui->lineEditUserdataLatLon->setText("N49° 26' 41.57\" E9° 12' 5.49\"");
-  }
-#endif
-
+  coordsEdited(QString());
 }
 
 void UserdataDialog::dialogToRecord()
@@ -334,6 +313,11 @@ void UserdataDialog::fillTypeComboBox(const QString& type)
   if(index != -1)
     // Current type does match - set index
     ui->comboBoxUserdataType->setCurrentIndex(index);
+  else if(type.isEmpty())
+  {
+    // Current type does not match - add to list and set default icon
+    ui->comboBoxUserdataType->setCurrentIndex(ui->comboBoxUserdataType->findText(DEFAULT_TYPE));
+  }
   else
   {
     // Current type does not match - add to list and set default icon

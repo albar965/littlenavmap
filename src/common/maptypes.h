@@ -689,6 +689,11 @@ struct MapSearchResult
     return !ndbs.isEmpty();
   }
 
+  bool hasUserpoints() const
+  {
+    return !userpoints.isEmpty();
+  }
+
   bool hasIls() const
   {
     return !ils.isEmpty();
