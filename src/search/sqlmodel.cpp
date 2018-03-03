@@ -498,7 +498,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       hasNonOverride = true;
   }
 
-  if(!hasNonOverride)
+  if(!hasNonOverride && !boundingRect.isValid())
     overrideColumns.clear();
 
   overrideModeActive = !overrideColumns.isEmpty();
