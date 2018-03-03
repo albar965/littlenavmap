@@ -84,7 +84,7 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
   }
 });
 
-const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG = 3.f;
+const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG = 6.f;
 const double MIN_ZOOM_FOR_CENTER_LEG = 4.;
 
 using namespace Marble;
