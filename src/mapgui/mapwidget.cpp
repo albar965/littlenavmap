@@ -944,6 +944,13 @@ void MapWidget::routeAltitudeChanged(float altitudeFeet)
   update();
 }
 
+bool MapWidget::isCenterLegAndAircraftActive()
+{
+  const Route& route = NavApp::getRoute();
+  return OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM &&
+         !route.isEmpty() && route.isActiveValid() && screenIndex->getUserAircraft().isFlying();
+}
+
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   const atools::fs::sc::SimConnectUserAircraft& ac = simulatorData.getUserAircraft();
@@ -1022,8 +1029,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
       // Check if centering of leg is reqired
       const Route& route = NavApp::getRoute();
-      bool centerAircraftAndLeg = od.getFlags2() & opts::ROUTE_AUTOZOOM &&
-                                  !route.isEmpty() && route.isActiveValid() && !ac.isOnGround();
+      bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
       // Get position of next waypoint
       Pos nextWp;
@@ -2166,8 +2172,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     }
   }
 
-  if(e->type() == QEvent::Wheel &&
-     (jumpBackToAircraftActive || OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM))
+  if(e->type() == QEvent::Wheel && (jumpBackToAircraftActive || isCenterLegAndAircraftActive()))
     // Only delay if already active. Allow zooming and jumpback if autozoom is on
     jumpBackToAircraftStart();
 

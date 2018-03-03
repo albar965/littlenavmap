@@ -391,6 +391,7 @@ private:
 
   void jumpBackToAircraftTimeout();
   void jumpBackToAircraftStart();
+  bool isCenterLegAndAircraftActive();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
