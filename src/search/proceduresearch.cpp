@@ -490,9 +490,9 @@ void ProcedureSearch::fillApproachTreeWidget()
           // Transitions for this approach
           for(const SqlRecord& recTrans : *recTransVector)
           {
+            // Also add runway from parent approach to transition
             itemIndex.append({MapProcedureRef(currentAirportNav.id, runwayEndId, apprId,
-                                              recTrans.valueInt("transition_id"), -1, type), {}
-                             });
+                                              recTrans.valueInt("transition_id"), -1, type), sidStarRunways});
             buildTransitionItem(apprItem, recTrans,
                                 type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
           }

@@ -1838,7 +1838,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     {
       const proc::MapProcedureLegs *legs = getTransitionLegs(departure, sidTransId);
       if(legs != nullptr)
+      {
         departureLegs = *legs;
+        // Assign runway to the legs copy if procedure has parallel or all runway reference
+        insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
+      }
       else
         qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidTransId;
     }
@@ -1876,7 +1880,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     {
       const proc::MapProcedureLegs *legs = getTransitionLegs(destination, starTransId);
       if(legs != nullptr)
+      {
         starLegs = *legs;
+        // Assign runway if procedure has parallel or all runway reference
+        insertSidStarRunway(starLegs, properties.value(pln::STARRW));
+      }
       else
         qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starTransId;
     }
