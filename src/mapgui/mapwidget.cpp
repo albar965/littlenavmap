@@ -2166,8 +2166,9 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     }
   }
 
-  if(e->type() == QEvent::Wheel && jumpBackToAircraftActive)
-    // Only delay if already active
+  if(e->type() == QEvent::Wheel &&
+     (jumpBackToAircraftActive || OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM))
+    // Only delay if already active. Allow zooming and jumpback if autozoom is on
     jumpBackToAircraftStart();
 
   if(e->type() == QEvent::MouseButtonDblClick)
