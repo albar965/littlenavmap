@@ -153,6 +153,9 @@ const QLatin1Literal APPROACHTREE_STATE("ApproachTree/TreeState");
 const QLatin1Literal APPROACHTREE_AIRPORT("ApproachTree/Airport");
 const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
+/* Export settings dialog */
+const QLatin1Literal USERDATA_EXPORT_DIALOG("UserdataExport/Widget");
+
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1Literal OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
@@ -206,9 +209,10 @@ const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
 
-const QLatin1Literal FILE_PATTERN_CSV("(*.csv)");
+const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
+const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml)");
 #else
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
@@ -225,9 +229,10 @@ const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
 
-const QLatin1Literal FILE_PATTERN_CSV("(*.csv *.Csv *.CSV)");
+const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv *.Csv *.CSV)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
+const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml *.Xml *.XML)");
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 

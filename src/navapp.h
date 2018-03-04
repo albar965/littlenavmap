@@ -41,6 +41,7 @@ class QSplashScreen;
 class UpdateHandler;
 class UserdataController;
 class UserdataIcons;
+class UserdataSearch;
 
 namespace atools {
 
@@ -136,6 +137,7 @@ public:
 
   static atools::fs::userdata::UserdataManager *getUserdataManager();
   static UserdataIcons *getUserdataIcons();
+  static UserdataSearch *getUserdataSearch();
 
   static atools::sql::SqlDatabase *getDatabaseUser();
 

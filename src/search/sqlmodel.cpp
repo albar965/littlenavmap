@@ -587,6 +587,11 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
   return val;
 }
 
+void SqlModel::refreshData()
+{
+  buildQuery();
+}
+
 void SqlModel::resetSqlQuery()
 {
   QSqlQueryModel::setQuery(currentSqlQuery, db->getQSqlDatabase());

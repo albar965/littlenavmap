@@ -31,6 +31,7 @@
 #include "fs/common/magdecreader.h"
 #include "common/updatehandler.h"
 #include "userdata/userdatacontroller.h"
+#include "search/searchcontroller.h"
 
 #include "ui_mainwindow.h"
 
@@ -88,6 +89,9 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
+
+  // Need to set this later to avoid circular database dependency
+  userdataController->setMagDecReader(magDecReader);
 
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(),
                           databaseManager->getDatabaseNav(), databaseManager->getDatabaseUser());
@@ -327,6 +331,11 @@ atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()
 UserdataIcons *NavApp::getUserdataIcons()
 {
   return userdataController->getUserdataIcons();
+}
+
+UserdataSearch *NavApp::getUserdataSearch()
+{
+  return mainWindow->getSearchController()->getUserdataSearch();
 }
 
 UserdataController *NavApp::getUserdataController()

@@ -84,8 +84,6 @@ private:
   /* Add button */
   void addUserpointTriggered();
 
-  QVector<int> selectedMapObjectIds() const;
-
   /* All layouts, lines and drop down menu items */
   QList<QObject *> userdataSearchWidgets;
 

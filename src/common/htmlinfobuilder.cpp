@@ -1416,62 +1416,66 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
 
 void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const
 {
-  QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
-  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
-  html.nbsp().nbsp();
+  atools::sql::SqlRecord rec = NavApp::getUserdataManager()->getRecord(userpoint.id);
 
-  atools::sql::SqlRecord rec = NavApp::getUserdataManager()->record(userpoint.id);
-
-  navaidTitle(html, tr("Userpoint"));
-
-  if(info)
+  // Check if userpoint still exists since it can be deleted in the background
+  if(!rec.isEmpty())
   {
-    // Add map link if not tooltip
+    QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
+    html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
     html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), atools::util::html::LINK_NO_UL);
-    html.br();
-  }
 
-  html.table();
-  // Be cautious with user defined data and adapt it for HTML display
-  html.row2If(tr("Type:"), adjustText(userpoint.type), atools::util::html::NO_ENTITIES);
-  html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
-  html.row2If(tr("Name:"), adjustText(userpoint.name), atools::util::html::NO_ENTITIES);
-  html.row2If(tr("Description:"), adjustText(userpoint.description), atools::util::html::NO_ENTITIES);
-  html.row2If(tr("Tags:"), adjustText(userpoint.tags), atools::util::html::NO_ENTITIES);
-  if(!rec.isNull("altitude"))
-    html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));
+    navaidTitle(html, tr("Userpoint"));
 
-  if(info)
-    addCoordinates(userpoint.position, html);
-  html.tableEnd();
+    if(info)
+    {
+      // Add map link if not tooltip
+      html.nbsp().nbsp();
+      html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
+             arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), atools::util::html::LINK_NO_UL);
+      html.br();
+    }
 
-  if(info)
-  {
-    html.br();
     html.table();
-    if(!rec.isNull("visible_from"))
-      html.row2If(tr("Visible from :"), Unit::distNm(rec.valueFloat("visible_from")));
+    // Be cautious with user defined data and adapt it for HTML display
+    html.row2If(tr("Type:"), adjustText(userpoint.type), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Name:"), adjustText(userpoint.name), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Description:"), adjustText(userpoint.description), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Tags:"), adjustText(userpoint.tags), atools::util::html::NO_ENTITIES);
+    if(!rec.isNull("altitude"))
+      html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));
 
-    html.row2(tr("Last Edit:"), rec.value("last_edit_timestamp").toDateTime().toString());
-    if(!rec.isNull("import_timestamp"))
-      html.row2(tr("Imported:"), rec.value("import_timestamp").toDateTime().toString());
+    if(info)
+      addCoordinates(userpoint.position, html);
     html.tableEnd();
-  }
 
-  if(info && !rec.isNull("import_file_path"))
-  {
-    head(html, tr("File"));
-    html.table();
-    html.row2(tr("Imported from:"), filepathText(rec.valueStr("import_file_path")),
-              atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-    html.tableEnd();
-  }
+    if(info)
+    {
+      html.br();
+      html.table();
+      if(!rec.isNull("visible_from"))
+        html.row2If(tr("Visible from :"), Unit::distNm(rec.valueFloat("visible_from")));
+
+      html.row2(tr("Last Change:"), rec.value("last_edit_timestamp").toDateTime().toString());
+      html.tableEnd();
+    }
+
+    if(info && !rec.isNull("import_file_path"))
+    {
+      head(html, tr("File"));
+      html.table();
+      html.row2(tr("Imported from:"), filepathText(rec.valueStr("import_file_path")),
+                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+      html.tableEnd();
+    }
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).pEnd();
+    html.p().small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).pEnd();
 #endif
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Empty record";
 }
 
 void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background) const

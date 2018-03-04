@@ -160,6 +160,9 @@ public:
     return overrideModeActive;
   }
 
+  /* Update model after data change */
+  void refreshData();
+
 signals:
   /* Emitted when more data was fetched */
   void fetchedMore();

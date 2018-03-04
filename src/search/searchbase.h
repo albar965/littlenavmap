@@ -106,6 +106,18 @@ public:
   /* Refresh table after updates in the database */
   void refreshData();
 
+  /* Number of rows currently loaded into the table view */
+  int getVisibleRowCount() const;
+
+  /* Total number of rows returned by the last query */
+  int getTotalRowCount() const;
+
+  /* Number of selected rows */
+  int getSelectedRowCount() const;
+
+  /* Get ids of all selected objects */
+  QVector<int> getSelectedIds() const;
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

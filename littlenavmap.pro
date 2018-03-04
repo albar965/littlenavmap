@@ -215,7 +215,8 @@ SOURCES += src/main.cpp\
     src/userdata/userdatacontroller.cpp \
     src/userdata/userdatadialog.cpp \
     src/userdata/userdataicons.cpp \
-    src/mapgui/mappainteruser.cpp
+    src/mapgui/mappainteruser.cpp \
+    src/userdata/userdataexportdialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -307,7 +308,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/userdata/userdatacontroller.h \
     src/userdata/userdatadialog.h \
     src/userdata/userdataicons.h \
-    src/mapgui/mappainteruser.h
+    src/mapgui/mappainteruser.h \
+    src/userdata/userdataexportdialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -319,7 +321,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/route/userwaypointdialog.ui \
     src/db/databaseerrordialog.ui \
     src/gui/updatedialog.ui \
-    src/userdata/userdatadialog.ui
+    src/userdata/userdatadialog.ui \
+    src/userdata/userdataexportdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

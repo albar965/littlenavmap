@@ -242,8 +242,6 @@ void UserdataDialog::dialogToRecord()
     // Fields that will never be updated when editing
     if(record->contains("import_file_path"))
       record->remove("import_file_path");
-    if(record->contains("import_timestamp"))
-      record->remove("import_timestamp");
     if(record->contains("userdata_id"))
       record->remove("userdata_id");
 

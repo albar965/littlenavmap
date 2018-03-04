@@ -75,8 +75,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
 
-  append(Column("last_edit_timestamp", tr("Last Edit"))).
-  append(Column("import_timestamp", tr("Imported"))).
+  append(Column("last_edit_timestamp", tr("Last Change"))).
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("import_file_path", ui->lineEditUserdataFilepath, tr("Imported\nfrom File")).filter()).
@@ -170,18 +169,18 @@ void UserdataSearch::connectSearchSlots()
 
 void UserdataSearch::addUserpointTriggered()
 {
-  QVector<int> ids = selectedMapObjectIds();
+  QVector<int> ids = getSelectedIds();
   emit addUserpoint(ids.isEmpty() ? -1 : ids.first(), atools::geo::EMPTY_POS);
 }
 
 void UserdataSearch::editUserpointsTriggered()
 {
-  emit editUserpoints(selectedMapObjectIds());
+  emit editUserpoints(getSelectedIds());
 }
 
 void UserdataSearch::deleteUserpointsTriggered()
 {
-  emit deleteUserpoints(selectedMapObjectIds());
+  emit deleteUserpoints(getSelectedIds());
 }
 
 void UserdataSearch::saveState()
@@ -264,7 +263,7 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   if(col->getColumnName() == "altitude")
     return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
            Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
-  else if(col->getColumnName() == "import_timestamp" || col->getColumnName() == "last_edit_timestamp")
+  else if(col->getColumnName() == "last_edit_timestamp")
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
     return QLocale().toString(displayRoleValue.toInt());
@@ -302,32 +301,6 @@ void UserdataSearch::getSelectedMapObjects(map::MapSearchResult& result) const
       }
     }
   }
-}
-
-QVector<int> UserdataSearch::selectedMapObjectIds() const
-{
-  QVector<int> retval;
-
-  if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
-    return retval;
-
-  // Build a SQL record with all available fields
-  atools::sql::SqlRecord rec;
-  controller->initRecord(rec);
-
-  const QItemSelection& selection = controller->getSelection();
-  for(const QItemSelectionRange& rng :  selection)
-  {
-    for(int row = rng.top(); row <= rng.bottom(); ++row)
-    {
-      if(controller->hasRow(row))
-      {
-        controller->fillRecord(row, rec);
-        retval.append(rec.valueInt("userdata_id"));
-      }
-    }
-  }
-  return retval;
 }
 
 void UserdataSearch::postDatabaseLoad()

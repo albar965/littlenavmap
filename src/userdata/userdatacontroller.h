@@ -35,8 +35,12 @@ class ErrorHandler;
 class HelpHandler;
 }
 namespace fs {
+namespace common {
+class MagDecReader;
+}
 namespace userdata {
 class UserdataManager;
+
 }
 }
 }
@@ -79,15 +83,15 @@ public:
   void exportCsv();
 
   /* Import and export user_fix.dat file from X-Plane */
-  void importUserFixDat();
-  void exportUserFixDat();
+  void importXplaneUserFixDat();
+  void exportXplaneUserFixDat();
 
   /* Import and export Garmin GTN user waypoint database */
   void importGarmin();
   void exportGarmin();
 
   /* Export waypoints into a XML file for BGL compilation */
-  void exportBgl();
+  void exportBglXml();
 
   /* Remove all data but keep the schema to avoid locks */
   void  clearDatabase();
@@ -134,6 +138,9 @@ public:
   void deleteUserpointFromMap(int id);
   void moveUserpointFromMap(const map::MapUserpoint& userpoint);
 
+  /* Needed for export */
+  void setMagDecReader(atools::fs::common::MagDecReader *magDecReader);
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch();
@@ -149,6 +156,7 @@ private:
   void typesToActions();
   void actionsToTypes();
   void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefill);
+  bool exportSelectedQuestion(bool& exportSelected, bool& append, bool appendAllowed);
 
   /* Currently in actions selected types */
   QStringList selectedTypes;
@@ -164,6 +172,12 @@ private:
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionUnknown = nullptr;
   QVector<QAction *> actions;
   atools::sql::SqlRecord *lastAddedRecord = nullptr;
+
+  /* Get default X-Plane path to user_fix.dat file */
+  QString xplaneUserWptDatPath();
+
+  /* Get default Garmin GTN export path */
+  QString garminGtnUserWptPath();
 
 };
 

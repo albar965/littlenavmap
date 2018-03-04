@@ -745,14 +745,16 @@ void MainWindow::connectAllSlots()
   connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController,
           &UserdataController::importGarmin);
   connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController,
-          &UserdataController::importUserFixDat);
+          &UserdataController::importXplaneUserFixDat);
 
   // Export ================
   connect(ui->actionUserdataExportCSV, &QAction::triggered, userdataController, &UserdataController::exportCsv);
   connect(ui->actionUserdataExportGarminGTN, &QAction::triggered, userdataController,
           &UserdataController::exportGarmin);
   connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController,
-          &UserdataController::exportUserFixDat);
+          &UserdataController::exportXplaneUserFixDat);
+  connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController,
+          &UserdataController::exportBglXml);
 
   connect(userdataController, &UserdataController::userdataChanged, infoController,
           &InfoController::updateAllInformation);

@@ -31,6 +31,7 @@
 #include "query/airportquery.h"
 #include "options/optiondata.h"
 #include "common/unit.h"
+#include "sql/sqlrecord.h"
 
 #include <QTimer>
 #include <QClipboard>
@@ -566,11 +567,51 @@ void SearchBaseTable::resetView()
 void SearchBaseTable::refreshData()
 {
   controller->refreshData();
+
+  tableSelectionChanged();
+}
+
+int SearchBaseTable::getVisibleRowCount() const
+{
+  return controller->getVisibleRowCount();
+}
+
+int SearchBaseTable::getTotalRowCount() const
+{
+  return controller->getTotalRowCount();
+}
+
+int SearchBaseTable::getSelectedRowCount() const
+{
+  QItemSelectionModel *sm = view->selectionModel();
+
+  int selectedRows = 0;
+  if(sm != nullptr && sm->hasSelection())
+    selectedRows = sm->selectedRows().size();
+
+  return selectedRows;
+}
+
+QVector<int> SearchBaseTable::getSelectedIds() const
+{
+  QVector<int> retval;
+
+  const QItemSelection& selection = controller->getSelection();
+  for(const QItemSelectionRange& rng :  selection)
+  {
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
+    {
+      if(controller->hasRow(row))
+        retval.append(controller->getRawData(row, columns->getIdColumnName()).toInt());
+    }
+  }
+  return retval;
 }
 
 void SearchBaseTable::resetSearch()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetSearch();

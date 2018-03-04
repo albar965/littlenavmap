@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "sql/sqlrecord.h"
 #include "navapp.h"
+#include "atools.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
@@ -28,9 +29,12 @@
 #include "userdata/userdataicons.h"
 #include "settings/settings.h"
 #include "options/optiondata.h"
+#include "search/userdatasearch.h"
 #include "common/maptypes.h"
+#include "userdata/userdataexportdialog.h"
 
 #include <QDebug>
+#include <QStandardPaths>
 
 UserdataController::UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent)
   : manager(userdataManager), mainWindow(parent)
@@ -219,7 +223,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
   else
   {
     // Prepare the dialog prefill data
-    atools::sql::SqlRecord prefill = manager->emptyRecord();
+    atools::sql::SqlRecord prefill = manager->getEmptyRecord();
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.first();
@@ -235,7 +239,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapVor& vor = result.vors.first();
       prefill.appendFieldAndValue("ident", vor.ident)
       .appendFieldAndValue("name", map::vorText(vor))
-      .appendFieldAndValue("type", "IFR")
+      .appendFieldAndValue("type", "WPT")
       .appendFieldAndValue("tags", vor.region);
       pos = vor.position;
     }
@@ -244,7 +248,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapNdb& ndb = result.ndbs.first();
       prefill.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
-      .appendFieldAndValue("type", "IFR")
+      .appendFieldAndValue("type", "WPT")
       .appendFieldAndValue("tags", ndb.region);
       pos = ndb.position;
     }
@@ -253,7 +257,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapWaypoint& wp = result.waypoints.first();
       prefill.appendFieldAndValue("ident", wp.ident)
       .appendFieldAndValue("name", map::waypointText(wp))
-      .appendFieldAndValue("type", "IFR")
+      .appendFieldAndValue("type", "WPT")
       .appendFieldAndValue("tags", wp.region);
       pos = wp.position;
     }
@@ -286,6 +290,11 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   mainWindow->setStatusMessage(tr("Userpoint moved."));
 }
 
+void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDecReader)
+{
+  manager->setMagDecReader(magDecReader);
+}
+
 void UserdataController::editUserpointFromMap(const map::MapSearchResult& result)
 {
   qDebug() << Q_FUNC_INFO;
@@ -306,7 +315,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
 
   if(id != -1 /*&& lastAddedRecord->isEmpty()*/)
     // Get prefill from given database id
-    rec = manager->record(id);
+    rec = manager->getRecord(id);
   else
     // Use last added dataset
     rec = *lastAddedRecord;
@@ -317,7 +326,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
 
   if(rec.isEmpty())
     // Otherwise fill nothing
-    rec = manager->emptyRecord();
+    rec = manager->getEmptyRecord();
 
   if(pos.isValid())
     // Take coordinates for prefill if given
@@ -344,7 +353,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::sql::SqlRecord rec = manager->record(ids.first());
+  atools::sql::SqlRecord rec = manager->getRecord(ids.first());
   if(!rec.isEmpty())
   {
     UserdataDialog dlg(mainWindow, ids.size() > 1 ? ud::EDIT_MULTIPLE : ud::EDIT_ONE, icons);
@@ -390,52 +399,156 @@ void UserdataController::importCsv()
 
   QStringList files = dialog->openFileDialogMulti(
     tr("Open Userpoint CSV File(s)"),
-    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), "Userdata/Csv");
+    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
 
+  int numImported = 0;
   for(const QString& file:files)
   {
     if(!file.isEmpty())
-      manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
+      numImported += manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
   }
 
   if(!files.isEmpty())
+  {
+    mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
     emit refreshUserdataSearch();
+  }
 }
 
-void UserdataController::exportCsv()
+void UserdataController::importXplaneUserFixDat()
 {
   qDebug() << Q_FUNC_INFO;
 
-}
+  QString file = dialog->openFileDialog(
+    tr("Open X-Plane user_fix.dat File"),
+    tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT), "Userdata/UserFixDat",
+    xplaneUserWptDatPath());
 
-void UserdataController::importUserFixDat()
-{
-  qDebug() << Q_FUNC_INFO;
-
-}
-
-void UserdataController::exportUserFixDat()
-{
-  qDebug() << Q_FUNC_INFO;
-
+  if(!file.isEmpty())
+  {
+    int numImported = manager->importXplane(file);
+    mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+    emit refreshUserdataSearch();
+  }
 }
 
 void UserdataController::importGarmin()
 {
   qDebug() << Q_FUNC_INFO;
 
+  QString file = dialog->openFileDialog(
+    tr("Open Garmin User Waypoint File"),
+    tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT), "Userdata/UserWptDat",
+    garminGtnUserWptPath());
+
+  if(!file.isEmpty())
+  {
+    int numImported = manager->importGarmin(file);
+    mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+    emit refreshUserdataSearch();
+  }
+}
+
+void UserdataController::exportCsv()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  bool exportSelected, append;
+  if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+  {
+    QString file = dialog->saveFileDialog(
+      tr("Export Userpoint CSV File"),
+      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
+      ".csv",
+      "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
+
+    if(!file.isEmpty())
+    {
+      QVector<int> ids;
+      if(!exportSelected)
+        ids = NavApp::getUserdataSearch()->getSelectedIds();
+      int numExported =
+        manager->exportCsv(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE, ',', '"');
+      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+    }
+  }
+}
+
+void UserdataController::exportXplaneUserFixDat()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  bool exportSelected, append;
+  if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+  {
+    QString file = dialog->saveFileDialog(
+      tr("Export X-Plane user_fix.dat File"),
+      tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT),
+      ".dat",
+      "Userdata/UserFixDat",
+      xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
+
+    if(!file.isEmpty())
+    {
+      QVector<int> ids;
+      if(!exportSelected)
+        ids = NavApp::getUserdataSearch()->getSelectedIds();
+      int numExported =
+        manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+    }
+  }
 }
 
 void UserdataController::exportGarmin()
 {
   qDebug() << Q_FUNC_INFO;
 
+  bool exportSelected, append;
+  if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+  {
+    QString file = dialog->saveFileDialog(
+      tr("Export Garmin User Waypoint File"),
+      tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT),
+      ".dat",
+      "Userdata/UserWptDat",
+      xplaneUserWptDatPath(), "user.wpt", append /* dont confirm overwrite */);
+
+    if(!file.isEmpty())
+    {
+      QVector<int> ids;
+      if(!exportSelected)
+        ids = NavApp::getUserdataSearch()->getSelectedIds();
+      int numExported =
+        manager->exportGarmin(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+    }
+  }
 }
 
-void UserdataController::exportBgl()
+void UserdataController::exportBglXml()
 {
   qDebug() << Q_FUNC_INFO;
 
+  bool exportSelected, append;
+  if(exportSelectedQuestion(exportSelected, append, false /* append allowed */))
+  {
+    QString file = dialog->saveFileDialog(
+      tr("Export XML File for FSX/P3D BGL Compiler"),
+      tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BGL_XML),
+      ".xml",
+      "Userdata/BglXml");
+
+    if(!file.isEmpty())
+    {
+      QVector<int> ids;
+      if(!exportSelected)
+        ids = NavApp::getUserdataSearch()->getSelectedIds();
+      int numExported =
+        manager->exportBgl(file, ids);
+      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+    }
+  }
 }
 
 void UserdataController::clearDatabase()
@@ -451,4 +564,54 @@ void UserdataController::clearDatabase()
     manager->clearData();
     emit refreshUserdataSearch();
   }
+}
+
+QString UserdataController::xplaneUserWptDatPath()
+{
+  QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
+  if(xpBasePath.isEmpty())
+    xpBasePath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+  else
+    xpBasePath = atools::buildPathNoCase({xpBasePath, "Custom Data"});
+  return xpBasePath;
+}
+
+QString UserdataController::garminGtnUserWptPath()
+{
+  QString path;
+#ifdef Q_OS_WIN32
+  QString gtnPath(qgetenv("GTNSIMDATA"));
+  path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN" : gtnPath;
+#elif DEBUG_INFORMATION
+  path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+                            "Garmin", "Trainers", "GTN"});
+#else
+  path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+#endif
+  return path;
+}
+
+bool UserdataController::exportSelectedQuestion(bool& exportSelected, bool& append, bool appendAllowed)
+{
+  int numSelected = NavApp::getUserdataSearch()->getSelectedRowCount();
+
+  if(numSelected == 0 && !appendAllowed)
+    // nothing select and not append option - do not show dialog
+    return true;
+
+  UserdataExportDialog exportDialog(mainWindow,
+                                    numSelected == 0 /* disable export selected */,
+                                    false /* disable append */);
+  exportDialog.restoreState();
+  int retval = exportDialog.exec();
+
+  if(retval == QDialog::Accepted)
+  {
+    exportSelected = exportDialog.isExportSelected() && numSelected > 0;
+    append = exportDialog.isAppendToFile();
+    exportDialog.saveState();
+    return true;
+  }
+  else
+    return false;
 }

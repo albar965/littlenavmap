@@ -71,7 +71,7 @@ void SqlController::postDatabaseLoad()
 
 void SqlController::refreshData()
 {
-  model->resetSqlQuery();
+  model->refreshData();
 }
 
 void SqlController::filterIncluding(const QModelIndex& index)

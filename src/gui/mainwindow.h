@@ -156,6 +156,11 @@ public:
     databasesErased = value;
   }
 
+  SearchController *getSearchController() const
+  {
+    return searchController;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
