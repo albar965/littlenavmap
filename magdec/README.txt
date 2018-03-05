@@ -2,8 +2,9 @@ Files in this directory:
 
 === magdec.bgl
 
-A file containing the magnetic declination from 1/1/2017. This file is used only when loading X-Plane data
-to fill the missing declination values for airports, NDB, waypoints and ILS.
+A file containing the magnetic declination from around January 2018. This file is used when loading X-Plane data
+to fill the missing declination values for airports, NDB, waypoints and ILS. It is also used to calculate and
+display the declination in Little Navmap.
 
 The magnetic declination file from the simulator scenery will be used if loading scenery data for FSX/P3D.
 You can override this behavior by copying the included magdec.bgl from this directory to 
