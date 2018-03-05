@@ -492,7 +492,7 @@ struct MapUserpointRoute
 /* User defined waypoint from the user database */
 struct MapUserpoint
 {
-  QString name, ident, type, description, tags;
+  QString name, ident, region, type, description, tags;
   int id;
   atools::geo::Pos position;
 

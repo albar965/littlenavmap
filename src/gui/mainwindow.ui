@@ -2445,6 +2445,28 @@
             </widget>
            </item>
            <item>
+            <widget class="QLineEdit" name="lineEditUserdataRegion">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Two-letter code for ICAO region</string>
+             </property>
+             <property name="statusTip">
+              <string>Two-letter code for ICAO region</string>
+             </property>
+             <property name="placeholderText">
+              <string>Region</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLineEdit" name="lineEditUserdataType">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">

@@ -71,6 +71,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   append(Column("userdata_id").hidden()).
   append(Column("type", ui->lineEditUserdataType, tr("Type")).filter()).
   append(Column("ident", ui->lineEditUserdataIdent, tr("Ident")).filter().defaultSort()).
+  append(Column("region", ui->lineEditUserdataRegion, tr("Region")).filter()).
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
   append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).

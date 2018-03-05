@@ -1882,6 +1882,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         ui->tabWidgetSearch->setCurrentIndex(3);
         emit showInSearch(map::USERPOINT, SqlRecord().
                           appendFieldAndValue("ident", userpoint->ident).
+                          appendFieldAndValue("region", userpoint->region).
                           appendFieldAndValue("name", userpoint->name).
                           appendFieldAndValue("type", userpoint->type).
                           appendFieldAndValue("tags", userpoint->tags));

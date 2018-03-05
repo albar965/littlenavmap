@@ -231,7 +231,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       prefill.appendFieldAndValue("ident", ap.ident)
       .appendFieldAndValue("name", ap.name)
       .appendFieldAndValue("type", "Airport")
-      .appendFieldAndValue("tags", ap.region);
+      .appendFieldAndValue("region", ap.region);
       pos = ap.position;
     }
     else if(result.hasVor())
@@ -240,7 +240,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       prefill.appendFieldAndValue("ident", vor.ident)
       .appendFieldAndValue("name", map::vorText(vor))
       .appendFieldAndValue("type", "WPT")
-      .appendFieldAndValue("tags", vor.region);
+      .appendFieldAndValue("region", vor.region);
       pos = vor.position;
     }
     else if(result.hasNdb())
@@ -249,7 +249,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       prefill.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
       .appendFieldAndValue("type", "WPT")
-      .appendFieldAndValue("tags", ndb.region);
+      .appendFieldAndValue("region", ndb.region);
       pos = ndb.position;
     }
     else if(result.hasWaypoints())
@@ -258,7 +258,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       prefill.appendFieldAndValue("ident", wp.ident)
       .appendFieldAndValue("name", map::waypointText(wp))
       .appendFieldAndValue("type", "WPT")
-      .appendFieldAndValue("tags", wp.region);
+      .appendFieldAndValue("region", wp.region);
       pos = wp.position;
     }
     else
@@ -465,10 +465,10 @@ void UserdataController::exportCsv()
     if(!file.isEmpty())
     {
       QVector<int> ids;
-      if(!exportSelected)
+      if(exportSelected)
         ids = NavApp::getUserdataSearch()->getSelectedIds();
       int numExported =
-        manager->exportCsv(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE, ',', '"');
+        manager->exportCsv(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
       mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
     }
   }
@@ -491,7 +491,7 @@ void UserdataController::exportXplaneUserFixDat()
     if(!file.isEmpty())
     {
       QVector<int> ids;
-      if(!exportSelected)
+      if(exportSelected)
         ids = NavApp::getUserdataSearch()->getSelectedIds();
       int numExported =
         manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
@@ -517,7 +517,7 @@ void UserdataController::exportGarmin()
     if(!file.isEmpty())
     {
       QVector<int> ids;
-      if(!exportSelected)
+      if(exportSelected)
         ids = NavApp::getUserdataSearch()->getSelectedIds();
       int numExported =
         manager->exportGarmin(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
@@ -542,7 +542,7 @@ void UserdataController::exportBglXml()
     if(!file.isEmpty())
     {
       QVector<int> ids;
-      if(!exportSelected)
+      if(exportSelected)
         ids = NavApp::getUserdataSearch()->getSelectedIds();
       int numExported =
         manager->exportBgl(file, ids);
@@ -557,7 +557,11 @@ void UserdataController::clearDatabase()
 
   QMessageBox::StandardButton retval =
     QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Really delete all userpoints?\n\nThis cannot be undone."));
+                          tr("Really delete all userpoints?\n\n"
+                             "A backup will be created in\n"
+                             "\"%1\"\n"
+                             "before deleting.")
+                          .arg(atools::settings::Settings::instance().getPath()));
 
   if(retval == QMessageBox::Yes)
   {

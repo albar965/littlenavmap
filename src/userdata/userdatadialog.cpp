@@ -75,6 +75,7 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   ui->checkBoxUserdataAltitude->setVisible(showCheckbox);
   ui->checkBoxUserdataDescription->setVisible(showCheckbox);
   ui->checkBoxUserdataIdent->setVisible(showCheckbox);
+  ui->checkBoxUserdataRegion->setVisible(showCheckbox);
   ui->checkBoxUserdataName->setVisible(showCheckbox);
   ui->checkBoxUserdataTags->setVisible(showCheckbox);
   ui->checkBoxUserdataType->setVisible(showCheckbox);
@@ -90,6 +91,7 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   connect(ui->checkBoxUserdataAltitude, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataDescription, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataIdent, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
+  connect(ui->checkBoxUserdataRegion, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataName, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataTags, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
   connect(ui->checkBoxUserdataType, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
@@ -139,6 +141,7 @@ void UserdataDialog::resetClicked()
     ui->checkBoxUserdataAltitude->setChecked(false);
     ui->checkBoxUserdataDescription->setChecked(false);
     ui->checkBoxUserdataIdent->setChecked(false);
+    ui->checkBoxUserdataRegion->setChecked(false);
     ui->checkBoxUserdataName->setChecked(false);
     ui->checkBoxUserdataTags->setChecked(false);
     ui->checkBoxUserdataType->setChecked(false);
@@ -150,6 +153,7 @@ void UserdataDialog::resetClicked()
     // Clear all except coordinates
     ui->comboBoxUserdataType->setCurrentIndex(ui->comboBoxUserdataType->findText(DEFAULT_TYPE));
     ui->lineEditUserdataIdent->clear();
+    ui->lineEditUserdataRegion->clear();
     ui->lineEditUserdataName->clear();
     ui->lineEditUserdataTags->clear();
     ui->spinBoxUserdataAltitude->setValue(0.);
@@ -187,6 +191,7 @@ void UserdataDialog::updateWidgets()
     ui->spinBoxUserdataAltitude->setEnabled(ui->checkBoxUserdataAltitude->isChecked());
     ui->textEditUserdataDescription->setEnabled(ui->checkBoxUserdataDescription->isChecked());
     ui->lineEditUserdataIdent->setEnabled(ui->checkBoxUserdataIdent->isChecked());
+    ui->lineEditUserdataRegion->setEnabled(ui->checkBoxUserdataRegion->isChecked());
     ui->lineEditUserdataName->setEnabled(ui->checkBoxUserdataName->isChecked());
     ui->lineEditUserdataTags->setEnabled(ui->checkBoxUserdataTags->isChecked());
     ui->comboBoxUserdataType->setEnabled(ui->checkBoxUserdataType->isChecked());
@@ -196,7 +201,7 @@ void UserdataDialog::updateWidgets()
     ui->buttonBoxUserdata->button(QDialogButtonBox::Ok)->setEnabled(
       ui->checkBoxUserdataAltitude->isChecked() |
       ui->checkBoxUserdataDescription->isChecked() |
-      ui->checkBoxUserdataIdent->isChecked() |
+      ui->checkBoxUserdataRegion->isChecked() |
       ui->checkBoxUserdataName->isChecked() |
       ui->checkBoxUserdataTags->isChecked() |
       ui->checkBoxUserdataType->isChecked() |
@@ -213,6 +218,7 @@ void UserdataDialog::recordToDialog()
 
   ui->lineEditUserdataName->setText(record->valueStr("name"));
   ui->lineEditUserdataIdent->setText(record->valueStr("ident"));
+  ui->lineEditUserdataRegion->setText(record->valueStr("region"));
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
 
@@ -268,6 +274,11 @@ void UserdataDialog::dialogToRecord()
     record->setValue("ident", ui->lineEditUserdataIdent->text());
   else if(editMode == ud::EDIT_MULTIPLE)
     record->remove("ident");
+
+  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataRegion->isChecked())
+    record->setValue("region", ui->lineEditUserdataRegion->text());
+  else if(editMode == ud::EDIT_MULTIPLE)
+    record->remove("region");
 
   if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataDescription->isChecked())
     record->setValue("description", ui->textEditUserdataDescription->toPlainText());

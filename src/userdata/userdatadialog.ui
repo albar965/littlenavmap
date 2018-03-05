@@ -34,94 +34,7 @@
      <property name="spacing">
       <number>6</number>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelUserdataIdent">
-       <property name="text">
-        <string>&amp;Ident:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditUserdataIdent</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="labelUserdataLatLon">
-       <property name="text">
-        <string>&amp;Latitude and Longitude:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditUserdataLatLon</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="labelUserdataAltitude">
-       <property name="text">
-        <string>&amp;Elevation or altitude:</string>
-       </property>
-       <property name="buddy">
-        <cstring>spinBoxUserdataAltitude</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QLineEdit" name="lineEditUserdataTags">
-       <property name="toolTip">
-        <string>List of tags.
-Will be used as two letter ICAO region code when exporting to X-Plane &quot;user_fix.dat&quot; or FSX/P3D BGL-XML</string>
-       </property>
-       <property name="statusTip">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QCheckBox" name="checkBoxUserdataType">
-       <property name="toolTip">
-        <string>Check to change type for all selected waypoints</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="labelUserdataTags">
-       <property name="text">
-        <string>&amp;Tags or region:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditUserdataTags</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="3">
-      <widget class="QCheckBox" name="checkBoxUserdataTags">
-       <property name="toolTip">
-        <string>Check to change tags for all selected waypoints</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLineEdit" name="lineEditUserdataIdent">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin units.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="statusTip">
-        <string/>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="2">
+     <item row="12" column="2">
       <widget class="QLabel" name="labelUserdataCoordStatus">
        <property name="text">
         <string/>
@@ -131,7 +44,7 @@ Will be used as two letter ICAO region code when exporting to X-Plane &quot;user
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="labelUserdataDescription">
        <property name="text">
         <string>&amp;Description:</string>
@@ -141,7 +54,7 @@ Will be used as two letter ICAO region code when exporting to X-Plane &quot;user
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="labelUserdataName">
        <property name="text">
         <string>&amp;Name:</string>
@@ -151,7 +64,7 @@ Will be used as two letter ICAO region code when exporting to X-Plane &quot;user
        </property>
       </widget>
      </item>
-     <item row="9" column="2">
+     <item row="11" column="2">
       <widget class="QLineEdit" name="lineEditUserdataLatLon">
        <property name="toolTip">
         <string>Recognized coordinate formats:
@@ -171,17 +84,73 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelUserdataRegion">
+       <property name="text">
+        <string>&amp;Region:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditUserdataRegion</cstring>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="2">
+      <widget class="QComboBox" name="comboBoxUserdataType">
+       <property name="toolTip">
+        <string>Type which will determine the used icon</string>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="maxVisibleItems">
+        <number>20</number>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QTextEdit" name="textEditUserdataDescription">
+       <property name="tabChangesFocus">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="labelUserdataVisible">
+       <property name="text">
+        <string>&amp;Visible from:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxUserdataVisible</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelUserdataIdent">
+       <property name="text">
+        <string>&amp;Ident:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditUserdataIdent</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
       <widget class="QLineEdit" name="lineEditUserdataName"/>
      </item>
-     <item row="8" column="0" colspan="4">
+     <item row="10" column="0" colspan="4">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="7" column="2">
+     <item row="9" column="2">
       <widget class="QSpinBox" name="spinBoxUserdataAltitude">
        <property name="toolTip">
         <string>Elevation or altitude of this waypoint</string>
@@ -200,7 +169,7 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
-     <item row="3" column="3">
+     <item row="5" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataName">
        <property name="toolTip">
         <string>Check to change name for all selected waypoints</string>
@@ -210,7 +179,7 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="labelUserdataType">
        <property name="text">
         <string>&amp;Type:</string>
@@ -220,7 +189,7 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
-     <item row="4" column="3">
+     <item row="6" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataDescription">
        <property name="toolTip">
         <string>Check to change description for all selected waypoints</string>
@@ -230,7 +199,7 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
-     <item row="7" column="3">
+     <item row="9" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataAltitude">
        <property name="toolTip">
         <string>Check to change elevation for all selected waypoints</string>
@@ -240,7 +209,7 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
-     <item row="6" column="3">
+     <item row="8" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataVisible">
        <property name="toolTip">
         <string>Check to change visibility for all selected waypoints</string>
@@ -260,43 +229,93 @@ Formats above have to be given exactly as shown
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QComboBox" name="comboBoxUserdataType">
+     <item row="1" column="3">
+      <widget class="QCheckBox" name="checkBoxUserdataRegion">
        <property name="toolTip">
-        <string>Type which will determine the used icon</string>
+        <string>Check to change ident for all selected waypoints</string>
        </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="maxVisibleItems">
-        <number>20</number>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::NoInsert</enum>
-       </property>
-       <property name="frame">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
-      <widget class="QTextEdit" name="textEditUserdataDescription">
-       <property name="tabChangesFocus">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="labelUserdataVisible">
        <property name="text">
-        <string>&amp;Visible from:</string>
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QCheckBox" name="checkBoxUserdataType">
+       <property name="toolTip">
+        <string>Check to change type for all selected waypoints</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="labelUserdataTags">
+       <property name="text">
+        <string>&amp;Tags:</string>
        </property>
        <property name="buddy">
-        <cstring>spinBoxUserdataVisible</cstring>
+        <cstring>lineEditUserdataTags</cstring>
        </property>
       </widget>
      </item>
-     <item row="6" column="2">
+     <item row="7" column="3">
+      <widget class="QCheckBox" name="checkBoxUserdataTags">
+       <property name="toolTip">
+        <string>Check to change tags for all selected waypoints</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="lineEditUserdataIdent">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="labelUserdataLatLon">
+       <property name="text">
+        <string>&amp;Latitude and Longitude:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditUserdataLatLon</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="labelUserdataAltitude">
+       <property name="text">
+        <string>&amp;Elevation or altitude:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxUserdataAltitude</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QLineEdit" name="lineEditUserdataTags">
+       <property name="toolTip">
+        <string>List of tags. Simple textfield for various purposes.</string>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
       <widget class="QSpinBox" name="spinBoxUserdataVisible">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -312,6 +331,30 @@ Formats above have to be given exactly as shown
        </property>
        <property name="value">
         <number>200</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="lineEditUserdataRegion">
+       <property name="toolTip">
+        <string>Two letter ICAO region code.
+Required for export to X-Plane &quot;user_fix.dat&quot;.</string>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="4">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -332,6 +375,8 @@ Formats above have to be given exactly as shown
  <tabstops>
   <tabstop>lineEditUserdataIdent</tabstop>
   <tabstop>checkBoxUserdataIdent</tabstop>
+  <tabstop>lineEditUserdataRegion</tabstop>
+  <tabstop>checkBoxUserdataRegion</tabstop>
   <tabstop>comboBoxUserdataType</tabstop>
   <tabstop>checkBoxUserdataType</tabstop>
   <tabstop>lineEditUserdataName</tabstop>

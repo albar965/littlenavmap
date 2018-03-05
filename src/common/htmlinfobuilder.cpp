@@ -1440,6 +1440,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     // Be cautious with user defined data and adapt it for HTML display
     html.row2If(tr("Type:"), adjustText(userpoint.type), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Region:"), adjustText(userpoint.region), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Name:"), adjustText(userpoint.name), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Description:"), adjustText(userpoint.description), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Tags:"), adjustText(userpoint.tags), atools::util::html::NO_ENTITIES);

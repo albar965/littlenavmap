@@ -310,6 +310,7 @@ void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint&
 {
   obj.id = rec.valueInt("userdata_id");
   obj.ident = rec.valueStr("ident");
+  obj.region = rec.valueStr("region");
   obj.name = rec.valueStr("name");
   obj.type = rec.valueStr("type");
   obj.description = rec.valueStr("description");

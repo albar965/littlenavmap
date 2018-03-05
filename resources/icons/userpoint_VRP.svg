@@ -14,7 +14,7 @@
    viewBox="0 0 33.866666 33.866668"
    version="1.1"
    id="svg821"
-   sodipodi:docname="userdata_VRP.svg"
+   sodipodi:docname="userpoint_VRP.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
   <defs
      id="defs815">
@@ -39,7 +39,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="5.4003165"
+     inkscape:cx="6.410469"
      inkscape:cy="28.623751"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -82,7 +82,7 @@
        rx="12.967333"
        ry="13.142568" />
     <circle
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#2b196d;stroke-width:3.792;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:11.376,11.376;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#2b196d;stroke-width:3.79199995;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:15.16799979,7.58399989;stroke-dashoffset:0;stroke-opacity:1"
        id="path5166"
        cx="16.96442"
        cy="280.17731"
