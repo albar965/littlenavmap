@@ -175,7 +175,7 @@ private:
   void createFsWatcher();
   void initXplane();
 
-  QHash<QString, QString> activeSkyMetars, xplaneMetars;
+  QHash<QString, QString> activeSkyMetars;
   QString activeSkyDepartureMetar, activeSkyDestinationMetar,
           activeSkyDepartureIdent, activeSkyDestinationIdent;
 

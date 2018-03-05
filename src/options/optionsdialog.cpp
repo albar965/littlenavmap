@@ -338,6 +338,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsMapNavaidText);
   widgets.append(ui->checkBoxOptionsMapFlightplanText);
   widgets.append(ui->checkBoxOptionsMapAirportBoundary);
+  widgets.append(ui->checkBoxOptionsMapAirportDiagram);
   widgets.append(ui->checkBoxOptionsMapFlightplanDimPassed);
   widgets.append(ui->checkBoxOptionsSimDoNotFollowOnScroll);
   widgets.append(ui->checkBoxOptionsSimCenterLeg);
@@ -953,6 +954,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapNavaidText, opts::MAP_NAVAID_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapFlightplanText, opts::MAP_ROUTE_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAirportBoundary, opts::MAP_AIRPORT_BOUNDARY);
+  toFlags2(ui->checkBoxOptionsMapAirportDiagram, opts::MAP_AIRPORT_DIAGRAM);
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
   toFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts::ROUTE_AUTOZOOM);
@@ -1096,6 +1098,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags2(ui->checkBoxOptionsMapNavaidText, opts::MAP_NAVAID_TEXT_BACKGROUND);
   fromFlags2(ui->checkBoxOptionsMapFlightplanText, opts::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(ui->checkBoxOptionsMapAirportBoundary, opts::MAP_AIRPORT_BOUNDARY);
+  fromFlags2(ui->checkBoxOptionsMapAirportDiagram, opts::MAP_AIRPORT_DIAGRAM);
   fromFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
   fromFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(ui->checkBoxOptionsSimCenterLeg, opts::ROUTE_AUTOZOOM);
