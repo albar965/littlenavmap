@@ -84,7 +84,8 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
   }
 });
 
-const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG = 6.f;
+const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL = 4.f;
+const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR = 4.f;
 const double MIN_ZOOM_FOR_CENTER_LEG = 4.;
 
 using namespace Marble;
@@ -966,12 +967,15 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QPoint diff = curPos - conv.wToS(last.getPosition());
   const OptionData& od = OptionData::instance();
   QRect widgetRect = rect();
-  QRect widgetRectSmall = widgetRect.adjusted(widgetRect.width() / 10, widgetRect.height() / 10,
-                                              -widgetRect.width() / 10, -widgetRect.height() / 10);
+  QRect widgetRectSmall = widgetRect.adjusted(widgetRect.width() / 20, widgetRect.height() / 20,
+                                              -widgetRect.width() / 20, -widgetRect.height() / 20);
+  curPosVisible = widgetRectSmall.contains(curPos);
 
   bool wasEmpty = aircraftTrack.isEmpty();
-
-  curPosVisible &= widgetRectSmall.contains(curPos);
+#ifdef DEBUG_INFORMATION_DISABLED
+  qDebug() << "curPos" << curPos;
+  qDebug() << "widgetRectSmall" << widgetRectSmall;
+#endif
 
   if(aircraftTrack.appendTrackPos(ac.getPosition(), ac.getZuluTime(), ac.isOnGround()))
     emit aircraftTrackPruned();
@@ -1039,7 +1043,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       {
         nextWp = route.getActiveLeg() != nullptr ? route.getActiveLeg()->getPosition() : Pos();
         nextWpPos = conv.wToS(nextWp, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
-        nextWpPosVisible &= widgetRectSmall.contains(nextWpPos);
+        nextWpPosVisible = widgetRectSmall.contains(nextWpPos);
       }
 
       bool mapUpdated = false;
@@ -1056,9 +1060,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
             if(centerAircraftAndLeg)
             {
               QRect aircraftWpRect = QRect(curPos, nextWpPos).normalized();
+              float factor = projection() ==
+                             Mercator ? MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR :
+                             MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL;
 
-              bool rectTooSmall = aircraftWpRect.width() < width() / MAX_SQUARE_FACTOR_FOR_CENTER_LEG &&
-                                  aircraftWpRect.height() < height() / MAX_SQUARE_FACTOR_FOR_CENTER_LEG;
+              bool rectTooSmall = aircraftWpRect.width() < width() / factor &&
+                                  aircraftWpRect.height() < height() / factor;
 
               // Check if the rectangle from aircraft and waypoint overlaps with a shrinked screen rectangle
               // to check if it is still centered
@@ -1066,6 +1073,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               bool centered = innerRect.intersects(atools::geo::rectToSquare(aircraftWpRect));
 
               if(distance() < MIN_ZOOM_FOR_CENTER_LEG + 1.)
+                // Already close enough
                 rectTooSmall = false;
 
               if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
@@ -1085,17 +1093,42 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 qDebug() << "innerRect" << innerRect;
                 qDebug() << "widgetRect" << widgetRect;
                 qDebug() << "aircraftWpRect" << aircraftWpRect;
+                qDebug() << "ac.getPosition()" << ac.getPosition();
+                qDebug() << "nextWp" << nextWp;
                 qDebug() << "rect" << rect;
 #endif
 
                 if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
-                  centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(),
+                {
+                  // Calculate a correction to inflate rectangle towards north and south since Marble is not
+                  // capable of precise zooming in Mercator. Correction is increasing towards the poles
+                  float nsCorrection = 0.f;
+                  if(projection() == Mercator)
+                  {
+                    float lat = static_cast<float>(std::abs(centerLatitude()));
+                    float nsCorrectionFactor = 0.f;
+                    if(lat > 70.f)
+                      nsCorrectionFactor = 2.f;
+                    else if(lat > 60.f)
+                      nsCorrectionFactor = 3.f;
+                    else if(lat > 50.f)
+                      nsCorrectionFactor = 6.f;
+
+                    nsCorrection = rect.getHeightDegree() / nsCorrectionFactor;
+#ifdef DEBUG_INFORMATION
+                    qDebug() << "nsCorrectionFactor" << nsCorrectionFactor << "nsCorrection" << nsCorrection;
+#endif
+                  }
+
+                  centerOn(GeoDataLatLonBox(rect.getNorth() + nsCorrection, rect.getSouth() - nsCorrection,
                                             rect.getEast(), rect.getWest(),
                                             GeoDataCoordinates::Degree), false);
+                }
                 else if(rect.isValid())
                   centerOn(rect.getEast(), rect.getNorth());
 
                 if(distance() < MIN_ZOOM_FOR_CENTER_LEG)
+                  // Correct zoom for minimum distance
                   setDistance(MIN_ZOOM_FOR_CENTER_LEG);
                 mapUpdated = true;
               }
@@ -1711,6 +1744,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else
   {
+    // No airport or selected parking position
     ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
@@ -1828,6 +1862,22 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(tr("here")));
     ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(tr("here")));
   }
+
+  qDebug() << "departureParkingAirportId " << departureParkingAirportId;
+  qDebug() << "airport " << airport;
+  qDebug() << "vor " << vor;
+  qDebug() << "ndb " << ndb;
+  qDebug() << "waypoint " << waypoint;
+  qDebug() << "parking " << parking;
+  qDebug() << "helipad " << helipad;
+  qDebug() << "routeIndex " << routeIndex;
+  qDebug() << "userpointRoute " << userpointRoute;
+  qDebug() << "informationText" << informationText;
+  qDebug() << "measureText" << measureText;
+  qDebug() << "departureText" << departureText;
+  qDebug() << "destinationText" << destinationText;
+  qDebug() << "addRouteText" << addRouteText;
+  qDebug() << "searchText" << searchText;
 
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(menuPos);
@@ -2136,11 +2186,15 @@ void MapWidget::elevationDisplayTimerTimeout()
 {
   qreal lon, lat;
   QPoint point = mapFromGlobal(QCursor::pos());
-  if(geoCoordinates(point.x(), point.y(), lon, lat, GeoDataCoordinates::Degree))
+
+  if(rect().contains(point))
   {
-    Pos pos(lon, lat);
-    pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
-    mainWindow->updateMapPosLabel(pos, point.x(), point.y());
+    if(geoCoordinates(point.x(), point.y(), lon, lat, GeoDataCoordinates::Degree))
+    {
+      Pos pos(lon, lat);
+      pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
+      mainWindow->updateMapPosLabel(pos, point.x(), point.y());
+    }
   }
 }
 
