@@ -2023,7 +2023,7 @@ bool MainWindow::routeExportGpx()
 
     if(!routeFile.isEmpty())
     {
-      if(routeController->exportFlighplanAsGpx(routeFile))
+      if(routeController->exportFlightplanAsGpx(routeFile))
       {
         if(NavApp::getAircraftTrack().isEmpty())
           setStatusMessage(tr("Flight plan saved as GPX."));
@@ -2595,7 +2595,8 @@ void MainWindow::restoreStateMain()
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
                        ui->actionMapShowCities,
                        ui->actionMapShowHillshading, ui->actionRouteEditMode,
-                       ui->actionWorkOffline});
+                       ui->actionWorkOffline,
+                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -2716,7 +2717,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,
-                    ui->actionWorkOffline});
+                    ui->actionWorkOffline,
+                    ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints});
   Settings::instance().syncSettings();
 }
 

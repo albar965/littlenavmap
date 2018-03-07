@@ -48,6 +48,7 @@
 #include "atools.h"
 #include "route/userwaypointdialog.h"
 #include "route/flightplanentrybuilder.h"
+#include "fs/pln/flightplanio.h"
 #include "route/routestringdialog.h"
 #include "util/htmlbuilder.h"
 #include "common/symbolpainter.h"
@@ -119,6 +120,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Leg Time\nhh:mm"),
                                  QObject::tr("ETA\nhh:mm"),
                                  QObject::tr("Remarks")});
+
+  flightplanIO = new atools::fs::pln::FlightplanIO();
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -236,6 +239,7 @@ RouteController::~RouteController()
   delete routeNetworkAirway;
   delete zoomHandler;
   delete symbolPainter;
+  delete flightplanIO;
 }
 
 void RouteController::undoTriggered()
@@ -522,7 +526,7 @@ void RouteController::newFlightplan()
   // Copy current alt and type from widgets to flightplan
   updateFlightplanFromWidgets();
 
-  createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan();
   route.updateAll();
 
   updateTableModel();
@@ -613,11 +617,11 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 
   route.getFlightplan().getProperties().insert(pln::SPEED, QString::number(speedKts, 'f', 4));
 
-  createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
-  updateAirwaysAndAltitude(adjustAltitude);
+  updateAirwaysAndAltitude(route, adjustAltitude);
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -658,18 +662,19 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 }
 
 /* Fetch airways by waypoint and name and adjust route altititude if needed */
-void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
+void RouteController::updateAirwaysAndAltitude(Route& rt, bool adjustRouteAltitude) const
 {
   int minAltitude = 0;
-  for(int i = 1; i < route.size(); i++)
+  for(int i = 1; i < rt.size(); i++)
   {
-    RouteLeg& routeLeg = route[i];
-    const RouteLeg& prevLeg = route.at(i - 1);
+    RouteLeg& routeLeg = rt[i];
+    const RouteLeg& prevLeg = rt.at(i - 1);
 
     if(!routeLeg.getAirwayName().isEmpty())
     {
       map::MapAirway airway;
-      mapQuery->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
+      NavApp::getMapQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
+                                                        routeLeg.getIdent());
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
 
@@ -679,19 +684,19 @@ void RouteController::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       routeLeg.setAirway(map::MapAirway());
   }
 
-  if(adjustRouteAltitude && minAltitude > 0 && !route.isEmpty())
+  if(adjustRouteAltitude && minAltitude > 0 && !rt.isEmpty())
   {
     if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
       // Apply simplified east/west rule
-      minAltitude = adjustAltitude(minAltitude);
-    route.getFlightplan().setCruisingAltitude(minAltitude);
+      minAltitude = adjustAltitude(rt, minAltitude);
+    rt.getFlightplan().setCruisingAltitude(minAltitude);
 
     qDebug() << Q_FUNC_INFO << "Updating flight plan altitude to" << minAltitude;
 
-    if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
-      route.getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+    if(rt.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
+      rt.getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
     else
-      route.getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
+      rt.getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
   }
 }
 
@@ -735,7 +740,7 @@ bool RouteController::loadFlightplan(const QString& filename)
   {
     qDebug() << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
-    newFlightplan.load(filename);
+    flightplanIO->load(newFlightplan, filename);
     // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
 
     // Convert altitude to local unit
@@ -767,7 +772,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     qDebug() << "appendFlightplan" << filename;
 
     // Will throw an exception if something goes wrong
-    flightplan.load(filename);
+    flightplanIO->load(flightplan, filename);
     // Convert altitude to local unit
     flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(flightplan.getCruisingAltitude())));
 
@@ -777,6 +782,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
     // Remove all procedure legs from route
+    route.clearProcedures(proc::PROCEDURE_ALL);
     route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
     for(const FlightplanEntry& entry : flightplan.getEntries())
@@ -786,10 +792,10 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
     route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
 
-    createRouteLegsFromFlightplan();
+    route.createRouteLegsFromFlightplan();
     loadProceduresFromFlightplan(false /* quiet */);
     route.updateAll();
-    updateAirwaysAndAltitude();
+    updateAirwaysAndAltitude(route);
 
     route.updateActiveLegAndPos(true /* force update */);
     updateTableModel();
@@ -834,7 +840,7 @@ bool RouteController::exportFlighplanAsClean(const QString& filename)
 bool RouteController::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(route, false /* procedures */,
+  QString gfp = RouteString().createGfpStringForRoute(routeAdjustedToProcedureOptions(), false /* procedures */,
                                                       OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
@@ -855,7 +861,8 @@ bool RouteController::exportFlighplanAsGfp(const QString& filename)
 bool RouteController::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString().createStringForRoute(route, 0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+  QString txt = RouteString().createStringForRoute(routeAdjustedToProcedureOptions(),
+                                                   0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -878,7 +885,7 @@ bool RouteController::exportFlighplanAsRte(const QString& filename)
 
   try
   {
-    route.getFlightplan().saveRte(filename);
+    flightplanIO->saveRte(routeAdjustedToProcedureOptions().getFlightplan(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -901,8 +908,7 @@ bool RouteController::exportFlighplanAsRxpGns(const QString& filename)
   {
     // Regions are required for the export
     route.updateAirportRegions();
-    route.getFlightplan().saveGarminGns(filename,
-                                        OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+    flightplanIO->saveGarminGns(routeAdjustedToProcedureOptions().getFlightplan(), filename, saveOptions());
   }
   catch(atools::Exception& e)
   {
@@ -920,7 +926,7 @@ bool RouteController::exportFlighplanAsRxpGns(const QString& filename)
 bool RouteController::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(route, true /* procedures */,
+  QString gfp = RouteString().createGfpStringForRoute(routeAdjustedToProcedureOptions(), true /* procedures */,
                                                       OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
@@ -944,7 +950,7 @@ bool RouteController::exportFlighplanAsFpr(const QString& filename)
 
   try
   {
-    route.getFlightplan().saveFpr(filename);
+    flightplanIO->saveFpr(routeAdjustedToProcedureOptions().getFlightplan(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -962,7 +968,7 @@ bool RouteController::exportFlighplanAsFpr(const QString& filename)
 bool RouteController::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString().createStringForRoute(route, 0.f,
+  QString txt = RouteString().createStringForRoute(routeAdjustedToProcedureOptions(), 0.f,
                                                    rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
                                                    rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
 
@@ -991,7 +997,7 @@ bool RouteController::exportFlighplanAsCorteIn(const QString& filename)
   }
 }
 
-bool RouteController::exportFlighplanAsGpx(const QString& filename)
+bool RouteController::exportFlightplanAsGpx(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -1007,7 +1013,8 @@ bool RouteController::exportFlighplanAsGpx(const QString& filename)
 
   try
   {
-    route.getFlightplan().saveGpx(filename, track, timestamps, static_cast<int>(route.getCruisingAltitudeFeet()));
+    flightplanIO->saveGpx(routeAdjustedToProcedureOptions().getFlightplan(), filename, track, timestamps,
+                          static_cast<int>(route.getCruisingAltitudeFeet()));
   }
   catch(atools::Exception& e)
   {
@@ -1025,7 +1032,7 @@ bool RouteController::exportFlighplanAsGpx(const QString& filename)
 /* Save flight plan using the same format indicated in the flight plan object */
 bool RouteController::saveFlightplan(bool cleanExport)
 {
-  Flightplan& flightplan = route.getFlightplan();
+  Flightplan flightplan = routeAdjustedToProcedureOptions().getFlightplan();
   qDebug() << Q_FUNC_INFO << flightplan.getFileFormat();
 
   try
@@ -1052,8 +1059,12 @@ bool RouteController::saveFlightplan(bool cleanExport)
     properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
     properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycleNav());
 
+    atools::fs::pln::SaveOptions options = saveOptions();
+    if(cleanExport)
+      options |= atools::fs::pln::SAVE_CLEAN;
+
     // Save PLN, FLP or FMS
-    flightplan.save(routeFilename, NavApp::getDatabaseAiracCycleNav(), cleanExport /* clean */);
+    flightplanIO->save(flightplan, routeFilename, NavApp::getDatabaseAiracCycleNav(), options);
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
       // Old format is always saved as new after question dialog
@@ -1096,7 +1107,7 @@ void RouteController::calculateDirect()
   route.removeRouteLegs();
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
 
   updateTableModel();
   postChange(undoCommand);
@@ -1292,7 +1303,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       flightplan.removeNoSaveEntries();
 
       // Copy flight plan to route object
-      createRouteLegsFromFlightplan();
+      route.createRouteLegsFromFlightplan();
 
       // Reload procedures from properties
       loadProceduresFromFlightplan(true /* quiet */);
@@ -1301,7 +1312,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       // Remove duplicates in flight plan and route
       route.removeDuplicateRouteLegs();
       route.updateAll();
-      updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */);
+      updateAirwaysAndAltitude(route, !useSetAltitude /* adjustRouteAltitude */);
 
       route.updateActiveLegAndPos(true /* force update */);
       updateTableModel();
@@ -1338,7 +1349,7 @@ void RouteController::adjustFlightplanAltitude()
     return;
 
   Flightplan& fp = route.getFlightplan();
-  int alt = adjustAltitude(fp.getCruisingAltitude());
+  int alt = adjustAltitude(route, fp.getCruisingAltitude());
 
   if(alt != fp.getCruisingAltitude())
   {
@@ -1362,14 +1373,14 @@ void RouteController::adjustFlightplanAltitude()
 }
 
 /* Apply simplified east/west or north/south rule */
-int RouteController::adjustAltitude(int minAltitude)
+int RouteController::adjustAltitude(Route& rt, int minAltitude) const
 {
-  if(route.size() > 1)
+  if(rt.size() > 1)
   {
-    const Pos& departurePos = route.first().getPosition();
-    const Pos& destinationPos = route.last().getPosition();
+    const Pos& departurePos = rt.first().getPosition();
+    const Pos& destinationPos = rt.last().getPosition();
 
-    float magvar = (route.first().getMagvar() + route.last().getMagvar()) / 2;
+    float magvar = (rt.first().getMagvar() + rt.last().getMagvar()) / 2;
 
     float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
 
@@ -1393,7 +1404,7 @@ int RouteController::adjustAltitude(int minAltitude)
       else if(OptionData::instance().getAltitudeRuleType() == opts::SOUTH_NORTH)
         odd = !(fpDir >= 90.f && fpDir <= 270.f);
 
-      if(route.getFlightplan().getFlightplanType() == atools::fs::pln::IFR)
+      if(rt.getFlightplan().getFlightplanType() == atools::fs::pln::IFR)
       {
         if(odd)
           // round up to the next odd value
@@ -1437,9 +1448,9 @@ void RouteController::reverseRoute()
       entries[i].setAirway(entries.at(i - 1).getAirway());
   }
 
-  createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan();
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   route.updateActiveLegAndPos(true /* force update */);
@@ -1530,12 +1541,13 @@ void RouteController::postDatabaseLoad()
   routeNetworkAirway->initQueries();
 
   // Remove the legs but keep the properties
+  route.clearProcedures(proc::PROCEDURE_ALL);
   route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
-  createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
 
   // Update runway or parking if one of these has changed due to the database switch
   Flightplan& flightplan = route.getFlightplan();
@@ -1998,10 +2010,10 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 {
   route.setFlightplan(newFlightplan);
 
-  createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(true /* quiet */);
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -2119,7 +2131,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     }
 
     route.updateAll();
-    updateAirwaysAndAltitude();
+    updateAirwaysAndAltitude(route);
 
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
@@ -2184,7 +2196,7 @@ void RouteController::deleteSelectedLegs()
     route.removeProcedureLegs(procs);
 
     route.updateAll();
-    updateAirwaysAndAltitude();
+    updateAirwaysAndAltitude(route);
 
     // Force update of start if departure airport was removed
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
@@ -2274,7 +2286,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   route.first().setDepartureParking(parking);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2314,7 +2326,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   route.first().setDepartureStart(start);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2338,7 +2350,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2390,7 +2402,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2488,7 +2500,7 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
   }
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   routeToFlightPlan();
 
   // Get type and cruise altitude from widgets
@@ -2544,7 +2556,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   route.removeProcedureLegs(procs);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2657,7 +2669,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
 
   // Force update of start if departure airport was changed
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
@@ -2693,7 +2705,7 @@ void RouteController::routeDelete(int index)
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
-  updateAirwaysAndAltitude();
+  updateAirwaysAndAltitude(route);
 
   // Force update of start if departure airport was removed
   updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
@@ -2798,46 +2810,6 @@ void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 
   flightplan.getProperties().insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
-}
-
-/* Loads navaids from database and create all route map objects from flight plan.
- * Flight plan will be corrected if needed. */
-void RouteController::createRouteLegsFromFlightplan()
-{
-  route.clear();
-
-  Flightplan& flightplan = route.getFlightplan();
-
-  const RouteLeg *last = nullptr;
-
-  // Create map objects first and calculate total distance
-  for(int i = 0; i < flightplan.getEntries().size(); i++)
-  {
-    RouteLeg mapobj(&flightplan);
-    mapobj.createFromDatabaseByEntry(i, last);
-
-    if(mapobj.getMapObjectType() == map::INVALID)
-      // Not found in database
-      qWarning() << "Entry for ident" << flightplan.at(i).getIcaoIdent()
-                 << "region" << flightplan.at(i).getIcaoRegion() << "is not valid";
-
-    route.append(mapobj);
-    last = &route.last();
-  }
-
-  if(!route.isEmpty())
-  {
-    // Correct departure and destination values if missing - can happen after import of FLP or FMS plans
-    if(flightplan.getDepartureAiportName().isEmpty())
-      flightplan.setDepartureAiportName(route.first().getName());
-    if(!flightplan.getDeparturePosition().isValid())
-      flightplan.setDeparturePosition(route.first().getPosition());
-
-    if(flightplan.getDestinationAiportName().isEmpty())
-      flightplan.setDestinationAiportName(route.last().getName());
-    if(!flightplan.getDestinationPosition().isValid())
-      flightplan.setDestinationPosition(route.first().getPosition());
-  }
 }
 
 QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
@@ -3554,4 +3526,25 @@ void RouteController::updateIcons()
   userpointIcon = symbolPainter->createUserpointIcon(iconSize);
   invalidIcon = symbolPainter->createWaypointIcon(iconSize, mapcolors::routeInvalidPointColor);
   procedureIcon = symbolPainter->createProcedurePointIcon(iconSize);
+}
+
+atools::fs::pln::SaveOptions RouteController::saveOptions() const
+{
+  atools::fs::pln::SaveOptions options = atools::fs::pln::SAVE_NO_OPTIONS;
+
+  if(OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT)
+    options |= atools::fs::pln::SAVE_GNS_USER_WAYPOINTS;
+
+  return options;
+}
+
+Route RouteController::routeAdjustedToProcedureOptions() const
+{
+  Route rt = route.adjustedToProcedureOptions(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked(),
+                                              NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked());
+
+  // Update airway structures
+  updateAirwaysAndAltitude(rt, false);
+
+  return rt;
 }

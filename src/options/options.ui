@@ -2477,7 +2477,7 @@ when transitioning from airport to airway.</string>
          </layout>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="10" column="0">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

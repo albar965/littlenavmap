@@ -38,6 +38,7 @@ class SimConnectData;
 }
 namespace pln {
 class Flightplan;
+class FlightplanIO;
 class FlightplanEntry;
 }
 }
@@ -96,7 +97,7 @@ public:
   bool exportFlighplanAsFpr(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
 
-  bool exportFlighplanAsGpx(const QString& filename);
+  bool exportFlightplanAsGpx(const QString& filename);
 
   bool exportFlighplanAsRxpGns(const QString& filename);
   bool exportFlighplanAsRxpGtn(const QString& filename);
@@ -307,8 +308,6 @@ private:
 
   void updateTableModel();
 
-  void createRouteLegsFromFlightplan();
-
   void routeAltChanged();
   void routeAltChangedDelayed();
   void routeSpeedChanged();
@@ -317,7 +316,7 @@ private:
 
   void clearRoute();
 
-  int adjustAltitude(int minAltitude);
+  int adjustAltitude(Route& rt, int minAltitude) const;
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
@@ -356,7 +355,7 @@ private:
   void loadProceduresFromFlightplan(bool quiet);
   void updateIcons();
   void beforeRouteCalc();
-  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
+  void updateAirwaysAndAltitude(Route& rt, bool adjustRouteAltitude = false) const;
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
   QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
@@ -365,6 +364,10 @@ private:
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
   void nothingSelectedTriggered();
   void activateLegTriggered();
+  Route routeAdjustedToProcedureOptions() const;
+
+  /* Calculate save options from dialog settings*/
+  atools::fs::pln::SaveOptions saveOptions() const;
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -395,6 +398,7 @@ private:
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
+  atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;

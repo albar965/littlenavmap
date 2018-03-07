@@ -28,6 +28,8 @@ class FlightplanEntryBuilder;
 /*
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
  * about the active route leg and current aircraft position.
+ *
+ * The flight plan is kept in sync and contains dummy entries for all procedure legs.
  */
 class Route :
   private QList<RouteLeg>
@@ -241,7 +243,10 @@ public:
 
   void removeRouteLegs();
 
-  /* Does not delete flight plan properties */
+  /* Does not delete flight plan properties. Clears the MapProcedure structures. */
+  void clearProcedures(proc::MapProcedureTypes type);
+
+  /* Removes legs that match the given procedures */
   void clearProcedureLegs(proc::MapProcedureTypes type);
 
   /* Deletes flight plan properties too */
@@ -339,6 +344,14 @@ public:
   using QList<RouteLeg>::removeLast;
   using QList<RouteLeg>::operator[];
 
+  /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
+   *  All procedure legs are converted to normal flight plan (user) legs.  */
+  Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp) const;
+
+  /* Loads navaids from database and create all route map objects from flight plan.
+   * Flight plan will be corrected if needed. */
+  void createRouteLegsFromFlightplan();
+
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
@@ -359,7 +372,6 @@ private:
   void copy(const Route& other);
   void nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
-  void eraseProcedureLegs(proc::MapProcedureTypes type);
   int adjustedActiveLeg() const;
 
   atools::geo::Rect boundingRect;

@@ -516,8 +516,8 @@ const atools::geo::Pos& RouteLeg::getPosition() const
   {
     if(type == map::INVALID)
     {
-      if(curEntry().getPosition().isValid())
-        return curEntry().getPosition();
+      if(getFlightplanEntry().getPosition().isValid())
+        return getFlightplanEntry().getPosition();
       else
         return atools::geo::EMPTY_POS;
     }
@@ -534,8 +534,8 @@ const atools::geo::Pos& RouteLeg::getPosition() const
       return ils.position;
     else if(runwayEnd.isValid())
       return runwayEnd.position;
-    else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
-      return curEntry().getPosition();
+    else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+      return getFlightplanEntry().getPosition();
   }
   return atools::geo::EMPTY_POS;
 }
@@ -557,10 +557,10 @@ QString RouteLeg::getIdent() const
   else if(!procedureLeg.displayText.isEmpty())
     return procedureLeg.displayText.first();
   else if(type == map::INVALID)
-    return curEntry().getIcaoIdent();
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
-    return curEntry().getWaypointId();
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+    return getFlightplanEntry().getIcaoIdent();
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return getFlightplanEntry().getWaypointId();
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
     return EMPTY_STRING;
   else
     return EMPTY_STRING;
@@ -582,9 +582,9 @@ bool RouteLeg::isNavdata() const
     return runwayEnd.navdata;
   else if(type == map::INVALID)
     return true;
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
     return true;
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
     return true;
 
   return true;
@@ -622,7 +622,7 @@ QString RouteLeg::getName() const
 const QString& RouteLeg::getAirwayName() const
 {
   if(isRoute())
-    return curEntry().getAirway();
+    return getFlightplanEntry().getAirway();
   else
     return EMPTY_STRING;
 }
@@ -658,7 +658,7 @@ int RouteLeg::getFrequency() const
   return 0;
 }
 
-const atools::fs::pln::FlightplanEntry& RouteLeg::curEntry() const
+const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
   if(isRoute())
     return flightplan->at(index);

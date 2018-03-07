@@ -78,6 +78,9 @@
     <addaction name="actionRouteSaveAsFms3"/>
     <addaction name="menuEXport"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteSaveApprWaypoints"/>
+    <addaction name="actionRouteSaveSidStarWaypoints"/>
+    <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
     <addaction name="actionClearKml"/>
@@ -6832,6 +6835,34 @@
    </property>
    <property name="statusTip">
     <string>Move Userpoint</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveApprWaypoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Save Waypoints for &amp;Approaches</string>
+   </property>
+   <property name="toolTip">
+    <string>Save procedure waypoints instead of approach information</string>
+   </property>
+   <property name="statusTip">
+    <string>Save procedure waypoints instead of approach information</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveSidStarWaypoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Save Waypoints for &amp;SID and STAR</string>
+   </property>
+   <property name="toolTip">
+    <string>Save procedure waypoints instead of SID/STAR information</string>
+   </property>
+   <property name="statusTip">
+    <string>Save procedure waypoints instead of SID/STAR information</string>
    </property>
   </action>
  </widget>

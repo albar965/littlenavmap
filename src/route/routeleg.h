@@ -176,6 +176,12 @@ public:
     return waypoint;
   }
 
+  /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
+  map::MapRunwayEnd getRunwayEnd() const
+  {
+    return runwayEnd;
+  }
+
   /* Great circle distance to this route map object from the predecessor in nautical miles or 0 if first in route */
   float getDistanceTo() const
   {
@@ -273,9 +279,9 @@ public:
     return !getAirwayName().isEmpty() && !airway.isValid();
   }
 
-private:
-  const atools::fs::pln::FlightplanEntry& curEntry() const;
+  const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
+private:
   void assignIntersection(const map::MapSearchResult& mapobjectResult,
                           atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
