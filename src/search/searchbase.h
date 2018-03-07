@@ -35,9 +35,10 @@ class QTimer;
 class CsvExporter;
 class Column;
 class ViewEventFilter;
-class LineEditEventFilter;
+class SearchWidgetEventFilter;
 class QLineEdit;
 class QAction;
+class QComboBox;
 
 namespace atools {
 namespace sql {
@@ -162,7 +163,7 @@ protected:
 
   void distanceSearchChanged(bool checked, bool changeViewState);
 
-  void connectLineEdit(QLineEdit *lineEdit);
+  void installEventFilterForWidget(QWidget *widget);
 
   /* Table/view controller */
   SqlController *controller = nullptr;
@@ -209,7 +210,7 @@ private:
   QTimer *updateTimer;
 
   ViewEventFilter *viewEventFilter = nullptr;
-  LineEditEventFilter *lineEditEventFilter = nullptr;
+  SearchWidgetEventFilter *widgetEventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_SEARCHBASE_H

@@ -2467,39 +2467,29 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEditUserdataType">
+            <widget class="QComboBox" name="comboBoxUserdataType">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Type of the userpoint which will defined the used icon</string>
-             </property>
-             <property name="statusTip">
-              <string>Type of the userpoint which will defined the used icon</string>
-             </property>
-             <property name="placeholderText">
-              <string>Type</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditUserdataName">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>2</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="placeholderText">
-              <string>Name</string>
+             <property name="toolTip">
+              <string>Userpoint type</string>
              </property>
-             <property name="clearButtonEnabled">
+             <property name="statusTip">
+              <string>Userpoint type</string>
+             </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
+             <property name="maxVisibleItems">
+              <number>30</number>
+             </property>
+             <property name="insertPolicy">
+              <enum>QComboBox::NoInsert</enum>
+             </property>
+             <property name="frame">
               <bool>true</bool>
              </property>
             </widget>
@@ -2667,6 +2657,22 @@
            <property name="topMargin">
             <number>0</number>
            </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataName">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Name</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QLineEdit" name="lineEditUserdataDescription">
              <property name="sizePolicy">
@@ -6656,23 +6662,6 @@
    </property>
    <property name="statusTip">
     <string>Centers the selected navaid on the map</string>
-   </property>
-  </action>
-  <action name="actionUserdataSearchShowAllOptions">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>All</string>
-   </property>
-   <property name="toolTip">
-    <string>Show all or no additional search options</string>
-   </property>
-   <property name="statusTip">
-    <string>Show all or no additional navaid search options</string>
    </property>
   </action>
   <action name="actionUserdataSearchShowMoreOptions">

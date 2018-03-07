@@ -75,17 +75,17 @@ private:
   SearchBaseTable *searchBase;
 };
 
-class LineEditEventFilter :
+class SearchWidgetEventFilter :
   public QObject
 {
 
 public:
-  LineEditEventFilter(SearchBaseTable *parent)
+  SearchWidgetEventFilter(SearchBaseTable *parent)
     : QObject(parent), searchBase(parent)
   {
   }
 
-  virtual ~LineEditEventFilter()
+  virtual ~SearchWidgetEventFilter()
   {
 
   }
@@ -100,6 +100,10 @@ private:
       {
         case Qt::Key_Down:
           searchBase->activateView();
+          return true;
+
+        case Qt::Key_Return:
+          searchBase->showFirstEntry();
           return true;
       }
     }
@@ -152,7 +156,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
   viewEventFilter = new ViewEventFilter(this);
-  lineEditEventFilter = new LineEditEventFilter(this);
+  widgetEventFilter = new SearchWidgetEventFilter(this);
   view->installEventFilter(viewEventFilter);
 }
 
@@ -165,7 +169,7 @@ SearchBaseTable::~SearchBaseTable()
   delete zoomHandler;
   delete columns;
   delete viewEventFilter;
-  delete lineEditEventFilter;
+  delete widgetEventFilter;
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
@@ -286,12 +290,37 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getComboBoxWidget() != nullptr)
     {
-      connect(col->getComboBoxWidget(), curIndexChangedPtr, [ = ](int index)
+      if(col->getComboBoxWidget()->isEditable())
       {
-        controller->filterByComboBox(col, index, index == 0);
-        updateButtonMenu();
-        editStartTimer();
-      });
+        // Treat editable combo boxes like line edits
+        connect(col->getComboBoxWidget(), &QComboBox::editTextChanged, [ = ](const QString& text)
+        {
+          QComboBox *box = col->getComboBoxWidget();
+
+          {
+            QSignalBlocker blocker(box);
+            Q_UNUSED(blocker);
+
+            // Reset index if entered word does not match
+            QString txt = box->currentText();
+            box->setCurrentIndex(box->findText(text, Qt::MatchExactly));
+            box->setCurrentText(txt);
+          }
+
+          controller->filterByLineEdit(col, text);
+          updateButtonMenu();
+          editStartTimer();
+        });
+      }
+      else
+      {
+        connect(col->getComboBoxWidget(), curIndexChangedPtr, [ = ](int index)
+        {
+          controller->filterByComboBox(col, index, index == 0);
+          updateButtonMenu();
+          editStartTimer();
+        });
+      }
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
@@ -446,10 +475,9 @@ void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
   updateButtonMenu();
 }
 
-void SearchBaseTable::connectLineEdit(QLineEdit *lineEdit)
+void SearchBaseTable::installEventFilterForWidget(QWidget *widget)
 {
-  connect(lineEdit, &QLineEdit::returnPressed, this, &SearchBaseTable::showFirstEntry);
-  lineEdit->installEventFilter(lineEditEventFilter);
+  widget->installEventFilter(widgetEventFilter);
 }
 
 /* Search criteria editing has started. Start or restart the timer for a

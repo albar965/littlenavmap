@@ -277,11 +277,11 @@ void AirportSearch::connectSearchSlots()
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonAirportSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
-  connectLineEdit(ui->lineEditAirportIcaoSearch);
-  connectLineEdit(ui->lineEditAirportCitySearch);
-  connectLineEdit(ui->lineEditAirportCountrySearch);
-  connectLineEdit(ui->lineEditAirportNameSearch);
-  connectLineEdit(ui->lineEditAirportStateSearch);
+  installEventFilterForWidget(ui->lineEditAirportIcaoSearch);
+  installEventFilterForWidget(ui->lineEditAirportCitySearch);
+  installEventFilterForWidget(ui->lineEditAirportCountrySearch);
+  installEventFilterForWidget(ui->lineEditAirportNameSearch);
+  installEventFilterForWidget(ui->lineEditAirportStateSearch);
 
   // Runways
   columns->assignMinMaxWidget("longest_runway_length",

@@ -204,10 +204,10 @@ void NavSearch::connectSearchSlots()
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonNavSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
-  connectLineEdit(ui->lineEditNavIcaoSearch);
-  connectLineEdit(ui->lineEditNavNameSearch);
-  connectLineEdit(ui->lineEditNavRegionSearch);
-  connectLineEdit(ui->lineEditNavAirportIcaoSearch);
+  installEventFilterForWidget(ui->lineEditNavIcaoSearch);
+  installEventFilterForWidget(ui->lineEditNavNameSearch);
+  installEventFilterForWidget(ui->lineEditNavRegionSearch);
+  installEventFilterForWidget(ui->lineEditNavAirportIcaoSearch);
 
   // Distance
   columns->assignDistanceSearchWidgets(ui->checkBoxNavDistSearch,

@@ -165,7 +165,15 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
       if(QLineEdit *le = cd->getLineEditWidget())
         le->setText(QString());
       if(QComboBox *cb = cd->getComboBoxWidget())
-        cb->setCurrentIndex(0);
+      {
+        if(cb->isEditable())
+        {
+          cb->setCurrentText(QString());
+          cb->setCurrentIndex(-1);
+        }
+        else
+          cb->setCurrentIndex(0);
+      }
       if(QCheckBox *check = cd->getCheckBoxWidget())
       {
         if(check->isTristate())
