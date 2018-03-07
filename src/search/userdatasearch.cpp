@@ -34,6 +34,7 @@
 #include "common/maptypesfactory.h"
 #include "userdata/userdatacontroller.h"
 #include "sql/sqlrecord.h"
+#include "userdata/userdataicons.h"
 
 UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
@@ -46,30 +47,29 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
     ui->horizontalLayoutUserdata,
     ui->horizontalLayoutUserdataMore,
     ui->lineUserdataMore,
-    ui->actionUserdataSearchShowAllOptions,
     ui->actionUserdataSearchShowMoreOptions
   };
 
   // All drop down menu actions
   userdataSearchMenuActions =
   {
-    ui->actionUserdataSearchShowAllOptions,
     ui->actionUserdataSearchShowMoreOptions
   };
 
-  // Show/hide all search options menu action
-  connect(ui->actionUserdataSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
-  {
-    for(QAction *a: userdataSearchMenuActions)
-      a->setChecked(state);
-  });
+  UserdataIcons *icons = NavApp::getUserdataIcons();
+
+  int size = ui->comboBoxUserdataType->fontMetrics().height();
+  for(const QString& type : icons->getAllTypes())
+    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(type, size)), type);
+  ui->comboBoxUserdataType->lineEdit()->setPlaceholderText(tr("Type"));
+  ui->comboBoxUserdataType->lineEdit()->setClearButtonEnabled(true);
 
   // Default view column descriptors
   // Hidden columns are part of the query and can be used as search criteria but are not shown in the table
   // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("userdata_id").hidden()).
-  append(Column("type", ui->lineEditUserdataType, tr("Type")).filter()).
+  append(Column("type", ui->comboBoxUserdataType, tr("Type")).filter()).
   append(Column("ident", ui->lineEditUserdataIdent, tr("Ident")).filter().defaultSort()).
   append(Column("region", ui->lineEditUserdataRegion, tr("Region")).filter()).
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
@@ -130,17 +130,16 @@ void UserdataSearch::connectSearchSlots()
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonUserdataReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
-  connectLineEdit(ui->lineEditUserdataDescription);
-  connectLineEdit(ui->lineEditUserdataFilepath);
-  connectLineEdit(ui->lineEditUserdataIdent);
-  connectLineEdit(ui->lineEditUserdataName);
-  connectLineEdit(ui->lineEditUserdataTags);
-  connectLineEdit(ui->lineEditUserdataType);
+  installEventFilterForWidget(ui->lineEditUserdataDescription);
+  installEventFilterForWidget(ui->lineEditUserdataFilepath);
+  installEventFilterForWidget(ui->lineEditUserdataIdent);
+  installEventFilterForWidget(ui->lineEditUserdataName);
+  installEventFilterForWidget(ui->lineEditUserdataTags);
+  installEventFilterForWidget(ui->comboBoxUserdataType);
 
   // Connect widgets to the controller
   SearchBaseTable::connectSearchWidgets();
-  ui->toolButtonUserdata->addActions({ui->actionUserdataSearchShowAllOptions,
-                                      ui->actionUserdataSearchShowMoreOptions});
+  ui->toolButtonUserdata->addActions({ui->actionUserdataSearchShowMoreOptions});
 
   // Drop down menu actions
   connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, [ = ](bool state)
@@ -323,16 +322,6 @@ void UserdataSearch::setCallbacks()
 void UserdataSearch::updateButtonMenu()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-
-  // Change state of show all action
-  ui->actionUserdataSearchShowAllOptions->blockSignals(true);
-  if(atools::gui::util::allChecked({ui->actionUserdataSearchShowMoreOptions}))
-    ui->actionUserdataSearchShowAllOptions->setChecked(true);
-  else if(atools::gui::util::noneChecked({ui->actionUserdataSearchShowMoreOptions}))
-    ui->actionUserdataSearchShowAllOptions->setChecked(false);
-  else
-    ui->actionUserdataSearchShowAllOptions->setChecked(false);
-  ui->actionUserdataSearchShowAllOptions->blockSignals(false);
 
   atools::gui::util::changeStarIndication(ui->actionUserdataSearchShowMoreOptions,
                                           atools::gui::util::anyWidgetChanged(
