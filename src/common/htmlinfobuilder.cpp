@@ -64,6 +64,9 @@ const float STARTPOS_ZOOM_METER = 500.f;
 
 const float MIN_GROUND_SPEED = 30.f;
 
+// Print weather time in red if older than this
+const int WEATHER_MAX_AGE_HOURS = 6;
+
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
   : mainWindow(parentWindow), info(formatInfo),
@@ -1155,7 +1158,17 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     time.setOffsetFromUtc(0);
     time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
     time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
-    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) + " " + time.timeZoneAbbreviation());
+
+    QDateTime oldUtc = QDateTime::currentDateTimeUtc().addSecs(-3600 * WEATHER_MAX_AGE_HOURS);
+    atools::util::html::Flags flags = atools::util::html::NONE;
+    QColor color;
+    if(time < oldUtc)
+    {
+      flags |= atools::util::html::BOLD;
+      color = Qt::red;
+    }
+    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) + " " + time.timeZoneAbbreviation(),
+              flags, color);
   }
 
   if(!parsed.getReportTypeString().isEmpty())
