@@ -81,6 +81,8 @@ public:
   void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
 
   void getAirwayById(map::MapAirway& airway, int airwayId);
+  map::MapAirway getAirwayById(int airwayId);
+
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   /* If waypoint is of type VOR get the related VOR object */

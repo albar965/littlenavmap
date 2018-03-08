@@ -1638,31 +1638,32 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   html.table();
   html.row2(tr("Segment type:"), map::airwayTypeToString(airway.type));
 
-  if(airway.direction != map::DIR_BOTH)
+  map::MapWaypoint from = mapQuery->getWaypointById(airway.fromWaypointId);
+  map::MapWaypoint to = mapQuery->getWaypointById(airway.toWaypointId);
+
+  // Show from/to waypoints if one-way and include links ==================================
+  HtmlBuilder tempHtml(true);
+
+  if(airway.direction == map::DIR_BACKWARD)
+    // Reverse if one-way is backward
+    std::swap(from, to);
+
+  QString connector(airway.direction == map::DIR_BOTH ? tr(", ") : tr(" ► "));
+  if(info)
   {
-    // Show from/to waypoints if one-way and include links ==================================
-    HtmlBuilder tempHtml(true);
-
-    map::MapWaypoint from = mapQuery->getWaypointById(airway.fromWaypointId);
-    map::MapWaypoint to = mapQuery->getWaypointById(airway.toWaypointId);
-
-    if(airway.direction == map::DIR_BACKWARD)
-      // Reverse if one-way is backward
-      std::swap(from, to);
-
-    if(info)
-    {
-      tempHtml.a(tr("%1/%2").arg(from.ident).arg(from.region), QString("lnm://show?lonx=%1&laty=%2").
-                 arg(from.position.getLonX()).arg(from.position.getLatY()), atools::util::html::LINK_NO_UL);
-      tempHtml.text(" ► ");
-      tempHtml.a(tr("%1/%2").arg(to.ident).arg(to.region), QString("lnm://show?lonx=%1&laty=%2").
-                 arg(to.position.getLonX()).arg(to.position.getLatY()), atools::util::html::LINK_NO_UL);
-    }
-    else
-      tempHtml.text(tr("%1/%2 ► %3/%4").arg(from.ident).arg(from.region).arg(to.ident).arg(to.region));
-
-    html.row2(tr("Segment One-way:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
+    tempHtml.a(tr("%1/%2").arg(from.ident).arg(from.region), QString("lnm://show?lonx=%1&laty=%2").
+               arg(from.position.getLonX()).arg(from.position.getLatY()), atools::util::html::LINK_NO_UL);
+    tempHtml.text(connector);
+    tempHtml.a(tr("%1/%2").arg(to.ident).arg(to.region), QString("lnm://show?lonx=%1&laty=%2").
+               arg(to.position.getLonX()).arg(to.position.getLatY()), atools::util::html::LINK_NO_UL);
   }
+  else
+    tempHtml.text(tr("%1/%2%3%4/%5").arg(from.ident).arg(from.region).arg(connector).arg(to.ident).arg(to.region));
+
+  if(airway.direction != map::DIR_BOTH)
+    html.row2(tr("Segment One-way:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
+  else
+    html.row2(tr("Segment:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
 
   QString altTxt = map::airwayAltText(airway);
 

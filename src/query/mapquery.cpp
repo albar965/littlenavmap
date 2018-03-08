@@ -228,6 +228,13 @@ void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypo
   }
 }
 
+map::MapAirway MapQuery::getAirwayById(int airwayId)
+{
+  map::MapAirway airway;
+  getAirwayById(airway, airwayId);
+  return airway;
+}
+
 void MapQuery::getAirwayById(map::MapAirway& airway, int airwayId)
 {
   airwayByIdQuery->bindValue(":id", airwayId);
@@ -440,6 +447,12 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     map::MapAirspace airspace = getAirspaceById(id);
     if(airspace.isValid())
       result.airspaces.append(airspace);
+  }
+  else if(type == map::AIRWAY)
+  {
+    map::MapAirway airway = getAirwayById(id);
+    if(airway.isValid())
+      result.airways.append(airway);
   }
 }
 
