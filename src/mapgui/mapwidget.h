@@ -473,6 +473,9 @@ private:
   atools::geo::Pos jumpBackToAircraftPos;
   bool jumpBackToAircraftActive = false;
 
+  /* The the overlays from updating */
+  bool ignoreOverlayUpdates = false;
+
 #ifdef DEBUG_MOVING_AIRPLANE
   void debugMovingPlane(QMouseEvent *event);
 

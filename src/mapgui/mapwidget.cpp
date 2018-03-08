@@ -184,6 +184,9 @@ void MapWidget::setTheme(const QString& theme, int index)
   Ui::MainWindow *ui = mainWindow->getUi();
   currentComboIndex = MapWidget::MapThemeComboIndex(index);
 
+  // Ignore any overlay state signals the widget sends while switching theme
+  ignoreOverlayUpdates = true;
+
   if(index >= MapWidget::CUSTOM)
   {
     // Enable all buttons for custom maps
@@ -226,8 +229,9 @@ void MapWidget::setTheme(const QString& theme, int index)
   setMapThemeId(theme);
   updateMapObjectsShown();
 
-  // atools::gui::Application::processEventsExtended();
-  // ignoreOverlayUpdates = false;
+  ignoreOverlayUpdates = false;
+
+  // Show or hide overlays again
   overlayStateFromMenu();
 }
 
@@ -626,13 +630,13 @@ void MapWidget::showOverlays(bool show)
 
       if(show && showConfig)
       {
-        // qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+        qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
         overlay->setVisible(true);
         overlay->show();
       }
       else
       {
-        // qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+        qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
         overlay->setVisible(false);
         overlay->hide();
       }
@@ -643,42 +647,49 @@ void MapWidget::showOverlays(bool show)
 
 void MapWidget::overlayStateToMenu()
 {
-  qDebug() << Q_FUNC_INFO;
-  for(const QString& name : mapOverlays.keys())
+  qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
+  if(!ignoreOverlayUpdates)
   {
-    AbstractFloatItem *overlay = floatItem(name);
-    if(overlay != nullptr)
+    for(const QString& name : mapOverlays.keys())
     {
-      QAction *menuItem = mapOverlays.value(name);
-      menuItem->blockSignals(true);
-      menuItem->setChecked(overlay->visible());
-      menuItem->blockSignals(false);
+      AbstractFloatItem *overlay = floatItem(name);
+      if(overlay != nullptr)
+      {
+        QAction *menuItem = mapOverlays.value(name);
+        menuItem->blockSignals(true);
+        menuItem->setChecked(overlay->visible());
+        menuItem->blockSignals(false);
+      }
     }
   }
 }
 
 void MapWidget::overlayStateFromMenu()
 {
-  qDebug() << Q_FUNC_INFO;
-
-  for(const QString& name : mapOverlays.keys())
+  qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
+  if(!ignoreOverlayUpdates)
   {
-    AbstractFloatItem *overlay = floatItem(name);
-    if(overlay != nullptr)
+    for(const QString& name : mapOverlays.keys())
     {
-      bool show = mapOverlays.value(name)->isChecked();
-      overlay->setVisible(show);
-      if(show)
+      AbstractFloatItem *overlay = floatItem(name);
+      if(overlay != nullptr)
       {
-        // qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
-        setPropertyValue(overlay->nameId(), true);
-        overlay->show();
-      }
-      else
-      {
-        // qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
-        setPropertyValue(overlay->nameId(), false);
-        overlay->hide();
+        bool show = mapOverlays.value(name)->isChecked();
+        overlay->blockSignals(true);
+        overlay->setVisible(show);
+        if(show)
+        {
+          // qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+          setPropertyValue(overlay->nameId(), true);
+          overlay->show();
+        }
+        else
+        {
+          // qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+          setPropertyValue(overlay->nameId(), false);
+          overlay->hide();
+        }
+        overlay->blockSignals(false);
       }
     }
   }

@@ -331,8 +331,10 @@ void MainWindow::updateMap() const
 
 void MainWindow::updateClock() const
 {
-  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d hh:mm:ssZ"));
-  timeLabel->setToolTip(tr("Day of month and UTC time.\n%1").arg(QDateTime::currentDateTimeUtc().toString()));
+  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d hh:mm:ss Z"));
+  timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
+                        .arg(QDateTime::currentDateTimeUtc().toString())
+                        .arg(QDateTime::currentDateTime().toString()));
 }
 
 /* Show map legend and bring information dock to front */
