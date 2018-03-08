@@ -32,6 +32,8 @@
 #include "search/userdatasearch.h"
 #include "common/maptypes.h"
 #include "userdata/userdataexportdialog.h"
+#include "gui/errorhandler.h"
+#include "exception.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -396,158 +398,230 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
 void UserdataController::importCsv()
 {
   qDebug() << Q_FUNC_INFO;
-
-  QStringList files = dialog->openFileDialogMulti(
-    tr("Open Userpoint CSV File(s)"),
-    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
-
-  int numImported = 0;
-  for(const QString& file:files)
+  try
   {
-    if(!file.isEmpty())
-      numImported += manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
+
+    QStringList files = dialog->openFileDialogMulti(
+      tr("Open Userpoint CSV File(s)"),
+      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
+
+    int numImported = 0;
+    for(const QString& file:files)
+    {
+      if(!file.isEmpty())
+        numImported += manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
+    }
+
+    if(!files.isEmpty())
+    {
+      mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+      emit refreshUserdataSearch();
+    }
   }
-
-  if(!files.isEmpty())
+  catch(atools::Exception& e)
   {
-    mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-    emit refreshUserdataSearch();
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
 void UserdataController::importXplaneUserFixDat()
 {
   qDebug() << Q_FUNC_INFO;
-
-  QString file = dialog->openFileDialog(
-    tr("Open X-Plane user_fix.dat File"),
-    tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT), "Userdata/UserFixDat",
-    xplaneUserWptDatPath());
-
-  if(!file.isEmpty())
+  try
   {
-    int numImported = manager->importXplane(file);
-    mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-    emit refreshUserdataSearch();
+
+    QString file = dialog->openFileDialog(
+      tr("Open X-Plane user_fix.dat File"),
+      tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT), "Userdata/UserFixDat",
+      xplaneUserWptDatPath());
+
+    if(!file.isEmpty())
+    {
+      int numImported = manager->importXplane(file);
+      mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+      emit refreshUserdataSearch();
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
 void UserdataController::importGarmin()
 {
   qDebug() << Q_FUNC_INFO;
-
-  QString file = dialog->openFileDialog(
-    tr("Open Garmin User Waypoint File"),
-    tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT), "Userdata/UserWptDat",
-    garminGtnUserWptPath());
-
-  if(!file.isEmpty())
+  try
   {
-    int numImported = manager->importGarmin(file);
-    mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-    emit refreshUserdataSearch();
+    QString file = dialog->openFileDialog(
+      tr("Open Garmin User Waypoint File"),
+      tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT), "Userdata/UserWptDat",
+      garminGtnUserWptPath());
+
+    if(!file.isEmpty())
+    {
+      int numImported = manager->importGarmin(file);
+      mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+      emit refreshUserdataSearch();
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
 void UserdataController::exportCsv()
 {
   qDebug() << Q_FUNC_INFO;
-
-  bool exportSelected, append;
-  if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+  try
   {
-    QString file = dialog->saveFileDialog(
-      tr("Export Userpoint CSV File"),
-      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-      ".csv",
-      "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
-
-    if(!file.isEmpty())
+    bool exportSelected, append;
+    if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
     {
-      QVector<int> ids;
-      if(exportSelected)
-        ids = NavApp::getUserdataSearch()->getSelectedIds();
-      int numExported =
-        manager->exportCsv(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
-      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      QString file = dialog->saveFileDialog(
+        tr("Export Userpoint CSV File"),
+        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
+        ".csv",
+        "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
+
+      if(!file.isEmpty())
+      {
+        QVector<int> ids;
+        if(exportSelected)
+          ids = NavApp::getUserdataSearch()->getSelectedIds();
+        int numExported =
+          manager->exportCsv(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+        mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      }
     }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
 void UserdataController::exportXplaneUserFixDat()
 {
   qDebug() << Q_FUNC_INFO;
-
-  bool exportSelected, append;
-  if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+  try
   {
-    QString file = dialog->saveFileDialog(
-      tr("Export X-Plane user_fix.dat File"),
-      tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT),
-      ".dat",
-      "Userdata/UserFixDat",
-      xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
-
-    if(!file.isEmpty())
+    bool exportSelected, append;
+    if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
     {
-      QVector<int> ids;
-      if(exportSelected)
-        ids = NavApp::getUserdataSearch()->getSelectedIds();
-      int numExported =
-        manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
-      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      QString file = dialog->saveFileDialog(
+        tr("Export X-Plane user_fix.dat File"),
+        tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT),
+        ".dat",
+        "Userdata/UserFixDat",
+        xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
+
+      if(!file.isEmpty())
+      {
+        QVector<int> ids;
+        if(exportSelected)
+          ids = NavApp::getUserdataSearch()->getSelectedIds();
+        int numExported =
+          manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+        mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      }
     }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
 void UserdataController::exportGarmin()
 {
   qDebug() << Q_FUNC_INFO;
-
-  bool exportSelected, append;
-  if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
+  try
   {
-    QString file = dialog->saveFileDialog(
-      tr("Export Garmin User Waypoint File"),
-      tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT),
-      ".dat",
-      "Userdata/UserWptDat",
-      xplaneUserWptDatPath(), "user.wpt", append /* dont confirm overwrite */);
-
-    if(!file.isEmpty())
+    bool exportSelected, append;
+    if(exportSelectedQuestion(exportSelected, append, true /* append allowed */))
     {
-      QVector<int> ids;
-      if(exportSelected)
-        ids = NavApp::getUserdataSearch()->getSelectedIds();
-      int numExported =
-        manager->exportGarmin(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
-      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      QString file = dialog->saveFileDialog(
+        tr("Export Garmin User Waypoint File"),
+        tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT),
+        ".dat",
+        "Userdata/UserWptDat",
+        xplaneUserWptDatPath(), "user.wpt", append /* dont confirm overwrite */);
+
+      if(!file.isEmpty())
+      {
+        QVector<int> ids;
+        if(exportSelected)
+          ids = NavApp::getUserdataSearch()->getSelectedIds();
+        int numExported =
+          manager->exportGarmin(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+        mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      }
     }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
 void UserdataController::exportBglXml()
 {
   qDebug() << Q_FUNC_INFO;
-
-  bool exportSelected, append;
-  if(exportSelectedQuestion(exportSelected, append, false /* append allowed */))
+  try
   {
-    QString file = dialog->saveFileDialog(
-      tr("Export XML File for FSX/P3D BGL Compiler"),
-      tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BGL_XML),
-      ".xml",
-      "Userdata/BglXml");
-
-    if(!file.isEmpty())
+    bool exportSelected, append;
+    if(exportSelectedQuestion(exportSelected, append, false /* append allowed */))
     {
-      QVector<int> ids;
-      if(exportSelected)
-        ids = NavApp::getUserdataSearch()->getSelectedIds();
-      int numExported =
-        manager->exportBgl(file, ids);
-      mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      QString file = dialog->saveFileDialog(
+        tr("Export XML File for FSX/P3D BGL Compiler"),
+        tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BGL_XML),
+        ".xml",
+        "Userdata/BglXml");
+
+      if(!file.isEmpty())
+      {
+        QVector<int> ids;
+        if(exportSelected)
+          ids = NavApp::getUserdataSearch()->getSelectedIds();
+        int numExported =
+          manager->exportBgl(file, ids);
+        mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
+      }
     }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 
