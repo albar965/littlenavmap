@@ -84,8 +84,10 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
   }
 });
 
+/* width/height / factor = inner rectangle which has to overlap */
 const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL = 4.f;
 const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR = 4.f;
+
 const double MIN_ZOOM_FOR_CENTER_LEG = 4.;
 
 using namespace Marble;
@@ -965,8 +967,8 @@ bool MapWidget::isCenterLegAndAircraftActive()
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  const atools::fs::sc::SimConnectUserAircraft& ac = simulatorData.getUserAircraft();
-  if(databaseLoadStatus || !ac.getPosition().isValid())
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
+  if(databaseLoadStatus || !aircraft.getPosition().isValid())
     return;
 
   screenIndex->updateSimData(simulatorData);
@@ -974,7 +976,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   CoordinateConverter conv(viewport());
   bool curPosVisible = false;
-  QPoint curPos = conv.wToS(ac.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &curPosVisible);
+  QPoint curPos = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &curPosVisible);
   QPoint diff = curPos - conv.wToS(last.getPosition());
   const OptionData& od = OptionData::instance();
   QRect widgetRect = rect();
@@ -988,7 +990,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   qDebug() << "widgetRectSmall" << widgetRectSmall;
 #endif
 
-  if(aircraftTrack.appendTrackPos(ac.getPosition(), ac.getZuluTime(), ac.isOnGround()))
+  if(aircraftTrack.appendTrackPos(aircraft.getPosition(), aircraft.getZuluTime(), aircraft.isOnGround()))
     emit aircraftTrackPruned();
 
   if(wasEmpty != aircraftTrack.isEmpty())
@@ -1031,10 +1033,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
       // Check if any data like heading has changed which requires a redraw
       bool dataHasChanged = posHasChanged ||
-                            almostNotEqual(last.getHeadingDegMag(), ac.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
-                            almostNotEqual(last.getIndicatedSpeedKts(), ac.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
+                            almostNotEqual(last.getHeadingDegMag(), aircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
+                            almostNotEqual(last.getIndicatedSpeedKts(),
+                                           aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
                             almostNotEqual(last.getPosition().getAltitude(),
-                                           ac.getPosition().getAltitude(), deltas.altitudeDelta); // Altitude has changed
+                                           aircraft.getPosition().getAltitude(), deltas.altitudeDelta); // Altitude has changed
 
       if(dataHasChanged)
         screenIndex->updateLastSimData(simulatorData);
@@ -1092,8 +1095,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 setUpdatesEnabled(false);
 
                 Rect rect(nextWp);
-                rect.extend(ac.getPosition());
-#ifdef DEBUG_INFORMATION
+                rect.extend(aircraft.getPosition());
+                // #ifdef DEBUG_INFORMATION
                 qDebug() << Q_FUNC_INFO
                          << "curPosVisible" << curPosVisible
                          << "nextWpPosVisible" << nextWpPosVisible
@@ -1104,10 +1107,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 qDebug() << "innerRect" << innerRect;
                 qDebug() << "widgetRect" << widgetRect;
                 qDebug() << "aircraftWpRect" << aircraftWpRect;
-                qDebug() << "ac.getPosition()" << ac.getPosition();
+                qDebug() << "ac.getPosition()" << aircraft.getPosition();
                 qDebug() << "nextWp" << nextWp;
                 qDebug() << "rect" << rect;
-#endif
+                // #endif
 
                 if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
                 {
@@ -1117,30 +1120,39 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                   if(projection() == Mercator)
                   {
                     float lat = static_cast<float>(std::abs(centerLatitude()));
-                    float nsCorrectionFactor = 0.f;
                     if(lat > 70.f)
-                      nsCorrectionFactor = 2.f;
+                      nsCorrection = rect.getHeightDegree() / 2.f;
                     else if(lat > 60.f)
-                      nsCorrectionFactor = 3.f;
+                      nsCorrection = rect.getHeightDegree() / 3.f;
                     else if(lat > 50.f)
-                      nsCorrectionFactor = 6.f;
+                      nsCorrection = rect.getHeightDegree() / 6.f;
 
-                    nsCorrection = rect.getHeightDegree() / nsCorrectionFactor;
-#ifdef DEBUG_INFORMATION
-                    qDebug() << "nsCorrectionFactor" << nsCorrectionFactor << "nsCorrection" << nsCorrection;
-#endif
+                    // #ifdef DEBUG_INFORMATION
+                    qDebug() << "nsCorrection" << nsCorrection;
+                    // #endif
                   }
 
-                  centerOn(GeoDataLatLonBox(rect.getNorth() + nsCorrection, rect.getSouth() - nsCorrection,
-                                            rect.getEast(), rect.getWest(),
-                                            GeoDataCoordinates::Degree), false);
+                  GeoDataLatLonBox box(rect.getNorth() + nsCorrection, rect.getSouth() - nsCorrection,
+                                       rect.getEast(), rect.getWest(),
+                                       GeoDataCoordinates::Degree);
+
+                  if(!box.isNull() &&
+                     box.width(GeoDataCoordinates::Degree) < 180. &&
+                     box.height(GeoDataCoordinates::Degree) < 180. &&
+                     box.width(GeoDataCoordinates::Degree) > 0.001 &&
+                     box.height(GeoDataCoordinates::Degree) > 0.001)
+                  {
+                    centerOn(box, false);
+                    if(distance() < MIN_ZOOM_FOR_CENTER_LEG)
+                      // Correct zoom for minimum distance
+                      setDistance(MIN_ZOOM_FOR_CENTER_LEG);
+                  }
+                  else
+                    centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
                 }
                 else if(rect.isValid())
-                  centerOn(rect.getEast(), rect.getNorth());
+                  centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
 
-                if(distance() < MIN_ZOOM_FOR_CENTER_LEG)
-                  // Correct zoom for minimum distance
-                  setDistance(MIN_ZOOM_FOR_CENTER_LEG);
                 mapUpdated = true;
               }
             }
@@ -1161,7 +1173,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 // Center aircraft only
                 // Save distance value to avoid "zoom creep"
                 double savedDistance = distance();
-                centerOn(ac.getPosition().getLonX(), ac.getPosition().getLatY(), false);
+                centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
                 setDistance(savedDistance);
                 mapUpdated = true;
               }
