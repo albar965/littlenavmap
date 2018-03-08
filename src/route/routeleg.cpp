@@ -681,6 +681,25 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
+bool RouteLeg::isAirwaySetAndInvalid() const
+{
+  if(!getAirwayName().isEmpty() && airway.isValid())
+  {
+    // Set and valid - check direction
+    if(airway.direction == map::DIR_BOTH)
+      // Always valid in both directions
+      return false;
+    else if(airway.direction == map::DIR_FORWARD)
+      // From this to airway "from" is wrong direction - invalid
+      return getId() == airway.fromWaypointId;
+    else if(airway.direction == map::DIR_BACKWARD)
+      // From this to airway "to" is wrong direction for backward - invalid
+      return getId() == airway.toWaypointId;
+  }
+
+  return !getAirwayName().isEmpty() && !airway.isValid();
+}
+
 // TODO assign functions are duplicatd in FlightplanEntryBuilder
 void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
@@ -750,6 +769,8 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
       << "ident" << leg.getIdent()
       << "nav" << leg.isNavdata()
       << leg.getIdent() << leg.getMapObjectTypeName()
-      << proc::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
+      << proc::procedureLegTypeStr(leg.getProcedureLegType())
+      << "airway" << leg.getAirway().id << leg.getAirwayName() << (leg.getAirway().isValid() ? "valid" : "invalid")
+      << "]";
   return out;
 }

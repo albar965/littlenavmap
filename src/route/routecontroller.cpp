@@ -3140,7 +3140,12 @@ void RouteController::highlightProcedureItems()
         }
         else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
                 (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid()))
+        {
           item->setForeground(Qt::red);
+          QFont font = item->font();
+          font.setBold(true);
+          item->setFont(font);
+        }
         else
           item->setForeground(QApplication::palette().color(QPalette::Normal, QPalette::Text));
       }
