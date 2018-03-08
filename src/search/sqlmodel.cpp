@@ -30,6 +30,7 @@
 #include <QCheckBox>
 #include <QSqlError>
 #include <QRegularExpression>
+#include <QComboBox>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -98,19 +99,25 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
   if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
     // Set the search text into the corresponding line edit
     edit->setText((exclude ? "-" : "") + whereValue.toString());
-  else if(QCheckBox *check = columns->getColumn(whereCol)->getCheckBoxWidget())
+  else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
-    if(check->isTristate())
+    if(combo->isEditable())
+      // Set the search text into the corresponding line edit
+      combo->setCurrentText((exclude ? "-" : "") + whereValue.toString());
+  }
+  else if(QCheckBox *checkBox = columns->getColumn(whereCol)->getCheckBoxWidget())
+  {
+    if(checkBox->isTristate())
     {
       // Update check box state for tri state boxes
       if(whereValue.isNull())
-        check->setCheckState(Qt::PartiallyChecked);
+        checkBox->setCheckState(Qt::PartiallyChecked);
       else
       {
         bool val = whereValue.toInt() > 0;
         if(exclude)
           val = !val;
-        check->setCheckState(val ? Qt::Checked : Qt::Unchecked);
+        checkBox->setCheckState(val ? Qt::Checked : Qt::Unchecked);
       }
     }
     else
@@ -119,7 +126,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
       bool val = whereValue.isNull() || whereValue.toInt() == 0;
       if(exclude)
         val = !val;
-      check->setCheckState(val ? Qt::Unchecked : Qt::Checked);
+      checkBox->setCheckState(val ? Qt::Unchecked : Qt::Checked);
     }
   }
   whereConditionMap.insert(whereCol, {whereOp, whereValue, whereValue, colDescr});
