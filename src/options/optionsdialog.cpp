@@ -342,6 +342,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsMapFlightplanDimPassed);
   widgets.append(ui->checkBoxOptionsSimDoNotFollowOnScroll);
   widgets.append(ui->checkBoxOptionsSimCenterLeg);
+  widgets.append(ui->checkBoxOptionsSimCenterLegTable);
   widgets.append(ui->spinBoxSimDoNotFollowOnScrollTime);
 
   doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
@@ -958,6 +959,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
   toFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts::ROUTE_AUTOZOOM);
+  toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts::ROUTE_CENTER_ACTIVE_LEG);
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
@@ -1102,6 +1104,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts::MAP_ROUTE_DIM_PASSED);
   fromFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(ui->checkBoxOptionsSimCenterLeg, opts::ROUTE_AUTOZOOM);
+  fromFlags2(ui->checkBoxOptionsSimCenterLegTable, opts::ROUTE_CENTER_ACTIVE_LEG);
 
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
 

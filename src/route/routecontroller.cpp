@@ -3061,6 +3061,9 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
           // Use corrected indexes to highlight initial fix
           qDebug() << "new route leg" << previousRouteLeg << routeLeg;
           highlightNextWaypoint(routeLeg);
+
+          if(OptionData::instance().getFlags2() & opts::ROUTE_CENTER_ACTIVE_LEG)
+            view->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
         }
       }
     }

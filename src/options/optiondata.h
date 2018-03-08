@@ -181,7 +181,10 @@ enum Flag2
   ROUTE_AUTOZOOM = 1 << 8,
 
   /* ui->checkBoxOptionsMapAirportDiagram */
-  MAP_AIRPORT_DIAGRAM = 1 << 9
+  MAP_AIRPORT_DIAGRAM = 1 << 9,
+
+  /* ui->checkBoxOptionsSimCenterLegTable */
+  ROUTE_CENTER_ACTIVE_LEG = 1 << 10
 
 };
 

@@ -2010,26 +2010,26 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
        <item row="4" column="0">
         <widget class="QGroupBox" name="groupBox_12">
          <property name="title">
-          <string>Map Movement while flying</string>
+          <string>While flying</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_24">
           <property name="verticalSpacing">
            <number>2</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowOnScroll">
-            <property name="toolTip">
-             <string>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming</string>
+          <item row="2" column="2">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-            <property name="text">
-             <string>&amp;Do not keep aircraft centered when scrolling or zooming in the map</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+           </spacer>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QSpinBox" name="spinBoxSimDoNotFollowOnScrollTime">
             <property name="toolTip">
              <string>Time until aircraft following is activated again after any map interaction like scrolling or zooming</string>
@@ -2048,7 +2048,7 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="labelSimDoNotFollowOnScroll">
             <property name="text">
              <string>&amp;Jump back to aircraft and resume aircraft following after this time:</string>
@@ -2058,18 +2058,28 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <spacer name="horizontalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowOnScroll">
+            <property name="toolTip">
+             <string>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+            <property name="text">
+             <string>&amp;Allow scrolling and zooming in the map</string>
             </property>
-           </spacer>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsSimCenterLegTable">
+            <property name="toolTip">
+             <string>The actiive (magenta) leg will be shown on top of the flight plan table when a new leg is activated</string>
+            </property>
+            <property name="text">
+             <string>&amp;Keep active leg on top of flight plan table</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
