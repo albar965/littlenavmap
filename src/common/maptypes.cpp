@@ -1185,6 +1185,7 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
   filled |= types & map::ILS && !ils.isEmpty();
   filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
+  filled |= types & map::USERPOINT && !userpointIds.isEmpty();
   return !filled;
 }
 

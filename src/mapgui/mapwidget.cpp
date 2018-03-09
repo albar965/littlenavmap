@@ -1322,10 +1322,11 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
   // Get objects from cache - already present objects will be skipped
   mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), false,
                               paintLayer->getShownMapObjects() &
-                              (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT),
+                              (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
                               newPoint.x(), newPoint.y(), screenSearchDistance, result);
 
-  int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size();
+  int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size() +
+                  result.userpoints.size();
 
   int id = -1;
   map::MapObjectTypes type = map::NONE;
@@ -1361,6 +1362,11 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
       id = result.waypoints.first().id;
       type = map::WAYPOINT;
     }
+    else if(!result.userpoints.isEmpty())
+    {
+      id = result.userpoints.first().id;
+      type = map::USERPOINT;
+    }
   }
   else
   {
@@ -1384,7 +1390,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     }
 
     if(!result.airports.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty() ||
-       !result.waypoints.isEmpty())
+       !result.waypoints.isEmpty() || !result.userpoints.isEmpty())
       // There will be more entries - add a separator
       menu.addSeparator();
 
@@ -1407,6 +1413,13 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
       QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE),
                                     menuPrefix + map::waypointText(obj) + menuSuffix, this);
       action->setData(QVariantList({obj.id, map::WAYPOINT}));
+      menu.addAction(action);
+    }
+    for(const map::MapUserpoint& obj : result.userpoints)
+    {
+      QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
+                                    menuPrefix + map::userpointText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, map::USERPOINT}));
       menu.addAction(action);
     }
 
@@ -1922,6 +1935,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     if(action == ui->actionShowInSearch)
     {
+      // Create records and send show in search signal
+      // This works only with line edit fields
       ui->dockWidgetSearch->raise();
       ui->dockWidgetSearch->show();
       if(airport != nullptr)
@@ -1932,33 +1947,49 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       else if(vor != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(map::VOR, SqlRecord().
-                          appendFieldAndValue("ident", vor->ident).
-                          appendFieldAndValue("region", vor->region));
+        SqlRecord rec;
+        rec.appendFieldAndValue("ident", vor->ident);
+        if(!vor->region.isEmpty())
+          rec.appendFieldAndValue("region", vor->region);
+
+        emit showInSearch(map::VOR, rec);
       }
       else if(ndb != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(map::NDB, SqlRecord().
-                          appendFieldAndValue("ident", ndb->ident).
-                          appendFieldAndValue("region", ndb->region));
+        SqlRecord rec;
+        rec.appendFieldAndValue("ident", ndb->ident);
+        if(!ndb->region.isEmpty())
+          rec.appendFieldAndValue("region", ndb->region);
+
+        emit showInSearch(map::NDB, rec);
       }
       else if(waypoint != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(map::WAYPOINT, SqlRecord().
-                          appendFieldAndValue("ident", waypoint->ident).
-                          appendFieldAndValue("region", waypoint->region));
+        SqlRecord rec;
+        rec.appendFieldAndValue("ident", waypoint->ident);
+        if(!waypoint->region.isEmpty())
+          rec.appendFieldAndValue("region", waypoint->region);
+
+        emit showInSearch(map::WAYPOINT, rec);
       }
       else if(userpoint != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(3);
-        emit showInSearch(map::USERPOINT, SqlRecord().
-                          appendFieldAndValue("ident", userpoint->ident).
-                          appendFieldAndValue("region", userpoint->region).
-                          appendFieldAndValue("name", userpoint->name).
-                          appendFieldAndValue("type", userpoint->type).
-                          appendFieldAndValue("tags", userpoint->tags));
+        SqlRecord rec;
+        if(!userpoint->ident.isEmpty())
+          rec.appendFieldAndValue("ident", userpoint->ident);
+        if(!userpoint->region.isEmpty())
+          rec.appendFieldAndValue("region", userpoint->region);
+        if(!userpoint->name.isEmpty())
+          rec.appendFieldAndValue("name", userpoint->name);
+        if(!userpoint->type.isEmpty())
+          rec.appendFieldAndValue("type", userpoint->type);
+        if(!userpoint->tags.isEmpty())
+          rec.appendFieldAndValue("tags", userpoint->tags);
+
+        emit showInSearch(map::USERPOINT, rec);
       }
     }
     else if(action == ui->actionMapNavaidRange)
@@ -2677,7 +2708,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  qDebug() << "mouseDoubleClickEvent";
+  qDebug() << Q_FUNC_INFO;
 
   jumpBackToAircraftStart();
 
@@ -2713,7 +2744,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.waypoints.first().position, 0.f, true);
     else if(!mapSearchResult.userPointsRoute.isEmpty())
       showPos(mapSearchResult.userPointsRoute.first().position, 0.f, true);
-    mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
+    else if(!mapSearchResult.userpoints.isEmpty())
+      showPos(mapSearchResult.userpoints.first().position, 0.f, true);
+    mainWindow->setStatusMessage(QString(tr("Showing navaid or userpoint on map.")));
   }
 }
 
@@ -2908,6 +2941,7 @@ void MapWidget::handleInfoClick(QPoint pos)
     result.waypoints.clear();
     result.waypointIds.clear();
     result.airways.clear();
+    result.userpoints.clear();
   }
 
   if(!(opts & opts::CLICK_AIRSPACE))

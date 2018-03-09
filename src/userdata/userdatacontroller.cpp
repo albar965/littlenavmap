@@ -241,7 +241,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapVor& vor = result.vors.first();
       prefill.appendFieldAndValue("ident", vor.ident)
       .appendFieldAndValue("name", map::vorText(vor))
-      .appendFieldAndValue("type", "WPT")
+      .appendFieldAndValue("type", "Waypoint")
       .appendFieldAndValue("region", vor.region);
       pos = vor.position;
     }
@@ -250,7 +250,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapNdb& ndb = result.ndbs.first();
       prefill.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
-      .appendFieldAndValue("type", "WPT")
+      .appendFieldAndValue("type", "Waypoint")
       .appendFieldAndValue("region", ndb.region);
       pos = ndb.position;
     }
@@ -259,7 +259,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
       const map::MapWaypoint& wp = result.waypoints.first();
       prefill.appendFieldAndValue("ident", wp.ident)
       .appendFieldAndValue("name", map::waypointText(wp))
-      .appendFieldAndValue("type", "WPT")
+      .appendFieldAndValue("type", "Waypoint")
       .appendFieldAndValue("region", wp.region);
       pos = wp.position;
     }

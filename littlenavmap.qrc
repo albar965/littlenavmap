@@ -176,7 +176,7 @@
         <file>resources/icons/userpoint_VRP.svg</file>
         <file>resources/icons/userpoint_Closed.svg</file>
         <file>resources/icons/userpoint_POI.svg</file>
-        <file>resources/icons/userpoint_WPT.svg</file>
+        <file>resources/icons/userpoint_Waypoint.svg</file>
         <file>resources/icons/userpoint_Bookmark.svg</file>
         <file>resources/icons/userpoint_Obstacle.svg</file>
         <file>resources/icons/userpoint_Seaport.svg</file>
