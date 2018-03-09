@@ -19,6 +19,7 @@
 
 #include "common/unit.h"
 #include "navapp.h"
+#include "route/route.h"
 #include "common/mapcolors.h"
 #include "query/infoquery.h"
 #include "query/procedurequery.h"
@@ -60,6 +61,7 @@ enum TreeColumnIndex
 };
 
 using atools::sql::SqlRecord;
+
 using atools::sql::SqlRecordVector;
 using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
@@ -165,7 +167,7 @@ void ProcedureSearch::resetSearch()
   {
     // Only reset if this tab is active
     ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
-    ui->comboBoxProcedureSearchFilter->setCurrentIndex(0);
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
   }
 }
 
@@ -244,6 +246,14 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   airportQuery->getAirportByIdent(currentAirportNav, airport.ident);
 
   updateFilterBoxes();
+
+  if(NavApp::getRoute().isAirportDeparture(airport.ident))
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
+  else if(NavApp::getRoute().isAirportDestination(airport.ident))
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
+  else
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
+
   fillApproachTreeWidget();
 
   restoreTreeViewState(recentTreeState.value(currentAirportNav.id));

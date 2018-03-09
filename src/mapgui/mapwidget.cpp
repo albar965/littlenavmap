@@ -1614,31 +1614,47 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapAirspace *airspace = nullptr;
   map::MapUserpoint *userpoint = nullptr;
 
+  bool airportDestination = false, airportDeparture = false;
   // ===================================================================================
   // Get only one object of each type
   if(result.userAircraft.getPosition().isValid())
     userAircraft = &result.userAircraft;
+
   if(!result.aiAircraft.isEmpty())
     aiAircraft = &result.aiAircraft.first();
+
   if(!result.airports.isEmpty())
+  {
     airport = &result.airports.first();
+    airportDestination = NavApp::getRoute().isAirportDestination(airport->ident);
+    airportDeparture = NavApp::getRoute().isAirportDeparture(airport->ident);
+  }
+
   if(!result.parkings.isEmpty())
     parking = &result.parkings.first();
+
   if(!result.helipads.isEmpty() && result.helipads.first().startId != -1)
     // Only helipads with start position are allowed
     helipad = &result.helipads.first();
+
   if(!result.vors.isEmpty())
     vor = &result.vors.first();
+
   if(!result.ndbs.isEmpty())
     ndb = &result.ndbs.first();
+
   if(!result.waypoints.isEmpty())
     waypoint = &result.waypoints.first();
+
   if(!result.userPointsRoute.isEmpty())
     userpointRoute = &result.userPointsRoute.first();
+
   if(!result.userpoints.isEmpty())
     userpoint = &result.userpoints.first();
+
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
+
   if(!result.airspaces.isEmpty())
     airspace = &result.airspaces.first();
 
@@ -1850,14 +1866,22 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     if(NavApp::getAirportQueryNav()->hasProcedures(airport->ident))
     {
+      QString procText;
+      if(airportDeparture)
+        procText = tr("Departure ");
+      else if(airportDestination)
+        procText = tr("Arrival ");
+      else
+        procText = tr("all ");
+
       ui->actionMapShowApproaches->setEnabled(true);
-      ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
+      ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(procText).arg(informationText));
     }
     else
       ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport->ident));
   }
   else
-    ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()));
+    ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
 
   // Update "delete in route"
   if(routeIndex != -1 && NavApp::getRoute().canEditPoint(routeIndex))

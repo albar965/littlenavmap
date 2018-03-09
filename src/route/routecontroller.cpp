@@ -1746,11 +1746,24 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowApproaches->setEnabled(false);
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
+      QString procText;
+      if(NavApp::getRoute().isAirportDeparture(routeLeg->getIdent()))
+        procText = tr("Departure ");
+      else if(NavApp::getRoute().isAirportDestination(routeLeg->getIdent()))
+        procText = tr("Arrival ");
+      else
+        procText = tr("all ");
+
       if(NavApp::getAirportQueryNav()->hasProcedures(routeLeg->getAirport().ident))
+      {
         ui->actionRouteShowApproaches->setEnabled(true);
+        ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(procText));
+      }
       else
         ui->actionRouteShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(routeLeg->getIdent()));
     }
+    else
+      ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(QString()));
 
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);

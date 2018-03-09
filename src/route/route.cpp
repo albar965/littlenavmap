@@ -1122,6 +1122,16 @@ const RouteLeg& Route::getDestinationBeforeProcedure() const
   return at(getDestinationIndexBeforeProcedure());
 }
 
+bool Route::isAirportDeparture(const QString& ident) const
+{
+  return !isEmpty() && first().getAirport().isValid() && first().getAirport().ident == ident;
+}
+
+bool Route::isAirportDestination(const QString& ident) const
+{
+  return !isEmpty() && last().getAirport().isValid() && last().getAirport().ident == ident;
+}
+
 int Route::getStartIndexAfterProcedure() const
 {
   if(hasAnyDepartureProcedure())

@@ -23,6 +23,7 @@
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
 #include "mapgui/mapwidget.h"
+#include "route/route.h"
 #include "atools.h"
 #include "gui/actiontextsaver.h"
 #include "gui/actionstatesaver.h"
@@ -813,11 +814,24 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproaches->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
+    QString procText;
+    if(NavApp::getRoute().isAirportDeparture(airport.ident))
+      procText = tr("Departure ");
+    else if(NavApp::getRoute().isAirportDestination(airport.ident))
+      procText = tr("Arrival ");
+      else
+        procText = tr("all ");
+
     if(NavApp::getAirportQueryNav()->hasProcedures(airport.ident))
+    {
       ui->actionSearchShowApproaches->setEnabled(true);
+      ui->actionSearchShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(procText));
+    }
     else
       ui->actionSearchShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport.ident));
   }
+  else
+    ui->actionSearchShowApproaches->setText(tr("Show procedures"));
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||

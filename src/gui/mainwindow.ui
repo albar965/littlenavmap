@@ -6078,7 +6078,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Procedures for %1</string>
+    <string>Show %1&amp;Procedures for %2</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -6093,7 +6093,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Procedures</string>
+    <string>Show %1&amp;Procedures</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -6111,7 +6111,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Procedures</string>
+    <string>Show %1&amp;Procedures</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>

@@ -86,6 +86,10 @@ public:
     return activeLeg > 0 && activeLeg < size();
   }
 
+  /* true if flight plan is not empty and airport is departure or destination */
+  bool isAirportDeparture(const QString& airportId) const;
+  bool isAirportDestination(const QString& airportId) const;
+
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;
 

@@ -105,6 +105,7 @@ private:
     QStringList sidStarRunways; // Only filled for all or parallel runway assignments in SID and STAR
   };
 
+  /* comboBoxProcedureSearchFilter index */
   enum FilterIndex
   {
     FILTER_ALL_PROCEDURES,
