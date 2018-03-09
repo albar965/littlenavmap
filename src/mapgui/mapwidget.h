@@ -355,6 +355,10 @@ signals:
 
   void shownMapFeaturesChanged(map::MapObjectTypes types);
 
+  /* State isFlying  between last and current aircraft has changed */
+  void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
 private:
   bool eventFilter(QObject *obj, QEvent *e) override;
   void setDetailLevel(int factor);
@@ -392,6 +396,9 @@ private:
   void jumpBackToAircraftTimeout();
   void jumpBackToAircraftStart();
   bool isCenterLegAndAircraftActive();
+
+  /* Timer for takeoff and landing recognition fired */
+  void takeoffLandingTimeout();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
@@ -468,6 +475,9 @@ private:
   /* Delay display of elevation display to avoid lagging mouse movements */
   QTimer elevationDisplayTimer;
 
+  /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
+  QTimer takeoffLandingTimer;
+
   QTimer jumpBackToAircraftTimer;
   double jumpBackToAircraftDistance = 0.;
   atools::geo::Pos jumpBackToAircraftPos;
@@ -480,6 +490,7 @@ private:
   void debugMovingPlane(QMouseEvent *event);
 
 #endif
+
 };
 
 Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

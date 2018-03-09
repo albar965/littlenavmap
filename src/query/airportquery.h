@@ -118,6 +118,14 @@ public:
 
   const QList<map::MapHelipad> *getHelipads(int airportId);
 
+  /* Get a list of runways of all airports inside rectangle sorted by distance to pos and filtered by heading */
+  void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos,
+                  float heading);
+
+  /* Get the best fitting runway end from the given list of runways according to heading */
+  bool getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+                                  const QVector<map::MapRunway>& runways, float heading);
+
   map::MapRunwayEnd getRunwayEndById(int id);
 
   /* Close all query objects thus disconnecting from the database */
@@ -131,7 +139,7 @@ public:
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
 
   static QStringList airportColumns(const atools::sql::SqlDatabase *db);
-  static QStringList airportOverviewColumns(const atools::sql::SqlDatabase* db);
+  static QStringList airportOverviewColumns(const atools::sql::SqlDatabase *db);
 
 private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
@@ -170,7 +178,7 @@ private:
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr;
   atools::sql::SqlQuery *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr;
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
-  *airportProcByIdentQuery = nullptr;
+                        *airportProcByIdentQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTQUERY_H

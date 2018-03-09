@@ -763,6 +763,9 @@ void MainWindow::connectAllSlots()
   connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
 
+  connect(mapWidget, &MapWidget::aircraftTakeoff, userdataController, &UserdataController::aircraftTakeoff);
+  connect(mapWidget, &MapWidget::aircraftLanding, userdataController, &UserdataController::aircraftLanding);
+
   // Approach controller ===================================================================
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
   connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
@@ -2598,7 +2601,8 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowCities,
                        ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline,
-                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints});
+                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                       ui->actionUserdataCreateLogbook});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -2720,7 +2724,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
-                    ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints});
+                    ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                    ui->actionUserdataCreateLogbook});
   Settings::instance().syncSettings();
 }
 

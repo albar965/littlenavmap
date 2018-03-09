@@ -73,8 +73,8 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   append(Column("ident", ui->lineEditUserdataIdent, tr("Ident")).filter().defaultSort()).
   append(Column("region", ui->lineEditUserdataRegion, tr("Region")).filter()).
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
-  append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
+  append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
 
   append(Column("last_edit_timestamp", tr("Last Change"))).
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).

@@ -35,6 +35,9 @@ class ErrorHandler;
 class HelpHandler;
 }
 namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+}
 namespace common {
 class MagDecReader;
 }
@@ -141,6 +144,9 @@ public:
   /* Needed for export */
   void setMagDecReader(atools::fs::common::MagDecReader *magDecReader);
 
+  void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch();
@@ -158,6 +164,14 @@ private:
   void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefill);
   bool exportSelectedQuestion(bool& exportSelected, bool& append, bool appendAllowed);
 
+  /* Get default X-Plane path to user_fix.dat file */
+  QString xplaneUserWptDatPath();
+
+  /* Get default Garmin GTN export path */
+  QString garminGtnUserWptPath();
+
+  void createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff);
+
   /* Currently in actions selected types */
   QStringList selectedTypes;
   bool selectedUnknownType = false;
@@ -172,12 +186,6 @@ private:
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionUnknown = nullptr;
   QVector<QAction *> actions;
   atools::sql::SqlRecord *lastAddedRecord = nullptr;
-
-  /* Get default X-Plane path to user_fix.dat file */
-  QString xplaneUserWptDatPath();
-
-  /* Get default Garmin GTN export path */
-  QString garminGtnUserWptPath();
 
 };
 

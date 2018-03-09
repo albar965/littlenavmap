@@ -73,8 +73,7 @@ void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAi
   airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
-void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway,
-                                 bool overview)
+void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview)
 {
   if(!overview)
   {
@@ -82,8 +81,6 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.shoulder = record.valueStr("shoulder", QString()); // Optional X-Plane field
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
-    runway.primaryEndId = record.valueInt("primary_end_id");
-    runway.secondaryEndId = record.valueInt("secondary_end_id");
     runway.edgeLight = record.valueStr("edge_light");
     runway.width = record.valueInt("width");
     runway.primaryOffset = record.valueInt("primary_offset_threshold");
@@ -108,6 +105,12 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.secondaryClosed = 0;
   }
 
+  runway.primaryEndId = record.valueInt("primary_end_id", -1);
+  runway.secondaryEndId = record.valueInt("secondary_end_id", -1);
+
+  // Optional in AirportQuery::getRunways
+  runway.airportId = record.valueInt("airport_id", -1);
+
   runway.length = record.valueInt("length");
   runway.heading = record.valueFloat("heading");
   runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
@@ -122,8 +125,6 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
   end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   end.secondary = record.valueStr("end_type") == "S";
   end.heading = record.valueFloat("heading");
-  if(end.secondary)
-    end.heading = atools::geo::opposedCourseDeg(end.heading);
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)

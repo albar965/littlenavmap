@@ -66,6 +66,9 @@ const int DEFAULT_MAP_DISTANCE = 7000;
 // Get elevation when mouse is still
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
+// Delay recognition to avoid detection of bumps
+const int TAKEOFF_LANDING_TIMEOUT = 5000;
+
 /* If width and height of a bounding rect are smaller than this use show point */
 const float POS_IS_POINT_EPSILON = 0.0001f;
 
@@ -154,6 +157,9 @@ MapWidget::MapWidget(MainWindow *parent)
   jumpBackToAircraftTimer.setSingleShot(true);
   connect(&jumpBackToAircraftTimer, &QTimer::timeout, this, &MapWidget::jumpBackToAircraftTimeout);
 
+  takeoffLandingTimer.setSingleShot(true);
+  connect(&takeoffLandingTimer, &QTimer::timeout, this, &MapWidget::takeoffLandingTimeout);
+
   mapVisible = new MapVisible(paintLayer);
 }
 
@@ -161,6 +167,7 @@ MapWidget::~MapWidget()
 {
   elevationDisplayTimer.stop();
   jumpBackToAircraftTimer.stop();
+  takeoffLandingTimer.stop();
 
   qDebug() << Q_FUNC_INFO << "removeEventFilter";
   removeEventFilter(this);
@@ -973,6 +980,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   screenIndex->updateSimData(simulatorData);
   const atools::fs::sc::SimConnectUserAircraft& last = screenIndex->getLastUserAircraft();
+
+  if(last.getPosition().isValid() && aircraft.getPosition().isValid())
+  {
+    // start time to emit takeoff/landing signal
+    if(last.isFlying() != aircraft.isFlying())
+      takeoffLandingTimer.start(TAKEOFF_LANDING_TIMEOUT);
+  }
 
   CoordinateConverter conv(viewport());
   bool curPosVisible = false;
@@ -3067,6 +3081,24 @@ void MapWidget::jumpBackToAircraftCancel()
 
   jumpBackToAircraftTimer.stop();
   jumpBackToAircraftActive = false;
+}
+
+void MapWidget::takeoffLandingTimeout()
+{
+  const atools::fs::sc::SimConnectUserAircraft aircraft = screenIndex->getLastUserAircraft();
+
+  if(aircraft.isFlying())
+  {
+    // In air after  status has changed
+    qDebug() << Q_FUNC_INFO << "Takeoff detected";
+    emit aircraftTakeoff(aircraft);
+  }
+  else
+  {
+    // On ground after status has changed
+    qDebug() << Q_FUNC_INFO << "Landing detected";
+    emit aircraftLanding(aircraft);
+  }
 }
 
 void MapWidget::jumpBackToAircraftTimeout()

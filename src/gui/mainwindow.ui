@@ -196,6 +196,8 @@
     <addaction name="actionUserdataExportGarminGTN"/>
     <addaction name="actionUserdataExportXmlBgl"/>
     <addaction name="separator"/>
+    <addaction name="actionUserdataCreateLogbook"/>
+    <addaction name="separator"/>
     <addaction name="actionUserdataClearDatabase"/>
    </widget>
    <widget class="QMenu" name="menuMapView">
@@ -6863,6 +6865,20 @@
    </property>
    <property name="statusTip">
     <string>Save procedure waypoints instead of SID/STAR information</string>
+   </property>
+  </action>
+  <action name="actionUserdataCreateLogbook">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Create Logbook entries</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a logbook entry for each start or landing</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a logbook entry for each start or landing</string>
    </property>
   </action>
  </widget>

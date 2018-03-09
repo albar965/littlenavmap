@@ -282,7 +282,7 @@ private:
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
                      atools::util::HtmlBuilder& html);
 
-  void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft,
+  void dateAndTime(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                    atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
                     const QString& station = QString(),

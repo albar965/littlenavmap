@@ -21,22 +21,28 @@
 #include "common/constants.h"
 #include "sql/sqlrecord.h"
 #include "navapp.h"
+#include "route/routecontroller.h"
 #include "atools.h"
 #include "gui/dialog.h"
+#include "fs/util/fsutil.h"
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "userdata/userdatadialog.h"
 #include "userdata/userdataicons.h"
 #include "settings/settings.h"
+#include "query/airportquery.h"
 #include "options/optiondata.h"
 #include "search/userdatasearch.h"
 #include "common/maptypes.h"
 #include "userdata/userdataexportdialog.h"
 #include "gui/errorhandler.h"
 #include "exception.h"
+#include "common/unit.h"
 
 #include <QDebug>
 #include <QStandardPaths>
+
+using atools::sql::SqlRecord;
 
 UserdataController::UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent)
   : manager(userdataManager), mainWindow(parent)
@@ -44,7 +50,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   dialog = new atools::gui::Dialog(mainWindow);
   icons = new UserdataIcons(mainWindow);
   icons->loadIcons();
-  lastAddedRecord = new atools::sql::SqlRecord();
+  lastAddedRecord = new SqlRecord();
 }
 
 UserdataController::~UserdataController()
@@ -225,7 +231,7 @@ void UserdataController::addUserpointFromMap(const map::MapSearchResult& result,
   else
   {
     // Prepare the dialog prefill data
-    atools::sql::SqlRecord prefill = manager->getEmptyRecord();
+    SqlRecord prefill = manager->getEmptyRecord();
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.first();
@@ -279,7 +285,7 @@ void UserdataController::deleteUserpointFromMap(int id)
 
 void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint)
 {
-  atools::sql::SqlRecord rec;
+  SqlRecord rec;
   rec.appendFieldAndValue("lonx", userpoint.position.getLonX());
   rec.appendFieldAndValue("laty", userpoint.position.getLatY());
 
@@ -297,6 +303,115 @@ void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDe
   manager->setMagDecReader(magDecReader);
 }
 
+void UserdataController::aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft)
+{
+  createTakoffLanding(aircraft, true /*takeoff*/);
+}
+
+void UserdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft)
+{
+  createTakoffLanding(aircraft, false /*takeoff*/);
+}
+
+void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff)
+{
+  if(NavApp::getMainUi()->actionUserdataCreateLogbook->isChecked())
+  {
+    QVector<map::MapRunway> runways;
+
+    // Use inflated rectangle for query
+    atools::geo::Rect rect(aircraft.getPosition());
+    rect.inflate(0.5f, 0.5f);
+
+    // Get runways that more or less match the aircraft heading
+    float track = aircraft.getTrackDegTrue();
+    AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+    airportQuery->getRunways(runways, rect, aircraft.getPosition(), track);
+
+    // Get closes runway that matches heading
+    map::MapRunwayEnd runwayEnd;
+    map::MapAirport airport;
+    if(airportQuery->getBestRunwayEndAndAirport(runwayEnd, airport, runways, track))
+    {
+      qDebug() << Q_FUNC_INFO << runwayEnd.name << aircraft.getPosition() << track;
+
+      QString departureArrivalText = takeoff ? tr("Departure") : tr("Arrival");
+
+      // Build record for new userpoint
+      SqlRecord record = manager->getEmptyRecord();
+      record.setValue("last_edit_timestamp", QDateTime::currentDateTime());
+      record.setValue("lonx", airport.position.getLonX());
+      record.setValue("laty", airport.position.getLatY());
+      record.setValue("ident", airport.ident);
+      record.setValue("type", "Logbook");
+      record.setValue("tags", departureArrivalText);
+      record.setValue("name", airport.name);
+      record.setValue("visible_from", 500);
+      record.setValue("altitude", airport.position.getAltitude());
+
+      // Build description text =========================================================
+      QString description = tr("%1 at %2 runway %3\n"
+                               "Simulator Date and Time: %4 %5, %6 %7\n"
+                               "Date and Time:  %8\n\n").
+                            arg(departureArrivalText).
+                            arg(map::airportText(airport)).
+                            arg(runwayEnd.name).
+                            arg(QLocale().toString(aircraft.getZuluTime(), QLocale::ShortFormat)).
+                            arg(aircraft.getZuluTime().timeZoneAbbreviation()).
+                            arg(QLocale().toString(aircraft.getLocalTime().time(), QLocale::ShortFormat)).
+                            arg(aircraft.getLocalTime().timeZoneAbbreviation()).
+                            arg(QDateTime::currentDateTime().toString());
+
+      // Add flight plan file name =========================================================
+      QString file = NavApp::getRouteController()->getCurrentRouteFilename();
+      if(!file.isEmpty())
+        description.append(tr("Flight Plan: \"%1\"\n\n").arg(QFileInfo(file).fileName()));
+
+      // Add aircraft information =========================================================
+      description.append(tr("Aircraft:\n"));
+
+      if(!aircraft.getAirplaneTitle().isEmpty())
+        description += tr("Title: %1\n").arg(aircraft.getAirplaneTitle());
+
+      if(!aircraft.getAirplaneAirline().isEmpty())
+        description += tr("Airline: %1\n").arg(aircraft.getAirplaneAirline());
+
+      if(!aircraft.getAirplaneFlightnumber().isEmpty())
+        description += tr("Flight Number: %1\n").arg(aircraft.getAirplaneFlightnumber());
+
+      if(!aircraft.getAirplaneModel().isEmpty())
+        description += tr("Model: %1\n").arg(aircraft.getAirplaneModel());
+
+      if(!aircraft.getAirplaneRegistration().isEmpty())
+        description += tr("Registration: %1\n").arg(aircraft.getAirplaneRegistration());
+
+      QString type;
+      if(!aircraft.getAirplaneType().isEmpty())
+        type = aircraft.getAirplaneType();
+      else
+        // Convert model ICAO code to a name
+        type = atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
+
+      if(!type.isEmpty())
+        description += tr("Type: %1\n").arg(type);
+
+      record.setValue("description", description);
+
+      // Add to database
+      manager->insertByRecord(record);
+      manager->commit();
+      emit refreshUserdataSearch();
+      emit userdataChanged();
+      mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2 runway %3 added.").
+                                   arg(departureArrivalText).
+                                   arg(airport.ident).
+                                   arg(runwayEnd.name));
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing" << aircraft.getPosition() << track;
+  }
+}
+
 void UserdataController::editUserpointFromMap(const map::MapSearchResult& result)
 {
   qDebug() << Q_FUNC_INFO;
@@ -305,15 +420,15 @@ void UserdataController::editUserpointFromMap(const map::MapSearchResult& result
 
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
 {
-  addUserpointInternal(id, pos, atools::sql::SqlRecord());
+  addUserpointInternal(id, pos, SqlRecord());
 }
 
 void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos,
-                                              const atools::sql::SqlRecord& prefill)
+                                              const SqlRecord& prefill)
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::sql::SqlRecord rec;
+  SqlRecord rec;
 
   if(id != -1 /*&& lastAddedRecord->isEmpty()*/)
     // Get prefill from given database id
@@ -355,7 +470,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::sql::SqlRecord rec = manager->getRecord(ids.first());
+  SqlRecord rec = manager->getRecord(ids.first());
   if(!rec.isEmpty())
   {
     UserdataDialog dlg(mainWindow, ids.size() > 1 ? ud::EDIT_MULTIPLE : ud::EDIT_ONE, icons);

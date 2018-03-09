@@ -184,6 +184,9 @@ struct MapRunway
       primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length */
   atools::geo::Pos position, primaryPosition, secondaryPosition;
 
+  /* Used by AirportQuery::getRunways */
+  int airportId;
+
   bool primaryClosed, secondaryClosed; /* true if ends have closed markings */
 
   bool isValid() const

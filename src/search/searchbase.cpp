@@ -819,8 +819,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       procText = tr("Departure ");
     else if(NavApp::getRoute().isAirportDestination(airport.ident))
       procText = tr("Arrival ");
-      else
-        procText = tr("all ");
+    else
+      procText = tr("all ");
 
     if(NavApp::getAirportQueryNav()->hasProcedures(airport.ident))
     {

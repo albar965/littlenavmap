@@ -1943,17 +1943,17 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   }
 }
 
-void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, HtmlBuilder& html) const
+void HtmlInfoBuilder::dateAndTime(const SimConnectUserAircraft *userAircraft, HtmlBuilder& html) const
 {
   html.row2(tr("Date and Time:"),
-            locale.toString(userAircaft->getZuluTime(), QLocale::ShortFormat) +
+            locale.toString(userAircraft->getZuluTime(), QLocale::ShortFormat) +
             tr(" ") +
-            userAircaft->getZuluTime().timeZoneAbbreviation());
+            userAircraft->getZuluTime().timeZoneAbbreviation());
 
   html.row2(tr("Local Time:"),
-            locale.toString(userAircaft->getLocalTime().time(), QLocale::ShortFormat) +
+            locale.toString(userAircraft->getLocalTime().time(), QLocale::ShortFormat) +
             tr(" ") +
-            userAircaft->getLocalTime().timeZoneAbbreviation());
+            userAircraft->getLocalTime().timeZoneAbbreviation());
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
@@ -1993,7 +1993,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
 
       html.table();
-      timeAndDate(userAircaft, html);
+      dateAndTime(userAircaft, html);
       html.tableEnd();
 
       // Route distances ===============================================================
@@ -2219,7 +2219,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     {
       head(html, tr("No Active Flight Plan Leg"));
       html.table();
-      timeAndDate(userAircaft, html);
+      dateAndTime(userAircaft, html);
       html.tableEnd();
     }
   }
@@ -2227,7 +2227,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     head(html, tr("No Flight Plan"));
     html.table();
-    timeAndDate(userAircaft, html);
+    dateAndTime(userAircaft, html);
     html.tableEnd();
   }
 
