@@ -91,8 +91,6 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
 const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL = 4.f;
 const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR = 4.f;
 
-const double MIN_ZOOM_FOR_CENTER_LEG = 4.;
-
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
@@ -1100,7 +1098,16 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               QRect innerRect = widgetRect.adjusted(width() / 4, height() / 4, -width() / 4, -height() / 4);
               bool centered = innerRect.intersects(atools::geo::rectToSquare(aircraftWpRect));
 
-              if(distance() < MIN_ZOOM_FOR_CENTER_LEG + 1.)
+              float minZoom = 4.f;
+              float alt = aircraft.getAltitudeAboveGroundFt();
+              if(alt < 500.f)
+                minZoom = 0.25f;
+              else if(alt < 1000.f)
+                minZoom = 0.5f;
+              else if(alt < 2000.f)
+                minZoom = 1.f;
+
+              if(distance() < minZoom + 1.)
                 // Already close enough
                 rectTooSmall = false;
 
@@ -1157,9 +1164,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                      box.height(GeoDataCoordinates::Degree) > 0.001)
                   {
                     centerOn(box, false);
-                    if(distance() < MIN_ZOOM_FOR_CENTER_LEG)
+                    if(distance() < minZoom)
                       // Correct zoom for minimum distance
-                      setDistance(MIN_ZOOM_FOR_CENTER_LEG);
+                      setDistance(minZoom);
                   }
                   else
                     centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
