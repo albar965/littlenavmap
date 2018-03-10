@@ -979,7 +979,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   screenIndex->updateSimData(simulatorData);
   const atools::fs::sc::SimConnectUserAircraft& last = screenIndex->getLastUserAircraft();
 
-  if(last.getPosition().isValid() && aircraft.getPosition().isValid())
+  if(last.getPosition().isValid() && aircraft.getPosition().isValid() &&
+     !aircraft.isSimPaused() && !aircraft.isSimReplay())
   {
     // start time to emit takeoff/landing signal
     if(last.isFlying() != aircraft.isFlying())
