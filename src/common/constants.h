@@ -155,6 +155,8 @@ const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
 /* Export settings dialog */
 const QLatin1Literal USERDATA_EXPORT_DIALOG("UserdataExport/Widget");
+/* Edit dialog */
+const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
 
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");

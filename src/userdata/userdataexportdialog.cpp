@@ -54,11 +54,11 @@ bool UserdataExportDialog::isExportSelected() const
 void UserdataExportDialog::saveState()
 {
   atools::gui::WidgetState state(lnm::USERDATA_EXPORT_DIALOG);
-  state.save({ui->checkBoxUserpointExportAppend, ui->checkBoxUserpointExportSelected});
+  state.save({this, ui->checkBoxUserpointExportAppend, ui->checkBoxUserpointExportSelected});
 }
 
 void UserdataExportDialog::restoreState()
 {
   atools::gui::WidgetState state(lnm::USERDATA_EXPORT_DIALOG);
-  state.restore({ui->checkBoxUserpointExportAppend, ui->checkBoxUserpointExportSelected});
+  state.restore({this, ui->checkBoxUserpointExportAppend, ui->checkBoxUserpointExportSelected});
 }

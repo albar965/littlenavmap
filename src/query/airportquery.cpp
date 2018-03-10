@@ -482,43 +482,48 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
-bool AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
                                               const QVector<map::MapRunway>& runways, float heading)
 {
-  // Loop through the list of distance ordered runways from getRunways
-  for(const map::MapRunway& rw : runways)
+  if(!runways.isEmpty())
   {
-    map::MapRunwayEnd primaryEnd = getRunwayEndById(rw.primaryEndId);
-    map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw.secondaryEndId);
+    // Loop through the list of distance ordered runways from getRunways
+    for(const map::MapRunway& rw : runways)
+    {
+      map::MapRunwayEnd primaryEnd = getRunwayEndById(rw.primaryEndId);
+      map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw.secondaryEndId);
 
-    // Check if either primary or secondary end matches by heading
-    if(atools::geo::angleInRange(heading,
-                                 atools::geo::normalizeCourse(primaryEnd.heading - MAX_HEADING_RUNWAY_DEVIATION),
-                                 atools::geo::normalizeCourse(primaryEnd.heading + MAX_HEADING_RUNWAY_DEVIATION)))
-    {
-      qDebug() << "Found primary" << primaryEnd.name;
-      runwayEnd = primaryEnd;
-      getAirportById(airport, rw.airportId);
-      return true;
+      // Check if either primary or secondary end matches by heading
+      if(atools::geo::angleInRange(heading,
+                                   atools::geo::normalizeCourse(primaryEnd.heading - MAX_HEADING_RUNWAY_DEVIATION),
+                                   atools::geo::normalizeCourse(primaryEnd.heading + MAX_HEADING_RUNWAY_DEVIATION)))
+      {
+        qDebug() << "Found primary" << primaryEnd.name;
+        runwayEnd = primaryEnd;
+        break;
+      }
+      else if(atools::geo::angleInRange(heading,
+                                        atools::geo::normalizeCourse(secondaryEnd.heading -
+                                                                     MAX_HEADING_RUNWAY_DEVIATION),
+                                        atools::geo::normalizeCourse(secondaryEnd.heading +
+                                                                     MAX_HEADING_RUNWAY_DEVIATION)))
+      {
+        qDebug() << "Found secondary" << secondaryEnd.name;
+        runwayEnd = secondaryEnd;
+        break;
+      }
     }
-    else if(atools::geo::angleInRange(heading,
-                                      atools::geo::normalizeCourse(secondaryEnd.heading - MAX_HEADING_RUNWAY_DEVIATION),
-                                      atools::geo::normalizeCourse(secondaryEnd.heading +
-                                                                   MAX_HEADING_RUNWAY_DEVIATION)))
-    {
-      qDebug() << "Found secondary" << secondaryEnd.name;
-      runwayEnd = secondaryEnd;
-      getAirportById(airport, rw.airportId);
-      return true;
-    }
+
+    // No runway end found - get at least the nearest airport
+    getAirportById(airport, runways.first().airportId);
+
+    if(!runwayEnd.isValid())
+      qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing";
   }
-
-  qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing";
-  return false;
 }
 
 void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect,
-                              const atools::geo::Pos& pos, float heading)
+                              const atools::geo::Pos& pos)
 {
   SqlQuery query(db);
   query.prepare("select * from runway where lonx between :leftx and :rightx and laty between :bottomy and :topy");
@@ -535,30 +540,21 @@ void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const atools::ge
     {
       map::MapRunway runway;
       mapTypesFactory->fillRunway(query.record(), runway, true /*overview*/);
-
-      // Omit all runways with not matching heading
-      bool primaryOk =
-        atools::geo::angleInRange(heading, atools::geo::normalizeCourse(runway.heading - MAX_HEADING_RUNWAY_DEVIATION),
-                                  atools::geo::normalizeCourse(runway.heading + MAX_HEADING_RUNWAY_DEVIATION));
-      bool secondaryOk =
-        atools::geo::angleInRange(heading,
-                                  atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(runway.heading) -
-                                                               MAX_HEADING_RUNWAY_DEVIATION),
-                                  atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(runway.heading) +
-                                                               MAX_HEADING_RUNWAY_DEVIATION));
-      if(primaryOk || secondaryOk)
-        runways.append(runway);
+      runways.append(runway);
     }
   }
 
   // Now sort the list of runways by distance to aircraft position and put the closest to the beginning of the list
-  std::sort(runways.begin(), runways.end(), [pos, heading](const map::MapRunway& r1, const map::MapRunway& r2) -> bool
+  std::sort(runways.begin(), runways.end(), [pos](const map::MapRunway& r1, const map::MapRunway& r2) -> bool
   {
     LineDistance result1, result2;
     Line(r1.primaryPosition, r1.secondaryPosition).distanceMeterToLine(pos, result1);
     Line(r2.primaryPosition, r2.secondaryPosition).distanceMeterToLine(pos, result2);
     return result1.distance < result2.distance;
   });
+
+  if(runways.isEmpty())
+    qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing at" << pos << "inside" << rect;
 }
 
 const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)

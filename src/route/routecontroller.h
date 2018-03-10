@@ -132,6 +132,11 @@ public:
     return routeFilename;
   }
 
+  float getRouteDistanceNm() const
+  {
+    return route.getTotalDistance();
+  }
+
   bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
 
   /* Create a default filename based on departure and destination names. Suffix includes dot. */

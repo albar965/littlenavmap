@@ -28,6 +28,7 @@
 #include "gui/helphandler.h"
 #include "navapp.h"
 #include "userdata/userdataicons.h"
+#include "gui/widgetstate.h"
 
 #include <QPushButton>
 #include <QDateTime>
@@ -181,6 +182,16 @@ void UserdataDialog::setRecord(const atools::sql::SqlRecord& sqlRecord)
 
   // Data to widgets
   recordToDialog();
+}
+
+void UserdataDialog::saveState()
+{
+  atools::gui::WidgetState(lnm::USERDATA_EDIT_ADD_DIALOG).save(this);
+}
+
+void UserdataDialog::restoreState()
+{
+  atools::gui::WidgetState(lnm::USERDATA_EDIT_ADD_DIALOG).restore(this);
 }
 
 void UserdataDialog::updateWidgets()

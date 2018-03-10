@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "sql/sqlrecord.h"
 #include "navapp.h"
+#include "common/formatter.h"
 #include "route/routecontroller.h"
 #include "atools.h"
 #include "gui/dialog.h"
@@ -43,6 +44,7 @@
 #include <QStandardPaths>
 
 using atools::sql::SqlRecord;
+using atools::geo::Pos;
 
 UserdataController::UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent)
   : manager(userdataManager), mainWindow(parent)
@@ -55,6 +57,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
 
 UserdataController::~UserdataController()
 {
+  delete aircraftAtTakeoff;
   delete dialog;
   delete icons;
   delete lastAddedRecord;
@@ -326,90 +329,129 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     // Get runways that more or less match the aircraft heading
     float track = aircraft.getTrackDegTrue();
     AirportQuery *airportQuery = NavApp::getAirportQuerySim();
-    airportQuery->getRunways(runways, rect, aircraft.getPosition(), track);
+    airportQuery->getRunways(runways, rect, aircraft.getPosition());
 
     // Get closes runway that matches heading
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
-    if(airportQuery->getBestRunwayEndAndAirport(runwayEnd, airport, runways, track))
-    {
-      qDebug() << Q_FUNC_INFO << runwayEnd.name << aircraft.getPosition() << track;
+    airportQuery->getBestRunwayEndAndAirport(runwayEnd, airport, runways, track);
 
-      QString departureArrivalText = takeoff ? tr("Departure") : tr("Arrival");
+    if(!airport.isValid())
+      qWarning() << Q_FUNC_INFO << "No runways or airports found for takeoff/landing"
+                 << aircraft.getPosition() << track;
 
-      // Build record for new userpoint
-      SqlRecord record = manager->getEmptyRecord();
-      record.setValue("last_edit_timestamp", QDateTime::currentDateTime());
-      record.setValue("lonx", airport.position.getLonX());
-      record.setValue("laty", airport.position.getLatY());
-      record.setValue("ident", airport.ident);
-      record.setValue("type", "Logbook");
-      record.setValue("tags", departureArrivalText);
-      record.setValue("name", airport.name);
-      record.setValue("visible_from", 500);
-      record.setValue("altitude", airport.position.getAltitude());
+    qDebug() << Q_FUNC_INFO << runwayEnd.name << aircraft.getPosition() << track << airport.ident;
 
-      // Build description text =========================================================
-      QString description = tr("%1 at %2 runway %3\n"
-                               "Simulator Date and Time: %4 %5, %6 %7\n"
-                               "Date and Time:  %8\n\n").
-                            arg(departureArrivalText).
-                            arg(map::airportText(airport)).
-                            arg(runwayEnd.name).
-                            arg(QLocale().toString(aircraft.getZuluTime(), QLocale::ShortFormat)).
-                            arg(aircraft.getZuluTime().timeZoneAbbreviation()).
-                            arg(QLocale().toString(aircraft.getLocalTime().time(), QLocale::ShortFormat)).
-                            arg(aircraft.getLocalTime().timeZoneAbbreviation()).
-                            arg(QDateTime::currentDateTime().toString());
+    QString departureArrivalText = takeoff ? tr("Departure") : tr("Arrival");
+    QString runwayText = runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString();
+    Pos position = airport.isValid() ? airport.position : aircraft.getPosition();
+    QString airportText = airport.isValid() ? map::airportText(airport) : Unit::coords(position);
 
-      // Add flight plan file name =========================================================
-      QString file = NavApp::getRouteController()->getCurrentRouteFilename();
-      if(!file.isEmpty())
-        description.append(tr("Flight Plan: \"%1\"\n\n").arg(QFileInfo(file).fileName()));
+    // Build record for new userpoint
+    SqlRecord record = manager->getEmptyRecord();
+    record.setValue("last_edit_timestamp", QDateTime::currentDateTime());
+    record.setValue("lonx", position.getLonX());
+    record.setValue("laty", position.getLatY());
+    record.setValue("ident", airport.ident);
+    record.setValue("type", "Logbook");
+    record.setValue("tags", departureArrivalText);
+    record.setValue("name", airport.name);
+    record.setValue("visible_from", 500);
+    record.setValue("altitude", position.getAltitude());
 
-      // Add aircraft information =========================================================
-      description.append(tr("Aircraft:\n"));
+    // Build description text =========================================================
+    QString description = tr("%1 at %2%3\n"
+                             "Simulator Date and Time: %4 %5, %6 %7\n"
+                             "Date and Time:  %8\n").
+                          arg(departureArrivalText).
+                          arg(airportText).
+                          arg(runwayText).
+                          arg(QLocale().toString(aircraft.getZuluTime(), QLocale::ShortFormat)).
+                          arg(aircraft.getZuluTime().timeZoneAbbreviation()).
+                          arg(QLocale().toString(aircraft.getLocalTime().time(), QLocale::ShortFormat)).
+                          arg(aircraft.getLocalTime().timeZoneAbbreviation()).
+                          arg(QDateTime::currentDateTime().toString());
 
-      if(!aircraft.getAirplaneTitle().isEmpty())
-        description += tr("Title: %1\n").arg(aircraft.getAirplaneTitle());
+    // Add flight plan file name =========================================================
+    QString file = NavApp::getRouteController()->getCurrentRouteFilename();
+    if(!file.isEmpty())
+      description.append(tr("\nFlight Plan: \"%1\"\n").arg(QFileInfo(file).fileName()));
 
-      if(!aircraft.getAirplaneAirline().isEmpty())
-        description += tr("Airline: %1\n").arg(aircraft.getAirplaneAirline());
+    // Add aircraft information =========================================================
+    description.append(tr("\nAircraft:\n"));
 
-      if(!aircraft.getAirplaneFlightnumber().isEmpty())
-        description += tr("Flight Number: %1\n").arg(aircraft.getAirplaneFlightnumber());
+    if(!aircraft.getAirplaneTitle().isEmpty())
+      description += tr("Title: %1\n").arg(aircraft.getAirplaneTitle());
 
-      if(!aircraft.getAirplaneModel().isEmpty())
-        description += tr("Model: %1\n").arg(aircraft.getAirplaneModel());
+    if(!aircraft.getAirplaneAirline().isEmpty())
+      description += tr("Airline: %1\n").arg(aircraft.getAirplaneAirline());
 
-      if(!aircraft.getAirplaneRegistration().isEmpty())
-        description += tr("Registration: %1\n").arg(aircraft.getAirplaneRegistration());
+    if(!aircraft.getAirplaneFlightnumber().isEmpty())
+      description += tr("Flight Number: %1\n").arg(aircraft.getAirplaneFlightnumber());
 
-      QString type;
-      if(!aircraft.getAirplaneType().isEmpty())
-        type = aircraft.getAirplaneType();
-      else
-        // Convert model ICAO code to a name
-        type = atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
+    if(!aircraft.getAirplaneModel().isEmpty())
+      description += tr("Model: %1\n").arg(aircraft.getAirplaneModel());
 
-      if(!type.isEmpty())
-        description += tr("Type: %1\n").arg(type);
+    if(!aircraft.getAirplaneRegistration().isEmpty())
+      description += tr("Registration: %1\n").arg(aircraft.getAirplaneRegistration());
 
-      record.setValue("description", description);
-
-      // Add to database
-      manager->insertByRecord(record);
-      manager->commit();
-      emit refreshUserdataSearch();
-      emit userdataChanged();
-      mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2 runway %3 added.").
-                                   arg(departureArrivalText).
-                                   arg(airport.ident).
-                                   arg(runwayEnd.name));
-    }
+    QString type;
+    if(!aircraft.getAirplaneType().isEmpty())
+      type = aircraft.getAirplaneType();
     else
-      qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing" << aircraft.getPosition() << track;
+      // Convert model ICAO code to a name
+      type = atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
+
+    if(!type.isEmpty())
+      description += tr("Type: %1\n").arg(type);
+
+    if(!takeoff && aircraftAtTakeoff != nullptr && aircraft.isSameAircraft(*aircraftAtTakeoff))
+    {
+      // Landing and have same aircraft state saved
+
+      // Add trip state =========================================================
+      description.append(tr("\nTrip:\n"));
+
+      float travelTimeHours = aircraft.getTravelingTimeMinutes(*aircraftAtTakeoff) / 60.f;
+
+      description += tr("Time: %1\n").
+                     arg(formatter::formatMinutesHoursLong(travelTimeHours));
+      if(!NavApp::getRoute().isEmpty())
+      {
+        float distNm = NavApp::getRoute().getTotalDistance();
+        description += tr("Flight Plan Distance: %1\n").arg(Unit::distNm(distNm));
+
+        if(travelTimeHours > 0.01f)
+          description +=
+            tr("Average Groundspeed (based on flight plan): %1\n").arg(Unit::speedKts(distNm / travelTimeHours));
+      }
+
+      description += tr("Fuel consumed: %1\n").arg(
+        Unit::weightLbs(aircraft.getConsumedFuelLbs(*aircraftAtTakeoff)) + tr(", ") +
+        Unit::volGallon(aircraft.getConsumedFuelGallons(*aircraftAtTakeoff)));
+      description += tr("Average fuel flow: %1\n").arg(
+        Unit::ffLbs(aircraft.getAverageFuelFlowPPH(*aircraftAtTakeoff)) + tr(", ") +
+        Unit::ffGallon(aircraft.getAverageFuelFlowGPH(*aircraftAtTakeoff)));
+    }
+
+    record.setValue("description", description);
+
+    // Add to database
+    manager->insertByRecord(record);
+    manager->commit();
+    emit refreshUserdataSearch();
+    emit userdataChanged();
+    mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
+                                 arg(departureArrivalText).
+                                 arg(airport.ident).
+                                 arg(runwayText));
   }
+
+  delete aircraftAtTakeoff;
+  aircraftAtTakeoff = nullptr;
+
+  if(takeoff)
+    aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
 }
 
 void UserdataController::editUserpointFromMap(const map::MapSearchResult& result)
@@ -450,6 +492,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     rec.appendFieldAndValue("lonx", pos.getLonX()).appendFieldAndValue("laty", pos.getLatY());
 
   UserdataDialog dlg(mainWindow, ud::ADD, icons);
+  dlg.restoreState();
 
   dlg.setRecord(rec);
   int retval = dlg.exec();
@@ -464,6 +507,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Userpoint added."));
   }
+  dlg.saveState();
 }
 
 void UserdataController::editUserpoints(const QVector<int>& ids)
@@ -474,6 +518,8 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
   if(!rec.isEmpty())
   {
     UserdataDialog dlg(mainWindow, ids.size() > 1 ? ud::EDIT_MULTIPLE : ud::EDIT_ONE, icons);
+    dlg.restoreState();
+
     dlg.setRecord(rec);
     int retval = dlg.exec();
     if(retval == QDialog::Accepted)
@@ -486,6 +532,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
       emit userdataChanged();
       mainWindow->setStatusMessage(tr("%n userpoint(s) updated.", "", ids.size()));
     }
+    dlg.saveState();
   }
   else
     qWarning() << Q_FUNC_INFO << "Empty record" << rec;

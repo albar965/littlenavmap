@@ -71,6 +71,9 @@ public:
 
   const static QLatin1Literal DEFAULT_TYPE;
 
+  void saveState();
+  void restoreState();
+
 private:
   void updateWidgets();
   void acceptClicked();

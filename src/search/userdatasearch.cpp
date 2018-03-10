@@ -70,13 +70,13 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   columns->
   append(Column("userdata_id").hidden()).
   append(Column("type", ui->comboBoxUserdataType, tr("Type")).filter()).
-  append(Column("ident", ui->lineEditUserdataIdent, tr("Ident")).filter().defaultSort()).
+  append(Column("last_edit_timestamp", tr("Last Change")).defaultSort().defaultSortOrder(Qt::DescendingOrder)).
+  append(Column("ident", ui->lineEditUserdataIdent, tr("Ident")).filter()).
   append(Column("region", ui->lineEditUserdataRegion, tr("Region")).filter()).
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
   append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
 
-  append(Column("last_edit_timestamp", tr("Last Change"))).
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("import_file_path", ui->lineEditUserdataFilepath, tr("Imported\nfrom File")).filter()).

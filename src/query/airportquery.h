@@ -118,12 +118,12 @@ public:
 
   const QList<map::MapHelipad> *getHelipads(int airportId);
 
-  /* Get a list of runways of all airports inside rectangle sorted by distance to pos and filtered by heading */
-  void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos,
-                  float heading);
+  /* Get a list of runways of all airports inside rectangle sorted by distance to pos */
+  void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos);
 
-  /* Get the best fitting runway end from the given list of runways according to heading */
-  bool getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+  /* Get the best fitting runway end from the given list of runways according to heading.
+   *  Only the rearest airport is returned if no runway was found */
+  void getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
                                   const QVector<map::MapRunway>& runways, float heading);
 
   map::MapRunwayEnd getRunwayEndById(int id);

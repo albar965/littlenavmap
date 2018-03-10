@@ -172,6 +172,9 @@ private:
 
   void createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff);
 
+  /* Remember last aircraft for fuel calculations */
+  const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
+
   /* Currently in actions selected types */
   QStringList selectedTypes;
   bool selectedUnknownType = false;
