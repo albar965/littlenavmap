@@ -1026,15 +1026,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       takeoffLandingTimer.start(TAKEOFF_LANDING_TIMEOUT);
   }
 
+  // Create screen coordinates =============================
   CoordinateConverter conv(viewport());
   bool curPosVisible = false;
-  QPoint curPos = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &curPosVisible);
-  QPoint diff = curPos - conv.wToS(last.getPosition());
+  QPoint curPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &curPosVisible);
+  QPoint diff = curPoint - conv.wToS(last.getPosition());
   const OptionData& od = OptionData::instance();
   QRect widgetRect = rect();
+
+  // Used to check if objects are still visible
   QRect widgetRectSmall = widgetRect.adjusted(widgetRect.width() / 20, widgetRect.height() / 20,
                                               -widgetRect.width() / 20, -widgetRect.height() / 20);
-  curPosVisible = widgetRectSmall.contains(curPos);
+  curPosVisible = widgetRectSmall.contains(curPoint);
 
   bool wasEmpty = aircraftTrack.isEmpty();
 #ifdef DEBUG_INFORMATION_DISABLED
@@ -1049,6 +1052,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // We have a track - update toolbar and menu
     emit updateActionStates();
 
+  // ================================================================================
+  // Check if screen has to be updated/scrolled/zoomed
   if(paintLayer->getShownMapObjects() & map::AIRCRAFT || paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
   {
     // Show aircraft is enabled
@@ -1057,7 +1062,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // Get delta values for update rate
     const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(od.getSimUpdateRate());
 
-    // Limit number of updates per second
+    // Limit number of updates per second =================================================
     qint64 now = QDateTime::currentMSecsSinceEpoch();
     if(now - lastSimUpdateMs > deltas.timeDeltaMs)
     {
@@ -1080,7 +1085,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       }
 
       // Check if position has changed significantly
-      bool posHasChanged = !last.getPosition().isValid() || // No previous position
+      bool posHasChanged = !last.isValid() || // No previous position
                            diff.manhattanLength() >= deltas.manhattanLengthDelta; // Screen position has changed
 
       // Check if any data like heading has changed which requires a redraw
@@ -1097,19 +1102,19 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       // Option to udpate always
       bool updateAlways = od.getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY;
 
-      // Check if centering of leg is reqired
+      // Check if centering of leg is reqired =======================================
       const Route& route = NavApp::getRoute();
       bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
-      // Get position of next waypoint
-      Pos nextWp;
-      QPoint nextWpPos;
+      // Get position of next waypoint and check visibility
+      Pos nextWpPos;
+      QPoint nextWpPoint;
       bool nextWpPosVisible = false;
       if(centerAircraftAndLeg)
       {
-        nextWp = route.getActiveLeg() != nullptr ? route.getActiveLeg()->getPosition() : Pos();
-        nextWpPos = conv.wToS(nextWp, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
-        nextWpPosVisible = widgetRectSmall.contains(nextWpPos);
+        nextWpPos = route.getActiveLeg() != nullptr ? route.getActiveLeg()->getPosition() : Pos();
+        nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
+        nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
       }
 
       bool mapUpdated = false;
@@ -1122,56 +1127,64 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
           // Do not update if user is using drag and drop or scrolling around
           if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBackToAircraftActive)
           {
-            setUpdatesEnabled(false);
             if(centerAircraftAndLeg)
             {
-              QRect aircraftWpRect = QRect(curPos, nextWpPos).normalized();
+              QRect aircraftWpRect = QRect(curPoint, nextWpPoint).normalized();
               float factor = projection() ==
                              Mercator ? MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR :
                              MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL;
-
-              bool rectTooSmall = aircraftWpRect.width() < width() / factor &&
-                                  aircraftWpRect.height() < height() / factor;
 
               // Check if the rectangle from aircraft and waypoint overlaps with a shrinked screen rectangle
               // to check if it is still centered
               QRect innerRect = widgetRect.adjusted(width() / 4, height() / 4, -width() / 4, -height() / 4);
               bool centered = innerRect.intersects(atools::geo::rectToSquare(aircraftWpRect));
 
-              float minZoom = 4.f;
+              // Minimum zoom depends on flight altitude
+              float minZoom = atools::geo::nmToKm(14.7f);
               float alt = aircraft.getAltitudeAboveGroundFt();
               if(alt < 500.f)
-                minZoom = 0.25f;
-              else if(alt < 1000.f)
-                minZoom = 0.5f;
-              else if(alt < 2000.f)
-                minZoom = 1.f;
+                minZoom = atools::geo::nmToKm(0.5f);
+              else if(alt < 1200.f)
+                minZoom = atools::geo::nmToKm(0.9f);
+              else if(alt < 2200.f)
+                minZoom = atools::geo::nmToKm(1.8f);
+              else if(alt < 10500.f)
+                minZoom = atools::geo::nmToKm(7.4f);
+              else if(alt < 20500.f)
+                minZoom = atools::geo::nmToKm(14.7f);
 
-              if(distance() < minZoom + 1.)
-                // Already close enough
+              // Check if zoom in is needed
+              bool rectTooSmall = aircraftWpRect.width() < width() / factor &&
+                                  aircraftWpRect.height() < height() / factor;
+
+              if(distance() < minZoom * 1.2f)
+                // Already close enough - do not zoom in
                 rectTooSmall = false;
 
               if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
               {
+                // Postpone scren updates
                 setUpdatesEnabled(false);
 
-                Rect rect(nextWp);
+                Rect rect(nextWpPos);
                 rect.extend(aircraft.getPosition());
-                // #ifdef DEBUG_INFORMATION
-                qDebug() << Q_FUNC_INFO
-                         << "curPosVisible" << curPosVisible
-                         << "nextWpPosVisible" << nextWpPosVisible
-                         << "updateAlways" << updateAlways
-                         << "rectTooSmall" << rectTooSmall
-                         << "centered" << centered;
+#ifdef DEBUG_INFORMATION
+                qDebug() << Q_FUNC_INFO;
+                qDebug() << "curPosVisible" << curPosVisible;
+                qDebug() << "curPoint" << curPoint;
+                qDebug() << "nextWpPosVisible" << nextWpPosVisible;
+                qDebug() << "nextWpPoint" << nextWpPoint;
+                qDebug() << "updateAlways" << updateAlways;
+                qDebug() << "rectTooSmall" << rectTooSmall;
+                qDebug() << "centered" << centered;
 
                 qDebug() << "innerRect" << innerRect;
                 qDebug() << "widgetRect" << widgetRect;
                 qDebug() << "aircraftWpRect" << aircraftWpRect;
                 qDebug() << "ac.getPosition()" << aircraft.getPosition();
-                qDebug() << "nextWp" << nextWp;
                 qDebug() << "rect" << rect;
-                // #endif
+                qDebug() << "minZoom" << minZoom;
+#endif
 
                 if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
                 {
@@ -1188,9 +1201,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                     else if(lat > 50.f)
                       nsCorrection = rect.getHeightDegree() / 6.f;
 
-                    // #ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION
                     qDebug() << "nsCorrection" << nsCorrection;
-                    // #endif
+#endif
                   }
 
                   GeoDataLatLonBox box(rect.getNorth() + nsCorrection, rect.getSouth() - nsCorrection,
@@ -1198,10 +1211,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                                        GeoDataCoordinates::Degree);
 
                   if(!box.isNull() &&
+                     // Keep the stupid Marble widget from crashing
                      box.width(GeoDataCoordinates::Degree) < 180. &&
                      box.height(GeoDataCoordinates::Degree) < 180. &&
-                     box.width(GeoDataCoordinates::Degree) > 0.001 &&
-                     box.height(GeoDataCoordinates::Degree) > 0.001)
+                     box.width(GeoDataCoordinates::Degree) > 0.000001 &&
+                     box.height(GeoDataCoordinates::Degree) > 0.000001)
                   {
                     centerOn(box, false);
                     if(distance() < minZoom)
@@ -1226,7 +1240,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
               widgetRect.adjust(dx, dy, -dx, -dy);
 
-              if(!widgetRect.contains(curPos) || // Aircraft out of box or ...
+              if(!widgetRect.contains(curPoint) || // Aircraft out of box or ...
                  updateAlways) // ... update always
               {
                 setUpdatesEnabled(false);
