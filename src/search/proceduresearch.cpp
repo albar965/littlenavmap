@@ -232,6 +232,13 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   ui->tabWidgetSearch->setCurrentIndex(2);
   treeWidget->setFocus();
 
+  if(NavApp::getRoute().isAirportDeparture(airport.ident))
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
+  else if(NavApp::getRoute().isAirportDestination(airport.ident))
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
+  else
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
+
   if(currentAirportNav.isValid() && currentAirportNav.ident == airport.ident)
     // Ignore if noting has changed - or jump out of the view mode
     return;
@@ -246,13 +253,6 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   airportQuery->getAirportByIdent(currentAirportNav, airport.ident);
 
   updateFilterBoxes();
-
-  if(NavApp::getRoute().isAirportDeparture(airport.ident))
-    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
-  else if(NavApp::getRoute().isAirportDestination(airport.ident))
-    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
-  else
-    ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
 
   fillApproachTreeWidget();
 
