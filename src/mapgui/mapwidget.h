@@ -357,7 +357,8 @@ signals:
 
   /* State isFlying  between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
+                       float averageTasKts);
 
 private:
   bool eventFilter(QObject *obj, QEvent *e) override;
@@ -477,6 +478,21 @@ private:
 
   /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
   QTimer takeoffLandingTimer;
+
+  /* Simulator zulu time timestamp of takeoff event */
+  qint64 takeoffTimeMs = 0L;
+
+  /* Flown distance from takeoff event */
+  double takeoffLandingDistanceNm = 0.;
+
+  /* Average true airspeed from takeoff event */
+  double takeoffLandingAverageTasKts = 0.;
+
+  /* Last sample from average value calculation */
+  qint64 takeoffLastSampleTimeMs = 0L;
+
+  /* Used for distance calculation */
+  atools::fs::sc::SimConnectUserAircraft takeoffLandingLastAircraft;
 
   QTimer jumpBackToAircraftTimer;
   double jumpBackToAircraftDistance = 0.;

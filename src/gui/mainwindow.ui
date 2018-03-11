@@ -6875,10 +6875,10 @@
     <string>&amp;Create Logbook entries</string>
    </property>
    <property name="toolTip">
-    <string>Create a logbook entry for each start or landing</string>
+    <string>Create a logbook entry for each takeoff or landing</string>
    </property>
    <property name="statusTip">
-    <string>Create a logbook entry for each start or landing</string>
+    <string>Create a logbook entry for each takeoff or landing</string>
    </property>
   </action>
  </widget>

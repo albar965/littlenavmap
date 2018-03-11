@@ -301,6 +301,11 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   mainWindow->setStatusMessage(tr("Userpoint moved."));
 }
 
+void UserdataController::backup()
+{
+  manager->backup();
+}
+
 void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDecReader)
 {
   manager->setMagDecReader(magDecReader);
@@ -308,15 +313,17 @@ void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDe
 
 void UserdataController::aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
-  createTakoffLanding(aircraft, true /*takeoff*/);
+  createTakoffLanding(aircraft, true /*takeoff*/, 0.f, 0.f);
 }
 
-void UserdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft)
+void UserdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
+                                         float averageTasKts)
 {
-  createTakoffLanding(aircraft, false /*takeoff*/);
+  createTakoffLanding(aircraft, false /*takeoff*/, flownDistanceNm, averageTasKts);
 }
 
-void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff)
+void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
+                                             float flownDistanceNm, float averageTasKts)
 {
   if(NavApp::getMainUi()->actionUserdataCreateLogbook->isChecked())
   {
@@ -376,6 +383,24 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     QString file = NavApp::getRouteController()->getCurrentRouteFilename();
     if(!file.isEmpty())
       description.append(tr("\nFlight Plan: \"%1\"\n").arg(QFileInfo(file).fileName()));
+    const Route& route = NavApp::getRoute();
+
+    // Current start and destination =========================================================
+    if(!route.isEmpty())
+    {
+      QString from, to;
+      if(route.first().getAirport().isValid())
+        from = map::airportText(route.first().getAirport());
+      else
+        from = route.first().getIdent();
+
+      if(route.last().getAirport().isValid())
+        to = map::airportText(route.last().getAirport());
+      else
+        to = route.last().getIdent();
+
+      description.append(tr("%1From: %2 to %3\n").arg(file.isEmpty() ? "\n" : "").arg(from).arg(to));
+    }
 
     // Add aircraft information =========================================================
     description.append(tr("\nAircraft:\n"));
@@ -416,15 +441,18 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
 
       description += tr("Time: %1\n").
                      arg(formatter::formatMinutesHoursLong(travelTimeHours));
-      if(!NavApp::getRoute().isEmpty())
-      {
-        float distNm = NavApp::getRoute().getTotalDistance();
-        description += tr("Flight Plan Distance: %1\n").arg(Unit::distNm(distNm));
+      if(!route.isEmpty())
+        description += tr("Flight Plan Distance: %1\n").arg(Unit::distNm(route.getTotalDistance()));
 
+      if(flownDistanceNm > 1.f)
+      {
+        description += tr("Flown Distance: %1\n").arg(Unit::distNm(flownDistanceNm));
         if(travelTimeHours > 0.01f)
-          description +=
-            tr("Average Groundspeed (based on flight plan): %1\n").arg(Unit::speedKts(distNm / travelTimeHours));
+          description += tr("Average Groundspeed: %1\n").arg(Unit::speedKts(flownDistanceNm / travelTimeHours));
       }
+
+      if(averageTasKts > 1.f)
+        description += tr("Average True Airspeed: %1\n").arg(Unit::speedKts(averageTasKts));
 
       description += tr("Fuel consumed: %1\n").arg(
         Unit::weightLbs(aircraft.getConsumedFuelLbs(*aircraftAtTakeoff)) + tr(", ") +

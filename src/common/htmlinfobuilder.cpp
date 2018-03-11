@@ -2352,7 +2352,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
   if(aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
      aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
-     aircraft.getTrueSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
+     aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT ||
      aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
 
@@ -2367,8 +2367,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
 
     if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
-      if(aircraft.getTrueSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-        html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueSpeedKts()));
+      if(aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueAirspeedKts()));
 
     if(aircraft.getCategory() != atools::fs::sc::BOAT)
     {
