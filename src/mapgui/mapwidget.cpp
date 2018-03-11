@@ -1756,23 +1756,28 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                       = destinationText = addRouteText = searchText = map::airportText(*airport);
 
   int departureParkingAirportId = -1;
-  if(helipad != nullptr)
+  // Parking or helipad only if no airport at cursor
+  if(airport == nullptr)
   {
-    departureParkingAirportId = helipad->airportId;
-    departureParkingText = tr("Helipad %1").arg(helipad->runwayName);
-  }
+    if(helipad != nullptr)
+    {
+      departureParkingAirportId = helipad->airportId;
+      departureParkingText = tr("Helipad %1").arg(helipad->runwayName);
+    }
 
-  if(parking != nullptr)
-  {
-    departureParkingAirportId = parking->airportId;
-    if(parking->number == -1)
-      departureParkingText = map::parkingName(parking->name);
-    else
-      departureParkingText = map::parkingName(parking->name) + " " + QLocale().toString(parking->number);
+    if(parking != nullptr)
+    {
+      departureParkingAirportId = parking->airportId;
+      if(parking->number == -1)
+        departureParkingText = map::parkingName(parking->name);
+      else
+        departureParkingText = map::parkingName(parking->name) + " " + QLocale().toString(parking->number);
+    }
   }
 
   if(departureParkingAirportId != -1)
   {
+    // Clear texts which are not valid for parking positions
     informationText.clear();
     measureText.clear();
     rangeRingText.clear();
