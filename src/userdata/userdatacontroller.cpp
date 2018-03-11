@@ -367,22 +367,22 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     record.setValue("altitude", position.getAltitude());
 
     // Build description text =========================================================
-    QString description = tr("%1 at %2%3\n"
-                             "Simulator Date and Time: %4 %5, %6 %7\n"
-                             "Date and Time:  %8\n").
-                          arg(departureArrivalText).
-                          arg(airportText).
-                          arg(runwayText).
-                          arg(QLocale().toString(aircraft.getZuluTime(), QLocale::ShortFormat)).
-                          arg(aircraft.getZuluTime().timeZoneAbbreviation()).
-                          arg(QLocale().toString(aircraft.getLocalTime().time(), QLocale::ShortFormat)).
-                          arg(aircraft.getLocalTime().timeZoneAbbreviation()).
-                          arg(QDateTime::currentDateTime().toString());
+    QStringList description;
+
+    description << tr("%1 at %2%3").arg(departureArrivalText).arg(airportText).arg(runwayText);
+
+    description << tr("Simulator Date and Time: %1 %2, %3 %4").
+      arg(QLocale().toString(aircraft.getZuluTime(), QLocale::ShortFormat)).
+      arg(aircraft.getZuluTime().timeZoneAbbreviation()).
+      arg(QLocale().toString(aircraft.getLocalTime().time(), QLocale::ShortFormat)).
+      arg(aircraft.getLocalTime().timeZoneAbbreviation());
+
+    description << tr("Date and Time: %1").arg(QDateTime::currentDateTime().toString());
 
     // Add flight plan file name =========================================================
     QString file = NavApp::getRouteController()->getCurrentRouteFilename();
     if(!file.isEmpty())
-      description.append(tr("\nFlight Plan: \"%1\"\n").arg(QFileInfo(file).fileName()));
+      description << QString() << tr("Flight Plan:") << QFileInfo(file).fileName();
     const Route& route = NavApp::getRoute();
 
     // Current start and destination =========================================================
@@ -399,26 +399,27 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
       else
         to = route.last().getIdent();
 
-      description.append(tr("%1From: %2 to %3\n").arg(file.isEmpty() ? "\n" : "").arg(from).arg(to));
+      description << tr("From: %2 to %3").arg(from).arg(to);
+      description << tr("Cruising altitude: %1").arg(Unit::altFeet(route.getCruisingAltitudeFeet()));
     }
 
     // Add aircraft information =========================================================
-    description.append(tr("\nAircraft:\n"));
+    description << QString() << tr("Aircraft:");
 
     if(!aircraft.getAirplaneTitle().isEmpty())
-      description += tr("Title: %1\n").arg(aircraft.getAirplaneTitle());
+      description << tr("Title: %1").arg(aircraft.getAirplaneTitle());
 
     if(!aircraft.getAirplaneAirline().isEmpty())
-      description += tr("Airline: %1\n").arg(aircraft.getAirplaneAirline());
+      description << tr("Airline: %1").arg(aircraft.getAirplaneAirline());
 
     if(!aircraft.getAirplaneFlightnumber().isEmpty())
-      description += tr("Flight Number: %1\n").arg(aircraft.getAirplaneFlightnumber());
+      description << tr("Flight Number: %1").arg(aircraft.getAirplaneFlightnumber());
 
     if(!aircraft.getAirplaneModel().isEmpty())
-      description += tr("Model: %1\n").arg(aircraft.getAirplaneModel());
+      description << tr("Model: %1").arg(aircraft.getAirplaneModel());
 
     if(!aircraft.getAirplaneRegistration().isEmpty())
-      description += tr("Registration: %1\n").arg(aircraft.getAirplaneRegistration());
+      description << tr("Registration: %1").arg(aircraft.getAirplaneRegistration());
 
     QString type;
     if(!aircraft.getAirplaneType().isEmpty())
@@ -428,41 +429,40 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
       type = atools::fs::util::aircraftTypeForCode(aircraft.getAirplaneModel());
 
     if(!type.isEmpty())
-      description += tr("Type: %1\n").arg(type);
+      description << tr("Type: %1").arg(type);
 
     if(!takeoff && aircraftAtTakeoff != nullptr && aircraft.isSameAircraft(*aircraftAtTakeoff))
     {
       // Landing and have same aircraft state saved
 
       // Add trip state =========================================================
-      description.append(tr("\nTrip:\n"));
+      description << QString() << tr("Trip:");
 
       float travelTimeHours = aircraft.getTravelingTimeMinutes(*aircraftAtTakeoff) / 60.f;
 
-      description += tr("Time: %1\n").
-                     arg(formatter::formatMinutesHoursLong(travelTimeHours));
+      description << tr("Time: %1").
+        arg(formatter::formatMinutesHoursLong(travelTimeHours));
       if(!route.isEmpty())
-        description += tr("Flight Plan Distance: %1\n").arg(Unit::distNm(route.getTotalDistance()));
+        description << tr("Flight Plan Distance: %1").arg(Unit::distNm(route.getTotalDistance()));
 
       if(flownDistanceNm > 1.f)
       {
-        description += tr("Flown Distance: %1\n").arg(Unit::distNm(flownDistanceNm));
+        description << tr("Flown Distance: %1").arg(Unit::distNm(flownDistanceNm));
         if(travelTimeHours > 0.01f)
-          description += tr("Average Groundspeed: %1\n").arg(Unit::speedKts(flownDistanceNm / travelTimeHours));
+          description << tr("Average Groundspeed: %1").arg(Unit::speedKts(flownDistanceNm / travelTimeHours));
       }
 
       if(averageTasKts > 1.f)
-        description += tr("Average True Airspeed: %1\n").arg(Unit::speedKts(averageTasKts));
+        description << tr("Average True Airspeed: %1").arg(Unit::speedKts(averageTasKts));
 
-      description += tr("Fuel consumed: %1\n").arg(
+      description << tr("Fuel consumed: %1").arg(
         Unit::weightLbs(aircraft.getConsumedFuelLbs(*aircraftAtTakeoff)) + tr(", ") +
         Unit::volGallon(aircraft.getConsumedFuelGallons(*aircraftAtTakeoff)));
-      description += tr("Average fuel flow: %1\n").arg(
+      description << tr("Average fuel flow: %1").arg(
         Unit::ffLbs(aircraft.getAverageFuelFlowPPH(*aircraftAtTakeoff)) + tr(", ") +
         Unit::ffGallon(aircraft.getAverageFuelFlowGPH(*aircraftAtTakeoff)));
     }
-
-    record.setValue("description", description);
+    record.setValue("description", description.join("\n"));
 
     // Add to database
     manager->insertByRecord(record);
