@@ -6690,45 +6690,99 @@
    <property name="text">
     <string>&amp;Show Search</string>
    </property>
+   <property name="toolTip">
+    <string>Show Userpoint Search Tab</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Userpoint Search Tab</string>
+   </property>
   </action>
   <action name="actionUserdataImportCSV">
    <property name="text">
     <string>Import &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Userpoints from CSV File</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Userpoints from CSV File</string>
    </property>
   </action>
   <action name="actionUserdataImportUserfixDat">
    <property name="text">
     <string>Import &amp;X-Plane user_fix.dat ...</string>
    </property>
+   <property name="toolTip">
+    <string>Import Userpoints from X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Userpoints from X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
   </action>
   <action name="actionUserdataImportGarminGTN">
    <property name="text">
     <string>Import &amp;Garmin GTN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</string>
    </property>
   </action>
   <action name="actionUserdataExportCSV">
    <property name="text">
     <string>Export &amp;CSV ...</string>
    </property>
+   <property name="toolTip">
+    <string>Export Userpoints to CSV File</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to CSV File</string>
+   </property>
   </action>
   <action name="actionUserdataExportUserfixDat">
    <property name="text">
     <string>Export &amp;X-Plane user_fix.dat ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Userpoints to X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to X-Plane &quot;user_fix.dat&quot; file</string>
    </property>
   </action>
   <action name="actionUserdataExportGarminGTN">
    <property name="text">
     <string>Export &amp;Garmin GTN ...</string>
    </property>
+   <property name="toolTip">
+    <string>Export Userpoints to Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
   </action>
   <action name="actionUserdataExportXmlBgl">
    <property name="text">
     <string>Export &amp;XML for FSX/P3D BGL Compiler ...</string>
    </property>
+   <property name="toolTip">
+    <string>Export Userpoints to XML File for FSX/P3D BGL Compiler</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to XML File for FSX/P3D BGL Compiler</string>
+   </property>
   </action>
   <action name="actionUserdataClearDatabase">
    <property name="text">
     <string>Clear database</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear Userpoint Database</string>
+   </property>
+   <property name="statusTip">
+    <string>Clear Userpoint Database</string>
    </property>
   </action>
   <action name="actionUserdataEdit">
@@ -6875,10 +6929,10 @@
     <string>&amp;Create Logbook entries</string>
    </property>
    <property name="toolTip">
-    <string>Create a logbook entry for each takeoff or landing</string>
+    <string>Create a Userpoint of type Logbook including flight information for each takeoff and landing</string>
    </property>
    <property name="statusTip">
-    <string>Create a logbook entry for each takeoff or landing</string>
+    <string>Create a Userpoint of type Logbook including flight information for each takeoff and landing</string>
    </property>
   </action>
  </widget>
