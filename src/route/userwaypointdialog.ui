@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>331</width>
-    <height>130</height>
+    <height>129</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Edit User Waypoint Name</string>
+   <string>Little Navmap - Edit User Waypoint</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0">
@@ -38,7 +38,25 @@
     <widget class="QLineEdit" name="lineEditRouteUserWaypoint"/>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="lineEditRouteUserWaypointLatLon"/>
+    <widget class="QLineEdit" name="lineEditRouteUserWaypointLatLon">
+     <property name="toolTip">
+      <string>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26' 41.57&quot; E9° 12' 5.49&quot; or 49° 26' 41.57&quot; N 9° 12' 5.49&quot; E
+- Degrees and minutes: N54* 16.82' W008* 35.95', N 52 33.58 E 13 17.26 or 49° 26.69' N 9° 12.09' E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
+Degree, minute and second signs can be omitted for above formats. 
+Latitude has to be first and N/S and E/W designators are required.
+A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
+Other formats:
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000
+- NAT type 5020N 
+Formats above have to be given exactly as shown in the examples.</string>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="labelRouteUserWaypoint">
