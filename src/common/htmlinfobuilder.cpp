@@ -189,6 +189,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
 
+  // Get transition altitude from nav database
+  map::MapAirport navAirport = airport;
+  NavApp::getMapQuery()->getAirportNavReplace(navAirport);
+  if(navAirport.transitionAltitude > 0)
+    html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
+
   if(info)
     addCoordinates(rec, html);
 

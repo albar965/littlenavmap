@@ -140,6 +140,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
+    ap.transitionAltitude = record.valueInt("transition_altitude", 0);
 
     ap.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                        record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));

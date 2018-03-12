@@ -105,7 +105,7 @@ struct MapAirport
 {
   QString ident, /* ICAO ident*/ name, region;
   int id; /* Database id airport.airport_id */
-  int longestRunwayLength = 0, longestRunwayHeading = 0;
+  int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0;
   int rating = -1;
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
