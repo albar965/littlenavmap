@@ -103,7 +103,11 @@ Map
 * Added X-Plane 3D airport flag as additional criteria for treating empty airports. This can be used to hide or dim
   all X-Plane airports which are not 3D. "Options" on tab "Map".
 
-* Fixed overlays reappearing randomly switching map theme.
+* Tooltips now show exact procedure type.
+* Improved text display between overlapping procedure legs to avoid text labels hiding each other.
+* Fixed issues with procedure display where restriction texts were not drawn in case of intercept legs.
+
+* Fixed overlays reappearing randomly when switching map theme.
 
 Information and Search
 

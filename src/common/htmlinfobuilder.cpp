@@ -1769,19 +1769,9 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
 
 void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, HtmlBuilder& html) const
 {
-  QString header;
-  if(ap.missed)
-    header = tr("Missed Approach ");
-  else if(ap.transition)
-    header = tr("Transition ");
-  else
-    header = tr("Approach ");
+  QString header = proc::procedureTypeText(ap.mapType);
 
   head(html, header);
-
-  // float time, theta, rho, magvar;
-  // QString fixType, fixIdent,
-  // QStringList displayText, remarks;
 
   QStringList atts;
 

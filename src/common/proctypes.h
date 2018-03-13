@@ -101,7 +101,7 @@ struct MapSpeedRestriction
   };
 
   Descriptor descriptor = NONE;
-  float speed;
+  float speed = 0.f;
 
   bool isValid() const
   {
@@ -146,6 +146,7 @@ QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
 
 struct MapProcedureLeg;
 
+/* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
 {
   MapProcedurePoint(const MapProcedureLeg& leg);
@@ -153,6 +154,8 @@ struct MapProcedurePoint
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
 
   QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+
+  proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
   QStringList displayText, remarks;
   MapAltRestriction altRestriction;
@@ -458,6 +461,7 @@ private:
 
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 
+QString procedureTypeText(proc::MapProcedureTypes mapType);
 QString procedureTypeText(const proc::MapProcedureLeg& leg);
 QString procedureFixType(const QString& type);
 QString procedureType(const QString& type);
