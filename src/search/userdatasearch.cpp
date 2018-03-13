@@ -249,6 +249,11 @@ QVariant UserdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colu
         return mapcolors::alternatingRowColor(rowIndex, true);
 
       break;
+    case Qt::ToolTipRole:
+      if(col->getColumnName() == "description")
+        return displayRoleValue.toString();
+
+      break;
     default:
       break;
   }
@@ -265,6 +270,8 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
            Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
   else if(col->getColumnName() == "last_edit_timestamp")
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
+  else if(col->getColumnName() == "description")
+    return displayRoleValue.toString().simplified();
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
     return QLocale().toString(displayRoleValue.toInt());
   else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
@@ -314,7 +321,7 @@ void UserdataSearch::setCallbacks()
 {
   using namespace std::placeholders;
   controller->setDataCallback(std::bind(&UserdataSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6),
-                              {Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
+                              {Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::ToolTipRole});
 }
 
 /* Update the button menu actions. Add * for changed search criteria and toggle show/hide all

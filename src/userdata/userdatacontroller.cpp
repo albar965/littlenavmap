@@ -516,8 +516,12 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     rec = manager->getEmptyRecord();
 
   if(pos.isValid())
+  {
     // Take coordinates for prefill if given
     rec.appendFieldAndValue("lonx", pos.getLonX()).appendFieldAndValue("laty", pos.getLatY());
+    if(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+      rec.appendFieldAndValue("altitude", pos.getAltitude());
+  }
 
   UserdataDialog dlg(mainWindow, ud::ADD, icons);
   dlg.restoreState();

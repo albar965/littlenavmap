@@ -2255,7 +2255,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapShowApproaches)
       emit showApproaches(*airport);
     else if(action == ui->actionMapUserdataAdd)
+    {
+      if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
+        pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
       emit addUserpointFromMap(result, pos);
+    }
     else if(action == ui->actionMapUserdataEdit)
       emit editUserpointFromMap(result);
     else if(action == ui->actionMapUserdataDelete)

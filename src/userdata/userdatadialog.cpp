@@ -32,6 +32,7 @@
 
 #include <QPushButton>
 #include <QDateTime>
+#include <QLocale>
 
 const QLatin1Literal UserdataDialog::DEFAULT_TYPE("Bookmark");
 
@@ -87,6 +88,13 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   ui->labelUserdataLatLon->setVisible(showLatLon);
   ui->lineEditUserdataLatLon->setVisible(showLatLon);
   ui->labelUserdataCoordStatus->setVisible(showLatLon);
+
+  bool hideMeta = editMode != ud::ADD && editMode != ud::EDIT_MULTIPLE;
+  ui->labelUserdataLastChange->setVisible(hideMeta);
+  ui->labelUserdataLastChangeDateTime->setVisible(hideMeta);
+  ui->labelUserdataFile->setVisible(hideMeta);
+  ui->labelUserdataFilepath->setVisible(hideMeta);
+  ui->lineUserdataMeta->setVisible(hideMeta);
 
   // Connect checkboxes
   connect(ui->checkBoxUserdataAltitude, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
@@ -232,6 +240,16 @@ void UserdataDialog::recordToDialog()
   ui->lineEditUserdataRegion->setText(record->valueStr("region"));
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
+
+  if(!record->value("last_edit_timestamp").isNull())
+    ui->labelUserdataLastChangeDateTime->setText(QLocale().toString(record->value("last_edit_timestamp").toDateTime()));
+  else
+    ui->labelUserdataFilepath->setText(tr("-"));
+
+  if(!record->value("import_file_path").isNull())
+    ui->labelUserdataFilepath->setText(record->valueStr("import_file_path"));
+  else
+    ui->labelUserdataFilepath->setText(tr("Not imported"));
 
   if(!record->isNull("visible_from"))
     ui->spinBoxUserdataVisible->setValue(Unit::distNmF(record->valueInt("visible_from")));
