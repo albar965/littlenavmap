@@ -2257,7 +2257,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapUserdataAdd)
     {
       if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
-        pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
+        pos.setAltitude(atools::geo::meterToFeet(NavApp::getElevationProvider()->getElevationMeter(pos)));
       emit addUserpointFromMap(result, pos);
     }
     else if(action == ui->actionMapUserdataEdit)
@@ -2354,7 +2354,7 @@ void MapWidget::elevationDisplayTimerTimeout()
     if(geoCoordinates(point.x(), point.y(), lon, lat, GeoDataCoordinates::Degree))
     {
       Pos pos(lon, lat);
-      pos.setAltitude(NavApp::getElevationProvider()->getElevation(pos));
+      pos.setAltitude(NavApp::getElevationProvider()->getElevationMeter(pos));
       mainWindow->updateMapPosLabel(pos, point.x(), point.y());
     }
   }

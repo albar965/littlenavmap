@@ -61,7 +61,7 @@ void ElevationProvider::marbleUpdateAvailable()
     emit updateAvailable();
 }
 
-float ElevationProvider::getElevation(const atools::geo::Pos& pos)
+float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos)
 {
   QMutexLocker locker(&mutex);
 

@@ -256,7 +256,7 @@ void UserdataDialog::recordToDialog()
   else
     ui->spinBoxUserdataVisible->setValue(Unit::distNmF(250.f));
 
-  ui->spinBoxUserdataAltitude->setValue(record->valueInt("altitude"));
+  ui->spinBoxUserdataAltitude->setValue(Unit::altFeetF(record->valueInt("altitude")));
 
   if(!record->isNull("lonx") && !record->isNull("laty"))
     ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
@@ -327,7 +327,7 @@ void UserdataDialog::dialogToRecord()
     record->remove("visible_from");
 
   if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataAltitude->isChecked())
-    record->setValue("altitude", ui->spinBoxUserdataAltitude->value());
+    record->setValue("altitude", Unit::rev(ui->spinBoxUserdataAltitude->value(), Unit::altFeetF));
   else if(editMode == ud::EDIT_MULTIPLE)
     record->remove("altitude");
 
