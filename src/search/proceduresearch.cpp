@@ -1078,7 +1078,7 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
     approachType = tr("Approach ") + proc::procedureType(type);
 
     if(!suffix.isEmpty())
-      approachType += " " + suffix;
+      approachType += tr("-%1").arg(suffix);
 
     if(gpsOverlay)
       approachType += tr(" (GPS Overlay)");

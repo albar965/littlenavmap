@@ -3305,6 +3305,14 @@ QString RouteController::buildFlightplanLabel(bool html) const
 
         boldTextFlag << true;
         procedureText.append(arrivalLegs.approachType);
+
+        if(!arrivalLegs.approachSuffix.isEmpty())
+        {
+          // Add suffix
+          boldTextFlag << true;
+          procedureText.append(tr("-%1").arg(arrivalLegs.approachSuffix));
+        }
+
         boldTextFlag << true;
         procedureText.append(arrivalLegs.approachFixIdent);
 
