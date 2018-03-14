@@ -279,6 +279,7 @@ public:
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
 private:
+  // TODO assign functions are duplicatd in FlightplanEntryBuilder
   void assignIntersection(const map::MapSearchResult& mapobjectResult,
                           atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
@@ -286,6 +287,8 @@ private:
   void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
                        float maxDistance);
   void assignRunwayOrHelipad(const QString& name);
+  void assignAirport(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;

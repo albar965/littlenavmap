@@ -22,6 +22,7 @@
 #include "fs/pln/flightplan.h"
 #include "common/maptools.h"
 #include "atools.h"
+#include "fs/util/fsutil.h"
 #include "route/route.h"
 #include "navapp.h"
 
@@ -175,21 +176,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIcaoIdent());
       if(!mapobjectResult.airports.isEmpty())
       {
-        type = map::AIRPORT;
-        flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
-
-        airport = mapobjectResult.airports.first();
-
-        Q_ASSERT(!airport.navdata);
-
+        assignAirport(mapobjectResult, flightplanEntry);
         valid = true;
-        if(!flightplanEntry->getPosition().isValid())
-          flightplanEntry->setPosition(airport.position);
 
-        // values which are not saved in PLN but other formats
-        flightplanEntry->setName(airport.name);
-        flightplanEntry->setMagvar(airport.magvar);
-
+        // Resolve parking ==============================
         QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && prevLeg == nullptr)
         {
@@ -267,11 +257,25 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // =============================== Navaid waypoint
     case atools::fs::pln::entry::INTERSECTION:
-      mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT, flightplanEntry->getIcaoIdent(), region,
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::AIRPORT,
+                                    flightplanEntry->getIcaoIdent(), region, /* region is ignored for airports */
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
       if(!mapobjectResult.waypoints.isEmpty())
       {
         assignIntersection(mapobjectResult, flightplanEntry);
+        valid = true;
+      }
+      else if(!mapobjectResult.airports.isEmpty())
+      {
+        // FSC saves airports in the flight plan wrongly as intersections
+        assignAirport(mapobjectResult, flightplanEntry);
+        valid = true;
+      }
+      else if(!atools::fs::util::isValidIdent(flightplanEntry->getIcaoIdent()))
+      {
+        // Name contains funny characters - must me a user fix from FSC
+        flightplanEntry->setWaypointId(flightplanEntry->getIcaoIdent());
+        assignUser(flightplanEntry);
         valid = true;
       }
       break;
@@ -300,13 +304,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // =============================== Navaid user coordinates
     case atools::fs::pln::entry::USER:
+      assignUser(flightplanEntry);
       valid = true;
-      type = map::USERPOINTROUTE;
-      flightplanEntry->setIcaoIdent(QString());
-      flightplanEntry->setIcaoRegion(QString());
-      flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
-
-      // flightplanEntry->setWaypointId(userName);
       break;
   }
 
@@ -701,6 +700,30 @@ bool RouteLeg::isAirwaySetAndInvalid() const
 }
 
 // TODO assign functions are duplicatd in FlightplanEntryBuilder
+void RouteLeg::assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::USERPOINTROUTE;
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::USER);
+  flightplanEntry->setIcaoIdent(QString());
+  flightplanEntry->setIcaoRegion(QString());
+  flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
+}
+
+void RouteLeg::assignAirport(const map::MapSearchResult& mapobjectResult,
+                             atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::AIRPORT;
+  airport = mapobjectResult.airports.first();
+
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
+  if(!flightplanEntry->getPosition().isValid())
+    flightplanEntry->setPosition(airport.position);
+
+  // values which are not saved in PLN but other formats
+  flightplanEntry->setName(airport.name);
+  flightplanEntry->setMagvar(airport.magvar);
+}
+
 void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
