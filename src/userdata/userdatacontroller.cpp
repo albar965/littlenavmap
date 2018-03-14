@@ -615,10 +615,12 @@ void UserdataController::importCsv()
   catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
+    manager->rollback();
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    manager->rollback();
   }
 }
 
@@ -643,10 +645,12 @@ void UserdataController::importXplaneUserFixDat()
   catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
+    manager->rollback();
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    manager->rollback();
   }
 }
 
@@ -670,10 +674,12 @@ void UserdataController::importGarmin()
   catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
+    manager->rollback();
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    manager->rollback();
   }
 }
 
