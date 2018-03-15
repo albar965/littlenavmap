@@ -1813,7 +1813,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionMapEditUserWaypoint->setEnabled(routeLeg != nullptr &&
                                             routeLeg->getMapObjectType() == map::USERPOINTROUTE);
-  ui->actionMapEditUserWaypoint->setText(tr("Edit Name of User Waypoint"));
+  ui->actionMapEditUserWaypoint->setText(tr("Edit User Waypoint"));
 
   QList<int> selectedRouteLegIndexes;
   getSelectedRouteLegs(selectedRouteLegIndexes);
