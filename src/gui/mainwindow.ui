@@ -336,11 +336,6 @@
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -2368,6 +2363,11 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -2736,6 +2736,11 @@
          </item>
          <item>
           <widget class="QTableView" name="tableViewUserdata">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
