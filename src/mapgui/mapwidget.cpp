@@ -1970,7 +1970,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(routeText));
   }
   else
-    ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(QString()));
+    ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(tr("Position")));
 
   // Update "name user waypoint"
   if(routeIndex != -1 && userpointRoute != nullptr)
@@ -1979,7 +1979,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(routeText));
   }
   else
-    ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(tr("User Point")));
+    ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(tr("Position")));
 
   // Update "show range rings for Navaid"
   if(vor != nullptr || ndb != nullptr)

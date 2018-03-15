@@ -1309,7 +1309,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                  tr("The FLP format does not allow saving of:"
                                     "<ul>"
                                       "<li>Procedures (limited, can result in mismatches)</li>"
-                                        "<li>User waypoint names</li>"
+                                        "<li>Position names</li>"
                                           "<li>Cruise Altitude</li>"
                                             "<li>Ground Speed</li>"
                                               "<li>Departure parking position</li>"

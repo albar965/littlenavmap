@@ -1039,7 +1039,7 @@ QString userpointText(const MapUserpoint& userpoint)
 
 QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
-  return QObject::tr("User point %1").arg(userpoint.name);
+  return QObject::tr("Position %1").arg(userpoint.name);
 }
 
 QString airwayText(const MapAirway& airway)

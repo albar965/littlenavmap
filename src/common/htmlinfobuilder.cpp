@@ -1762,7 +1762,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
-  head(html, tr("User Flight Plan Point: ") + userpoint.name);
+  head(html, tr("Position: ") + userpoint.name);
   if(userpoint.routeIndex >= 0)
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }

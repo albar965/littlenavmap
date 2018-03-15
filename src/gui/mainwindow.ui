@@ -5933,10 +5933,10 @@
     <string>Edit Flight Plan %1</string>
    </property>
    <property name="toolTip">
-    <string>Edit user waypoint name and position</string>
+    <string>Edit name and coordinates of user defined flight plan position</string>
    </property>
    <property name="statusTip">
-    <string>Edit user waypoint name and position</string>
+    <string>Edit name and coordinates of user defined flight plan position</string>
    </property>
   </action>
   <action name="actionHelpContentsOffline">
