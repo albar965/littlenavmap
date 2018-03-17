@@ -71,7 +71,7 @@ public:
   void saveState();
   void restoreState();
 
-  atools::fs::sc::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
+  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
 
 signals:
   /* Emitted when new data was received from the server (Little Navconnect).
@@ -134,7 +134,7 @@ private:
   QTimer reconnectNetworkTimer, flushQueuedRequestsTimer;
   MainWindow *mainWindow;
   bool verbose = false;
-  atools::util::TimedCache<QString, atools::fs::sc::MetarResult> metarIdentCache;
+  atools::util::TimedCache<QString, atools::fs::weather::MetarResult> metarIdentCache;
   QSet<QString> outstandingReplies;
   QVector<atools::fs::sc::WeatherRequest> queuedRequests;
 

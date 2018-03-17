@@ -15,16 +15,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/weatherreporter.h"
+#include "weather/weatherreporter.h"
 
 #include "gui/mainwindow.h"
 #include "settings/settings.h"
 #include "options/optiondata.h"
-#include "fs/common/xpweatherreader.h"
+#include "fs/weather/xpweatherreader.h"
 #include "navapp.h"
+#include "fs/weather/weathernetdownload.h"
 #include "fs/sc/simconnecttypes.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
+#include "fs/weather/weathernetsingle.h"
 
 #include <QDebug>
 #include <QDir>
@@ -44,12 +46,31 @@ const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=.+$");
 const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})?(.*)$");
 
 using atools::fs::FsPaths;
+using atools::fs::weather::WeatherNetDownload;
+using atools::fs::weather::WeatherNetSingle;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), noaaCache(WEATHER_TIMEOUT_SECS), vatsimCache(WEATHER_TIMEOUT_SECS), simType(type),
+  : QObject(parentWindow), simType(type),
   mainWindow(parentWindow)
 {
-  xpWeatherReader = new atools::fs::common::XpWeatherReader(this);
+  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this);
+
+  noaaWeather = new WeatherNetSingle(parentWindow, ONLINE_WEATHER_TIMEOUT_SECS);
+  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
+
+  vatsimWeather = new WeatherNetSingle(parentWindow, ONLINE_WEATHER_TIMEOUT_SECS);
+  vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
+
+  ivaoWeather = new WeatherNetDownload(parentWindow);
+  ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
+  ivaoWeather->setSetUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
+  // Set callback so the reader can build an index for nearest airports
+  ivaoWeather->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
+  {
+    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(ident);
+  });
+  ivaoWeather->download();
+
   initActiveSkyNext();
 
   // Set callback so the reader can build an index for nearest airports
@@ -59,34 +80,23 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   });
   initXplane();
 
-  connect(xpWeatherReader, &atools::fs::common::XpWeatherReader::weatherUpdated,
+  connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated,
           this, &WeatherReporter::xplaneWeatherFileChanged);
-  connect(&flushQueueTimer, &QTimer::timeout, this, &WeatherReporter::flushRequestQueue);
 
-  flushQueueTimer.setInterval(1000);
-  flushQueueTimer.start();
+  // Forward signals from clients
+  connect(noaaWeather, &WeatherNetSingle::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+  connect(vatsimWeather, &WeatherNetSingle::weatherUpdated, this, &WeatherReporter::weatherUpdated);
+  connect(ivaoWeather, &WeatherNetDownload::weatherUpdated, this, &WeatherReporter::weatherUpdated);
 }
 
 WeatherReporter::~WeatherReporter()
 {
-  flushQueueTimer.stop();
-
-  // Remove any outstanding requests
-  cancelNoaaReply();
-  cancelVatsimReply();
-
   deleteFsWatcher();
+  delete noaaWeather;
+  delete vatsimWeather;
+  delete ivaoWeather;
 
   delete xpWeatherReader;
-}
-
-void WeatherReporter::flushRequestQueue()
-{
-  if(!noaaRequests.isEmpty())
-    loadNoaaMetar(noaaRequests.takeLast());
-
-  if(!vatsimRequests.isEmpty())
-    loadVatsimMetar(vatsimRequests.takeLast());
 }
 
 void WeatherReporter::deleteFsWatcher()
@@ -396,72 +406,9 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
     qInfo() << "file does not exist" << weatherFile;
 }
 
-void WeatherReporter::cancelVatsimReply()
-{
-  if(vatsimReply != nullptr)
-  {
-    disconnect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
-    vatsimReply->abort();
-    vatsimReply->deleteLater();
-    vatsimReply = nullptr;
-    vatsimRequestIcao.clear();
-  }
-}
-
-void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
-{
-  // http://metar.vatsim.net/metar.php?id=EDDF
-  if(vatsimReply != nullptr)
-    vatsimRequests.append(airportIcao);
-  else
-  {
-    cancelVatsimReply();
-
-    vatsimRequestIcao = airportIcao;
-    QNetworkRequest request(QUrl(OptionData::instance().getWeatherVatsimUrl().arg(airportIcao)));
-
-    vatsimReply = networkManager.get(request);
-
-    if(vatsimReply != nullptr)
-      connect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
-    else
-      qWarning() << "Vatsim Reply is null";
-  }
-}
-
-void WeatherReporter::cancelNoaaReply()
-{
-  if(noaaReply != nullptr)
-  {
-    disconnect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
-    noaaReply->abort();
-    noaaReply->deleteLater();
-    noaaReply = nullptr;
-    noaaRequestIcao.clear();
-  }
-}
-
 bool WeatherReporter::testUrl(const QString& url, const QString& airportIcao, QString& result)
 {
-  QNetworkRequest request(QUrl(url.arg(airportIcao)));
-  QNetworkReply *reply = networkManager.get(request);
-
-  QEventLoop eventLoop;
-  QObject::connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
-  eventLoop.exec();
-
-  if(reply->error() == QNetworkReply::NoError)
-  {
-    result = reply->readAll();
-    reply->deleteLater();
-    return true;
-  }
-  else
-  {
-    result = reply->errorString();
-    reply->deleteLater();
-    return false;
-  }
+  return atools::fs::weather::testUrl(url, airportIcao, result);
 }
 
 QString WeatherReporter::getCurrentActiveSkyName() const
@@ -477,86 +424,6 @@ QString WeatherReporter::getCurrentActiveSkyName() const
     return tr("Active Sky");
 }
 
-void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
-{
-  // http://www.aviationweather.gov/static/adds/metars/stations.txt
-  // http://weather.noaa.gov/pub/data/observations/metar/stations/EDDL.TXT
-  // http://weather.noaa.gov/pub/data/observations/metar/
-  // request.setRawHeader("User-Agent", "Qt NetworkAccess 1.3");
-
-  if(noaaReply != nullptr)
-    noaaRequests.append(airportIcao);
-  else
-  {
-    cancelNoaaReply();
-
-    noaaRequestIcao = airportIcao;
-    QNetworkRequest request(QUrl(OptionData::instance().getWeatherNoaaUrl().arg(airportIcao)));
-
-    noaaReply = networkManager.get(request);
-
-    if(noaaReply != nullptr)
-      connect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
-    else
-      qWarning() << "NOAA Reply is null";
-  }
-}
-
-/* Called by network reply signal */
-void WeatherReporter::httpFinishedNoaa()
-{
-  // qDebug() << Q_FUNC_INFO << noaaRequestIcao;
-  httpFinished(noaaReply, noaaRequestIcao, noaaCache);
-  if(noaaReply != nullptr)
-    noaaReply->deleteLater();
-  noaaReply = nullptr;
-
-  if(!noaaRequests.isEmpty())
-    loadNoaaMetar(noaaRequests.takeLast());
-}
-
-/* Called by network reply signal */
-void WeatherReporter::httpFinishedVatsim()
-{
-  // qDebug() << Q_FUNC_INFO << vatsimRequestIcao;
-  httpFinished(vatsimReply, vatsimRequestIcao, vatsimCache);
-  if(vatsimReply != nullptr)
-    vatsimReply->deleteLater();
-  vatsimReply = nullptr;
-
-  if(!vatsimRequests.isEmpty())
-    loadVatsimMetar(vatsimRequests.takeLast());
-}
-
-void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao,
-                                   atools::util::TimedCache<QString, QString>& metars)
-{
-  if(reply != nullptr)
-  {
-    if(reply->error() == QNetworkReply::NoError)
-    {
-      QString metar = reply->readAll().simplified();
-      if(!metar.contains("no metar available", Qt::CaseInsensitive))
-        // Add metar with current time
-        metars.insert(icao, metar);
-      else
-        // Add empty record so we know there is no weather station
-        metars.insert(icao, QString());
-      // mainWindow->setStatusMessage(tr("Weather information updated."));
-      emit weatherUpdated();
-    }
-    else if(reply->error() != QNetworkReply::OperationCanceledError)
-    {
-      metars.insert(icao, QString());
-      if(reply->error() == QNetworkReply::ContentNotFoundError)
-        qInfo() << "Request for" << icao << "failed. Reason:" << reply->errorString();
-      else
-        qWarning() << "Request for" << icao << "failed. Reason:" << reply->errorString();
-    }
-    reply->deleteLater();
-  }
-}
-
 QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
   if(activeSkyDepartureIdent == airportIcao)
@@ -567,35 +434,24 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
     return activeSkyMetars.value(airportIcao, QString());
 }
 
-atools::fs::sc::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
   return xpWeatherReader->getXplaneMetar(station, pos);
 }
 
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
-  // qDebug() << Q_FUNC_INFO << airportIcao;
-
-  QString *metar = noaaCache.value(airportIcao);
-  if(metar != nullptr)
-    return QString(*metar);
-  else
-    loadNoaaMetar(airportIcao);
-
-  return QString();
+  return noaaWeather->getMetar(airportIcao);
 }
 
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
-  // qDebug() << Q_FUNC_INFO << airportIcao;
+  return vatsimWeather->getMetar(airportIcao);
+}
 
-  QString *metar = vatsimCache.value(airportIcao);
-  if(metar != nullptr)
-    return QString(*metar);
-  else
-    loadVatsimMetar(airportIcao);
-
-  return QString();
+atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
+{
+  return ivaoWeather->getMetar(airportIcao, pos);
 }
 
 void WeatherReporter::preDatabaseLoad()
@@ -616,6 +472,10 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
 void WeatherReporter::optionsChanged()
 {
+  vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
+  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
+  ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
+
   initActiveSkyNext();
   initXplane();
 }

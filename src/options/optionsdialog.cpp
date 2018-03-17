@@ -22,7 +22,7 @@
 #include "common/elevationprovider.h"
 #include "common/unit.h"
 #include "ui_options.h"
-#include "common/weatherreporter.h"
+#include "weather/weatherreporter.h"
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
 #include "gui/widgetutil.h"
@@ -265,15 +265,18 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsWeatherInfoAsn);
   widgets.append(ui->checkBoxOptionsWeatherInfoNoaa);
   widgets.append(ui->checkBoxOptionsWeatherInfoVatsim);
+  widgets.append(ui->checkBoxOptionsWeatherInfoIvao);
   widgets.append(ui->checkBoxOptionsWeatherInfoFs);
   widgets.append(ui->checkBoxOptionsWeatherTooltipAsn);
   widgets.append(ui->checkBoxOptionsWeatherTooltipNoaa);
   widgets.append(ui->checkBoxOptionsWeatherTooltipVatsim);
+  widgets.append(ui->checkBoxOptionsWeatherTooltipIvao);
   widgets.append(ui->checkBoxOptionsWeatherTooltipFs);
   widgets.append(ui->lineEditOptionsMapRangeRings);
   widgets.append(ui->lineEditOptionsWeatherAsnPath);
   widgets.append(ui->lineEditOptionsWeatherNoaaUrl);
   widgets.append(ui->lineEditOptionsWeatherVatsimUrl);
+  widgets.append(ui->lineEditOptionsWeatherIvaoUrl);
   widgets.append(ui->listWidgetOptionsDatabaseAddon);
   widgets.append(ui->listWidgetOptionsDatabaseExclude);
   widgets.append(ui->comboBoxMapScrollDetails);
@@ -373,6 +376,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherVatsimUrl, &QLineEdit::textEdited,
           this, &OptionsDialog::updateWeatherButtonState);
+  connect(ui->lineEditOptionsWeatherIvaoUrl, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateWeatherButtonState);
 
   // Database exclude path
   connect(ui->pushButtonOptionsDatabaseAddExclude, &QPushButton::clicked,
@@ -403,6 +408,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::testWeatherNoaaUrlClicked);
   connect(ui->pushButtonOptionsWeatherVatsimTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherVatsimUrlClicked);
+  connect(ui->pushButtonOptionsWeatherIvaoTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherIvaoUrlClicked);
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled,
           this, &OptionsDialog::simUpdatesConstantClicked);
@@ -794,10 +801,22 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
   testWeatherUrl(ui->lineEditOptionsWeatherVatsimUrl->text());
 }
 
+/* Test IVAO weather download URL and show a dialog of the first line */
+void OptionsDialog::testWeatherIvaoUrlClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  QString result;
+  if(WeatherReporter::testUrl(ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), result))
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("Success. First METARs in file:\n%1").arg(result));
+  else
+    QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
+}
+
 void OptionsDialog::testWeatherUrl(const QString& url)
 {
   QString result;
-  if(NavApp::getWeatherReporter()->testUrl(url, "KORD", result))
+  if(WeatherReporter::testUrl(url, "KORD", result))
     QMessageBox::information(this, QApplication::applicationName(), tr("Success. Result:\n%1").arg(result));
   else
     QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
@@ -937,10 +956,12 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherInfoNoaa, opts::WEATHER_INFO_NOAA);
   toFlags(ui->checkBoxOptionsWeatherInfoVatsim, opts::WEATHER_INFO_VATSIM);
+  toFlags2(ui->checkBoxOptionsWeatherInfoIvao, opts::WEATHER_INFO_IVAO);
   toFlags(ui->checkBoxOptionsWeatherInfoFs, opts::WEATHER_INFO_FS);
   toFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   toFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
+  toFlags2(ui->checkBoxOptionsWeatherTooltipIvao, opts::WEATHER_TOOLTIP_IVAO);
   toFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   toFlags(ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
@@ -976,6 +997,7 @@ void OptionsDialog::widgetsToOptionData()
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
   data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaUrl->text();
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
+  data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text();
 
   data.databaseAddonExclude.clear();
   for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
@@ -1082,10 +1104,12 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherInfoNoaa, opts::WEATHER_INFO_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherInfoVatsim, opts::WEATHER_INFO_VATSIM);
+  fromFlags2(ui->checkBoxOptionsWeatherInfoIvao, opts::WEATHER_INFO_IVAO);
   fromFlags(ui->checkBoxOptionsWeatherInfoFs, opts::WEATHER_INFO_FS);
   fromFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
+  fromFlags2(ui->checkBoxOptionsWeatherTooltipIvao, opts::WEATHER_TOOLTIP_IVAO);
   fromFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   fromFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   fromFlags(ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
@@ -1130,6 +1154,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(data.weatherActiveSkyPath));
   ui->lineEditOptionsWeatherNoaaUrl->setText(data.weatherNoaaUrl);
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
+  ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl);
 
   ui->listWidgetOptionsDatabaseAddon->clear();
   for(const QString& str : data.databaseAddonExclude)
@@ -1313,6 +1338,7 @@ void OptionsDialog::updateWeatherButtonState()
 
   ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().isEmpty());
+  ui->pushButtonOptionsWeatherIvaoTest->setEnabled(!ui->lineEditOptionsWeatherIvaoUrl->text().isEmpty());
   updateActiveSkyPathStatus();
 }
 

@@ -19,23 +19,20 @@
 #define LITTLENAVMAP_WEATHERREPORTER_H
 
 #include "fs/fspaths.h"
-#include "util/timedcache.h"
 
 #include <QHash>
-#include <QNetworkAccessManager>
 #include <QObject>
-#include <QTimer>
 
 namespace atools {
 namespace geo {
 class Pos;
 }
 namespace fs {
-namespace sc {
+namespace weather {
 struct MetarResult;
-}
 
-namespace common {
+class WeatherNetSingle;
+class WeatherNetDownload;
 class XpWeatherReader;
 }
 }
@@ -74,7 +71,7 @@ public:
    * @return X-Plane metar or empty if file not found or X-Plane base directory not found. Gives the nearest
    * weather if station has no weather report.
    */
-  atools::fs::sc::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
+  atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
   /*
    * @return NOAA metar from cache or empty if not entry was found in the cache. Once the request was
@@ -87,6 +84,11 @@ public:
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
    */
   QString getVatsimMetar(const QString& airportIcao);
+
+  /*
+   * @return IVAO metar from downloaded file or empty if airport has not report.
+   */
+  atools::fs::weather::MetarResult getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* Does nothing currently */
   void preDatabaseLoad();
@@ -107,7 +109,7 @@ public:
    * @param result metar if successfull - otherwise error message
    * @return true if successfull
    */
-  bool testUrl(const QString& url, const QString& airportIcao, QString& result);
+  static bool testUrl(const QString& url, const QString& airportIcao, QString& result);
 
   enum ActiveSkyType
   {
@@ -148,7 +150,7 @@ signals:
 
 private:
   // Update online reports if older than 10 minutes
-  static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 600;
+  static Q_CONSTEXPR int ONLINE_WEATHER_TIMEOUT_SECS = 600;
 
   void activeSkyWeatherFileChanged(const QString& path);
   void xplaneWeatherFileChanged();
@@ -159,44 +161,26 @@ private:
   void findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot, const QString& activeSkyPrefix,
                           const QString& activeSkySimSuffix);
 
-  void loadNoaaMetar(const QString& airportIcao);
-  void loadVatsimMetar(const QString& airportIcao);
-
-  void httpFinished(QNetworkReply *reply, const QString& icao,
-                    atools::util::TimedCache<QString, QString>& metars);
-  void httpFinishedNoaa();
-  void httpFinishedVatsim();
-
-  void cancelNoaaReply();
-  void cancelVatsimReply();
-  void flushRequestQueue();
   bool validateActiveSkyFlightplanFile(const QString& path);
   void deleteFsWatcher();
   void createFsWatcher();
   void initXplane();
 
+  atools::fs::weather::WeatherNetSingle *noaaWeather = nullptr;
+  atools::fs::weather::WeatherNetSingle *vatsimWeather = nullptr;
+  atools::fs::weather::WeatherNetDownload *ivaoWeather = nullptr;
+
   QHash<QString, QString> activeSkyMetars;
   QString activeSkyDepartureMetar, activeSkyDestinationMetar,
           activeSkyDepartureIdent, activeSkyDestinationIdent;
 
-  atools::util::TimedCache<QString, QString> noaaCache, vatsimCache;
-
   QString activeSkySnapshotPath;
   QFileSystemWatcher *fsWatcher = nullptr;
-  QNetworkAccessManager networkManager;
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
 
-  atools::fs::common::XpWeatherReader *xpWeatherReader = nullptr;
-
-  // Stores the request ICAO so we can send it to httpFinished()
-  QString noaaRequestIcao, vatsimRequestIcao;
-
-  // Keeps the reply
-  QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
-  QStringList noaaRequests, vatsimRequests;
+  atools::fs::weather::XpWeatherReader *xpWeatherReader = nullptr;
 
   MainWindow *mainWindow;
-  QTimer flushQueueTimer;
 
   ActiveSkyType activeSkyType = NONE;
   QString asPath, asFlightplanPath;

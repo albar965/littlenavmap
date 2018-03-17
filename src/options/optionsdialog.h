@@ -94,6 +94,7 @@ private:
 
   void testWeatherNoaaUrlClicked();
   void testWeatherVatsimUrlClicked();
+  void testWeatherIvaoUrlClicked();
   void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);

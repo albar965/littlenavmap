@@ -20,7 +20,7 @@
 #include "gui/widgetstate.h"
 #include "gui/helphandler.h"
 #include "common/constants.h"
-#include "common/weatherreporter.h"
+#include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
 #include "options/optiondata.h"
 #include "gui/mainwindow.h"

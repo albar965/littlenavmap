@@ -184,7 +184,15 @@ enum Flag2
   MAP_AIRPORT_DIAGRAM = 1 << 9,
 
   /* ui->checkBoxOptionsSimCenterLegTable */
-  ROUTE_CENTER_ACTIVE_LEG = 1 << 10
+  ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
+
+  /* Show IVAO weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoIvao*/
+  WEATHER_INFO_IVAO = 1 << 11,
+
+  /* Show IVAO weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipIvao*/
+  WEATHER_TOOLTIP_IVAO = 1 << 12
 
 };
 
@@ -435,6 +443,11 @@ public:
   const QString& getWeatherVatsimUrl() const
   {
     return weatherVatsimUrl;
+  }
+
+  const QString& getWeatherIvaoUrl() const
+  {
+    return weatherIvaoUrl;
   }
 
   /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
@@ -730,7 +743,6 @@ private:
     opts::WEATHER_TOOLTIP_FS |
     opts::WEATHER_TOOLTIP_ACTIVESKY |
     opts::WEATHER_TOOLTIP_NOAA |
-    opts::WEATHER_TOOLTIP_VATSIM |
 
     opts::FLIGHT_PLAN_SHOW_TOD |
     opts::CACHE_USE_ONLINE_ELEVATION
@@ -745,7 +757,8 @@ private:
   // ui->lineEditOptionsWeatherAsnPath
   QString weatherActiveSkyPath,
           weatherNoaaUrl = "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
-          weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1";
+          weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1",
+          weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
   QString cacheOfflineElevationPath;
 

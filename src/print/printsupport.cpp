@@ -26,7 +26,7 @@
 #include "print/printdialog.h"
 #include "common/htmlinfobuilder.h"
 #include "options/optiondata.h"
-#include "common/weatherreporter.h"
+#include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
 #include "gui/mainwindow.h"
 

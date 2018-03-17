@@ -161,7 +161,6 @@ SOURCES += src/main.cpp\
     src/route/routenetworkradio.cpp \
     src/route/routenetworkairway.cpp \
     src/route/routenetwork.cpp \
-    src/common/weatherreporter.cpp \
     src/connect/connectdialog.cpp \
     src/connect/connectclient.cpp \
     src/mapgui/mappainteraircraft.cpp \
@@ -216,7 +215,8 @@ SOURCES += src/main.cpp\
     src/userdata/userdatadialog.cpp \
     src/userdata/userdataicons.cpp \
     src/mapgui/mappainteruser.cpp \
-    src/userdata/userdataexportdialog.cpp
+    src/userdata/userdataexportdialog.cpp \
+    src/weather/weatherreporter.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -254,7 +254,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routenetworkradio.h \
     src/route/routenetworkairway.h \
     src/route/routenetwork.h \
-    src/common/weatherreporter.h \
     src/connect/connectdialog.h \
     src/connect/connectclient.h \
     src/mapgui/mappainteraircraft.h \
@@ -309,7 +308,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/userdata/userdatadialog.h \
     src/userdata/userdataicons.h \
     src/mapgui/mappainteruser.h \
-    src/userdata/userdataexportdialog.h
+    src/userdata/userdataexportdialog.h \
+    src/weather/weatherreporter.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

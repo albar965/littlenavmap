@@ -24,8 +24,8 @@
 #include "fs/fspaths.h"
 #include "common/mapflags.h"
 #include "geo/linestring.h"
-#include "fs/sc/simconnectaircraft.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "fs/weather/weathertypes.h"
 #include "fs/common/xpgeometry.h"
 
 #include <QColor>
@@ -765,9 +765,15 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
-  atools::fs::sc::MetarResult fsMetar;
+  atools::fs::weather::MetarResult fsMetar, ivaoMetar;
   bool isAsDeparture = false, isAsDestination = false;
   QString asMetar, asType, vatsimMetar, noaaMetar, ident;
+
+  bool isEmpty() const
+  {
+    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() &&
+           ivaoMetar.isEmpty();
+  }
 
 };
 

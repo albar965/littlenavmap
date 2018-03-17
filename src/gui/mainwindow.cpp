@@ -23,7 +23,7 @@
 #include "atools.h"
 #include "common/mapcolors.h"
 #include "gui/application.h"
-#include "common/weatherreporter.h"
+#include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
 #include "common/elevationprovider.h"
 #include "db/databasemanager.h"
@@ -2827,6 +2827,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
 {
   opts::Flags flags = OptionData::instance().getFlags();
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
   bool changed = false;
   bool newAirport = currentWeatherContext->ident != airport.ident;
 
@@ -2834,8 +2835,6 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   if(flags & opts::WEATHER_INFO_FS)
   {
-    // qDebug() << "connectClient->isConnected()" << connectClient->isConnected();
-    // qDebug() << "currentWeatherContext->fsMetar" << currentWeatherContext->fsMetar.metarForStation;
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     {
       currentWeatherContext->fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
@@ -2844,25 +2843,21 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     else if(NavApp::isConnected())
     {
       // FSX/P3D - Flight simulator fetched weather
-      atools::fs::sc::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+      atools::fs::weather::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
 
       if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
       {
         currentWeatherContext->fsMetar = metar;
         changed = true;
-        // qDebug() << Q_FUNC_INFO << "FS changed";
       }
     }
     else
     {
-      // qDebug() << "currentWeatherContext->fsMetar.isEmpty()" << currentWeatherContext->fsMetar.isEmpty();
-
       if(!currentWeatherContext->fsMetar.isEmpty())
       {
         // If there was a previous metar and the new one is empty we were being disconnected
-        currentWeatherContext->fsMetar = atools::fs::sc::MetarResult();
+        currentWeatherContext->fsMetar = atools::fs::weather::MetarResult();
         changed = true;
-        // qDebug() << "FS changed to null";
       }
     }
   }
@@ -2874,11 +2869,8 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->asMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext->asMetar;
-      // qDebug() << "new Metar" << metarStr;
       currentWeatherContext->asMetar = metarStr;
       changed = true;
-      // qDebug() << "AS changed";
     }
   }
 
@@ -2887,11 +2879,8 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->noaaMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext->noaaMetar;
-      // qDebug() << "new Metar" << metarStr;
       currentWeatherContext->noaaMetar = metarStr;
       changed = true;
-      // qDebug() << "NOAA changed";
     }
   }
 
@@ -2900,17 +2889,18 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->vatsimMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext->vatsimMetar;
-      // qDebug() << "new Metar" << metarStr;
       currentWeatherContext->vatsimMetar = metarStr;
       changed = true;
-      // qDebug() << "VATSIM changed";
     }
   }
 
-  weatherContext = *currentWeatherContext;
+  if(flags2 & opts::WEATHER_INFO_IVAO)
+  {
+    currentWeatherContext->ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
+    changed = true;
+  }
 
-  // qDebug() << Q_FUNC_INFO << "changed" << changed;
+  weatherContext = *currentWeatherContext;
 
   return changed;
 }
@@ -2919,6 +2909,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
 {
   opts::Flags flags = OptionData::instance().getFlags();
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
 
   weatherContext.ident = airport.ident;
 
@@ -2941,6 +2932,9 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
 
   if(flags & opts::WEATHER_INFO_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+
+  if(flags2 & opts::WEATHER_INFO_IVAO)
+    weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 
 /* Build a temporary weather context for the map tooltip */
@@ -2970,6 +2964,10 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
 
   if(flags & opts::WEATHER_TOOLTIP_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
+  if(flags2 & opts::WEATHER_TOOLTIP_IVAO)
+    weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 
 /* Fill active sky information into the weather context */

@@ -2516,7 +2516,7 @@ when transitioning from airport to airway.</string>
           <string>Weather Display in Tooltip</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="0">
@@ -2545,7 +2545,7 @@ when transitioning from airport to airway.</string>
              <string>&amp;VATSIM</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -2562,6 +2562,16 @@ when transitioning from airport to airway.</string>
             </property>
            </widget>
           </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipIvao">
+            <property name="text">
+             <string>&amp;IVAO</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -2574,7 +2584,7 @@ when transitioning from airport to airway.</string>
           <string>Weather Display in Information Panels</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="0">
@@ -2603,7 +2613,7 @@ when transitioning from airport to airway.</string>
              <string>VA&amp;TSIM</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -2617,6 +2627,16 @@ when transitioning from airport to airway.</string>
             </property>
             <property name="checked">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoIvao">
+            <property name="text">
+             <string>&amp;IVAO</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -2756,6 +2776,42 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
             <property name="margin">
              <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
+            <property name="text">
+             <string>&amp;IVAO Weather Download URL:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditOptionsWeatherVatsimUrl</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
+            <property name="toolTip">
+             <string>Download URL for the IVAO weather file</string>
+            </property>
+            <property name="text">
+             <string>http://wx.ivao.aero/metar.php</string>
+            </property>
+            <property name="placeholderText">
+             <string>No URL set. IVAO weather reports are disabled.</string>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
+            <property name="toolTip">
+             <string>Test the IVAO download URL</string>
+            </property>
+            <property name="text">
+             <string>&amp;Test</string>
             </property>
            </widget>
           </item>
