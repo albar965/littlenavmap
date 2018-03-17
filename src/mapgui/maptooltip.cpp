@@ -134,6 +134,20 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
   if(opts & opts::TOOLTIP_NAVAID)
   {
+    for(const MapUserpoint& up : mapSearchResult.userpoints)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.userpointText(up, html);
+      html.pEnd();
+      numEntries++;
+    }
+
     for(const MapVor& vor : mapSearchResult.vors)
     {
       if(checkText(html, numEntries))
@@ -172,20 +186,6 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
       html.p();
       info.waypointText(wp, html, iconBackColor);
-      html.pEnd();
-      numEntries++;
-    }
-
-    for(const MapUserpoint& up : mapSearchResult.userpoints)
-    {
-      if(checkText(html, numEntries))
-        return html.getHtml();
-
-      if(!html.isEmpty())
-        html.hr();
-
-      html.p();
-      info.userpointText(up, html);
       html.pEnd();
       numEntries++;
     }

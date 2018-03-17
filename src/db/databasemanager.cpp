@@ -184,6 +184,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
   if(!userdataManager->hasSchema())
     userdataManager->createSchema();
+  else
+    userdataManager->updateSchema();
 }
 
 DatabaseManager::~DatabaseManager()

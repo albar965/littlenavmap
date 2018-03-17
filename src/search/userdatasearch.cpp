@@ -76,6 +76,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, Searc
   append(Column("name", ui->lineEditUserdataName, tr("Name")).filter()).
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter()).
   append(Column("description", ui->lineEditUserdataDescription, tr("Description")).filter()).
+  append(Column("temp").hidden()).
 
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
@@ -251,7 +252,7 @@ QVariant UserdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colu
       break;
     case Qt::ToolTipRole:
       if(col->getColumnName() == "description")
-        return displayRoleValue.toString();
+        return atools::elideTextLinesShort(displayRoleValue.toString(), 40);
 
       break;
     default:

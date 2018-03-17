@@ -93,6 +93,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   // Need to set this later to avoid circular database dependency
   userdataController->setMagDecReader(magDecReader);
   userdataController->backup();
+  userdataController->clearTemporary();
 
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(),
                           databaseManager->getDatabaseNav(), databaseManager->getDatabaseUser());

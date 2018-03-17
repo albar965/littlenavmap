@@ -306,6 +306,11 @@ void UserdataController::backup()
   manager->backup();
 }
 
+void UserdataController::clearTemporary()
+{
+  manager->clearTemporary();
+}
+
 void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDecReader)
 {
   manager->setMagDecReader(magDecReader);
@@ -523,6 +528,8 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
       rec.appendFieldAndValue("altitude", pos.getAltitude());
   }
 
+  qDebug() << Q_FUNC_INFO << rec;
+
   UserdataDialog dlg(mainWindow, ud::ADD, icons);
   dlg.restoreState();
 
@@ -532,8 +539,13 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
   {
     *lastAddedRecord = dlg.getRecord();
 
+    if(lastAddedRecord->contains("import_file_path"))
+      lastAddedRecord->setNull("import_file_path");
+
+    qDebug() << Q_FUNC_INFO << rec;
+
     // Add to database
-    manager->insertByRecord(dlg.getRecord());
+    manager->insertByRecord(*lastAddedRecord);
     manager->commit();
     emit refreshUserdataSearch();
     emit userdataChanged();

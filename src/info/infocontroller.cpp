@@ -461,6 +461,20 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   }
 
   html.clear();
+  // Userpoints on top of the list
+  for(map::MapUserpoint userpoint: result.userpoints)
+  {
+    qDebug() << "Found waypoint" << userpoint.ident;
+
+    // Get updated object in case of changes in the database
+    mapQuery->updateUserdataPoint(userpoint);
+
+    currentSearchResult.userpoints.append(userpoint);
+    infoBuilder->userpointText(userpoint, html);
+    html.br();
+    foundNavaid = true;
+  }
+
   for(const map::MapVor& vor : result.vors)
   {
     qDebug() << "Found vor" << vor.ident;
@@ -487,19 +501,6 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
     currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html, iconBackColor);
-    html.br();
-    foundNavaid = true;
-  }
-
-  for(map::MapUserpoint userpoint: result.userpoints)
-  {
-    qDebug() << "Found waypoint" << userpoint.ident;
-
-    // Get updated object in case of changes in the database
-    mapQuery->updateUserdataPoint(userpoint);
-
-    currentSearchResult.userpoints.append(userpoint);
-    infoBuilder->userpointText(userpoint, html);
     html.br();
     foundNavaid = true;
   }

@@ -1479,7 +1479,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
     html.nbsp().nbsp();
 
-    navaidTitle(html, tr("Userpoint"));
+    navaidTitle(html, tr("Userpoint%1").arg(userpoint.temp ? tr(" (Temporary)") : QString()));
 
     if(info)
     {
@@ -1496,7 +1496,10 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Region:"), adjustText(userpoint.region), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Name:"), adjustText(userpoint.name), atools::util::html::NO_ENTITIES);
-    html.row2If(tr("Description:"), adjustText(userpoint.description), atools::util::html::NO_ENTITIES);
+
+    QString description = adjustText(atools::elideTextLinesShort(userpoint.description, info ? 40 : 4));
+    html.row2If(tr("Description:"), description, atools::util::html::NO_ENTITIES);
+
     html.row2If(tr("Tags:"), adjustText(userpoint.tags), atools::util::html::NO_ENTITIES);
     if(!rec.isNull("altitude"))
       html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));

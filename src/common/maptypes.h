@@ -498,6 +498,7 @@ struct MapUserpoint
   QString name, ident, region, type, description, tags;
   int id;
   atools::geo::Pos position;
+  bool temp = false;
 
   bool isValid() const
   {

@@ -317,6 +317,7 @@ void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint&
   obj.type = rec.valueStr("type");
   obj.description = rec.valueStr("description");
   obj.tags = rec.valueStr("tags");
+  obj.temp = rec.valueBool("temp", false);
   obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
 }
 

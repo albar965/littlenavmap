@@ -94,7 +94,10 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   ui->labelUserdataLastChangeDateTime->setVisible(hideMeta);
   ui->labelUserdataFile->setVisible(hideMeta);
   ui->labelUserdataFilepath->setVisible(hideMeta);
+  ui->labelUserdataTemp->setVisible(hideMeta);
   ui->lineUserdataMeta->setVisible(hideMeta);
+
+  ui->checkBoxUserdataTemp->setVisible(editMode == ud::ADD);
 
   // Connect checkboxes
   connect(ui->checkBoxUserdataAltitude, &QCheckBox::toggled, this, &UserdataDialog::updateWidgets);
@@ -168,6 +171,7 @@ void UserdataDialog::resetClicked()
     ui->spinBoxUserdataAltitude->setValue(0.);
     ui->spinBoxUserdataVisible->setValue(250);
     ui->textEditUserdataDescription->clear();
+    ui->checkBoxUserdataTemp->setChecked(false);
   }
   else if(editMode == ud::EDIT_MULTIPLE || editMode == ud::EDIT_ONE)
     recordToDialog();
@@ -241,6 +245,19 @@ void UserdataDialog::recordToDialog()
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
 
+  if(record->contains("temp") && !record->value("temp").isNull())
+  {
+    // temp point
+    if(editMode == ud::ADD)
+      // Checkbox in add mode if set in record
+      ui->checkBoxUserdataTemp->setChecked(record->valueBool("temp"));
+    else if(editMode == ud::EDIT_ONE)
+      // Add label in edit mode
+      ui->labelUserdataTemp->setText(tr("Temporary userpoint - will be deleted on next startup"));
+  }
+  else
+    ui->labelUserdataTemp->setVisible(false);
+
   if(!record->value("last_edit_timestamp").isNull())
     ui->labelUserdataLastChangeDateTime->setText(QLocale().toString(record->value("last_edit_timestamp").toDateTime()));
   else
@@ -267,6 +284,9 @@ void UserdataDialog::recordToDialog()
 void UserdataDialog::dialogToRecord()
 {
   qDebug() << Q_FUNC_INFO;
+
+  if(editMode == ud::ADD)
+    record->setValue("temp", ui->checkBoxUserdataTemp->isChecked());
 
   if(editMode == ud::EDIT_MULTIPLE || editMode == ud::EDIT_ONE)
   {
