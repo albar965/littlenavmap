@@ -156,7 +156,12 @@ signals:
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
+  /* Catches exceptions and terminates program if any */
   void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
+
+  /* Does not catch exceptions */
+  void openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
+
   void closeDatabaseFile(atools::sql::SqlDatabase *db);
 
   void restoreState();
@@ -249,6 +254,7 @@ private:
           databaseTimeText;
 
   atools::fs::userdata::UserdataManager *userdataManager = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H

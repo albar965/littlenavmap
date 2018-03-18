@@ -712,7 +712,30 @@ void DatabaseManager::openUserDatabase()
                              QDir::separator() + lnm::DATABASE_PREFIX +
                              "userdata" + lnm::DATABASE_SUFFIX;
 
-  openDatabaseFile(databaseUser, databaseNameUser, false /* readonly */, false /* createSchema */);
+  try
+  {
+    openDatabaseFileInternal(databaseUser, databaseNameUser, false /* readonly */, false /* createSchema */);
+  }
+  catch(atools::sql::SqlException& e)
+  {
+    QMessageBox::critical(mainWindow, QApplication::applicationName(),
+                          tr("Cannot open user database. Reason:\n\n"
+                             "%1\n\n"
+                             "Is another %2 running?\n\n"
+                             "Exiting now.").
+                          arg(e.getSqlError().databaseText()).
+                          arg(QApplication::applicationName()));
+
+    std::exit(1);
+  }
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
 }
 
 void DatabaseManager::closeUserDatabase()
@@ -738,6 +761,23 @@ void DatabaseManager::openAllDatabases()
 void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
                                        bool createSchema)
 {
+  try
+  {
+    openDatabaseFileInternal(db, file, readonly, createSchema);
+  }
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
+}
+
+void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
+                                               bool createSchema)
+{
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
   bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
@@ -749,63 +789,52 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
                                 "PRAGMA page_size=8196",
                                 "PRAGMA locking_mode=EXCLUSIVE"});
 
-  try
+  qDebug() << "Opening database" << file;
+  db->setDatabaseName(file);
+
+  // Set foreign keys only on demand because they can decrease loading performance
+  if(foreignKeys)
+    DATABASE_PRAGMAS.append("PRAGMA foreign_keys = ON");
+  else
+    DATABASE_PRAGMAS.append("PRAGMA foreign_keys = OFF");
+
+  bool autocommit = db->isAutocommit();
+  db->setAutocommit(false);
+  db->open(DATABASE_PRAGMAS);
+
+  db->setAutocommit(autocommit);
+
+  if(createSchema)
   {
-    qDebug() << "Opening database" << file;
-    db->setDatabaseName(file);
-
-    // Set foreign keys only on demand because they can decrease loading performance
-    if(foreignKeys)
-      DATABASE_PRAGMAS.append("PRAGMA foreign_keys = ON");
-    else
-      DATABASE_PRAGMAS.append("PRAGMA foreign_keys = OFF");
-
-    bool autocommit = db->isAutocommit();
-    db->setAutocommit(false);
-    db->open(DATABASE_PRAGMAS);
-
-    db->setAutocommit(autocommit);
-
-    if(createSchema)
+    if(!hasSchema(db))
     {
-      if(!hasSchema(db))
+      if(db->isReadonly())
       {
-        if(db->isReadonly())
-        {
-          // Reopen database read/write
-          db->close();
-          db->setReadonly(false);
-          db->open(DATABASE_PRAGMAS);
-        }
-
-        createEmptySchema(db);
-        db->commit();
+        // Reopen database read/write
+        db->close();
+        db->setReadonly(false);
+        db->open(DATABASE_PRAGMAS);
       }
+
+      createEmptySchema(db);
+      db->commit();
     }
-
-    if(readonly && !db->isReadonly())
-    {
-      // Readonly requested - reopen database
-      db->close();
-      db->setReadonly();
-      db->open(DATABASE_PRAGMAS);
-    }
-
-    DatabaseMeta dbmeta(db);
-    qInfo().nospace() << "Database version "
-                      << dbmeta.getMajorVersion() << "." << dbmeta.getMinorVersion();
-
-    qInfo().nospace() << "Application database version "
-                      << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
   }
-  catch(atools::Exception& e)
+
+  if(readonly && !db->isReadonly())
   {
-    ATOOLS_HANDLE_EXCEPTION(e);
+    // Readonly requested - reopen database
+    db->close();
+    db->setReadonly();
+    db->open(DATABASE_PRAGMAS);
   }
-  catch(...)
-  {
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
-  }
+
+  DatabaseMeta dbmeta(db);
+  qInfo().nospace() << "Database version "
+                    << dbmeta.getMajorVersion() << "." << dbmeta.getMinorVersion();
+
+  qInfo().nospace() << "Application database version "
+                    << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
 }
 
 void DatabaseManager::closeDatabases()
