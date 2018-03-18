@@ -41,9 +41,12 @@
 #include <QEventLoop>
 
 // Checks the first line of an ASN file if it has valid content
-const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
-const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=.+$");
-const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})?(.*)$");
+static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
+static const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=.+$");
+static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})?(.*)$");
+
+// Update online reports if older than 10 minutes
+static int ONLINE_WEATHER_TIMEOUT_SECS = 600;
 
 using atools::fs::FsPaths;
 using atools::fs::weather::WeatherNetDownload;
@@ -63,13 +66,16 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   ivaoWeather = new WeatherNetDownload(parentWindow);
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
-  ivaoWeather->setSetUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
+  ivaoWeather->setUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
   // Set callback so the reader can build an index for nearest airports
   ivaoWeather->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
   {
     return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(ident);
   });
-  ivaoWeather->download();
+
+  if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
+     OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
+    ivaoWeather->download();
 
   initActiveSkyNext();
 
@@ -475,6 +481,15 @@ void WeatherReporter::optionsChanged()
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
+
+  if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
+     OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
+  {
+    ivaoWeather->setUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
+    ivaoWeather->download();
+  }
+  else
+    ivaoWeather->setUpdatePeriod(-1);
 
   initActiveSkyNext();
   initXplane();

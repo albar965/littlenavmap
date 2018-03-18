@@ -149,9 +149,6 @@ signals:
   void weatherUpdated();
 
 private:
-  // Update online reports if older than 10 minutes
-  static Q_CONSTEXPR int ONLINE_WEATHER_TIMEOUT_SECS = 600;
-
   void activeSkyWeatherFileChanged(const QString& path);
   void xplaneWeatherFileChanged();
 
