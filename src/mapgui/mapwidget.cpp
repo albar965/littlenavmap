@@ -1944,18 +1944,38 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(airport != nullptr)
   {
-    if(NavApp::getAirportQueryNav()->hasProcedures(airport->ident))
-    {
-      QString procText;
-      if(airportDeparture)
-        procText = tr("Departure ");
-      else if(airportDestination)
-        procText = tr("Arrival ");
-      else
-        procText = tr("all ");
+    bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport->ident);
+    bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport->ident);
 
-      ui->actionMapShowApproaches->setEnabled(true);
-      ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(procText).arg(informationText));
+    if(hasAnyArrival || hasDeparture)
+    {
+      if(airportDeparture)
+      {
+        if(hasDeparture)
+        {
+          ui->actionMapShowApproaches->setEnabled(true);
+          ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("Departure ")).
+                                               arg(informationText));
+        }
+        else
+          ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no departure procedure)").arg(airport->ident));
+      }
+      else if(airportDestination)
+      {
+        if(hasAnyArrival)
+        {
+          ui->actionMapShowApproaches->setEnabled(true);
+          ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("Arrival ")).
+                                               arg(informationText));
+        }
+        else
+          ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no arrival procedure)").arg(airport->ident));
+      }
+      else
+      {
+        ui->actionMapShowApproaches->setEnabled(true);
+        ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("all ")).arg(informationText));
+      }
     }
     else
       ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport->ident));

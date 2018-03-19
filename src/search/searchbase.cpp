@@ -814,21 +814,41 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproaches->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
-    QString procText;
-    if(NavApp::getRoute().isAirportDeparture(airport.ident))
-      procText = tr("Departure ");
-    else if(NavApp::getRoute().isAirportDestination(airport.ident))
-      procText = tr("Arrival ");
-    else
-      procText = tr("all ");
+    bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport.ident);
+    bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport.ident);
+    bool airportDestination = NavApp::getRoute().isAirportDestination(airport.ident);
+    bool airportDeparture = NavApp::getRoute().isAirportDeparture(airport.ident);
 
-    if(NavApp::getAirportQueryNav()->hasProcedures(airport.ident))
+    if(hasAnyArrival || hasDeparture)
     {
-      ui->actionSearchShowApproaches->setEnabled(true);
-      ui->actionSearchShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(procText));
+      if(airportDeparture)
+      {
+        if(hasDeparture)
+        {
+          ui->actionSearchShowApproaches->setEnabled(true);
+          ui->actionSearchShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(tr("Departure ")));
+        }
+        else
+          ui->actionSearchShowApproaches->setText(tr("Show procedures (airport has no departure procedure)"));
+      }
+      else if(airportDestination)
+      {
+        if(hasAnyArrival)
+        {
+          ui->actionSearchShowApproaches->setEnabled(true);
+          ui->actionSearchShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(tr("Arrival ")));
+        }
+        else
+          ui->actionSearchShowApproaches->setText(tr("Show procedures (airport has no arrival procedure)"));
+      }
+      else
+      {
+        ui->actionSearchShowApproaches->setEnabled(true);
+        ui->actionSearchShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(tr("all ")));
+      }
     }
     else
-      ui->actionSearchShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport.ident));
+      ui->actionSearchShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
   }
   else
     ui->actionSearchShowApproaches->setText(tr("Show procedures"));

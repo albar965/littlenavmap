@@ -1746,24 +1746,44 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowApproaches->setEnabled(false);
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
-      QString procText;
-      if(NavApp::getRoute().isAirportDeparture(routeLeg->getIdent()))
-        procText = tr("Departure ");
-      else if(NavApp::getRoute().isAirportDestination(routeLeg->getIdent()))
-        procText = tr("Arrival ");
-      else
-        procText = tr("all ");
+      bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(routeLeg->getIdent());
+      bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(routeLeg->getIdent());
 
-      if(NavApp::getAirportQueryNav()->hasProcedures(routeLeg->getAirport().ident))
+      if(hasAnyArrival || hasDeparture)
       {
-        ui->actionRouteShowApproaches->setEnabled(true);
-        ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(procText));
+        bool airportDeparture = NavApp::getRoute().isAirportDeparture(routeLeg->getIdent());
+        bool airportDestination = NavApp::getRoute().isAirportDestination(routeLeg->getIdent());
+        if(airportDeparture)
+        {
+          if(hasDeparture)
+          {
+            ui->actionRouteShowApproaches->setEnabled(true);
+            ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("Departure ")));
+          }
+          else
+            ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no departure procedure)"));
+        }
+        else if(airportDestination)
+        {
+          if(hasAnyArrival)
+          {
+            ui->actionRouteShowApproaches->setEnabled(true);
+            ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("Arrival ")));
+          }
+          else
+            ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no arrival procedure)"));
+        }
+        else
+        {
+          ui->actionRouteShowApproaches->setEnabled(true);
+          ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("all ")));
+        }
       }
       else
-        ui->actionRouteShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(routeLeg->getIdent()));
+        ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
     }
     else
-      ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(QString()));
+      ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
 
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);

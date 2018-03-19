@@ -69,8 +69,13 @@ public:
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
   atools::geo::Pos getAirportCoordinatesByIdent(const QString& ident);
 
-  bool hasProcedures(int airportId) const;
   bool hasProcedures(const QString& ident) const;
+
+  /* True if there are STAR or approaches */
+  bool hasAnyArrivalProcedures(const QString& ident) const;
+
+  /* True if airport has SID */
+  bool hasDepartureProcedures(const QString& ident) const;
 
   /* Get the region for airports where it is missing. This uses an expensive query to get the
    * region from the nearest waypoints. Region is set in MapAirport.
@@ -147,6 +152,7 @@ private:
                                               bool lazy, bool overview);
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
+  bool hasQueryByAirportIdent(atools::sql::SqlQuery& query, const QString& ident) const;
 
   const int queryRowLimit = 5000;
 
@@ -177,8 +183,9 @@ private:
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr;
   atools::sql::SqlQuery *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr;
-  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
-                        *airportProcByIdentQuery = nullptr;
+  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr,
+                        *airportProcByIdentQuery = nullptr,
+                        *procArrivalByAirportIdentQuery = nullptr, *procDepartureByAirportIdentQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTQUERY_H

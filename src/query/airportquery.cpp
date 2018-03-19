@@ -146,13 +146,28 @@ Pos AirportQuery::getAirportCoordinatesByIdent(const QString& ident)
 
 bool AirportQuery::hasProcedures(const QString& ident) const
 {
-  bool retval = false;
-  airportProcByIdentQuery->bindValue(":ident", ident);
-  airportProcByIdentQuery->exec();
-  if(airportProcByIdentQuery->next())
-    retval = airportProcByIdentQuery->valueBool("num_approach");
+  return hasQueryByAirportIdent(*airportProcByIdentQuery, ident);
+}
 
-  airportProcByIdentQuery->finish();
+bool AirportQuery::hasAnyArrivalProcedures(const QString& ident) const
+{
+  return hasQueryByAirportIdent(*procArrivalByAirportIdentQuery, ident);
+}
+
+bool AirportQuery::hasDepartureProcedures(const QString& ident) const
+{
+  return hasQueryByAirportIdent(*procDepartureByAirportIdentQuery, ident);
+}
+
+bool AirportQuery::hasQueryByAirportIdent(atools::sql::SqlQuery& query, const QString& ident) const
+{
+  bool retval = false;
+  query.bindValue(":ident", ident);
+  query.exec();
+  if(query.next())
+    retval = true;
+
+  query.finish();
   return retval;
 }
 
@@ -174,18 +189,6 @@ void AirportQuery::getAirportRegion(map::MapAirport& airport)
   if(query.next())
     airport.region = query.valueStr(0);
   query.finish();
-}
-
-bool AirportQuery::hasProcedures(int airportId) const
-{
-  bool retval = false;
-  airportProcByIdQuery->bindValue(":id", airportId);
-  airportProcByIdQuery->exec();
-  if(airportProcByIdQuery->next())
-    retval = airportProcByIdQuery->valueBool("num_approach");
-
-  airportProcByIdQuery->finish();
-  return retval;
 }
 
 map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
@@ -754,11 +757,17 @@ void AirportQuery::initQueries()
   airportAdminByIdQuery = new SqlQuery(db);
   airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
 
-  airportProcByIdQuery = new SqlQuery(db);
-  airportProcByIdQuery->prepare("select num_approach from airport where airport_id = :id");
-
   airportProcByIdentQuery = new SqlQuery(db);
-  airportProcByIdentQuery->prepare("select num_approach from airport where ident = :ident");
+  airportProcByIdentQuery->prepare("select 1 from airport where ident = :ident limit 1");
+
+  procArrivalByAirportIdentQuery = new SqlQuery(db);
+  procArrivalByAirportIdentQuery->prepare("select 1 from approach  "
+                                          "where airport_ident = :ident and  "
+                                          "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null))");
+
+  procDepartureByAirportIdentQuery = new SqlQuery(db);
+  procDepartureByAirportIdentQuery->prepare("select 1 from approach "
+                                            "where airport_ident = :ident and type = 'GPS' and suffix = 'D' limit 1");
 
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where ident = :ident ");
@@ -888,11 +897,14 @@ void AirportQuery::deInitQueries()
   delete airportAdminByIdQuery;
   airportAdminByIdQuery = nullptr;
 
-  delete airportProcByIdQuery;
-  airportProcByIdQuery = nullptr;
-
   delete airportProcByIdentQuery;
   airportProcByIdentQuery = nullptr;
+
+  delete procDepartureByAirportIdentQuery;
+  procDepartureByAirportIdentQuery = nullptr;
+
+  delete procArrivalByAirportIdentQuery;
+  procArrivalByAirportIdentQuery = nullptr;
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
