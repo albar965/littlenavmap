@@ -1783,7 +1783,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
     }
     else
-      ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
+      ui->actionRouteShowApproaches->setText(tr("Show procedures"));
 
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
