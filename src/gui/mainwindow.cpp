@@ -1344,17 +1344,17 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
  *  @return true if route can be saved anyway */
 bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDestination)
 {
-  const static atools::gui::DialogButtonList BUTTONS({
-    {QString(), QMessageBox::Cancel},
-    {tr("Select Start Position"), QMessageBox::Yes},
-    {QString(), QMessageBox::Save}
-  });
 
   if(!NavApp::getRoute().hasValidDeparture() || !NavApp::getRoute().hasValidDestination())
   {
     if(validateDepartureAndDestination)
     {
       NavApp::deleteSplashScreen();
+      const static atools::gui::DialogButtonList BUTTONS({
+        {QString(), QMessageBox::Cancel},
+        {tr("Select Start &Position"), QMessageBox::Yes},
+        {QString(), QMessageBox::Save}
+      });
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_WARNING,
                                               tr("Flight Plan must have a valid airport as "
                                                  "start and destination and "
@@ -1380,6 +1380,12 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
         NavApp::deleteSplashScreen();
 
         // Airport has parking but no one is selected
+        const static atools::gui::DialogButtonList BUTTONS({
+          {QString(), QMessageBox::Cancel},
+          {tr("Select Start &Position"), QMessageBox::Yes},
+          {tr("Show &Departure on Map"), QMessageBox::YesToAll},
+          {QString(), QMessageBox::Save}
+        });
 
         int result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
@@ -1388,8 +1394,14 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
           BUTTONS, QMessageBox::Yes, QMessageBox::Save);
 
         if(result == QMessageBox::Yes)
-          // saving depends if user selects parking or  cancels out of the dialog
+          // saving depends if user selects parking or cancels out of the dialog
           return routeController->selectDepartureParking();
+        else if(result == QMessageBox::YesToAll)
+        {
+          // Zoom to airport and cancel out
+          mapWidget->showRect(NavApp::getRoute().first().getAirport().bounding, false);
+          return false;
+        }
         else if(result == QMessageBox::Save)
           // Save right away
           return true;
@@ -2843,7 +2855,8 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     else if(NavApp::isConnected())
     {
       // FSX/P3D - Flight simulator fetched weather
-      atools::fs::weather::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+      atools::fs::weather::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident,
+                                                                                          airport.position);
 
       if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
       {
