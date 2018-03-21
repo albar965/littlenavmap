@@ -1360,4 +1360,88 @@ bool runwayNameSplit(const QString& name, QString *number, QString *designator)
   return retval;
 }
 
+QDebug operator<<(QDebug out, const map::MapSearchResult& record)
+{
+  QDebugStateSaver saver(out);
+
+  if(!record.airports.isEmpty())
+  {
+    out << "Airport";
+    for(const map::MapAirport& obj :  record.airports)
+      out << obj.id << obj.ident << ",";
+    out << endl;
+  }
+  if(!record.runwayEnds.isEmpty())
+  {
+    out << "RunwayEnd";
+    for(const map::MapRunwayEnd& obj :  record.runwayEnds)
+      out << obj.name << ",";
+    out << endl;
+  }
+  if(!record.parkings.isEmpty())
+  {
+    out << "Parking";
+    for(const map::MapParking& obj :  record.parkings)
+      out << obj.id << obj.name << obj.number << obj.type << ",";
+    out << endl;
+  }
+  if(!record.waypoints.isEmpty())
+  {
+    out << "Waypoint";
+    for(const map::MapWaypoint& obj :  record.waypoints)
+      out << obj.id << obj.ident << obj.region << ",";
+    out << endl;
+  }
+  if(!record.vors.isEmpty())
+  {
+    out << "VOR";
+    for(const map::MapVor& obj :  record.vors)
+      out << obj.id << obj.ident << obj.region << ",";
+    out << endl;
+  }
+  if(!record.ndbs.isEmpty())
+  {
+    out << "NDB";
+    for(const map::MapNdb& obj :  record.ndbs)
+      out << obj.id << obj.ident << obj.region << ",";
+    out << endl;
+  }
+  if(!record.ils.isEmpty())
+  {
+    out << "ILS";
+    for(const map::MapIls& obj :  record.ils)
+      out << obj.id << obj.ident << ",";
+    out << endl;
+  }
+  if(!record.airways.isEmpty())
+  {
+    out << "Airway";
+    for(const map::MapAirway& obj :  record.airways)
+      out << obj.id << obj.name << ",";
+    out << endl;
+  }
+  if(!record.airspaces.isEmpty())
+  {
+    out << "Airspace";
+    for(const map::MapAirspace& obj :  record.airspaces)
+      out << obj.id << obj.name << ",";
+    out << endl;
+  }
+  if(!record.userPointsRoute.isEmpty())
+  {
+    out << "UserpointRoute";
+    for(const map::MapUserpointRoute& obj :  record.userPointsRoute)
+      out << obj.id << obj.name << ",";
+    out << endl;
+  }
+  if(!record.userpoints.isEmpty())
+  {
+    out << "Userpoint";
+    for(const map::MapUserpoint& obj :  record.userpoints)
+      out << obj.id << obj.name << ",";
+    out << endl;
+  }
+  return out;
+}
+
 } // namespace types

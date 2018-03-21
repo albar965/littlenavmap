@@ -683,6 +683,11 @@ struct MapSearchResult
     return !airports.isEmpty();
   }
 
+  bool hasAirways() const
+  {
+    return !airways.isEmpty();
+  }
+
   bool hasVor() const
   {
     return !vors.isEmpty();
@@ -714,6 +719,8 @@ struct MapSearchResult
   }
 
 };
+
+QDebug operator<<(QDebug out, const map::MapSearchResult& record);
 
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
