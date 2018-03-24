@@ -146,7 +146,8 @@ private:
                          const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
 
   void findWaypoints(map::MapSearchResult& result, const QString& item);
-  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
+  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, const map::MapSearchResult *lastResult,
+                       float maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
