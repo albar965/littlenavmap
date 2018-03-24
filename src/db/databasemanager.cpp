@@ -36,6 +36,7 @@
 #include "navapp.h"
 #include "gui/dialog.h"
 #include "fs/userdata/userdatamanager.h"
+#include "fs/online/onlinedatamanager.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -175,17 +176,29 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
 
   databaseSim = new SqlDatabase(DATABASE_NAME);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
   databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+  databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
-  openUserDatabase();
+  // Open user point database
+  openWriteableDatabase(databaseUser, "userdata", "user");
   userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
   if(!userdataManager->hasSchema())
     userdataManager->createSchema();
   else
     userdataManager->updateSchema();
+
+  // Open online network database
+  openWriteableDatabase(databaseOnline, "onlinedata", "online network");
+  onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline);
+  if(!onlinedataManager->hasSchema())
+    onlinedataManager->createSchema();
+  else
+    onlinedataManager->updateSchema();
+  onlinedataManager->initQueries();
 }
 
 DatabaseManager::~DatabaseManager()
@@ -196,13 +209,16 @@ DatabaseManager::~DatabaseManager()
   delete databaseDialog;
   delete progressDialog;
   delete userdataManager;
+  delete onlinedataManager;
 
   closeDatabases();
   closeUserDatabase();
+  closeOnlineDatabase();
 
   delete databaseSim;
   delete databaseNav;
   delete databaseUser;
+  delete databaseOnline;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
@@ -706,23 +722,25 @@ void DatabaseManager::switchSimFromMainMenu()
   }
 }
 
-void DatabaseManager::openUserDatabase()
+void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name,
+                                            const QString& displayName)
 {
-  QString databaseNameUser = databaseDirectory +
-                             QDir::separator() + lnm::DATABASE_PREFIX +
-                             "userdata" + lnm::DATABASE_SUFFIX;
+  QString databaseNameUser = databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX + name +
+                             lnm::DATABASE_SUFFIX;
 
   try
   {
-    openDatabaseFileInternal(databaseUser, databaseNameUser, false /* readonly */, false /* createSchema */);
+    openDatabaseFileInternal(database, databaseNameUser, false /* readonly */, false /* createSchema */,
+                             false /* exclusive */, false /* auto transactions */);
   }
   catch(atools::sql::SqlException& e)
   {
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          tr("Cannot open user database. Reason:\n\n"
-                             "%1\n\n"
-                             "Is another %2 running?\n\n"
+                          tr("Cannot open %1 database. Reason:\n\n"
+                             "%2\n\n"
+                             "Is another %3 running?\n\n"
                              "Exiting now.").
+                          arg(displayName).
                           arg(e.getSqlError().databaseText()).
                           arg(QApplication::applicationName()));
 
@@ -741,6 +759,11 @@ void DatabaseManager::openUserDatabase()
 void DatabaseManager::closeUserDatabase()
 {
   closeDatabaseFile(databaseUser);
+}
+
+void DatabaseManager::closeOnlineDatabase()
+{
+  closeDatabaseFile(databaseOnline);
 }
 
 void DatabaseManager::openAllDatabases()
@@ -763,7 +786,7 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
 {
   try
   {
-    openDatabaseFileInternal(db, file, readonly, createSchema);
+    openDatabaseFileInternal(db, file, readonly, createSchema, true /* exclusive */, true /* auto transactions */);
   }
   catch(atools::Exception& e)
   {
@@ -776,31 +799,34 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
 }
 
 void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
-                                               bool createSchema)
+                                               bool createSchema, bool exclusive, bool autoTransactions)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
   bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
 
   // cache_size * 1024 bytes if value is negative
-  QStringList DATABASE_PRAGMAS({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
-                                "PRAGMA synchronous=OFF",
-                                "PRAGMA journal_mode=TRUNCATE",
-                                "PRAGMA page_size=8196",
-                                "PRAGMA locking_mode=EXCLUSIVE"});
+  QStringList databasePragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
+                               "PRAGMA synchronous=OFF",
+                               "PRAGMA journal_mode=TRUNCATE",
+                               "PRAGMA page_size=8196"});
+
+  if(exclusive)
+    databasePragmas.append("PRAGMA locking_mode=EXCLUSIVE");
 
   qDebug() << "Opening database" << file;
   db->setDatabaseName(file);
 
   // Set foreign keys only on demand because they can decrease loading performance
   if(foreignKeys)
-    DATABASE_PRAGMAS.append("PRAGMA foreign_keys = ON");
+    databasePragmas.append("PRAGMA foreign_keys = ON");
   else
-    DATABASE_PRAGMAS.append("PRAGMA foreign_keys = OFF");
+    databasePragmas.append("PRAGMA foreign_keys = OFF");
 
   bool autocommit = db->isAutocommit();
   db->setAutocommit(false);
-  db->open(DATABASE_PRAGMAS);
+  db->setAutomaticTransactions(autoTransactions);
+  db->open(databasePragmas);
 
   db->setAutocommit(autocommit);
 
@@ -813,7 +839,7 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
         // Reopen database read/write
         db->close();
         db->setReadonly(false);
-        db->open(DATABASE_PRAGMAS);
+        db->open(databasePragmas);
       }
 
       createEmptySchema(db);
@@ -826,7 +852,7 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
     // Readonly requested - reopen database
     db->close();
     db->setReadonly();
-    db->open(DATABASE_PRAGMAS);
+    db->open(databasePragmas);
   }
 
   DatabaseMeta dbmeta(db);

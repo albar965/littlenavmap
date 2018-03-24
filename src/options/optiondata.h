@@ -360,6 +360,23 @@ enum UpdateChannels
   STABLE_BETA_DEVELOP
 };
 
+/* comboBoxOptionsStartupUpdateChannels - what updates to check for */
+enum OnlineNetwork
+{
+  ONLINE_NONE,
+  ONLINE_VATSIM,
+  ONLINE_IVAO,
+  ONLINE_CUSTOM_STATUS,
+  ONLINE_CUSTOM
+};
+
+/* comboBoxOptionsOnlineFormat whazzup.txt file format */
+enum OnlineFormat
+{
+  ONLINE_FORMAT_VATSIM,
+  ONLINE_FORMAT_IVAO
+};
+
 }
 
 /*
@@ -711,6 +728,22 @@ public:
     return simNoFollowAircraftOnScroll;
   }
 
+  opts::OnlineNetwork getOnlineNetwork() const
+  {
+    return onlineNetwork;
+  }
+
+  opts::OnlineFormat getOnlineFormat() const;
+
+  /* URL to "status.txt" or empty if not applicable */
+  QString getOnlineStatusUrl() const;
+
+  /* URL to "whazzup.txt" or empty if not applicable */
+  QString getOnlineWhazzupUrl() const;
+
+  /* Reload files or automatic or not applicable if -1 */
+  int getOnlineReloadTimeSeconds() const;
+
 private:
   friend class OptionsDialog;
 
@@ -901,6 +934,7 @@ private:
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
 
+  /* Default values are set by widget states - these are needed for the reset button */
   opts::DisplayOptions displayOptions =
     opts::ITEM_AIRPORT_NAME | opts::ITEM_AIRPORT_TOWER | opts::ITEM_AIRPORT_ATIS |
     opts::ITEM_AIRPORT_RUNWAY |
@@ -921,6 +955,12 @@ private:
   // Used in the singelton to check if data was already loaded
   bool valid = false;
 
+  /* Online network configuration ========================================= */
+  opts::OnlineNetwork onlineNetwork = opts::ONLINE_NONE;
+  opts::OnlineFormat onlineFormat = opts::ONLINE_FORMAT_VATSIM;
+  QString onlineStatusUrl, onlineWhazzupUrl;
+
+  int onlineReloadSeconds = 180;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

@@ -40,6 +40,7 @@ class AircraftTrack;
 class QSplashScreen;
 class UpdateHandler;
 class UserdataController;
+class OnlinedataController;
 class UserdataIcons;
 class UserdataSearch;
 
@@ -73,9 +74,12 @@ namespace Ui {
 class MainWindow;
 }
 
-/* Keeps most important handler, window and query classes for static access.
+/*
+ * Keeps most important handler, window and query classes for static access.
  * Initialized and deinitialized in main window.
- * Not all getters refer to aggregated values but are rather delegates that help to minimized dependencies. */
+ *
+ * Not all getters refer to aggregated values but are rather delegates that help to minimize dependencies.
+ */
 class NavApp :
   public atools::gui::Application
 {
@@ -181,6 +185,7 @@ public:
   static UpdateHandler *getUpdateHandler();
 
   static UserdataController *getUserdataController();
+  static OnlinedataController *getOnlinedataController();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
@@ -191,13 +196,17 @@ private:
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
+
   /* Most important handlers */
   static ConnectClient *connectClient;
   static DatabaseManager *databaseManager;
   static atools::fs::common::MagDecReader *magDecReader;
   static UserdataController *userdataController;
+  static OnlinedataController *onlinedataController;
+
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
+
   static atools::fs::db::DatabaseMeta *databaseMeta;
   static atools::fs::db::DatabaseMeta *databaseMetaNav;
   static QSplashScreen *splashScreen;

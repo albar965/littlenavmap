@@ -2833,6 +2833,236 @@ If this field is empty, the default Active Sky weather file path will be used wh
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabOptionsOnline">
+      <attribute name="title">
+       <string>Online Flying</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_26">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBoxOptionsOnlineServices">
+         <property name="title">
+          <string>Online Service</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsOnlineNone">
+            <property name="toolTip">
+             <string>Do not use any online flying services</string>
+            </property>
+            <property name="text">
+             <string>&amp;None</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsOnlineVatsim">
+            <property name="toolTip">
+             <string>Use the VATSIM network pre-defined configuration for online flying</string>
+            </property>
+            <property name="text">
+             <string>&amp;VATSIM</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsOnlineIvao">
+            <property name="toolTip">
+             <string>Use the IVAO network pre-defined configuration for online flying</string>
+            </property>
+            <property name="text">
+             <string>&amp;IVAO</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsOnlineCustomStatus">
+            <property name="toolTip">
+             <string>Use a custom web address for the &quot;status.txt&quot; file</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Custom with &amp;Status File</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsOnlineCustom">
+            <property name="toolTip">
+             <string>Use a custom web address for the &quot;whazzup.txt&quot; file</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>&amp;Custom</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBoxOptionsOnlineWeb">
+         <property name="title">
+          <string>Web Adresses</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_25">
+          <property name="verticalSpacing">
+           <number>2</number>
+          </property>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEditOptionsOnlineWhazzupUrl">
+            <property name="toolTip">
+             <string>Web address of the &quot;whazzup.txt&quot; file</string>
+            </property>
+            <property name="placeholderText">
+             <string>No web address for &quot;whazzup.txt&quot; entered.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QPushButton" name="pushButtonOptionsOnlineTestWhazzupUrl">
+            <property name="toolTip">
+             <string>Download &quot;whazzup.txt&quot; file from given URL and check validity</string>
+            </property>
+            <property name="text">
+             <string>&amp;Test</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelOptionsOnlineWhazzupUrl">
+            <property name="text">
+             <string>&amp;Whazzup File URL:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditOptionsOnlineWhazzupUrl</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="lineEditOptionsOnlineStatusUrl">
+            <property name="toolTip">
+             <string>Web address of the &quot;status.txt&quot; file</string>
+            </property>
+            <property name="placeholderText">
+             <string>No web address for &quot;status.txt&quot; entered.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelOptionsOnlineStatusUrl">
+            <property name="text">
+             <string>&amp;Status File URL:</string>
+            </property>
+            <property name="buddy">
+             <cstring>lineEditOptionsOnlineStatusUrl</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="pushButtonOptionsOnlineTestStatusUrl">
+            <property name="toolTip">
+             <string>Download &quot;status.txt&quot; file from given URL and check validity</string>
+            </property>
+            <property name="text">
+             <string>&amp;Test</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QSpinBox" name="spinBoxOptionsOnlineUpdate">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.
+Do not use values smaller than two minutes for official networks like VATSIM or IVAO.
+Use this only for private networks.</string>
+            </property>
+            <property name="suffix">
+             <string> seconds</string>
+            </property>
+            <property name="minimum">
+             <number>30</number>
+            </property>
+            <property name="maximum">
+             <number>1800</number>
+            </property>
+            <property name="value">
+             <number>600</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelOptionsOnlineUpdate">
+            <property name="text">
+             <string>&amp;Update every:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsOnlineUpdate</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QComboBox" name="comboBoxOptionsOnlineFormat">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text">
+              <string>VATSIM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>IVAO</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelOptionsOnlineFormat">
+            <property name="text">
+             <string>&amp;Format:</string>
+            </property>
+            <property name="buddy">
+             <cstring>comboBoxOptionsOnlineFormat</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabOptionsCache">
       <attribute name="title">
        <string>Cache and Files</string>

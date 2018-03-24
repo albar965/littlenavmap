@@ -59,6 +59,7 @@
 #include "search/proceduresearch.h"
 #include "gui/airspacetoolbarhandler.h"
 #include "userdata/userdatacontroller.h"
+#include "online/onlinedatacontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -686,6 +687,8 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
@@ -736,6 +739,8 @@ void MainWindow::connectAllSlots()
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+
+  // Online network ===================================================================================
 
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
@@ -2413,6 +2418,8 @@ void MainWindow::mainWindowShown()
 
   // Check for updates once main window is visible
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
+
+  NavApp::getOnlinedataController()->startProcessing();
 
   setStatusMessage(tr("Ready."));
 

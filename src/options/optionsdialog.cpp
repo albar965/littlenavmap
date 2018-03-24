@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/unit.h"
+#include "atools.h"
 #include "ui_options.h"
 #include "weather/weatherreporter.h"
 #include "gui/widgetstate.h"
@@ -348,6 +349,17 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsSimCenterLegTable);
   widgets.append(ui->spinBoxSimDoNotFollowOnScrollTime);
 
+  widgets.append(ui->radioButtonOptionsOnlineNone);
+  widgets.append(ui->radioButtonOptionsOnlineVatsim);
+  widgets.append(ui->radioButtonOptionsOnlineIvao);
+  widgets.append(ui->radioButtonOptionsOnlineCustomStatus);
+  widgets.append(ui->radioButtonOptionsOnlineCustom);
+
+  widgets.append(ui->lineEditOptionsOnlineStatusUrl);
+  widgets.append(ui->lineEditOptionsOnlineWhazzupUrl);
+  widgets.append(ui->spinBoxOptionsOnlineUpdate);
+  widgets.append(ui->comboBoxOptionsOnlineFormat);
+
   doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
   doubleSpinBoxOptionsMapZoomShowMapMenuSuffix = ui->doubleSpinBoxOptionsMapZoomShowMapMenu->suffix();
 
@@ -440,8 +452,30 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled,
           this, &OptionsDialog::mapEmptyAirportsClicked);
 
-  connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled,
-          this, &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+  connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled, this,
+          &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+
+  // Online tab =======================================================================
+  connect(ui->radioButtonOptionsOnlineNone, &QRadioButton::clicked,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+  connect(ui->radioButtonOptionsOnlineVatsim, &QRadioButton::clicked,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+  connect(ui->radioButtonOptionsOnlineIvao, &QRadioButton::clicked,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+  connect(ui->radioButtonOptionsOnlineCustomStatus, &QRadioButton::clicked,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+  connect(ui->radioButtonOptionsOnlineCustom, &QRadioButton::clicked,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+
+  connect(ui->lineEditOptionsOnlineStatusUrl, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+  connect(ui->lineEditOptionsOnlineWhazzupUrl, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateOnlineWidgetStatus);
+
+  connect(ui->pushButtonOptionsOnlineTestStatusUrl, &QPushButton::clicked,
+          this, &OptionsDialog::onlineTestStatusUrlClicked);
+  connect(ui->pushButtonOptionsOnlineTestWhazzupUrl, &QPushButton::clicked,
+          this, &OptionsDialog::onlineTestWhazzupUrlClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -458,8 +492,65 @@ int OptionsDialog::exec()
   updateWidgetUnits();
   updateDatabaseButtonState();
   updateGuiStyleSpinboxState();
+  updateOnlineWidgetStatus();
 
   return QDialog::exec();
+}
+
+void OptionsDialog::onlineTestStatusUrlClicked()
+{
+  onlineTestUrl(ui->lineEditOptionsOnlineStatusUrl->text());
+}
+
+void OptionsDialog::onlineTestWhazzupUrlClicked()
+{
+  onlineTestUrl(ui->lineEditOptionsOnlineWhazzupUrl->text());
+}
+
+void OptionsDialog::onlineTestUrl(const QString& url)
+{
+  qDebug() << Q_FUNC_INFO << url;
+  QString result;
+  if(WeatherReporter::testUrl(url, QString(), result))
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("Success. First lines in file:\n%1").arg(result));
+  else
+    QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
+}
+
+void OptionsDialog::updateOnlineWidgetStatus()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(ui->radioButtonOptionsOnlineNone->isChecked() || ui->radioButtonOptionsOnlineVatsim->isChecked() ||
+     ui->radioButtonOptionsOnlineIvao->isChecked())
+  {
+    ui->lineEditOptionsOnlineStatusUrl->setEnabled(false);
+    ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(false);
+    ui->pushButtonOptionsOnlineTestStatusUrl->setEnabled(false);
+    ui->pushButtonOptionsOnlineTestWhazzupUrl->setEnabled(false);
+    ui->spinBoxOptionsOnlineUpdate->setEnabled(false);
+    ui->comboBoxOptionsOnlineFormat->setEnabled(false);
+  }
+  else
+  {
+    if(ui->radioButtonOptionsOnlineCustomStatus->isChecked())
+    {
+      ui->lineEditOptionsOnlineStatusUrl->setEnabled(true);
+      ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(false);
+      ui->pushButtonOptionsOnlineTestStatusUrl->setEnabled(QUrl(ui->lineEditOptionsOnlineStatusUrl->text()).isValid());
+      ui->pushButtonOptionsOnlineTestWhazzupUrl->setEnabled(false);
+    }
+    else if(ui->radioButtonOptionsOnlineCustom->isChecked())
+    {
+      ui->lineEditOptionsOnlineStatusUrl->setEnabled(false);
+      ui->lineEditOptionsOnlineWhazzupUrl->setEnabled(true);
+      ui->pushButtonOptionsOnlineTestStatusUrl->setEnabled(false);
+      ui->pushButtonOptionsOnlineTestWhazzupUrl->setEnabled(QUrl(ui->lineEditOptionsOnlineWhazzupUrl->text()).isValid());
+    }
+    ui->spinBoxOptionsOnlineUpdate->setEnabled(true);
+    ui->comboBoxOptionsOnlineFormat->setEnabled(true);
+  }
 }
 
 void OptionsDialog::updateWidgetUnits()
@@ -1067,6 +1158,22 @@ void OptionsDialog::widgetsToOptionData()
   data.unitFuelWeight = static_cast<opts::UnitFuelAndWeight>(ui->comboBoxOptionsUnitFuelWeight->currentIndex());
   data.altitudeRuleType = static_cast<opts::AltitudeRule>(ui->comboBoxOptionsRouteAltitudeRuleType->currentIndex());
 
+  if(ui->radioButtonOptionsOnlineNone->isChecked())
+    data.onlineNetwork = opts::ONLINE_NONE;
+  else if(ui->radioButtonOptionsOnlineVatsim->isChecked())
+    data.onlineNetwork = opts::ONLINE_VATSIM;
+  else if(ui->radioButtonOptionsOnlineIvao->isChecked())
+    data.onlineNetwork = opts::ONLINE_IVAO;
+  else if(ui->radioButtonOptionsOnlineCustomStatus->isChecked())
+    data.onlineNetwork = opts::ONLINE_CUSTOM_STATUS;
+  else if(ui->radioButtonOptionsOnlineCustom->isChecked())
+    data.onlineNetwork = opts::ONLINE_CUSTOM;
+
+  data.onlineStatusUrl = ui->lineEditOptionsOnlineStatusUrl->text();
+  data.onlineWhazzupUrl = ui->lineEditOptionsOnlineWhazzupUrl->text();
+  data.onlineReloadSeconds = ui->spinBoxOptionsOnlineUpdate->value();
+  data.onlineFormat = static_cast<opts::OnlineFormat>(ui->comboBoxOptionsOnlineFormat->currentIndex());
+
   data.valid = true;
 }
 
@@ -1226,6 +1333,29 @@ void OptionsDialog::optionDataToWidgets()
   ui->comboBoxOptionsUnitCoords->setCurrentIndex(data.unitCoords);
   ui->comboBoxOptionsUnitFuelWeight->setCurrentIndex(data.unitFuelWeight);
   ui->comboBoxOptionsRouteAltitudeRuleType->setCurrentIndex(data.altitudeRuleType);
+
+  switch(data.onlineNetwork)
+  {
+    case opts::ONLINE_NONE:
+      ui->radioButtonOptionsOnlineNone->setChecked(true);
+      break;
+    case opts::ONLINE_VATSIM:
+      ui->radioButtonOptionsOnlineVatsim->setChecked(true);
+      break;
+    case opts::ONLINE_IVAO:
+      ui->radioButtonOptionsOnlineIvao->setChecked(true);
+      break;
+    case opts::ONLINE_CUSTOM_STATUS:
+      ui->radioButtonOptionsOnlineCustomStatus->setChecked(true);
+      break;
+    case opts::ONLINE_CUSTOM:
+      ui->radioButtonOptionsOnlineCustom->setChecked(true);
+      break;
+  }
+  ui->lineEditOptionsOnlineStatusUrl->setText(data.onlineStatusUrl);
+  ui->lineEditOptionsOnlineWhazzupUrl->setText(data.onlineWhazzupUrl);
+  ui->spinBoxOptionsOnlineUpdate->setValue(data.onlineReloadSeconds);
+  ui->comboBoxOptionsOnlineFormat->setCurrentIndex(data.onlineFormat);
 }
 
 /* Add flag from checkbox to OptionData flags */

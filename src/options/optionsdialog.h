@@ -121,6 +121,10 @@ private:
   void offlineDataSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
+  void updateOnlineWidgetStatus();
+  void onlineTestStatusUrlClicked();
+  void onlineTestWhazzupUrlClicked();
+  void onlineTestUrl(const QString& url);
 
   QVector<int> ringStrToVector(const QString& string) const;
 

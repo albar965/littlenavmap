@@ -28,9 +28,15 @@
 namespace atools {
 namespace fs {
 class NavDatabaseProgress;
+
 namespace userdata {
 class UserdataManager;
 }
+
+namespace online {
+class OnlinedataManager;
+}
+
 }
 }
 
@@ -84,11 +90,16 @@ public:
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
   bool hasSimulatorDatabases() const;
 
-  /* Opens a Sqlite database. If the database is new or does not contain a schema an empty schema is created.
-   * Will not return if an exception is caught during opening. */
+  /* Opens Sim and Nav Sqlite databases in readonly mode. If the database is new or does not contain a schema
+   * an empty schema is created.
+   * Will not return if an exception is caught during opening.
+   * Only for scenery database */
   void openAllDatabases();
-  void openUserDatabase();
+
+  /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
+  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName);
   void closeUserDatabase();
+  void closeOnlineDatabase();
 
   /* Close all simulator databases - not the user database.
    * Will not return if an exception is caught during opening. */
@@ -139,6 +150,11 @@ public:
     return userdataManager;
   }
 
+  atools::fs::online::OnlinedataManager *getOnlinedataManager() const
+  {
+    return onlinedataManager;
+  }
+
   atools::sql::SqlDatabase *getDatabaseUser() const
   {
     return databaseUser;
@@ -160,7 +176,8 @@ private:
   void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
 
   /* Does not catch exceptions */
-  void openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
+  void openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema,
+                                bool exclusive, bool autoTransactions);
 
   void closeDatabaseFile(atools::sql::SqlDatabase *db);
 
@@ -210,7 +227,12 @@ private:
 
   /* Navaid database e.g. from Navigraph */
   const QString DATABASE_NAME_NAV = "LNMDBNAV";
+
+  /* Userpoint database */
   const QString DATABASE_NAME_USER = "LNMDBUSER";
+
+  /* Network online player data */
+  const QString DATABASE_NAME_ONLINE = "LNMDBONLINE";
 
   const QString DATABASE_NAME_TEMP = "LNMTEMPDB";
   const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
@@ -223,7 +245,8 @@ private:
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *databaseSim = nullptr /* Database for simulator content */,
                            *databaseNav = nullptr /* Database for third party navigation data */,
-                           *databaseUser = nullptr /* Database for user data */;
+                           *databaseUser = nullptr /* Database for user data */,
+                           *databaseOnline = nullptr /* Database for network online data */;
 
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
@@ -253,7 +276,9 @@ private:
   QString databaseMetaText, databaseAiracCycleText, databaseInfoText, databaseLoadingText,
           databaseTimeText;
 
+  /* Also keep the database-close manager classes here */
   atools::fs::userdata::UserdataManager *userdataManager = nullptr;
+  atools::fs::online::OnlinedataManager *onlinedataManager = nullptr;
 
 };
 

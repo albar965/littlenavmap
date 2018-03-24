@@ -23,6 +23,10 @@
 
 OptionData *OptionData::optionData = nullptr;
 
+/* Default values for well known networks */
+static const QString ONLINE_VATSIM_STATUS_URL = "http://status.vatsim.net/status.txt";
+static const QString ONLINE_IVAO_STATUS_URL = "http://www.ivao.aero/whazzup/status.txt";
+
 OptionData::OptionData()
   : flightplanColor(Qt::yellow), flightplanActiveColor(Qt::magenta), trailColor(Qt::black)
 {
@@ -32,6 +36,78 @@ OptionData::OptionData()
 OptionData::~OptionData()
 {
 
+}
+
+opts::OnlineFormat OptionData::getOnlineFormat() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_CUSTOM:
+    case opts::ONLINE_CUSTOM_STATUS:
+    case opts::ONLINE_NONE:
+      return onlineFormat;
+
+    case opts::ONLINE_VATSIM:
+      return opts::ONLINE_FORMAT_VATSIM;
+
+    case opts::ONLINE_IVAO:
+      return opts::ONLINE_FORMAT_IVAO;
+  }
+  return opts::ONLINE_FORMAT_VATSIM;
+}
+
+QString OptionData::getOnlineStatusUrl() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_CUSTOM:
+    case opts::ONLINE_NONE:
+      return QString();
+
+    case opts::ONLINE_VATSIM:
+      return ONLINE_VATSIM_STATUS_URL;
+
+    case opts::ONLINE_IVAO:
+      return ONLINE_IVAO_STATUS_URL;
+
+    case opts::ONLINE_CUSTOM_STATUS:
+      return onlineStatusUrl;
+  }
+  return QString();
+}
+
+QString OptionData::getOnlineWhazzupUrl() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_NONE:
+      return QString();
+
+    case opts::ONLINE_CUSTOM:
+      return onlineWhazzupUrl;
+
+    case opts::ONLINE_VATSIM:
+    case opts::ONLINE_IVAO:
+    case opts::ONLINE_CUSTOM_STATUS:
+      return QString();
+  }
+  return QString();
+}
+
+int OptionData::getOnlineReloadTimeSeconds() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_VATSIM:
+    case opts::ONLINE_IVAO:
+    case opts::ONLINE_NONE:
+      return -1;
+
+    case opts::ONLINE_CUSTOM:
+    case opts::ONLINE_CUSTOM_STATUS:
+      return onlineReloadSeconds;
+  }
+  return -1;
 }
 
 const OptionData& OptionData::instance()

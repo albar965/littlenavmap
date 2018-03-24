@@ -31,6 +31,7 @@
 #include "fs/common/magdecreader.h"
 #include "common/updatehandler.h"
 #include "userdata/userdatacontroller.h"
+#include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
 
 #include "ui_mainwindow.h"
@@ -57,6 +58,7 @@ QSplashScreen *NavApp::splashScreen = nullptr;
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
+OnlinedataController *NavApp::onlinedataController = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -92,8 +94,13 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   // Need to set this later to avoid circular database dependency
   userdataController->setMagDecReader(magDecReader);
+
+  // Create a CSV backup
   userdataController->backup();
+  // Clear temporary userpoints
   userdataController->clearTemporary();
+
+  onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
 
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(),
                           databaseManager->getDatabaseNav(), databaseManager->getDatabaseUser());
@@ -129,6 +136,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete userdataController";
   delete userdataController;
   userdataController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete onlinedataController";
+  delete onlinedataController;
+  onlinedataController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete updateHandler";
   delete updateHandler;
@@ -197,6 +208,8 @@ void NavApp::preDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
 
+  onlinedataController->preDatabaseLoad();
+
   infoQuery->deInitQueries();
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
@@ -223,6 +236,8 @@ void NavApp::postDatabaseLoad()
   mapQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
+
+  onlinedataController->postDatabaseLoad();
 }
 
 Ui::MainWindow *NavApp::getMainUi()
@@ -343,6 +358,11 @@ UserdataSearch *NavApp::getUserdataSearch()
 UserdataController *NavApp::getUserdataController()
 {
   return userdataController;
+}
+
+OnlinedataController *NavApp::getOnlinedataController()
+{
+  return onlinedataController;
 }
 
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()
