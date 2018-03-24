@@ -35,6 +35,7 @@
 #include "options/optiondata.h"
 #include "search/userdatasearch.h"
 #include "common/maptypes.h"
+#include "sql/sqltransaction.h"
 #include "userdata/userdataexportdialog.h"
 #include "gui/errorhandler.h"
 #include "exception.h"
@@ -43,6 +44,7 @@
 #include <QDebug>
 #include <QStandardPaths>
 
+using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
 
@@ -292,9 +294,11 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   rec.appendFieldAndValue("lonx", userpoint.position.getLonX());
   rec.appendFieldAndValue("laty", userpoint.position.getLatY());
 
+  SqlTransaction transaction(manager->getDatabase());
+
   // Change coordinate columns for id
   manager->updateByRecord(rec, {userpoint.id});
-  manager->commit();
+  transaction.commit();
 
   // No need to update search
   emit userdataChanged();
@@ -470,8 +474,9 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     record.setValue("description", description.join("\n"));
 
     // Add to database
+    SqlTransaction transaction(manager->getDatabase());
     manager->insertByRecord(record);
-    manager->commit();
+    transaction.commit();
     emit refreshUserdataSearch();
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
@@ -545,8 +550,9 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     qDebug() << Q_FUNC_INFO << rec;
 
     // Add to database
+    SqlTransaction transaction(manager->getDatabase());
     manager->insertByRecord(*lastAddedRecord);
-    manager->commit();
+    transaction.commit();
     emit refreshUserdataSearch();
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Userpoint added."));
@@ -569,8 +575,9 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
     if(retval == QDialog::Accepted)
     {
       // Change modified columns for all given ids
+      SqlTransaction transaction(manager->getDatabase());
       manager->updateByRecord(dlg.getRecord(), ids);
-      manager->commit();
+      transaction.commit();
 
       emit refreshUserdataSearch();
       emit userdataChanged();
@@ -592,8 +599,9 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
 
   if(retval == QMessageBox::Yes)
   {
+    SqlTransaction transaction(manager->getDatabase());
     manager->removeRows(ids);
-    manager->commit();
+    transaction.commit();
 
     emit refreshUserdataSearch();
     emit userdataChanged();
@@ -627,12 +635,10 @@ void UserdataController::importCsv()
   catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
-    manager->rollback();
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-    manager->rollback();
   }
 }
 
@@ -657,12 +663,10 @@ void UserdataController::importXplaneUserFixDat()
   catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
-    manager->rollback();
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-    manager->rollback();
   }
 }
 
@@ -686,12 +690,10 @@ void UserdataController::importGarmin()
   catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
-    manager->rollback();
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-    manager->rollback();
   }
 }
 
