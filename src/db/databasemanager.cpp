@@ -30,6 +30,7 @@
 #include "fs/fspaths.h"
 #include "fs/navdatabase.h"
 #include "sql/sqlutil.h"
+#include "sql/sqltransaction.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
@@ -59,6 +60,7 @@ using atools::fs::NavDatabaseOptions;
 using atools::fs::NavDatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
+using atools::sql::SqlTransaction;
 using atools::sql::SqlQuery;
 using atools::fs::db::DatabaseMeta;
 
@@ -808,11 +810,18 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
   // cache_size * 1024 bytes if value is negative
   QStringList databasePragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
                                "PRAGMA synchronous=OFF",
-                               "PRAGMA journal_mode=TRUNCATE",
                                "PRAGMA page_size=8196"});
 
   if(exclusive)
+  {
     databasePragmas.append("PRAGMA locking_mode=EXCLUSIVE");
+    databasePragmas.append("PRAGMA journal_mode=TRUNCATE");
+  }
+  else
+  {
+    databasePragmas.append("PRAGMA locking_mode=NORMAL");
+    databasePragmas.append("PRAGMA journal_mode=WAL");
+  }
 
   qDebug() << "Opening database" << file;
   db->setDatabaseName(file);
@@ -843,7 +852,6 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
       }
 
       createEmptySchema(db);
-      db->commit();
     }
   }
 
@@ -950,9 +958,11 @@ void DatabaseManager::copyAirspaces()
           // X-Plane database file has a boundary table
           QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
+          SqlTransaction transaction(xpDb);
+
           // Delete
           xpDb.exec("delete from boundary");
-          xpDb.commit();
+          transaction.commit();
 
           // Build statements
           SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), databaseSim);
@@ -972,7 +982,7 @@ void DatabaseManager::copyAirspaces()
               return true;
             };
           int copied = SqlUtil::copyResultValues(fromQuery, xpQuery, func);
-          xpDb.commit();
+          transaction.commit();
 
           QGuiApplication::restoreOverrideCursor();
           QMessageBox::information(mainWindow, QApplication::applicationName(),
