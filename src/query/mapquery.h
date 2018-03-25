@@ -97,6 +97,8 @@ public:
   map::MapVor getVorById(int id);
   map::MapNdb getNdbById(int id);
   map::MapIls getIlsById(int id);
+
+  QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
   map::MapWaypoint getWaypointById(int id);
   map::MapAirspace getAirspaceById(int airspaceId);
   map::MapUserpoint getUserdataPointById(int id);
@@ -269,8 +271,8 @@ private:
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
                         *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
-                        *ilsByIdQuery = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr,
-                        *userdataPointByIdQuery = nullptr;
+                        *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr, *vorNearestQuery = nullptr,
+                        *ndbNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
                         *airwayByIdQuery = nullptr,

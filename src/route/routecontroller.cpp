@@ -2922,11 +2922,34 @@ void RouteController::updateTableModel()
       itemRow[rc::RESTRICTION] = new QStandardItem(restrictions);
     }
 
+    // Get ILS for approach runway if it marks the end of an ILS procedure
+    QVector<map::MapIls> ilsByAirportAndRunway;
+    if((route.getArrivalLegs().approachType == "ILS" || route.getArrivalLegs().approachType == "LOC") &&
+       leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
+      ilsByAirportAndRunway = mapQuery->getIlsByAirportAndRunway(route.last().getAirport().ident, leg.getRunwayEnd().name);
+
     // VOR/NDB type ===========================
     if(leg.getVor().isValid())
       itemRow[rc::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
     else if(leg.getNdb().isValid())
       itemRow[rc::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
+    else if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) &&
+            leg.getRunwayEnd().isValid())
+    {
+      // Build string for ILS type
+      QStringList texts;
+      for(const map::MapIls& ils : ilsByAirportAndRunway)
+      {
+        QStringList txt(tr("ILS"));
+        if(ils.slope > 0.f)
+          txt.append("GS");
+        if(ils.hasDme)
+          txt.append("DME");
+        texts.append(txt.join("/"));
+      }
+
+      itemRow[rc::TYPE] = new QStandardItem(texts.join(","));
+    }
 
     // VOR/NDB frequency =====================
     if(leg.getVor().isValid())
@@ -2938,6 +2961,16 @@ void RouteController::updateTableModel()
     }
     else if(leg.getNdb().isValid())
       itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
+    else if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) &&
+            leg.getRunwayEnd().isValid())
+    {
+      // Add ILS frequencies
+      QStringList texts;
+      for(const map::MapIls& ils : ilsByAirportAndRunway)
+        texts.append(QLocale().toString(ils.frequency / 1000.f, 'f', 2));
+
+      itemRow[rc::FREQ] = new QStandardItem(texts.join(","));
+    }
 
     // VOR/NDB range =====================
     if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))

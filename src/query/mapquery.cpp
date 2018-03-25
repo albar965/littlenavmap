@@ -489,6 +489,21 @@ map::MapIls MapQuery::getIlsById(int id)
   return ils;
 }
 
+QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway)
+{
+  QVector<map::MapIls> ilsList;
+  ilsQuerySimByName->bindValue(":apt", airportIdent);
+  ilsQuerySimByName->bindValue(":rwy", runway);
+  ilsQuerySimByName->exec();
+  while(ilsQuerySimByName->next())
+  {
+    map::MapIls ils;
+    mapTypesFactory->fillIls(ilsQuerySimByName->record(), ils);
+    ilsList.append(ils);
+  }
+  return ilsList;
+}
+
 map::MapWaypoint MapQuery::getWaypointById(int id)
 {
   map::MapWaypoint wp;
@@ -1270,6 +1285,10 @@ void MapQuery::initQueries()
   ilsByIdQuery = new SqlQuery(db);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
+  ilsQuerySimByName = new SqlQuery(db);
+  ilsQuerySimByName->prepare("select " + ilsQueryBase + " from ils "
+                                                        "where loc_airport_ident = :apt and loc_runway_name = :rwy");
+
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
     "select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
@@ -1483,6 +1502,9 @@ void MapQuery::deInitQueries()
 
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;
+
+  delete ilsQuerySimByName;
+  ilsQuerySimByName = nullptr;
 
   delete airwayWaypointByIdentQuery;
   airwayWaypointByIdentQuery = nullptr;
