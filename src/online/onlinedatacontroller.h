@@ -38,6 +38,7 @@ class OnlinedataManager;
 }
 
 class MainWindow;
+class QTextCodec;
 
 /*
  * Manages recurring download of online network data from the status.txt and whazzup.txt files.
@@ -98,6 +99,8 @@ private:
 
   /* Set after parsing status.txt to indicate compressed file */
   bool whazzupGzipped = false;
+
+  QTextCodec *codec = nullptr;
 };
 
 #endif // LNM_ONLINECONTROLLER_H

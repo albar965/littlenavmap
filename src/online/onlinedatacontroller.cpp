@@ -24,6 +24,7 @@
 #include "zip/gzip.h"
 
 #include <QDebug>
+#include <QTextCodec>
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 
@@ -46,6 +47,10 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
 OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent)
   : manager(onlineManager), mainWindow(parent)
 {
+  codec = QTextCodec::codecForName("Windows-1252");
+  if(codec == nullptr)
+    codec = QTextCodec::codecForLocale();
+
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
@@ -130,7 +135,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   if(currentState == DOWNLOADING_STATUS)
   {
     // Parse status file
-    manager->readFromStatus(data);
+    manager->readFromStatus(codec->toUnicode(data));
 
     // Get URL from status file
     QString whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped);
@@ -160,7 +165,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     else
       whazzupData = data;
 
-    manager->readFromWhazzup(whazzupData, convertFormat(OptionData::instance().getOnlineFormat()));
+    manager->readFromWhazzup(codec->toUnicode(whazzupData), convertFormat(OptionData::instance().getOnlineFormat()));
 
     QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
     if(!whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -180,7 +185,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
   {
-    manager->readServersFromWhazzup(data, convertFormat(OptionData::instance().getOnlineFormat()));
+    manager->readServersFromWhazzup(codec->toUnicode(data), convertFormat(OptionData::instance().getOnlineFormat()));
     lastServerDownload = QDateTime::currentDateTime();
 
     // Done here - start timer for next session
