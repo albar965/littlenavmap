@@ -565,7 +565,10 @@ void SearchBaseTable::tableSelectionChanged()
 
   emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
 
-  if(sm != nullptr && sm->currentIndex().isValid() && followModeAction()->isChecked())
+  if(sm != nullptr &&
+     sm->currentIndex().isValid() &&
+     sm->isSelected(sm->currentIndex()) &&
+     followModeAction()->isChecked())
     emit showPos(controller->getGeoPos(sm->currentIndex()), map::INVALID_DISTANCE_VALUE, false);
 }
 

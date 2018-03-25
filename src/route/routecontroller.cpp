@@ -2008,7 +2008,10 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   emit routeSelectionChanged(selectedRows, model->rowCount());
 
-  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm != nullptr && sm->currentIndex().isValid())
+  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() &&
+     sm != nullptr &&
+     sm->currentIndex().isValid() &&
+     sm->isSelected(sm->currentIndex()))
     emit showPos(route.at(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false);
 }
 
