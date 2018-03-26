@@ -823,6 +823,10 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
     databasePragmas.append("PRAGMA journal_mode=WAL");
   }
 
+  if(!readonly)
+    databasePragmas.append("PRAGMA busy_timeout=2000");
+
+
   qDebug() << "Opening database" << file;
   db->setDatabaseName(file);
 
