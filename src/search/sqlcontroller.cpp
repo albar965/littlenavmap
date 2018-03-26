@@ -89,7 +89,7 @@ void SqlController::refreshData(bool keepSelection)
 
 bool SqlController::hasColumn(const QString& colName) const
 {
-  columns->hasColumn(colName);
+  return columns->hasColumn(colName);
 }
 
 void SqlController::filterIncluding(const QModelIndex& index)
