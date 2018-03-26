@@ -38,7 +38,10 @@ enum SearchTabIndex
   SEARCH_AIRPORT = 0,
   SEARCH_NAV = 1,
   SEARCH_PROC = 2,
-  SEARCH_USER = 3
+  SEARCH_USER = 3,
+  SEARCH_ONLINE_CLIENT = 4,
+  SEARCH_ONLINE_CENTER = 5,
+  SEARCH_ONLINE_SERVER = 6
 };
 
 class AbstractSearch :

@@ -21,6 +21,7 @@
 #include "search/sqlcontroller.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
+#include "common/mapcolors.h"
 #include "search/columnlist.h"
 #include "mapgui/mapwidget.h"
 #include "route/route.h"
@@ -180,12 +181,21 @@ void SearchBaseTable::tableCopyClipboard()
   {
     QString csv;
     SqlController *c = controller;
-    int exported = CsvExporter::selectionAsCsv(view, true, csv, {"longitude", "latitude"},
-                                               [c](int index) -> QStringList
+
+    int exported = 0;
+    if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
     {
-      return {QLocale().toString(c->getRawData(index, "lonx").toFloat()),
-              QLocale().toString(c->getRawData(index, "laty").toFloat())};
-    });
+      // Full CSV export including coordinates and full rows
+      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv, {"longitude", "latitude"},
+                                             [c](int index) -> QStringList
+      {
+        return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),
+                QLocale().toString(c->getRawData(index, "laty").toFloat(), 'f', 8)};
+      });
+    }
+    else
+      // Copy only selected cells
+      exported = CsvExporter::selectionAsCsv(view, false /* header */, false /* rows */, csv);
 
     if(!csv.isEmpty())
       QApplication::clipboard()->setText(csv);
@@ -568,6 +578,7 @@ void SearchBaseTable::tableSelectionChanged()
   if(sm != nullptr &&
      sm->currentIndex().isValid() &&
      sm->isSelected(sm->currentIndex()) &&
+     followModeAction() != nullptr &&
      followModeAction()->isChecked())
     emit showPos(controller->getGeoPos(sm->currentIndex()), map::INVALID_DISTANCE_VALUE, false);
 }
@@ -596,9 +607,16 @@ void SearchBaseTable::resetView()
   }
 }
 
+void SearchBaseTable::refreshDataAndKeepSelection()
+{
+  controller->refreshData(true);
+
+  tableSelectionChanged();
+}
+
 void SearchBaseTable::refreshData()
 {
-  controller->refreshData();
+  controller->refreshData(false);
 
   tableSelectionChanged();
 }
@@ -701,7 +719,7 @@ void SearchBaseTable::showRow(int row)
   // get airport, VOR, NDB or waypoint id from model row
   getNavTypeAndId(row, navType, id);
 
-  if(id > 0)
+  if(id > 0 && navType != map::NONE)
   {
     // Check if the used table has bounding rectangle columns
     bool hasBounding = columns->hasColumn("left_lonx") && columns->hasColumn("top_laty") &&
@@ -784,9 +802,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       // Disabled menu items don't need any content
       fieldData = controller->getFieldDataAt(index);
 
-    // Get position to display range rings
-    position = atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
-                                controller->getRawData(index.row(), "laty").toFloat());
+    if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
+      // Get position to display range rings
+      position = atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
+                                  controller->getRawData(index.row(), "laty").toFloat());
 
     // get airport, VOR, NDB or waypoint id from model row
     getNavTypeAndId(index.row(), navType, id);
@@ -875,44 +894,53 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Build the menu
   QMenu menu;
-  menu.addAction(ui->actionSearchShowInformation);
-  if(navType == map::AIRPORT)
-    menu.addAction(ui->actionSearchShowApproaches);
-  menu.addAction(ui->actionSearchShowOnMap);
-  menu.addSeparator();
-
-  // Add extra menu items in the user defined waypoint table - these are already connected
-  if(getTabIndex() == SEARCH_USER)
+  if(navType != map::NONE)
   {
-    menu.addAction(ui->actionUserdataAdd);
-    menu.addAction(ui->actionUserdataEdit);
-    menu.addAction(ui->actionUserdataDelete);
+    menu.addAction(ui->actionSearchShowInformation);
+    if(navType == map::AIRPORT)
+      menu.addAction(ui->actionSearchShowApproaches);
+    menu.addAction(ui->actionSearchShowOnMap);
+    menu.addSeparator();
+
+    // Add extra menu items in the user defined waypoint table - these are already connected
+    if(getTabIndex() == SEARCH_USER)
+    {
+      menu.addAction(ui->actionUserdataAdd);
+      menu.addAction(ui->actionUserdataEdit);
+      menu.addAction(ui->actionUserdataDelete);
+      menu.addSeparator();
+    }
+  }
+
+  if(getTabIndex() != SEARCH_ONLINE_SERVER)
+  {
+    menu.addAction(followModeAction());
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchFilterIncluding);
+    menu.addAction(ui->actionSearchFilterExcluding);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchResetSearch);
+    menu.addAction(ui->actionSearchShowAll);
     menu.addSeparator();
   }
 
-  menu.addAction(followModeAction());
-  menu.addSeparator();
+  if(navType != map::NONE)
+  {
+    menu.addAction(ui->actionMapRangeRings);
+    menu.addAction(ui->actionMapNavaidRange);
+    menu.addAction(ui->actionMapHideRangeRings);
+    menu.addSeparator();
 
-  menu.addAction(ui->actionSearchFilterIncluding);
-  menu.addAction(ui->actionSearchFilterExcluding);
-  menu.addSeparator();
+    menu.addAction(ui->actionRouteAirportStart);
+    menu.addAction(ui->actionRouteAirportDest);
+    menu.addSeparator();
 
-  menu.addAction(ui->actionSearchResetSearch);
-  menu.addAction(ui->actionSearchShowAll);
-  menu.addSeparator();
-
-  menu.addAction(ui->actionMapRangeRings);
-  menu.addAction(ui->actionMapNavaidRange);
-  menu.addAction(ui->actionMapHideRangeRings);
-  menu.addSeparator();
-
-  menu.addAction(ui->actionRouteAirportStart);
-  menu.addAction(ui->actionRouteAirportDest);
-  menu.addSeparator();
-
-  menu.addAction(ui->actionRouteAddPos);
-  menu.addAction(ui->actionRouteAppendPos);
-  menu.addSeparator();
+    menu.addAction(ui->actionRouteAddPos);
+    menu.addAction(ui->actionRouteAppendPos);
+    menu.addSeparator();
+  }
 
   menu.addAction(ui->actionSearchTableCopy);
   menu.addAction(ui->actionSearchTableSelectAll);
@@ -922,7 +950,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetView);
   menu.addSeparator();
 
-  menu.addAction(ui->actionSearchSetMark);
+  if(navType != map::NONE)
+    menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);
 
@@ -1080,19 +1109,13 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   navType = map::NONE;
   id = -1;
 
-  if(columns->getTablename() == "airport")
+  if(getTabIndex() == SEARCH_AIRPORT)
   {
     // Airport table
     navType = map::AIRPORT;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
-  else if(columns->getTablename() == "userdata")
-  {
-    // User data
-    navType = map::USERPOINT;
-    id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
-  }
-  else
+  else if(getTabIndex() == SEARCH_NAV)
   {
     // Otherwise nav_search table
     navType = map::navTypeToMapObjectType(controller->getRawData(row, "nav_type").toString());
@@ -1104,9 +1127,75 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
     else if(navType == map::WAYPOINT)
       id = controller->getRawData(row, "waypoint_id").toInt();
   }
+  else if(getTabIndex() == SEARCH_USER)
+  {
+    // User data
+    navType = map::USERPOINT;
+    id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
+  }
+  else if(getTabIndex() == SEARCH_ONLINE_CLIENT)
+  {
+
+  }
+  else if(getTabIndex() == SEARCH_ONLINE_CENTER)
+  {
+
+  }
+  else if(getTabIndex() == SEARCH_ONLINE_SERVER)
+  {
+    navType = map::NONE;
+  }
 }
 
 void SearchBaseTable::tabDeactivated()
 {
   emit selectionChanged(this, 0, controller->getVisibleRowCount(), controller->getTotalRowCount());
+}
+
+/* Callback for the controller. Will be called for each table cell and should return a formatted value */
+QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                                           const QVariant& displayRoleValue, Qt::ItemDataRole role) const
+{
+  Q_UNUSED(roleValue);
+
+  switch(role)
+  {
+    case Qt::DisplayRole:
+      return formatModelData(col, displayRoleValue);
+
+    case Qt::TextAlignmentRole:
+      if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt ||
+         displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong ||
+         displayRoleValue.type() == QVariant::Double)
+        // Align all numeric columns right
+        return Qt::AlignRight;
+
+      break;
+    case Qt::BackgroundRole:
+      if(colIndex == controller->getSortColumnIndex())
+        // Use another alternating color if this is a field in the sort column
+        return mapcolors::alternatingRowColor(rowIndex, true);
+
+      break;
+    default:
+      break;
+  }
+
+  return QVariant();
+}
+
+/* Formats the QVariant to a QString depending on column name */
+QString SearchBaseTable::formatModelData(const Column *col, const QVariant& displayRoleValue) const
+{
+  Q_UNUSED(col);
+
+  // Called directly by the model for export functions
+  if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
+    return QLocale().toString(displayRoleValue.toInt());
+  else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
+    return QLocale().toString(displayRoleValue.toLongLong());
+  else if(displayRoleValue.type() == QVariant::Double)
+    return QLocale().toString(displayRoleValue.toDouble());
+
+  return displayRoleValue.toString();
 }

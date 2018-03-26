@@ -69,9 +69,27 @@ void SqlController::postDatabaseLoad()
   model->fillHeaderData();
 }
 
-void SqlController::refreshData()
+void SqlController::refreshData(bool keepSelection)
 {
+  QItemSelectionModel *sm = view->selectionModel();
+
+  QModelIndexList list;
+  if(keepSelection && sm != nullptr)
+    list = sm->selectedIndexes();
+
   model->refreshData();
+
+  sm = view->selectionModel();
+  if(keepSelection && sm != nullptr)
+  {
+    for(const QModelIndex& idx : list)
+      sm->select(idx, QItemSelectionModel::Select);
+  }
+}
+
+bool SqlController::hasColumn(const QString& colName) const
+{
+  columns->hasColumn(colName);
 }
 
 void SqlController::filterIncluding(const QModelIndex& index)
@@ -437,17 +455,20 @@ void SqlController::processViewColumns()
 
   // Apply sort order to view
   const Column *colDescrDefSort = columns->getDefaultSortColumn();
-  int idx = rec.indexOf(colDescrDefSort->getColumnName());
-  if(colDescrCurSort == nullptr)
-    // Sort by default
-    view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
-  else
+  if(colDescrDefSort != nullptr)
   {
-    if(colDescrCurSort->isHidden())
+    int idx = rec.indexOf(colDescrDefSort->getColumnName());
+    if(colDescrCurSort == nullptr)
+      // Sort by default
       view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
-    else if(!isDistanceSearch())
-      if(colDescrCurSort->isDistance())
+    else
+    {
+      if(colDescrCurSort->isHidden())
         view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
+      else if(!isDistanceSearch())
+        if(colDescrCurSort->isDistance())
+          view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
+    }
   }
 }
 
@@ -529,7 +550,7 @@ void SqlController::initRecord(atools::sql::SqlRecord& rec)
     rec.appendField(from.fieldName(i), from.fieldType(i));
 }
 
-bool SqlController::hasRow(int row)
+bool SqlController::hasRow(int row) const
 {
   int srow = row;
   if(proxyModel != nullptr)

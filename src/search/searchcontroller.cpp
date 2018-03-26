@@ -31,6 +31,9 @@
 #include "search/proceduresearch.h"
 #include "options/optiondata.h"
 #include "userdata/userdatacontroller.h"
+#include "search/onlineclientsearch.h"
+#include "search/onlinecentersearch.h"
+#include "search/onlineserversearch.h"
 
 #include <QTabWidget>
 #include <QUrl>
@@ -45,10 +48,16 @@ SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSea
           this, &SearchController::helpPressed);
   connect(NavApp::getMainUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
-  connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
-          this, &SearchController::helpPressedUserdata);
   connect(NavApp::getMainUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedProcedure);
+
+  connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
+          this, &SearchController::helpPressedUserdata);
+
+  connect(NavApp::getMainUi()->pushButtonOnlineClientHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressedOnlineClient);
+  connect(NavApp::getMainUi()->pushButtonOnlineCenterHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressedOnlineCenter);
 }
 
 SearchController::~SearchController()
@@ -57,6 +66,9 @@ SearchController::~SearchController()
   delete navSearch;
   delete procedureSearch;
   delete userdataSearch;
+  delete onlineClientSearch;
+  delete onlineCenterSearch;
+  delete onlineServerSearch;
 }
 
 void SearchController::getSelectedMapObjects(map::MapSearchResult& result) const
@@ -83,6 +95,16 @@ void SearchController::helpPressedProcedure()
 void SearchController::helpPressedUserdata()
 {
   HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHUSERDATA.html", lnm::helpLanguagesOnline());
+}
+
+void SearchController::helpPressedOnlineClient()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHONLINECLIENT.html", lnm::helpLanguagesOnline());
+}
+
+void SearchController::helpPressedOnlineCenter()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHONLINECENTER.html", lnm::helpLanguagesOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */
@@ -134,6 +156,24 @@ void SearchController::createUserdataSearch(QTableView *tableView)
   connect(userdataSearch, &UserdataSearch::addUserpoint,
           NavApp::getUserdataController(), &UserdataController::addUserpoint);
 
+}
+
+void SearchController::createOnlineClientSearch(QTableView *tableView)
+{
+  onlineClientSearch = new OnlineClientSearch(mainWindow, tableView, SEARCH_ONLINE_CLIENT);
+  postCreateSearch(onlineClientSearch);
+}
+
+void SearchController::createOnlineCenterSearch(QTableView *tableView)
+{
+  onlineCenterSearch = new OnlineCenterSearch(mainWindow, tableView, SEARCH_ONLINE_CENTER);
+  postCreateSearch(onlineCenterSearch);
+}
+
+void SearchController::createOnlineServerSearch(QTableView *tableView)
+{
+  onlineServerSearch = new OnlineServerSearch(mainWindow, tableView, SEARCH_ONLINE_SERVER);
+  postCreateSearch(onlineServerSearch);
 }
 
 void SearchController::createProcedureSearch(QTreeWidget *treeWidget)

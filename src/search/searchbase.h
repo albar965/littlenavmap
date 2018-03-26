@@ -106,6 +106,7 @@ public:
 
   /* Refresh table after updates in the database */
   void refreshData();
+  void refreshDataAndKeepSelection();
 
   /* Number of rows currently loaded into the table view */
   int getVisibleRowCount() const;
@@ -118,6 +119,11 @@ public:
 
   /* Get ids of all selected objects */
   QVector<int> getSelectedIds() const;
+
+  /* Default handler */
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
+  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */

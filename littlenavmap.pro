@@ -217,7 +217,10 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainteruser.cpp \
     src/userdata/userdataexportdialog.cpp \
     src/weather/weatherreporter.cpp \
-    src/online/onlinedatacontroller.cpp
+    src/online/onlinedatacontroller.cpp \
+    src/search/onlineclientsearch.cpp \
+    src/search/onlinecentersearch.cpp \
+    src/search/onlineserversearch.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -311,7 +314,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainteruser.h \
     src/userdata/userdataexportdialog.h \
     src/weather/weatherreporter.h \
-    src/online/onlinedatacontroller.h
+    src/online/onlinedatacontroller.h \
+    src/search/onlineclientsearch.h \
+    src/search/onlinecentersearch.h \
+    src/search/onlineserversearch.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

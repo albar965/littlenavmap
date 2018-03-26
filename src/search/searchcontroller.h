@@ -28,6 +28,9 @@ class AirportSearch;
 class NavSearch;
 class ProcedureSearch;
 class UserdataSearch;
+class OnlineClientSearch;
+class OnlineCenterSearch;
+class OnlineServerSearch;
 class ColumnList;
 class QTableView;
 class QTabWidget;
@@ -64,31 +67,50 @@ public:
   /* Create the airport search tab */
   void createAirportSearch(QTableView *tableView);
 
+  /* Create the navaid search tab */
+  void createNavSearch(QTableView *tableView);
+
+  void createProcedureSearch(QTreeWidget *treeWidget);
+
+  void createUserdataSearch(QTableView *tableView);
+
+  void createOnlineClientSearch(QTableView *tableView);
+  void createOnlineCenterSearch(QTableView *tableView);
+  void createOnlineServerSearch(QTableView *tableView);
+
   AirportSearch *getAirportSearch() const
   {
     return airportSearch;
   }
-
-  /* Create the navaid search tab */
-  void createNavSearch(QTableView *tableView);
 
   NavSearch *getNavSearch() const
   {
     return navSearch;
   }
 
-  void createProcedureSearch(QTreeWidget *treeWidget);
-
   ProcedureSearch *getProcedureSearch() const
   {
     return procedureSearch;
   }
 
-  void createUserdataSearch(QTableView *tableView);
-
   UserdataSearch *getUserdataSearch() const
   {
     return userdataSearch;
+  }
+
+  OnlineClientSearch *getOnlineClientSearch() const
+  {
+    return onlineClientSearch;
+  }
+
+  OnlineCenterSearch *getOnlineCenterSearch() const
+  {
+    return onlineCenterSearch;
+  }
+
+  OnlineServerSearch *getOnlineServerSearch() const
+  {
+    return onlineServerSearch;
   }
 
   /* Disconnect and reconnect all queries if a new database is loaded or changed */
@@ -118,6 +140,8 @@ private:
   void helpPressed();
   void helpPressedProcedure();
   void helpPressedUserdata();
+  void helpPressedOnlineClient();
+  void helpPressedOnlineCenter();
 
   MapQuery *mapQuery;
 
@@ -125,6 +149,9 @@ private:
   NavSearch *navSearch = nullptr;
   ProcedureSearch *procedureSearch = nullptr;
   UserdataSearch *userdataSearch = nullptr;
+  OnlineClientSearch *onlineClientSearch = nullptr;
+  OnlineCenterSearch *onlineCenterSearch = nullptr;
+  OnlineServerSearch *onlineServerSearch = nullptr;
 
   QMainWindow *mainWindow;
   QTabWidget *tabWidget = nullptr;

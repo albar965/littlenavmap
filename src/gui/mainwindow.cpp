@@ -60,6 +60,9 @@
 #include "gui/airspacetoolbarhandler.h"
 #include "userdata/userdatacontroller.h"
 #include "online/onlinedatacontroller.h"
+#include "search/onlineclientsearch.h"
+#include "search/onlinecentersearch.h"
+#include "search/onlineserversearch.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -198,8 +201,14 @@ MainWindow::MainWindow()
     searchController = new SearchController(this, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
+
     searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
+
     searchController->createUserdataSearch(ui->tableViewUserdata);
+
+    searchController->createOnlineClientSearch(ui->tableViewOnlineClientSearch);
+    searchController->createOnlineCenterSearch(ui->tableViewOnlineCenterSearch);
+    searchController->createOnlineServerSearch(ui->tableViewOnlineServerSearch);
 
     qDebug() << "MainWindow Creating InfoController";
     infoController = new InfoController(this);
@@ -770,6 +779,22 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapWidget::aircraftTakeoff, userdataController, &UserdataController::aircraftTakeoff);
   connect(mapWidget, &MapWidget::aircraftLanding, userdataController, &UserdataController::aircraftLanding);
+
+  // Online search ===================================================================================
+  OnlineClientSearch *clientSearch = searchController->getOnlineClientSearch();
+  OnlineCenterSearch *centerSearch = searchController->getOnlineCenterSearch();
+  OnlineServerSearch *serverSearch = searchController->getOnlineServerSearch();
+  OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
+
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          clientSearch, &OnlineClientSearch::refreshDataAndKeepSelection);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          centerSearch, &OnlineCenterSearch::refreshDataAndKeepSelection);
+  connect(onlinedataController, &OnlinedataController::onlineServersUpdated,
+          serverSearch, &OnlineServerSearch::refreshDataAndKeepSelection);
+
+  connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
 
   // Approach controller ===================================================================
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
@@ -2138,22 +2163,43 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 /* Selection in one of the search result tables has changed */
 void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
-  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
+  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
   QString type;
   if(source->getTabIndex() == SEARCH_AIRPORT)
   {
     type = tr("Airports");
-    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+    ui->labelAirportSearchStatus->setText(selectionLabelText.
+                                          arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
   else if(source->getTabIndex() == SEARCH_NAV)
   {
     type = tr("Navaids");
-    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+    ui->labelNavSearchStatus->setText(selectionLabelText.
+                                      arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
   else if(source->getTabIndex() == SEARCH_USER)
   {
     type = tr("Userpoints");
-    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+    ui->labelUserdata->setText(selectionLabelText.
+                               arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
+  else if(source->getTabIndex() == SEARCH_ONLINE_CLIENT)
+  {
+    type = tr("Clients");
+    QString lastUpdate = tr(" Last Update: %1").
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+    ui->labelOnlineClientSearchStatus->setText(selectionLabelText.
+                                               arg(selected).arg(total).arg(type).arg(visible).
+                                               arg(lastUpdate));
+  }
+  else if(source->getTabIndex() == SEARCH_ONLINE_CENTER)
+  {
+    type = tr("Centers");
+    QString lastUpdate = tr(" Last Update: %1").
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+    ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.
+                                               arg(selected).arg(total).arg(type).arg(visible).
+                                               arg(lastUpdate));
   }
 
   map::MapSearchResult result;

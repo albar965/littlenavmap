@@ -166,6 +166,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       whazzupData = data;
 
     manager->readFromWhazzup(codec->toUnicode(whazzupData), convertFormat(OptionData::instance().getOnlineFormat()));
+    lastUpdateTime = QDateTime::currentDateTime();
+
+    emit onlineClientAndAtcUpdated();
 
     QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
     if(!whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -187,6 +190,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   {
     manager->readServersFromWhazzup(codec->toUnicode(data), convertFormat(OptionData::instance().getOnlineFormat()));
     lastServerDownload = QDateTime::currentDateTime();
+
+    emit onlineServersUpdated();
 
     // Done here - start timer for next session
     startDownloadTimer();
@@ -223,10 +228,21 @@ void OnlinedataController::optionsChanged()
 
   // Clear all URL from status.txt too
   manager->reset();
-
   stopAllProcesses();
 
-  startDownloadInternal();
+  manager->clearData();
+  if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
+  {
+    emit onlineClientAndAtcUpdated();
+    emit onlineServersUpdated();
+  }
+  else
+  {
+    lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
+    lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
+
+    startDownloadInternal();
+  }
 }
 
 void OnlinedataController::startDownloadTimer()
@@ -236,7 +252,7 @@ void OnlinedataController::startDownloadTimer()
   int reloadFromOptions = OptionData::instance().getOnlineReloadTimeSeconds();
   int reloadFromWhazzup = manager->getReloadMinutesFromWhazzup() * 60;
 
-  // Use three minutes as default it nothing is given
+  // Use three minutes as default if nothing is given
   int intervalSeconds = 3 * 60;
   if(reloadFromOptions > 15)
   {

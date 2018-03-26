@@ -64,9 +64,15 @@ public:
   /* Options dialog changed settings. Will trigger download. */
   void optionsChanged();
 
+  const QDateTime& getLastUpdateTime() const
+  {
+    return lastUpdateTime;
+  }
+
 signals:
   /* Sent whenever new data was downloaded */
-  void onlineDataUpdated();
+  void onlineClientAndAtcUpdated();
+  void onlineServersUpdated();
 
 private:
   /* HTTP download signal slots */
@@ -96,6 +102,9 @@ private:
 
   /* Used to check server downloads and limit them to 15 minutes */
   QDateTime lastServerDownload;
+
+  /*  Last update from whazzup */
+  QDateTime lastUpdateTime;
 
   /* Set after parsing status.txt to indicate compressed file */
   bool whazzupGzipped = false;

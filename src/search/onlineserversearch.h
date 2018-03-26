@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_USERDATASEARCH_H
-#define LITTLENAVMAP_USERDATASEARCH_H
+#ifndef LITTLENAVMAP_ONLINESERVER_SEARCH_H
+#define LITTLENAVMAP_ONLINESERVER_SEARCH_H
 
 #include "search/searchbase.h"
 
@@ -26,7 +26,6 @@ class QTableView;
 class QAction;
 class QMainWindow;
 class Column;
-class UserIconDelegate;
 
 namespace atools {
 namespace sql {
@@ -35,16 +34,16 @@ class SqlDatabase;
 }
 
 /*
- * Search tab for user defined waypoints including all search widgets and the result table view.
+ * Search tab for online network servers. Only display functionality.
  */
-class UserdataSearch :
+class OnlineServerSearch :
   public SearchBaseTable
 {
   Q_OBJECT
 
 public:
-  UserdataSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex);
-  virtual ~UserdataSearch();
+  OnlineServerSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex);
+  virtual ~OnlineServerSearch();
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;
@@ -54,11 +53,6 @@ public:
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 
-signals:
-  void addUserpoint(int id, const atools::geo::Pos& pos);
-  void editUserpoints(const QVector<int>& ids);
-  void deleteUserpoints(const QVector<int>& ids);
-
 private:
   virtual void updateButtonMenu() override;
   virtual void saveViewState(bool distSearchActive) override;
@@ -67,29 +61,8 @@ private:
   QAction *followModeAction() override;
 
   void setCallbacks();
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
-                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
-  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
-
-  /* Edit button clicked */
-  void editUserpointsTriggered();
-
-  /* Delete button clicked */
-  void deleteUserpointsTriggered();
-
-  /* Add button */
-  void addUserpointTriggered();
-
-  /* All layouts, lines and drop down menu items */
-  QList<QObject *> userdataSearchWidgets;
-
-  /* All drop down menu actions */
-  QList<QAction *> userdataSearchMenuActions;
-
-  /* Draw type icon into type table column */
-  UserIconDelegate *iconDelegate = nullptr;
 
 };
 
-#endif // LITTLENAVMAP_USERDATASEARCH_H
+#endif // LITTLENAVMAP_ONLINESERVER_SEARCH_H

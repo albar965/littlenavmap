@@ -375,6 +375,11 @@ atools::sql::SqlDatabase *NavApp::getDatabaseUser()
   return databaseManager->getDatabaseUser();
 }
 
+atools::sql::SqlDatabase *NavApp::getDatabaseOnline()
+{
+  return onlinedataController->getDatabase();
+}
+
 ElevationProvider *NavApp::getElevationProvider()
 {
   return elevationProvider;

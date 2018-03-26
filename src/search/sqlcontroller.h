@@ -174,10 +174,13 @@ public:
   void updateHeaderData();
 
   /* Update query on changes in the database */
-  void refreshData();
+  void refreshData(bool keepSelection);
 
   /* True if the row exists in the model */
-  bool hasRow(int row);
+  bool hasRow(int row) const;
+
+  /* True if query contains column */
+  bool hasColumn(const QString& colName) const;
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

@@ -144,6 +144,7 @@ public:
   static UserdataSearch *getUserdataSearch();
 
   static atools::sql::SqlDatabase *getDatabaseUser();
+  static atools::sql::SqlDatabase *getDatabaseOnline();
 
   static ElevationProvider *getElevationProvider();
 

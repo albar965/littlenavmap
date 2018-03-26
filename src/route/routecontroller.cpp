@@ -259,10 +259,11 @@ void RouteController::tableCopyClipboard()
 
   const Route& rt = route;
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(view, true, csv, {"longitude", "latitude"}, [&rt](int index) -> QStringList
+  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv, {"longitude", "latitude"},
+                                             [&rt](int index) -> QStringList
   {
-    return {QLocale().toString(rt.at(index).getPosition().getLonX()),
-            QLocale().toString(rt.at(index).getPosition().getLatY())};
+    return {QLocale().toString(rt.at(index).getPosition().getLonX(), 'f', 8),
+            QLocale().toString(rt.at(index).getPosition().getLatY(), 'f', 8)};
   });
 
   if(!csv.isEmpty())
@@ -465,7 +466,8 @@ void RouteController::restoreState()
   updateTableHeaders();
 
   atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
-  state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+  state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt,
+                 ui->actionRouteFollowSelection});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {
@@ -2926,7 +2928,8 @@ void RouteController::updateTableModel()
     QVector<map::MapIls> ilsByAirportAndRunway;
     if((route.getArrivalLegs().approachType == "ILS" || route.getArrivalLegs().approachType == "LOC") &&
        leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
-      ilsByAirportAndRunway = mapQuery->getIlsByAirportAndRunway(route.last().getAirport().ident, leg.getRunwayEnd().name);
+      ilsByAirportAndRunway = mapQuery->getIlsByAirportAndRunway(route.last().getAirport().ident,
+                                                                 leg.getRunwayEnd().name);
 
     // VOR/NDB type ===========================
     if(leg.getVor().isValid())
