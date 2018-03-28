@@ -41,6 +41,7 @@ class GeoPainter;
 class SymbolPainter;
 class MapLayer;
 class MapQuery;
+class AirspaceQuery;
 class AirportQuery;
 class MapScale;
 class MapWidget;
@@ -187,6 +188,7 @@ protected:
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
+  AirspaceQuery *airspaceQuery;
   AirportQuery *airportQuery;
   MapScale *scale;
 

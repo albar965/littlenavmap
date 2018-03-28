@@ -20,7 +20,9 @@
 #include "common/mapcolors.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
+#include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -51,8 +53,9 @@ void MapPainterAirspace::render(PaintContext *context)
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirspace> *airspaces =
-    mapQuery->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer, route->getCruisingAltitudeFeet(),
-                        context->viewContext == Marble::Animation);
+    airspaceQuery->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer,
+                                route->getCruisingAltitudeFeet(),
+                                context->viewContext == Marble::Animation);
   if(airspaces != nullptr)
   {
     Marble::GeoPainter *painter = context->painter;
@@ -81,7 +84,7 @@ void MapPainterAirspace::render(PaintContext *context)
         if(!context->drawFast)
           painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
 
-        const LineString *lines = mapQuery->getAirspaceGeometry(airspace.id);
+        const LineString *lines = airspaceQuery->getAirspaceGeometry(airspace.id);
 
         for(const Pos& pos : *lines)
           linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));

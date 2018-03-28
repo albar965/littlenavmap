@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_AIRPORTSEARCH_H
 #define LITTLENAVMAP_AIRPORTSEARCH_H
 
-#include "search/searchbase.h"
+#include "search/searchbasetable.h"
 
 #include <QObject>
 

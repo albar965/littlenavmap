@@ -25,6 +25,7 @@
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "settings/settings.h"
@@ -53,6 +54,7 @@ InfoController::InfoController(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
+  airspaceQuery = NavApp::getAirspaceQuery();
   airportQuery = NavApp::getAirportQuerySim();
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
@@ -141,7 +143,7 @@ void InfoController::anchorClicked(const QUrl& url)
         if(type & map::AIRPORT)
           emit showRect(airportQuery->getAirportById(id).bounding, false);
         if(type & map::AIRSPACE)
-          emit showRect(mapQuery->getAirspaceById(id).bounding, false);
+          emit showRect(airspaceQuery->getAirspaceById(id).bounding, false);
       }
       else if(query.hasQueryItem("airport"))
       {

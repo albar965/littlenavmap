@@ -26,6 +26,7 @@
 class MainWindow;
 class MapQuery;
 class AirportQuery;
+class AirspaceQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
@@ -124,6 +125,7 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
+  AirspaceQuery *airspaceQuery = nullptr;
   AirportQuery *airportQuery = nullptr;
   QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;

@@ -21,6 +21,7 @@
 #include "query/procedurequery.h"
 #include "connect/connectclient.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
@@ -44,6 +45,7 @@
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
+AirspaceQuery *NavApp::airspaceQuery = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
 
@@ -102,9 +104,13 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
 
-  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(),
-                          databaseManager->getDatabaseNav(), databaseManager->getDatabaseUser());
+  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
+                          databaseManager->getDatabaseUser());
   mapQuery->initQueries();
+
+  airspaceQuery = new AirspaceQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
+                                    databaseManager->getDatabaseOnline());
+  airspaceQuery->initQueries();
 
   airportQuerySim = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
   airportQuerySim->initQueries();
@@ -165,6 +171,10 @@ void NavApp::deInit()
   delete mapQuery;
   mapQuery = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete airspaceQuery";
+  delete airspaceQuery;
+  airspaceQuery = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
   infoQuery = nullptr;
@@ -214,6 +224,7 @@ void NavApp::preDatabaseLoad()
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
+  airspaceQuery->deInitQueries();
   procedureQuery->deInitQueries();
 
   delete databaseMeta;
@@ -234,6 +245,7 @@ void NavApp::postDatabaseLoad()
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
+  airspaceQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
 
@@ -268,6 +280,11 @@ AirportQuery *NavApp::getAirportQueryNav()
 MapQuery *NavApp::getMapQuery()
 {
   return mapQuery;
+}
+
+AirspaceQuery *NavApp::getAirspaceQuery()
+{
+  return airspaceQuery;
 }
 
 InfoQuery *NavApp::getInfoQuery()

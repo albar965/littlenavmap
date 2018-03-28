@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_ONLINECENTER_SEARCH_H
 #define LITTLENAVMAP_ONLINECENTER_SEARCH_H
 
-#include "search/searchbase.h"
+#include "search/searchbasetable.h"
 
 #include <QObject>
 

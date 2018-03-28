@@ -25,6 +25,7 @@
 
 class AirportQuery;
 class MapQuery;
+class AirspaceQuery;
 class InfoQuery;
 class ProcedureQuery;
 class Route;
@@ -113,6 +114,7 @@ public:
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
+  static AirspaceQuery *getAirspaceQuery();
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRoute();
@@ -194,6 +196,7 @@ private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
+  static AirspaceQuery *airspaceQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;

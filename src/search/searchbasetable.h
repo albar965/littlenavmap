@@ -106,7 +106,8 @@ public:
 
   /* Refresh table after updates in the database */
   void refreshData();
-  void refreshDataAndKeepSelection();
+  void refreshDataLoadAll();
+  void refreshView();
 
   /* Number of rows currently loaded into the table view */
   int getVisibleRowCount() const;

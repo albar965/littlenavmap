@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>904</width>
+    <width>1024</width>
     <height>564</height>
    </rect>
   </property>
@@ -2988,14 +2988,14 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
             <property name="toolTip">
              <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.
-Do not use values smaller than two minutes for official networks like VATSIM or IVAO.
-Use this only for private networks.</string>
+Never use values smaller than two minutes for official networks like VATSIM or IVAO.
+Use lower values only for private networks.</string>
             </property>
             <property name="suffix">
              <string> seconds</string>
             </property>
             <property name="minimum">
-             <number>30</number>
+             <number>15</number>
             </property>
             <property name="maximum">
              <number>1800</number>

@@ -173,8 +173,11 @@ public:
 
   void updateHeaderData();
 
-  /* Update query on changes in the database */
-  void refreshData(bool keepSelection);
+  /* Update query on changes in the database. Loads all data needed to restore selection if keepSelection is true */
+  void refreshData(bool loadAll, bool keepSelection);
+
+  /* Update view only */
+  void refreshView();
 
   /* True if the row exists in the model */
   bool hasRow(int row) const;

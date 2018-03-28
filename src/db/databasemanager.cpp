@@ -521,6 +521,11 @@ QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType
   return simulators.value(type).basePath;
 }
 
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseOnline() const
+{
+  return onlinedataManager->getDatabase();
+}
+
 void DatabaseManager::insertSimSwitchActions()
 {
   qDebug() << Q_FUNC_INFO;
@@ -825,7 +830,6 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
 
   if(!readonly)
     databasePragmas.append("PRAGMA busy_timeout=2000");
-
 
   qDebug() << "Opening database" << file;
   db->setDatabaseName(file);

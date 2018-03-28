@@ -234,7 +234,7 @@ void OnlineClientSearch::getSelectedMapObjects(map::MapSearchResult& result) con
   controller->initRecord(rec);
   // qDebug() << Q_FUNC_INFO << rec;
 
-  const QItemSelection& selection = controller->getSelection();
+  const QItemSelection selection = controller->getSelection();
   for(const QItemSelectionRange& rng :  selection)
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)

@@ -626,7 +626,16 @@ struct MapAirspace
   int comFrequency;
   map::MapAirspaceTypes type;
 
+  /* Set only for online centers to create geometry (circle) on the fly */
+  int onlineVisualRangeNm = 0.f;
+  QString onlineNetwork, onlineCallsign, onlineFacilityType, onlineServer, onlineFrequency;
+
   atools::geo::Rect bounding;
+
+  bool isOnline() const
+  {
+    return type & map::ONLINE_CENTER;
+  }
 
   bool isValid() const
   {

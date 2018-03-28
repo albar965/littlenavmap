@@ -97,8 +97,7 @@ private:
 
   State currentState = NONE;
 
-  QTimer downloadTimer, /* Triggers recurring downloads */
-         startDownloadAsyncTimer; /* Used to avoid nested calls from within downloadFinished signal */
+  QTimer downloadTimer; /* Triggers recurring downloads */
 
   /* Used to check server downloads and limit them to 15 minutes */
   QDateTime lastServerDownload;

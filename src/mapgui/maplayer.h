@@ -161,6 +161,7 @@ public:
   MapLayer& airspaceRestricted(bool value = true);
   MapLayer& airspaceSpecial(bool value = true);
   MapLayer& airspaceOther(bool value = true);
+  MapLayer& airspaceOnlineCenter(bool value = true); /* Online network centers */
 
   MapLayer& aiAircraftGround(bool value = true);
   MapLayer& aiAircraftLarge(bool value = true);
@@ -416,7 +417,7 @@ public:
   bool isAirspace() const
   {
     return isAirspaceCenter() || isAirspaceFir() || isAirspaceIcao() || isAirspaceOther() || isAirspaceRestricted() ||
-           isAirspaceSpecial();
+           isAirspaceSpecial() || isAirspaceOnlineCenter();
   }
 
   bool isAirspaceCenter() const
@@ -447,6 +448,11 @@ public:
   bool isAirspaceOther() const
   {
     return layerAirspaceOther;
+  }
+
+  bool isAirspaceOnlineCenter() const
+  {
+    return layerAirspaceOnlineCenter;
   }
 
   bool isAiAircraftLarge() const
@@ -527,7 +533,7 @@ private:
   int maximumTextLengthUserpoint = 10;
 
   bool layerAirspaceCenter = false, layerAirspaceIcao = false, layerAirspaceFir = false, layerAirspaceRestricted =
-    false, layerAirspaceSpecial = false, layerAirspaceOther = false;
+    false, layerAirspaceSpecial = false, layerAirspaceOther = false, layerAirspaceOnlineCenter = false;
 
   bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
        layerAiShipLarge = false, layerAiShipSmall = false,

@@ -69,22 +69,62 @@ void SqlController::postDatabaseLoad()
   model->fillHeaderData();
 }
 
-void SqlController::refreshData(bool keepSelection)
+void SqlController::refreshData(bool loadAll, bool keepSelection)
 {
   QItemSelectionModel *sm = view->selectionModel();
 
-  QModelIndexList list;
-  if(keepSelection && sm != nullptr)
-    list = sm->selectedIndexes();
+  // Get all selected rows and highest selected row number
+  int maxRow = 0;
+  QSet<int> rows;
+  if(sm != nullptr && keepSelection)
+  {
+    for(const QModelIndex& index : sm->selectedRows(0))
+    {
+      if(index.row() > maxRow)
+        maxRow = index.row();
+      rows.insert(index.row());
+    }
+  }
 
+  // Reload query model
   model->refreshData();
 
-  sm = view->selectionModel();
-  if(keepSelection && sm != nullptr)
+  if(loadAll)
   {
-    for(const QModelIndex& idx : list)
-      sm->select(idx, QItemSelectionModel::Select);
+    while(model->canFetchMore())
+      model->fetchMore(QModelIndex());
   }
+
+  // Selection changes when updating model
+  sm = view->selectionModel();
+
+  if(sm != nullptr && keepSelection)
+  {
+    int visibleRowCount = getVisibleRowCount();
+
+    // Check if selected rows have to be loaded
+    if(maxRow >= visibleRowCount)
+    {
+      // Load until done or highest selected row is covered
+      while(model->canFetchMore() && getVisibleRowCount() < maxRow)
+        model->fetchMore(QModelIndex());
+    }
+
+    // Update selection in new data result set
+    int totalRowCount = getTotalRowCount();
+    sm->blockSignals(true);
+    for(int row : rows)
+    {
+      if(row < totalRowCount)
+        sm->select(model->index(row, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    }
+    sm->blockSignals(false);
+  }
+}
+
+void SqlController::refreshView()
+{
+  view->update();
 }
 
 bool SqlController::hasColumn(const QString& colName) const

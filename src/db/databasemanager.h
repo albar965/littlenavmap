@@ -160,6 +160,8 @@ public:
     return databaseUser;
   }
 
+  atools::sql::SqlDatabase *getDatabaseOnline() const;
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed

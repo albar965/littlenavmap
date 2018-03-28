@@ -194,6 +194,7 @@ private:
   QString  sortOrderToSql(Qt::SortOrder order);
   QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
+  void updateTotalCount();
 
   /* Default - all conditions are combined using "and" */
   const QString WHERE_OPERATOR = "and";
@@ -201,7 +202,7 @@ private:
   QString orderByCol /* Order by column name */, orderByOrder /* "asc" or "desc" */;
   int orderByColIndex = 0;
 
-  QString currentSqlQuery;
+  QString currentSqlQuery, currentSqlCountQuery;
 
   /* Data callback */
   DataFunctionType dataFunction = nullptr;

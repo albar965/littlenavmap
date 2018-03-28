@@ -20,11 +20,15 @@
 #include "fs/online/onlinedatamanager.h"
 #include "util/httpdownloader.h"
 #include "gui/mainwindow.h"
+#include "common/constants.h"
+#include "settings/settings.h"
 #include "options/optiondata.h"
 #include "zip/gzip.h"
 
 #include <QDebug>
 #include <QTextCodec>
+
+//#define DEBUG_ONLINE_DOWNLOAD 1
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 
@@ -47,23 +51,26 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
 OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent)
   : manager(onlineManager), mainWindow(parent)
 {
+  // Files use Windows code with emebedded UTF-8 for ATIS text
   codec = QTextCodec::codecForName("Windows-1252");
   if(codec == nullptr)
     codec = QTextCodec::codecForLocale();
 
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
+  // Create a default user agent if not disabled
+  // if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
+  // downloader->setUserAgent();
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
 
-  // Start downloads when event queue is active
-  startDownloadAsyncTimer.setSingleShot(true);
-  startDownloadAsyncTimer.setInterval(0);
-  connect(&startDownloadAsyncTimer, &QTimer::timeout, downloader, &HttpDownloader::startDownload);
-
   // Recurring downloads
   downloadTimer.setInterval(OptionData::instance().getOnlineReloadTimeSeconds() * 1000);
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
+
+#ifdef DEBUG_ONLINE_DOWNLOAD
+  downloader->enableCache(60);
+#endif
 }
 
 OnlinedataController::~OnlinedataController()
@@ -114,7 +121,9 @@ void OnlinedataController::startDownloadInternal()
     {
       // Trigger the download chain
       downloader->setUrl(url);
-      startDownloadAsyncTimer.start();
+
+      // Call later in the event loop to avoid recursion
+      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
     }
   }
   // opts::OnlineFormat onlineFormat = od.getOnlineFormat();
@@ -144,11 +153,13 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Next in chain is whazzup.txt
       currentState = DOWNLOADING_WHAZZUP;
       downloader->setUrl(whazzupUrlFromStatus);
-      startDownloadAsyncTimer.start();
+
+      // Call later in the event loop to avoid recursion
+      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
     }
     else
     {
-      // Done here - start timer
+      // Done after downloading status.txt - start timer for next session
       startDownloadTimer();
       currentState = NONE;
     }
@@ -168,8 +179,6 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     manager->readFromWhazzup(codec->toUnicode(whazzupData), convertFormat(OptionData::instance().getOnlineFormat()));
     lastUpdateTime = QDateTime::currentDateTime();
 
-    emit onlineClientAndAtcUpdated();
-
     QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
     if(!whazzupVoiceUrlFromStatus.isEmpty() &&
        lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
@@ -177,13 +186,17 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Next in chain is server file
       currentState = DOWNLOADING_WHAZZUP_SERVERS;
       downloader->setUrl(whazzupVoiceUrlFromStatus);
-      startDownloadAsyncTimer.start();
+
+      // Call later in the event loop to avoid recursion
+      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
     }
     else
     {
-      // Done here - start timer
+      // Done after downloading whazzup.txt - start timer for next session
       startDownloadTimer();
       currentState = NONE;
+
+      emit onlineClientAndAtcUpdated();
     }
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
@@ -191,11 +204,12 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     manager->readServersFromWhazzup(codec->toUnicode(data), convertFormat(OptionData::instance().getOnlineFormat()));
     lastServerDownload = QDateTime::currentDateTime();
 
-    emit onlineServersUpdated();
-
-    // Done here - start timer for next session
+    // Done after downloading server.txt - start timer for next session
     startDownloadTimer();
     currentState = NONE;
+
+    emit onlineClientAndAtcUpdated();
+    emit onlineServersUpdated();
   }
 }
 
@@ -218,7 +232,6 @@ void OnlinedataController::stopAllProcesses()
 {
   downloader->cancelDownload();
   downloadTimer.stop();
-  startDownloadAsyncTimer.stop();
   currentState = NONE;
 }
 
@@ -267,6 +280,10 @@ void OnlinedataController::startDownloadTimer()
     qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from whazzup";
   }
 
+#ifdef DEBUG_ONLINE_DOWNLOAD
+  downloadTimer.setInterval(2000);
+#else
   downloadTimer.setInterval(intervalSeconds * 1000);
+#endif
   downloadTimer.start();
 }

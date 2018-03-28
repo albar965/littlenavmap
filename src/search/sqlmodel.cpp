@@ -426,7 +426,7 @@ void SqlModel::buildQuery()
 
   // Build a query to find the total row count of the result
   totalRowCount = 0;
-  QString queryCount = "select count(1) from " + columns->getTablename() + " " + queryWhere;
+  currentSqlCountQuery = "select count(1) from " + columns->getTablename() + " " + queryWhere;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << currentSqlQuery;
@@ -443,10 +443,7 @@ void SqlModel::buildQuery()
   try
   {
     // Count total rows
-    SqlQuery countStmt(db);
-    countStmt.exec(queryCount);
-    if(countStmt.next())
-      totalRowCount = countStmt.value(0).toInt();
+    updateTotalCount();
 
     if(!boundingRect.isValid())
       // Delay query for bounding rectangle query with proxy model
@@ -460,6 +457,21 @@ void SqlModel::buildQuery()
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
+}
+
+void SqlModel::updateTotalCount()
+{
+  if(!currentSqlCountQuery.isEmpty())
+  {
+    SqlQuery countStmt(db);
+    countStmt.exec(currentSqlCountQuery);
+    if(countStmt.next())
+      totalRowCount = countStmt.value(0).toInt();
+    else
+      totalRowCount = 0;
+  }
+  else
+    totalRowCount = 0;
 }
 
 /* Build where statement */
@@ -596,7 +608,8 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
 
 void SqlModel::refreshData()
 {
-  buildQuery();
+  resetSqlQuery();
+  updateTotalCount();
 }
 
 void SqlModel::resetSqlQuery()

@@ -179,7 +179,6 @@ SOURCES += src/main.cpp\
     src/options/optionsdialog.cpp \
     src/options/optiondata.cpp \
     src/common/settingsmigrate.cpp \
-    src/search/searchbase.cpp \
     src/search/sqlcontroller.cpp \
     src/print/printsupport.cpp \
     src/print/printdialog.cpp \
@@ -220,7 +219,10 @@ SOURCES += src/main.cpp\
     src/online/onlinedatacontroller.cpp \
     src/search/onlineclientsearch.cpp \
     src/search/onlinecentersearch.cpp \
-    src/search/onlineserversearch.cpp
+    src/search/onlineserversearch.cpp \
+    src/query/airspacequery.cpp \
+    src/query/querytypes.cpp \
+    src/search/searchbasetable.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -276,7 +278,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/options/optionsdialog.h \
     src/options/optiondata.h \
     src/common/settingsmigrate.h \
-    src/search/searchbase.h \
     src/search/sqlcontroller.h \
     src/print/printsupport.h \
     src/print/printdialog.h \
@@ -317,7 +318,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/online/onlinedatacontroller.h \
     src/search/onlineclientsearch.h \
     src/search/onlinecentersearch.h \
-    src/search/onlineserversearch.h
+    src/search/onlineserversearch.h \
+    src/query/airspacequery.h \
+    src/query/querytypes.h \
+    src/search/searchbasetable.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

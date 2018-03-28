@@ -359,6 +359,12 @@ MapLayer& MapLayer::airspaceOther(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airspaceOnlineCenter(bool value)
+{
+  layerAirspaceOnlineCenter = value;
+  return *this;
+}
+
 MapLayer& MapLayer::aiAircraftLarge(bool value)
 {
   layerAiAircraftLarge = value;

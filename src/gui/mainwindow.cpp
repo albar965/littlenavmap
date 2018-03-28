@@ -787,11 +787,11 @@ void MainWindow::connectAllSlots()
   OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
 
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          clientSearch, &OnlineClientSearch::refreshDataAndKeepSelection);
+          clientSearch, &OnlineClientSearch::refreshDataLoadAll);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          centerSearch, &OnlineCenterSearch::refreshDataAndKeepSelection);
+          centerSearch, &OnlineCenterSearch::refreshDataLoadAll);
   connect(onlinedataController, &OnlinedataController::onlineServersUpdated,
-          serverSearch, &OnlineServerSearch::refreshDataAndKeepSelection);
+          serverSearch, &OnlineServerSearch::refreshDataLoadAll);
 
   connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);

@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVSEARCH_H
 #define LITTLENAVMAP_NAVSEARCH_H
 
-#include "search/searchbase.h"
+#include "search/searchbasetable.h"
 
 #include <QObject>
 

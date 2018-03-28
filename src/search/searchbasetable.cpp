@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "search/searchbase.h"
+#include "search/searchbasetable.h"
 #include "gui/itemviewzoomhandler.h"
 #include "navapp.h"
 #include "search/sqlcontroller.h"
@@ -607,16 +607,23 @@ void SearchBaseTable::resetView()
   }
 }
 
-void SearchBaseTable::refreshDataAndKeepSelection()
+void SearchBaseTable::refreshDataLoadAll()
 {
-  controller->refreshData(true);
+  controller->refreshData(true /* load all */, true /* keep selection */);
 
   tableSelectionChanged();
 }
 
 void SearchBaseTable::refreshData()
 {
-  controller->refreshData(false);
+  controller->refreshData(false /* load all */, true /* keep selection */);
+
+  tableSelectionChanged();
+}
+
+void SearchBaseTable::refreshView()
+{
+  controller->refreshView();
 
   tableSelectionChanged();
 }

@@ -28,6 +28,8 @@
 #include "query/airportquery.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
+#include "query/airportquery.h"
 #include "common/coordinateconverter.h"
 #include "common/constants.h"
 #include "settings/settings.h"
@@ -45,6 +47,7 @@ MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintL
   : mapWidget(parentWidget), paintLayer(mapPaintLayer)
 {
   mapQuery = NavApp::getMapQuery();
+  airspaceQuery = NavApp::getAirspaceQuery();
   airportQuery = NavApp::getAirportQuerySim();
 }
 
@@ -64,7 +67,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
   const MapScale *scale = paintLayer->getMapScale();
   if(scale->isValid())
   {
-    const QList<map::MapAirspace> *airspaces = mapQuery->getAirspaces(
+    const QList<map::MapAirspace> *airspaces = airspaceQuery->getAirspaces(
       curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
       NavApp::getRoute().getCruisingAltitudeFeet(), false);
 
@@ -84,7 +87,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
           QPolygon polygon;
           int x, y;
 
-          const atools::geo::LineString *lines = mapQuery->getAirspaceGeometry(airspace.id);
+          const atools::geo::LineString *lines = airspaceQuery->getAirspaceGeometry(airspace.id);
 
           for(const Pos& pos : *lines)
           {
@@ -492,7 +495,7 @@ void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& r
     if(poly.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
     {
       map::MapAirspace airspace;
-      mapQuery->getAirspaceById(airspace, polyPair.first);
+      NavApp::getAirspaceQuery()->getAirspaceById(airspace, polyPair.first);
       result.airspaces.append(airspace);
     }
   }

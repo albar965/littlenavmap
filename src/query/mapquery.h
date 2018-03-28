@@ -18,15 +18,10 @@
 #ifndef LITTLENAVMAP_MAPQUERY_H
 #define LITTLENAVMAP_MAPQUERY_H
 
+#include "query/querytypes.h"
 #include "common/maptypes.h"
-#include "mapgui/maplayer.h"
 
 #include <QCache>
-#include <QList>
-
-#include <functional>
-
-#include <marble/GeoDataLatLonBox.h>
 
 namespace atools {
 namespace geo {
@@ -83,8 +78,6 @@ public:
   void getAirwayById(map::MapAirway& airway, int airwayId);
   map::MapAirway getAirwayById(int airwayId);
 
-  void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
-
   /* If waypoint is of type VOR get the related VOR object */
   void getVorForWaypoint(map::MapVor& vor, int waypointId);
   void getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos);
@@ -100,7 +93,6 @@ public:
 
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
   map::MapWaypoint getWaypointById(int id);
-  map::MapAirspace getAirspaceById(int airspaceId);
   map::MapUserpoint getUserdataPointById(int id);
   void updateUserdataPoint(map::MapUserpoint& userpoint);
 
@@ -173,10 +165,6 @@ public:
   /* Similar to getAirports */
   const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
-  const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy);
-  const atools::geo::LineString *getAirspaceGeometry(int boundaryId);
-
   /* Get a partially filled runway list for the overview */
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
@@ -192,28 +180,6 @@ public:
   void deInitQueries();
 
 private:
-  /* Simple spatial cache that deals with objects in a bounding rectangle but does not run any queries to load data */
-  template<typename TYPE>
-  struct SimpleRectCache
-  {
-    typedef std::function<bool (const MapLayer * curLayer, const MapLayer * mapLayer)> LayerCompareFunc;
-
-    /*
-     * @param rect bounding rectangle - all objects inside this rectangle are returned
-     * @param mapLayer current map layer
-     * @param lazy if true do not fetch new data but return the old potentially incomplete dataset
-     * @return true after clearing the cache. The caller has to request new data
-     */
-    bool updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                     LayerCompareFunc funcSameLayer);
-    void clear();
-    void validate();
-
-    Marble::GeoDataLatLonBox curRect;
-    const MapLayer *curMapLayer = nullptr;
-    QList<TYPE> list;
-  };
-
   void mapObjectByIdentInternal(map::MapSearchResult& result, map::MapObjectTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
@@ -222,13 +188,6 @@ private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
                                               bool lazy, bool overview);
-
-  void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                                 const QString& prefix = QString());
-
-  QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
-
-  static void inflateRect(Marble::GeoDataLatLonBox& rect);
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
@@ -244,13 +203,9 @@ private:
   SimpleRectCache<map::MapMarker> markerCache;
   SimpleRectCache<map::MapIls> ilsCache;
   SimpleRectCache<map::MapAirway> airwayCache;
-  SimpleRectCache<map::MapAirspace> airspaceCache;
-  map::MapAirspaceFilter lastAirspaceFilter = {map::AIRSPACE_NONE, map::AIRSPACE_FLAG_NONE};
-  float lastFlightplanAltitude = 0.f;
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
-  QCache<int, atools::geo::LineString> airspaceLineCache;
 
   static int queryMaxRows;
 
@@ -261,10 +216,7 @@ private:
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
                         *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
-                        *airwayByRectQuery = nullptr, *airspaceByRectQuery = nullptr,
-                        *airspaceByRectBelowAltQuery = nullptr, *airspaceByRectAboveAltQuery = nullptr,
-                        *airspaceByRectAtAltQuery = nullptr, *airspaceLinesByIdQuery = nullptr,
-                        *userdataPointByRectQuery = nullptr;
+                        *airwayByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr,
                         *ilsByIdentQuery = nullptr;
@@ -275,52 +227,8 @@ private:
                         *ndbNearestQuery = nullptr, *userdataPointByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr, *airwayByNameAndWaypointQuery = nullptr,
-                        *airwayByIdQuery = nullptr,
-                        *airspaceByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,
-                        *airwayWaypointsQuery = nullptr,
-                        *airwayByNameQuery = nullptr;
+                        *airwayByIdQuery = nullptr, *airwayWaypointByIdentQuery = nullptr,
+                        *airwayWaypointsQuery = nullptr, *airwayByNameQuery = nullptr;
 };
-
-// ---------------------------------------------------------------------------------
-template<typename TYPE>
-bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy, LayerCompareFunc funcSameLayer)
-{
-  if(lazy)
-    // Nothing changed11
-    return false;
-
-  // Store bounding rectangle and inflate it
-  Marble::GeoDataLatLonBox cur(curRect);
-  MapQuery::inflateRect(cur);
-
-  if(curRect.isEmpty() || !cur.contains(rect) || !funcSameLayer(curMapLayer, mapLayer))
-  {
-    // Rectangle not covered by loaded data or new layer selected
-    list.clear();
-    curRect = rect;
-    curMapLayer = mapLayer;
-    return true;
-  }
-  return false;
-}
-
-template<typename TYPE>
-void MapQuery::SimpleRectCache<TYPE>::validate()
-{
-  if(list.size() >= queryMaxRows)
-  {
-    curRect.clear();
-    curMapLayer = nullptr;
-  }
-}
-
-template<typename TYPE>
-void MapQuery::SimpleRectCache<TYPE>::clear()
-{
-  list.clear();
-  curRect.clear();
-  curMapLayer = nullptr;
-}
 
 #endif // LITTLENAVMAP_MAPQUERY_H

@@ -33,6 +33,7 @@ class GeoDataLatLonAltBox;
 
 class MapWidget;
 class AirportQuery;
+class AirspaceQuery;
 class MapPaintLayer;
 
 /*
@@ -187,6 +188,7 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
+  AirspaceQuery *airspaceQuery;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 
