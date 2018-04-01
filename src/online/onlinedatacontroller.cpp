@@ -253,7 +253,14 @@ void OnlinedataController::optionsChanged()
 
   manager->clearData();
   if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
+  {
+    // Remove all from the database
+    manager->clearData();
+
+    emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+    emit onlineServersUpdated(true /* load all */, true /* keep selection */);
     emit onlineNetworkChanged();
+  }
   else
   {
     lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
