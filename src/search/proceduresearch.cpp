@@ -370,7 +370,6 @@ void ProcedureSearch::fillApproachTreeWidget()
   itemIndex.clear();
   itemLoadedIndex.clear();
 
-  bool foundItems = false;
   if(currentAirportNav.isValid())
   {
     // Add a tree of transitions and approaches
@@ -386,7 +385,6 @@ void ProcedureSearch::fillApproachTreeWidget()
       // Collect all procedures from the database
       for(SqlRecord recApp : *recAppVector)
       {
-        foundItems = true;
         QString rwname = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
 
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
@@ -512,26 +510,7 @@ void ProcedureSearch::fillApproachTreeWidget()
     itemLoadedIndex.resize(itemIndex.size());
   }
 
-  if(itemIndex.isEmpty())
-  {
-    QString message;
-    if(!currentAirportNav.isValid())
-      message = tr("No airport selected.");
-    else
-    {
-      if(foundItems)
-        message = tr("No procedure found.");
-      else
-        message = tr("%1 has no procedure.").arg(map::airportText(
-                                                   NavApp::getMapQuery()->getAirportSim(currentAirportNav)));
-    }
-
-    QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {message});
-    item->setDisabled(true);
-    item->setFirstColumnSpanned(true);
-  }
   treeWidget->blockSignals(false);
-
 }
 
 void ProcedureSearch::saveState()
@@ -825,7 +804,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
   ProcData procData;
   MapProcedureRef ref;
-  if(item != nullptr)
+  if(item != nullptr && !itemIndex.isEmpty())
   {
     procData = itemIndex.at(item->type());
     ref = procData.procedureRef;
@@ -906,6 +885,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionInfoApproachAttach);
   else
     runwayActions = buildRunwaySubmenu(menu, procData);
+
+  ui->actionInfoApproachExpandAll->setEnabled(!itemIndex.isEmpty());
+  ui->actionInfoApproachCollapseAll->setEnabled(!itemIndex.isEmpty());
 
   menu.addSeparator();
   menu.addAction(ui->actionInfoApproachExpandAll);
