@@ -290,6 +290,8 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
                      ui->actionShowAirspaces->isChecked());
+  setShowMapFeatures(map::AIRSPACE_ONLINE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
+                     ui->actionShowAirspacesOnline->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
@@ -357,14 +359,13 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
   if(type & map::AIRWAYV || type & map::AIRWAYJ)
     screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
 
-  if(type & map::AIRSPACE)
+  if(type & map::AIRSPACE || type & map::AIRSPACE_ONLINE)
     screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
 
 void MapWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
 {
   paintLayer->setShowAirspaces(types);
-  // setShowMapFeatures(map::AIRSPACE, types & map::AIRSPACE_ALL);
   mapVisible->updateVisibleObjectsStatusBar();
   screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
 }
@@ -532,6 +533,9 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionShowAirspaces->blockSignals(true);
   ui->actionShowAirspaces->setChecked(true);
   ui->actionShowAirspaces->blockSignals(false);
+  ui->actionShowAirspacesOnline->blockSignals(true);
+  ui->actionShowAirspacesOnline->setChecked(true);
+  ui->actionShowAirspacesOnline->blockSignals(false);
   ui->actionMapShowRoute->blockSignals(true);
   ui->actionMapShowRoute->setChecked(true);
   ui->actionMapShowRoute->blockSignals(false);
@@ -3171,6 +3175,19 @@ void MapWidget::jumpBackToAircraftCancel()
 
   jumpBackToAircraftTimer.stop();
   jumpBackToAircraftActive = false;
+}
+
+void MapWidget::onlineClientAndAtcUpdated()
+{
+  screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
+  update();
+}
+
+void MapWidget::onlineNetworkChanged()
+{
+  screenIndex->resetAirspaceOnlineScreenGeometry();
+  screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
+  update();
 }
 
 void MapWidget::takeoffLandingTimeout()

@@ -69,10 +69,18 @@ public:
     return lastUpdateTime;
   }
 
+  bool hasData() const;
+
+  /* VATSIM, IVAO or Custom */
+  QString getNetwork() const;
+
 signals:
   /* Sent whenever new data was downloaded */
-  void onlineClientAndAtcUpdated();
-  void onlineServersUpdated();
+  void onlineClientAndAtcUpdated(bool loadAll, bool keepSelection);
+  void onlineServersUpdated(bool loadAll, bool keepSelection);
+
+  /* Sent when network changes via options dialog */
+  void onlineNetworkChanged();
 
 private:
   /* HTTP download signal slots */

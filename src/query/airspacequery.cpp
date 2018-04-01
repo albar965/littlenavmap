@@ -40,9 +40,8 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int AirspaceQuery::queryMaxRows = 5000;
 
-AirspaceQuery::AirspaceQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav,
-                             SqlDatabase *sqlDbOnline)
-  : QObject(parent), db(sqlDb), dbNav(sqlDbNav), dbOnline(sqlDbOnline)
+AirspaceQuery::AirspaceQuery(QObject *parent, SqlDatabase *sqlDb, bool onlineSchema)
+  : QObject(parent), db(sqlDb), online(onlineSchema)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -71,12 +70,24 @@ map::MapAirspace AirspaceQuery::getAirspaceById(int airspaceId)
   return airspace;
 }
 
+SqlRecord AirspaceQuery::getAirspaceRecordById(int airspaceId)
+{
+  SqlQuery query(db);
+  query.prepare("select * from atc where atc_id = :id");
+  query.bindValue(":id", airspaceId);
+  query.exec();
+  if(query.next())
+    return query.record();
+  else
+    return SqlRecord();
+}
+
 void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 {
   airspaceByIdQuery->bindValue(":id", airspaceId);
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
-    mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace);
+    mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace, online);
   airspaceByIdQuery->finish();
 }
 
@@ -184,7 +195,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
                                                 GeoDataCoordinates::GeoDataCoordinates::Degree)))
             {
               map::MapAirspace airspace;
-              mapTypesFactory->fillAirspace(query->record(), airspace);
+              mapTypesFactory->fillAirspace(query->record(), airspace, online);
               airspaceCache.list.append(airspace);
 
               ids.insert(airspace.id);
@@ -231,53 +242,70 @@ const LineString *AirspaceQuery::getAirspaceGeometry(int boundaryId)
 
 void AirspaceQuery::initQueries()
 {
-  static const QString airspaceQueryBase(
-    "boundary_id, type, name, com_type, com_frequency, com_name, "
-    "min_altitude_type, max_altitude_type, max_altitude, max_lonx, max_laty, min_altitude, min_lonx, min_laty ");
+  QString airspaceQueryBase, table, id;
+  if(online)
+  {
+    // Use modified result rows from online atc table
+    table = "atc";
+    id = "atc_id";
+    airspaceQueryBase =
+      "atc_id as boundary_id, type, com_type, callsign, name, frequency as com_frequency, "
+      "server, facility_type, visual_range, atis, atis_time, max_lonx, max_laty, min_lonx, min_laty, "
+      "9999999 as max_altitude, "
+      "max_lonx, max_laty, 0 as min_altitude, min_lonx, min_laty ";
+  }
+  else
+  {
+    // Usual offline boundaries (Navigraph, etc.)
+    table = "boundary";
+    id = "boundary_id";
+    airspaceQueryBase =
+      "boundary_id, type, name, com_type, com_frequency, com_name, "
+      "min_altitude_type, max_altitude_type, max_altitude, max_lonx, max_laty, min_altitude, min_lonx, min_laty ";
+  }
 
   deInitQueries();
 
-  airspaceByIdQuery = new SqlQuery(dbNav);
-  airspaceByIdQuery->prepare("select " + airspaceQueryBase + " from boundary where boundary_id = :id");
+  airspaceByIdQuery = new SqlQuery(db);
+  airspaceByIdQuery->prepare("select " + airspaceQueryBase + " from " + table + " where " + id + " = :id");
 
   // Get all that are crossing the anti meridian too and filter them out from the query result
   QString airspaceRect =
     " (not (max_lonx < :leftx or min_lonx > :rightx or "
     "min_laty > :topy or max_laty < :bottomy) or max_lonx < min_lonx) and ";
 
-  airspaceByRectQuery = new SqlQuery(dbNav);
+  airspaceByRectQuery = new SqlQuery(db);
   airspaceByRectQuery->prepare(
-    "select " + airspaceQueryBase + "from boundary "
-                                    "where " + airspaceRect + " type like :type");
+    "select " + airspaceQueryBase + "from " + table +
+    " where " + airspaceRect + " type like :type");
 
-  airspaceByRectBelowAltQuery = new SqlQuery(dbNav);
+  airspaceByRectBelowAltQuery = new SqlQuery(db);
   airspaceByRectBelowAltQuery->prepare(
-    "select " + airspaceQueryBase + "from boundary "
-                                    "where " + airspaceRect + " type like :type and min_altitude < :alt");
+    "select " + airspaceQueryBase + "from " + table +
+    " where " + airspaceRect + " type like :type and min_altitude < :alt");
 
-  airspaceByRectAboveAltQuery = new SqlQuery(dbNav);
+  airspaceByRectAboveAltQuery = new SqlQuery(db);
   airspaceByRectAboveAltQuery->prepare(
-    "select " + airspaceQueryBase + "from boundary "
-                                    "where " + airspaceRect + " type like :type and max_altitude > :alt");
+    "select " + airspaceQueryBase + "from " + table +
+    " where " + airspaceRect + " type like :type and max_altitude > :alt");
 
-  airspaceByRectAtAltQuery = new SqlQuery(dbNav);
+  airspaceByRectAtAltQuery = new SqlQuery(db);
   airspaceByRectAtAltQuery->prepare(
-    "select " + airspaceQueryBase + "from boundary "
-                                    "where "
-                                    "not (max_lonx < :leftx or min_lonx > :rightx or "
-                                    "min_laty > :topy or max_laty < :bottomy) and "
-                                    "type like :type and "
-                                    ":alt between min_altitude and max_altitude");
+    "select " + airspaceQueryBase + "from " + table +
+    " where "
+    "not (max_lonx < :leftx or min_lonx > :rightx or "
+    "min_laty > :topy or max_laty < :bottomy) and "
+    "type like :type and "
+    ":alt between min_altitude and max_altitude");
 
-  airspaceLinesByIdQuery = new SqlQuery(dbNav);
-  airspaceLinesByIdQuery->prepare("select geometry from boundary where boundary_id = :id");
+  airspaceLinesByIdQuery = new SqlQuery(db);
+  airspaceLinesByIdQuery->prepare("select geometry from " + table + " where " + id + " = :id");
 
 }
 
 void AirspaceQuery::deInitQueries()
 {
-  airspaceCache.clear();
-  airspaceLineCache.clear();
+  clearCache();
 
   delete airspaceByRectQuery;
   airspaceByRectQuery = nullptr;
@@ -293,4 +321,10 @@ void AirspaceQuery::deInitQueries()
   delete airspaceByIdQuery;
   airspaceByIdQuery = nullptr;
 
+}
+
+void AirspaceQuery::clearCache()
+{
+  airspaceCache.clear();
+  airspaceLineCache.clear();
 }

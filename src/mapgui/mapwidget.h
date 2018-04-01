@@ -309,6 +309,9 @@ public:
   /* Stop timer and cancel any jumping back */
   void jumpBackToAircraftCancel();
 
+  void onlineClientAndAtcUpdated();
+  void onlineNetworkChanged();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);

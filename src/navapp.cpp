@@ -46,6 +46,7 @@ AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
 AirspaceQuery *NavApp::airspaceQuery = nullptr;
+AirspaceQuery *NavApp::airspaceQueryOnline = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
 
@@ -108,9 +109,11 @@ void NavApp::init(MainWindow *mainWindowParam)
                           databaseManager->getDatabaseUser());
   mapQuery->initQueries();
 
-  airspaceQuery = new AirspaceQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
-                                    databaseManager->getDatabaseOnline());
+  airspaceQuery = new AirspaceQuery(mainWindow, databaseManager->getDatabaseNav(), false /* online database */);
   airspaceQuery->initQueries();
+
+  airspaceQueryOnline = new AirspaceQuery(mainWindow, databaseManager->getDatabaseOnline(), true /* online database */);
+  airspaceQueryOnline->initQueries();
 
   airportQuerySim = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
   airportQuerySim->initQueries();
@@ -175,6 +178,10 @@ void NavApp::deInit()
   delete airspaceQuery;
   airspaceQuery = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete airspaceQueryOnline";
+  delete airspaceQueryOnline;
+  airspaceQueryOnline = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
   infoQuery = nullptr;
@@ -225,6 +232,7 @@ void NavApp::preDatabaseLoad()
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
   airspaceQuery->deInitQueries();
+  airspaceQueryOnline->deInitQueries();
   procedureQuery->deInitQueries();
 
   delete databaseMeta;
@@ -246,6 +254,7 @@ void NavApp::postDatabaseLoad()
   airportQueryNav->initQueries();
   mapQuery->initQueries();
   airspaceQuery->initQueries();
+  airspaceQueryOnline->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
 
@@ -285,6 +294,11 @@ MapQuery *NavApp::getMapQuery()
 AirspaceQuery *NavApp::getAirspaceQuery()
 {
   return airspaceQuery;
+}
+
+AirspaceQuery *NavApp::getAirspaceQueryOnline()
+{
+  return airspaceQueryOnline;
 }
 
 InfoQuery *NavApp::getInfoQuery()
@@ -465,6 +479,16 @@ QString NavApp::getDatabaseAiracCycleNav()
 bool NavApp::hasDatabaseAirspaces()
 {
   return databaseMetaNav->hasAirspaces();
+}
+
+bool NavApp::hasOnlineData()
+{
+  return onlinedataController->hasData();
+}
+
+QString NavApp::getOnlineNetwork()
+{
+  return onlinedataController->getNetwork();
 }
 
 const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaSim()

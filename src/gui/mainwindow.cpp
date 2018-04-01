@@ -749,6 +749,14 @@ void MainWindow::connectAllSlots()
   connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
 
+  // Online center search ===================================================================================
+  OnlineCenterSearch *onlineCenterSearch = searchController->getOnlineCenterSearch();
+  connect(onlineCenterSearch, &OnlineCenterSearch::showRect, mapWidget, &MapWidget::showRect);
+  connect(onlineCenterSearch, &OnlineCenterSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(onlineCenterSearch, &OnlineCenterSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(onlineCenterSearch, &OnlineCenterSearch::showInformation, infoController, &InfoController::showInformation);
+  connect(onlineCenterSearch, &OnlineCenterSearch::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
   // Online network ===================================================================================
 
   // User data ===================================================================================
@@ -786,12 +794,30 @@ void MainWindow::connectAllSlots()
   OnlineServerSearch *serverSearch = searchController->getOnlineServerSearch();
   OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
 
+  // Update search
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          clientSearch, &OnlineClientSearch::refreshDataLoadAll);
+          clientSearch, &OnlineClientSearch::refreshData);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          centerSearch, &OnlineCenterSearch::refreshDataLoadAll);
+          centerSearch, &OnlineCenterSearch::refreshData);
   connect(onlinedataController, &OnlinedataController::onlineServersUpdated,
-          serverSearch, &OnlineServerSearch::refreshDataLoadAll);
+          serverSearch, &OnlineServerSearch::refreshData);
+
+  // Update map widget
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          mapWidget, &MapWidget::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          mapWidget, &MapWidget::onlineNetworkChanged);
+
+  // Update info
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          infoController, &InfoController::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          infoController, &InfoController::onlineNetworkChanged);
+
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          airspaceHandler, &AirspaceToolBarHandler::updateButtonsAndActions);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          airspaceHandler, &AirspaceToolBarHandler::updateButtonsAndActions);
 
   connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -966,6 +992,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionShowAirspacesOnline, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
@@ -2652,7 +2679,7 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                         ui->actionShowAirspaces,
+                         ui->actionShowAirspaces, ui->actionShowAirspacesOnline,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                          ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
@@ -2781,7 +2808,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAddonAirports,
                     ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                    ui->actionShowAirspaces,
+                    ui->actionShowAirspaces, ui->actionShowAirspacesOnline,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                     ui->actionMapAircraftCenter,
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,

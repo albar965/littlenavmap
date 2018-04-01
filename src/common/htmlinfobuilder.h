@@ -187,7 +187,7 @@ public:
    * @param html Result containing HTML snippet
    */
   void airwayText(const map::MapAirway& airway, atools::util::HtmlBuilder& html) const;
-  void airspaceText(const map::MapAirspace& airspace, atools::util::HtmlBuilder& html, QColor background) const;
+  void airspaceText(const map::MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for a marker.

@@ -191,5 +191,6 @@
         <file>resources/icons/userpoint_Airport.svg</file>
         <file>resources/icons/userpoint_Mountain.svg</file>
         <file>resources/icons/userpoint_Logbook.svg</file>
+        <file>resources/icons/airspaceonline.svg</file>
     </qresource>
 </RCC>

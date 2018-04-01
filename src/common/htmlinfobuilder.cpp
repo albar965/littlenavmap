@@ -20,6 +20,7 @@
 #include "options/optiondata.h"
 #include "navapp.h"
 #include "atools.h"
+#include "fs/online/onlinetypes.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
 #include "fs/bgl/ap/rw/runway.h"
@@ -1622,21 +1623,30 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 #endif
 }
 
-void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
+                                   HtmlBuilder& html, QColor background) const
 {
   QIcon icon = SymbolPainter(background).createAirspaceIcon(airspace, SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
+  QString network;
+  if(airspace.online)
+  {
+    if(!NavApp::getOnlineNetwork().isEmpty())
+      network = tr(" (%1)").arg(NavApp::getOnlineNetwork());
+  }
+
   if(airspace.name.isEmpty())
-    navaidTitle(html, tr("Airspace"));
+    navaidTitle(html, tr("Airspace") + network);
   else
   {
-    QString name = formatter::capNavString(airspace.name);
+    // Do not capitalize online network center names
+    QString name = airspace.online ? airspace.name : formatter::capNavString(airspace.name);
     if(!info)
       name = atools::elideTextShort(name, 40);
 
-    navaidTitle(html, (info ? tr("Airspace: ") : QString()) + name);
+    navaidTitle(html, ((info && !airspace.online) ? tr("Airspace: ") : QString()) + name + network);
   }
 
   if(info)
@@ -1644,7 +1654,9 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"),
-           QString("lnm://show?id=%1&type=%2").arg(airspace.id).arg(map::AIRSPACE),
+           QString("lnm://show?id=%1&type=%2").
+           arg(airspace.id).
+           arg(airspace.online ? map::AIRSPACE_ONLINE : map::AIRSPACE),
            atools::util::html::LINK_NO_UL);
   }
 
@@ -1654,28 +1666,74 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
   html.table();
   html.row2(tr("Type:"), map::airspaceTypeToString(airspace.type));
 
-  if(airspace.minAltitudeType.isEmpty())
-    html.row2(tr("Min altitude:"), tr("Unknown"));
-  else
-    html.row2(tr("Min altitude:"), Unit::altFeet(airspace.minAltitude) + " " + airspace.minAltitudeType);
+  if(!airspace.online)
+  {
+    if(airspace.minAltitudeType.isEmpty())
+      html.row2(tr("Min altitude:"), tr("Unknown"));
+    else
+      html.row2(tr("Min altitude:"), Unit::altFeet(airspace.minAltitude) + " " + airspace.minAltitudeType);
 
-  QString maxAlt;
-  if(airspace.maxAltitudeType.isEmpty())
-    maxAlt = tr("Unknown");
-  else if(airspace.maxAltitudeType == "UL")
-    maxAlt = tr("Unlimited");
-  else
-    maxAlt = Unit::altFeet(airspace.maxAltitude) + " " + airspace.maxAltitudeType;
+    QString maxAlt;
+    if(airspace.maxAltitudeType.isEmpty())
+      maxAlt = tr("Unknown");
+    else if(airspace.maxAltitudeType == "UL")
+      maxAlt = tr("Unlimited");
+    else
+      maxAlt = Unit::altFeet(airspace.maxAltitude) + " " + airspace.maxAltitudeType;
 
-  html.row2(tr("Max altitude:"), maxAlt);
+    html.row2(tr("Max altitude:"), maxAlt);
+  }
 
   html.row2If(tr("COM:"), formatter::capNavString(airspace.comName));
+
   html.row2If(tr("COM Type:"), map::comTypeName(airspace.comType));
-  if(airspace.comFrequency > 0)
-    html.row2(tr("COM Frequency:"), locale.toString(airspace.comFrequency / 1000., 'f', 3) + tr(" MHz"));
+  if(!airspace.comFrequencies.isEmpty())
+  {
+    QStringList freqTxt;
+    for(int freq : airspace.comFrequencies)
+      freqTxt.append(locale.toString(freq / 1000., 'f', 3));
+
+    html.row2(tr("COM Frequency:"), freqTxt.join(tr(", ") + tr(" MHz")));
+  }
+
+  if(!onlineRec.isEmpty() && info)
+  {
+    // Show online center information ====================================
+    html.row2If(tr("VID:"), onlineRec.valueStr("vid"));
+    html.row2If(tr("Name:"), onlineRec.valueStr("name"));
+    html.row2If(tr("Server:"), onlineRec.valueStr("server"));
+    html.row2If(tr("Facility Type:"), atools::fs::online::facilityTypeText(onlineRec.valueInt("facility_type")));
+    html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
+    html.row2If(tr("ATIS:"), onlineRec.valueStr("atis"));
+    html.row2If(tr("ATIS Time:"), locale.toString(onlineRec.valueDateTime("atis_time")));
+
+    float qnh = onlineRec.valueFloat("qnh_mb");
+    if(qnh > 0.f)
+      html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
+                locale.toString(atools::geo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
+
+    if(onlineRec.isNull("administrative_rating") || onlineRec.isNull("atc_pilot_rating"))
+      html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
+
+    if(!onlineRec.isNull("administrative_rating"))
+      html.row2If(tr("Aministrative Rating:"),
+                  atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
+    if(!onlineRec.isNull("atc_pilot_rating"))
+      html.row2If(tr("ATC Rating:"), atools::fs::online::atcRatingText(onlineRec.valueInt("atc_pilot_rating")));
+
+    html.row2If(tr("Connection Time:"), locale.toString(onlineRec.valueDateTime("connection_time")));
+
+    if(!onlineRec.valueStr("software_name").isEmpty())
+      html.row2If(tr("Software:"), tr("%1 %2").
+                  arg(onlineRec.valueStr("software_name")).
+                  arg(onlineRec.valueStr("software_version")));
+
+    // Always unknown
+    // html.row2If(tr("Simulator:"), atools::fs::online::simulatorText(onlineRec.valueInt("simulator")));
+  }
   html.tableEnd();
 
-  if(info)
+  if(info && !airspace.online)
   {
     const atools::sql::SqlRecord *rec = infoQuery->getAirspaceInformation(airspace.id);
 
@@ -1684,7 +1742,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, HtmlBuilder& htm
   }
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: boundary_id = %1").arg(airspace.getId())).pEnd();
+  html.p().small(QString("Database: online = %1, boundary_id = %2").arg(airspace.online).arg(airspace.getId())).pEnd();
 #endif
 
 }

@@ -28,6 +28,7 @@
 #include "common/unit.h"
 #include "atools.h"
 #include "sql/sqlrecord.h"
+#include "common/maptypesfactory.h"
 
 OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("atc", "atc_id"), tabWidgetIndex)
@@ -65,7 +66,12 @@ OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("atis", tr("ATIS"))).
   append(Column("atis_time", tr("ATIS\nTime"))).
   append(Column("connection_time", tr("Connection\nTime"))).
-
+  append(Column("com_type").hidden()).
+  append(Column("type").hidden()).
+  append(Column("max_lonx").hidden()).
+  append(Column("max_laty").hidden()).
+  append(Column("min_lonx").hidden()).
+  append(Column("min_laty").hidden()).
   append(Column("lonx").hidden()).
   append(Column("laty").hidden())
   ;
@@ -191,13 +197,10 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
     // Called directly by the model for export functions
     if(col->getColumnName() == "frequency")
     {
-      bool ok = false;
-      double freq = displayRoleValue.toDouble(&ok);
-
-      if(!ok || displayRoleValue.isNull())
-        return QString();
-      else
-        return QLocale().toString(freq, 'f', 3);
+      QStringList freqs;
+      for(const QString& str : displayRoleValue.toString().split("&"))
+        freqs.append(QLocale().toString(str.toDouble() / 1000., 'f', 3));
+      return freqs.join(tr(", "));
     }
     else if(col->getColumnName() == "administrative_rating")
       return atools::fs::online::admRatingText(
@@ -239,10 +242,9 @@ void OnlineCenterSearch::getSelectedMapObjects(map::MapSearchResult& result) con
         controller->fillRecord(row, rec);
         // qDebug() << Q_FUNC_INFO << rec;
 
-        // TODO
-        // map::MapUserpoint obj;
-        // MapTypesFactory().fillUserdataPoint(rec, obj);
-        // result.userpoints.append(obj);
+        map::MapAirspace obj;
+        MapTypesFactory().fillAirspace(rec, obj, true /* online */);
+        result.airspaces.append(obj);
       }
     }
   }

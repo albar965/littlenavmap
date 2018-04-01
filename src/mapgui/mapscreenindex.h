@@ -77,6 +77,9 @@ public:
   void updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
   void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
 
+  /* Clear internal caches */
+  void resetAirspaceOnlineScreenGeometry();
+
   /* Save and restore distance markers and range rings */
   void saveState();
   void restoreState();
@@ -184,11 +187,14 @@ private:
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                      QList<proc::MapProcedurePoint>& procPoints);
+  void updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
+                                    const Marble::GeoDataLatLonAltBox& curBox);
 
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
   AirspaceQuery *airspaceQuery;
+  AirspaceQuery *airspaceQueryOnline;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 
@@ -203,6 +209,7 @@ private:
   QList<std::pair<int, QLine> > routeLines;
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QPolygon> > airspacePolygons;
+  QList<std::pair<int, QPolygon> > airspacePolygonsOnline;
   QList<std::pair<int, QPoint> > routePoints;
 
 };

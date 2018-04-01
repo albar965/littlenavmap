@@ -30,6 +30,7 @@ class Rect;
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
+class SqlRecord;
 }
 }
 
@@ -41,6 +42,8 @@ class MapLayer;
  * Objects from methods returning a pointer to a list might be deleted from the cache and should be copied
  * if they have to be kept between event loop calls.
  * All ids are database ids.
+ *
+ * Two instance are used in LNM. One for normal airspaces and one for online ATC.
  */
 class AirspaceQuery
   : public QObject
@@ -52,13 +55,15 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  AirspaceQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
-                atools::sql::SqlDatabase *sqlDbOnline);
+  AirspaceQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool onlineSchema);
   ~AirspaceQuery();
 
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   map::MapAirspace getAirspaceById(int airspaceId);
+
+  /* Get record with all rows from atc table */
+  atools::sql::SqlRecord getAirspaceRecordById(int airspaceId);
 
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy);
@@ -69,10 +74,11 @@ public:
 
   /* Create and prepare all queries */
   void deInitQueries();
+  void clearCache();
 
 private:
   MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *db, *dbNav, *dbOnline;
+  atools::sql::SqlDatabase *db;
 
   /* Simple bounding rectangle caches */
   SimpleRectCache<map::MapAirspace> airspaceCache;
@@ -89,6 +95,7 @@ private:
                         *airspaceByRectAboveAltQuery = nullptr, *airspaceByRectAtAltQuery = nullptr,
                         *airspaceLinesByIdQuery = nullptr, *airspaceByIdQuery = nullptr;
 
+  bool online;
 };
 
 #endif // LITTLENAVMAP_AIRSPACEQUERY_H

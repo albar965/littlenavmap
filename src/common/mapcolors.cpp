@@ -40,10 +40,12 @@ QColor markerSymbolColor(Qt::darkMagenta);
 QColor ilsSymbolColor(Qt::darkGreen);
 
 QColor ilsTextColor(0, 30, 0);
+
 QColor waypointSymbolColor(200, 0, 200);
-QPen airwayVictorPen(QColor(150, 150, 150), 1.5);
-QPen airwayJetPen(QColor(100, 100, 100), 1.5);
-QPen airwayBothPen(QColor(100, 100, 100), 1.5);
+
+QPen airwayVictorPen(QColor("#969696"), 1.5);
+QPen airwayJetPen(QColor("#000080"), 1.5);
+QPen airwayBothPen(QColor("#646464"), 1.5);
 QColor airwayTextColor(80, 80, 80);
 
 QColor distanceRhumbColor(80, 80, 80);
@@ -311,9 +313,9 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
     {map::CLASS_E, QColor("#30cc5060")},
     {map::CLASS_F, QColor("#307d8000")},
     {map::CLASS_G, QColor("#30cc8040")},
-    {map::TOWER, QColor("#3060808a")},
+    {map::TOWER, QColor("#300000f0")},
     {map::CLEARANCE, QColor("#3060808a")},
-    {map::GROUND, QColor("#3060808a")},
+    {map::GROUND, QColor("#30000000")},
     {map::DEPARTURE, QColor("#3060808a")},
     {map::APPROACH, QColor("#3060808a")},
     {map::MOA, QColor("#304485b7")},
@@ -329,7 +331,7 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
     {map::TRAINING, QColor("#30509090")},
     {map::GLIDERPROHIBITED, QColor("#30fd8c00")},
     {map::WAVEWINDOW, QColor("#304485b7")},
-    {map::ONLINE_CENTER, QColor("#40000000")}
+    {map::ONLINE_OBSERVER, QColor("#3000a000")}
   }
   );
 
@@ -344,9 +346,9 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
     {map::CLASS_E, QPen(QColor("#cc5060"), 2)},
     {map::CLASS_F, QPen(QColor("#7d8000"), 2)},
     {map::CLASS_G, QPen(QColor("#cc8040"), 2)},
-    {map::TOWER, QPen(QColor("#60808a"), 2)},
+    {map::TOWER, QPen(QColor("#6000a0"), 2)},
     {map::CLEARANCE, QPen(QColor("#60808a"), 2)},
-    {map::GROUND, QPen(QColor("#60808a"), 2)},
+    {map::GROUND, QPen(QColor("#000000"), 2)},
     {map::DEPARTURE, QPen(QColor("#60808a"), 2)},
     {map::APPROACH, QPen(QColor("#60808a"), 2)},
     {map::MOA, QPen(QColor("#4485b7"), 2)},
@@ -362,7 +364,7 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
     {map::TRAINING, QPen(QColor("#509090"), 2)},
     {map::GLIDERPROHIBITED, QPen(QColor("#fd8c00"), 2)},
     {map::WAVEWINDOW, QPen(QColor("#4485b7"), 2)},
-    {map::ONLINE_CENTER, QPen(QColor("#a0000000"), 2)}
+    {map::ONLINE_OBSERVER, QPen(QColor("#a000a000"), 1.5)}
   }
   );
 
@@ -393,7 +395,8 @@ static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
     {"Radar", map::RADAR},
     {"Training", map::TRAINING},
     {"GliderProhibited", map::GLIDERPROHIBITED},
-    {"WaveWindow", map::WAVEWINDOW}
+    {"WaveWindow", map::WAVEWINDOW},
+    {"Observer", map::ONLINE_OBSERVER}
   }
   );
 

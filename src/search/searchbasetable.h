@@ -105,8 +105,7 @@ public:
   void nothingSelectedTriggered();
 
   /* Refresh table after updates in the database */
-  void refreshData();
-  void refreshDataLoadAll();
+  void refreshData(bool loadAll, bool keepSelection);
   void refreshView();
 
   /* Number of rows currently loaded into the table view */

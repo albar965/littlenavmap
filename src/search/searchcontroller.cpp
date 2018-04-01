@@ -209,7 +209,7 @@ void SearchController::postDatabaseLoad()
 
 void SearchController::refreshUserdata()
 {
-  userdataSearch->refreshData();
+  userdataSearch->refreshData(false /* load all */, true /* keep selection */);
 }
 
 void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record)

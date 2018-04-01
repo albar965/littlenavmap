@@ -217,6 +217,7 @@
       <string>&amp;Airspaces</string>
      </property>
      <addaction name="actionShowAirspaces"/>
+     <addaction name="actionShowAirspacesOnline"/>
     </widget>
     <widget class="QMenu" name="menuViewProjection">
      <property name="title">
@@ -4343,6 +4344,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowAirspaces"/>
+   <addaction name="actionShowAirspacesOnline"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -7535,6 +7537,27 @@
    </property>
    <property name="statusTip">
     <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionShowAirspacesOnline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Online Network Airspaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
    </property>
   </action>
  </widget>

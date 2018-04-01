@@ -204,7 +204,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       }
 
       QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip;
-      if(shown & map::AIRSPACE)
+      if(shown & map::AIRSPACE || shown & map::AIRSPACE_ONLINE)
       {
         map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
         // Collect airspace information ==========================================================

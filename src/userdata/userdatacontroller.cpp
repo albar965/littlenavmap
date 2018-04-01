@@ -477,7 +477,7 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     SqlTransaction transaction(manager->getDatabase());
     manager->insertByRecord(record);
     transaction.commit();
-    emit refreshUserdataSearch();
+    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
                                  arg(departureArrivalText).
@@ -553,7 +553,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     SqlTransaction transaction(manager->getDatabase());
     manager->insertByRecord(*lastAddedRecord);
     transaction.commit();
-    emit refreshUserdataSearch();
+    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Userpoint added."));
   }
@@ -579,7 +579,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
       manager->updateByRecord(dlg.getRecord(), ids);
       transaction.commit();
 
-      emit refreshUserdataSearch();
+      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
       emit userdataChanged();
       mainWindow->setStatusMessage(tr("%n userpoint(s) updated.", "", ids.size()));
     }
@@ -603,7 +603,7 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
     manager->removeRows(ids);
     transaction.commit();
 
-    emit refreshUserdataSearch();
+    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
   }
@@ -629,7 +629,7 @@ void UserdataController::importCsv()
     if(!files.isEmpty())
     {
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-      emit refreshUserdataSearch();
+      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
   }
   catch(atools::Exception& e)
@@ -657,7 +657,7 @@ void UserdataController::importXplaneUserFixDat()
     {
       int numImported = manager->importXplane(file);
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-      emit refreshUserdataSearch();
+      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
   }
   catch(atools::Exception& e)
@@ -684,7 +684,7 @@ void UserdataController::importGarmin()
     {
       int numImported = manager->importGarmin(file);
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-      emit refreshUserdataSearch();
+      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
   }
   catch(atools::Exception& e)
@@ -854,7 +854,7 @@ void UserdataController::clearDatabase()
   if(retval == QMessageBox::Yes)
   {
     manager->clearData();
-    emit refreshUserdataSearch();
+    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
   }
 }
 

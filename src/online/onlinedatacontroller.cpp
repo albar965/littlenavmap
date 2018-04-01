@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QTextCodec>
 
-//#define DEBUG_ONLINE_DOWNLOAD 1
+// #define DEBUG_ONLINE_DOWNLOAD 1
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 
@@ -76,6 +76,9 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 OnlinedataController::~OnlinedataController()
 {
   delete downloader;
+
+  // Remove all from the database to avoid confusion on startup
+  manager->clearData();
 }
 
 void OnlinedataController::startProcessing()
@@ -162,6 +165,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Done after downloading status.txt - start timer for next session
       startDownloadTimer();
       currentState = NONE;
+      lastUpdateTime = QDateTime::currentDateTime();
     }
   }
   else if(currentState == DOWNLOADING_WHAZZUP)
@@ -177,7 +181,6 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       whazzupData = data;
 
     manager->readFromWhazzup(codec->toUnicode(whazzupData), convertFormat(OptionData::instance().getOnlineFormat()));
-    lastUpdateTime = QDateTime::currentDateTime();
 
     QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
     if(!whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -195,8 +198,10 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       // Done after downloading whazzup.txt - start timer for next session
       startDownloadTimer();
       currentState = NONE;
+      lastUpdateTime = QDateTime::currentDateTime();
 
-      emit onlineClientAndAtcUpdated();
+      // Message for search tabs, map widget and info
+      emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     }
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
@@ -207,9 +212,11 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     // Done after downloading server.txt - start timer for next session
     startDownloadTimer();
     currentState = NONE;
+    lastUpdateTime = QDateTime::currentDateTime();
 
-    emit onlineClientAndAtcUpdated();
-    emit onlineServersUpdated();
+    // Message for search tabs, map widget and info
+    emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+    emit onlineServersUpdated(true /* load all */, true /* keep selection */);
   }
 }
 
@@ -240,44 +247,76 @@ void OnlinedataController::optionsChanged()
   qDebug() << Q_FUNC_INFO;
 
   // Clear all URL from status.txt too
-  manager->reset();
+  manager->resetForNewOptions();
   stopAllProcesses();
+  whazzupGzipped = false;
 
   manager->clearData();
   if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
-  {
-    emit onlineClientAndAtcUpdated();
-    emit onlineServersUpdated();
-  }
+    emit onlineNetworkChanged();
   else
   {
     lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
     lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
 
+    emit onlineNetworkChanged();
+
     startDownloadInternal();
   }
+}
+
+bool OnlinedataController::hasData() const
+{
+  return manager->hasData();
+}
+
+QString OnlinedataController::getNetwork() const
+{
+  opts::OnlineNetwork onlineNetwork = OptionData::instance().getOnlineNetwork();
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_NONE:
+      return QString();
+
+    case opts::ONLINE_VATSIM:
+      return tr("VATSIM");
+
+    case opts::ONLINE_IVAO:
+      return tr("IVAO");
+
+    case opts::ONLINE_CUSTOM_STATUS:
+    case opts::ONLINE_CUSTOM:
+      return tr("Custom Network");
+
+  }
+  return QString();
 }
 
 void OnlinedataController::startDownloadTimer()
 {
   downloadTimer.stop();
 
+  opts::OnlineNetwork onlineNetwork = OptionData::instance().getOnlineNetwork();
   int reloadFromOptions = OptionData::instance().getOnlineReloadTimeSeconds();
-  int reloadFromWhazzup = manager->getReloadMinutesFromWhazzup() * 60;
 
   // Use three minutes as default if nothing is given
   int intervalSeconds = 3 * 60;
-  if(reloadFromOptions > 15)
-  {
-    // Use time from dialog
+
+  if(onlineNetwork == opts::ONLINE_CUSTOM || onlineNetwork == opts::ONLINE_CUSTOM_STATUS)
+    // Use options for custom network - ignore reload in whazzup.txt
     intervalSeconds = reloadFromOptions;
-    qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from options";
-  }
-  else if(reloadFromWhazzup > 15)
+  else
   {
-    // Use time from whazzup.txt
-    intervalSeconds = reloadFromWhazzup;
-    qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from whazzup";
+    // Check reload time from whazzup file
+    int reloadFromWhazzupSeconds = manager->getReloadMinutesFromWhazzup() * 60;
+
+    // Safety margin 30 seconds
+    if(reloadFromWhazzupSeconds > 30)
+    {
+      // Use time from whazzup.txt
+      intervalSeconds = reloadFromWhazzupSeconds;
+      qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from whazzup";
+    }
   }
 
 #ifdef DEBUG_ONLINE_DOWNLOAD

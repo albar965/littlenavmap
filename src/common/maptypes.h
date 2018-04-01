@@ -623,18 +623,15 @@ struct MapAirspace
   int id;
   int minAltitude, maxAltitude;
   QString name, comName, comType, minAltitudeType, maxAltitudeType;
-  int comFrequency;
+  QVector<int> comFrequencies;
   map::MapAirspaceTypes type;
-
-  /* Set only for online centers to create geometry (circle) on the fly */
-  int onlineVisualRangeNm = 0.f;
-  QString onlineNetwork, onlineCallsign, onlineFacilityType, onlineServer, onlineFrequency;
+  bool online = false;
 
   atools::geo::Rect bounding;
 
-  bool isOnline() const
+  atools::geo::Pos getPosition() const
   {
-    return type & map::ONLINE_CENTER;
+    return bounding.getCenter();
   }
 
   bool isValid() const

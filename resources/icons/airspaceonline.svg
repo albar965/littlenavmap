@@ -14,7 +14,7 @@
    height="300"
    id="svg2"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="airspacefir.svg">
+   sodipodi:docname="airspaceonline.svg">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,14 +41,14 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="-20.913574"
+     inkscape:cx="148.14618"
      inkscape:cy="86.764814"
      inkscape:window-x="38"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="g3338"
      showguides="false"
-     inkscape:snap-grids="true"
+     inkscape:snap-grids="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -273,22 +273,33 @@
        cy="130.52826"
        r="5" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#82858a;stroke-width:13.27768517;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#82858a;stroke-width:14.82669544;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4445"
-       width="184.51892"
-       height="91.722313"
-       x="14.091309"
-       y="174.94678" />
+       width="275.10001"
+       height="140.98222"
+       x="12.052693"
+       y="133.12477" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="19.91011"
-       y="252.67235"
-       id="text4422"><tspan
+       style="font-style:normal;font-weight:normal;font-size:62.6883812px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.5672096px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="20.365065"
+       y="258.83188"
+       id="text2380-3"><tspan
          sodipodi:role="line"
-         id="tspan4424"
-         x="19.91011"
-         y="252.67235"
-         style="font-size:90px;line-height:1.25">FIR</tspan></text>
+         x="20.365065"
+         y="258.83188"
+         id="tspan2382-6"
+         style="font-weight:bold;stroke-width:1.5672096px">VATSIM</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:73.03588104px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.8258971px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="16.849516"
+       y="197.87881"
+       id="text2380-3-7"><tspan
+         sodipodi:role="line"
+         x="16.849516"
+         y="197.87881"
+         id="tspan2382-6-5"
+         style="font-weight:bold;letter-spacing:-0.60318941px;stroke-width:1.8258971px">IVAO</tspan></text>
   </g>
 </svg>

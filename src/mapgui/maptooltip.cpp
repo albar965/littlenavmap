@@ -23,7 +23,9 @@
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "route/route.h"
+#include "query/airspacequery.h"
 #include "options/optiondata.h"
+#include "sql/sqlrecord.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -281,7 +283,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
   if(opts & opts::TOOLTIP_AIRSPACE)
   {
-    for(const MapAirspace& up : mapSearchResult.airspaces)
+    for(const MapAirspace& airspace : mapSearchResult.airspaces)
     {
       if(checkText(html, numEntries))
         return html.getHtml();
@@ -289,8 +291,12 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       if(!html.isEmpty())
         html.hr();
 
+      atools::sql::SqlRecord onlineRec;
+      if(airspace.online)
+        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+
       html.p();
-      info.airspaceText(up, html, iconBackColor);
+      info.airspaceText(airspace, onlineRec, html, iconBackColor);
       html.pEnd();
       numEntries++;
     }

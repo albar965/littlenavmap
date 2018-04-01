@@ -403,7 +403,7 @@ void initTranslateableTexts()
       {map::TRAINING, QObject::tr("Training")},
       {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
       {map::WAVEWINDOW, QObject::tr("Wave Window")},
-      {map::ONLINE_CENTER, QObject::tr("Online Network Center")}
+      {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
     });
 
   airspaceFlagNameMap = QHash<map::MapAirspaceFlags, QString>(
@@ -446,7 +446,7 @@ void initTranslateableTexts()
       {map::TRAINING, QString()},
       {map::GLIDERPROHIBITED, QString()},
       {map::WAVEWINDOW, QObject::tr("Sailplane Area.")},
-      {map::ONLINE_CENTER, QString()}
+      {map::ONLINE_OBSERVER, QObject::tr("Online network observer")}
     });
 
 }
@@ -508,7 +508,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"TR", map::TRAINING},
     {"GP", map::GLIDERPROHIBITED},
     {"WW", map::WAVEWINDOW},
-    {"OC", map::ONLINE_CENTER}, /* No database type */
+    {"OBS", map::ONLINE_OBSERVER}, /* No database type */
   });
 
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
@@ -541,7 +541,7 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
     {map::GLIDERPROHIBITED, "GP"},
     {map::WAVEWINDOW, "WW"},
 
-    {map::ONLINE_CENTER, "OC"} /* Not a database type */
+    {map::ONLINE_OBSERVER, "OBS"} /* Not a database type */
   });
 
 /* Defines drawing sort order - lower values are drawn first - higher values are drawn on top */
@@ -549,7 +549,7 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
   {
     {map::AIRSPACE_NONE, 1},
 
-    {map::ONLINE_CENTER, 2},
+    {map::ONLINE_OBSERVER, 2},
     {map::CENTER, 3},
 
     {map::CLASS_A, 10},

@@ -188,7 +188,7 @@ protected:
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
-  AirspaceQuery *airspaceQuery;
+  AirspaceQuery *airspaceQuery, *airspaceQueryOnline;
   AirportQuery *airportQuery;
   MapScale *scale;
 

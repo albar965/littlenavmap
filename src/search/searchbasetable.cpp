@@ -607,16 +607,9 @@ void SearchBaseTable::resetView()
   }
 }
 
-void SearchBaseTable::refreshDataLoadAll()
+void SearchBaseTable::refreshData(bool loadAll, bool keepSelection)
 {
-  controller->refreshData(true /* load all */, true /* keep selection */);
-
-  tableSelectionChanged();
-}
-
-void SearchBaseTable::refreshData()
-{
-  controller->refreshData(false /* load all */, true /* keep selection */);
+  controller->refreshData(loadAll, keepSelection);
 
   tableSelectionChanged();
 }
@@ -729,16 +722,26 @@ void SearchBaseTable::showRow(int row)
   if(id > 0 && navType != map::NONE)
   {
     // Check if the used table has bounding rectangle columns
-    bool hasBounding = columns->hasColumn("left_lonx") && columns->hasColumn("top_laty") &&
-                       columns->hasColumn("right_lonx") && columns->hasColumn("bottom_laty");
 
     // Show on map
-    if(hasBounding)
+    if(columns->hasColumn("left_lonx") && columns->hasColumn("top_laty") &&
+       columns->hasColumn("right_lonx") && columns->hasColumn("bottom_laty"))
     {
+      // Rectangle at airports
       float leftLon = controller->getRawData(row, "left_lonx").toFloat();
       float topLat = controller->getRawData(row, "top_laty").toFloat();
       float rightLon = controller->getRawData(row, "right_lonx").toFloat();
       float bottomLat = controller->getRawData(row, "bottom_laty").toFloat();
+      emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat), true);
+    }
+    else if(columns->hasColumn("min_lonx") && columns->hasColumn("max_laty") &&
+            columns->hasColumn("max_lonx") && columns->hasColumn("min_laty"))
+    {
+      // Different column names for airspaces and online centers
+      float leftLon = controller->getRawData(row, "min_lonx").toFloat();
+      float topLat = controller->getRawData(row, "max_laty").toFloat();
+      float rightLon = controller->getRawData(row, "max_lonx").toFloat();
+      float bottomLat = controller->getRawData(row, "min_laty").toFloat();
       emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat), true);
     }
     else
@@ -899,27 +902,27 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchTableSelectNothing->setEnabled(
     controller->getTotalRowCount() > 0 && view->selectionModel()->hasSelection());
 
-  // Build the menu
+  // Build the menu depending on tab =========================================================================
   QMenu menu;
-  if(navType != map::NONE)
+  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionSearchShowInformation);
     if(navType == map::AIRPORT)
       menu.addAction(ui->actionSearchShowApproaches);
     menu.addAction(ui->actionSearchShowOnMap);
     menu.addSeparator();
-
-    // Add extra menu items in the user defined waypoint table - these are already connected
-    if(getTabIndex() == SEARCH_USER)
-    {
-      menu.addAction(ui->actionUserdataAdd);
-      menu.addAction(ui->actionUserdataEdit);
-      menu.addAction(ui->actionUserdataDelete);
-      menu.addSeparator();
-    }
   }
 
-  if(getTabIndex() != SEARCH_ONLINE_SERVER)
+  // Add extra menu items in the user defined waypoint table - these are already connected
+  if(getTabIndex() == SEARCH_USER)
+  {
+    menu.addAction(ui->actionUserdataAdd);
+    menu.addAction(ui->actionUserdataEdit);
+    menu.addAction(ui->actionUserdataDelete);
+    menu.addSeparator();
+  }
+
+  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(followModeAction());
     menu.addSeparator();
@@ -933,17 +936,27 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(navType != map::NONE)
-  {
+  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionMapRangeRings);
+
+  if(atools::contains(getTabIndex(), {SEARCH_NAV}))
     menu.addAction(ui->actionMapNavaidRange);
+
+  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
+  {
     menu.addAction(ui->actionMapHideRangeRings);
     menu.addSeparator();
+  }
 
+  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT}))
+  {
     menu.addAction(ui->actionRouteAirportStart);
     menu.addAction(ui->actionRouteAirportDest);
     menu.addSeparator();
+  }
 
+  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER}))
+  {
     menu.addAction(ui->actionRouteAddPos);
     menu.addAction(ui->actionRouteAppendPos);
     menu.addSeparator();
@@ -1094,6 +1107,11 @@ void SearchBaseTable::showOnMapTriggered()
         emit showRect(result.airports.first().bounding, false);
         NavApp::setStatusMessage(tr("Showing airport on map."));
       }
+      else if(!result.airspaces.isEmpty())
+      {
+        emit showRect(result.airspaces.first().bounding, false);
+        NavApp::setStatusMessage(tr("Showing airspace on map."));
+      }
       else
       {
         if(!result.vors.isEmpty())
@@ -1146,7 +1164,8 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   }
   else if(getTabIndex() == SEARCH_ONLINE_CENTER)
   {
-
+    navType = map::AIRSPACE_ONLINE;
+    id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else if(getTabIndex() == SEARCH_ONLINE_SERVER)
   {

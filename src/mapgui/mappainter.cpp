@@ -58,6 +58,7 @@ MapPainter::MapPainter(MapWidget *parentMapWidget, MapScale *mapScale)
 {
   mapQuery = NavApp::getMapQuery();
   airspaceQuery = NavApp::getAirspaceQuery();
+  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }

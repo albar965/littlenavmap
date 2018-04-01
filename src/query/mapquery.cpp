@@ -424,6 +424,12 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     if(airspace.isValid())
       result.airspaces.append(airspace);
   }
+  else if(type == map::AIRSPACE_ONLINE)
+  {
+    map::MapAirspace airspace = NavApp::getAirspaceQueryOnline()->getAirspaceById(id);
+    if(airspace.isValid())
+      result.airspaces.append(airspace);
+  }
   else if(type == map::AIRWAY)
   {
     map::MapAirway airway = getAirwayById(id);

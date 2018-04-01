@@ -30,6 +30,8 @@ AirspaceToolBarHandler::AirspaceToolBarHandler(MainWindow *parent)
 {
   connect(NavApp::getMainUi()->actionShowAirspaces, &QAction::toggled,
           this, &AirspaceToolBarHandler::allAirspacesToggled);
+  connect(NavApp::getMainUi()->actionShowAirspacesOnline, &QAction::toggled,
+          this, &AirspaceToolBarHandler::allAirspacesToggled);
 }
 
 AirspaceToolBarHandler::~AirspaceToolBarHandler()
@@ -51,6 +53,11 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
   bool hasAirspaces = NavApp::hasDatabaseAirspaces();
   airspaceAction->setEnabled(hasAirspaces);
 
+  QAction *airspaceActionOnline = NavApp::getMainUi()->actionShowAirspacesOnline;
+  bool hasAirspacesOnline = NavApp::hasOnlineData();
+  airspaceActionOnline->setEnabled(hasAirspacesOnline);
+
+  // Enable or disable all tool buttons
   for(int i = 0; i < airspaceToolButtons.size(); i++)
   {
     if(airspaceToolGroups.at(i) == nullptr)
@@ -61,7 +68,9 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
       // Depress button if the first is not selected in groups
       airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().first()->isChecked());
 
-    airspaceToolButtons.at(i)->setEnabled(airspaceAction->isChecked() && hasAirspaces);
+    // Enable button if any airspace type is enabled
+    airspaceToolButtons.at(i)->setEnabled((airspaceAction->isChecked() && hasAirspaces) ||
+                                          (airspaceActionOnline->isChecked() && hasAirspacesOnline));
   }
 }
 
@@ -83,7 +92,9 @@ void AirspaceToolBarHandler::updateAirspaceToolActions()
   }
 
   for(QAction *action : airspaceActions)
-    action->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
+    action->setEnabled(
+      NavApp::getMainUi()->actionShowAirspaces->isChecked() ||
+      NavApp::getMainUi()->actionShowAirspacesOnline->isChecked());
 }
 
 void AirspaceToolBarHandler::updateButtonsAndActions()
@@ -180,7 +191,7 @@ void AirspaceToolBarHandler::createToolButtons()
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceother.svg",
                            tr("Select centers and other airspaces"),
                            {map::CENTER, map::TOWER, map::CLEARANCE, map::GROUND, map::DEPARTURE, map::APPROACH,
-                            map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW}, {});
+                            map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW, map::ONLINE_OBSERVER}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacealt.svg",
                            tr("Select altitude limitations for airspace display"),

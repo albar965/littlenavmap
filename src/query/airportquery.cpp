@@ -724,30 +724,8 @@ void AirportQuery::initQueries()
   QStringList const airportQueryBase = airportColumns(db);
   QStringList const airportQueryBaseOverview = airportOverviewColumns(db);
 
-  static const QString airwayQueryBase(
-    "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
-    "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
-
-  static const QString airspaceQueryBase(
-    "boundary_id, type, name, com_type, com_frequency, com_name, "
-    "min_altitude_type, max_altitude_type, max_altitude, max_lonx, max_laty, min_altitude, min_lonx, min_laty ");
-
-  static const QString waypointQueryBase(
-    "waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
-    "mag_var, lonx, laty ");
-
-  static const QString vorQueryBase(
-    "vor_id, ident, name, region, type, name, frequency, channel, range, dme_only, dme_altitude, "
-    "mag_var, altitude, lonx, laty ");
-  static const QString ndbQueryBase(
-    "ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
-
   static const QString parkingQueryBase(
     "parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
-
-  static const QString ilsQueryBase(
-    "ils_id, ident, name, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
-    "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");
 
   deInitQueries();
 

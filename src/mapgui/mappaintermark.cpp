@@ -22,6 +22,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
+#include "query/airspacequery.h"
 #include "geo/calculations.h"
 #include "common/symbolpainter.h"
 #include "atools.h"
@@ -34,6 +35,7 @@
 #include "common/textplacement.h"
 
 #include <marble/GeoDataLineString.h>
+#include <marble/GeoDataLinearRing.h>
 #include <marble/GeoPainter.h>
 
 const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
@@ -131,11 +133,16 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     positions.append(ndb.position);
   for(const MapUserpoint& user : highlightResults.userpoints)
     positions.append(user.position);
+  for(const MapAirspace& airspace: highlightResults.airspaces)
+    positions.append(airspace.bounding.getCenter());
 
   GeoPainter *painter = context->painter;
   if(context->mapLayerEffective->isAirport())
     size = context->sz(context->symbolSizeAirport,
                        std::max(size, context->mapLayerEffective->getAirportSymbolSize()));
+
+  QPen outerPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap);
+  QPen innerPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap);
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -146,11 +153,46 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     {
       if(!context->drawFast)
       {
-        painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
+        // Draw black background for outline
+        painter->setPen(outerPen);
         painter->drawEllipse(QPoint(x, y), size, size);
-        painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+        painter->setPen(innerPen);
       }
       painter->drawEllipse(QPoint(x, y), size, size);
+    }
+  }
+
+  // Draw boundary for selected online network airspaces ------------------------------------------
+  for(const MapAirspace& airspace: highlightResults.airspaces)
+  {
+    if(airspace.online)
+    {
+      const LineString *airspaceGeometry = airspaceQueryOnline->getAirspaceGeometry(airspace.id);
+      if(airspaceGeometry != nullptr)
+      {
+        if(context->viewportRect.overlaps(airspace.bounding))
+        {
+          if(context->objCount())
+            return;
+
+          // qDebug() << airspace.getId() << airspace.name;
+
+          Marble::GeoDataLinearRing linearRing;
+          linearRing.setTessellate(true);
+
+          for(const Pos& pos : *airspaceGeometry)
+            linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+
+          if(!context->drawFast)
+          {
+            // Draw black background for outline
+            painter->setPen(outerPen);
+            painter->drawPolygon(linearRing);
+            painter->setPen(innerPen);
+          }
+          painter->drawPolygon(linearRing);
+        }
+      }
     }
   }
 

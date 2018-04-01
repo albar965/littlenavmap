@@ -48,6 +48,7 @@ MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintL
 {
   mapQuery = NavApp::getMapQuery();
   airspaceQuery = NavApp::getAirspaceQuery();
+  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
 }
 
@@ -56,18 +57,14 @@ MapScreenIndex::~MapScreenIndex()
 
 }
 
-void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
+void MapScreenIndex::updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
+                                                  const Marble::GeoDataLatLonAltBox& curBox)
 {
-  airspacePolygons.clear();
-
-  if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
-    return;
-
   CoordinateConverter conv(mapWidget->viewport());
   const MapScale *scale = paintLayer->getMapScale();
   if(scale->isValid())
   {
-    const QList<map::MapAirspace> *airspaces = airspaceQuery->getAirspaces(
+    const QList<map::MapAirspace> *airspaces = query->getAirspaces(
       curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
       NavApp::getRoute().getCruisingAltitudeFeet(), false);
 
@@ -87,7 +84,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
           QPolygon polygon;
           int x, y;
 
-          const atools::geo::LineString *lines = airspaceQuery->getAirspaceGeometry(airspace.id);
+          const atools::geo::LineString *lines = query->getAirspaceGeometry(airspace.id);
 
           for(const Pos& pos : *lines)
           {
@@ -102,11 +99,35 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
 
           // qDebug() << airspace.name << polygon;
 
-          airspacePolygons.append(std::make_pair(airspace.id, polygon));
+          polygons.append(std::make_pair(airspace.id, polygon));
         }
       }
     }
   }
+}
+
+void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
+{
+  // Clear internal caches
+  airspaceQueryOnline->deInitQueries();
+  airspaceQueryOnline->initQueries();
+}
+
+void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
+{
+  airspacePolygons.clear();
+  airspacePolygonsOnline.clear();
+
+  if(!paintLayer->getMapLayer()->isAirspace() ||
+     !(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE) ||
+       paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE)))
+    return;
+
+  if(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+    updateAirspaceScreenGeometry(airspacePolygons, airspaceQuery, curBox);
+
+  if(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE))
+    updateAirspaceScreenGeometry(airspacePolygonsOnline, airspaceQueryOnline, curBox);
 }
 
 void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
@@ -382,6 +403,11 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.userpoints, &result.userpointIds, xs, ys, obj);
 
+  for(const map::MapAirspace& obj : highlights.airspaces)
+    if(conv.wToS(obj.bounding.getCenter(), x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        insertSortedByDistance(conv, result.airspaces, nullptr, xs, ys, obj);
+
   for(const map::MapIls& obj : highlights.ils)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
@@ -483,19 +509,30 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance)
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& result)
 {
-  if(!paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+  if(!paintLayer->getShownMapObjects().testFlag(map::AIRSPACE) &&
+     !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE))
     return;
 
   for(int i = 0; i < airspacePolygons.size(); i++)
   {
     const std::pair<int, QPolygon>& polyPair = airspacePolygons.at(i);
 
-    const QPolygon& poly = polyPair.second;
-
-    if(poly.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
+    if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
     {
       map::MapAirspace airspace;
       NavApp::getAirspaceQuery()->getAirspaceById(airspace, polyPair.first);
+      result.airspaces.append(airspace);
+    }
+  }
+
+  for(int i = 0; i < airspacePolygonsOnline.size(); i++)
+  {
+    const std::pair<int, QPolygon>& polyPair = airspacePolygonsOnline.at(i);
+
+    if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
+    {
+      map::MapAirspace airspace;
+      NavApp::getAirspaceQueryOnline()->getAirspaceById(airspace, polyPair.first);
       result.airspaces.append(airspace);
     }
   }

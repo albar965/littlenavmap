@@ -114,7 +114,13 @@ public:
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
+
+  /* Nav data as source */
   static AirspaceQuery *getAirspaceQuery();
+
+  /* Online network data as source */
+  static AirspaceQuery *getAirspaceQueryOnline();
+
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRoute();
@@ -172,7 +178,14 @@ public:
 
   static QString getDatabaseAiracCycleSim();
   static QString getDatabaseAiracCycleNav();
+
+  /* True if the database contains any airspaces or boundaries. */
   static bool hasDatabaseAirspaces();
+
+  /* True if online data and ATC centers are available */
+  static bool hasOnlineData();
+
+  static QString getOnlineNetwork();
 
   static const AircraftTrack& getAircraftTrack();
 
@@ -196,7 +209,7 @@ private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
-  static AirspaceQuery *airspaceQuery;
+  static AirspaceQuery *airspaceQuery, *airspaceQueryOnline;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;

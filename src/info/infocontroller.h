@@ -95,6 +95,10 @@ public:
 
   void updateAllInformation();
 
+  void onlineClientAndAtcUpdated();
+
+  void onlineNetworkChanged();
+
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
@@ -126,6 +130,7 @@ private:
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
   AirspaceQuery *airspaceQuery = nullptr;
+  AirspaceQuery *airspaceQueryOnline = nullptr;
   AirportQuery *airportQuery = nullptr;
   QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;

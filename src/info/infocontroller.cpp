@@ -32,6 +32,7 @@
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 #include "options/optiondata.h"
+#include "sql/sqlrecord.h"
 
 #include <QDebug>
 #include <QScrollBar>
@@ -55,6 +56,7 @@ InfoController::InfoController(MainWindow *parent)
 {
   mapQuery = NavApp::getMapQuery();
   airspaceQuery = NavApp::getAirspaceQuery();
+  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
@@ -144,6 +146,8 @@ void InfoController::anchorClicked(const QUrl& url)
           emit showRect(airportQuery->getAirportById(id).bounding, false);
         if(type & map::AIRSPACE)
           emit showRect(airspaceQuery->getAirspaceById(id).bounding, false);
+        if(type & map::AIRSPACE_ONLINE)
+          emit showRect(airspaceQueryOnline->getAirspaceById(id).bounding, false);
       }
       else if(query.hasQueryItem("airport"))
       {
@@ -231,18 +235,28 @@ void InfoController::saveState()
   map::MapObjectRefList refs;
   for(const map::MapAirport& airport  : currentSearchResult.airports)
     refs.append({airport.id, map::AIRPORT});
+
   for(const map::MapVor& vor : currentSearchResult.vors)
     refs.append({vor.id, map::VOR});
+
   for(const map::MapNdb& ndb : currentSearchResult.ndbs)
     refs.append({ndb.id, map::NDB});
+
   for(const map::MapWaypoint& waypoint : currentSearchResult.waypoints)
     refs.append({waypoint.id, map::WAYPOINT});
+
   for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
     refs.append({userpoint.id, map::USERPOINT});
+
   for(const map::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, map::AIRWAY});
+
   for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
-    refs.append({airspace.id, map::AIRSPACE});
+  {
+    // Do not save online airspace ids since they will change on next startup
+    if(!airspace.online)
+      refs.append({airspace.id, map::AIRSPACE});
+  }
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
@@ -363,6 +377,26 @@ void InfoController::updateAllInformation()
   showInformationInternal(currentSearchResult, false);
 }
 
+void InfoController::onlineNetworkChanged()
+{
+  // Clear display
+  NavApp::getMainUi()->textBrowserAirspaceInfo->clear();
+
+  // Remove all online network airspaces from current result
+  QList<map::MapAirspace> airspaces;
+  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
+    if(!airspace.online)
+      airspaces.append(airspace);
+  currentSearchResult.airspaces = airspaces;
+
+  showInformationInternal(currentSearchResult, false);
+}
+
+void InfoController::onlineClientAndAtcUpdated()
+{
+  showInformationInternal(currentSearchResult, false);
+}
+
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
 void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
@@ -437,7 +471,13 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
       qDebug() << "Found airspace" << airspace.id;
 
       currentSearchResult.airspaces.append(airspace);
-      infoBuilder->airspaceText(airspace, html, iconBackColor);
+
+      // Get extra information for online network ATC
+      atools::sql::SqlRecord onlineRec;
+      if(airspace.online)
+        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+
+      infoBuilder->airspaceText(airspace, onlineRec, html, iconBackColor);
       html.br();
     }
     foundAirspace = true;
