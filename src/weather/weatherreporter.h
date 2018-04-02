@@ -77,7 +77,7 @@ public:
    * @return NOAA metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
    */
-  QString getNoaaMetar(const QString& airportIcao);
+  atools::fs::weather::MetarResult getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /*
    * @return VATSIM metar from cache or empty if not entry was found in the cache. Once the request was
@@ -162,6 +162,9 @@ private:
   void deleteFsWatcher();
   void createFsWatcher();
   void initXplane();
+
+  static void noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line);
+  static atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   atools::fs::weather::WeatherNetSingle *noaaWeather = nullptr;
   atools::fs::weather::WeatherNetSingle *vatsimWeather = nullptr;

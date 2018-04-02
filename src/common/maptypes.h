@@ -779,9 +779,9 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
-  atools::fs::weather::MetarResult fsMetar, ivaoMetar;
+  atools::fs::weather::MetarResult fsMetar, ivaoMetar, noaaMetar;
   bool isAsDeparture = false, isAsDestination = false;
-  QString asMetar, asType, vatsimMetar, noaaMetar, ident;
+  QString asMetar, asType, vatsimMetar, ident;
 
   bool isEmpty() const
   {

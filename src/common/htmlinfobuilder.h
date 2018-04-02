@@ -76,6 +76,12 @@ namespace fs {
 namespace util {
 class MorseCode;
 }
+
+namespace weather {
+struct MetarResult;
+
+}
+
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;
@@ -289,6 +295,8 @@ private:
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
                     const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar,
                     bool isInterpolated) const;
+  void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
+                     const map::MapAirport& airport, const QString& name) const;
 
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);

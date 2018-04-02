@@ -3005,12 +3005,8 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   if(flags & opts::WEATHER_INFO_NOAA)
   {
-    QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->noaaMetar))
-    {
-      currentWeatherContext->noaaMetar = metarStr;
-      changed = true;
-    }
+    currentWeatherContext->noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
+    changed = true;
   }
 
   if(flags & opts::WEATHER_INFO_VATSIM)
@@ -3057,7 +3053,7 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
   }
 
   if(flags & opts::WEATHER_INFO_NOAA)
-    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident);
+    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & opts::WEATHER_INFO_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
@@ -3089,7 +3085,7 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
   }
 
   if(flags & opts::WEATHER_TOOLTIP_NOAA)
-    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident);
+    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & opts::WEATHER_TOOLTIP_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);

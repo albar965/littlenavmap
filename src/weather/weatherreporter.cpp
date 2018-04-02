@@ -60,6 +60,8 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   noaaWeather = new WeatherNetSingle(parentWindow, ONLINE_WEATHER_TIMEOUT_SECS);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
+  noaaWeather->setStationIndexUrl("http://tgftp.nws.noaa.gov/data/observations/metar/stations/", noaaIndexParser);
+  noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
 
   vatsimWeather = new WeatherNetSingle(parentWindow, ONLINE_WEATHER_TIMEOUT_SECS);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
@@ -68,10 +70,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
   ivaoWeather->setUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
   // Set callback so the reader can build an index for nearest airports
-  ivaoWeather->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
-  {
-    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(ident);
-  });
+  ivaoWeather->setFetchAirportCoords(fetchAirportCoordinates);
 
   if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
      OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
@@ -80,10 +79,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   initActiveSkyNext();
 
   // Set callback so the reader can build an index for nearest airports
-  xpWeatherReader->setFetchAirportCoords([](const QString& ident) -> atools::geo::Pos
-  {
-    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(ident);
-  });
+  xpWeatherReader->setFetchAirportCoords(fetchAirportCoordinates);
   initXplane();
 
   connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated,
@@ -103,6 +99,41 @@ WeatherReporter::~WeatherReporter()
   delete ivaoWeather;
 
   delete xpWeatherReader;
+}
+
+atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
+{
+  return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(airportIdent);
+}
+
+void WeatherReporter::noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line)
+{
+  // Need to use hardcoded English month names since QDate uses localized names
+  static const QStringList months({"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"});
+  static const QRegularExpression INDEX_LINE_REGEXP(
+    ">([A-Z0-9]{3,4}).TXT<.*>(\\d+)-(\\S+)-(\\d+)\\s+(\\d+):(\\d+)\\s*<");
+
+  // <tr><td><a href="AGGM.TXT">AGGM.TXT</a></td><td align="right">09-Feb-2018 03:06  </td><td align="right"> 72 </td></tr>
+  // <tr><td><a href="AGTB.TXT">AGTB.TXT</a></td><td align="right">27-Feb-2009 10:31  </td><td align="right"> 88 </td></tr>
+  // <tr><td><a href="AK15.TXT">AK15.TXT</a></td><td align="right">13-Jan-2014 13:20  </td><td align="right"> 58 </td></tr>
+  // qDebug() << Q_FUNC_INFO << line;
+
+  QRegularExpressionMatch match = INDEX_LINE_REGEXP.match(line);
+  if(match.hasMatch())
+  {
+    icao = match.captured(1).toUpper();
+
+    // 09-Feb-2018 03:06
+    int day = match.captured(2).toInt();
+    int month = months.indexOf(match.captured(3)) + 1;
+    int year = match.captured(4).toInt();
+    int hour = match.captured(5).toInt();
+    int minute = match.captured(6).toInt();
+
+    lastUpdate = QDateTime(QDate(year, month, day), QTime(hour, minute));
+
+    // qDebug() << icao << lastUpdate;
+  }
 }
 
 void WeatherReporter::deleteFsWatcher()
@@ -445,14 +476,15 @@ atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& 
   return xpWeatherReader->getXplaneMetar(station, pos);
 }
 
-QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
+atools::fs::weather::MetarResult WeatherReporter::getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
-  return noaaWeather->getMetar(airportIcao);
+  return noaaWeather->getMetar(airportIcao, pos);
 }
 
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
-  return vatsimWeather->getMetar(airportIcao);
+  // VATSIM does not use nearest station
+  return vatsimWeather->getMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation;
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
