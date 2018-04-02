@@ -26,7 +26,9 @@
 #include "zip/gzip.h"
 
 #include <QDebug>
+#include <QMessageBox>
 #include <QTextCodec>
+#include <QApplication>
 
 // #define DEBUG_ONLINE_DOWNLOAD 1
 
@@ -151,6 +153,11 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 
     // Get URL from status file
     QString whazzupUrlFromStatus = manager->getWhazzupUrlFromStatus(whazzupGzipped);
+
+    if(!manager->getMessageFromStatus().isEmpty())
+      // Call later in the event loop
+      QTimer::singleShot(0, this, &OnlinedataController::showMessageDialog);
+
     if(!whazzupUrlFromStatus.isEmpty())
     {
       // Next in chain is whazzup.txt
@@ -240,6 +247,12 @@ void OnlinedataController::stopAllProcesses()
   downloader->cancelDownload();
   downloadTimer.stop();
   currentState = NONE;
+}
+
+void OnlinedataController::showMessageDialog()
+{
+  QMessageBox::information(mainWindow, QApplication::applicationName(),
+                           tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
 void OnlinedataController::optionsChanged()

@@ -92,6 +92,9 @@ private:
   void startDownloadTimer();
   void stopAllProcesses();
 
+  /* Show message from status.txt */
+  void showMessageDialog();
+
   atools::fs::online::OnlinedataManager *manager;
   atools::util::HttpDownloader *downloader;
   MainWindow *mainWindow;
