@@ -128,7 +128,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
       html.p();
       mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
-      info.airportText(airport, currentWeatherContext, html, &route, iconBackColor);
+      info.airportText(airport, currentWeatherContext, html, &route);
       html.pEnd();
       numEntries++;
     }
@@ -159,7 +159,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.vorText(vor, html, iconBackColor);
+      info.vorText(vor, html);
       html.pEnd();
       numEntries++;
     }
@@ -173,7 +173,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.ndbText(ndb, html, iconBackColor);
+      info.ndbText(ndb, html);
       html.pEnd();
       numEntries++;
     }
@@ -187,7 +187,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.waypointText(wp, html, iconBackColor);
+      info.waypointText(wp, html);
       html.pEnd();
       numEntries++;
     }
@@ -296,7 +296,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
 
       html.p();
-      info.airspaceText(airspace, onlineRec, html, iconBackColor);
+      info.airspaceText(airspace, onlineRec, html);
       html.pEnd();
       numEntries++;
     }

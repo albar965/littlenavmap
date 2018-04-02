@@ -113,10 +113,9 @@ void HtmlInfoBuilder::updateAircraftIcons(bool force)
       QIcon(":/littlenavmap/resources/icons/boataiground.svg"), QSize(24, 24));
 }
 
-void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating,
-                                   QColor background) const
+void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating) const
 {
-  html.img(SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE),
+  html.img(SymbolPainter().createAirportIcon(airport, SYMBOL_SIZE),
            QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
@@ -152,7 +151,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 }
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherContext& weatherContext,
-                                  HtmlBuilder& html, const Route *route, QColor background) const
+                                  HtmlBuilder& html, const Route *route) const
 {
   const SqlRecord *rec = infoQuery->getAirportInformation(airport.id);
   int rating = -1;
@@ -160,7 +159,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(rec != nullptr)
     rating = rec->valueInt("rating");
 
-  airportTitle(airport, html, rating, background);
+  airportTitle(airport, html, rating);
   html.br();
 
   QString city, state, country;
@@ -409,12 +408,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 #endif
 }
 
-void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) const
 {
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, -1, background);
+      airportTitle(airport, html, -1);
 
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
@@ -444,13 +443,12 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
   }
 }
 
-void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, QColor background,
-                                 bool details, bool soft) const
+void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, bool details, bool soft) const
 {
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, -1, background);
+      airportTitle(airport, html, -1);
 
     const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -773,14 +771,14 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
     html.brText(tr("Is Closed"));
 }
 
-void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html) const
 {
   if(info && infoQuery != nullptr && airport.isValid())
   {
     MapAirport navAirport = mapQuery->getAirportNav(airport);
 
     if(!print)
-      airportTitle(airport, html, -1, background);
+      airportTitle(airport, html, -1);
 
     html.p(tr("Approaches and Transitions"));
 
@@ -1052,15 +1050,16 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
   }
 }
 
+static const Flags WEATHER_TITLE_FLAGS = atools::util::html::BOLD | atools::util::html::BIG;
+
 void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport,
-                                  atools::util::HtmlBuilder& html, QColor background) const
+                                  atools::util::HtmlBuilder& html) const
 {
-  static const Flags TITLE_FLAGS = atools::util::html::BOLD | atools::util::html::BIG;
 
   if(info)
   {
     if(!print)
-      airportTitle(airport, html, -1, background);
+      airportTitle(airport, html, -1);
 
     // Simconnect or X-Plane weather file metar ===========================
     if(context.fsMetar.isValid())
@@ -1359,13 +1358,13 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 #endif
 }
 
-void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
     rec = infoQuery->getVorInformation(vor.id);
 
-  QIcon icon = SymbolPainter(background).createVorIcon(vor, SYMBOL_SIZE);
+  QIcon icon = SymbolPainter().createVorIcon(vor, SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
@@ -1424,13 +1423,13 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
 #endif
 }
 
-void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
     rec = infoQuery->getNdbInformation(ndb.id);
 
-  QIcon icon = SymbolPainter(background).createNdbIcon(SYMBOL_SIZE);
+  QIcon icon = SymbolPainter().createNdbIcon(SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
@@ -1537,14 +1536,14 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     qWarning() << Q_FUNC_INFO << "Empty record";
 }
 
-void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html) const
 {
   const SqlRecord *rec = nullptr;
 
   if(info && infoQuery != nullptr)
     rec = infoQuery->getWaypointInformation(waypoint.id);
 
-  QIcon icon = SymbolPainter(background).createWaypointIcon(SYMBOL_SIZE);
+  QIcon icon = SymbolPainter().createWaypointIcon(SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
@@ -1624,9 +1623,9 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 }
 
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
-                                   HtmlBuilder& html, QColor background) const
+                                   HtmlBuilder& html) const
 {
-  QIcon icon = SymbolPainter(background).createAirspaceIcon(airspace, SYMBOL_SIZE);
+  QIcon icon = SymbolPainter().createAirspaceIcon(airspace, SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 

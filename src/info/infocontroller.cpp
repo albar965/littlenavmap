@@ -331,7 +331,7 @@ void InfoController::updateAirportInternal(bool newAirport)
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
-      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRoute(), iconBackColor);
+      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRoute());
 
       Ui::MainWindow *ui = NavApp::getMainUi();
       if(newAirport)
@@ -342,7 +342,7 @@ void InfoController::updateAirportInternal(bool newAirport)
         atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
 
       html.clear();
-      infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
+      infoBuilder->weatherText(currentWeatherContext, airport, html);
 
       if(newAirport)
         // scroll up for new airports
@@ -441,21 +441,21 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     updateAirportInternal(true);
 
     html.clear();
-    infoBuilder->runwayText(airport, html, iconBackColor);
+    infoBuilder->runwayText(airport, html);
     ui->textBrowserRunwayInfo->setText(html.getHtml());
 
     html.clear();
-    infoBuilder->comText(airport, html, iconBackColor);
+    infoBuilder->comText(airport, html);
     ui->textBrowserComInfo->setText(html.getHtml());
 
     html.clear();
-    infoBuilder->procedureText(airport, html, iconBackColor);
+    infoBuilder->procedureText(airport, html);
     ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
     map::WeatherContext currentWeatherContext;
     mainWindow->buildWeatherContextForInfo(currentWeatherContext, airport);
-    infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
+    infoBuilder->weatherText(currentWeatherContext, airport, html);
     ui->textBrowserWeatherInfo->setText(html.getHtml());
 
     foundAirport = true;
@@ -477,7 +477,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
       if(airspace.online)
         onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
 
-      infoBuilder->airspaceText(airspace, onlineRec, html, iconBackColor);
+      infoBuilder->airspaceText(airspace, onlineRec, html);
       html.br();
     }
     foundAirspace = true;
@@ -524,7 +524,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     qDebug() << "Found vor" << vor.ident;
 
     currentSearchResult.vors.append(vor);
-    infoBuilder->vorText(vor, html, iconBackColor);
+    infoBuilder->vorText(vor, html);
     html.br();
     foundNavaid = true;
   }
@@ -534,7 +534,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     qDebug() << "Found ndb" << ndb.ident;
 
     currentSearchResult.ndbs.append(ndb);
-    infoBuilder->ndbText(ndb, html, iconBackColor);
+    infoBuilder->ndbText(ndb, html);
     html.br();
     foundNavaid = true;
   }
@@ -544,7 +544,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
     qDebug() << "Found waypoint" << waypoint.ident;
 
     currentSearchResult.waypoints.append(waypoint);
-    infoBuilder->waypointText(waypoint, html, iconBackColor);
+    infoBuilder->waypointText(waypoint, html);
     html.br();
     foundNavaid = true;
   }

@@ -101,8 +101,8 @@ public:
   /*
    * @param backgroundColor used for tooltips of table view icons
    */
-  SymbolPainter(QColor backgroundColor);
   SymbolPainter();
+  ~SymbolPainter();
 
   /* Create icons for tooltips, table views and more. Size is pixel. */
   QIcon createAirportIcon(const map::MapAirport& airport, int size);
@@ -179,7 +179,6 @@ private:
   const QPixmap *windPointerFromCache(int size);
   const QPixmap *trackLineFromCache(int size);
 
-  QColor iconBackground;
   QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
   void prepareForIcon(QPainter& painter);
 

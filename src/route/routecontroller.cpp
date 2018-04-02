@@ -128,7 +128,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   entryBuilder = new FlightplanEntryBuilder();
 
-  symbolPainter = new SymbolPainter(Qt::transparent);
+  symbolPainter = new SymbolPainter();
 
   // Use saved font size for table view
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());

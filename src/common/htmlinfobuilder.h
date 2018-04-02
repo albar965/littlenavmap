@@ -122,7 +122,7 @@ public:
    * @param background Background color for icons
    */
   void airportText(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
-                   atools::util::HtmlBuilder& html, const Route *route, QColor background) const;
+                   atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for all runways of an airport.
@@ -131,7 +131,7 @@ public:
    * @param background Background color for icons
    */
   void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                  QColor background, bool details = true, bool soft = true) const;
+                  bool details = true, bool soft = true) const;
 
   /*
    * Creates a HTML description for all COM frequencies of an airport.
@@ -139,7 +139,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void comText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background) const;
+  void comText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for all approaches of an airport.
@@ -147,11 +147,10 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                     QColor background) const;
+  void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
-                   atools::util::HtmlBuilder& html, QColor background) const;
+                   atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -159,7 +158,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void vorText(const map::MapVor& vor, atools::util::HtmlBuilder& html, QColor background) const;
+  void vorText(const map::MapVor& vor, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a NDB station.
@@ -167,7 +166,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html, QColor background) const;
+  void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a waypoint including all attached airways.
@@ -175,8 +174,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html,
-                    QColor background) const;
+  void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
 
   /* Description for user defined points */
   void userpointText(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
@@ -187,7 +185,8 @@ public:
    * @param html Result containing HTML snippet
    */
   void airwayText(const map::MapAirway& airway, atools::util::HtmlBuilder& html) const;
-  void airspaceText(const map::MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec, atools::util::HtmlBuilder& html, QColor background) const;
+  void airspaceText(const map::MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
+                    atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a marker.
@@ -257,8 +256,7 @@ private:
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
 
-  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating,
-                    QColor background) const;
+  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
 
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
