@@ -98,8 +98,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   // Need to set this later to avoid circular database dependency
   userdataController->setMagDecReader(magDecReader);
 
-  // Create a CSV backup
-  userdataController->backup();
+  // Create a CSV backup - not needed since the database is backed up now
+  // userdataController->backup();
   // Clear temporary userpoints
   userdataController->clearTemporary();
 
