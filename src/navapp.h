@@ -186,6 +186,7 @@ public:
   static bool hasOnlineData();
 
   static QString getOnlineNetwork();
+  static bool isOnlineNetworkActive();
 
   static const AircraftTrack& getAircraftTrack();
 

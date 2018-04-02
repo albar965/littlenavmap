@@ -299,6 +299,11 @@ QString OnlinedataController::getNetwork() const
   return QString();
 }
 
+bool OnlinedataController::isNetworkActive() const
+{
+  return OptionData::instance().getOnlineNetwork() != opts::ONLINE_NONE;
+}
+
 void OnlinedataController::startDownloadTimer()
 {
   downloadTimer.stop();

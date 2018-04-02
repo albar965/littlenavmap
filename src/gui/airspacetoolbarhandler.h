@@ -42,6 +42,11 @@ public:
   /* Update buttons and menus based on NavApp::getShownMapAirspaces() */
   void updateButtonsAndActions();
 
+  const QVector<QToolButton *>& getAirspaceToolButtons() const
+  {
+    return airspaceToolButtons;
+  }
+
 signals:
   void updateAirspaceTypes(map::MapAirspaceFilter types);
 

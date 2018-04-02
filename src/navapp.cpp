@@ -491,6 +491,11 @@ QString NavApp::getOnlineNetwork()
   return onlinedataController->getNetwork();
 }
 
+bool NavApp::isOnlineNetworkActive()
+{
+  return onlinedataController->isNetworkActive();
+}
+
 const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaSim()
 {
   return databaseMeta;

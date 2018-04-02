@@ -73,6 +73,7 @@ public:
 
   /* VATSIM, IVAO or Custom */
   QString getNetwork() const;
+  bool isNetworkActive() const;
 
 signals:
   /* Sent whenever new data was downloaded */

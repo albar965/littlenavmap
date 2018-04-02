@@ -230,7 +230,9 @@ MainWindow::MainWindow()
     restoreStateMain();
 
     updateActionStates();
+
     airspaceHandler->updateButtonsAndActions();
+    updateOnlineActionStates();
 
     qDebug() << "MainWindow Setting theme";
     changeMapTheme();
@@ -793,6 +795,10 @@ void MainWindow::connectAllSlots()
   OnlineCenterSearch *centerSearch = searchController->getOnlineCenterSearch();
   OnlineServerSearch *serverSearch = searchController->getOnlineServerSearch();
   OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
+
+  // Remove/add buttons and tabs
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          this, &MainWindow::updateOnlineActionStates);
 
   // Update search
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
@@ -2498,6 +2504,36 @@ void MainWindow::mainWindowShown()
 
   // TODO DEBUG
   // routeNewFromString();
+}
+
+/* Enable or disable actions related to online networks */
+void MainWindow::updateOnlineActionStates()
+{
+  if(NavApp::isOnlineNetworkActive())
+  {
+    // Show action in menu and toolbar
+    ui->actionShowAirspacesOnline->setVisible(true);
+
+    // Add tabs
+    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineClientSearch) == -1)
+      ui->tabWidgetSearch->addTab(ui->tabOnlineClientSearch, tr("Online Clients"));
+
+    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineCenterSearch) == -1)
+      ui->tabWidgetSearch->addTab(ui->tabOnlineCenterSearch, tr("Online Centers"));
+
+    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineServerSearch) == -1)
+      ui->tabWidgetSearch->addTab(ui->tabOnlineServerSearch, tr("Online Server"));
+  }
+  else
+  {
+    // Hide action in menu and toolbar
+    ui->actionShowAirspacesOnline->setVisible(false);
+
+    // Remove the tabs. Order is important - the search objects remain
+    ui->tabWidgetSearch->removeTab(SEARCH_ONLINE_SERVER);
+    ui->tabWidgetSearch->removeTab(SEARCH_ONLINE_CENTER);
+    ui->tabWidgetSearch->removeTab(SEARCH_ONLINE_CLIENT);
+  }
 }
 
 /* Enable or disable actions */

@@ -123,6 +123,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+#ifndef IVAO_SUPPORT
+  ui->radioButtonOptionsOnlineIvao->setVisible(false);
+#endif
+
+#ifndef VATSIM_SUPPORT
+  ui->radioButtonOptionsOnlineVatsim->setVisible(false);
+#endif
+
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
   QTreeWidgetItem *ap = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
   addItem(ap, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);

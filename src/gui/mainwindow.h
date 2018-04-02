@@ -176,6 +176,8 @@ private:
 
   void restoreStateMain();
   void updateActionStates();
+  void updateOnlineActionStates();
+
   void setupUi();
 
   void options();

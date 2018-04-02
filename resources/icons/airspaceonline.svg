@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -273,33 +273,23 @@
        cy="130.52826"
        r="5" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#82858a;stroke-width:14.82669544;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#82858a;stroke-width:12.59368229;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4445"
-       width="275.10001"
-       height="140.98222"
-       x="12.052693"
-       y="133.12477" />
+       width="283.15536"
+       height="98.820465"
+       x="8.3428106"
+       y="175.18285" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:62.6883812px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.5672096px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="20.365065"
-       y="258.83188"
-       id="text2380-3"><tspan
+       style="font-style:normal;font-weight:normal;font-size:74.14816284px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.85370421px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="16.032873"
+       y="222.3013"
+       id="text2380-3"
+       transform="scale(0.86847222,1.1514473)"><tspan
          sodipodi:role="line"
-         x="20.365065"
-         y="258.83188"
+         x="16.032873"
+         y="222.3013"
          id="tspan2382-6"
-         style="font-weight:bold;stroke-width:1.5672096px">VATSIM</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:73.03588104px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.8258971px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="16.849516"
-       y="197.87881"
-       id="text2380-3-7"><tspan
-         sodipodi:role="line"
-         x="16.849516"
-         y="197.87881"
-         id="tspan2382-6-5"
-         style="font-weight:bold;letter-spacing:-0.60318941px;stroke-width:1.8258971px">IVAO</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:1.85370421px">ONLINE</tspan></text>
   </g>
 </svg>
