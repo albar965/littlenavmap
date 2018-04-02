@@ -481,7 +481,9 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
       html.br();
     }
     foundAirspace = true;
-    ui->textBrowserAirspaceInfo->setText(html.getHtml());
+
+    // Update and keep scroll position
+    atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml());
   }
 
   // Navaids ================================================================
