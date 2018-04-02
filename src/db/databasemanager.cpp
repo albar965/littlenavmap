@@ -178,17 +178,17 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
-  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
-  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
 
   databaseSim = new SqlDatabase(DATABASE_NAME);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
-  databaseUser = new SqlDatabase(DATABASE_NAME_USER);
-  databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
   if(mainWindow != nullptr)
   {
     // Open only for instantiation in main window and not in main function
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
+    databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+    databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
     // Open user point database
     openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
