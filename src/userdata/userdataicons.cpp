@@ -25,7 +25,7 @@
 #include <QPixmap>
 #include <QIcon>
 
-const static QLatin1Literal DEFAULT_TYPE("Flag");
+const static QLatin1Literal DEFAULT_TYPE("Unknown");
 
 UserdataIcons::UserdataIcons(QObject *parent) : QObject(parent)
 {
