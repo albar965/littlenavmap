@@ -193,5 +193,6 @@
         <file>resources/icons/userpoint_Logbook.svg</file>
         <file>resources/icons/airspaceonline.svg</file>
         <file>resources/icons/userpoint_Unknown.svg</file>
+        <file>resources/config/networks.cfg</file>
     </qresource>
 </RCC>

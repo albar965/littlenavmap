@@ -960,7 +960,10 @@ private:
   opts::OnlineFormat onlineFormat = opts::ONLINE_FORMAT_VATSIM;
   QString onlineStatusUrl, onlineWhazzupUrl;
 
+  /* Values loaded from networks.cfg */
   int onlineReloadSeconds = 180;
+  QString onlineVatsimStatusUrl;
+  QString onlineIvaoStatusUrl;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

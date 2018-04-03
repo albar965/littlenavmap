@@ -24,8 +24,6 @@
 OptionData *OptionData::optionData = nullptr;
 
 /* Default values for well known networks */
-static const QString ONLINE_VATSIM_STATUS_URL = "http://status.vatsim.net/status.txt";
-static const QString ONLINE_IVAO_STATUS_URL = "http://www.ivao.aero/whazzup/status.txt";
 
 OptionData::OptionData()
   : flightplanColor(Qt::yellow), flightplanActiveColor(Qt::magenta), trailColor(Qt::black)
@@ -65,10 +63,10 @@ QString OptionData::getOnlineStatusUrl() const
       return QString();
 
     case opts::ONLINE_VATSIM:
-      return ONLINE_VATSIM_STATUS_URL;
+      return onlineVatsimStatusUrl;
 
     case opts::ONLINE_IVAO:
-      return ONLINE_IVAO_STATUS_URL;
+      return onlineIvaoStatusUrl;
 
     case opts::ONLINE_CUSTOM_STATUS:
       return onlineStatusUrl;

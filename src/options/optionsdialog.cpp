@@ -123,14 +123,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
-#ifndef IVAO_SUPPORT
-  ui->radioButtonOptionsOnlineIvao->setVisible(false);
-#endif
-
-#ifndef VATSIM_SUPPORT
-  ui->radioButtonOptionsOnlineVatsim->setVisible(false);
-#endif
-
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
   QTreeWidgetItem *ap = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
   addItem(ap, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
@@ -699,11 +691,28 @@ void OptionsDialog::saveState()
 
 void OptionsDialog::restoreState()
 {
+  Settings& settings = Settings::instance();
+
+  // Reload online network settings from configuration file which can be overloaded by placing a copy
+  // in the settings file
+  QString networksPath = settings.getOverloadedPath(":/littlenavmap/resources/config/networks.cfg");
+  QSettings networkSettings(networksPath, QSettings::IniFormat);
+  OptionData& od = OptionData::instanceInternal();
+  od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
+  od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
+  int update = networkSettings.value("options/update").toInt();
+  if(update < 60)
+    update = 60;
+  od.onlineReloadSeconds = update;
+
+  // Disable selection based on what was found in the file
+  ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoStatusUrl.isEmpty());
+  ui->radioButtonOptionsOnlineVatsim->setVisible(!od.onlineVatsimStatusUrl.isEmpty());
+
   atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
                            false /*save visibility*/, true /*block signals*/).restore(widgets);
   restoreDisplayOptItemStates();
 
-  Settings& settings = Settings::instance();
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
     ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
