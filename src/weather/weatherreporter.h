@@ -185,6 +185,9 @@ private:
   ActiveSkyType activeSkyType = NONE;
   QString asPath, asFlightplanPath;
 
+  /* Update online reports if older than 10 minutes */
+  int onlineWeatherTimeoutSecs = 600;
+
 };
 
 #endif // LITTLENAVMAP_WEATHERREPORTER_H

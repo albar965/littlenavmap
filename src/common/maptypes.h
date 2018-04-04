@@ -791,6 +791,8 @@ struct WeatherContext
 
 };
 
+QDebug operator<<(QDebug out, const map::WeatherContext& record);
+
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
 const QString& navTypeNameVor(const QString& type);

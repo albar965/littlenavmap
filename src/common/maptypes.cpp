@@ -1451,4 +1451,21 @@ QDebug operator<<(QDebug out, const map::MapSearchResult& record)
   return out;
 }
 
+QDebug operator<<(QDebug out, const WeatherContext& record)
+{
+  QDebugStateSaver saver(out);
+
+  out << "WeatherContext["
+      << "Sim METAR" << record.fsMetar
+      << "IVAO METAR" << record.ivaoMetar
+      << "NOAA METAR" << record.noaaMetar
+      << "VATSIM METAR" << record.vatsimMetar
+      << "AS departure" << record.isAsDeparture
+      << "AS destination" << record.isAsDestination
+      << "AS METAR" << record.asMetar
+      << "AS type" << record.asType
+      << "ident" << record.ident << "]";
+  return out;
+}
+
 } // namespace types

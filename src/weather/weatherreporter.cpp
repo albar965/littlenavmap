@@ -20,6 +20,7 @@
 #include "gui/mainwindow.h"
 #include "settings/settings.h"
 #include "options/optiondata.h"
+#include "common/constants.h"
 #include "fs/weather/xpweatherreader.h"
 #include "navapp.h"
 #include "fs/weather/weathernetdownload.h"
@@ -45,9 +46,6 @@ static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,
 static const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=.+$");
 static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})?(.*)$");
 
-// Update online reports if older than 10 minutes
-static int ONLINE_WEATHER_TIMEOUT_SECS = 600;
-
 using atools::fs::FsPaths;
 using atools::fs::weather::WeatherNetDownload;
 using atools::fs::weather::WeatherNetSingle;
@@ -56,25 +54,32 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   : QObject(parentWindow), simType(type),
   mainWindow(parentWindow)
 {
+  onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
+
   xpWeatherReader = new atools::fs::weather::XpWeatherReader(this);
 
-  noaaWeather = new WeatherNetSingle(parentWindow, ONLINE_WEATHER_TIMEOUT_SECS);
+  bool verbose = false;
+#ifdef DEBUG_INFORMATION
+  verbose = true;
+#endif
+
+  noaaWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   noaaWeather->setStationIndexUrl("http://tgftp.nws.noaa.gov/data/observations/metar/stations/", noaaIndexParser);
   noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
 
-  vatsimWeather = new WeatherNetSingle(parentWindow, ONLINE_WEATHER_TIMEOUT_SECS);
+  vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
 
-  ivaoWeather = new WeatherNetDownload(parentWindow);
+  ivaoWeather = new WeatherNetDownload(parentWindow, verbose);
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
-  ivaoWeather->setUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
   // Set callback so the reader can build an index for nearest airports
   ivaoWeather->setFetchAirportCoords(fetchAirportCoordinates);
-
   if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
      OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
-    ivaoWeather->download();
+    ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
+  else
+    ivaoWeather->setUpdatePeriod(-1);
 
   initActiveSkyNext();
 
@@ -516,10 +521,7 @@ void WeatherReporter::optionsChanged()
 
   if(OptionData::instance().getFlags2() & opts::WEATHER_INFO_IVAO ||
      OptionData::instance().getFlags2() & opts::WEATHER_TOOLTIP_IVAO)
-  {
-    ivaoWeather->setUpdatePeriod(ONLINE_WEATHER_TIMEOUT_SECS);
-    ivaoWeather->download();
-  }
+    ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
 
