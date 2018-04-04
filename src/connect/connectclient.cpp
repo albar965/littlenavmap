@@ -217,7 +217,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     if(verbose)
       qDebug() << "Metars number" << dataPacket.getMetars().size();
 
-    for(const atools::fs::weather::MetarResult& metar : dataPacket.getMetars())
+    for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
     {
       QString ident = metar.requestIdent;
       if(verbose)
@@ -229,7 +229,8 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
         qDebug() << "Interpolated" << metar.metarForInterpolated;
       }
 
-      metarIdentCache.insert(ident, atools::fs::weather::MetarResult(metar));
+      metar.simulator = true;
+      metarIdentCache.insert(ident, metar);
     }
 
     emit weatherUpdated();

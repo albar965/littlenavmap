@@ -1068,6 +1068,9 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     // Simconnect or X-Plane weather file metar ===========================
     if(context.fsMetar.isValid())
     {
+      // Only FSX/P3D allow remote requests for now
+      bool fsxP3d = context.fsMetar.simulator;
+
       const atools::fs::weather::MetarResult& metar = context.fsMetar;
       QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
 
@@ -1076,7 +1079,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
         html.p(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
-        decodedMetar(html, airport, map::MapAirport(), met, false);
+        decodedMetar(html, airport, map::MapAirport(), met, false /* interpolated */, fsxP3d);
       }
 
       if(!metar.metarForNearest.isEmpty())
@@ -1097,14 +1100,14 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
                  atools::util::html::LINK_NO_UL);
         }
 
-        decodedMetar(html, airport, reportAirport, met, false);
+        decodedMetar(html, airport, reportAirport, met, false /* interpolated */, fsxP3d);
       }
 
       if(!metar.metarForInterpolated.isEmpty())
       {
-        Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
+        Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, fsxP3d);
         html.p(tr("%2Interpolated Weather - %1").arg(met.getStation()).arg(sim), WEATHER_TITLE_FLAGS);
-        decodedMetar(html, airport, map::MapAirport(), met, true);
+        decodedMetar(html, airport, map::MapAirport(), met, true /* interpolated */, fsxP3d);
       }
     }
     else if(!print && OptionData::instance().getFlags() & opts::WEATHER_INFO_FS)
@@ -1122,7 +1125,8 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       else
         html.p(context.asType, WEATHER_TITLE_FLAGS);
 
-      decodedMetar(html, airport, map::MapAirport(), Metar(context.asMetar), false);
+      decodedMetar(html, airport, map::MapAirport(), Metar(context.asMetar), false /* interpolated */,
+                   false /* FSX/P3D */);
     }
 
     // NOAA or nearest
@@ -1132,7 +1136,8 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!context.vatsimMetar.isEmpty())
     {
       html.p(tr("VATSIM Weather"), WEATHER_TITLE_FLAGS);
-      decodedMetar(html, airport, map::MapAirport(), Metar(context.vatsimMetar), false);
+      decodedMetar(html, airport, map::MapAirport(), Metar(context.vatsimMetar),
+                   false /* interpolated */, false /* FSX/P3D */);
     }
 
     // IVAO or nearest
@@ -1149,7 +1154,7 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
     {
       html.p(tr("%1 Station Weather").arg(name), WEATHER_TITLE_FLAGS);
       decodedMetar(html, airport, map::MapAirport(),
-                   Metar(metar.metarForStation, metar.requestIdent, metar.timestamp, true), false);
+                   Metar(metar.metarForStation, metar.requestIdent, metar.timestamp, true), false, false);
     }
 
     if(!metar.metarForNearest.isEmpty())
@@ -1171,14 +1176,14 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
                atools::util::html::LINK_NO_UL);
       }
 
-      decodedMetar(html, airport, reportAirport, met, false);
+      decodedMetar(html, airport, reportAirport, met, false, false);
     }
   }
 }
 
 void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& airport,
                                    const map::MapAirport& reportAirport,
-                                   const atools::fs::weather::Metar& metar, bool isInterpolated) const
+                                   const atools::fs::weather::Metar& metar, bool isInterpolated, bool isFsxP3d) const
 {
   using atools::fs::weather::INVALID_METAR_VALUE;
 
@@ -1199,7 +1204,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   }
 
   // Time and date =============================================================
-  if(!isInterpolated)
+  if(!isInterpolated && !isFsxP3d)
   {
     QDateTime time;
     time.setOffsetFromUtc(0);

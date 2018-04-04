@@ -294,7 +294,7 @@ private:
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
                     const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar,
-                    bool isInterpolated) const;
+                    bool isInterpolated, bool isFsxP3d) const;
   void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
                      const map::MapAirport& airport, const QString& name) const;
 

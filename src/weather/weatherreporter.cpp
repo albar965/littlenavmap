@@ -64,8 +64,9 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 #endif
 
   noaaWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
-  noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-  noaaWeather->setStationIndexUrl("http://tgftp.nws.noaa.gov/data/observations/metar/stations/", noaaIndexParser);
+  QString noaaUrl(OptionData::instance().getWeatherNoaaUrl());
+  noaaWeather->setRequestUrl(noaaUrl);
+  noaaWeather->setStationIndexUrl(noaaUrl.left(noaaUrl.lastIndexOf("/")) + "/", noaaIndexParser);
   noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
 
   vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
