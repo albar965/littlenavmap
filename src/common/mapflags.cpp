@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
       flags.append("AIRCRAFT_AI_BOAT");
     if(type & AIRCRAFT_TRACK)
       flags.append("AIRCRAFT_TRACK");
-    if(type & USER)
+    if(type & USERPOINTROUTE)
       flags.append("USER");
     if(type & PARKING)
       flags.append("PARKING");

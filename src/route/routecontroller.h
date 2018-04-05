@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class SimConnectData;
 }
 namespace pln {
 class Flightplan;
+class FlightplanIO;
 class FlightplanEntry;
 }
 }
@@ -96,7 +97,7 @@ public:
   bool exportFlighplanAsFpr(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
 
-  bool exportFlighplanAsGpx(const QString& filename);
+  bool exportFlightplanAsGpx(const QString& filename);
 
   bool exportFlighplanAsRxpGns(const QString& filename);
   bool exportFlighplanAsRxpGtn(const QString& filename);
@@ -131,6 +132,11 @@ public:
     return routeFilename;
   }
 
+  float getRouteDistanceNm() const
+  {
+    return route.getTotalDistance();
+  }
+
   bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
 
   /* Create a default filename based on departure and destination names. Suffix includes dot. */
@@ -161,7 +167,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachProcedure(const proc::MapProcedureLegs& legs);
+  void routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
@@ -307,8 +313,6 @@ private:
 
   void updateTableModel();
 
-  void createRouteLegsFromFlightplan();
-
   void routeAltChanged();
   void routeAltChangedDelayed();
   void routeSpeedChanged();
@@ -317,7 +321,7 @@ private:
 
   void clearRoute();
 
-  int adjustAltitude(int minAltitude);
+  int adjustAltitude(Route& rt, int minAltitude) const;
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
@@ -356,7 +360,7 @@ private:
   void loadProceduresFromFlightplan(bool quiet);
   void updateIcons();
   void beforeRouteCalc();
-  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
+  void updateAirwaysAndAltitude(Route& rt, bool adjustRouteAltitude = false) const;
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
   QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
@@ -365,6 +369,10 @@ private:
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
   void nothingSelectedTriggered();
   void activateLegTriggered();
+  Route routeAdjustedToProcedureOptions() const;
+
+  /* Calculate save options from dialog settings*/
+  atools::fs::pln::SaveOptions saveOptions() const;
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -395,6 +403,7 @@ private:
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
+  atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;

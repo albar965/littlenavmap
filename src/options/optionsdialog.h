@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,11 +67,15 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();
   void optionDataToWidgets();
+
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
   void toFlags(QRadioButton *radioButton, opts::Flags flag);
-
   void fromFlags(QCheckBox *checkBox, opts::Flags flag);
   void fromFlags(QRadioButton *radioButton, opts::Flags flag);
+  void toFlags2(QCheckBox *checkBox, opts::Flags2 flag);
+  void toFlags2(QRadioButton *radioButton, opts::Flags2 flag);
+  void fromFlags2(QCheckBox *checkBox, opts::Flags2 flag);
+  void fromFlags2(QRadioButton *radioButton, opts::Flags2 flag);
 
   void selectActiveSkyPathClicked();
   void clearMemCachedClicked();
@@ -83,17 +87,20 @@ private:
   void removeDatabaseExcludePathClicked();
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
+  void simNoFollowAircraftOnScrollClicked(bool state);
 
   void showDiskCacheClicked();
   void updateDatabaseButtonState();
 
   void testWeatherNoaaUrlClicked();
   void testWeatherVatsimUrlClicked();
+  void testWeatherIvaoUrlClicked();
   void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();
   void flightplanActiveColorClicked();
+  void flightplanPassedColorClicked();
   void flightplanProcedureColorClicked();
   void trailColorClicked();
 
@@ -113,10 +120,15 @@ private:
   void updateCacheElevationStates();
   void offlineDataSelectClicked();
   void checkUpdateClicked();
+  void mapEmptyAirportsClicked(bool state);
+  void updateOnlineWidgetStatus();
+  void onlineTestStatusUrlClicked();
+  void onlineTestWhazzupUrlClicked();
+  void onlineTestUrl(const QString& url);
 
   QVector<int> ringStrToVector(const QString& string) const;
 
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
+  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;

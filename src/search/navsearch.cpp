@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex)
+NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -159,6 +159,8 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIn
   append(Column("laty").hidden())
   ;
 
+  ui->labelNavSearchOverride->hide();
+
   // Add icon delegate for the ident column
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
@@ -174,6 +176,23 @@ NavSearch::~NavSearch()
   delete iconDelegate;
 }
 
+void NavSearch::overrideMode(const QStringList& overrideColumnTitles)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(overrideColumnTitles.isEmpty())
+  {
+    ui->labelNavSearchOverride->hide();
+    ui->labelNavSearchOverride->clear();
+  }
+  else
+  {
+    ui->labelNavSearchOverride->show();
+    ui->labelNavSearchOverride->setText(tr("%1 overriding all other search options.").
+                                        arg(overrideColumnTitles.join(" and ")));
+  }
+}
+
 void NavSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
@@ -185,10 +204,10 @@ void NavSearch::connectSearchSlots()
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonNavSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
-  connectLineEdit(ui->lineEditNavIcaoSearch);
-  connectLineEdit(ui->lineEditNavNameSearch);
-  connectLineEdit(ui->lineEditNavRegionSearch);
-  connectLineEdit(ui->lineEditNavAirportIcaoSearch);
+  installEventFilterForWidget(ui->lineEditNavIcaoSearch);
+  installEventFilterForWidget(ui->lineEditNavNameSearch);
+  installEventFilterForWidget(ui->lineEditNavRegionSearch);
+  installEventFilterForWidget(ui->lineEditNavAirportIcaoSearch);
 
   // Distance
   columns->assignDistanceSearchWidgets(ui->checkBoxNavDistSearch,
@@ -215,6 +234,8 @@ void NavSearch::connectSearchSlots()
                                               {ui->lineNavScenerySearch});
     updateButtonMenu();
   });
+
+  connect(controller->getSqlModel(), &SqlModel::overrideMode, this, &NavSearch::overrideMode);
 }
 
 void NavSearch::saveState()
@@ -223,7 +244,7 @@ void NavSearch::saveState()
   widgetState.save(navSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save(ui->horizontalLayoutNavDistanceSearch);
+  widgetState.save({ui->horizontalLayoutNavDistanceSearch, ui->actionSearchNavaidFollowSelection});
   saveViewState(ui->checkBoxNavDistSearch->isChecked());
 }
 
@@ -231,7 +252,6 @@ void NavSearch::restoreState()
 {
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
     widgetState.restore(navSearchWidgets);
 
@@ -239,7 +259,7 @@ void NavSearch::restoreState()
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
     Ui::MainWindow *ui = NavApp::getMainUi();
-    widgetState.restore(ui->horizontalLayoutNavDistanceSearch);
+    widgetState.restore({ui->horizontalLayoutNavDistanceSearch, ui->actionSearchNavaidFollowSelection});
     restoreViewState(ui->checkBoxNavDistSearch->isChecked());
 
     bool distSearchChecked = ui->checkBoxNavDistSearch->isChecked();
@@ -435,4 +455,9 @@ void NavSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
   NavApp::getMainUi()->pushButtonNavSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
+}
+
+QAction *NavSearch::followModeAction()
+{
+  return NavApp::getMainUi()->actionSearchNavaidFollowSelection;
 }

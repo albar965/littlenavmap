@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -102,12 +102,17 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
+  /* Change procedure to insert runway from flight plan as departure or start for arinc names "ALL" or "RW10B".
+   * Only for SID or STAR.
+   *  Should only be used on a copy of a procedure object and not the cached object.*/
+  void insertSidStarRunway(proc::MapProcedureLegs& legs, const QString& runway);
+
 private:
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
   proc::MapProcedureLeg buildApproachLegEntry(const map::MapAirport& airport);
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
 
-  void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs);
+  void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
   void processLegs(proc::MapProcedureLegs& legs);
   void processLegErrors(proc::MapProcedureLegs& legs);
 
@@ -149,6 +154,16 @@ private:
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                          const QString& suffix, const QString& runway, float distance, int size, bool transition);
   void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
+
+  /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern or matches exactly */
+  bool doesRunwayMatch(const QString& runway, const QString& runwayFromQuery, const QString& arincName,
+                       const QStringList& airportRunways) const;
+
+  /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern - otherwise false */
+  bool doesSidStarRunwayMatch(const QString& runway, const QString& arincName, const QStringList& airportRunways) const;
+
+  /* Get first runway of an airport which matches an SID/STAR "ALL" or e.g. "RW10B" pattern. */
+  QString anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways) const;
 
   atools::sql::SqlDatabase *db, *dbNav;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,

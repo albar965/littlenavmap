@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ using atools::fs::sc::SimConnectData;
 
 uint qHash(const MapPainterVehicle::PixmapKey& key)
 {
-  return key.size | (key.type << 8) | (key.ground << 10) | (key.user << 11);
+  return static_cast<uint>(key.size | (key.type << 8) | (key.ground << 10) | (key.user << 11));
 }
 
 bool MapPainterVehicle::PixmapKey::operator==(const MapPainterVehicle::PixmapKey& other) const
@@ -57,8 +57,7 @@ MapPainterVehicle::~MapPainterVehicle()
 
 }
 
-void MapPainterVehicle::paintAiVehicle(const PaintContext *context,
-                                       const SimConnectAircraft& vehicle)
+void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimConnectAircraft& vehicle, bool forceLabel)
 {
   if(vehicle.isUser())
     return;
@@ -94,7 +93,7 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context,
 
       // Build text label
       if(vehicle.getCategory() != atools::fs::sc::BOAT)
-        paintTextLabelAi(context, x, y, size, vehicle);
+        paintTextLabelAi(context, x, y, size, vehicle, forceLabel);
     }
   }
 }
@@ -194,12 +193,12 @@ void MapPainterVehicle::paintTrack(const PaintContext *context)
 }
 
 void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, float y, int size,
-                                         const SimConnectAircraft& aircraft)
+                                         const SimConnectAircraft& aircraft, bool forceLabel)
 {
   QStringList texts;
 
   if((aircraft.isOnGround() && context->mapLayer->isAiAircraftGroundText()) || // All AI on ground
-     (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText())) // All AI in the air
+     (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText()) || forceLabel) // All AI in the air
   {
     appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_REGISTRATION),
                   context->dOpt(opts::ITEM_AI_AIRCRAFT_TYPE),
@@ -363,8 +362,13 @@ void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircra
                                       bool registration, bool type, bool airline, bool flightnumber)
 {
   QStringList line;
-  if(!aircraft.getAirplaneRegistration().isEmpty() && registration)
-    line.append(aircraft.getAirplaneRegistration());
+  if(registration)
+  {
+    if(!aircraft.getAirplaneRegistration().isEmpty())
+      line.append(aircraft.getAirplaneRegistration());
+    else
+      line.append(QString::number(aircraft.getObjectId() + 1));
+  }
 
   if(!aircraft.getAirplaneModel().isEmpty() && type)
     line.append(aircraft.getAirplaneModel());

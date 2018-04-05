@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -466,7 +466,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
       symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 14, flags, 10, true);
     }
-    else if(type == map::USER)
+    else if(type == map::USERPOINTROUTE)
     {
       symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,

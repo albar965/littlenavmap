@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -126,13 +126,6 @@ int main(int argc, char *argv[])
     LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(
                                         ":/littlenavmap/resources/config/logging.cfg"));
 
-    Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
-
-    Application::addReportPath(QObject::tr("Database directory:"),
-                               {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
-    Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
-    Application::setEmailAddresses({"albar965@mailbox.org"});
-
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();
     qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
@@ -169,7 +162,16 @@ int main(int argc, char *argv[])
       // Checkbox in options dialog
       lang = OptionsDialog::isOverrideLanguage() ? "en" : lang;
 
+    qInfo() << "Loading translations for" << lang;
     Translator::load(lang);
+
+    // Add paths here to allow translation
+    Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
+
+    Application::addReportPath(QObject::tr("Database directory:"),
+                               {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
+    Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
+    Application::setEmailAddresses({"albar965@mailbox.org"});
 
     /* Avoid static translations and load these dynamically now */
     Unit::initTranslateableTexts();

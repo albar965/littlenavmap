@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "query/procedurequery.h"
 #include "query/airportquery.h"
 #include "navapp.h"
+#include "fs/util/fsutil.h"
 
 #include <QRegularExpression>
 
@@ -36,6 +37,8 @@ using atools::geo::nmToMeter;
 using atools::geo::normalizeCourse;
 using atools::geo::meterToNm;
 using atools::geo::manhattanDistance;
+using atools::fs::pln::FlightplanEntry;
+using atools::fs::pln::Flightplan;
 
 Route::Route()
 {
@@ -106,7 +109,7 @@ int Route::getNextUserWaypointNumber() const
 
   int nextNum = 0;
 
-  for(const atools::fs::pln::FlightplanEntry& entry : flightplan.getEntries())
+  for(const FlightplanEntry& entry : flightplan.getEntries())
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::USER)
       nextNum = std::max(QString(USER_WP_ID.match(entry.getWaypointId()).captured(1)).toInt(), nextNum);
@@ -619,23 +622,23 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
 
       if(leg.getMapObjectType() == map::INVALID)
       {
-        map::MapUserpoint up;
+        map::MapUserpointRoute up;
         up.routeIndex = i;
         up.name = leg.getIdent() + " (not found)";
         up.position = leg.getPosition();
         up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userPoints.append(up);
+        mapobjects.userPointsRoute.append(up);
       }
 
-      if(leg.getMapObjectType() == map::USER)
+      if(leg.getMapObjectType() == map::USERPOINTROUTE)
       {
-        map::MapUserpoint up;
+        map::MapUserpointRoute up;
         up.id = i;
         up.routeIndex = i;
         up.name = leg.getIdent();
         up.position = leg.getPosition();
         up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userPoints.append(up);
+        mapobjects.userPointsRoute.append(up);
       }
 
       if(leg.isAnyProcedure())
@@ -687,7 +690,7 @@ bool Route::hasUserWaypoints() const
 {
   for(const RouteLeg& leg : *this)
   {
-    if(leg.getMapObjectType() == map::USER)
+    if(leg.getMapObjectType() == map::USERPOINTROUTE)
       return true;
   }
   return false;
@@ -717,7 +720,7 @@ bool Route::canCalcRoute() const
   return getFlightplan().getEntries().size() >= 2;
 }
 
-void Route::clearProcedureLegs(proc::MapProcedureTypes type)
+void Route::clearProcedures(proc::MapProcedureTypes type)
 {
   // Clear procedure legs
   if(type & proc::PROCEDURE_SID)
@@ -734,9 +737,6 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type)
     arrivalLegs.clearTransition();
   if(type & proc::PROCEDURE_APPROACH)
     arrivalLegs.clearApproach();
-
-  // Remove legs from flight plan and route legs
-  eraseProcedureLegs(type);
 }
 
 void Route::removeProcedureLegs()
@@ -746,6 +746,7 @@ void Route::removeProcedureLegs()
 
 void Route::removeProcedureLegs(proc::MapProcedureTypes type)
 {
+  clearProcedures(type);
   clearProcedureLegs(type);
 
   // Remove properties from flight plan
@@ -761,7 +762,7 @@ void Route::clearFlightplanProcedureProperties(proc::MapProcedureTypes type)
 
 void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
 {
-  eraseProcedureLegs(proc::PROCEDURE_ALL);
+  clearProcedureLegs(proc::PROCEDURE_ALL);
 
   departureLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
@@ -772,7 +773,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
     // Starts always after departure airport
     departureLegsOffset = 1;
 
-  QList<atools::fs::pln::FlightplanEntry>& entries = flightplan.getEntries();
+  QList<FlightplanEntry>& entries = flightplan.getEntries();
   for(int i = 0; i < departureLegs.size(); i++)
   {
     int insertIndex = 1 + i;
@@ -780,7 +781,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
     obj.createFromApproachLeg(i, departureLegs, &at(i));
     insert(insertIndex, obj);
 
-    atools::fs::pln::FlightplanEntry entry;
+    FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(departureLegs.at(insertIndex - 1), entry, true);
     entries.insert(insertIndex, entry);
   }
@@ -797,7 +798,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
     obj.createFromApproachLeg(i, starLegs, prev);
     insert(size() - 1, obj);
 
-    atools::fs::pln::FlightplanEntry entry;
+    FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(starLegs.at(i), entry, true);
     entries.insert(entries.size() - 1, entry);
   }
@@ -814,7 +815,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
     obj.createFromApproachLeg(i, arrivalLegs, prev);
     insert(size() - 1, obj);
 
-    atools::fs::pln::FlightplanEntry entry;
+    FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(arrivalLegs.at(i), entry, true);
     entries.insert(entries.size() - 1, entry);
   }
@@ -845,7 +846,7 @@ void Route::removeRouteLegs()
   }
 }
 
-void Route::eraseProcedureLegs(proc::MapProcedureTypes type)
+void Route::clearProcedureLegs(proc::MapProcedureTypes type)
 {
   QVector<int> indexes;
 
@@ -1121,6 +1122,16 @@ const RouteLeg& Route::getDestinationBeforeProcedure() const
   return at(getDestinationIndexBeforeProcedure());
 }
 
+bool Route::isAirportDeparture(const QString& ident) const
+{
+  return !isEmpty() && first().getAirport().isValid() && first().getAirport().ident == ident;
+}
+
+bool Route::isAirportDestination(const QString& ident) const
+{
+  return !isEmpty() && last().getAirport().isValid() && last().getAirport().ident == ident;
+}
+
 int Route::getStartIndexAfterProcedure() const
 {
   if(hasAnyDepartureProcedure())
@@ -1206,6 +1217,145 @@ void Route::removeDuplicateRouteLegs()
       flightplan.getEntries().removeAt(i);
     }
   }
+}
+
+void Route::createRouteLegsFromFlightplan()
+{
+  clear();
+
+  Flightplan& flightplan = getFlightplan();
+
+  const RouteLeg *lastLeg = nullptr;
+
+  // Create map objects first and calculate total distance
+  for(int i = 0; i < flightplan.getEntries().size(); i++)
+  {
+    RouteLeg mapobj(&flightplan);
+    mapobj.createFromDatabaseByEntry(i, lastLeg);
+
+    if(mapobj.getMapObjectType() == map::INVALID)
+      // Not found in database
+      qWarning() << "Entry for ident" << flightplan.at(i).getIcaoIdent()
+                 << "region" << flightplan.at(i).getIcaoRegion() << "is not valid";
+
+    append(mapobj);
+    lastLeg = &last();
+  }
+
+  if(!isEmpty())
+  {
+    // Correct departure and destination values if missing - can happen after import of FLP or FMS plans
+    if(flightplan.getDepartureAiportName().isEmpty())
+      flightplan.setDepartureAiportName(first().getName());
+    if(!flightplan.getDeparturePosition().isValid())
+      flightplan.setDeparturePosition(first().getPosition());
+
+    if(flightplan.getDestinationAiportName().isEmpty())
+      flightplan.setDestinationAiportName(last().getName());
+    if(!flightplan.getDestinationPosition().isValid())
+      flightplan.setDestinationPosition(first().getPosition());
+  }
+}
+
+Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp) const
+{
+  qDebug() << Q_FUNC_INFO << "saveApproachWp" << saveApproachWp << "saveSidStarWp" << saveSidStarWp;
+
+  Route route(*this);
+
+  // First remove properties and procedure structures
+  if(saveApproachWp)
+  {
+    route.clearProcedures(proc::PROCEDURE_ARRIVAL);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_ARRIVAL);
+    route.clearProcedureLegs(proc::PROCEDURE_MISSED);
+  }
+
+  if(saveSidStarWp)
+  {
+    route.clearProcedures(proc::PROCEDURE_SID_STAR_ALL);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_SID_STAR_ALL);
+  }
+
+  if(saveApproachWp || saveSidStarWp)
+  {
+    Flightplan& fp = route.getFlightplan();
+
+    // Now replace all entries with either valid waypoints or user defined waypoints
+    for(int i = 0; i < fp.getEntries().size(); i++)
+    {
+      FlightplanEntry& entry = fp.getEntries()[i];
+      const RouteLeg& leg = route.at(i);
+
+      if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) ||
+         (saveSidStarWp && (leg.getProcedureType() & proc::PROCEDURE_SID_STAR_ALL)))
+      {
+        // Entry is one of the category which have to be replaced
+        entry.setIcaoIdent(QString());
+        entry.setIcaoRegion(QString());
+        entry.setPosition(leg.getPosition());
+        entry.setAirway(QString());
+        entry.setNoSave(false);
+
+        if(leg.getWaypoint().isValid())
+        {
+          entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
+          entry.setIcaoIdent(leg.getWaypoint().ident);
+          entry.setIcaoRegion(leg.getWaypoint().region);
+          entry.setWaypointId(leg.getWaypoint().ident);
+        }
+        else if(leg.getVor().isValid())
+        {
+          entry.setWaypointType(atools::fs::pln::entry::VOR);
+          entry.setIcaoIdent(leg.getVor().ident);
+          entry.setIcaoRegion(leg.getVor().region);
+          entry.setWaypointId(leg.getVor().ident);
+        }
+        else if(leg.getNdb().isValid())
+        {
+          entry.setWaypointType(atools::fs::pln::entry::NDB);
+          entry.setIcaoIdent(leg.getNdb().ident);
+          entry.setIcaoRegion(leg.getNdb().region);
+          entry.setWaypointId(leg.getNdb().ident);
+        }
+        else if(leg.getRunwayEnd().isValid())
+        {
+          // Make a user defined waypoint from a runway end
+          entry.setWaypointType(atools::fs::pln::entry::USER);
+          entry.setWaypointId("RW" + leg.getRunwayEnd().name);
+        }
+        else
+        {
+          // Make a user defined waypoint from manual, altitude or other points
+          entry.setWaypointType(atools::fs::pln::entry::USER);
+          entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+        }
+      }
+    }
+
+    // Now get rid of all procedure legs in the flight plan
+    fp.removeNoSaveEntries();
+
+    // Delete duplicates
+    for(int i = fp.getEntries().size() - 1; i > 0; i--)
+    {
+      const FlightplanEntry& entry = fp.getEntries().at(i);
+      const FlightplanEntry& prev = fp.getEntries().at(i - 1);
+
+      if(entry.getWaypointId() == prev.getWaypointId() &&
+         entry.getIcaoIdent() == prev.getIcaoIdent() &&
+         entry.getIcaoRegion() == prev.getIcaoRegion() &&
+         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+        fp.getEntries().removeAt(i);
+    }
+
+    // Copy flight plan entries to route legs
+    route.createRouteLegsFromFlightplan();
+    route.updateAll();
+
+    // Airways are updated in route controller
+  }
+  return route;
 }
 
 QDebug operator<<(QDebug out, const Route& route)

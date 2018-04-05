@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,69 @@ void SqlController::postDatabaseLoad()
   model->fillHeaderData();
 }
 
+void SqlController::refreshData(bool loadAll, bool keepSelection)
+{
+  QItemSelectionModel *sm = view->selectionModel();
+
+  // Get all selected rows and highest selected row number
+  int maxRow = 0;
+  QSet<int> rows;
+  if(sm != nullptr && keepSelection)
+  {
+    for(const QModelIndex& index : sm->selectedRows(0))
+    {
+      if(index.row() > maxRow)
+        maxRow = index.row();
+      rows.insert(index.row());
+    }
+  }
+
+  // Reload query model
+  model->refreshData();
+
+  if(loadAll)
+  {
+    while(model->canFetchMore())
+      model->fetchMore(QModelIndex());
+  }
+
+  // Selection changes when updating model
+  sm = view->selectionModel();
+
+  if(sm != nullptr && keepSelection)
+  {
+    int visibleRowCount = getVisibleRowCount();
+
+    // Check if selected rows have to be loaded
+    if(maxRow >= visibleRowCount)
+    {
+      // Load until done or highest selected row is covered
+      while(model->canFetchMore() && getVisibleRowCount() < maxRow)
+        model->fetchMore(QModelIndex());
+    }
+
+    // Update selection in new data result set
+    int totalRowCount = getTotalRowCount();
+    sm->blockSignals(true);
+    for(int row : rows)
+    {
+      if(row < totalRowCount)
+        sm->select(model->index(row, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    }
+    sm->blockSignals(false);
+  }
+}
+
+void SqlController::refreshView()
+{
+  view->update();
+}
+
+bool SqlController::hasColumn(const QString& colName) const
+{
+  return columns->hasColumn(colName);
+}
+
 void SqlController::filterIncluding(const QModelIndex& index)
 {
   view->clearSelection();
@@ -114,10 +177,10 @@ void SqlController::filterBySpinBox(const Column *col, int value)
   searchParamsChanged = true;
 }
 
-void SqlController::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SqlController::filterByRecord(const atools::sql::SqlRecord& record)
 {
   view->clearSelection();
-  model->filterByIdent(ident, region, airportIdent);
+  model->filterByRecord(record);
   searchParamsChanged = true;
 }
 
@@ -432,17 +495,20 @@ void SqlController::processViewColumns()
 
   // Apply sort order to view
   const Column *colDescrDefSort = columns->getDefaultSortColumn();
-  int idx = rec.indexOf(colDescrDefSort->getColumnName());
-  if(colDescrCurSort == nullptr)
-    // Sort by default
-    view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
-  else
+  if(colDescrDefSort != nullptr)
   {
-    if(colDescrCurSort->isHidden())
+    int idx = rec.indexOf(colDescrDefSort->getColumnName());
+    if(colDescrCurSort == nullptr)
+      // Sort by default
       view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
-    else if(!isDistanceSearch())
-      if(colDescrCurSort->isDistance())
+    else
+    {
+      if(colDescrCurSort->isHidden())
         view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
+      else if(!isDistanceSearch())
+        if(colDescrCurSort->isDistance())
+          view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
+    }
   }
 }
 
@@ -518,9 +584,19 @@ QVector<const Column *> SqlController::getCurrentColumns() const
 
 void SqlController::initRecord(atools::sql::SqlRecord& rec)
 {
+  rec.clear();
   atools::sql::SqlRecord from = model->getSqlRecord();
   for(int i = 0; i < from.count(); i++)
     rec.appendField(from.fieldName(i), from.fieldType(i));
+}
+
+bool SqlController::hasRow(int row) const
+{
+  int srow = row;
+  if(proxyModel != nullptr)
+    srow = toSource(proxyModel->index(row, 0)).row();
+
+  return model->hasIndex(srow, 0);
 }
 
 void SqlController::fillRecord(int row, atools::sql::SqlRecord& rec)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,10 @@
 #include <marble/MarbleWidget.h>
 
 namespace atools {
+namespace sql {
+class SqlRecord;
+}
+
 namespace geo {
 class Pos;
 class Rect;
@@ -49,20 +53,29 @@ class MapTooltip;
 class QRubberBand;
 class MapScreenIndex;
 class Route;
+class MapVisible;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
 enum MouseState
 {
-  NONE = 0x00, /* Nothing */
-  DRAG_DISTANCE = 0x01, /* A new distance measurement line is dragged */
-  DRAG_CHANGE_DISTANCE = 0x02, /* A present distance measurement line is changed dragging */
-  DRAG_ROUTE_LEG = 0x04, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 0x08, /* Changing the flight plan by replacing a present waypoint */
-  DRAG_POST = 0x10, /* Mouse released - all done */
-  DRAG_POST_MENU = 0x20, /* A menu is opened after selecting multiple objects.
-                          * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 0x40 /* Right mousebutton clicked - cancel all actions */
+  NONE = 0x0000, /* Nothing */
+
+  DRAG_DISTANCE = 0x0001, /* A new distance measurement line is dragged */
+  DRAG_CHANGE_DISTANCE = 0x0002, /* A present distance measurement line is changed dragging */
+
+  DRAG_ROUTE_LEG = 0x0004, /* Changing a flight plan leg by adding a new point */
+  DRAG_ROUTE_POINT = 0x0008, /* Changing the flight plan by replacing a present waypoint */
+
+  DRAG_USER_POINT = 0x0010, /* Moving a userpoint around */
+
+  DRAG_POST = 0x0020, /* Mouse released - all done */
+  DRAG_POST_MENU = 0x0040, /* A menu is opened after selecting multiple objects.
+                            * Avoid cancelling all drag when loosing focus */
+  DRAG_POST_CANCEL = 0x0080, /* Right mousebutton clicked - cancel all actions */
+
+  DRAG_ALL = mw::DRAG_DISTANCE | mw::DRAG_CHANGE_DISTANCE | mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
+             mw::DRAG_USER_POINT
 };
 
 Q_DECLARE_FLAGS(MouseStates, MouseState);
@@ -89,7 +102,7 @@ public:
   void restoreState();
 
   /* Jump to position on the map using the given zoom distance (if not equal -1) */
-  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
+  void showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick);
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -168,6 +181,9 @@ public:
   /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
    * if dragging departure or destination */
   void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
+
+  /* Get source and current position while dragging a userpoint */
+  void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
@@ -290,6 +306,12 @@ public:
 
   void resetSettingActionsToDefault();
 
+  /* Stop timer and cancel any jumping back */
+  void jumpBackToAircraftCancel();
+
+  void onlineClientAndAtcUpdated();
+  void onlineNetworkChanged();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);
@@ -298,8 +320,7 @@ signals:
   void searchMarkChanged(const atools::geo::Pos& mark);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const QString& ident, const QString& region,
-                    const QString& airportIdent);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
 
   /* Set parking position, departure, destination for flight plan from context menu */
   void routeSetParkingStart(map::MapParking parking);
@@ -321,6 +342,14 @@ signals:
   /* Show information about objects from single click or context menu */
   void showInformation(map::MapSearchResult result);
 
+  /* Add user point and pass result to it so it can prefill the dialog */
+  void addUserpointFromMap(map::MapSearchResult result, const atools::geo::Pos& pos);
+  void editUserpointFromMap(map::MapSearchResult result);
+  void deleteUserpointFromMap(int id);
+
+  /* Passed point with updated coordinates */
+  void moveUserpointFromMap(const map::MapUserpoint& point);
+
   /* Show approaches from context menu */
   void showApproaches(map::MapAirport airport);
 
@@ -328,6 +357,11 @@ signals:
   void aircraftTrackPruned();
 
   void shownMapFeaturesChanged(map::MapObjectTypes types);
+
+  /* State isFlying  between last and current aircraft has changed */
+  void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
+                       float averageTasKts);
 
 private:
   bool eventFilter(QObject *obj, QEvent *e) override;
@@ -353,7 +387,6 @@ private:
   virtual void leaveEvent(QEvent *) override;
 
   void updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point);
-  void updateVisibleObjectsStatusBar();
 
   void handleInfoClick(QPoint pos);
   bool loadKml(const QString& filename, bool center);
@@ -362,6 +395,14 @@ private:
   void cancelDragDistance();
   void cancelDragRoute();
   void elevationDisplayTimerTimeout();
+  void cancelDragUserpoint();
+
+  void jumpBackToAircraftTimeout();
+  void jumpBackToAircraftStart();
+  bool isCenterLegAndAircraftActive();
+
+  /* Timer for takeoff and landing recognition fired */
+  void takeoffLandingTimeout();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
@@ -377,13 +418,21 @@ private:
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
   MapThemeComboIndex currentComboIndex = INVALID;
+
   mw::MouseStates mouseState = mw::NONE;
+  bool contextMenuActive = false;
+
   /* Current position when dragging a flight plan point or leg */
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom /* First fixed point of route drag */,
                    routeDragTo /* Second fixed point of route drag */;
   int routeDragPoint = -1 /* Index of changed point */,
       routeDragLeg = -1 /* index of changed leg */;
+
+  /* Current position and pixmap when drawing userpoint on map */
+  QPoint userpointDragCur;
+  map::MapUserpoint userpointDrag;
+  QPixmap userpointDragPixmap;
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
@@ -393,6 +442,7 @@ private:
 
   MainWindow *mainWindow;
   MapPaintLayer *paintLayer;
+  MapVisible *mapVisible;
   MapQuery *mapQuery;
   AirportQuery *airportQuery;
   MapScreenIndex *screenIndex = nullptr;
@@ -416,7 +466,7 @@ private:
   QHash<QString, QAction *> mapOverlays;
 
   /* Need to check if the zoom and position was changed by the map history to avoid recursion */
-  bool changedByHistory = false;
+  bool noStoreInHistory = false;
 
   /* Values used to check if view has changed */
   Marble::GeoDataLatLonAltBox currentViewBoundingBox;
@@ -428,6 +478,38 @@ private:
 
   /* Delay display of elevation display to avoid lagging mouse movements */
   QTimer elevationDisplayTimer;
+
+  /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
+  QTimer takeoffLandingTimer;
+
+  /* Simulator zulu time timestamp of takeoff event */
+  qint64 takeoffTimeMs = 0L;
+
+  /* Flown distance from takeoff event */
+  double takeoffLandingDistanceNm = 0.;
+
+  /* Average true airspeed from takeoff event */
+  double takeoffLandingAverageTasKts = 0.;
+
+  /* Last sample from average value calculation */
+  qint64 takeoffLastSampleTimeMs = 0L;
+
+  /* Used for distance calculation */
+  atools::fs::sc::SimConnectUserAircraft takeoffLandingLastAircraft;
+
+  QTimer jumpBackToAircraftTimer;
+  double jumpBackToAircraftDistance = 0.;
+  atools::geo::Pos jumpBackToAircraftPos;
+  bool jumpBackToAircraftActive = false;
+
+  /* The the overlays from updating */
+  bool ignoreOverlayUpdates = false;
+
+#ifdef DEBUG_MOVING_AIRPLANE
+  void debugMovingPlane(QMouseEvent *event);
+
+#endif
+
 };
 
 Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,18 +29,32 @@ class SqlRecord;
 
 namespace map {
 struct MapAirport;
+
 struct MapRunway;
+
 struct MapRunwayEnd;
+
 struct MapVor;
+
 struct MapNdb;
+
 struct MapWaypoint;
+
 struct MapAirway;
+
 struct MapIls;
+
 struct MapParking;
+
 struct MapAirspace;
+
 struct MapStart;
+
 struct MapHelipad;
+
 struct MapMarker;
+
+struct MapUserpoint;
 
 }
 
@@ -60,10 +74,11 @@ public:
    * based on incomplete records in the search.
    * @param nav filled from third party nav database
    */
-  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav);
+  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
+                   bool xplane);
 
   /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
-  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport);
+  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane);
 
   /*
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
@@ -86,9 +101,11 @@ public:
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
-  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace);
+  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, bool online);
 
   void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
+
+  void fillUserdataPoint(const atools::sql::SqlRecord& rec, map::MapUserpoint& obj);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);

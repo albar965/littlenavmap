@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,29 @@ namespace Ui {
 class UserWaypointDialog;
 }
 
+namespace atools {
+namespace geo {
+class Pos;
+}
+}
+
 class UserWaypointDialog :
   public QDialog
 {
   Q_OBJECT
 
 public:
-  UserWaypointDialog(QWidget *parent, const QString& name);
+  UserWaypointDialog(QWidget *parent, const QString& name, const atools::geo::Pos& pos);
   virtual ~UserWaypointDialog();
 
   QString getName() const;
+  atools::geo::Pos getPos() const;
 
 private:
+  void coordsEdited(const QString& text);
+
   Ui::UserWaypointDialog *ui;
+
 };
 
 #endif // LITTLENAVMAP_USERWAYPOINTDIALOG_H

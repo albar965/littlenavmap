@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,15 @@
 #include "navapp.h"
 #include "mapgui/maplayer.h"
 #include "util/paintercontextsaver.h"
+#include "geo/calculations.h"
 
 #include <marble/GeoPainter.h>
 
 using atools::fs::sc::SimConnectAircraft;
+
+const int NUM_CLOSEST_AI_LABELS = 5;
+const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
+const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
 MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapScale *mapScale)
   : MapPainterVehicle(mapWidget, mapScale)
@@ -51,25 +56,53 @@ void MapPainterAircraft::render(PaintContext *context)
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     paintTrack(context);
 
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
+  const atools::geo::Pos& pos = userAircraft.getPosition();
+
   if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
   {
     // Draw AI aircraft
     if(context->objectTypes & map::AIRCRAFT_AI && context->mapLayer->isAiAircraftLarge())
     {
-      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+      struct AiDistType
       {
+        const SimConnectAircraft *aircraft;
+        float distanceLateralMeter, distanceVerticalFt;
+      };
+
+      QVector<AiDistType> aiSorted;
+
+      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+        aiSorted.append({&ac,
+                         pos.distanceMeterTo(ac.getPosition()),
+                         std::abs(pos.getAltitude() - ac.getPosition().getAltitude())});
+
+      std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
+                                                     const AiDistType& ai2) -> bool
+      {
+        // returns ​true if the first argument is less than (i.e. is ordered before) the second.
+        return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
+      });
+
+      int num = aiSorted.size();
+      for(const AiDistType& adt : aiSorted)
+      {
+        const SimConnectAircraft& ac = *adt.aircraft;
+
         if(ac.getCategory() != atools::fs::sc::BOAT &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_AIRCRAFT_SIZE || context->mapLayer->isAiAircraftSmall()) &&
            (!ac.isOnGround() || context->mapLayer->isAiAircraftGround()))
-          paintAiVehicle(context, ac);
+        {
+          paintAiVehicle(context, ac,
+                         --num < NUM_CLOSEST_AI_LABELS &&
+                         adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
+                         adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
+        }
       }
     }
 
     if(context->objectTypes.testFlag(map::AIRCRAFT))
     {
-      const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
-      const atools::geo::Pos& pos = userAircraft.getPosition();
-
       if(pos.isValid())
       {
         if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))

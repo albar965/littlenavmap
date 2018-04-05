@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "atools.h"
 #include "common/mapcolors.h"
 #include "gui/application.h"
-#include "common/weatherreporter.h"
+#include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
 #include "common/elevationprovider.h"
 #include "db/databasemanager.h"
@@ -44,6 +44,7 @@
 #include "route/routecontroller.h"
 #include "gui/filehistoryhandler.h"
 #include "search/airportsearch.h"
+#include "search/userdatasearch.h"
 #include "search/navsearch.h"
 #include "mapgui/maplayersettings.h"
 #include "search/searchcontroller.h"
@@ -57,6 +58,11 @@
 #include "query/procedurequery.h"
 #include "search/proceduresearch.h"
 #include "gui/airspacetoolbarhandler.h"
+#include "userdata/userdatacontroller.h"
+#include "online/onlinedatacontroller.h"
+#include "search/onlineclientsearch.h"
+#include "search/onlinecentersearch.h"
+#include "search/onlineserversearch.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -115,7 +121,7 @@ MainWindow::MainWindow()
                     "</a>."
                   "</p>"
                   "<p>"
-                    "<b>Copyright 2015-2017 Alexander Barthel"
+                    "<b>Copyright 2015-2018 Alexander Barthel"
                     "</b>"
                   "</p>").arg(lnm::HELP_DONTATE_URL);
 
@@ -195,7 +201,14 @@ MainWindow::MainWindow()
     searchController = new SearchController(this, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
+
     searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
+
+    searchController->createUserdataSearch(ui->tableViewUserdata);
+
+    searchController->createOnlineClientSearch(ui->tableViewOnlineClientSearch);
+    searchController->createOnlineCenterSearch(ui->tableViewOnlineCenterSearch);
+    searchController->createOnlineServerSearch(ui->tableViewOnlineServerSearch);
 
     qDebug() << "MainWindow Creating InfoController";
     infoController = new InfoController(this);
@@ -210,11 +223,16 @@ MainWindow::MainWindow()
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
 
+    // Add user defined points toolbar button and submenu items
+    NavApp::getUserdataController()->addToolbarButton();
+
     qDebug() << "MainWindow Reading settings";
     restoreStateMain();
 
     updateActionStates();
+
     airspaceHandler->updateButtonsAndActions();
+    updateOnlineActionStates();
 
     qDebug() << "MainWindow Setting theme";
     changeMapTheme();
@@ -230,6 +248,10 @@ MainWindow::MainWindow()
     loadNavmapLegend();
     updateLegend();
     updateWindowTitle();
+
+    clockTimer.setInterval(1000);
+    connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
+    clockTimer.start();
 
     qDebug() << "MainWindow Constructor done";
   }
@@ -247,6 +269,8 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
+
+  clockTimer.stop();
 
   NavApp::setShuttingDown(true);
 
@@ -315,6 +339,14 @@ MainWindow::~MainWindow()
 void MainWindow::updateMap() const
 {
   mapWidget->update();
+}
+
+void MainWindow::updateClock() const
+{
+  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d hh:mm:ss Z"));
+  timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
+                        .arg(QDateTime::currentDateTimeUtc().toString())
+                        .arg(QDateTime::currentDateTime().toString()));
 }
 
 /* Show map legend and bring information dock to front */
@@ -440,7 +472,7 @@ void MainWindow::setupUi()
   ui->toolbarMapOptions->addWidget(mapProjectionComboBox);
 
   // Projection menu items
-  actionGroupMapProjection = new QActionGroup(ui->menuMapProjection);
+  actionGroupMapProjection = new QActionGroup(ui->menuViewProjection);
   ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
   ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
 
@@ -463,7 +495,7 @@ void MainWindow::setupUi()
   ui->toolbarMapOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
-  actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
+  actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenStreetMap->setData(MapWidget::OPENSTREETMAP);
 
@@ -505,7 +537,7 @@ void MainWindow::setupUi()
     mapThemeComboBox->addItem(name, dgmlFile.filePath());
 
     // Create action for map/theme submenu
-    QAction *action = ui->menuMapTheme->addAction(name);
+    QAction *action = ui->menuViewTheme->addAction(name);
     action->setCheckable(true);
     action->setToolTip(helptext);
     action->setStatusTip(helptext);
@@ -520,13 +552,13 @@ void MainWindow::setupUi()
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
   ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+1")));
   ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                       arg(ui->dockWidgetSearch->windowTitle().toLower()));
+                                                       arg(ui->dockWidgetSearch->windowTitle()));
   ui->dockWidgetSearch->toggleViewAction()->setStatusTip(ui->dockWidgetSearch->toggleViewAction()->toolTip());
 
   ui->dockWidgetRoute->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routedock.svg"));
   ui->dockWidgetRoute->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+2")));
   ui->dockWidgetRoute->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                      arg(ui->dockWidgetRoute->windowTitle().toLower()));
+                                                      arg(ui->dockWidgetRoute->windowTitle()));
   ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
 
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
@@ -540,21 +572,21 @@ void MainWindow::setupUi()
   ui->dockWidgetElevation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
   ui->dockWidgetElevation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetElevation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                          arg(ui->dockWidgetElevation->windowTitle().toLower()));
+                                                          arg(ui->dockWidgetElevation->windowTitle()));
   ui->dockWidgetElevation->toggleViewAction()->setStatusTip(
     ui->dockWidgetElevation->toggleViewAction()->toolTip());
 
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
   ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
   ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                         arg(ui->dockWidgetAircraft->windowTitle().toLower()));
+                                                         arg(ui->dockWidgetAircraft->windowTitle()));
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(
     ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
   ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
   ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
   ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                       arg(ui->dockWidgetLegend->windowTitle().toLower()));
+                                                       arg(ui->dockWidgetLegend->windowTitle()));
   ui->dockWidgetLegend->toggleViewAction()->setStatusTip(
     ui->dockWidgetLegend->toggleViewAction()->toolTip());
 
@@ -621,8 +653,20 @@ void MainWindow::setupUi()
   mapPosLabel = new QLabel();
   mapPosLabel->setAlignment(Qt::AlignCenter);
   mapPosLabel->setMinimumWidth(240);
-  mapPosLabel->setToolTip(tr("Cursor position on map."));
+  mapPosLabel->setToolTip(tr("Coordinates and elevation at cursor position."));
   ui->statusBar->addPermanentWidget(mapPosLabel);
+
+  magvarLabel = new QLabel();
+  magvarLabel->setAlignment(Qt::AlignCenter);
+  magvarLabel->setMinimumWidth(40);
+  magvarLabel->setToolTip(tr("Magnetic declination at cursor position."));
+  ui->statusBar->addPermanentWidget(magvarLabel);
+
+  timeLabel = new QLabel();
+  timeLabel->setAlignment(Qt::AlignCenter);
+  timeLabel->setMinimumWidth(50);
+  timeLabel->setToolTip(tr("Day of month and UTC time."));
+  ui->statusBar->addPermanentWidget(timeLabel);
 }
 
 void MainWindow::connectAllSlots()
@@ -654,6 +698,8 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
@@ -676,25 +722,131 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
-  connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(searchController->getAirportSearch(), &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(
-    searchController->getAirportSearch(), &AirportSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
-          infoController, &InfoController::showInformation);
-  connect(searchController->getAirportSearch(), &AirportSearch::showProcedures,
+  // Airport search ===================================================================================
+  AirportSearch *airportSearch = searchController->getAirportSearch();
+  connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
+  connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(airportSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(airportSearch, &SearchBaseTable::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
+  connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
+  connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+  connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
+  // Nav search ===================================================================================
+  NavSearch *navSearch = searchController->getNavSearch();
+  connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(navSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+
+  // Userdata search ===================================================================================
+  UserdataSearch *userSearch = searchController->getUserdataSearch();
+  connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(userSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+
+  // User data ===================================================================================
+  UserdataController *userdataController = NavApp::getUserdataController();
+  connect(ui->actionUserdataClearDatabase, &QAction::triggered, userdataController, &UserdataController::clearDatabase);
+  connect(ui->actionUserdataShowSearch, &QAction::triggered, userdataController, &UserdataController::showSearch);
+
+  // Import ================
+  connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
+  connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController,
+          &UserdataController::importGarmin);
+  connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController,
+          &UserdataController::importXplaneUserFixDat);
+
+  // Export ================
+  connect(ui->actionUserdataExportCSV, &QAction::triggered, userdataController, &UserdataController::exportCsv);
+  connect(ui->actionUserdataExportGarminGTN, &QAction::triggered, userdataController,
+          &UserdataController::exportGarmin);
+  connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController,
+          &UserdataController::exportXplaneUserFixDat);
+  connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController,
+          &UserdataController::exportBglXml);
+
+  connect(userdataController, &UserdataController::userdataChanged, infoController,
+          &InfoController::updateAllInformation);
+  connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
+  connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
+
+  connect(mapWidget, &MapWidget::aircraftTakeoff, userdataController, &UserdataController::aircraftTakeoff);
+  connect(mapWidget, &MapWidget::aircraftLanding, userdataController, &UserdataController::aircraftLanding);
+
+  // Online search ===================================================================================
+  OnlineClientSearch *clientSearch = searchController->getOnlineClientSearch();
+  OnlineCenterSearch *centerSearch = searchController->getOnlineCenterSearch();
+  OnlineServerSearch *serverSearch = searchController->getOnlineServerSearch();
+  OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
+
+  // Online client search ===================================================================================
+  connect(clientSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
+  connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(clientSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(clientSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
+  // Online center search ===================================================================================
+  connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
+  connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(centerSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(centerSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
+  // Remove/add buttons and tabs
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          this, &MainWindow::updateOnlineActionStates);
+
+  // Update search
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          clientSearch, &OnlineClientSearch::refreshData);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          centerSearch, &OnlineCenterSearch::refreshData);
+  connect(onlinedataController, &OnlinedataController::onlineServersUpdated,
+          serverSearch, &OnlineServerSearch::refreshData);
+
+  // Update map widget
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          mapWidget, &MapWidget::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          mapWidget, &MapWidget::onlineNetworkChanged);
+
+  // Update info
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          infoController, &InfoController::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          infoController, &InfoController::onlineNetworkChanged);
+
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
+          airspaceHandler, &AirspaceToolBarHandler::updateButtonsAndActions);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          airspaceHandler, &AirspaceToolBarHandler::updateButtonsAndActions);
+
+  connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
+  // Approach controller ===================================================================
+  ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
+  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
+  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
+  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
+  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
+          &RouteController::routeAttachProcedure);
+  connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
-
-  connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(searchController->getNavSearch(), &NavSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(searchController->getNavSearch(), &NavSearch::showInformation,
-          infoController, &InfoController::showInformation);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
@@ -786,6 +938,14 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showApproaches,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
+  connect(mapWidget, &MapWidget::addUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(mapWidget, &MapWidget::editUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
+  connect(mapWidget, &MapWidget::deleteUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);
+  connect(mapWidget, &MapWidget::moveUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::moveUserpointFromMap);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -836,11 +996,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
+  connect(ui->actionMapShowCompassRose, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionShowAirspacesOnline, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
@@ -853,6 +1015,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::showAircraft);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::jumpBackToAircraftCancel);
 
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
@@ -865,10 +1028,6 @@ void MainWindow::connectAllSlots()
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 
   connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
-  connect(searchController->getAirportSearch(), &SearchBaseTable::selectionChanged,
-          this, &MainWindow::searchSelectionChanged);
-  connect(searchController->getNavSearch(), &SearchBaseTable::selectionChanged,
-          this, &MainWindow::searchSelectionChanged);
 
   connect(ui->actionRouteSelectParking, &QAction::triggered, routeController, &RouteController::selectDepartureParking);
 
@@ -879,16 +1038,6 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
-
-  connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDeparture,
-          routeController, &RouteController::routeSetDeparture);
-  connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDestination,
-          routeController, &RouteController::routeSetDestination);
-  connect(searchController->getAirportSearch(), &SearchBaseTable::routeAdd,
-          routeController, &RouteController::routeAdd);
-
-  connect(searchController->getNavSearch(), &SearchBaseTable::routeAdd,
-          routeController, &RouteController::routeAdd);
 
   // Messages about database query result status
   connect(mapWidget, &MapWidget::resultTruncated, this, &MainWindow::resultTruncated);
@@ -942,16 +1091,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
-
-  // Approach controller ===================================================================
-  ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
-  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
-  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
-  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
-          &RouteController::routeAttachProcedure);
-  connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
 }
@@ -1237,7 +1376,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                  tr("The FLP format does not allow saving of:"
                                     "<ul>"
                                       "<li>Procedures (limited, can result in mismatches)</li>"
-                                        "<li>User waypoint names</li>"
+                                        "<li>Position names</li>"
                                           "<li>Cruise Altitude</li>"
                                             "<li>Ground Speed</li>"
                                               "<li>Departure parking position</li>"
@@ -1272,17 +1411,17 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
  *  @return true if route can be saved anyway */
 bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDestination)
 {
-  const static atools::gui::DialogButtonList BUTTONS({
-    {QString(), QMessageBox::Cancel},
-    {tr("Select Start Position"), QMessageBox::Yes},
-    {QString(), QMessageBox::Save}
-  });
 
   if(!NavApp::getRoute().hasValidDeparture() || !NavApp::getRoute().hasValidDestination())
   {
     if(validateDepartureAndDestination)
     {
       NavApp::deleteSplashScreen();
+      const static atools::gui::DialogButtonList BUTTONS({
+        {QString(), QMessageBox::Cancel},
+        {tr("Select Start &Position"), QMessageBox::Yes},
+        {QString(), QMessageBox::Save}
+      });
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_WARNING,
                                               tr("Flight Plan must have a valid airport as "
                                                  "start and destination and "
@@ -1308,6 +1447,12 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
         NavApp::deleteSplashScreen();
 
         // Airport has parking but no one is selected
+        const static atools::gui::DialogButtonList BUTTONS({
+          {QString(), QMessageBox::Cancel},
+          {tr("Select Start &Position"), QMessageBox::Yes},
+          {tr("Show &Departure on Map"), QMessageBox::YesToAll},
+          {QString(), QMessageBox::Save}
+        });
 
         int result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
@@ -1316,8 +1461,14 @@ bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDe
           BUTTONS, QMessageBox::Yes, QMessageBox::Save);
 
         if(result == QMessageBox::Yes)
-          // saving depends if user selects parking or  cancels out of the dialog
+          // saving depends if user selects parking or cancels out of the dialog
           return routeController->selectDepartureParking();
+        else if(result == QMessageBox::YesToAll)
+        {
+          // Zoom to airport and cancel out
+          mapWidget->showRect(NavApp::getRoute().first().getAirport().bounding, false);
+          return false;
+        }
         else if(result == QMessageBox::Save)
           // Save right away
           return true;
@@ -1338,15 +1489,19 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
+    magvarLabel->setText(map::magvarText(NavApp::getMagVar(pos), true /* short text */));
+
 #ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
     mapPosLabel->setText(text);
-
   }
   else
+  {
     mapPosLabel->setText(tr("No position"));
+    magvarLabel->clear();
+  }
 }
 
 /* Updates main window title with simulator type, flight plan name and change status */
@@ -1370,6 +1525,10 @@ void MainWindow::updateWindowTitle()
                 (routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
+
+#ifdef DEBUG_INFORMATION
+  newTitle += QString(" / %1 (%2)").arg(NavApp::applicationVersion()).arg(GIT_REVISION);
+#endif
 
   setWindowTitle(newTitle);
 }
@@ -1576,7 +1735,8 @@ bool MainWindow::routeSaveAsPln()
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
-      routeController->buildDefaultFilename());
+      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
+      routeController->buildDefaultFilenameShort("_", ".pln") : routeController->buildDefaultFilename());
 
     if(!routeFile.isEmpty())
     {
@@ -1682,7 +1842,9 @@ bool MainWindow::routeExportClean()
       tr("Save Clean Flight Plan without Annotations"),
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
-      routeController->buildDefaultFilename(tr(" Clean")));
+
+      (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
+      routeController->buildDefaultFilenameShort("_", ".pln") : routeController->buildDefaultFilename(tr(" Clean")));
 
     if(!routeFile.isEmpty())
     {
@@ -1945,7 +2107,7 @@ bool MainWindow::routeExportGpx()
 
     if(!routeFile.isEmpty())
     {
-      if(routeController->exportFlighplanAsGpx(routeFile))
+      if(routeController->exportFlightplanAsGpx(routeFile))
       {
         if(NavApp::getAircraftTrack().isEmpty())
           setStatusMessage(tr("Flight plan saved as GPX."));
@@ -2038,17 +2200,43 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 /* Selection in one of the search result tables has changed */
 void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
-  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
+  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
   QString type;
-  if(source == searchController->getAirportSearch())
+  if(source->getTabIndex() == si::SEARCH_AIRPORT)
   {
     type = tr("Airports");
-    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+    ui->labelAirportSearchStatus->setText(selectionLabelText.
+                                          arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
-  else if(source == searchController->getNavSearch())
+  else if(source->getTabIndex() == si::SEARCH_NAV)
   {
     type = tr("Navaids");
-    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+    ui->labelNavSearchStatus->setText(selectionLabelText.
+                                      arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
+  else if(source->getTabIndex() == si::SEARCH_USER)
+  {
+    type = tr("Userpoints");
+    ui->labelUserdata->setText(selectionLabelText.
+                               arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
+  else if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT)
+  {
+    type = tr("Clients");
+    QString lastUpdate = tr(" Last Update: %1").
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+    ui->labelOnlineClientSearchStatus->setText(selectionLabelText.
+                                               arg(selected).arg(total).arg(type).arg(visible).
+                                               arg(lastUpdate));
+  }
+  else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
+  {
+    type = tr("Centers");
+    QString lastUpdate = tr(" Last Update: %1").
+                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::SystemLocaleShortDate));
+    ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.
+                                               arg(selected).arg(total).arg(type).arg(visible).
+                                               arg(lastUpdate));
   }
 
   map::MapSearchResult result;
@@ -2147,6 +2335,8 @@ void MainWindow::resetMapObjectsShown()
 
   mapWidget->resetSettingActionsToDefault();
   mapWidget->resetSettingsToDefault();
+  NavApp::getUserdataController()->resetSettingsToDefault();
+
   mapWidget->updateMapObjectsShown();
   airspaceHandler->updateButtonsAndActions();
   profileWidget->update();
@@ -2305,17 +2495,60 @@ void MainWindow::mainWindowShown()
 
   weatherUpdateTimeout();
 
-  // Update the weather every 30 seconds if connected
+  // Update the weather every 15 seconds if connected
   weatherUpdateTimer.setInterval(WEATHER_UPDATE_MS);
   weatherUpdateTimer.start();
 
   // Check for updates once main window is visible
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 
+  NavApp::getOnlinedataController()->startProcessing();
+
   setStatusMessage(tr("Ready."));
 
   // TODO DEBUG
   // routeNewFromString();
+}
+
+/* Enable or disable actions related to online networks */
+void MainWindow::updateOnlineActionStates()
+{
+  if(NavApp::isOnlineNetworkActive())
+  {
+    // Show action in menu and toolbar
+    ui->actionShowAirspacesOnline->setVisible(true);
+
+    // Add tabs in search widget
+    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineClientSearch) == -1)
+      ui->tabWidgetSearch->addTab(ui->tabOnlineClientSearch, tr("Online Clients"));
+
+    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineCenterSearch) == -1)
+      ui->tabWidgetSearch->addTab(ui->tabOnlineCenterSearch, tr("Online Centers"));
+
+    if(ui->tabWidgetSearch->indexOf(ui->tabOnlineServerSearch) == -1)
+      ui->tabWidgetSearch->addTab(ui->tabOnlineServerSearch, tr("Online Server"));
+
+    // Add tabs in information widget
+    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineCenterInfo) == -1)
+      ui->tabWidgetInformation->addTab(ui->tabOnlineCenterInfo, tr("Online Centers"));
+
+    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineClientInfo) == -1)
+      ui->tabWidgetInformation->addTab(ui->tabOnlineClientInfo, tr("Online Clients"));
+  }
+  else
+  {
+    // Hide action in menu and toolbar
+    ui->actionShowAirspacesOnline->setVisible(false);
+
+    // Remove the tabs in search. Order is important - the search objects remain
+    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_SERVER);
+    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CENTER);
+    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CLIENT);
+
+    // Remove tabs in information
+    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CLIENT);
+    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CENTER);
+  }
 }
 
 /* Enable or disable actions */
@@ -2343,6 +2576,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsCorteIn->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms3->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsRxpGtn->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsRxpGns->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
@@ -2364,8 +2599,8 @@ void MainWindow::updateActionStates()
       emptyAirportSeparator = ui->toolbarMapOptions->insertSeparator(ui->actionMapShowVor);
     }
 
-    if(!ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->menuMap->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+    if(!ui->menuMapView->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuMapView->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
   }
   else
   {
@@ -2380,8 +2615,8 @@ void MainWindow::updateActionStates()
       emptyAirportSeparator = nullptr;
     }
 
-    if(ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);
+    if(ui->menuMapView->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuMapView->removeAction(ui->actionMapShowEmptyAirports);
   }
 
 #ifdef DEBUG_MOVING_AIRPLANE
@@ -2471,6 +2706,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "MainWindow restoring state of mapWidget";
   mapWidget->restoreState();
 
+  qDebug() << "MainWindow restoring state of userdataControlle";
+  NavApp::getUserdataController()->restoreState();
+
   qDebug() << "MainWindow restoring state of routeController";
   routeController->restoreState();
 
@@ -2492,8 +2730,9 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                         ui->actionShowAirspaces,
-                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                         ui->actionShowAirspaces, ui->actionShowAirspacesOnline,
+                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                         ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                          ui->actionMapShowAircraftTrack,
                          ui->actionInfoApproachShowMissedAppr});
@@ -2504,7 +2743,9 @@ void MainWindow::restoreStateMain()
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
                        ui->actionMapShowCities,
                        ui->actionMapShowHillshading, ui->actionRouteEditMode,
-                       ui->actionWorkOffline});
+                       ui->actionWorkOffline,
+                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                       ui->actionUserdataCreateLogbook});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -2539,6 +2780,10 @@ void MainWindow::saveStateMain()
   qDebug() << "mapWidget";
   if(mapWidget != nullptr)
     mapWidget->saveState();
+
+  qDebug() << "mapWidget";
+  if(NavApp::getUserdataController() != nullptr)
+    NavApp::getUserdataController()->saveState();
 
   qDebug() << "routeController";
   if(routeController != nullptr)
@@ -2614,13 +2859,16 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAddonAirports,
                     ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                    ui->actionShowAirspaces,
-                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                    ui->actionShowAirspaces, ui->actionShowAirspacesOnline,
+                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                    ui->actionMapAircraftCenter,
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,
-                    ui->actionWorkOffline});
+                    ui->actionWorkOffline,
+                    ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                    ui->actionUserdataCreateLogbook});
   Settings::instance().syncSettings();
 }
 
@@ -2722,15 +2970,18 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
 {
   opts::Flags flags = OptionData::instance().getFlags();
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
   bool changed = false;
   bool newAirport = currentWeatherContext->ident != airport.ident;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
 
   currentWeatherContext->ident = airport.ident;
 
   if(flags & opts::WEATHER_INFO_FS)
   {
-    // qDebug() << "connectClient->isConnected()" << connectClient->isConnected();
-    // qDebug() << "currentWeatherContext->fsMetar" << currentWeatherContext->fsMetar.metarForStation;
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     {
       currentWeatherContext->fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
@@ -2739,25 +2990,23 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     else if(NavApp::isConnected())
     {
       // FSX/P3D - Flight simulator fetched weather
-      atools::fs::sc::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+      atools::fs::weather::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident,
+                                                                                          airport.position);
 
       if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
       {
+        // Airport has changed or METAR has changed
         currentWeatherContext->fsMetar = metar;
         changed = true;
-        // qDebug() << Q_FUNC_INFO << "FS changed";
       }
     }
     else
     {
-      // qDebug() << "currentWeatherContext->fsMetar.isEmpty()" << currentWeatherContext->fsMetar.isEmpty();
-
       if(!currentWeatherContext->fsMetar.isEmpty())
       {
         // If there was a previous metar and the new one is empty we were being disconnected
-        currentWeatherContext->fsMetar = atools::fs::sc::MetarResult();
+        currentWeatherContext->fsMetar = atools::fs::weather::MetarResult();
         changed = true;
-        // qDebug() << "FS changed to null";
       }
     }
   }
@@ -2769,24 +3018,20 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->asMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext->asMetar;
-      // qDebug() << "new Metar" << metarStr;
+      // Airport has changed or METAR has changed
       currentWeatherContext->asMetar = metarStr;
       changed = true;
-      // qDebug() << "AS changed";
     }
   }
 
   if(flags & opts::WEATHER_INFO_NOAA)
   {
-    QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->noaaMetar))
+    atools::fs::weather::MetarResult noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
+    if(newAirport || (!noaaMetar.isEmpty() && noaaMetar != currentWeatherContext->noaaMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext->noaaMetar;
-      // qDebug() << "new Metar" << metarStr;
-      currentWeatherContext->noaaMetar = metarStr;
+      // Airport has changed or METAR has changed
+      currentWeatherContext->noaaMetar = noaaMetar;
       changed = true;
-      // qDebug() << "NOAA changed";
     }
   }
 
@@ -2795,17 +3040,29 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->vatsimMetar))
     {
-      // qDebug() << "old Metar" << currentWeatherContext->vatsimMetar;
-      // qDebug() << "new Metar" << metarStr;
+      // Airport has changed or METAR has changed
       currentWeatherContext->vatsimMetar = metarStr;
       changed = true;
-      // qDebug() << "VATSIM changed";
+    }
+  }
+
+  if(flags2 & opts::WEATHER_INFO_IVAO)
+  {
+    atools::fs::weather::MetarResult ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
+    if(newAirport || (!ivaoMetar.isEmpty() && ivaoMetar != currentWeatherContext->ivaoMetar))
+    {
+      // Airport has changed or METAR has changed
+      currentWeatherContext->ivaoMetar = ivaoMetar;
+      changed = true;
     }
   }
 
   weatherContext = *currentWeatherContext;
 
-  // qDebug() << Q_FUNC_INFO << "changed" << changed;
+#ifdef DEBUG_INFORMATION
+  if(changed)
+    qDebug() << Q_FUNC_INFO << "changed" << changed << weatherContext;
+#endif
 
   return changed;
 }
@@ -2814,6 +3071,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
 {
   opts::Flags flags = OptionData::instance().getFlags();
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
 
   weatherContext.ident = airport.ident;
 
@@ -2832,10 +3090,13 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
   }
 
   if(flags & opts::WEATHER_INFO_NOAA)
-    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident);
+    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & opts::WEATHER_INFO_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+
+  if(flags2 & opts::WEATHER_INFO_IVAO)
+    weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 
 /* Build a temporary weather context for the map tooltip */
@@ -2861,10 +3122,14 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
   }
 
   if(flags & opts::WEATHER_TOOLTIP_NOAA)
-    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident);
+    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
   if(flags & opts::WEATHER_TOOLTIP_VATSIM)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
+  if(flags2 & opts::WEATHER_TOOLTIP_IVAO)
+    weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 
 /* Fill active sky information into the weather context */

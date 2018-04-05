@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "route/route.h"
+#include "query/airspacequery.h"
 #include "options/optiondata.h"
+#include "sql/sqlrecord.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -126,7 +128,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
       html.p();
       mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
-      info.airportText(airport, currentWeatherContext, html, &route, iconBackColor);
+      info.airportText(airport, currentWeatherContext, html, &route);
       html.pEnd();
       numEntries++;
     }
@@ -134,6 +136,20 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
   if(opts & opts::TOOLTIP_NAVAID)
   {
+    for(const MapUserpoint& up : mapSearchResult.userpoints)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.userpointText(up, html);
+      html.pEnd();
+      numEntries++;
+    }
+
     for(const MapVor& vor : mapSearchResult.vors)
     {
       if(checkText(html, numEntries))
@@ -143,7 +159,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.vorText(vor, html, iconBackColor);
+      info.vorText(vor, html);
       html.pEnd();
       numEntries++;
     }
@@ -157,7 +173,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.ndbText(ndb, html, iconBackColor);
+      info.ndbText(ndb, html);
       html.pEnd();
       numEntries++;
     }
@@ -171,7 +187,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.waypointText(wp, html, iconBackColor);
+      info.waypointText(wp, html);
       html.pEnd();
       numEntries++;
     }
@@ -236,7 +252,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
   if(opts & opts::TOOLTIP_NAVAID)
   {
-    for(const MapUserpoint& up : mapSearchResult.userPoints)
+    for(const MapUserpointRoute& up : mapSearchResult.userPointsRoute)
     {
       if(checkText(html, numEntries))
         return html.getHtml();
@@ -245,7 +261,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.userpointText(up, html);
+      info.userpointTextRoute(up, html);
       html.pEnd();
       numEntries++;
     }
@@ -267,7 +283,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
   if(opts & opts::TOOLTIP_AIRSPACE)
   {
-    for(const MapAirspace& up : mapSearchResult.airspaces)
+    for(const MapAirspace& airspace : mapSearchResult.airspaces)
     {
       if(checkText(html, numEntries))
         return html.getHtml();
@@ -275,8 +291,12 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       if(!html.isEmpty())
         html.hr();
 
+      atools::sql::SqlRecord onlineRec;
+      if(airspace.online)
+        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+
       html.p();
-      info.airspaceText(up, html, iconBackColor);
+      info.airspaceText(airspace, onlineRec, html);
       html.pEnd();
       numEntries++;
     }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public:
   virtual ~ElevationProvider();
 
   /* Elevation in meter. Only for offline data. */
-  float getElevation(const atools::geo::Pos& pos);
+  float getElevationMeter(const atools::geo::Pos& pos);
 
   /* Get elevations along a great circle line. Will create a point every 500 meters and delete
    * consecutive ones with same elevation. Elevation given in meter */

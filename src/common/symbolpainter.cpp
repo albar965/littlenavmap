@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,20 +38,19 @@ const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
                                     QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
                                    });
 
-SymbolPainter::SymbolPainter(QColor backgroundColor)
-{
-  iconBackground = backgroundColor;
-}
-
 SymbolPainter::SymbolPainter()
 {
-  iconBackground = QApplication::palette().color(QPalette::Active, QPalette::Window);
+}
+
+SymbolPainter::~SymbolPainter()
+{
+
 }
 
 QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -62,7 +61,7 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
 QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -73,7 +72,7 @@ QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size)
 QIcon SymbolPainter::createNdbIcon(int size)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -84,7 +83,7 @@ QIcon SymbolPainter::createNdbIcon(int size)
 QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -95,7 +94,7 @@ QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
 QIcon SymbolPainter::createUserpointIcon(int size)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -106,7 +105,7 @@ QIcon SymbolPainter::createUserpointIcon(int size)
 QIcon SymbolPainter::createProcedurePointIcon(int size)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -117,7 +116,7 @@ QIcon SymbolPainter::createProcedurePointIcon(int size)
 QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int size)
 {
   QPixmap pixmap(size, size);
-  pixmap.fill(iconBackground);
+  pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
@@ -669,11 +668,14 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
       atts |= textatt::ROUTE_BG_COLOR;
 
     int transparency = diagram ? 130 : 255;
-    if(airport.empty() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
+    if(airport.emptyDraw() && !(flags & textflags::ROUTE_TEXT))
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
       x += size + 2.f;
+
+    if(flags & textflags::NO_BACKGROUND)
+      transparency = 0;
 
     textBoxF(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
   }

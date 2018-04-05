@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
 #include "common/mapcolors.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
+#include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -46,14 +48,43 @@ MapPainterAirspace::~MapPainterAirspace()
 
 void MapPainterAirspace::render(PaintContext *context)
 {
-  if(!context->mapLayer->isAirspace() || !context->objectTypes.testFlag(map::AIRSPACE))
+  if(!context->mapLayer->isAirspace() ||
+     !(context->objectTypes.testFlag(map::AIRSPACE) || context->objectTypes.testFlag(map::AIRSPACE_ONLINE)))
     return;
 
+  // Get online and offline airspace and merge then into one list =============
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  const QList<MapAirspace> *airspaces =
-    mapQuery->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer, route->getCruisingAltitudeFeet(),
-                        context->viewContext == Marble::Animation);
-  if(airspaces != nullptr)
+  QList<const MapAirspace *> airspaces;
+
+  if(context->objectTypes.testFlag(map::AIRSPACE))
+  {
+    // qDebug() << Q_FUNC_INFO << "NON ONLINE";
+    const QList<MapAirspace> *airspacesNav =
+      airspaceQuery->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer,
+                                  route->getCruisingAltitudeFeet(),
+                                  context->viewContext == Marble::Animation);
+    if(airspacesNav != nullptr)
+    {
+      for(const MapAirspace& airspace : *airspacesNav)
+        airspaces.append(&airspace);
+    }
+  }
+
+  if(context->objectTypes.testFlag(map::AIRSPACE_ONLINE))
+  {
+    // qDebug() << Q_FUNC_INFO << "ONLINE";
+    const QList<MapAirspace> *airspacesOnline =
+      airspaceQueryOnline->getAirspaces(curBox, context->mapLayer, context->airspaceFilterByLayer,
+                                        route->getCruisingAltitudeFeet(),
+                                        context->viewContext == Marble::Animation);
+    if(airspacesOnline != nullptr)
+    {
+      for(const MapAirspace& airspace : *airspacesOnline)
+        airspaces.append(&airspace);
+    }
+  }
+
+  if(!airspaces.isEmpty())
   {
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
@@ -61,12 +92,12 @@ void MapPainterAirspace::render(PaintContext *context)
 
     painter->setBackgroundMode(Qt::TransparentMode);
 
-    for(const MapAirspace& airspace : *airspaces)
+    for(const MapAirspace *airspace : airspaces)
     {
-      if(!(airspace.type & context->airspaceFilterByLayer.types))
+      if(!(airspace->type & context->airspaceFilterByLayer.types))
         continue;
 
-      if(context->viewportRect.overlaps(airspace.bounding))
+      if(context->viewportRect.overlaps(airspace->bounding))
       {
         if(context->objCount())
           return;
@@ -76,12 +107,13 @@ void MapPainterAirspace::render(PaintContext *context)
         Marble::GeoDataLinearRing linearRing;
         linearRing.setTessellate(true);
 
-        painter->setPen(mapcolors::penForAirspace(airspace));
+        painter->setPen(mapcolors::penForAirspace(*airspace));
 
         if(!context->drawFast)
-          painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
+          painter->setBrush(mapcolors::colorForAirspaceFill(*airspace));
 
-        const LineString *lines = mapQuery->getAirspaceGeometry(airspace.id);
+        const LineString *lines =
+          (airspace->online ? airspaceQueryOnline : airspaceQuery)->getAirspaceGeometry(airspace->id);
 
         for(const Pos& pos : *lines)
           linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));

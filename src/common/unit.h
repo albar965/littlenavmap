@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -102,6 +102,8 @@ public:
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);
+  static QString coordsLatY(const atools::geo::Pos& pos);
+  static QString coordsLonX(const atools::geo::Pos& pos);
 
   static void optionsChanged();
 

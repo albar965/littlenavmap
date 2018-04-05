@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -280,6 +280,8 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
 
+  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+
   for(const MapWaypoint& waypoint : *waypoints)
   {
     // If waypoints are off, airways are on and waypoint has no airways skip it
@@ -300,13 +302,15 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
       // If airways are drawn force display of the respecive waypoints
       if(context->mapLayer->isWaypointName() ||
          (context->mapLayer->isAirwayIdent() && (drawAirwayV || drawAirwayJ)))
-        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, false);
+        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, fill);
     }
   }
 }
 
 void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, bool drawFast)
 {
+  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+
   for(const MapVor& vor : *vors)
   {
     int x, y;
@@ -329,13 +333,15 @@ void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, 
       else if(context->mapLayer->isVorIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, false);
+      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, fill);
     }
   }
 }
 
 void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
 {
+  bool fill = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND;
+
   for(const MapNdb& ndb : *ndbs)
   {
     int x, y;
@@ -356,13 +362,15 @@ void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, 
       else if(context->mapLayer->isNdbIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, false);
+      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, fill);
     }
   }
 }
 
 void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
 {
+  int transparency = context->flags2 & opts::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
+
   for(const MapMarker& marker : *markers)
   {
     int x, y;
@@ -382,7 +390,7 @@ void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *
         type[0] = type.at(0).toUpper();
         x -= size / 2 + 2;
         symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                               textatt::BOLD | textatt::RIGHT, 0);
+                               textatt::BOLD | textatt::RIGHT, transparency);
       }
     }
   }

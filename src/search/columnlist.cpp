@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@ void ColumnList::clear()
   maxDistanceWidget = nullptr;
   distanceDirectionWidget = nullptr;
   distanceCheckBox = nullptr;
+}
+
+bool ColumnList::isDistanceCheckBoxChecked() const
+{
+  return distanceCheckBox != nullptr ? distanceCheckBox->isChecked() : false;
 }
 
 void ColumnList::updateUnits()
@@ -157,23 +162,31 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     // Reset widgets assigned to columns
     if(!exceptColNames.contains(cd->getColumnName()))
     {
-      if(QLineEdit * le = cd->getLineEditWidget())
+      if(QLineEdit *le = cd->getLineEditWidget())
         le->setText(QString());
-      if(QComboBox * cb = cd->getComboBoxWidget())
-        cb->setCurrentIndex(0);
-      if(QCheckBox * check = cd->getCheckBoxWidget())
+      if(QComboBox *cb = cd->getComboBoxWidget())
+      {
+        if(cb->isEditable())
+        {
+          cb->setCurrentText(QString());
+          cb->setCurrentIndex(-1);
+        }
+        else
+          cb->setCurrentIndex(0);
+      }
+      if(QCheckBox *check = cd->getCheckBoxWidget())
       {
         if(check->isTristate())
           check->setCheckState(Qt::PartiallyChecked);
         else
           check->setCheckState(Qt::Unchecked);
       }
-      if(QSpinBox * spin = cd->getSpinBoxWidget())
+      if(QSpinBox *spin = cd->getSpinBoxWidget())
         spin->setValue(0);
 
-      if(QSpinBox * maxspin = cd->getMaxSpinBoxWidget())
+      if(QSpinBox *maxspin = cd->getMaxSpinBoxWidget())
         maxspin->setValue(maxspin->maximum());
-      if(QSpinBox * minspin = cd->getMinSpinBoxWidget())
+      if(QSpinBox *minspin = cd->getMinSpinBoxWidget())
         minspin->setValue(minspin->minimum());
     }
   }
@@ -184,7 +197,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     // Values should match the GUI values
     minDistanceWidget->setValue(0);
     minDistanceWidget->setMinimum(0);
-    minDistanceWidget->setMaximum(3000);
+    minDistanceWidget->setMaximum(8000);
   }
 
   if(maxDistanceWidget != nullptr)
@@ -192,7 +205,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     // Values should match the GUI values
     maxDistanceWidget->setValue(100);
     maxDistanceWidget->setMinimum(100);
-    maxDistanceWidget->setMaximum(3000);
+    maxDistanceWidget->setMaximum(8000);
   }
   if(distanceDirectionWidget != nullptr)
     distanceDirectionWidget->setCurrentIndex(0);

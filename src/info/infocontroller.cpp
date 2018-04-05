@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,14 @@
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 #include "options/optiondata.h"
+#include "sql/sqlrecord.h"
 
 #include <QDebug>
 #include <QScrollBar>
@@ -53,6 +55,8 @@ InfoController::InfoController(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
+  airspaceQuery = NavApp::getAirspaceQuery();
+  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
@@ -70,6 +74,9 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
   ui->textBrowserAirspaceInfo->setSearchPaths(paths);
+  ui->textBrowserCenterInfo->setSearchPaths(paths);
+  ui->textBrowserClientInfo->setSearchPaths(paths);
+
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
@@ -83,9 +90,11 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAirspaceInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
+  connect(ui->textBrowserCenterInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserClientInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+
   connect(ui->textBrowserAircraftInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
-
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(ui->tabWidgetAircraft, &QTabWidget::currentChanged, this, &InfoController::currentTabChanged);
@@ -141,7 +150,9 @@ void InfoController::anchorClicked(const QUrl& url)
         if(type & map::AIRPORT)
           emit showRect(airportQuery->getAirportById(id).bounding, false);
         if(type & map::AIRSPACE)
-          emit showRect(mapQuery->getAirspaceById(id).bounding, false);
+          emit showRect(airspaceQuery->getAirspaceById(id).bounding, false);
+        if(type & map::AIRSPACE_ONLINE)
+          emit showRect(airspaceQueryOnline->getAirspaceById(id).bounding, false);
       }
       else if(query.hasQueryItem("airport"))
       {
@@ -229,16 +240,28 @@ void InfoController::saveState()
   map::MapObjectRefList refs;
   for(const map::MapAirport& airport  : currentSearchResult.airports)
     refs.append({airport.id, map::AIRPORT});
+
   for(const map::MapVor& vor : currentSearchResult.vors)
     refs.append({vor.id, map::VOR});
+
   for(const map::MapNdb& ndb : currentSearchResult.ndbs)
     refs.append({ndb.id, map::NDB});
+
   for(const map::MapWaypoint& waypoint : currentSearchResult.waypoints)
     refs.append({waypoint.id, map::WAYPOINT});
+
+  for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
+    refs.append({userpoint.id, map::USERPOINT});
+
   for(const map::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, map::AIRWAY});
+
   for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
-    refs.append({airspace.id, map::AIRSPACE});
+  {
+    // Do not save online airspace ids since they will change on next startup
+    if(!airspace.online)
+      refs.append({airspace.id, map::AIRSPACE});
+  }
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
@@ -313,7 +336,7 @@ void InfoController::updateAirportInternal(bool newAirport)
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
-      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRoute(), iconBackColor);
+      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRoute());
 
       Ui::MainWindow *ui = NavApp::getMainUi();
       if(newAirport)
@@ -324,7 +347,7 @@ void InfoController::updateAirportInternal(bool newAirport)
         atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
 
       html.clear();
-      infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
+      infoBuilder->weatherText(currentWeatherContext, airport, html);
 
       if(newAirport)
         // scroll up for new airports
@@ -347,6 +370,9 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
   ui->textBrowserAirspaceInfo->clear();
+
+  ui->textBrowserClientInfo->clear();
+  ui->textBrowserCenterInfo->clear();
 }
 
 void InfoController::showInformation(map::MapSearchResult result)
@@ -359,14 +385,34 @@ void InfoController::updateAllInformation()
   showInformationInternal(currentSearchResult, false);
 }
 
+void InfoController::onlineNetworkChanged()
+{
+  // Clear display
+  NavApp::getMainUi()->textBrowserCenterInfo->clear();
+
+  // Remove all online network airspaces from current result
+  QList<map::MapAirspace> airspaces;
+  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
+    if(!airspace.online)
+      airspaces.append(airspace);
+  currentSearchResult.airspaces = airspaces;
+
+  showInformationInternal(currentSearchResult, false);
+}
+
+void InfoController::onlineClientAndAtcUpdated()
+{
+  showInformationInternal(currentSearchResult, false);
+}
+
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(const map::MapSearchResult& result, bool showWindows)
+void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
 {
   qDebug() << Q_FUNC_INFO;
 
   bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundAiAircraft = false,
-       foundAirspace = false;
+       foundAirspace = false, foundOnlineCenter = false;
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -403,21 +449,21 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
     updateAirportInternal(true);
 
     html.clear();
-    infoBuilder->runwayText(airport, html, iconBackColor);
+    infoBuilder->runwayText(airport, html);
     ui->textBrowserRunwayInfo->setText(html.getHtml());
 
     html.clear();
-    infoBuilder->comText(airport, html, iconBackColor);
+    infoBuilder->comText(airport, html);
     ui->textBrowserComInfo->setText(html.getHtml());
 
     html.clear();
-    infoBuilder->procedureText(airport, html, iconBackColor);
+    infoBuilder->procedureText(airport, html);
     ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
     map::WeatherContext currentWeatherContext;
     mainWindow->buildWeatherContextForInfo(currentWeatherContext, airport);
-    infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
+    infoBuilder->weatherText(currentWeatherContext, airport, html);
     ui->textBrowserWeatherInfo->setText(html.getHtml());
 
     foundAirport = true;
@@ -426,22 +472,51 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
   // Airspaces ================================================================
   if(!result.airspaces.isEmpty())
   {
+    atools::sql::SqlRecord onlineRec;
     currentSearchResult.airspaces.clear();
+
     html.clear();
     for(const map::MapAirspace& airspace : result.airspaces)
     {
+      if(airspace.online)
+        continue;
       qDebug() << "Found airspace" << airspace.id;
 
       currentSearchResult.airspaces.append(airspace);
-      infoBuilder->airspaceText(airspace, html, iconBackColor);
+      infoBuilder->airspaceText(airspace, onlineRec, html);
       html.br();
+      foundAirspace = true;
     }
-    foundAirspace = true;
-    ui->textBrowserAirspaceInfo->setText(html.getHtml());
+
+    // Update and keep scroll position
+    atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml());
+
+    // Online Center ==================================
+    html.clear();
+    for(const map::MapAirspace& airspace : result.airspaces)
+    {
+      if(!airspace.online)
+        continue;
+      qDebug() << "Found airspace" << airspace.id;
+
+      currentSearchResult.airspaces.append(airspace);
+
+      // Get extra information for online network ATC
+      if(airspace.online)
+        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+
+      infoBuilder->airspaceText(airspace, onlineRec, html);
+      html.br();
+      foundOnlineCenter = true;
+    }
+
+    // Update and keep scroll position
+    atools::gui::util::updateTextEdit(ui->textBrowserCenterInfo, html.getHtml());
   }
 
   // Navaids ================================================================
-  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty())
+  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty() ||
+     !result.userpoints.isEmpty())
   {
     // if any navaids are to be shown clear search result before
     currentSearchResult.vors.clear();
@@ -452,16 +527,32 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
     currentSearchResult.runwayEnds.clear();
     currentSearchResult.waypoints.clear();
     currentSearchResult.waypointIds.clear();
+    currentSearchResult.userpoints.clear();
+    currentSearchResult.userpointIds.clear();
     currentSearchResult.airways.clear();
   }
 
   html.clear();
+  // Userpoints on top of the list
+  for(map::MapUserpoint userpoint: result.userpoints)
+  {
+    qDebug() << "Found waypoint" << userpoint.ident;
+
+    // Get updated object in case of changes in the database
+    mapQuery->updateUserdataPoint(userpoint);
+
+    currentSearchResult.userpoints.append(userpoint);
+    infoBuilder->userpointText(userpoint, html);
+    html.br();
+    foundNavaid = true;
+  }
+
   for(const map::MapVor& vor : result.vors)
   {
     qDebug() << "Found vor" << vor.ident;
 
     currentSearchResult.vors.append(vor);
-    infoBuilder->vorText(vor, html, iconBackColor);
+    infoBuilder->vorText(vor, html);
     html.br();
     foundNavaid = true;
   }
@@ -471,7 +562,7 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
     qDebug() << "Found ndb" << ndb.ident;
 
     currentSearchResult.ndbs.append(ndb);
-    infoBuilder->ndbText(ndb, html, iconBackColor);
+    infoBuilder->ndbText(ndb, html);
     html.br();
     foundNavaid = true;
   }
@@ -481,7 +572,7 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
     qDebug() << "Found waypoint" << waypoint.ident;
 
     currentSearchResult.waypoints.append(waypoint);
-    infoBuilder->waypointText(waypoint, html, iconBackColor);
+    infoBuilder->waypointText(waypoint, html);
     html.br();
     foundNavaid = true;
   }
@@ -503,7 +594,7 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
   // Show dock windows if needed
   if(showWindows)
   {
-    if(foundNavaid || foundAirport || foundAirspace)
+    if(foundNavaid || foundAirport || foundAirspace || foundOnlineCenter)
     {
       NavApp::getMainUi()->dockWidgetInformation->show();
       NavApp::getMainUi()->dockWidgetInformation->raise();
@@ -518,23 +609,31 @@ void InfoController::showInformationInternal(const map::MapSearchResult& result,
 
   if(showWindows)
   {
+    // Select message ==========================================================
     if(foundNavaid)
       mainWindow->setStatusMessage(tr("Showing information for navaid."));
     else if(foundAirport)
       mainWindow->setStatusMessage(tr("Showing information for airport."));
     else if(foundAirspace)
       mainWindow->setStatusMessage(tr("Showing information for airspace."));
+    else if(foundOnlineCenter)
+      mainWindow->setStatusMessage(tr("Showing information for online center."));
 
+    // Select tab to activate ==========================================================
     ic::TabIndex idx = static_cast<ic::TabIndex>(ui->tabWidgetInformation->currentIndex());
+    // Is any airport related tab active?
     bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
                          idx == ic::INFO_APPROACHES || idx == ic::INFO_WEATHER;
 
+    // Is the navaid tab active
     bool navaidActive = idx == ic::INFO_NAVAID;
 
     ic::TabIndex newIdx = idx;
 
-    if(foundAirspace && !foundNavaid && !foundAirport)
+    if(foundAirspace && !foundOnlineCenter && !foundNavaid && !foundAirport)
       newIdx = ic::INFO_AIRSPACE;
+    else if(foundOnlineCenter && !foundNavaid && !foundAirport)
+      newIdx = ic::INFO_ONLINE_CENTER;
     else if(foundAirport && !foundNavaid)
     {
       if(!airportActive)
@@ -777,6 +876,9 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAirspaceInfo, infoFontPtSize, sizePercent);
+
+  setTextEditFontSize(ui->textBrowserCenterInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserClientInfo, infoFontPtSize, sizePercent);
 
   sizePercent = OptionData::instance().getGuiInfoSimSize();
   setTextEditFontSize(ui->textBrowserAircraftInfo, simInfoFontPtSize, sizePercent);

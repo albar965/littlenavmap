@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <QCheckBox>
 #include <QSqlError>
 #include <QRegularExpression>
+#include <QComboBox>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -67,19 +68,10 @@ void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
   buildQuery();
 }
 
-void SqlModel::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SqlModel::filterByRecord(const atools::sql::SqlRecord& record)
 {
-  // Build filter conditions
-  filterBy(false, "ident", ident);
-
-  if(!region.isEmpty() && columns->getColumn("region") != nullptr)
-    filterBy(false, "region", region);
-
-  if(!airportIdent.isEmpty() && columns->getColumn("airport_ident") != nullptr)
-    filterBy(false, "airport_ident", airportIdent);
-
-  // Build and run query
-  buildQuery();
+  for(int i = 0; i < record.count(); i++)
+    filterBy(false /* exclude */, record.fieldName(i), record.value(i));
 }
 
 /* Filter by value at index (context menu in table view) */
@@ -107,19 +99,25 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
   if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
     // Set the search text into the corresponding line edit
     edit->setText((exclude ? "-" : "") + whereValue.toString());
-  else if(QCheckBox *check = columns->getColumn(whereCol)->getCheckBoxWidget())
+  else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
-    if(check->isTristate())
+    if(combo->isEditable())
+      // Set the search text into the corresponding line edit
+      combo->setCurrentText((exclude ? "-" : "") + whereValue.toString());
+  }
+  else if(QCheckBox *checkBox = columns->getColumn(whereCol)->getCheckBoxWidget())
+  {
+    if(checkBox->isTristate())
     {
       // Update check box state for tri state boxes
       if(whereValue.isNull())
-        check->setCheckState(Qt::PartiallyChecked);
+        checkBox->setCheckState(Qt::PartiallyChecked);
       else
       {
         bool val = whereValue.toInt() > 0;
         if(exclude)
           val = !val;
-        check->setCheckState(val ? Qt::Checked : Qt::Unchecked);
+        checkBox->setCheckState(val ? Qt::Checked : Qt::Unchecked);
       }
     }
     else
@@ -128,10 +126,10 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
       bool val = whereValue.isNull() || whereValue.toInt() == 0;
       if(exclude)
         val = !val;
-      check->setCheckState(val ? Qt::Unchecked : Qt::Checked);
+      checkBox->setCheckState(val ? Qt::Unchecked : Qt::Checked);
     }
   }
-  whereConditionMap.insert(whereCol, {whereOp, whereValue, colDescr});
+  whereConditionMap.insert(whereCol, {whereOp, whereValue, whereValue, colDescr});
 }
 
 /* Changes the whereConditionMap. Removes, replaces or adds where conditions based on input */
@@ -238,11 +236,12 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
       // Replace values in existing condition
       whereConditionMap[colName].oper = oper;
       whereConditionMap[colName].value = newVariant;
+      whereConditionMap[colName].valueRaw = value;
       whereConditionMap[colName].col = col;
     }
     else
       // Insert new condition
-      whereConditionMap.insert(colName, {oper, newVariant, col});
+      whereConditionMap.insert(colName, {oper, newVariant, value, col});
   }
   buildQuery();
 }
@@ -393,7 +392,8 @@ void SqlModel::buildQuery()
   atools::sql::SqlRecord tableCols = db->record(columns->getTablename());
   QString queryCols = buildColumnList(tableCols);
 
-  QString queryWhere = buildWhere(tableCols);
+  QVector<const Column *> overrideColumns;
+  QString queryWhere = buildWhere(tableCols, overrideColumns);
 
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
@@ -426,19 +426,24 @@ void SqlModel::buildQuery()
 
   // Build a query to find the total row count of the result
   totalRowCount = 0;
-  QString queryCount = "select count(1) from " + columns->getTablename() + " " + queryWhere;
+  currentSqlCountQuery = "select count(1) from " + columns->getTablename() + " " + queryWhere;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << currentSqlQuery;
 #endif
 
+  QStringList overrideColumnTitles;
+  if(!overrideColumns.isEmpty())
+  {
+    for(const Column *ocol : overrideColumns)
+      overrideColumnTitles.append(ocol->getDisplayName());
+  }
+  emit overrideMode(overrideColumnTitles);
+
   try
   {
     // Count total rows
-    SqlQuery countStmt(db);
-    countStmt.exec(queryCount);
-    if(countStmt.next())
-      totalRowCount = countStmt.value(0).toInt();
+    updateTotalCount();
 
     if(!boundingRect.isValid())
       // Delay query for bounding rectangle query with proxy model
@@ -454,14 +459,75 @@ void SqlModel::buildQuery()
   }
 }
 
+void SqlModel::updateTotalCount()
+{
+  if(!currentSqlCountQuery.isEmpty())
+  {
+    SqlQuery countStmt(db);
+    countStmt.exec(currentSqlCountQuery);
+    if(countStmt.next())
+      totalRowCount = countStmt.value(0).toInt();
+    else
+      totalRowCount = 0;
+  }
+  else
+    totalRowCount = 0;
+}
+
 /* Build where statement */
-QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols)
+QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns)
 {
   const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
   QString queryWhere;
 
+  QHash<QString, WhereCondition> whereConditions;
+  bool hasNonOverride = false;
+
+  // Check for columns that override all other search options
+  for(const QString& key : whereConditionMap.keys())
+  {
+    const WhereCondition& cond = whereConditionMap.value(key);
+
+    if(cond.col->isOverride())
+    {
+      if(cond.col->getMinOverrideLength() == -1)
+      {
+        // Length not given - simply check if valid
+        if(cond.value.isValid())
+        {
+          whereConditions.insert(key, cond);
+          overrideColumns.append(cond.col);
+        }
+        else
+          hasNonOverride = true;
+      }
+      else
+      {
+        // Check if minimum length for overriding is satisfied
+        if(cond.valueRaw.toString().size() >= cond.col->getMinOverrideLength())
+        {
+          whereConditions.insert(key, cond);
+          overrideColumns.append(cond.col);
+        }
+        else
+          hasNonOverride = true;
+      }
+    }
+    else
+      hasNonOverride = true;
+  }
+
+  if(!hasNonOverride && !boundingRect.isValid())
+    overrideColumns.clear();
+
+  overrideModeActive = !overrideColumns.isEmpty();
+
+  if(whereConditions.isEmpty())
+    // No overrides found use all columns
+    whereConditions = whereConditionMap;
+
   int numCond = 0;
-  for(const WhereCondition& cond : whereConditionMap)
+  for(const WhereCondition& cond : whereConditions)
   {
     // Extract the required column from the comment in the operator and  check if it exists in the table
     QString checkCol = cond.col->getColumnName();
@@ -489,7 +555,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols)
       queryWhere += buildWhereValue(cond);
   }
 
-  if(boundingRect.isValid())
+  if(boundingRect.isValid() && !overrideModeActive)
   {
     QString rectCond;
     if(boundingRect.crossesAntiMeridian())
@@ -538,6 +604,12 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
           cond.value.type() == QVariant::Double)
     val = " " + cond.value.toString();
   return val;
+}
+
+void SqlModel::refreshData()
+{
+  resetSqlQuery();
+  updateTotalCount();
 }
 
 void SqlModel::resetSqlQuery()

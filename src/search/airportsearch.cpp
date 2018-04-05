@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
 
-AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex)
+AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -149,7 +149,8 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
   append(Column("airport_id").hidden()).
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
-  append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort()).
+  append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort().
+         override().minOverrideLength(3)).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
@@ -175,6 +176,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed")).hidden()).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military")).hidden()).
   append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Addon")).hidden()).
+  append(Column("is_3d", tr("3D")).hidden()).
 
   append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
          includesName().indexCondMap(rwSurface).hidden()).
@@ -231,6 +233,8 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, int tab
   append(Column("laty", tr("Latitude")).hidden())
   ;
 
+  ui->labelAirportSearchOverride->hide();
+
   // Add icon delegate for the ident column
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
@@ -246,6 +250,23 @@ AirportSearch::~AirportSearch()
   delete iconDelegate;
 }
 
+void AirportSearch::overrideMode(const QStringList& overrideColumnTitles)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(overrideColumnTitles.isEmpty())
+  {
+    ui->labelAirportSearchOverride->hide();
+    ui->labelAirportSearchOverride->clear();
+  }
+  else
+  {
+    ui->labelAirportSearchOverride->show();
+    ui->labelAirportSearchOverride->setText(tr("%1 overriding all other search options.").
+                                            arg(overrideColumnTitles.join(" and ")));
+  }
+}
+
 void AirportSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
@@ -256,11 +277,11 @@ void AirportSearch::connectSearchSlots()
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonAirportSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
-  connectLineEdit(ui->lineEditAirportIcaoSearch);
-  connectLineEdit(ui->lineEditAirportCitySearch);
-  connectLineEdit(ui->lineEditAirportCountrySearch);
-  connectLineEdit(ui->lineEditAirportNameSearch);
-  connectLineEdit(ui->lineEditAirportStateSearch);
+  installEventFilterForWidget(ui->lineEditAirportIcaoSearch);
+  installEventFilterForWidget(ui->lineEditAirportCitySearch);
+  installEventFilterForWidget(ui->lineEditAirportCountrySearch);
+  installEventFilterForWidget(ui->lineEditAirportNameSearch);
+  installEventFilterForWidget(ui->lineEditAirportStateSearch);
 
   // Runways
   columns->assignMinMaxWidget("longest_runway_length",
@@ -329,6 +350,8 @@ void AirportSearch::connectSearchSlots()
                                               {ui->lineAirportScenerySearch});
     updateButtonMenu();
   });
+
+  connect(controller->getSqlModel(), &SqlModel::overrideMode, this, &AirportSearch::overrideMode);
 }
 
 void AirportSearch::saveState()
@@ -337,7 +360,7 @@ void AirportSearch::saveState()
   widgetState.save(airportSearchWidgets);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save(ui->horizontalLayoutAirportDistanceSearch);
+  widgetState.save({ui->horizontalLayoutAirportDistanceSearch, ui->actionSearchAirportFollowSelection});
   saveViewState(ui->checkBoxAirportDistSearch->isChecked());
 }
 
@@ -352,7 +375,7 @@ void AirportSearch::restoreState()
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
     Ui::MainWindow *ui = NavApp::getMainUi();
-    widgetState.restore(ui->horizontalLayoutAirportDistanceSearch);
+    widgetState.restore({ui->horizontalLayoutAirportDistanceSearch, ui->actionSearchAirportFollowSelection});
     restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
 
     if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
@@ -480,18 +503,19 @@ void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
-  for(const QItemSelectionRange& rng :  selection)
-  {
-    for(int row = rng.top(); row <= rng.bottom(); ++row)
+    for(const QItemSelectionRange& rng :  selection)
     {
-      map::MapAirport ap;
-      rec.setValue(0, controller->getRawData(row, idColumnName));
-      rec.setValue(1, controller->getRawData(row, "lonx"));
-      rec.setValue(2, controller->getRawData(row, "laty"));
+      for(int row = rng.top(); row <= rng.bottom(); ++row)
+      {
+        map::MapAirport ap;
+        rec.setValue(0, controller->getRawData(row, idColumnName));
+        rec.setValue(1, controller->getRawData(row, "lonx"));
+        rec.setValue(2, controller->getRawData(row, "laty"));
 
-      // Not fully populated
-      factory.fillAirport(rec, ap, false /* complete */, false /* nav */);
-      result.airports.append(ap);
+        // Not fully populated
+        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
+                            NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+        result.airports.append(ap);
     }
   }
 }
@@ -566,4 +590,9 @@ void AirportSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
   NavApp::getMainUi()->pushButtonAirportSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
+}
+
+QAction *AirportSearch::followModeAction()
+{
+  return NavApp::getMainUi()->actionSearchAirportFollowSelection;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
 #include "fs/util/fsutil.h"
 
 #include "atools.h"
+#include "fs/util/coordinates.h"
+#include "unit.h"
+#include "geo/pos.h"
 
 #include <QDateTime>
 #include <QElapsedTimer>
@@ -138,6 +141,29 @@ QString formatElapsed(const QElapsedTimer& timer)
 QString capNavString(const QString& str)
 {
   return atools::fs::util::capNavString(str);
+}
+
+bool checkCoordinates(QString& message, const QString& text)
+{
+  Q_UNUSED(text);
+
+  atools::geo::Pos pos = atools::fs::util::fromAnyFormat(text);
+
+  if(pos.isValid())
+  {
+    QString coords = Unit::coords(pos);
+    if(coords != text)
+      message = QObject::tr("Coordinates are valid: %1").arg(coords);
+    else
+      // Same as in line edit. No need to show again
+      message = QObject::tr("Coordinates are valid.");
+    return true;
+  }
+  else
+    // Show red warning
+    message = QObject::tr("<span style=\"font-weight: bold; color: red;\">"
+                            "Coordinates are not valid.</span>");
+  return false;
 }
 
 } // namespace formatter

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,9 @@ bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourcePar
 {
   Q_UNUSED(sourceParent);
 
+  if(sourceSqlModel->isOverrideModeActive())
+    return true;
+
   Pos pos = buildPos(sourceRow);
   float heading = normalizeCourse(centerPos.angleDegTo(pos));
 
@@ -93,6 +96,9 @@ bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourcePar
 
 bool SqlProxyModel::matchDistance(const Pos& pos) const
 {
+  if(sourceSqlModel->isOverrideModeActive())
+    return true;
+
   float distMeter = pos.distanceMeterTo(centerPos);
   return distMeter >= minDistMeter && distMeter <= maxDistMeter;
 }

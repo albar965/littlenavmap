@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -156,6 +156,11 @@ public:
     databasesErased = value;
   }
 
+  SearchController *getSearchController() const
+  {
+    return searchController;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -171,6 +176,8 @@ private:
 
   void restoreStateMain();
   void updateActionStates();
+  void updateOnlineActionStates();
+
   void setupUi();
 
   void options();
@@ -180,6 +187,8 @@ private:
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 
   void updateMapObjectsShown();
+
+  /* Reset drawing settings */
   void resetMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
@@ -258,6 +267,7 @@ private:
   bool routeSaveCheckFMS11Warnings();
 
   void checkForUpdates();
+  void updateClock() const;
 
   /* Original unchanged window title */
   QString mainWindowTitle;
@@ -277,8 +287,8 @@ private:
   PrintSupport *printSupport = nullptr;
 
   /* Status bar labels */
-  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel,
-         *connectStatusLabel;
+  QLabel *mapDistanceLabel = nullptr, *mapPosLabel = nullptr, *magvarLabel = nullptr, *renderStatusLabel = nullptr,
+         *detailLabel = nullptr, *messageLabel = nullptr, *connectStatusLabel = nullptr, *timeLabel = nullptr;
 
   /* List of status bar messages (currently only one) */
   QStringList statusMessages;
@@ -317,6 +327,7 @@ private:
   bool databasesErased = false;
 
   QString aboutMessage;
+  QTimer clockTimer;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

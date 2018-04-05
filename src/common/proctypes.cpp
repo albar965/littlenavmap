@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 #include <QObject>
 
 namespace proc  {
+
+static QRegularExpression PARALLEL_REGEXP("^RW[0-9]{2}B$");
 
 static QHash<QString, QString> approachFixTypeToStr;
 static QHash<QString, QString> approachTypeToStr;
@@ -467,9 +469,11 @@ MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg)
   displayText = leg.displayText;
   remarks = leg.remarks;
   altRestriction = leg.altRestriction;
+  speedRestriction = leg.speedRestriction;
   type = leg.type;
   missed = leg.missed;
   flyover = leg.flyover;
+  mapType = leg.mapType;
   position = leg.line.getPos1();
 }
 
@@ -600,6 +604,16 @@ void MapProcedureLegs::clearTransition()
   transitionFixIdent.clear();
 }
 
+bool hasSidStarParallelRunways(const QString& approachArincName)
+{
+  return approachArincName.contains(PARALLEL_REGEXP);
+}
+
+bool hasSidStarAllRunways(const QString& approachArincName)
+{
+  return approachArincName == "ALL";
+}
+
 const MapProcedureLeg *proc::MapProcedureLegs::approachLegById(int legId) const
 {
   for(const MapProcedureLeg& leg : approachLegs)
@@ -709,24 +723,29 @@ proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type,
   return proc::PROCEDURE_APPROACH;
 }
 
-QString procedureTypeText(const proc::MapProcedureLeg& leg)
+QString procedureTypeText(proc::MapProcedureTypes mapType)
 {
   QString suffix;
-  if(leg.isApproach())
+  if(mapType & proc::PROCEDURE_APPROACH)
     suffix = QObject::tr("Approach");
-  else if(leg.isMissed())
+  else if(mapType & proc::PROCEDURE_MISSED)
     suffix = QObject::tr("Missed");
-  else if(leg.isTransition())
+  else if(mapType & proc::PROCEDURE_TRANSITION)
     suffix = QObject::tr("Transition");
-  else if(leg.isStar())
+  else if(mapType & proc::PROCEDURE_STAR)
     suffix = QObject::tr("STAR");
-  else if(leg.isSid())
+  else if(mapType & proc::PROCEDURE_SID)
     suffix = QObject::tr("SID");
-  else if(leg.isSidTransition())
+  else if(mapType & proc::PROCEDURE_SID_TRANSITION)
     suffix = QObject::tr("SID Transition");
-  else if(leg.isStarTransition())
+  else if(mapType & proc::PROCEDURE_STAR_TRANSITION)
     suffix = QObject::tr("STAR Transition");
   return suffix;
+}
+
+QString procedureTypeText(const proc::MapProcedureLeg& leg)
+{
+  return procedureTypeText(leg.mapType);
 }
 
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)

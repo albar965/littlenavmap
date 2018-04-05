@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ namespace lnm {
 
 // ======== URLs ================================================================
 // "master" or "release/1.4"
-const QLatin1Literal HELP_BRANCH("release/1.8"); // VERSION_NUMBER
+const QLatin1Literal HELP_BRANCH("master"); // VERSION_NUMBER
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
 const QString HELP_ONLINE_URL(
@@ -114,6 +114,8 @@ const QLatin1Literal MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1Literal MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1Literal MAP_DISTANCEMARKERS("Map/DistanceMarkers");
 const QLatin1Literal MAP_AIRSPACES("Map/AirspaceFilter");
+const QLatin1Literal MAP_USERDATA("Map/Userdata");
+const QLatin1Literal MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");
 const QLatin1Literal MAP_HOMEDISTANCE("Map/HomeDistance");
 const QLatin1Literal MAP_HOMELATY("Map/HomeLatY");
 const QLatin1Literal MAP_HOMELONX("Map/HomeLonX");
@@ -138,6 +140,11 @@ const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView
 const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
+const QLatin1Literal SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
+
+const QLatin1Literal SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient/WidgetView");
+const QLatin1Literal SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET("SearchPaneOnlineCenter/WidgetView");
+const QLatin1Literal SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET("SearchPaneOnlineServer/WidgetView");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");
@@ -150,6 +157,11 @@ const QLatin1Literal APPROACHTREE_STATE("ApproachTree/TreeState");
 const QLatin1Literal APPROACHTREE_AIRPORT("ApproachTree/Airport");
 const QLatin1Literal APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
 
+/* Export settings dialog */
+const QLatin1Literal USERDATA_EXPORT_DIALOG("UserdataExport/Widget");
+/* Edit dialog */
+const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
+
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1Literal OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
@@ -160,6 +172,7 @@ const QLatin1Literal OPTIONS_DIALOG_DB_ADDON_EXCLUDE("OptionsDialog/DatabaseAddo
 const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_COLOR("OptionsDialog/FlightplanColor");
 const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR("OptionsDialog/FlightplanProcedureColor");
 const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR("OptionsDialog/FlightplanActiveColor");
+const QLatin1Literal OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR("OptionsDialog/FlightplanPassedColor");
 const QLatin1Literal OPTIONS_DIALOG_TRAIL_COLOR("OptionsDialog/TrailColor");
 const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS("OptionsDialog/DisplayOptions");
 const QLatin1Literal OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
@@ -171,6 +184,8 @@ const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
+const QLatin1Literal OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
+const QLatin1Literal OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
 
 /* Used to override  default URL */
 const QLatin1Literal OPTIONS_UPDATE_URL("Update/Url");
@@ -201,6 +216,11 @@ const QLatin1Literal FILE_PATTERN_FLP("(*.flp)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
+
+const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv)");
+const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
+const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
+const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml)");
 #else
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
@@ -216,6 +236,11 @@ const QLatin1Literal FILE_PATTERN_FLP("(*.flp *.Flp *.FLP)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
+
+const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv *.Csv *.CSV)");
+const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
+const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
+const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml *.Xml *.XML)");
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 

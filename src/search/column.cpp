@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,18 @@ Column::Column(const QString& columnName, QWidget *widget, const QString& column
 Column& Column::filter(bool b)
 {
   colCanBeFiltered = b;
+  return *this;
+}
+
+Column& Column::override(bool b)
+{
+  colCanOverride = b;
+  return *this;
+}
+
+Column& Column::minOverrideLength(int val)
+{
+  colMinOverrideLength = val;
   return *this;
 }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -138,8 +138,16 @@ private:
   /* Garming GFP format with procedures */
   QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
 
+  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
+                           const atools::geo::Pos& nearestPos);
+
+  /* Get a result set with the single closest element */
+  void resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
+                         const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
+
   void findWaypoints(map::MapSearchResult& result, const QString& item);
-  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
+  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, const map::MapSearchResult *lastResult,
+                       float maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
@@ -153,6 +161,7 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
   bool plaintextMessages = false;
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H
