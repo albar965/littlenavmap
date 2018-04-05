@@ -347,6 +347,9 @@
         <attribute name="title">
          <string>Airports</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Search for airports</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <property name="spacing">
           <number>2</number>
@@ -1506,6 +1509,9 @@
         <attribute name="title">
          <string>Navaids</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Search for VOR, NDB and waypoints</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="spacing">
           <number>2</number>
@@ -2231,6 +2237,9 @@
         <attribute name="title">
          <string>Procedures</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Search for SID, STAR and approach procedures of an airport</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <property name="spacing">
           <number>2</number>
@@ -2398,6 +2407,9 @@
        <widget class="QWidget" name="tabUserdataSearch">
         <attribute name="title">
          <string>Userpoints</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search, add and edit user defined waypoints</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_12">
          <property name="spacing">
@@ -2804,6 +2816,9 @@
         <attribute name="title">
          <string>Online Clients</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Search for online network clients/aircraft</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_23">
          <property name="spacing">
           <number>2</number>
@@ -3053,6 +3068,9 @@
        <widget class="QWidget" name="tabOnlineCenterSearch">
         <attribute name="title">
          <string>Online Centers</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for online network centers</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_24">
          <property name="spacing">
@@ -3307,6 +3325,9 @@
        <widget class="QWidget" name="tabOnlineServerSearch">
         <attribute name="title">
          <string>Online Server</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for online network servers</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_25">
          <property name="spacing">
@@ -3689,7 +3710,10 @@
        </widget>
        <widget class="QWidget" name="tabRunwayInfo">
         <attribute name="title">
-         <string>Runways/Helipads</string>
+         <string>Runways</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Runway and helipad information</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <property name="spacing">
@@ -3726,6 +3750,9 @@
         <attribute name="title">
          <string>Com</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Airport communication frequencies</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_11">
          <property name="spacing">
           <number>2</number>
@@ -3760,6 +3787,9 @@
        <widget class="QWidget" name="tabProceduresInfo">
         <attribute name="title">
          <string>Procedures</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Airport approach procedures</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_22">
          <property name="spacing">
@@ -3802,6 +3832,9 @@
         <attribute name="title">
          <string>Weather</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Decoded weather information for airport</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_19">
          <property name="spacing">
           <number>2</number>
@@ -3832,7 +3865,10 @@
        </widget>
        <widget class="QWidget" name="tabNavaidInfo">
         <attribute name="title">
-         <string>Navaid/Airways</string>
+         <string>Navaids</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>VOR, NDB, waypoint, airway and userpoint information</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <property name="spacing">
@@ -4145,6 +4181,9 @@
         <attribute name="title">
          <string>Aircraft</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>General user aircraft information</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_16">
          <property name="spacing">
           <number>2</number>
@@ -4180,6 +4219,9 @@
         <attribute name="title">
          <string>Progress</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>User aircraft progress and environment information</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_17">
          <property name="spacing">
           <number>2</number>
@@ -4214,6 +4256,9 @@
        <widget class="QWidget" name="tabAircraftAiInfo">
         <attribute name="title">
          <string>AI / Multiplayer</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Information about AI or multplayer aircraft or ships</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_18">
          <property name="spacing">
