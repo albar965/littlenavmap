@@ -108,7 +108,7 @@ TreeEventFilter::~TreeEventFilter()
 
 }
 
-ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, SearchTabIndex tabWidgetIndex)
+ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex)
   : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam), mainWindow(main)
 {
   infoQuery = NavApp::getInfoQuery();

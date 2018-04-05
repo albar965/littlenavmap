@@ -43,7 +43,7 @@ class UserdataSearch :
   Q_OBJECT
 
 public:
-  UserdataSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex);
+  UserdataSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
   virtual ~UserdataSearch();
 
   /* All state saving is done through the widget state */

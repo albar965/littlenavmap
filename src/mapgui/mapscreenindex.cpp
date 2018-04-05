@@ -307,7 +307,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         result.userAircraft = simData.getUserAircraft();
   }
 
-  // Check for AI / multiplayer aircraft
+  // Check for AI / multiplayer aircraft from simulator
   result.aiAircraft.clear();
   if(NavApp::isConnected())
   {

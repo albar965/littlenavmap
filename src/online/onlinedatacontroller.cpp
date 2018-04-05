@@ -317,6 +317,17 @@ bool OnlinedataController::isNetworkActive() const
   return OptionData::instance().getOnlineNetwork() != opts::ONLINE_NONE;
 }
 
+void OnlinedataController::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
+{
+  manager->getClientAircraftById(aircraft, id);
+}
+
+void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac,
+                                                  const atools::sql::SqlRecord& record)
+{
+  OnlinedataManager::fillFromClient(ac, record);
+}
+
 void OnlinedataController::startDownloadTimer()
 {
   downloadTimer.stop();

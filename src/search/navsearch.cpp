@@ -34,7 +34,7 @@
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
 
-NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex)
+NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

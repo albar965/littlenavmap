@@ -117,7 +117,7 @@ private:
 };
 
 SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                                 SearchTabIndex tabWidgetIndex)
+                                 si::SearchTabIndex tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
@@ -904,7 +904,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Build the menu depending on tab =========================================================================
   QMenu menu;
-  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionSearchShowInformation);
     if(navType == map::AIRPORT)
@@ -914,7 +914,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   }
 
   // Add extra menu items in the user defined waypoint table - these are already connected
-  if(getTabIndex() == SEARCH_USER)
+  if(getTabIndex() == si::SEARCH_USER)
   {
     menu.addAction(ui->actionUserdataAdd);
     menu.addAction(ui->actionUserdataEdit);
@@ -922,7 +922,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(followModeAction());
     menu.addSeparator();
@@ -936,26 +936,26 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionMapRangeRings);
 
-  if(atools::contains(getTabIndex(), {SEARCH_NAV}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_NAV}))
     menu.addAction(ui->actionMapNavaidRange);
 
-  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER, SEARCH_ONLINE_CENTER, SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionMapHideRangeRings);
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT}))
   {
     menu.addAction(ui->actionRouteAirportStart);
     menu.addAction(ui->actionRouteAirportDest);
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {SEARCH_AIRPORT, SEARCH_NAV, SEARCH_USER}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER}))
   {
     menu.addAction(ui->actionRouteAddPos);
     menu.addAction(ui->actionRouteAppendPos);
@@ -970,7 +970,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetView);
   menu.addSeparator();
 
-  if(navType != map::NONE)
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);
@@ -1112,17 +1112,30 @@ void SearchBaseTable::showOnMapTriggered()
         emit showRect(result.airspaces.first().bounding, false);
         NavApp::setStatusMessage(tr("Showing airspace on map."));
       }
-      else
+      else if(!result.vors.isEmpty())
       {
-        if(!result.vors.isEmpty())
-          emit showPos(result.vors.first().getPosition(), 0.f, false);
-        else if(!result.ndbs.isEmpty())
-          emit showPos(result.ndbs.first().getPosition(), 0.f, false);
-        else if(!result.waypoints.isEmpty())
-          emit showPos(result.waypoints.first().getPosition(), 0.f, false);
-        else if(!result.userpoints.isEmpty())
-          emit showPos(result.userpoints.first().getPosition(), 0.f, false);
-        NavApp::setStatusMessage(tr("Showing navaid on map."));
+        emit showPos(result.vors.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing VOR on map."));
+      }
+      else if(!result.ndbs.isEmpty())
+      {
+        emit showPos(result.ndbs.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing NDB on map."));
+      }
+      else if(!result.waypoints.isEmpty())
+      {
+        emit showPos(result.waypoints.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing waypoint on map."));
+      }
+      else if(!result.userpoints.isEmpty())
+      {
+        emit showPos(result.userpoints.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing userpoint on map."));
+      }
+      else if(!result.aiAircraft.isEmpty())
+      {
+        emit showPos(result.aiAircraft.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing online client on map."));
       }
     }
   }
@@ -1134,13 +1147,13 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   navType = map::NONE;
   id = -1;
 
-  if(getTabIndex() == SEARCH_AIRPORT)
+  if(getTabIndex() == si::SEARCH_AIRPORT)
   {
     // Airport table
     navType = map::AIRPORT;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
-  else if(getTabIndex() == SEARCH_NAV)
+  else if(getTabIndex() == si::SEARCH_NAV)
   {
     // Otherwise nav_search table
     navType = map::navTypeToMapObjectType(controller->getRawData(row, "nav_type").toString());
@@ -1152,22 +1165,23 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
     else if(navType == map::WAYPOINT)
       id = controller->getRawData(row, "waypoint_id").toInt();
   }
-  else if(getTabIndex() == SEARCH_USER)
+  else if(getTabIndex() == si::SEARCH_USER)
   {
     // User data
     navType = map::USERPOINT;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
-  else if(getTabIndex() == SEARCH_ONLINE_CLIENT)
+  else if(getTabIndex() == si::SEARCH_ONLINE_CLIENT)
   {
-
+    navType = map::AIRCRAFT_AI_ONLINE;
+    id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
-  else if(getTabIndex() == SEARCH_ONLINE_CENTER)
+  else if(getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
     navType = map::AIRSPACE_ONLINE;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
-  else if(getTabIndex() == SEARCH_ONLINE_SERVER)
+  else if(getTabIndex() == si::SEARCH_ONLINE_SERVER)
   {
     navType = map::NONE;
   }

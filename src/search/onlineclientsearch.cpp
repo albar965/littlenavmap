@@ -18,8 +18,9 @@
 #include "search/onlineclientsearch.h"
 
 #include "navapp.h"
-#include "fs/online/onlinetypes.h"
 #include "common/constants.h"
+#include "online/onlinedatacontroller.h"
+#include "fs/online/onlinetypes.h"
 #include "search/sqlcontroller.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
@@ -30,7 +31,7 @@
 #include "sql/sqlrecord.h"
 #include "common/formatter.h"
 
-OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex)
+OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("client", "client_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -65,7 +66,8 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("administrative_rating", tr("Admin\nRating"))).
   append(Column("atc_pilot_rating", tr("Pilot\nRating"))).
   append(Column("connection_time", tr("Connection\nTime"))).
-  append(Column("plane", tr("Plane"))).
+  append(Column("client_type").hidden()).
+  append(Column("heading").hidden()).
 
   append(Column("lonx").hidden()).
   append(Column("laty").hidden())
@@ -244,10 +246,9 @@ void OnlineClientSearch::getSelectedMapObjects(map::MapSearchResult& result) con
         controller->fillRecord(row, rec);
         // qDebug() << Q_FUNC_INFO << rec;
 
-        // TODO
-        // map::MapUserpoint obj;
-        // MapTypesFactory().fillUserdataPoint(rec, obj);
-        // result.userpoints.append(obj);
+        atools::fs::sc::SimConnectAircraft ac;
+        NavApp::getOnlinedataController()->fillAircraftFromClient(ac, rec);
+        result.aiAircraft.append(ac);
       }
     }
   }

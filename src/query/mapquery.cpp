@@ -21,6 +21,7 @@
 #include "common/maptypesfactory.h"
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
+#include "online/onlinedatacontroller.h"
 #include "sql/sqlquery.h"
 #include "query/airportquery.h"
 #include "query/airspacequery.h"
@@ -430,6 +431,13 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     if(airspace.isValid())
       result.airspaces.append(airspace);
   }
+  else if(type == map::AIRCRAFT_AI_ONLINE)
+  {
+    atools::fs::sc::SimConnectAircraft aircraft;
+    NavApp::getOnlinedataController()->getClientAircraftById(aircraft, id);
+    if(aircraft.isValid())
+      result.aiAircraft.append(aircraft);
+  }
   else if(type == map::AIRWAY)
   {
     map::MapAirway airway = getAirwayById(id);
@@ -578,7 +586,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isUserpoint())
+  if(mapLayer->isUserpoint() && types.testFlag(map::USERPOINT))
   {
     for(int i = userpointCache.list.size() - 1; i >= 0; i--)
     {
@@ -589,7 +597,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isAirwayWaypoint())
+  if(mapLayer->isAirwayWaypoint() && types.testFlag(map::WAYPOINT))
   {
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {

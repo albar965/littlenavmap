@@ -59,7 +59,7 @@ class ProcedureSearch :
   Q_OBJECT
 
 public:
-  ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, SearchTabIndex tabWidgetIndex);
+  ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex);
   virtual ~ProcedureSearch();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */

@@ -133,19 +133,19 @@ void SearchController::restoreState()
 
 void SearchController::createAirportSearch(QTableView *tableView)
 {
-  airportSearch = new AirportSearch(mainWindow, tableView, SEARCH_AIRPORT);
+  airportSearch = new AirportSearch(mainWindow, tableView, si::SEARCH_AIRPORT);
   postCreateSearch(airportSearch);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
 {
-  navSearch = new NavSearch(mainWindow, tableView, SEARCH_NAV);
+  navSearch = new NavSearch(mainWindow, tableView, si::SEARCH_NAV);
   postCreateSearch(navSearch);
 }
 
 void SearchController::createUserdataSearch(QTableView *tableView)
 {
-  userdataSearch = new UserdataSearch(mainWindow, tableView, SEARCH_USER);
+  userdataSearch = new UserdataSearch(mainWindow, tableView, si::SEARCH_USER);
   postCreateSearch(userdataSearch);
 
   // Get edit and delete signals from user search action and pushbuttons
@@ -160,25 +160,25 @@ void SearchController::createUserdataSearch(QTableView *tableView)
 
 void SearchController::createOnlineClientSearch(QTableView *tableView)
 {
-  onlineClientSearch = new OnlineClientSearch(mainWindow, tableView, SEARCH_ONLINE_CLIENT);
+  onlineClientSearch = new OnlineClientSearch(mainWindow, tableView, si::SEARCH_ONLINE_CLIENT);
   postCreateSearch(onlineClientSearch);
 }
 
 void SearchController::createOnlineCenterSearch(QTableView *tableView)
 {
-  onlineCenterSearch = new OnlineCenterSearch(mainWindow, tableView, SEARCH_ONLINE_CENTER);
+  onlineCenterSearch = new OnlineCenterSearch(mainWindow, tableView, si::SEARCH_ONLINE_CENTER);
   postCreateSearch(onlineCenterSearch);
 }
 
 void SearchController::createOnlineServerSearch(QTableView *tableView)
 {
-  onlineServerSearch = new OnlineServerSearch(mainWindow, tableView, SEARCH_ONLINE_SERVER);
+  onlineServerSearch = new OnlineServerSearch(mainWindow, tableView, si::SEARCH_ONLINE_SERVER);
   postCreateSearch(onlineServerSearch);
 }
 
 void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
 {
-  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, SEARCH_PROC);
+  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, si::SEARCH_PROC);
   postCreateSearch(procedureSearch);
 }
 

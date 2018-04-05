@@ -42,7 +42,7 @@ class OnlineServerSearch :
   Q_OBJECT
 
 public:
-  OnlineServerSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex);
+  OnlineServerSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
   virtual ~OnlineServerSearch();
 
   /* All state saving is done through the widget state */

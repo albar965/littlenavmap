@@ -28,9 +28,13 @@ class HttpDownloader;
 }
 namespace sql {
 class SqlDatabase;
+class SqlRecord;
 }
 
 namespace fs {
+namespace sc {
+class SimConnectAircraft;
+}
 namespace online {
 class OnlinedataManager;
 }
@@ -74,6 +78,10 @@ public:
   /* VATSIM, IVAO or Custom */
   QString getNetwork() const;
   bool isNetworkActive() const;
+
+  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
+
+  static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
 signals:
   /* Sent whenever new data was downloaded */

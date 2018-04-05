@@ -71,7 +71,9 @@ enum MapObjectType
   HELIPAD = 1 << 25, /* Helipads on airports */
   COMPASS_ROSE = 1 << 26, /* Compass rose */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
+
   AIRSPACE_ONLINE = 1 << 28, /* Online network center */
+  AIRCRAFT_AI_ONLINE = 1 << 29, /* Online network client/aircraft */
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,

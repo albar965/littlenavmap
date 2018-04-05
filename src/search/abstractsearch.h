@@ -33,6 +33,8 @@ class ItemViewZoomHandler;
 
 class QMainWindow;
 
+namespace si {
+
 enum SearchTabIndex
 {
   SEARCH_AIRPORT = 0,
@@ -44,13 +46,15 @@ enum SearchTabIndex
   SEARCH_ONLINE_SERVER = 6
 };
 
+}
+
 class AbstractSearch :
   public QObject
 {
   Q_OBJECT
 
 public:
-  AbstractSearch(QMainWindow *parent, SearchTabIndex tabWidgetIndex);
+  AbstractSearch(QMainWindow *parent, si::SearchTabIndex tabWidgetIndex);
   virtual ~AbstractSearch();
 
   /* Disconnect and reconnect queries on database change */
@@ -76,7 +80,7 @@ public:
   virtual void updateTableSelection() = 0;
   virtual void tabDeactivated() = 0;
 
-  SearchTabIndex getTabIndex() const
+  si::SearchTabIndex getTabIndex() const
   {
     return tabIndex;
   }
@@ -85,7 +89,7 @@ protected:
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   /* Tab index of this search tab on the search dock window */
-  SearchTabIndex tabIndex;
+  si::SearchTabIndex tabIndex;
   QMainWindow *mainWindow = nullptr;
 
 };

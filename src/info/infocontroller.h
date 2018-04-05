@@ -40,7 +40,9 @@ enum TabIndex
   INFO_APPROACHES = 3,
   INFO_WEATHER = 4,
   INFO_NAVAID = 5,
-  INFO_AIRSPACE = 6
+  INFO_AIRSPACE = 6,
+  INFO_ONLINE_CENTER = 7,
+  INFO_ONLINE_CLIENT = 8
 };
 
 enum TabIndexAircraft
@@ -119,6 +121,7 @@ private:
   void updateAircraftText();
   void updateAircraftProgressText();
   void updateAiAircraftText();
+  void updateAircraftInfo();
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -136,8 +139,6 @@ private:
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
-
-  void updateAircraftInfo();
 
 };
 

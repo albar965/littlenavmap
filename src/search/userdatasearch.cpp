@@ -36,7 +36,7 @@
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
 
-UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, SearchTabIndex tabWidgetIndex)
+UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

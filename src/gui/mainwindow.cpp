@@ -724,11 +724,11 @@ void MainWindow::connectAllSlots()
 
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
-  connect(airportSearch, &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(airportSearch, &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(airportSearch, &AirportSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(airportSearch, &AirportSearch::showInformation, infoController, &InfoController::showInformation);
-  connect(airportSearch, &AirportSearch::showProcedures,
+  connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
+  connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(airportSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(airportSearch, &SearchBaseTable::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
@@ -750,16 +750,6 @@ void MainWindow::connectAllSlots()
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
-
-  // Online center search ===================================================================================
-  OnlineCenterSearch *onlineCenterSearch = searchController->getOnlineCenterSearch();
-  connect(onlineCenterSearch, &OnlineCenterSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(onlineCenterSearch, &OnlineCenterSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(onlineCenterSearch, &OnlineCenterSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(onlineCenterSearch, &OnlineCenterSearch::showInformation, infoController, &InfoController::showInformation);
-  connect(onlineCenterSearch, &OnlineCenterSearch::selectionChanged, this, &MainWindow::searchSelectionChanged);
-
-  // Online network ===================================================================================
 
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
@@ -795,6 +785,20 @@ void MainWindow::connectAllSlots()
   OnlineCenterSearch *centerSearch = searchController->getOnlineCenterSearch();
   OnlineServerSearch *serverSearch = searchController->getOnlineServerSearch();
   OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
+
+  // Online client search ===================================================================================
+  connect(clientSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
+  connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(clientSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(clientSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
+  // Online center search ===================================================================================
+  connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
+  connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(centerSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(centerSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
 
   // Remove/add buttons and tabs
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
@@ -2198,25 +2202,25 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
 {
   QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
   QString type;
-  if(source->getTabIndex() == SEARCH_AIRPORT)
+  if(source->getTabIndex() == si::SEARCH_AIRPORT)
   {
     type = tr("Airports");
     ui->labelAirportSearchStatus->setText(selectionLabelText.
                                           arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
-  else if(source->getTabIndex() == SEARCH_NAV)
+  else if(source->getTabIndex() == si::SEARCH_NAV)
   {
     type = tr("Navaids");
     ui->labelNavSearchStatus->setText(selectionLabelText.
                                       arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
-  else if(source->getTabIndex() == SEARCH_USER)
+  else if(source->getTabIndex() == si::SEARCH_USER)
   {
     type = tr("Userpoints");
     ui->labelUserdata->setText(selectionLabelText.
                                arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
-  else if(source->getTabIndex() == SEARCH_ONLINE_CLIENT)
+  else if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT)
   {
     type = tr("Clients");
     QString lastUpdate = tr(" Last Update: %1").
@@ -2225,7 +2229,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
                                                arg(selected).arg(total).arg(type).arg(visible).
                                                arg(lastUpdate));
   }
-  else if(source->getTabIndex() == SEARCH_ONLINE_CENTER)
+  else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
     type = tr("Centers");
     QString lastUpdate = tr(" Last Update: %1").
@@ -2514,7 +2518,7 @@ void MainWindow::updateOnlineActionStates()
     // Show action in menu and toolbar
     ui->actionShowAirspacesOnline->setVisible(true);
 
-    // Add tabs
+    // Add tabs in search widget
     if(ui->tabWidgetSearch->indexOf(ui->tabOnlineClientSearch) == -1)
       ui->tabWidgetSearch->addTab(ui->tabOnlineClientSearch, tr("Online Clients"));
 
@@ -2523,16 +2527,27 @@ void MainWindow::updateOnlineActionStates()
 
     if(ui->tabWidgetSearch->indexOf(ui->tabOnlineServerSearch) == -1)
       ui->tabWidgetSearch->addTab(ui->tabOnlineServerSearch, tr("Online Server"));
+
+    // Add tabs in information widget
+    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineCenterInfo) == -1)
+      ui->tabWidgetInformation->addTab(ui->tabOnlineCenterInfo, tr("Online Centers"));
+
+    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineClientInfo) == -1)
+      ui->tabWidgetInformation->addTab(ui->tabOnlineClientInfo, tr("Online Clients"));
   }
   else
   {
     // Hide action in menu and toolbar
     ui->actionShowAirspacesOnline->setVisible(false);
 
-    // Remove the tabs. Order is important - the search objects remain
-    ui->tabWidgetSearch->removeTab(SEARCH_ONLINE_SERVER);
-    ui->tabWidgetSearch->removeTab(SEARCH_ONLINE_CENTER);
-    ui->tabWidgetSearch->removeTab(SEARCH_ONLINE_CLIENT);
+    // Remove the tabs in search. Order is important - the search objects remain
+    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_SERVER);
+    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CENTER);
+    ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CLIENT);
+
+    // Remove tabs in information
+    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CLIENT);
+    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CENTER);
   }
 }
 

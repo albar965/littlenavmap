@@ -125,16 +125,24 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 
   for(const MapAirport& ap : highlightResults.airports)
     positions.append(ap.position);
+
   for(const MapWaypoint& wp : highlightResults.waypoints)
     positions.append(wp.position);
+
   for(const MapVor& vor : highlightResults.vors)
     positions.append(vor.position);
+
   for(const MapNdb& ndb : highlightResults.ndbs)
     positions.append(ndb.position);
+
   for(const MapUserpoint& user : highlightResults.userpoints)
     positions.append(user.position);
+
   for(const MapAirspace& airspace: highlightResults.airspaces)
     positions.append(airspace.bounding.getCenter());
+
+  for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResults.aiAircraft)
+    positions.append(aircraft.getPosition());
 
   GeoPainter *painter = context->painter;
   if(context->mapLayerEffective->isAirport())
