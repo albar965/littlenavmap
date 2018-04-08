@@ -118,7 +118,7 @@ private:
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
   void currentTabChanged(int index);
-  void updateAircraftText();
+  void updateUserAircraftText();
   void updateAircraftProgressText();
   void updateAiAircraftText();
   void updateAircraftInfo();

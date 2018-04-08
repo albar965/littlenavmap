@@ -64,7 +64,7 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
     return;
 
   auto it = std::remove_if(list.begin(), list.end(),
-                           [ = ](const TYPE &type)->bool
+                           [ = ](const TYPE& type) -> bool
     {
       return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
     });
@@ -82,7 +82,7 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxD
     return;
 
   auto it = std::remove_if(list.begin(), list.end(),
-                           [ = ](const TYPE &type)->bool
+                           [ = ](const TYPE& type) -> bool
     {
       return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
     });
@@ -100,7 +100,7 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
     return;
 
   auto it = std::remove_if(list.begin(), list.end(),
-                           [ = ](const TYPE &type)->bool
+                           [ = ](const TYPE& type) -> bool
     {
       int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
       int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
@@ -120,7 +120,7 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
     return;
 
   std::sort(list.begin(), list.end(),
-            [ = ](const TYPE &t1, const TYPE &t2)->bool
+            [ = ](const TYPE& t1, const TYPE& t2) -> bool
     {
       return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
     });
@@ -140,7 +140,7 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, 
   if(ids == nullptr || !ids->contains(type.getId()))
   {
     auto it = std::lower_bound(list.begin(), list.end(), type,
-                               [ = ](const TYPE &a1, const TYPE &a2)->bool
+                               [ = ](const TYPE& a1, const TYPE& a2) -> bool
       {
         int x1, y1, x2, y2;
         conv.wToS(a1.getPosition(), x1, y1);
@@ -155,13 +155,27 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, 
   }
 }
 
+/* Inserts elements from list into result sorted by screen distance to xs/ys using ids set for deduplication */
+template<typename TYPE>
+void insertSorted(const CoordinateConverter& conv, int xs, int ys, const QList<TYPE>& list, QList<TYPE>& result,
+                  QSet<int> *ids, int maxDistance)
+{
+  int x, y;
+  for(const TYPE& obj : list)
+  {
+    if(conv.wToS(obj.getPosition(), x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        maptools::insertSortedByDistance(conv, result, ids, xs, ys, obj);
+  }
+}
+
 /* Inserts element into list sorted by screen distance of tower to xs/ys using ids set for deduplication */
 template<typename TYPE>
 void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<TYPE>& list, int xs, int ys,
                                  TYPE type)
 {
   auto it = std::lower_bound(list.begin(), list.end(), type,
-                             [ = ](const TYPE &a1, const TYPE &a2)->bool
+                             [ = ](const TYPE& a1, const TYPE& a2) -> bool
     {
       int x1, y1, x2, y2;
       conv.wToS(a1.towerCoords, x1, y1);

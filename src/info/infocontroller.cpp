@@ -21,6 +21,7 @@
 #include "navapp.h"
 #include "common/constants.h"
 #include "common/htmlinfobuilder.h"
+#include "online/onlinedatacontroller.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
@@ -111,7 +112,7 @@ void InfoController::currentTabChanged(int index)
   switch(static_cast<ic::TabIndexAircraft>(index))
   {
     case ic::AIRCRAFT_USER:
-      updateAircraftText();
+      updateUserAircraftText();
       break;
     case ic::AIRCRAFT_USER_PROGRESS:
       updateAircraftProgressText();
@@ -411,7 +412,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 {
   qDebug() << Q_FUNC_INFO;
 
-  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundAiAircraft = false,
+  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false,
+       foundAiAircraft = false, foundOnlineClient = false,
        foundAirspace = false, foundOnlineCenter = false;
   HtmlBuilder html(true);
 
@@ -431,6 +433,28 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   // AI aircraft ================================================================
   for(const SimConnectAircraft& ac : currentSearchResult.aiAircraft)
     qDebug() << "Show AI" << ac.getAirplaneRegistration() << "id" << ac.getObjectId();
+
+  // Online aircraft
+  if(!result.onlineAircraft.isEmpty())
+  {
+    // Clear current result and add only shown aircraft
+    currentSearchResult.onlineAircraft.clear();
+    currentSearchResult.onlineAircraftIds.clear();
+    OnlinedataController *odc = NavApp::getOnlinedataController();
+
+    html.clear();
+    int num = 1;
+    for(const SimConnectAircraft& ac : result.onlineAircraft)
+    {
+      infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
+      infoBuilder->aircraftProgressText(ac, html, Route());
+      infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
+
+      atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml());
+      foundOnlineClient = true;
+      currentSearchResult.onlineAircraft.append(ac);
+    }
+  }
 
   // Airport ================================================================
   if(!result.airports.isEmpty())
@@ -594,7 +618,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   // Show dock windows if needed
   if(showWindows)
   {
-    if(foundNavaid || foundAirport || foundAirspace || foundOnlineCenter)
+    if(foundNavaid || foundAirport || foundAirspace || foundOnlineCenter || foundOnlineClient)
     {
       NavApp::getMainUi()->dockWidgetInformation->show();
       NavApp::getMainUi()->dockWidgetInformation->raise();
@@ -618,6 +642,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
       mainWindow->setStatusMessage(tr("Showing information for airspace."));
     else if(foundOnlineCenter)
       mainWindow->setStatusMessage(tr("Showing information for online center."));
+    else if(foundOnlineClient)
+      mainWindow->setStatusMessage(tr("Showing information for online clients."));
 
     // Select tab to activate ==========================================================
     ic::TabIndex idx = static_cast<ic::TabIndex>(ui->tabWidgetInformation->currentIndex());
@@ -630,13 +656,17 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
     ic::TabIndex newIdx = idx;
 
-    if(foundAirspace && !foundOnlineCenter && !foundNavaid && !foundAirport)
+    // Decide which tab to activate
+    if(foundAirspace && !foundOnlineClient && !foundOnlineCenter && !foundNavaid && !foundAirport)
       newIdx = ic::INFO_AIRSPACE;
-    else if(foundOnlineCenter && !foundNavaid && !foundAirport)
+    else if(foundOnlineCenter && !foundOnlineClient && !foundNavaid && !foundAirport)
       newIdx = ic::INFO_ONLINE_CENTER;
+    else if(foundOnlineClient && !foundNavaid && !foundAirport)
+      newIdx = ic::INFO_ONLINE_CLIENT;
     else if(foundAirport && !foundNavaid)
     {
       if(!airportActive)
+        // Show airport tab if no airport related tab was active
         newIdx = ic::INFO_AIRPORT;
     }
     else if(foundNavaid && !foundAirport)
@@ -676,7 +706,7 @@ void InfoController::postDatabaseLoad()
   updateAircraftInfo();
 }
 
-void InfoController::updateAircraftText()
+void InfoController::updateUserAircraftText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 #ifdef DEBUG_MOVING_AIRPLANE
@@ -796,7 +826,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
     if(data.getUserAircraft().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
     {
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER)
-        updateAircraftText();
+        updateUserAircraftText();
 
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS)
         updateAircraftProgressText();
@@ -850,7 +880,7 @@ void InfoController::disconnectedFromSimulator()
 
 void InfoController::updateAircraftInfo()
 {
-  updateAircraftText();
+  updateUserAircraftText();
   updateAircraftProgressText();
   updateAiAircraftText();
 }

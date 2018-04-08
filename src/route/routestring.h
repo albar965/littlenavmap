@@ -152,8 +152,6 @@ private:
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
   bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
-  bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet);
-  QString createSpeedAndAltitude(float speedKnots, float altFeet);
 
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr;

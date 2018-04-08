@@ -1934,8 +1934,8 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                   HtmlBuilder& html, int num, int total)
+void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, int num,
+                                   int total)
 {
   if(!aircraft.getPosition().isValid())
     return;
@@ -2014,8 +2014,118 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   }
   else if(info && aircraft.getWingSpan() > 0)
     html.row2(tr("Wingspan:"), Unit::distShortFeet(aircraft.getWingSpan()));
-
   html.tableEnd();
+
+#ifdef DEBUG_INFORMATION
+  html.p().small(QString("Object ID: %1").arg(aircraft.getId())).pEnd();
+#endif
+}
+
+void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft,
+                                         const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html)
+{
+  if(!onlineRec.isEmpty() && info)
+  {
+    // General online information =================================================================
+    head(html, tr("Online Information"));
+    html.table();
+
+    html.row2If(tr("VID:"), onlineRec.valueStr("vid"));
+    html.row2If(tr("Name:"), onlineRec.valueStr("name"));
+    html.row2If(tr("Server:"), onlineRec.valueStr("server"));
+    html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
+
+    float qnh = onlineRec.valueFloat("qnh_mb");
+    if(qnh > 0.f)
+      html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
+                locale.toString(atools::geo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
+
+    if(onlineRec.isNull("administrative_rating") || onlineRec.isNull("atc_pilot_rating"))
+      html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
+
+    if(!onlineRec.isNull("administrative_rating"))
+      html.row2If(tr("Aministrative Rating:"),
+                  atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
+    if(!onlineRec.isNull("atc_pilot_rating"))
+      html.row2If(tr("ATC Rating:"), atools::fs::online::pilotRatingText(onlineRec.valueInt("atc_pilot_rating")));
+
+    html.row2If(tr("Connection Time:"), locale.toString(onlineRec.valueDateTime("connection_time")));
+
+    if(!onlineRec.valueStr("software_name").isEmpty())
+      html.row2If(tr("Software:"), tr("%1 %2").
+                  arg(onlineRec.valueStr("software_name")).
+                  arg(onlineRec.valueStr("software_version")));
+    html.tableEnd();
+
+    // Always unknown
+    // html.row2If(tr("Simulator:"), atools::fs::online::simulatorText(onlineRec.valueInt("simulator")));
+
+    // Flight plan information =================================================================
+    head(html, tr("Flight Plan"));
+    html.table();
+
+    if(onlineRec.valueBool("prefile"))
+      html.row2(tr("Is Prefile"));
+
+    QString spd = onlineRec.valueStr("flightplan_cruising_speed");
+    QString alt = onlineRec.valueStr("flightplan_cruising_level");
+
+    // Decode speed and altitude
+    float speed, altitude;
+    bool speedOk, altitudeOk;
+    atools::fs::util::extractSpeedAndAltitude(
+      spd + (alt == "VFR" ? QString() : alt), speed, altitude, &speedOk, &altitudeOk);
+
+    if(speedOk)
+      html.row2If(tr("Cruising Speed"), tr("%1 (%2)").arg(spd).arg(Unit::speedKts(speed)));
+    else
+      html.row2If(tr("Cruising Speed"), spd);
+
+    if(altitudeOk)
+      html.row2If(tr("Cruising Level:"), tr("%1 (%2)").arg(alt).arg(Unit::altFeet(altitude)));
+    else
+      html.row2If(tr("Cruising Level:"), alt);
+
+    html.row2If(tr("Transponder Code:"), onlineRec.valueStr("transponder_code"));
+    html.row2If(tr("Visual Range"), Unit::distNm(onlineRec.valueFloat("visual_range")));
+    html.row2If(tr("Flight Rules:"), onlineRec.valueStr("flightplan_flight_rules"));
+    html.row2If(tr("Type of Flight:"), onlineRec.valueStr("flightplan_type_of_flight"));
+    html.row2If(tr("Departure Time:"), onlineRec.valueStr("flightplan_departure_time"));
+    html.row2If(tr("Actual Departure Time:"), onlineRec.valueStr("flightplan_actual_departure_time"));
+
+    // Display times
+    double enrouteMin = onlineRec.valueDouble("flightplan_enroute_minutes");
+    if(enrouteMin > 0.)
+      html.row2(tr("Enroute hh:mm"), formatter::formatMinutesHours(enrouteMin / 60.));
+    double enduranceMin = onlineRec.valueDouble("flightplan_endurance_minutes");
+    if(enduranceMin > 0.)
+      html.row2If(tr("Endurance hh:mm"), formatter::formatMinutesHours(enduranceMin / 60.));
+
+    QStringList alternates({onlineRec.valueStr("flightplan_alternate_aerodrome"),
+                            onlineRec.valueStr("flightplan_2nd_alternate_aerodrome")});
+    alternates.removeAll(QString());
+    html.row2If(alternates.size() > 1 ? tr("Alternates:") : tr("Alternate:"), alternates.join(tr(", ")));
+
+    QString route = onlineRec.valueStr("flightplan_route").trimmed();
+    QString departure = aircraft.getFromIdent();
+    if(!route.startsWith(departure))
+      route.prepend(departure + " ");
+    QString destination = aircraft.getToIdent();
+    if(!route.endsWith(destination))
+      route.append(" " + destination);
+
+    html.row2If(tr("Route:"), route);
+    html.row2If(tr("Other Information:"), onlineRec.valueStr("flightplan_other_info"));
+    html.row2If(tr("Persons on Board:"), onlineRec.valueInt("flightplan_persons_on_board"));
+    html.tableEnd();
+
+    if(info)
+    {
+      head(html, tr("Position"));
+      html.row2(tr("Coordinates:"), Unit::coords(aircraft.getPosition()));
+      html.tableEnd();
+    }
+  }
 }
 
 void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
@@ -2415,18 +2525,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
   html.tableEnd();
 
-  if(info)
+  // Display more text for information display if not online aircraft
+  bool longDisplay = info && !(aircraft.getFlags() & atools::fs::sc::SIM_ONLINE);
+
+  if(longDisplay)
     head(html, tr("Altitude"));
   html.table();
 
   if(aircraft.getCategory() != atools::fs::sc::BOAT)
   {
-    if(info && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+    if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()));
   }
-  html.row2(info ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
+  html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
 
-  if(userAircaft != nullptr && info && aircraft.getCategory() != atools::fs::sc::BOAT)
+  if(userAircaft != nullptr && longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT)
   {
     if(userAircaft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
@@ -2459,23 +2572,23 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
      aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
 
-    if(info)
+    if(longDisplay)
       head(html, tr("Speed"));
     html.table();
-    if(info && aircraft.getCategory() != atools::fs::sc::BOAT &&
+    if(longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT &&
        aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
 
     if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(info ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
+      html.row2(longDisplay ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
 
-    if(info && aircraft.getCategory() != atools::fs::sc::BOAT)
+    if(longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT)
       if(aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
         html.row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueAirspeedKts()));
 
     if(aircraft.getCategory() != atools::fs::sc::BOAT)
     {
-      if(info && aircraft.getMachSpeed() < atools::fs::sc::SC_INVALID_FLOAT)
+      if(longDisplay && aircraft.getMachSpeed() < atools::fs::sc::SC_INVALID_FLOAT)
       {
         float mach = aircraft.getMachSpeed();
         if(mach > 0.4f)
@@ -2496,14 +2609,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(vspeed < 10.f && vspeed > -10.f)
           vspeed = 0.f;
 
-        html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
+        html.row2(longDisplay ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
                   atools::util::html::NO_ENTITIES);
       }
     }
     html.tableEnd();
   }
 
-  if(userAircaft != nullptr && info)
+  if(userAircaft != nullptr && longDisplay)
   {
     head(html, tr("Environment"));
     html.table();
@@ -2589,7 +2702,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.tableEnd();
   }
 
-  if(info)
+  if(longDisplay)
   {
     head(html, tr("Position"));
     html.row2(tr("Coordinates:"), Unit::coords(aircraft.getPosition()));

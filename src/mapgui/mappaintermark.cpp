@@ -141,7 +141,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   for(const MapAirspace& airspace: highlightResults.airspaces)
     positions.append(airspace.bounding.getCenter());
 
-  for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResults.aiAircraft)
+  for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResults.onlineAircraft)
     positions.append(aircraft.getPosition());
 
   GeoPainter *painter = context->painter;

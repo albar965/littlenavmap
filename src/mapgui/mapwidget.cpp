@@ -1682,6 +1682,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   map::MapAirport *airport = nullptr;
   SimConnectAircraft *aiAircraft = nullptr;
+  SimConnectAircraft *onlineAircraft = nullptr;
   SimConnectUserAircraft *userAircraft = nullptr;
   map::MapVor *vor = nullptr;
   map::MapNdb *ndb = nullptr;
@@ -1701,6 +1702,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(!result.aiAircraft.isEmpty())
     aiAircraft = &result.aiAircraft.first();
+
+  if(!result.onlineAircraft.isEmpty())
+    onlineAircraft = &result.onlineAircraft.first();
 
   if(!result.airports.isEmpty())
   {
@@ -1808,6 +1812,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     informationText = tr("%1 / %2").arg(aiAircraft->getAirplaneRegistration()).arg(
       aiAircraft->getAirplaneModel());
+    isAircraft = true;
+  }
+
+  if(onlineAircraft != nullptr)
+  {
+    informationText = tr("%1").arg(onlineAircraft->getAirplaneRegistration());
     isAircraft = true;
   }
 
@@ -2242,6 +2252,16 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = waypoint->id;
         type = map::WAYPOINT;
+      }
+      else if(aiAircraft != nullptr)
+      {
+        id = aiAircraft->getId();
+        type = map::AIRCRAFT_AI;
+      }
+      else if(onlineAircraft != nullptr)
+      {
+        id = onlineAircraft->getId();
+        type = map::AIRCRAFT_ONLINE;
       }
       else
       {
@@ -2860,6 +2880,11 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   {
     showPos(mapSearchResult.aiAircraft.first().getPosition(), 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
+  }
+  else if(!mapSearchResult.onlineAircraft.isEmpty())
+  {
+    showPos(mapSearchResult.onlineAircraft.first().getPosition(), 0.f, true);
+    mainWindow->setStatusMessage(QString(tr("Showing online client/aircraft on map.")));
   }
   else if(!mapSearchResult.airports.isEmpty())
   {

@@ -24,6 +24,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "common/unit.h"
+#include "navapp.h"
 #include "util/paintercontextsaver.h"
 #include "settings/settings.h"
 
@@ -73,18 +74,20 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
   {
     if(!hidden)
     {
-      int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-      int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
-
-      int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
-      int offset = -(size / 2);
-
       context->szFont(context->textSizeAircraftAi);
 
       // Position is visible
       context->painter->translate(x, y);
       if(vehicle.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
         context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
+      else
+        context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegMag() + NavApp::getMagVar(pos)));
+
+      int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
+      int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
+
+      int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
+      int offset = -(size / 2);
 
       // Draw symbol
       context->painter->drawPixmap(offset, offset, *pixmapFromCache(vehicle, size, false));
@@ -198,7 +201,9 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
   QStringList texts;
 
   if((aircraft.isOnGround() && context->mapLayer->isAiAircraftGroundText()) || // All AI on ground
-     (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText()) || forceLabel) // All AI in the air
+     (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText()) || // All AI in the air
+     (aircraft.getFlags() & atools::fs::sc::SIM_ONLINE && context->mapLayer->isOnlineAircraftText()) || // All online
+     forceLabel) // Force label for nearby aircraft
   {
     appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_REGISTRATION),
                   context->dOpt(opts::ITEM_AI_AIRCRAFT_TYPE),
@@ -280,7 +285,9 @@ const QPixmap *MapPainterVehicle::pixmapFromCache(const SimConnectAircraft& ac, 
 {
   PixmapKey key;
 
-  if(ac.getCategory() == atools::fs::sc::HELICOPTER)
+  if(ac.getFlags() & atools::fs::sc::SIM_ONLINE)
+    key.type = AC_ONLINE;
+  else if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;
   else if(ac.getCategory() == atools::fs::sc::BOAT)
     key.type = AC_SHIP;
@@ -305,6 +312,9 @@ const QPixmap *MapPainterVehicle::pixmapFromCache(const PixmapKey& key)
     QString name = ":/littlenavmap/resources/icons/aircraft";
     switch(key.type)
     {
+      case AC_ONLINE:
+        name += "_online";
+        break;
       case AC_SMALL:
         name += "_small";
         break;
@@ -320,9 +330,12 @@ const QPixmap *MapPainterVehicle::pixmapFromCache(const PixmapKey& key)
         name += "_boat";
         break;
     }
+
     if(key.ground)
       name += "_ground";
-    if(key.user)
+
+    if(key.type != AC_ONLINE && key.user)
+      // No user key for online
       name += "_user";
 
     name = atools::settings::Settings::instance().getOverloadedPath(name + ".svg");

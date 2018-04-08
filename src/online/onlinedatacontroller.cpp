@@ -24,6 +24,9 @@
 #include "settings/settings.h"
 #include "options/optiondata.h"
 #include "zip/gzip.h"
+#include "sql/sqlquery.h"
+#include "mapgui/maplayer.h"
+#include "fs/sc/simconnectaircraft.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -77,6 +80,8 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
 OnlinedataController::~OnlinedataController()
 {
+  deInitQueries();
+
   delete downloader;
 
   // Remove all from the database to avoid confusion on startup
@@ -207,6 +212,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       currentState = NONE;
       lastUpdateTime = QDateTime::currentDateTime();
 
+      aircraftCache.clear();
       // Message for search tabs, map widget and info
       emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     }
@@ -221,6 +227,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     currentState = NONE;
     lastUpdateTime = QDateTime::currentDateTime();
 
+    aircraftCache.clear();
     // Message for search tabs, map widget and info
     emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
@@ -230,16 +237,6 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 void OnlinedataController::downloadFailed(const QString& error, QString url)
 {
   qDebug() << Q_FUNC_INFO << "Failed" << error << url;
-}
-
-void OnlinedataController::preDatabaseLoad()
-{
-  qDebug() << Q_FUNC_INFO;
-}
-
-void OnlinedataController::postDatabaseLoad()
-{
-  qDebug() << Q_FUNC_INFO;
 }
 
 void OnlinedataController::stopAllProcesses()
@@ -264,12 +261,12 @@ void OnlinedataController::optionsChanged()
   stopAllProcesses();
   whazzupGzipped = false;
 
+  // Remove all from the database
   manager->clearData();
+  aircraftCache.clear();
+
   if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
   {
-    // Remove all from the database
-    manager->clearData();
-
     emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
     emit onlineNetworkChanged();
@@ -317,6 +314,43 @@ bool OnlinedataController::isNetworkActive() const
   return OptionData::instance().getOnlineNetwork() != opts::ONLINE_NONE;
 }
 
+const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircraftFromCache()
+{
+  return &aircraftCache.list;
+}
+
+const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircraft(const Marble::GeoDataLatLonBox& rect,
+                                                                                   const MapLayer *mapLayer, bool lazy)
+{
+  static const double queryRectInflationFactor = 0.2;
+  static const double queryRectInflationIncrement = 0.1;
+  static const int queryMaxRows = 5000;
+
+  aircraftCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
+                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersWaypoint(newLayer);
+  });
+
+  if(aircraftCache.list.isEmpty() && !lazy)
+  {
+    for(const Marble::GeoDataLatLonBox& r :
+        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    {
+      query::bindCoordinatePointInRect(r, aircraftByRectQuery);
+      aircraftByRectQuery->exec();
+      while(aircraftByRectQuery->next())
+      {
+        atools::fs::sc::SimConnectAircraft ac;
+        fillAircraftFromClient(ac, aircraftByRectQuery->record());
+        aircraftCache.list.append(ac);
+      }
+    }
+  }
+  aircraftCache.validate(queryMaxRows);
+  return &aircraftCache.list;
+}
+
 void OnlinedataController::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
 {
   manager->getClientAircraftById(aircraft, id);
@@ -326,6 +360,38 @@ void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAirc
                                                   const atools::sql::SqlRecord& record)
 {
   OnlinedataManager::fillFromClient(ac, record);
+}
+
+atools::sql::SqlRecord OnlinedataController::getClientRecordById(int clientId)
+{
+  return manager->getClientRecordById(clientId);
+}
+
+void OnlinedataController::initQueries()
+{
+  deInitQueries();
+
+  manager->initQueries();
+
+  aircraftByRectQuery = new atools::sql::SqlQuery(getDatabase());
+  aircraftByRectQuery->prepare("select * from client "
+                               "where lonx between :leftx and :rightx and "
+                               "laty between :bottomy and :topy");
+}
+
+void OnlinedataController::deInitQueries()
+{
+  aircraftCache.clear();
+
+  manager->deInitQueries();
+
+  delete aircraftByRectQuery;
+  aircraftByRectQuery = nullptr;
+}
+
+int OnlinedataController::getNumClients() const
+{
+  return manager->getNumClients();
 }
 
 void OnlinedataController::startDownloadTimer()

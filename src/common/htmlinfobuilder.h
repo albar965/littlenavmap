@@ -233,11 +233,11 @@ public:
   void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
 
   /*
-   * Creates an overview HTML description for the user aircraft in the simulator.
+   * Creates an overview HTML description for any AI or user aircraft in the simulator.
    * @param data
    * @param html Result containing HTML snippet
    */
-  void aircraftText(const atools::fs::sc::SimConnectAircraft& userAircraft,
+  void aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
                     atools::util::HtmlBuilder& html, int num = -1, int total = -1);
   void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
                                  atools::util::HtmlBuilder& html) const;
@@ -250,6 +250,12 @@ public:
   void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
                             atools::util::HtmlBuilder& html,
                             const Route& route);
+
+  /*
+   * Create HTML for online aircraft also showing position.
+   */
+  void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
+                          atools::util::HtmlBuilder& html);
 
   void updateAircraftIcons(bool force);
 

@@ -222,7 +222,8 @@ SOURCES += src/main.cpp\
     src/search/onlineserversearch.cpp \
     src/query/airspacequery.cpp \
     src/query/querytypes.cpp \
-    src/search/searchbasetable.cpp
+    src/search/searchbasetable.cpp \
+    src/mapgui/mapfunctions.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -321,7 +322,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/onlineserversearch.h \
     src/query/airspacequery.h \
     src/query/querytypes.h \
-    src/search/searchbasetable.h
+    src/search/searchbasetable.h \
+    src/mapgui/mapfunctions.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

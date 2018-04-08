@@ -163,13 +163,18 @@ public:
   MapLayer& airspaceOther(bool value = true);
 
   MapLayer& aiAircraftGround(bool value = true);
-  MapLayer& aiAircraftLarge(bool value = true);
   MapLayer& aiAircraftSmall(bool value = true);
-  MapLayer& aiShipLarge(bool value = true);
+  MapLayer& aiAircraftLarge(bool value = true);
+
   MapLayer& aiShipSmall(bool value = true);
+  MapLayer& aiShipLarge(bool value = true);
 
   MapLayer& aiAircraftGroundText(bool value = true);
   MapLayer& aiAircraftText(bool value = true);
+
+  /* Online network aircraft */
+  MapLayer& onlineAircraft(bool value = true);
+  MapLayer& onlineAircraftText(bool value = true);
 
   bool operator<(const MapLayer& other) const;
 
@@ -484,6 +489,16 @@ public:
     return layerAiAircraftText;
   }
 
+  bool isOnlineAircraft() const
+  {
+    return layerOnlineAircraft;
+  }
+
+  bool isOnlineAircraftText() const
+  {
+    return layerOnlineAircraftText;
+  }
+
   int getMaxTextLengthAirport() const
   {
     return maximumTextLengthAirport;
@@ -530,8 +545,9 @@ private:
     false, layerAirspaceSpecial = false, layerAirspaceOther = false;
 
   bool layerAiAircraftGround = false, layerAiAircraftLarge = false, layerAiAircraftSmall = false,
+       layerOnlineAircraft = false,
        layerAiShipLarge = false, layerAiShipSmall = false,
-       layerAiAircraftGroundText = false, layerAiAircraftText = false;
+       layerAiAircraftGroundText = false, layerAiAircraftText = false, layerOnlineAircraftText = false;
 
 };
 

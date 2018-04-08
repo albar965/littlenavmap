@@ -650,7 +650,7 @@ struct MapAirspace
 struct MapSearchResult
 {
   QList<MapAirport> airports;
-  QSet<int> airportIds; /* Ids used to deduplicate */
+  QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
 
   QList<MapRunwayEnd> runwayEnds;
   QList<MapAirport> towers;
@@ -681,6 +681,9 @@ struct MapSearchResult
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
+
+  QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
+  QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
   bool isEmpty(const map::MapObjectTypes& types) const;
 

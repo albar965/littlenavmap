@@ -58,7 +58,8 @@ public:
     AC_SMALL,
     AC_JET,
     AC_HELICOPTER,
-    AC_SHIP
+    AC_SHIP,
+    AC_ONLINE
   };
 
   struct PixmapKey

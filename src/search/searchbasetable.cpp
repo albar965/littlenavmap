@@ -1132,10 +1132,10 @@ void SearchBaseTable::showOnMapTriggered()
         emit showPos(result.userpoints.first().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing userpoint on map."));
       }
-      else if(!result.aiAircraft.isEmpty())
+      else if(!result.onlineAircraft.isEmpty())
       {
-        emit showPos(result.aiAircraft.first().getPosition(), 0.f, false);
-        NavApp::setStatusMessage(tr("Showing online client on map."));
+        emit showPos(result.onlineAircraft.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing online client/aircraft on map."));
       }
     }
   }
@@ -1173,7 +1173,7 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   }
   else if(getTabIndex() == si::SEARCH_ONLINE_CLIENT)
   {
-    navType = map::AIRCRAFT_AI_ONLINE;
+    navType = map::AIRCRAFT_ONLINE;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else if(getTabIndex() == si::SEARCH_ONLINE_CENTER)

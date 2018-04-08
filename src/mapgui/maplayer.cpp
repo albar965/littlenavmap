@@ -401,6 +401,18 @@ MapLayer& MapLayer::aiAircraftText(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::onlineAircraft(bool value)
+{
+  layerOnlineAircraft = value;
+  return *this;
+}
+
+MapLayer& MapLayer::onlineAircraftText(bool value)
+{
+  layerOnlineAircraftText = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportMaxTextLength(int size)
 {
   maximumTextLengthAirport = size;

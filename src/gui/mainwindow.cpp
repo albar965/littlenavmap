@@ -1489,7 +1489,13 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
-    magvarLabel->setText(map::magvarText(NavApp::getMagVar(pos), true /* short text */));
+    float magVar = NavApp::getMagVar(pos);
+    QString magVarText = map::magvarText(magVar, true /* short text */);
+#ifdef DEBUG_INFORMATION
+    magVarText = QString("%1 [%2]").arg(magVarText).arg(magVar, 0, 'f', 2);
+#endif
+
+    magvarLabel->setText(magVarText);
 
 #ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));

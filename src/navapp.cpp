@@ -104,6 +104,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   userdataController->clearTemporary();
 
   onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
+  onlinedataController->initQueries();
 
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
                           databaseManager->getDatabaseUser());
@@ -225,8 +226,6 @@ void NavApp::preDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
 
-  onlinedataController->preDatabaseLoad();
-
   infoQuery->deInitQueries();
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
@@ -257,8 +256,6 @@ void NavApp::postDatabaseLoad()
   airspaceQueryOnline->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
-
-  onlinedataController->postDatabaseLoad();
 }
 
 Ui::MainWindow *NavApp::getMainUi()
