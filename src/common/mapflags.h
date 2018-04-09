@@ -148,7 +148,7 @@ enum MapAirspaceType
 Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
 
-Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 26;
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 27;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag

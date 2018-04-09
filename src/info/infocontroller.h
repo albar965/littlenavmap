@@ -41,8 +41,8 @@ enum TabIndex
   INFO_WEATHER = 4,
   INFO_NAVAID = 5,
   INFO_AIRSPACE = 6,
-  INFO_ONLINE_CENTER = 7,
-  INFO_ONLINE_CLIENT = 8
+  INFO_ONLINE_CLIENT = 7,
+  INFO_ONLINE_CENTER = 8
 };
 
 enum TabIndexAircraft

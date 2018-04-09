@@ -3933,41 +3933,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabOnlineCenterInfo">
-        <attribute name="title">
-         <string>Online Centers</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Online network center information</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_26">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserCenterInfo">
-           <property name="placeholderText">
-            <string>No online network center selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="tabOnlineClientInfo">
         <attribute name="title">
          <string>Online Clients</string>
@@ -3995,6 +3960,41 @@
           <widget class="QTextBrowser" name="textBrowserClientInfo">
            <property name="placeholderText">
             <string>No online client/aircraft selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineCenterInfo">
+        <attribute name="title">
+         <string>Online Centers</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Online network center information</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_26">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserCenterInfo">
+           <property name="placeholderText">
+            <string>No online network center selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -6431,10 +6431,10 @@
     <string>Show AI and &amp;Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
    </property>
   </action>
   <action name="actionPrintMap">

@@ -1691,7 +1691,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
   map::MapHelipad *helipad = nullptr;
-  map::MapAirspace *airspace = nullptr;
+  map::MapAirspace *airspace = nullptr, *onlineCenter = nullptr;
   map::MapUserpoint *userpoint = nullptr;
 
   bool airportDestination = false, airportDeparture = false;
@@ -1752,7 +1752,15 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           addRouteText, searchText, editUserpointText;
 
   if(airspace != nullptr)
-    informationText = tr("Airspace");
+  {
+    if(airspace->online)
+    {
+      onlineCenter = airspace;
+      searchText = informationText = tr("Online Center %1").arg(onlineCenter->name);
+    }
+    else
+      informationText = tr("Airspace");
+  }
 
   if(airway != nullptr)
     informationText = map::airwayText(*airway);
@@ -1817,7 +1825,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(onlineAircraft != nullptr)
   {
-    informationText = tr("%1").arg(onlineAircraft->getAirplaneRegistration());
+    searchText = informationText = tr("Online Client Aircraft %1").arg(onlineAircraft->getAirplaneRegistration());
     isAircraft = true;
   }
 
@@ -1940,10 +1948,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // ===================================================================================
   // Update "show in search" and "add to route" only for airports an navaids
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || userpoint != nullptr)
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
+     userpoint != nullptr)
   {
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
     ui->actionRouteAddPos->setEnabled(true);
     ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(addRouteText));
     ui->actionRouteAppendPos->setEnabled(true);
@@ -1951,10 +1958,18 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else
   {
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
     ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(tr("Position")));
     ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(tr("Position")));
   }
+
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
+     userpoint != nullptr || onlineAircraft != nullptr || onlineCenter != nullptr)
+  {
+    ui->actionShowInSearch->setEnabled(true);
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
+  }
+  else
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
 
   if(airport != nullptr)
   {
@@ -2129,6 +2144,22 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         emit showInSearch(map::USERPOINT, rec);
       }
+      else if(onlineAircraft != nullptr)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(4);
+        SqlRecord rec;
+        rec.appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration());
+
+        emit showInSearch(map::AIRCRAFT_ONLINE, rec);
+      }
+      else if(onlineCenter != nullptr)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(5);
+        SqlRecord rec;
+        rec.appendFieldAndValue("callsign", onlineCenter->name);
+
+        emit showInSearch(map::AIRSPACE_ONLINE, rec);
+      }
     }
     else if(action == ui->actionMapNavaidRange)
     {
@@ -2262,6 +2293,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = onlineAircraft->getId();
         type = map::AIRCRAFT_ONLINE;
+      }
+      else if(onlineCenter != nullptr)
+      {
+        id = onlineCenter->id;
+        type = map::AIRSPACE_ONLINE;
       }
       else
       {
@@ -2884,7 +2920,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   else if(!mapSearchResult.onlineAircraft.isEmpty())
   {
     showPos(mapSearchResult.onlineAircraft.first().getPosition(), 0.f, true);
-    mainWindow->setStatusMessage(QString(tr("Showing online client/aircraft on map.")));
+    mainWindow->setStatusMessage(QString(tr("Showing online client aircraft on map.")));
   }
   else if(!mapSearchResult.airports.isEmpty())
   {

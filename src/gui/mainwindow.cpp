@@ -2535,25 +2535,25 @@ void MainWindow::updateOnlineActionStates()
       ui->tabWidgetSearch->addTab(ui->tabOnlineServerSearch, tr("Online Server"));
 
     // Add tabs in information widget
-    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineCenterInfo) == -1)
-      ui->tabWidgetInformation->addTab(ui->tabOnlineCenterInfo, tr("Online Centers"));
-
     if(ui->tabWidgetInformation->indexOf(ui->tabOnlineClientInfo) == -1)
       ui->tabWidgetInformation->addTab(ui->tabOnlineClientInfo, tr("Online Clients"));
+
+    if(ui->tabWidgetInformation->indexOf(ui->tabOnlineCenterInfo) == -1)
+      ui->tabWidgetInformation->addTab(ui->tabOnlineCenterInfo, tr("Online Centers"));
   }
   else
   {
     // Hide action in menu and toolbar
     ui->actionShowAirspacesOnline->setVisible(false);
 
-    // Remove the tabs in search. Order is important - the search objects remain
+    // Remove the tabs in search from last to first. Order is important - the search objects remain
     ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_SERVER);
     ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CENTER);
     ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_CLIENT);
 
     // Remove tabs in information
-    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CLIENT);
     ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CENTER);
+    ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CLIENT);
   }
 }
 

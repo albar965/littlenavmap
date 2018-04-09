@@ -622,7 +622,8 @@ struct MapAirspace
 {
   int id;
   int minAltitude, maxAltitude;
-  QString name, comName, comType, minAltitudeType, maxAltitudeType;
+  QString name, /* Airspace name or callsign for online ATC */
+          comName, comType, minAltitudeType, maxAltitudeType;
   QVector<int> comFrequencies;
   map::MapAirspaceTypes type;
   bool online = false;

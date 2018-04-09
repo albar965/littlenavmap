@@ -156,8 +156,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   QTreeWidgetItem *ai =
-    addTopItem(root, tr("AI / Multiplayer Aircraft"),
-               tr("Select text labels for the AI and multiplayer aircraft."));
+    addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"),
+               tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem(ai, tr("Registration or Number"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem(ai, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
   addItem(ai, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);

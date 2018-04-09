@@ -238,6 +238,18 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       userdataSearch->filterByRecord(record);
       break;
 
+    case map::AIRCRAFT_ONLINE:
+      // Shown in user search tab
+      onlineClientSearch->resetSearch();
+      onlineClientSearch->filterByRecord(record);
+      break;
+
+    case map::AIRSPACE_ONLINE:
+      // Shown in user search tab
+      onlineCenterSearch->resetSearch();
+      onlineCenterSearch->filterByRecord(record);
+      break;
+
     case map::ILS:
     case map::MARKER:
     case map::NONE:

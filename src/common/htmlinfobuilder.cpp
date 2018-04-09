@@ -1974,13 +1974,19 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
         break;
     }
 
-    if(num != -1 && total != -1)
-      aircraftText = tr("AI / Multiplayer%1 - %2 of %3 Vehicles").arg(type).arg(num).arg(total);
+    QString typeText;
+    if(aircraft.isOnline())
+      typeText = tr("Online Client");
     else
-      aircraftText = tr("AI / Multiplayer%1").arg(type);
+      typeText = tr("AI / Multiplayer");
+
+    if(num != -1 && total != -1)
+      aircraftText = tr("%1%2 - %3 of %4 Vehicles").arg(typeText).arg(type).arg(num).arg(total);
+    else
+      aircraftText = tr("%1%2").arg(typeText).arg(type);
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
-      html.p(tr("AI and multiplayer aircraft are not shown on map."), atools::util::html::BOLD);
+      html.p(tr("No %2 shown on map.").arg(typeText), atools::util::html::BOLD);
   }
 
   head(html, aircraftText);
@@ -2526,7 +2532,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   html.tableEnd();
 
   // Display more text for information display if not online aircraft
-  bool longDisplay = info && !(aircraft.getFlags() & atools::fs::sc::SIM_ONLINE);
+  bool longDisplay = info && !aircraft.isOnline();
 
   if(longDisplay)
     head(html, tr("Altitude"));
@@ -2726,18 +2732,24 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
   if(aircraft.isUser())
     html.img(*icon, tr("User Vehicle"), QString(), QSize(24, 24));
+  else if(aircraft.isOnline())
+    html.img(*icon, tr("Online Client (%1)").arg(NavApp::getOnlineNetwork()), QString(), QSize(24, 24));
   else
     html.img(*icon, tr("AI / Multiplayer Vehicle"), QString(), QSize(24, 24));
   html.nbsp().nbsp();
 
   QString title(aircraft.getAirplaneRegistration());
   QString title2 = airplaneType(aircraft);
+  QString title3 = aircraft.isOnline() ? NavApp::getOnlineNetwork() : QString();
 
   if(!aircraft.getAirplaneModel().isEmpty())
     title2 += (title2.isEmpty() ? "" : ", ") + aircraft.getAirplaneModel();
 
   if(!title2.isEmpty())
-    title += " (" + title2 + ")";
+    title += " - " + title2;
+
+  if(!title3.isEmpty())
+    title += " (" + title3 + ")";
 
   html.text(title, atools::util::html::BOLD | atools::util::html::BIG);
 

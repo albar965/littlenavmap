@@ -193,11 +193,11 @@ void RouteStringDialog::readButtonClicked()
 
     QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
     if(!sid.isEmpty())
-      msg += tr("Found departure procedure <b>%1</b>.<br/>").arg(sid);
+      msg += tr("Found SID <b>%1</b>.<br/>").arg(sid);
 
     QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
     if(!star.isEmpty())
-      msg += tr("Found arrival procedure <b>%1</b>.<br/>").arg(star);
+      msg += tr("Found STAR <b>%1</b>.<br/>").arg(star);
 
     ui->textEditRouteStringErrors->setHtml(msg);
   }

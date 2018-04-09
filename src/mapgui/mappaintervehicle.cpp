@@ -202,7 +202,7 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
 
   if((aircraft.isOnGround() && context->mapLayer->isAiAircraftGroundText()) || // All AI on ground
      (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText()) || // All AI in the air
-     (aircraft.getFlags() & atools::fs::sc::SIM_ONLINE && context->mapLayer->isOnlineAircraftText()) || // All online
+     (aircraft.isOnline() && context->mapLayer->isOnlineAircraftText()) || // All online
      forceLabel) // Force label for nearby aircraft
   {
     appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_REGISTRATION),
@@ -285,7 +285,7 @@ const QPixmap *MapPainterVehicle::pixmapFromCache(const SimConnectAircraft& ac, 
 {
   PixmapKey key;
 
-  if(ac.getFlags() & atools::fs::sc::SIM_ONLINE)
+  if(ac.isOnline())
     key.type = AC_ONLINE;
   else if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;

@@ -33,7 +33,7 @@ bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLaye
     show &= layer->isAiAircraftGround();
   else
   {
-    if(ac.getFlags() & atools::fs::sc::SIM_ONLINE)
+    if(ac.isOnline())
       show &= layer->isOnlineAircraft();
     else if(ac.getModelRadiusCorrected() * 2 < layer::LARGE_AIRCRAFT_SIZE)
       show &= layer->isAiAircraftSmall();

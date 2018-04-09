@@ -214,26 +214,32 @@ void MapVisible::updateVisibleObjectsStatusBar()
           if(airspaceFilter.types & type)
             airspacesTooltip.append(map::airspaceTypeToString(type));
         }
+        std::sort(airspacesTooltip.begin(), airspacesTooltip.end());
+
         if(airspaceFilter.types & map::AIRSPACE_ICAO)
         {
           airspaceGroupLabel.append(tr("ICAO"));
           airspaceGroupTooltip.append(tr("Class A-E (ICAO)"));
         }
+
         if(airspaceFilter.types & map::AIRSPACE_FIR)
         {
           airspaceGroupLabel.append(tr("FIR"));
           airspaceGroupTooltip.append(tr("Flight Information Region, class F and/or G (FIR)"));
         }
+
         if(airspaceFilter.types & map::AIRSPACE_RESTRICTED)
         {
           airspaceGroupLabel.append(tr("RSTR"));
           airspaceGroupTooltip.append(tr("Restricted (RSTR)"));
         }
+
         if(airspaceFilter.types & map::AIRSPACE_SPECIAL)
         {
           airspaceGroupLabel.append(tr("SPEC"));
           airspaceGroupTooltip.append(tr("Special (SPEC)"));
         }
+
         if(airspaceFilter.types & map::AIRSPACE_OTHER || airspaceFilter.types & map::AIRSPACE_CENTER)
         {
           airspaceGroupLabel.append(tr("OTR"));
@@ -246,19 +252,35 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No navaids")).trEnd();
 
+      QString asText, asGroupText;
+      if(shown & map::AIRSPACE_ONLINE && shown & map::AIRSPACE)
+      {
+        asText = tr("Airspaces and Online Centers: ");
+        asGroupText = tr("Airspace and Online Center Groups: ");
+      }
+      else if(shown & map::AIRSPACE_ONLINE)
+      {
+        asText = tr("Online Centers: ");
+        asGroupText = tr("Online Center Groups: ");
+      }
+      else if(shown & map::AIRSPACE)
+      {
+        asText = tr("Airspaces: ");
+        asGroupText = tr("Airspace Groups: ");
+      }
+
       if(!airspacesTooltip.isEmpty())
       {
-        tooltip.tr().td().b(tr("Airspace Groups: ")).text(airspaceGroupTooltip.join(", ")).tdEnd().trEnd();
-        tooltip.tr().td().b(tr("Airspaces: ")).text(airspacesTooltip.join(", ")).tdEnd().trEnd();
+        tooltip.tr().td().b(asGroupText).text(airspaceGroupTooltip.join(", ")).tdEnd().trEnd();
+        tooltip.tr().td().b(asText).text(airspacesTooltip.join(", ")).tdEnd().trEnd();
       }
       else
         tooltip.tr().td(tr("No airspaces")).trEnd();
 
       QStringList aiLabel;
+      QStringList ai;
       if(NavApp::isConnected())
       {
-        QStringList ai;
-
         // AI vehicles
         if(shown & map::AIRCRAFT_AI && layer->isAiAircraftLarge())
         {
@@ -295,11 +317,14 @@ void MapVisible::updateVisibleObjectsStatusBar()
             aiLabel.append("S");
           }
         }
-        if(!ai.isEmpty())
-          tooltip.tr().td().b(tr("AI/multiplayer: ")).text(ai.join(", ")).tdEnd().trEnd();
-        else
-          tooltip.tr().td(tr("No AI/Multiplayer")).trEnd();
       }
+      if(shown & map::AIRCRAFT_AI && NavApp::isOnlineNetworkActive())
+        ai.append(tr("%1 Clients / Aircraft").arg(NavApp::getOnlineNetwork()));
+
+      if(!ai.isEmpty())
+        tooltip.tr().td().b(tr("AI / multiplayer / online client: ")).text(ai.join(", ")).tdEnd().trEnd();
+      else
+        tooltip.tr().td(tr("No AI / Multiplayer / online client")).trEnd();
       tooltip.tableEnd();
 
       QStringList label;
