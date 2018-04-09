@@ -50,13 +50,6 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
                                  const QList<proc::MapProcedurePoint>& procPoints,
                                  const Route& route, bool airportDiagram)
 {
-#if defined(Q_OS_WIN32)
-  QColor iconBackColor(Qt::transparent);
-#else
-  // Avoid unreadable icons for some linux distributions that have a black tooltip background
-  QColor iconBackColor(QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase));
-#endif
-
   opts::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
   HtmlBuilder html(false);

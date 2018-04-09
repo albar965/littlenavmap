@@ -158,7 +158,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *ai =
     addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"),
                tr("Select text labels for the AI, multiplayer and online client aircraft."));
-  addItem(ai, tr("Registration or Number"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem(ai, tr("Registration, Number or Callsign"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem(ai, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
   addItem(ai, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
   addItem(ai, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);

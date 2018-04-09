@@ -41,6 +41,7 @@
 #include "common/unit.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
+#include "common/vehicleicons.h"
 
 #include <QSize>
 #include <QFileInfo>
@@ -59,7 +60,12 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::weather::Metar;
 
-const int SYMBOL_SIZE = 20;
+/* Airport, navaid and userpoint size */
+const QSize SYMBOL_SIZE(20, 20);
+
+/* Aircraft size */
+const QSize SYMBOL_SIZE_VEHICLE(28, 28);
+
 const float HELIPAD_ZOOM_METER = 200.f;
 const float STARTPOS_ZOOM_METER = 500.f;
 
@@ -86,37 +92,10 @@ HtmlInfoBuilder::~HtmlInfoBuilder()
   delete morse;
 }
 
-void HtmlInfoBuilder::updateAircraftIcons(bool force)
-{
-  if(aircraftEncodedIcon.isEmpty() || force)
-    aircraftEncodedIcon = HtmlBuilder::getEncodedImageHref(
-      QIcon(":/littlenavmap/resources/icons/aircraft.svg"), QSize(24, 24));
-
-  if(aircraftGroundEncodedIcon.isEmpty() || force)
-    aircraftGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
-      QIcon(":/littlenavmap/resources/icons/aircraftground.svg"), QSize(24, 24));
-
-  if(aircraftAiEncodedIcon.isEmpty() || force)
-    aircraftAiEncodedIcon = HtmlBuilder::getEncodedImageHref(
-      QIcon(":/littlenavmap/resources/icons/aircraftai.svg"), QSize(24, 24));
-
-  if(aircraftAiGroundEncodedIcon.isEmpty() || force)
-    aircraftAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
-      QIcon(":/littlenavmap/resources/icons/aircraftaiground.svg"), QSize(24, 24));
-
-  if(boatAiEncodedIcon.isEmpty() || force)
-    boatAiEncodedIcon = HtmlBuilder::getEncodedImageHref(
-      QIcon(":/littlenavmap/resources/icons/boatai.svg"), QSize(24, 24));
-
-  if(boatAiGroundEncodedIcon.isEmpty() || force)
-    boatAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
-      QIcon(":/littlenavmap/resources/icons/boataiground.svg"), QSize(24, 24));
-}
-
 void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating) const
 {
-  html.img(SymbolPainter().createAirportIcon(airport, SYMBOL_SIZE),
-           QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.img(SymbolPainter().createAirportIcon(airport, SYMBOL_SIZE.height()),
+           QString(), QString(), SYMBOL_SIZE);
   html.nbsp().nbsp();
 
   // Adapt title to airport status
@@ -1376,8 +1355,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(info && infoQuery != nullptr)
     rec = infoQuery->getVorInformation(vor.id);
 
-  QIcon icon = SymbolPainter().createVorIcon(vor, SYMBOL_SIZE);
-  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  QIcon icon = SymbolPainter().createVorIcon(vor, SYMBOL_SIZE.height());
+  html.img(icon, QString(), QString(), SYMBOL_SIZE);
   html.nbsp().nbsp();
 
   QString type = map::vorType(vor);
@@ -1441,8 +1420,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(info && infoQuery != nullptr)
     rec = infoQuery->getNdbInformation(ndb.id);
 
-  QIcon icon = SymbolPainter().createNdbIcon(SYMBOL_SIZE);
-  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  QIcon icon = SymbolPainter().createNdbIcon(SYMBOL_SIZE.height());
+  html.img(icon, QString(), QString(), SYMBOL_SIZE);
   html.nbsp().nbsp();
 
   navaidTitle(html, tr("NDB: ") + capString(ndb.name) + " (" + ndb.ident + ")");
@@ -1488,7 +1467,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
   if(!rec.isEmpty())
   {
     QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
-    html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+    html.img(icon, QString(), QString(), SYMBOL_SIZE);
     html.nbsp().nbsp();
 
     navaidTitle(html, tr("Userpoint%1").arg(userpoint.temp ? tr(" (Temporary)") : QString()));
@@ -1555,8 +1534,8 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info && infoQuery != nullptr)
     rec = infoQuery->getWaypointInformation(waypoint.id);
 
-  QIcon icon = SymbolPainter().createWaypointIcon(SYMBOL_SIZE);
-  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  QIcon icon = SymbolPainter().createWaypointIcon(SYMBOL_SIZE.height());
+  html.img(icon, QString(), QString(), SYMBOL_SIZE);
   html.nbsp().nbsp();
 
   navaidTitle(html, tr("Waypoint: ") + waypoint.ident);
@@ -1637,8 +1616,8 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
                                    HtmlBuilder& html) const
 {
-  QIcon icon = SymbolPainter().createAirspaceIcon(airspace, SYMBOL_SIZE);
-  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  QIcon icon = SymbolPainter().createAirspaceIcon(airspace, SYMBOL_SIZE.height());
+  html.img(icon, QString(), QString(), SYMBOL_SIZE);
   html.nbsp().nbsp();
 
   QString network;
@@ -1805,27 +1784,27 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
     if(!waypoints.isEmpty())
     {
-      HtmlBuilder tempHtml(true);
+      HtmlBuilder tempLinkHtml(true);
       for(const SqlRecord& wprec : waypoints)
       {
-        if(!tempHtml.isEmpty())
-          tempHtml.text(", ");
-        tempHtml.a(tr("%1/%2").
-                   arg(wprec.valueStr("from_ident")).
-                   arg(wprec.valueStr("from_region")),
-                   QString("lnm://show?lonx=%1&laty=%2").
-                   arg(wprec.valueFloat("from_lonx")).
-                   arg(wprec.valueFloat("from_laty")), atools::util::html::LINK_NO_UL);
+        if(!tempLinkHtml.isEmpty())
+          tempLinkHtml.text(", ");
+        tempLinkHtml.a(tr("%1/%2").
+                       arg(wprec.valueStr("from_ident")).
+                       arg(wprec.valueStr("from_region")),
+                       QString("lnm://show?lonx=%1&laty=%2").
+                       arg(wprec.valueFloat("from_lonx")).
+                       arg(wprec.valueFloat("from_laty")), atools::util::html::LINK_NO_UL);
       }
-      tempHtml.text(", ");
-      tempHtml.a(tr("%1/%2").
-                 arg(waypoints.last().valueStr("to_ident")).
-                 arg(waypoints.last().valueStr("to_region")),
-                 QString("lnm://show?lonx=%1&laty=%2").
-                 arg(waypoints.last().valueFloat("to_lonx")).
-                 arg(waypoints.last().valueFloat("to_laty")), atools::util::html::LINK_NO_UL);
+      tempLinkHtml.text(", ");
+      tempLinkHtml.a(tr("%1/%2").
+                     arg(waypoints.last().valueStr("to_ident")).
+                     arg(waypoints.last().valueStr("to_region")),
+                     QString("lnm://show?lonx=%1&laty=%2").
+                     arg(waypoints.last().valueFloat("to_lonx")).
+                     arg(waypoints.last().valueFloat("to_laty")), atools::util::html::LINK_NO_UL);
 
-      html.row2(tr("Waypoints Ident/Region:"), tempHtml.getHtml(), atools::util::html::NO_ENTITIES);
+      html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), atools::util::html::NO_ENTITIES);
     }
   }
   html.tableEnd();
@@ -2716,26 +2695,27 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 }
 
-void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                    HtmlBuilder& html)
+void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html)
 {
-  const QString *icon;
+  // const QString *iconFile;
 
-  updateAircraftIcons(false);
+  // updateAircraftIcons(false);
+
+  // if(aircraft.isUser())
+  // iconFile = aircraft.isOnGround() ? &aircraftGroundEncodedIcon : &aircraftEncodedIcon;
+  // else if(aircraft.getCategory() == atools::fs::sc::BOAT)
+  // iconFile = aircraft.isOnGround() ? &boatAiGroundEncodedIcon : &boatAiEncodedIcon;
+  // else
+  // iconFile = aircraft.isOnGround() ? &aircraftAiGroundEncodedIcon : &aircraftAiEncodedIcon;
+
+  QIcon icon = NavApp::getVehicleIcons()->iconFromCache(aircraft, SYMBOL_SIZE_VEHICLE.height(), 45);
 
   if(aircraft.isUser())
-    icon = aircraft.isOnGround() ? &aircraftGroundEncodedIcon : &aircraftEncodedIcon;
-  else if(aircraft.getCategory() == atools::fs::sc::BOAT)
-    icon = aircraft.isOnGround() ? &boatAiGroundEncodedIcon : &boatAiEncodedIcon;
-  else
-    icon = aircraft.isOnGround() ? &aircraftAiGroundEncodedIcon : &aircraftAiEncodedIcon;
-
-  if(aircraft.isUser())
-    html.img(*icon, tr("User Vehicle"), QString(), QSize(24, 24));
+    html.img(icon, tr("User Vehicle"), QString(), SYMBOL_SIZE_VEHICLE);
   else if(aircraft.isOnline())
-    html.img(*icon, tr("Online Client (%1)").arg(NavApp::getOnlineNetwork()), QString(), QSize(24, 24));
+    html.img(icon, tr("Online Client (%1)").arg(NavApp::getOnlineNetwork()), QString(), SYMBOL_SIZE_VEHICLE);
   else
-    html.img(*icon, tr("AI / Multiplayer Vehicle"), QString(), QSize(24, 24));
+    html.img(icon, tr("AI / Multiplayer Vehicle"), QString(), SYMBOL_SIZE_VEHICLE);
   html.nbsp().nbsp();
 
   QString title(aircraft.getAirplaneRegistration());

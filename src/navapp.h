@@ -44,6 +44,7 @@ class UserdataController;
 class OnlinedataController;
 class UserdataIcons;
 class UserdataSearch;
+class VehicleIcons;
 
 namespace atools {
 
@@ -206,6 +207,8 @@ public:
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
+  static VehicleIcons *getVehicleIcons();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
@@ -230,6 +233,7 @@ private:
   static QSplashScreen *splashScreen;
 
   static UpdateHandler *updateHandler;
+  static VehicleIcons *vehicleIcons;
 
   static bool shuttingDown;
 };

@@ -285,9 +285,7 @@ void InfoController::restoreState()
                                  map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
                                  refsStrList.at(i).toInt(), false /* airport from nav database */);
 
-    iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
     updateTextEditFontSizes();
-    infoBuilder->updateAircraftIcons(true);
     showInformationInternal(res, false);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
@@ -887,9 +885,7 @@ void InfoController::updateAircraftInfo()
 
 void InfoController::optionsChanged()
 {
-  iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   updateTextEditFontSizes();
-  infoBuilder->updateAircraftIcons(true);
   showInformationInternal(currentSearchResult, false);
 }
 

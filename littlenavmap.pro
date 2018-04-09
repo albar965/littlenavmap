@@ -223,7 +223,8 @@ SOURCES += src/main.cpp\
     src/query/airspacequery.cpp \
     src/query/querytypes.cpp \
     src/search/searchbasetable.cpp \
-    src/mapgui/mapfunctions.cpp
+    src/mapgui/mapfunctions.cpp \
+    src/common/vehicleicons.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -323,7 +324,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/query/airspacequery.h \
     src/query/querytypes.h \
     src/search/searchbasetable.h \
-    src/mapgui/mapfunctions.h
+    src/mapgui/mapfunctions.h \
+    src/common/vehicleicons.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

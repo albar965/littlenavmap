@@ -2633,7 +2633,8 @@ void MainWindow::updateActionStates()
 #else
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
   ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
-  ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected());
+  ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() ||
+                                          NavApp::getOnlinedataController()->isNetworkActive());
   ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected());
 #endif
 

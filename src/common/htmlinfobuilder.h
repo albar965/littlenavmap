@@ -257,8 +257,6 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
-  void updateAircraftIcons(bool force);
-
 private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
@@ -321,8 +319,6 @@ private:
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
-  QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon,
-          boatAiEncodedIcon, boatAiGroundEncodedIcon;
 
 };
 

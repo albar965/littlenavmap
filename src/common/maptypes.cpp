@@ -89,7 +89,7 @@ void initTranslateableTexts()
       {"T", QObject::tr("Tarmac")},
       {"TR", QObject::tr("Transparent")},
       {"UNKNOWN", QObject::tr("Unknown")},
-      {"INVALID", QString("Invalid")}
+      {"INVALID", QObject::tr("Invalid")}
     });
 
   /* Short size name for gate and full name for others */

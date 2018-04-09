@@ -135,7 +135,6 @@ private:
   AirspaceQuery *airspaceQuery = nullptr;
   AirspaceQuery *airspaceQueryOnline = nullptr;
   AirportQuery *airportQuery = nullptr;
-  QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;

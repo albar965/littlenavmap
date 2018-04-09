@@ -34,6 +34,7 @@
 #include "userdata/userdatacontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
+#include "common/vehicleicons.h"
 
 #include "ui_mainwindow.h"
 
@@ -62,6 +63,7 @@ atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
+VehicleIcons *NavApp::vehicleIcons = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -94,6 +96,8 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
+
+  vehicleIcons = new VehicleIcons();
 
   // Need to set this later to avoid circular database dependency
   userdataController->setMagDecReader(magDecReader);
@@ -206,6 +210,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete magDecReader";
   delete magDecReader;
   magDecReader = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete vehicleIcons";
+  delete vehicleIcons;
+  vehicleIcons = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete splashScreen";
   delete splashScreen;
@@ -396,6 +404,11 @@ OnlinedataController *NavApp::getOnlinedataController()
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()
 {
   return magDecReader;
+}
+
+VehicleIcons *NavApp::getVehicleIcons()
+{
+  return vehicleIcons;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()
