@@ -37,6 +37,7 @@
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
+#include "userdata/userdataicons.h"
 
 #include <QCommandLineParser>
 #include <QDebug>
@@ -175,6 +176,7 @@ int main(int argc, char *argv[])
 
     /* Avoid static translations and load these dynamically now */
     Unit::initTranslateableTexts();
+    UserdataIcons::initTranslateableTexts();
     map::initTranslateableTexts();
     proc::initTranslateableTexts();
 

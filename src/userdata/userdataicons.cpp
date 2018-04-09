@@ -27,6 +27,68 @@
 
 const static QLatin1Literal DEFAULT_TYPE("Unknown");
 
+static QHash<QString, QString> typeToTranslatedMap;
+static QHash<QString, QString> translationToTypeMap;
+
+void UserdataIcons::initTranslateableTexts()
+{
+  typeToTranslatedMap = QHash<QString, QString>(
+  {
+    {QLatin1Literal("Airport"), QObject::tr("Airport", "UserpointType")},
+    {QLatin1Literal("Airstrip"), QObject::tr("Airstrip", "UserpointType")},
+    {QLatin1Literal("Bookmark"), QObject::tr("Bookmark", "UserpointType")},
+    {QLatin1Literal("Cabin"), QObject::tr("Cabin", "UserpointType")},
+    {QLatin1Literal("Closed"), QObject::tr("Closed", "UserpointType")},
+    {QLatin1Literal("Error"), QObject::tr("Error", "UserpointType")},
+    {QLatin1Literal("Flag"), QObject::tr("Flag", "UserpointType")},
+    {QLatin1Literal("Helipad"), QObject::tr("Helipad", "UserpointType")},
+    {QLatin1Literal("Location"), QObject::tr("Location", "UserpointType")},
+    {QLatin1Literal("Logbook"), QObject::tr("Logbook", "UserpointType")},
+    {QLatin1Literal("Marker"), QObject::tr("Marker", "UserpointType")},
+    {QLatin1Literal("Mountain"), QObject::tr("Mountain", "UserpointType")},
+    {QLatin1Literal("Obstacle"), QObject::tr("Obstacle", "UserpointType")},
+    {QLatin1Literal("Pin"), QObject::tr("Pin", "UserpointType")},
+    {QLatin1Literal("POI"), QObject::tr("POI", "UserpointType")},
+    {QLatin1Literal("Seaport"), QObject::tr("Seaport", "UserpointType")},
+    {QLatin1Literal("Unknown"), QObject::tr("Unknown", "UserpointType")},
+    {QLatin1Literal("VRP"), QObject::tr("VRP", "UserpointType")},
+    {QLatin1Literal("Waypoint"), QObject::tr("Waypoint", "UserpointType")}
+  });
+
+  translationToTypeMap = QHash<QString, QString>(
+  {
+    {QObject::tr("Airport", "UserpointType"), QLatin1Literal("Airport")},
+    {QObject::tr("Airstrip", "UserpointType"), QLatin1Literal("Airstrip")},
+    {QObject::tr("Bookmark", "UserpointType"), QLatin1Literal("Bookmark")},
+    {QObject::tr("Cabin", "UserpointType"), QLatin1Literal("Cabin")},
+    {QObject::tr("Closed", "UserpointType"), QLatin1Literal("Closed")},
+    {QObject::tr("Error", "UserpointType"), QLatin1Literal("Error")},
+    {QObject::tr("Flag", "UserpointType"), QLatin1Literal("Flag")},
+    {QObject::tr("Helipad", "UserpointType"), QLatin1Literal("Helipad")},
+    {QObject::tr("Location", "UserpointType"), QLatin1Literal("Location")},
+    {QObject::tr("Logbook", "UserpointType"), QLatin1Literal("Logbook")},
+    {QObject::tr("Marker", "UserpointType"), QLatin1Literal("Marker")},
+    {QObject::tr("Mountain", "UserpointType"), QLatin1Literal("Mountain")},
+    {QObject::tr("Obstacle", "UserpointType"), QLatin1Literal("Obstacle")},
+    {QObject::tr("Pin", "UserpointType"), QLatin1Literal("Pin")},
+    {QObject::tr("POI", "UserpointType"), QLatin1Literal("POI")},
+    {QObject::tr("Seaport", "UserpointType"), QLatin1Literal("Seaport")},
+    {QObject::tr("Unknown", "UserpointType"), QLatin1Literal("Unknown")},
+    {QObject::tr("VRP", "UserpointType"), QLatin1Literal("VRP")},
+    {QObject::tr("Waypoint", "UserpointType"), QLatin1Literal("Waypoint")}
+  });
+}
+
+QString UserdataIcons::typeToTranslated(const QString& type)
+{
+  return typeToTranslatedMap.value(type, type);
+}
+
+QString UserdataIcons::translatedToType(const QString& type)
+{
+  return translationToTypeMap.value(type, type);
+}
+
 UserdataIcons::UserdataIcons(QObject *parent) : QObject(parent)
 {
 
