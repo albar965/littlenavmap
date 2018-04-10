@@ -742,7 +742,16 @@ public:
   QString getOnlineWhazzupUrl() const;
 
   /* Reload files or automatic or not applicable if -1 */
-  int getOnlineReloadTimeSeconds() const;
+  int getOnlineReloadTimeSeconds() const
+  {
+    return onlineReloadSeconds;
+  }
+
+  /* Value from networks.cfg or -1 if auto */
+  int getOnlineReloadTimeSecondsConfig() const
+  {
+    return onlineReloadSecondsConfig;
+  }
 
 private:
   friend class OptionsDialog;
@@ -961,7 +970,7 @@ private:
   QString onlineStatusUrl, onlineWhazzupUrl;
 
   /* Values loaded from networks.cfg */
-  int onlineReloadSeconds = 180;
+  int onlineReloadSeconds = 180, onlineReloadSecondsConfig = 180;
   QString onlineVatsimStatusUrl;
   QString onlineIvaoStatusUrl;
 };

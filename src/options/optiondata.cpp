@@ -92,22 +92,6 @@ QString OptionData::getOnlineWhazzupUrl() const
   return QString();
 }
 
-int OptionData::getOnlineReloadTimeSeconds() const
-{
-  switch(onlineNetwork)
-  {
-    case opts::ONLINE_VATSIM:
-    case opts::ONLINE_IVAO:
-    case opts::ONLINE_NONE:
-      return -1;
-
-    case opts::ONLINE_CUSTOM:
-    case opts::ONLINE_CUSTOM_STATUS:
-      return onlineReloadSeconds;
-  }
-  return -1;
-}
-
 const OptionData& OptionData::instance()
 {
   OptionData& optData = instanceInternal();

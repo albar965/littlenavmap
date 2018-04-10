@@ -700,10 +700,16 @@ void OptionsDialog::restoreState()
   OptionData& od = OptionData::instanceInternal();
   od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
   od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
-  int update = networkSettings.value("options/update").toInt();
-  if(update < 60)
+
+  int update;
+  if(networkSettings.value("options/update").toString().trimmed().toLower() == "auto")
+    update = -1;
+  else
+    update = networkSettings.value("options/update").toInt();
+
+  if(update < 60 && update != -1)
     update = 60;
-  od.onlineReloadSeconds = update;
+  od.onlineReloadSecondsConfig = update;
 
   // Disable selection based on what was found in the file
   ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoStatusUrl.isEmpty());

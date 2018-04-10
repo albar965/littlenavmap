@@ -70,7 +70,6 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
 
   // Recurring downloads
-  downloadTimer.setInterval(OptionData::instance().getOnlineReloadTimeSeconds() * 1000);
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
@@ -399,27 +398,34 @@ void OnlinedataController::startDownloadTimer()
   downloadTimer.stop();
 
   opts::OnlineNetwork onlineNetwork = OptionData::instance().getOnlineNetwork();
-  int reloadFromOptions = OptionData::instance().getOnlineReloadTimeSeconds();
+  QString source;
 
   // Use three minutes as default if nothing is given
-  int intervalSeconds = 3 * 60;
+  int intervalSeconds;
 
   if(onlineNetwork == opts::ONLINE_CUSTOM || onlineNetwork == opts::ONLINE_CUSTOM_STATUS)
+  {
     // Use options for custom network - ignore reload in whazzup.txt
-    intervalSeconds = reloadFromOptions;
+    intervalSeconds = OptionData::instance().getOnlineReloadTimeSeconds();
+    source = "options";
+  }
   else
   {
-    // Check reload time from whazzup file
-    int reloadFromWhazzupSeconds = manager->getReloadMinutesFromWhazzup() * 60;
-
-    // Safety margin 30 seconds
-    if(reloadFromWhazzupSeconds > 30)
+    int reloadFromCfg = OptionData::instance().getOnlineReloadTimeSecondsConfig();
+    if(reloadFromCfg == -1)
     {
-      // Use time from whazzup.txt
-      intervalSeconds = reloadFromWhazzupSeconds;
-      qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from whazzup";
+      // Use time from whazzup.txt - mode auto
+      intervalSeconds = std::max(manager->getReloadMinutesFromWhazzup() * 60, 60);
+      source = "whazzup";
+    }
+    else
+    {
+      intervalSeconds = std::max(reloadFromCfg, 60);
+      source = "networks.cfg";
     }
   }
+
+  qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from" << source;
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloadTimer.setInterval(2000);
