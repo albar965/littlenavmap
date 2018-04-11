@@ -62,9 +62,6 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
     codec = QTextCodec::codecForLocale();
 
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
-  // Create a default user agent if not disabled
-  // if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
-  // downloader->setUserAgent();
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
@@ -110,6 +107,10 @@ void OnlinedataController::startDownloadInternal()
 
   if(currentState == NONE)
   {
+    // Create a default user agent if not disabled for debugging
+    if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
+      downloader->setDefaultUserAgentShort(QString(" Config/%1").arg(getNetwork()));
+
     QString url;
     if(whazzupUrlFromStatus.isEmpty() && // Status not downloaded yet
        !onlineStatusUrl.isEmpty()) // Need  status.txt by configuration
