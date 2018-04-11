@@ -82,6 +82,11 @@ NavApp::~NavApp()
 {
 }
 
+NavApp *NavApp::navAppInstance()
+{
+  return dynamic_cast<NavApp *>(QCoreApplication::instance());
+}
+
 void NavApp::init(MainWindow *mainWindowParam)
 {
   qDebug() << Q_FUNC_INFO;

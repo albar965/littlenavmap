@@ -116,6 +116,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   airportQuery = NavApp::getAirportQueryNav();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
+  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
 
   treeWidget->setItemDelegate(gridDelegate);
@@ -158,6 +159,14 @@ ProcedureSearch::~ProcedureSearch()
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
   delete treeEventFilter;
   delete gridDelegate;
+}
+
+void ProcedureSearch::fontChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  zoomHandler->fontChanged();
+  optionsChanged();
 }
 
 void ProcedureSearch::resetSearch()

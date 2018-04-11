@@ -370,6 +370,7 @@ private:
   void nothingSelectedTriggered();
   void activateLegTriggered();
   Route routeAdjustedToProcedureOptions() const;
+  void fontChanged();
 
   /* Calculate save options from dialog settings*/
   atools::fs::pln::SaveOptions saveOptions() const;

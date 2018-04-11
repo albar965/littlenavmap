@@ -124,6 +124,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   airportQuery = NavApp::getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
+  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -172,6 +173,14 @@ SearchBaseTable::~SearchBaseTable()
   delete columns;
   delete viewEventFilter;
   delete widgetEventFilter;
+}
+
+void SearchBaseTable::fontChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  zoomHandler->fontChanged();
+  optionsChanged();
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
@@ -904,7 +913,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Build the menu depending on tab =========================================================================
   QMenu menu;
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionSearchShowInformation);
     if(navType == map::AIRPORT)
@@ -922,7 +933,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(followModeAction());
     menu.addSeparator();
@@ -936,7 +949,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionMapRangeRings);
 
   if(atools::contains(getTabIndex(), {si::SEARCH_NAV}))

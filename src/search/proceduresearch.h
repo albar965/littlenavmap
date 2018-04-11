@@ -166,6 +166,7 @@ private:
   void updateFilterBoxes();
   void resetSearch();
   void dockVisibilityChanged(bool visible);
+  void fontChanged();
 
   static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);

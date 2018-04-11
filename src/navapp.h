@@ -89,6 +89,8 @@ public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
   virtual ~NavApp();
 
+  static NavApp *navAppInstance();
+
   /* Creates all aggregated objects */
   static void init(MainWindow *mainWindowParam);
 
