@@ -308,7 +308,7 @@ void InfoController::updateProgress()
   {
     // ok - scrollbars not pressed
     html.clear();
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRoute());
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRouteConst());
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
   }
 }
@@ -335,7 +335,7 @@ void InfoController::updateAirportInternal(bool newAirport)
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
-      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRoute());
+      infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRouteConst());
 
       Ui::MainWindow *ui = NavApp::getMainUi();
       if(newAirport)
@@ -746,7 +746,7 @@ void InfoController::updateAircraftProgressText()
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
-        infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRoute());
+        infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRouteConst());
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
       }
     }

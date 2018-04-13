@@ -751,9 +751,9 @@ void MapWidget::showSavedPosOnStartup()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
   {
-    qDebug() << "Show Route" << NavApp::getRoute().getBoundingRect();
-    if(!NavApp::getRoute().isFlightplanEmpty())
-      showRect(NavApp::getRoute().getBoundingRect(), false);
+    qDebug() << "Show Route" << NavApp::getRouteConst().getBoundingRect();
+    if(!NavApp::getRouteConst().isFlightplanEmpty())
+      showRect(NavApp::getRouteConst().getBoundingRect(), false);
     else
       showHome();
   }
@@ -969,7 +969,7 @@ void MapWidget::routeAltitudeChanged(float altitudeFeet)
 
 bool MapWidget::isCenterLegAndAircraftActive()
 {
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
   return OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM &&
          !route.isEmpty() && route.isActiveValid() && screenIndex->getUserAircraft().isFlying();
 }
@@ -1107,7 +1107,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       bool updateAlways = od.getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY;
 
       // Check if centering of leg is reqired =======================================
-      const Route& route = NavApp::getRoute();
+      const Route& route = NavApp::getRouteConst();
       bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
       // Get position of next waypoint and check visibility
@@ -1709,8 +1709,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.airports.isEmpty())
   {
     airport = &result.airports.first();
-    airportDestination = NavApp::getRoute().isAirportDestination(airport->ident);
-    airportDeparture = NavApp::getRoute().isAirportDeparture(airport->ident);
+    airportDestination = NavApp::getRouteConst().isAirportDestination(airport->ident);
+    airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport->ident);
   }
 
   if(!result.parkings.isEmpty())
@@ -2013,7 +2013,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
 
   // Update "delete in route"
-  if(routeIndex != -1 && NavApp::getRoute().canEditPoint(routeIndex))
+  if(routeIndex != -1 && NavApp::getRouteConst().canEditPoint(routeIndex))
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(routeText));
@@ -2661,7 +2661,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons() == Qt::NoButton)
     {
       // No dragging going on now - update cursor over flight plan legs or markers
-      const Route& route = NavApp::getRoute();
+      const Route& route = NavApp::getRouteConst();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
@@ -2826,7 +2826,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const Route& route = NavApp::getRoute();
+        const Route& route = NavApp::getRouteConst();
 
         if(route.size() > 1)
         {
@@ -3015,7 +3015,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, NavApp::getRoute(),
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, NavApp::getRouteConst(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())

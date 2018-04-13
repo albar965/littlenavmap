@@ -54,10 +54,10 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   // Create all painters
   mapPainterNav = new MapPainterNav(mapWidget, mapScale);
   mapPainterIls = new MapPainterIls(mapWidget, mapScale);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &NavApp::getRoute());
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &NavApp::getRouteConst());
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &NavApp::getRouteConst());
   mapPainterMark = new MapPainterMark(mapWidget, mapScale);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRouteConst());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale);
   mapPainterShip = new MapPainterShip(mapWidget, mapScale);
   mapPainterUser = new MapPainterUser(mapWidget, mapScale);

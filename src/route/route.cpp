@@ -19,6 +19,7 @@
 
 #include "geo/calculations.h"
 #include "common/maptools.h"
+#include "query/mapquery.h"
 #include "common/unit.h"
 #include "route/flightplanentrybuilder.h"
 #include "query/procedurequery.h"
@@ -1356,6 +1357,120 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp)
     // Airways are updated in route controller
   }
   return route;
+}
+
+/* Check if route has valid departure parking.
+ *  @return true if route can be saved anyway */
+bool Route::hasValidParking() const
+{
+  if(hasValidDeparture())
+  {
+    const QList<map::MapParking> *parkingCache = NavApp::getAirportQuerySim()->getParkingsForAirport(first().getId());
+
+    if(!parkingCache->isEmpty())
+      return hasDepartureParking() || hasDepartureHelipad();
+    else
+      // No parking available - so no parking selection is ok
+      return true;
+  }
+  else
+    return false;
+}
+
+/* Fetch airways by waypoint and name and adjust route altititude if needed */
+void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
+{
+  int minAltitude = 0;
+  for(int i = 1; i < size(); i++)
+  {
+    RouteLeg& routeLeg = (*this)[i];
+    const RouteLeg& prevLeg = at(i - 1);
+
+    if(!routeLeg.getAirwayName().isEmpty())
+    {
+      map::MapAirway airway;
+      NavApp::getMapQuery()->getAirwayByNameAndWaypoint(airway, routeLeg.getAirwayName(), prevLeg.getIdent(),
+                                                        routeLeg.getIdent());
+      routeLeg.setAirway(airway);
+      minAltitude = std::max(airway.minAltitude, minAltitude);
+
+      // qDebug() << "min" << airway.minAltitude << "max" << airway.maxAltitude;
+    }
+    else
+      routeLeg.setAirway(map::MapAirway());
+  }
+
+  if(adjustRouteAltitude && minAltitude > 0 && !isEmpty())
+  {
+    if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
+      // Apply simplified east/west rule
+      minAltitude = adjustAltitude(minAltitude);
+    getFlightplan().setCruisingAltitude(minAltitude);
+
+    qDebug() << Q_FUNC_INFO << "Updating flight plan altitude to" << minAltitude;
+
+    if(getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
+      getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+    else
+      getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
+  }
+}
+
+/* Apply simplified east/west or north/south rule */
+int Route::adjustAltitude(int minAltitude) const
+{
+  if(size() > 1)
+  {
+    const Pos& departurePos = first().getPosition();
+    const Pos& destinationPos = last().getPosition();
+
+    float magvar = (first().getMagvar() + last().getMagvar()) / 2;
+
+    float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
+
+    if(fpDir < Pos::INVALID_VALUE)
+    {
+      qDebug() << Q_FUNC_INFO << "minAltitude" << minAltitude << "fp dir" << fpDir;
+
+      // East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans
+      // and nearest even thousand feet for westward flight plans.
+      // North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans
+      // and nearest even thousand feet for northward flight plans.
+
+      // In Italy, France and Portugal, for example, southbound traffic uses odd flight levels;
+      // in New Zealand, southbound traffic uses even flight levels.
+
+      bool odd = false;
+      if(OptionData::instance().getAltitudeRuleType() == opts::EAST_WEST)
+        odd = fpDir >= 0.f && fpDir <= 180.f;
+      else if(OptionData::instance().getAltitudeRuleType() == opts::NORTH_SOUTH)
+        odd = fpDir >= 90.f && fpDir <= 270.f;
+      else if(OptionData::instance().getAltitudeRuleType() == opts::SOUTH_NORTH)
+        odd = !(fpDir >= 90.f && fpDir <= 270.f);
+
+      if(getFlightplan().getFlightplanType() == atools::fs::pln::IFR)
+      {
+        if(odd)
+          // round up to the next odd value
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+        else
+          // round up to the next even value
+          minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
+      }
+      else
+      {
+        if(odd)
+          // round up to the next odd value + 500
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
+        else
+          // round up to the next even value + 500
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
+      }
+
+      qDebug() << "corrected minAltitude" << minAltitude;
+    }
+  }
+  return minAltitude;
 }
 
 QDebug operator<<(QDebug out, const Route& route)

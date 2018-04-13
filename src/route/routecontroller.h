@@ -20,7 +20,6 @@
 
 #include "route/routecommand.h"
 #include "route/route.h"
-#include "fs/pln/flightplanconstants.h"
 
 #include <QIcon>
 #include <QObject>
@@ -91,16 +90,6 @@ public:
   bool saveFlightplan(bool cleanExport);
 
   bool exportFlighplanAsClean(const QString& filename);
-  bool exportFlighplanAsGfp(const QString& filename);
-  bool exportFlighplanAsTxt(const QString& filename);
-  bool exportFlighplanAsRte(const QString& filename);
-  bool exportFlighplanAsFpr(const QString& filename);
-  bool exportFlighplanAsCorteIn(const QString& filename);
-
-  bool exportFlightplanAsGpx(const QString& filename);
-
-  bool exportFlighplanAsRxpGns(const QString& filename);
-  bool exportFlighplanAsRxpGtn(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -108,6 +97,11 @@ public:
 
   /* Get the route only */
   const Route& getRoute() const
+  {
+    return route;
+  }
+
+  Route& getRoute()
   {
     return route;
   }
@@ -138,14 +132,6 @@ public:
   }
 
   bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
-
-  /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
-  QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
-
-  /* @return true if departure is valid and departure airport has no parking or departure of flight plan
-   *  has parking or helipad as start position */
-  bool hasValidParking() const;
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -321,8 +307,6 @@ private:
 
   void clearRoute();
 
-  int adjustAltitude(Route& rt, int minAltitude) const;
-
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
                               bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex);
@@ -360,7 +344,6 @@ private:
   void loadProceduresFromFlightplan(bool quiet);
   void updateIcons();
   void beforeRouteCalc();
-  void updateAirwaysAndAltitude(Route& rt, bool adjustRouteAltitude = false) const;
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
   QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
@@ -369,11 +352,7 @@ private:
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
   void nothingSelectedTriggered();
   void activateLegTriggered();
-  Route routeAdjustedToProcedureOptions() const;
   void fontChanged();
-
-  /* Calculate save options from dialog settings*/
-  atools::fs::pln::SaveOptions saveOptions() const;
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

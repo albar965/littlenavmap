@@ -94,7 +94,7 @@ void PrintSupport::fillWeatherCache()
 {
   qDebug() << Q_FUNC_INFO;
 
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   if(!route.isEmpty())
   {
@@ -195,7 +195,7 @@ void PrintSupport::createFlightplanDocuments()
   prt::PrintFlightPlanOpts opts = printFlightplanDialog->getPrintOptions();
   atools::util::HtmlBuilder html(false);
 
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   bool printFlightplan = opts & prt::FLIGHTPLAN;
   bool printAnyDeparture = route.hasValidDeparture() && opts & prt::DEPARTURE_ANY;

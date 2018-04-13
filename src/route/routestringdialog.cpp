@@ -114,7 +114,7 @@ RouteStringDialog::~RouteStringDialog()
 
 void RouteStringDialog::updateButtonClicked()
 {
-  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRoute(),
+  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRouteConst(),
                                                                                NavApp::getSpeedKts(), options));
 }
 
@@ -152,7 +152,7 @@ void RouteStringDialog::restoreState()
   options = getOptionsFromSettings();
   updateButtonState();
 
-  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRoute(),
+  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRouteConst(),
                                                                                NavApp::getSpeedKts(), options));
 }
 
@@ -277,7 +277,7 @@ void RouteStringDialog::updateButtonState()
   QStringList cleanString = RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText());
 
   ui->pushButtonRouteStringRead->setEnabled(!cleanString.isEmpty());
-  ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRoute().isEmpty());
+  ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRouteConst().isEmpty());
 
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
 

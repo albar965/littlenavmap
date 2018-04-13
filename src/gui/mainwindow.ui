@@ -61,6 +61,12 @@
      <addaction name="actionRouteSaveAsFpr"/>
      <addaction name="actionRouteSaveAsFpl"/>
      <addaction name="actionRouteSaveAsCorteIn"/>
+     <addaction name="actionRouteSaveAsIFly"/>
+     <addaction name="actionRouteSaveAsProSim"/>
+     <addaction name="actionRouteSaveAsBbsAirbus"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsUfmc"/>
+     <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsGpx"/>
     </widget>
@@ -7184,7 +7190,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan as X-Plane FMS &amp;3...</string>
+    <string>Export Flight Plan as X-Plane FMS &amp;3 ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
@@ -7199,7 +7205,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight &amp;Plan as X-Plane FMS 11...</string>
+    <string>Save Flight &amp;Plan as X-Plane FMS 11 ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
@@ -7213,7 +7219,7 @@
   </action>
   <action name="actionRouteSaveAsFpr">
    <property name="text">
-    <string>Export Flight Plan as &amp;Majestic Dash FPR...</string>
+    <string>Export Flight Plan as &amp;Majestic Dash FPR ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPR file usable Majestic Software MJC8 Q400</string>
@@ -7224,7 +7230,7 @@
   </action>
   <action name="actionRouteSaveAsFpl">
    <property name="text">
-    <string>Export Flight Plan as IXEG &amp;FPL...</string>
+    <string>Export Flight Plan as IXEG &amp;FPL ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
@@ -7235,7 +7241,7 @@
   </action>
   <action name="actionRouteSaveAsCorteIn">
    <property name="text">
-    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus...</string>
+    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</string>
    </property>
    <property name="toolTip">
     <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
@@ -7673,6 +7679,61 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsIFly">
+   <property name="text">
+    <string>Export Flight Plan as FLTPLAN for iFly ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsXFmc">
+   <property name="text">
+    <string>Export Flight Plan for X-FMC ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file usable by X-FMC</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsUfmc">
+   <property name="text">
+    <string>Export Flight Plan for UFMC ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as UFMC file</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsProSim">
+   <property name="text">
+    <string>Export Flight Plan to XML for ProSim ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
+   </property>
+   <property name="statusTip">
+    <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsBbsAirbus">
+   <property name="text">
+    <string>Export Flight Plan as PLN for BBS Airbus ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
    </property>
   </action>
  </widget>

@@ -126,7 +126,8 @@ public:
 
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
-  static const Route& getRoute();
+  static const Route& getRouteConst();
+  static Route& getRoute();
   static float getSpeedKts();
 
   /* Currently selected simulator database */

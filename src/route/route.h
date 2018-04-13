@@ -356,6 +356,13 @@ public:
    * Flight plan will be corrected if needed. */
   void createRouteLegsFromFlightplan();
 
+  /* @return true if departure is valid and departure airport has no parking or departure of flight plan
+   *  has parking or helipad as start position */
+  bool hasValidParking() const;
+
+  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
+  int adjustAltitude(int minAltitude) const;
+
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 

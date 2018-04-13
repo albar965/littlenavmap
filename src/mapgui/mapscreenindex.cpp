@@ -68,7 +68,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon>
   {
     const QList<map::MapAirspace> *airspaces = query->getAirspaces(
       curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
-      NavApp::getRoute().getCruisingAltitudeFeet(), false);
+      NavApp::getRouteConst().getCruisingAltitudeFeet(), false);
 
     if(airspaces != nullptr)
     {
@@ -202,7 +202,7 @@ void MapScreenIndex::restoreState()
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
 {
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   routeLines.clear();
   routePoints.clear();
@@ -366,7 +366,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   if(shown.testFlag(map::FLIGHTPLAN))
     // Get copies from flight plan if visible
-    NavApp::getRoute().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
 
   // Get points of procedure preview
   getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);

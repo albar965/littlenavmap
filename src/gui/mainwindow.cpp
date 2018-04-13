@@ -34,10 +34,8 @@
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
-#include "query/infoquery.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingguiabort.h"
-#include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
 #include "profile/profilewidget.h"
@@ -53,7 +51,6 @@
 #include "print/printsupport.h"
 #include "exception.h"
 #include "route/routestringdialog.h"
-#include "route/routestring.h"
 #include "common/unit.h"
 #include "query/procedurequery.h"
 #include "search/proceduresearch.h"
@@ -63,6 +60,7 @@
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
+#include "route/routeexport.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -144,6 +142,8 @@ MainWindow::MainWindow()
     marbleAbout->setApplicationTitle(QApplication::applicationName());
 
     currentWeatherContext = new map::WeatherContext;
+
+    routeExport = new RouteExport(this);
 
     setupUi();
 
@@ -318,6 +318,9 @@ MainWindow::~MainWindow()
 
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
+
+  qDebug() << Q_FUNC_INFO << "delete routeExport";
+  delete routeExport;
 
   qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
   NavApp::deInit();
@@ -704,6 +707,11 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
+  // Route export signals =======================================================
+  connect(routeExport, &RouteExport::showRect, mapWidget, &MapWidget::showRect);
+  connect(routeExport, &RouteExport::selectDepartureParking, routeController, &RouteController::selectDepartureParking);
+
+  // Route controller signals =======================================================
   connect(routeController, &RouteController::showRect, mapWidget, &MapWidget::showRect);
   connect(routeController, &RouteController::showPos, mapWidget, &MapWidget::showPos);
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
@@ -864,7 +872,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
-  // Flight plan file actions
+  // Flight plan file actions ============================================================
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeNewFromString);
@@ -873,22 +881,28 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
-
-  connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
-  connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeExportGfp);
-  connect(ui->actionRouteSaveAsTxt, &QAction::triggered, this, &MainWindow::routeExportTxt);
-  connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeExportRte);
-  connect(ui->actionRouteSaveAsFpr, &QAction::triggered, this, &MainWindow::routeExportFpr);
-  connect(ui->actionRouteSaveAsFpl, &QAction::triggered, this, &MainWindow::routeExportFpl);
-  connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, this, &MainWindow::routeExportCorteIn);
-
-  connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, this, &MainWindow::routeExportRxpGns);
-  connect(ui->actionRouteSaveAsRxpGtn, &QAction::triggered, this, &MainWindow::routeExportRxpGtn);
-
   connect(ui->actionRouteSaveAsFms3, &QAction::triggered, this, &MainWindow::routeSaveAsFms3);
   connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, &MainWindow::routeSaveAsFms11);
+  connect(ui->actionRouteSaveAsClean, &QAction::triggered, this, &MainWindow::routeExportClean);
 
-  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, &MainWindow::routeExportGpx);
+  // Flight plan export actions =====================================================================
+  connect(ui->actionRouteSaveAsGfp, &QAction::triggered, routeExport, &RouteExport::routeExportGfp);
+  connect(ui->actionRouteSaveAsTxt, &QAction::triggered, routeExport, &RouteExport::routeExportTxt);
+  connect(ui->actionRouteSaveAsRte, &QAction::triggered, routeExport, &RouteExport::routeExportRte);
+  connect(ui->actionRouteSaveAsFpr, &QAction::triggered, routeExport, &RouteExport::routeExportFpr);
+  connect(ui->actionRouteSaveAsFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFpl);
+  connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, routeExport, &RouteExport::routeExportCorteIn);
+  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, routeExport, &RouteExport::routeExportGpx);
+
+  connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGns);
+  connect(ui->actionRouteSaveAsRxpGtn, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGtn);
+
+  connect(ui->actionRouteSaveAsIFly, &QAction::triggered, routeExport, &RouteExport::routeExportIfly);
+  connect(ui->actionRouteSaveAsXFmc, &QAction::triggered, routeExport, &RouteExport::routeExportXFmc);
+  connect(ui->actionRouteSaveAsUfmc, &QAction::triggered, routeExport, &RouteExport::routeExportUFmc);
+  connect(ui->actionRouteSaveAsProSim, &QAction::triggered, routeExport, &RouteExport::routeExportProSim);
+  connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBBsAirbus);
+
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
@@ -1255,7 +1269,7 @@ void MainWindow::renderStatusChanged(RenderStatus status)
 /* Route center action */
 void MainWindow::routeCenter()
 {
-  if(!NavApp::getRoute().isFlightplanEmpty())
+  if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
     mapWidget->showRect(routeController->getBoundingRect(), false);
     setStatusMessage(tr("Flight plan shown on map."));
@@ -1265,7 +1279,7 @@ void MainWindow::routeCenter()
 bool MainWindow::routeSaveCheckFMS11Warnings()
 {
   if(NavApp::getDatabaseAiracCycleNav().isEmpty() &&
-     NavApp::getRoute().getFlightplan().getFileFormat() == atools::fs::pln::FMS11)
+     NavApp::getRouteConst().getFlightplan().getFileFormat() == atools::fs::pln::FMS11)
   {
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
                                             tr(
@@ -1295,10 +1309,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     {QString(), QMessageBox::Help}
   };
 
-  bool airways = NavApp::getRoute().hasAirways();
-  bool userWaypoints = NavApp::getRoute().hasUserWaypoints();
-  bool procedures = NavApp::getRoute().hasAnyProcedure();
-  bool parking = NavApp::getRoute().hasDepartureParking();
+  bool airways = NavApp::getRouteConst().hasAirways();
+  bool userWaypoints = NavApp::getRouteConst().hasUserWaypoints();
+  bool procedures = NavApp::getRouteConst().hasAnyProcedure();
+  bool parking = NavApp::getRouteConst().hasDepartureParking();
   QString routeFilename = NavApp::getRouteController()->getCurrentRouteFilename();
   int result = QMessageBox::Save;
 
@@ -1405,79 +1419,6 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
   saveAs = false;
   return false;
-}
-
-/* Check if route has valid departure  and destination and departure parking.
- *  @return true if route can be saved anyway */
-bool MainWindow::routeValidate(bool validateParking, bool validateDepartureAndDestination)
-{
-
-  if(!NavApp::getRoute().hasValidDeparture() || !NavApp::getRoute().hasValidDestination())
-  {
-    if(validateDepartureAndDestination)
-    {
-      NavApp::deleteSplashScreen();
-      const static atools::gui::DialogButtonList BUTTONS({
-        {QString(), QMessageBox::Cancel},
-        {tr("Select Start &Position"), QMessageBox::Yes},
-        {QString(), QMessageBox::Save}
-      });
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTE_WARNING,
-                                              tr("Flight Plan must have a valid airport as "
-                                                 "start and destination and "
-                                                 "will not be usable by the Simulator."),
-                                              tr("Do not show this dialog again and"
-                                                 " save Flight Plan in the future."),
-                                              QMessageBox::Cancel | QMessageBox::Save,
-                                              QMessageBox::Cancel, QMessageBox::Save);
-
-      if(result == QMessageBox::Save)
-        // Save anyway
-        return true;
-      else if(result == QMessageBox::Cancel)
-        return false;
-    }
-  }
-  else
-  {
-    if(validateParking)
-    {
-      if(!routeController->hasValidParking())
-      {
-        NavApp::deleteSplashScreen();
-
-        // Airport has parking but no one is selected
-        const static atools::gui::DialogButtonList BUTTONS({
-          {QString(), QMessageBox::Cancel},
-          {tr("Select Start &Position"), QMessageBox::Yes},
-          {tr("Show &Departure on Map"), QMessageBox::YesToAll},
-          {QString(), QMessageBox::Save}
-        });
-
-        int result = dialog->showQuestionMsgBox(
-          lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
-          tr("The start airport has parking spots but no parking was selected for this Flight Plan"),
-          tr("Do not show this dialog again and save Flight Plan in the future."),
-          BUTTONS, QMessageBox::Yes, QMessageBox::Save);
-
-        if(result == QMessageBox::Yes)
-          // saving depends if user selects parking or cancels out of the dialog
-          return routeController->selectDepartureParking();
-        else if(result == QMessageBox::YesToAll)
-        {
-          // Zoom to airport and cancel out
-          mapWidget->showRect(NavApp::getRoute().first().getAirport().bounding, false);
-          return false;
-        }
-        else if(result == QMessageBox::Save)
-          // Save right away
-          return true;
-        else if(result == QMessageBox::Cancel)
-          return false;
-      }
-    }
-  }
-  return true;
 }
 
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
@@ -1688,7 +1629,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
 /* Called from menu or toolbar by action */
 bool MainWindow::routeSave()
 {
-  atools::fs::pln::FileFormat format = NavApp::getRoute().getFlightplan().getFileFormat();
+  atools::fs::pln::FileFormat format = NavApp::getRouteConst().getFlightplan().getFileFormat();
 
   if(!routeSaveCheckFMS11Warnings())
     return false;
@@ -1714,7 +1655,7 @@ bool MainWindow::routeSave()
     {
 
       bool validate = format == atools::fs::pln::PLN_FSX || format == atools::fs::pln::PLN_FS9;
-      if(routeValidate(validate /* validate parking */, validate /* validate departure and destination */))
+      if(routeExport->routeValidate(validate /* validate parking */, validate /* validate departure and destination */))
       {
         // Save in loaded format PLN, FLP or FMS
         if(routeController->saveFlightplan(false /* clean */))
@@ -1734,7 +1675,7 @@ bool MainWindow::routeSave()
 /* Called from menu or toolbar by action */
 bool MainWindow::routeSaveAsPln()
 {
-  if(routeValidate(true /* validate parking */, true /* validate departure and destination */))
+  if(routeExport->routeValidate(true /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan as PLN Format"),
@@ -1742,7 +1683,7 @@ bool MainWindow::routeSaveAsPln()
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeController->buildDefaultFilenameShort("_", ".pln") : routeController->buildDefaultFilename());
+      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename());
 
     if(!routeFile.isEmpty())
     {
@@ -1773,7 +1714,7 @@ bool MainWindow::routeSaveAsFlp()
       tr("Save Flight Plan as FLP Format"),
       tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
       "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeController->buildDefaultFilenameShort(QString(), ".flp"));
+      routeExport->buildDefaultFilenameShort(QString(), ".flp"));
 
     if(!routeFile.isEmpty())
     {
@@ -1823,7 +1764,7 @@ bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
       tr("Save Flight Plan as X-Plane FMS Format"),
       tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
       "fms", "Route/Fms", xpBasePath,
-      routeController->buildDefaultFilenameShort(QString(), ".fms"));
+      routeExport->buildDefaultFilenameShort(QString(), ".fms"));
 
     if(!routeFile.isEmpty())
     {
@@ -1842,7 +1783,7 @@ bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
 
 bool MainWindow::routeExportClean()
 {
-  if(routeValidate(true /* validate parking */, true /* validate departure and destination */))
+  if(routeExport->routeValidate(true /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Clean Flight Plan without Annotations"),
@@ -1850,275 +1791,13 @@ bool MainWindow::routeExportClean()
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
 
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeController->buildDefaultFilenameShort("_", ".pln") : routeController->buildDefaultFilename(tr(" Clean")));
+      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(tr(" Clean")));
 
     if(!routeFile.isEmpty())
     {
       if(routeController->exportFlighplanAsClean(routeFile))
       {
-        routeFileHistory->addFile(routeFile);
-        updateActionStates();
         setStatusMessage(tr("Flight plan exported."));
-        saveFileHistoryStates();
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-/* Called from menu or toolbar by action */
-bool MainWindow::routeExportRxpGns()
-{
-  // Save flight plan as FPL file usable by the GNS 530W/430W V2 - XML format
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString path;
-
-#ifdef Q_OS_WIN32
-    QString gnsPath(qgetenv("GNSAPPDATA"));
-    path = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
-#elif DEBUG_INFORMATION
-    path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-                              "Garmin", "GNS Trainer Data", "GNS", "FPL"});
-#else
-    path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
-#endif
-
-    bool mkdir = QDir(path).mkpath(path);
-    qInfo() << "mkdir" << path << "result" << mkdir;
-
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as FPL for Reality XP GNS"),
-      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
-      "fpl", "Route/RxpGns", path,
-      routeController->buildDefaultFilenameShort("", ".fpl"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsRxpGns(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as FPL."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-/* Called from menu or toolbar by action */
-bool MainWindow::routeExportRxpGtn()
-{
-  // Save flight plan as GFP file usable by the Reality XP GTN 750/650 Touch
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString path;
-
-#ifdef Q_OS_WIN32
-    QString gtnPath(qgetenv("GTNSIMDATA"));
-    path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN\\FPLN" : gtnPath + "\\FPLN";
-#elif DEBUG_INFORMATION
-    path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-                              "Garmin", "Trainers", "GTN", "FPLN"});
-#else
-    path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
-#endif
-
-    bool mkdir = QDir(path).mkpath(path);
-    qInfo() << "mkdir" << path << "result" << mkdir;
-
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as GFP for Reality XP GTN"),
-      tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
-      "gfp", "Route/RxpGfp", path,
-      routeController->buildDefaultFilenameShort("_", ".gfp"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsRxpGtn(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as GFP."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-/* Called from menu or toolbar by action */
-bool MainWindow::routeExportGfp()
-{
-  // <FSX/P3D>/F1GTN/FPL.
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as Garmin GFP Format"),
-      tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
-      "gfp", "Route/Gfp",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
-      routeController->buildDefaultFilenameShort("-", ".gfp"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsGfp(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as GFP."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-/* Called from menu or toolbar by action */
-bool MainWindow::routeExportTxt()
-{
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as TXT Format"),
-      tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
-      routeController->buildDefaultFilenameShort(QString(), ".txt"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsTxt(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as TXT."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportRte()
-{
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as PMDG RTE Format"),
-      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
-      "rte", "Route/Rte",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
-      routeController->buildDefaultFilenameShort(QString(), ".rte"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsRte(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as RTE."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportFpr()
-{
-  // <FSX/P3D>/SimObjects/Airplanes/mjc8q400/nav/routes.
-
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as Majestic Dash FPR..."),
-      tr("FPR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPR),
-      "fpr", "Route/Fpr",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "SimObjects" +
-      QDir::separator() + "Airplanes" +
-      QDir::separator() + "mjc8q400" +
-      QDir::separator() + "nav" +
-      QDir::separator() + "routes",
-      routeController->buildDefaultFilenameShort(QString(), ".fpr"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsFpr(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as FPR."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportFpl()
-{
-  // \X-Plane 11\Aircraft\X-Aviation\IXEG 737 Classic\coroutes
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as IXEG FPL Format"),
-      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
-      "fpl", "Route/Fpl",
-      NavApp::getCurrentSimulatorBasePath() +
-      QDir::separator() + "Aircraft" +
-      QDir::separator() + "X-Aviation" +
-      QDir::separator() + "IXEG 737 Classic" +
-      QDir::separator() + "coroutes",
-      routeController->buildDefaultFilenameShort(QString(), ".fpl"));
-
-    if(!routeFile.isEmpty())
-    {
-      // Same format as txt
-      if(routeController->exportFlighplanAsTxt(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved as FPL."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportCorteIn()
-{
-  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
-  {
-    QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan to corte.in for Flight Factor Airbus"),
-      tr("corte.in Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CORTEIN),
-      ".in", "Route/CorteIn",
-      NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft", "corte.in",
-      true /* dont confirm overwrite */);
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlighplanAsCorteIn(routeFile))
-      {
-        setStatusMessage(tr("Flight plan saved to corte.in."));
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool MainWindow::routeExportGpx()
-{
-  if(routeValidate(false /* validate parking */, false /* validate departure and destination */))
-  {
-    QString title = NavApp::getAircraftTrack().isEmpty() ?
-                    tr("Save Flight Plan as GPX Format") : tr("Save Flightplan and Track as GPX Format");
-
-    QString routeFile = dialog->saveFileDialog(
-      title,
-      tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
-      "gpx", "Route/Gpx", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeController->buildDefaultFilename(QString(), ".gpx"));
-
-    if(!routeFile.isEmpty())
-    {
-      if(routeController->exportFlightplanAsGpx(routeFile))
-      {
-        if(NavApp::getAircraftTrack().isEmpty())
-          setStatusMessage(tr("Flight plan saved as GPX."));
-        else
-          setStatusMessage(tr("Flight plan and track saved as GPX."));
         return true;
       }
     }
@@ -2569,7 +2248,7 @@ void MainWindow::updateActionStates()
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
-  bool hasFlightplan = !NavApp::getRoute().isFlightplanEmpty();
+  bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
@@ -2586,8 +2265,15 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsRxpGns->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsClean->setEnabled(hasFlightplan);
+
+  ui->actionRouteSaveAsIFly->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsXFmc->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsUfmc->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsProSim->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsBbsAirbus->setEnabled(hasFlightplan);
+
   ui->actionRouteCenter->setEnabled(hasFlightplan);
-  ui->actionRouteSelectParking->setEnabled(NavApp::getRoute().hasValidDeparture());
+  ui->actionRouteSelectParking->setEnabled(NavApp::getRouteConst().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
@@ -2641,8 +2327,8 @@ void MainWindow::updateActionStates()
   ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
 
-  bool canCalcRoute = NavApp::getRoute().canCalcRoute();
-  ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRoute().hasEntries());
+  bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
+  ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
   ui->actionRouteCalcRadionav->setEnabled(canCalcRoute);
   ui->actionRouteCalcHighAlt->setEnabled(canCalcRoute);
   ui->actionRouteCalcLowAlt->setEnabled(canCalcRoute);

@@ -45,6 +45,7 @@ class PrintSupport;
 class ProcedureSearch;
 class Route;
 class AirspaceToolBarHandler;
+class RouteExport;
 
 namespace Marble {
 class LegendWidget;
@@ -210,22 +211,10 @@ private:
   bool routeSaveAsFms(atools::fs::pln::FileFormat format);
   bool routeSaveAsFms3();
   bool routeSaveAsFms11();
-
-  /* Flight plan export functions */
   bool routeExportClean();
-  bool routeExportGfp();
-  bool routeExportTxt();
-  bool routeExportRte();
-  bool routeExportGpx();
-  bool routeExportFpr();
-  bool routeExportFpl();
-  bool routeExportCorteIn();
-  bool routeExportRxpGns();
-  bool routeExportRxpGtn();
 
   void routeCenter();
   bool routeCheckForChanges();
-  bool routeValidate(bool validateParking, bool validateDepartureAndDestination);
   void showMapLegend();
   void resetMessages();
   void showDatabaseFiles();
@@ -310,6 +299,7 @@ private:
   WeatherReporter *weatherReporter = nullptr;
   InfoController *infoController = nullptr;
   AirspaceToolBarHandler *airspaceHandler = nullptr;
+  RouteExport *routeExport = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr;

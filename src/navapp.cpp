@@ -321,7 +321,12 @@ ProcedureQuery *NavApp::getProcedureQuery()
   return procedureQuery;
 }
 
-const Route& NavApp::getRoute()
+const Route& NavApp::getRouteConst()
+{
+  return mainWindow->getRouteController()->getRoute();
+}
+
+Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
 }

@@ -857,8 +857,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport.ident);
     bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport.ident);
-    bool airportDestination = NavApp::getRoute().isAirportDestination(airport.ident);
-    bool airportDeparture = NavApp::getRoute().isAirportDeparture(airport.ident);
+    bool airportDestination = NavApp::getRouteConst().isAirportDestination(airport.ident);
+    bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport.ident);
 
     if(hasAnyArrival || hasDeparture)
     {

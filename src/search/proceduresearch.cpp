@@ -241,9 +241,9 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   ui->tabWidgetSearch->setCurrentIndex(2);
   treeWidget->setFocus();
 
-  if(NavApp::getRoute().isAirportDeparture(airport.ident))
+  if(NavApp::getRouteConst().isAirportDeparture(airport.ident))
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
-  else if(NavApp::getRoute().isAirportDestination(airport.ident))
+  else if(NavApp::getRouteConst().isAirportDestination(airport.ident))
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
   else
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
@@ -824,7 +824,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
