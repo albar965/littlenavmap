@@ -337,7 +337,7 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString str = RouteString().createStringForRoute(route,
+  QString str = RouteString::createStringForRoute(route,
                                                    getSpinBoxSpeedKts(), RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;

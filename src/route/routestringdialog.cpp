@@ -114,7 +114,7 @@ RouteStringDialog::~RouteStringDialog()
 
 void RouteStringDialog::updateButtonClicked()
 {
-  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRouteConst(),
+  ui->plainTextEditRouteString->setPlainText(RouteString::createStringForRoute(NavApp::getRouteConst(),
                                                                                NavApp::getSpeedKts(), options));
 }
 
@@ -152,7 +152,7 @@ void RouteStringDialog::restoreState()
   options = getOptionsFromSettings();
   updateButtonState();
 
-  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRouteConst(),
+  ui->plainTextEditRouteString->setPlainText(RouteString::createStringForRoute(NavApp::getRouteConst(),
                                                                                NavApp::getSpeedKts(), options));
 }
 

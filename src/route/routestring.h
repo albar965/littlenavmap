@@ -78,12 +78,18 @@ public:
   RouteString(FlightplanEntryBuilder *flightplanEntryBuilder = nullptr);
   virtual ~RouteString();
 
+  /* Create a flight plan for the given route string and include speed and altitude if given.
+   *  Get error messages with getMessages() */
+  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
+  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                             float& speedKts, bool& altIncluded);
+
   /*
    * Create a route string like
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options);
+  static QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options);
 
   /*
    * Create a route string in garming flight plan format (GFP):
@@ -91,12 +97,7 @@ public:
    *
    * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
    */
-  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption);
-
-  /* Create a flight plan for the given route string and include speed and altitude if given */
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                             float& speedKts, bool& altIncluded);
+  static QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption);
 
   const QStringList& getMessages() const
   {
@@ -130,13 +131,13 @@ private:
   void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
 
-  QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
+  static QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
 
   /* Garming GFP format */
-  QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption);
+  static QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption);
 
   /* Garming GFP format with procedures */
-  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
+  static QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
 
   void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
                            const atools::geo::Pos& nearestPos);

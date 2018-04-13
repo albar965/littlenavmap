@@ -301,30 +301,67 @@ bool RouteExport::routeExportCorteIn()
 bool RouteExport::routeExportIfly()
 {
   qDebug() << Q_FUNC_INFO;
+  // Default directory for the iFly stored Flight plans is Prepar3D/iFly/737NG/navdata/FLTPLAN
+  // YSSYYMML.FLTPLAN
+  // FS9 format
+
   return false;
 }
 
 bool RouteExport::routeExportXFmc()
 {
   qDebug() << Q_FUNC_INFO;
+  // The plans have an extension of *.FPL and are saved in for following Folder : -
+  // Path to Root X-Plane 11 Folder\Resources\plugins\XFMC\FlightPlans
+  // LFLLEHAM.FPL
+  // Same as TXT but FPL
+
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan as FPL for X-FMC"),
+      tr("X-FMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/XFmc",
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "Resources" +
+      QDir::separator() + "plugins" +
+      QDir::separator() + "XFMC" +
+      QDir::separator() + "FlightPlans",
+      buildDefaultFilenameShort(QString(), ".fpl"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(exportFlighplanAsTxt(routeFile))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as FPL for X-FMC."));
+        return true;
+      }
+    }
+  }
+  return false;
+
   return false;
 }
 
 bool RouteExport::routeExportUFmc()
 {
   qDebug() << Q_FUNC_INFO;
+  // EDDHLIRF.ufmc
   return false;
 }
 
 bool RouteExport::routeExportProSim()
 {
   qDebug() << Q_FUNC_INFO;
+  // companyroutes.xml
   return false;
 }
 
 bool RouteExport::routeExportBBsAirbus()
 {
   qDebug() << Q_FUNC_INFO;
+  // P3D Root Folder \BlackBox Simulation\Airbus A330
+  // Uses FS9 PLN format.   EDDHLIRF.pln
+
   return false;
 }
 
@@ -481,8 +518,8 @@ QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString
 bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(routeAdjustedToProcedureOptions(), false /* procedures */,
-                                                      OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+  QString gfp = RouteString::createGfpStringForRoute(routeAdjustedToProcedureOptions(), false /* procedures */,
+                                                     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -502,8 +539,8 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString().createStringForRoute(routeAdjustedToProcedureOptions(),
-                                                   0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+  QString txt = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(),
+                                                  0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -515,7 +552,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving TXT file:"));
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving TXT or FPL file:"));
     return false;
   }
 }
@@ -573,8 +610,8 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
 bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString().createGfpStringForRoute(routeAdjustedToProcedureOptions(), true /* procedures */,
-                                                      OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+  QString gfp = RouteString::createGfpStringForRoute(routeAdjustedToProcedureOptions(), true /* procedures */,
+                                                     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -615,9 +652,9 @@ bool RouteExport::exportFlighplanAsFpr(const QString& filename)
 bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString().createStringForRoute(routeAdjustedToProcedureOptions(), 0.f,
-                                                   rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
-                                                   rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
+  QString txt = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(), 0.f,
+                                                  rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
+                                                  rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
 
   txt.prepend(QString("RTE %1%2 ").
               arg(NavApp::getRouteConst().getFlightplan().getDepartureIdent()).arg(NavApp::getRouteConst().getFlightplan()

@@ -33,7 +33,7 @@ class MainWindow;
 class Route;
 
 /*
- * Covers all flight plan export and export related functions.
+ * Covers all flight plan export and export related functions including validation and warning dialogs.
  *
  * Does not contain save, save as or open methods.
  */
