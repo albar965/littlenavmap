@@ -81,6 +81,25 @@ QString RouteString::createStringForRoute(const Route& route, float speed, rs::R
 #endif
 }
 
+QStringList RouteString::createStringForRouteList(const Route& route, float speed, rs::RouteStringOptions options)
+{
+  if(route.isEmpty())
+    return QStringList();
+
+#ifdef DEBUG_INFORMATION_ROUTE_STRING
+
+  return createStringForRouteInternal(route, speed, options) + "\n\n" +
+         "GTN:\n" + createGfpStringForRouteInternalProc(route, false) + "\n" +
+         "GTN UWP:\n" + createGfpStringForRouteInternalProc(route, true) + "\n\n" +
+         "GFP:\n" + createGfpStringForRouteInternal(route, false) + "\n" +
+         "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
+
+#else
+  return createStringForRouteInternal(route, speed, options);
+
+#endif
+}
+
 QString RouteString::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption)
 {
   if(route.isEmpty())

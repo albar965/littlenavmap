@@ -338,14 +338,29 @@ bool RouteExport::routeExportXFmc()
     }
   }
   return false;
-
-  return false;
 }
 
 bool RouteExport::routeExportUFmc()
 {
   qDebug() << Q_FUNC_INFO;
   // EDDHLIRF.ufmc
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for UFMC"),
+      tr("UFMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_UFMC), "ufmc", "Route/UFmc",
+      NavApp::getCurrentSimulatorBasePath(),
+      buildDefaultFilenameShort(QString(), ".ufmc"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(exportFlighplanAsUFmc(routeFile))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for UFMC."));
+        return true;
+      }
+    }
+  }
   return false;
 }
 
@@ -557,6 +572,49 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
   }
 }
 
+bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  QStringList list = RouteString::createStringForRouteList(routeAdjustedToProcedureOptions(), 0.f,
+                                                           rs::DCT | rs::START_AND_DEST);
+
+  // Remove last DCT
+  if(list.size() - 2 >= 0 && list.at(list.size() - 2) == "DCT")
+    list.removeAt(list.size() - 2);
+
+  // Replace DCT with DIRECT
+  list.replaceInStrings(QRegularExpression("^DCT$"), "DIRECT");
+  // KJFK
+  // CYYZ
+  // DIRECT
+  // GAYEL
+  // Q818
+  // WOZEE
+  // 99
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    // Save start and destination
+    stream << list.first() << endl << list.last() << endl;
+
+    // Waypoints and airways
+    for(int i = 1; i < list.size() - 1; i++)
+      stream << list.at(i) << endl;
+
+    // File end
+    stream << "99" << endl;
+
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving UFMC file:"));
+    return false;
+  }
+}
+
 bool RouteExport::exportFlighplanAsRte(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
@@ -657,9 +715,8 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
                                                   rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
 
   txt.prepend(QString("RTE %1%2 ").
-              arg(NavApp::getRouteConst().getFlightplan().getDepartureIdent()).arg(NavApp::getRouteConst().getFlightplan()
-                                                                                   .
-                                                                                   getDestinationIdent()));
+              arg(NavApp::getRouteConst().getFlightplan().getDepartureIdent()).
+              arg(NavApp::getRouteConst().getFlightplan().getDestinationIdent()));
 
   // Check if we have to insert an endl first
   bool endsWithEol = atools::fileEndsWithEol(filename);

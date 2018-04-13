@@ -7689,7 +7689,7 @@
     <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
    </property>
   </action>
   <action name="actionRouteSaveAsXFmc">
@@ -7700,7 +7700,7 @@
     <string>Save flight plan as FPL file usable by X-FMC</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+    <string>Save flight plan as FPL file usable by X-FMC</string>
    </property>
   </action>
   <action name="actionRouteSaveAsUfmc">
@@ -7711,7 +7711,7 @@
     <string>Save flight plan as UFMC file</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+    <string>Save flight plan as UFMC file</string>
    </property>
   </action>
   <action name="actionRouteSaveAsProSim">
@@ -7722,7 +7722,7 @@
     <string>Append flight plan to the companyroutes.xml file for ProSim</string>
    </property>
    <property name="statusTip">
-    <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
+    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
    </property>
   </action>
   <action name="actionRouteSaveAsBbsAirbus">
@@ -7733,7 +7733,7 @@
     <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
    </property>
   </action>
  </widget>
