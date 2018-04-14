@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "common/aircrafttrack.h"
 #include "route/route.h"
+#include "io/fileroller.h"
 #include "options/optiondata.h"
 #include "gui/dialog.h"
 #include "ui_mainwindow.h"
@@ -37,6 +38,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QStandardPaths>
+#include <QXmlStreamReader>
 #include <exception.h>
 
 RouteExport::RouteExport(MainWindow *parent)
@@ -290,7 +292,7 @@ bool RouteExport::routeExportCorteIn()
     {
       if(exportFlighplanAsCorteIn(routeFile))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved to corte.in."));
+        mainWindow->setStatusMessage(tr("Flight plan added to corte.in."));
         return true;
       }
     }
@@ -366,8 +368,27 @@ bool RouteExport::routeExportUFmc()
 
 bool RouteExport::routeExportProSim()
 {
-  qDebug() << Q_FUNC_INFO;
   // companyroutes.xml
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan to companyroutes.xml for ProSim"),
+      tr("companyroutes.xml Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_COMPANYROUTES_XML),
+      ".xml", "Route/CompanyRoutesXml",
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(), "companyroutes.xml",
+      true /* dont confirm overwrite */);
+
+    if(!routeFile.isEmpty())
+    {
+      if(exportFlighplanAsCompanyroutesXml(routeFile))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan added to companyroutes.xml."));
+        return true;
+      }
+    }
+  }
   return false;
 }
 
@@ -736,6 +757,105 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   else
   {
     atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to corte.in file:"));
+    return false;
+  }
+}
+
+bool RouteExport::exportFlighplanAsCompanyroutesXml(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  // <?xml version="1.0" encoding="UTF-8"?>
+  // <companyroutes>
+  // <route name="KDSMKOKC">KDSM DSM J25 TUL KOKC </route>
+  // <route name="EDDHEDDS">EDDH IDEKO Y900 TIMEN UL126 WRB UN850 KRH T128 BADSO EDDS</route>
+  // <route name="EDDSEDDH">EDDS KRH UZ210 NOSPA EDDL</route>
+  // </companyroutes>
+
+  // Read the XML file and keep all routes ===========================================
+  QVector<std::pair<QString, QString> > routes;
+  QSet<QString> routeNames;
+
+  QFile file(filename);
+  if(file.exists() && file.size() > 0)
+  {
+    if(file.open(QFile::ReadOnly | QIODevice::Text))
+    {
+      QXmlStreamReader reader(&file);
+
+      while(!reader.atEnd())
+      {
+        if(reader.error() != QXmlStreamReader::NoError)
+          throw atools::Exception("Error reading \"" + filename + "\": " + reader.errorString());
+
+        QXmlStreamReader::TokenType token = reader.readNext();
+
+        if(token == QXmlStreamReader::StartElement && reader.name() == "route")
+        {
+          QString name = reader.attributes().value("name").toString();
+          QString route = reader.readElementText();
+          routes.append(std::make_pair(name, route));
+          routeNames.insert(name);
+        }
+      }
+      file.close();
+    }
+    else
+    {
+      atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While reading from companyroutes.xml file:"));
+      return false;
+    }
+  }
+
+  // Create maximum of two backup files
+  QString backupFile = filename + "_lnm_backup";
+  atools::io::FileRoller roller(1);
+  roller.rollFile(backupFile);
+
+  // Copy file to backup before opening
+  bool result = QFile(filename).copy(backupFile);
+  qDebug() << Q_FUNC_INFO << "Copied" << filename << "to" << backupFile << result;
+
+  // Create route string
+  QString route = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(), 0.f, rs::START_AND_DEST);
+  QString name = buildDefaultFilenameShort(QString(), QString());
+
+  // Find a unique name between all loaded
+  QString newname = name;
+  int i = 1;
+  while(routeNames.contains(newname) && i < 99)
+    newname = QString("%1%2").arg(name).arg(i++, 2, 10, QChar('0'));
+
+  // Add new route
+  routes.append(std::make_pair(newname, route));
+
+  // Save and overwrite new file ====================================================
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    QXmlStreamWriter writer(&file);
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(2);
+    writer.writeStartDocument();
+
+    writer.writeStartElement("companyroutes");
+
+    for(const std::pair<QString, QString>& entry : routes)
+    {
+      // <route name="KDSMKOKC">KDSM DSM J25 TUL KOKC </route>
+      writer.writeStartElement("route");
+      writer.writeAttribute("name", entry.first);
+      writer.writeCharacters(entry.second);
+      writer.writeEndElement(); // route
+    }
+
+    writer.writeEndElement(); // companyroutes
+    writer.writeEndDocument();
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to companyroutes.xml file:"));
     return false;
   }
 }

@@ -7683,7 +7683,7 @@
   </action>
   <action name="actionRouteSaveAsIFly">
    <property name="text">
-    <string>Export Flight Plan as FLTPLAN for iFly ...</string>
+    <string>Export Flight Plan as &amp;FLTPLAN for iFly ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
@@ -7694,7 +7694,7 @@
   </action>
   <action name="actionRouteSaveAsXFmc">
    <property name="text">
-    <string>Export Flight Plan for X-FMC ...</string>
+    <string>Export Flight Plan for &amp;X-FMC ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPL file usable by X-FMC</string>
@@ -7705,7 +7705,7 @@
   </action>
   <action name="actionRouteSaveAsUfmc">
    <property name="text">
-    <string>Export Flight Plan for UFMC ...</string>
+    <string>Export Flight Plan for &amp;UFMC ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as UFMC file</string>
@@ -7716,7 +7716,7 @@
   </action>
   <action name="actionRouteSaveAsProSim">
    <property name="text">
-    <string>Export Flight Plan to XML for ProSim ...</string>
+    <string>Export Flight Plan for &amp;ProSim ...</string>
    </property>
    <property name="toolTip">
     <string>Append flight plan to the companyroutes.xml file for ProSim</string>
@@ -7727,7 +7727,7 @@
   </action>
   <action name="actionRouteSaveAsBbsAirbus">
    <property name="text">
-    <string>Export Flight Plan as PLN for BBS Airbus ...</string>
+    <string>Export Flight Plan as PLN for &amp;BBS Airbus ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>

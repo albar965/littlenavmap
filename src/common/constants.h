@@ -215,6 +215,7 @@ const QLatin1Literal FILE_PATTERN_CORTEIN("(corte.in)");
 const QLatin1Literal FILE_PATTERN_FLP("(*.flp)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
 const QLatin1Literal FILE_PATTERN_UFMC("(*.ufmc)");
+const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
@@ -237,6 +238,7 @@ const QLatin1Literal FILE_PATTERN_CORTEIN("(corte.in Corte.in CORTE.IN)");
 const QLatin1Literal FILE_PATTERN_FLP("(*.flp *.Flp *.FLP)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
 const QLatin1Literal FILE_PATTERN_UFMC("(*.ufmc *.Ufmc *.UFMC)");
+const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml Companyroutes.xml COMPANYROUTES.XML)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");

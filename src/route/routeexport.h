@@ -87,6 +87,7 @@ private:
   bool exportFlighplanAsRte(const QString& filename);
   bool exportFlighplanAsFpr(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
+  bool exportFlighplanAsCompanyroutesXml(const QString& filename);
   bool exportFlighplanAsUFmc(const QString& filename);
 
   bool exportFlightplanAsGpx(const QString& filename);
