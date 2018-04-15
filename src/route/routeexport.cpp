@@ -45,12 +45,13 @@ RouteExport::RouteExport(MainWindow *parent)
   : mainWindow(parent)
 {
   dialog = new atools::gui::Dialog(mainWindow);
-
+  flightplanIO = new atools::fs::pln::FlightplanIO;
 }
 
 RouteExport::~RouteExport()
 {
   delete dialog;
+  delete flightplanIO;
 }
 
 /* Called from menu or toolbar by action */
@@ -202,7 +203,8 @@ bool RouteExport::routeExportRte()
 
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsRte(routeFile))
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveRte, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as RTE."));
         return true;
@@ -234,7 +236,8 @@ bool RouteExport::routeExportFpr()
 
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsFpr(routeFile))
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveFpr, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as FPR."));
         return true;
@@ -300,13 +303,35 @@ bool RouteExport::routeExportCorteIn()
   return false;
 }
 
-bool RouteExport::routeExportIfly()
+bool RouteExport::routeExportFltplan()
 {
   qDebug() << Q_FUNC_INFO;
   // Default directory for the iFly stored Flight plans is Prepar3D/iFly/737NG/navdata/FLTPLAN
+  // <FSX/P3D>/iFly/737NG/navdata/FLTPLAN.
   // YSSYYMML.FLTPLAN
-  // FS9 format
 
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan as FLTPLAN for iFly"),
+      tr("iFly FLTPLAN Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLTPLAN), "fltplan", "Route/Fltplan",
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "iFly" +
+      QDir::separator() + "737NG" +
+      QDir::separator() + "navdata" +
+      QDir::separator() + "FLTPLAN",
+      buildDefaultFilenameShort(QString(), ".fltplan"));
+
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as FLTPLAN for iFly."));
+        return true;
+      }
+    }
+  }
   return false;
 }
 
@@ -382,7 +407,7 @@ bool RouteExport::routeExportProSim()
 
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsCompanyroutesXml(routeFile))
+      if(exportFlighplanAsProSim(routeFile))
       {
         mainWindow->setStatusMessage(tr("Flight plan added to companyroutes.xml."));
         return true;
@@ -636,27 +661,6 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
   }
 }
 
-bool RouteExport::exportFlighplanAsRte(const QString& filename)
-{
-  qDebug() << Q_FUNC_INFO << filename;
-
-  try
-  {
-    atools::fs::pln::FlightplanIO().saveRte(routeAdjustedToProcedureOptions().getFlightplan(), filename);
-  }
-  catch(atools::Exception& e)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleException(e);
-    return false;
-  }
-  catch(...)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-    return false;
-  }
-  return true;
-}
-
 bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
@@ -707,13 +711,15 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
   }
 }
 
-bool RouteExport::exportFlighplanAsFpr(const QString& filename)
+bool RouteExport::exportFlighplan(const QString& filename,
+                                  std::function<void(const atools::fs::pln::Flightplan& plan,
+                                                     const QString &file)> exportFunc)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
   try
   {
-    atools::fs::pln::FlightplanIO().saveFpr(routeAdjustedToProcedureOptions().getFlightplan(), filename);
+    exportFunc(routeAdjustedToProcedureOptions().getFlightplan(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -761,7 +767,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   }
 }
 
-bool RouteExport::exportFlighplanAsCompanyroutesXml(const QString& filename)
+bool RouteExport::exportFlighplanAsProSim(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 

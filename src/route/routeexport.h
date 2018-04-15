@@ -19,8 +19,16 @@
 #define LNM_ROUTEEXPORT_H
 
 #include <QObject>
+#include <functional>
 
 namespace atools {
+
+namespace fs {
+namespace pln {
+class Flightplan;
+class FlightplanIO;
+}
+}
 namespace geo {
 class Rect;
 }
@@ -48,18 +56,44 @@ public:
 
   /* Flight plan export functions */
   bool routeExportGfp();
+
+  /* Rotate MD-80 and others */
   bool routeExportTxt();
+
+  /* PMDG RTE format */
   bool routeExportRte();
+
+  /* Garmin exchange format. Not a flight plan format.  */
   bool routeExportGpx();
+
+  /* Majestic Dash binary format */
   bool routeExportFpr();
+
+  /* IXEG 737 */
   bool routeExportFpl();
+
+  /* Flight factor airbus */
   bool routeExportCorteIn();
+
+  /* Reality XP GNS */
   bool routeExportRxpGns();
+
+  /* Reality XP GTN */
   bool routeExportRxpGtn();
-  bool routeExportIfly();
+
+  /* iFly */
+  bool routeExportFltplan();
+
+  /* X-FMC */
   bool routeExportXFmc();
+
+  /* UFMC */
   bool routeExportUFmc();
+
+  /* ProSim */
   bool routeExportProSim();
+
+  /* BlackBox Simulations Airbus */
   bool routeExportBBsAirbus();
 
   /* Check if route has valid departure  and destination and departure parking.
@@ -78,16 +112,14 @@ signals:
   /* Show airport on map to allow parking selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
-  /* Show parking selection */
+  /* Show parking selection dialog */
   void  selectDepartureParking();
 
 private:
   bool exportFlighplanAsGfp(const QString& filename);
   bool exportFlighplanAsTxt(const QString& filename);
-  bool exportFlighplanAsRte(const QString& filename);
-  bool exportFlighplanAsFpr(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
-  bool exportFlighplanAsCompanyroutesXml(const QString& filename);
+  bool exportFlighplanAsProSim(const QString& filename);
   bool exportFlighplanAsUFmc(const QString& filename);
 
   bool exportFlightplanAsGpx(const QString& filename);
@@ -95,8 +127,12 @@ private:
   bool exportFlighplanAsRxpGns(const QString& filename);
   bool exportFlighplanAsRxpGtn(const QString& filename);
 
+  bool exportFlighplan(const QString& filename, std::function<void(const atools::fs::pln::Flightplan&,
+                                                                   const QString &)> exportFunc);
+
   MainWindow *mainWindow;
-  atools::gui::Dialog *dialog = nullptr;
+  atools::gui::Dialog *dialog;
+  atools::fs::pln::FlightplanIO *flightplanIO;
 };
 
 #endif // LNM_ROUTEEXPORT_H
