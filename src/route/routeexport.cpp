@@ -417,12 +417,33 @@ bool RouteExport::routeExportProSim()
   return false;
 }
 
-bool RouteExport::routeExportBBsAirbus()
+bool RouteExport::routeExportBbs()
 {
   qDebug() << Q_FUNC_INFO;
   // P3D Root Folder \BlackBox Simulation\Airbus A330
+  // <FSX/P3D>/Blackbox Simulation/Company Routes.
   // Uses FS9 PLN format.   EDDHLIRF.pln
 
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for BBS Airbus"),
+      tr("PLN Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BBS_PLN), "pln", "Route/BbsPln",
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "Blackbox Simulation" +
+      QDir::separator() + "Company Routes",
+      buildDefaultFilenameShort(QString(), ".pln"));
+
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for BBS."));
+        return true;
+      }
+    }
+  }
   return false;
 }
 

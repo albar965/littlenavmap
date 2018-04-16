@@ -901,7 +901,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsXFmc, &QAction::triggered, routeExport, &RouteExport::routeExportXFmc);
   connect(ui->actionRouteSaveAsUfmc, &QAction::triggered, routeExport, &RouteExport::routeExportUFmc);
   connect(ui->actionRouteSaveAsProSim, &QAction::triggered, routeExport, &RouteExport::routeExportProSim);
-  connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBBsAirbus);
+  connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBbs);
 
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
