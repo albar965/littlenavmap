@@ -2183,7 +2183,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(activeLegCorrected != map::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
-      if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f &&
+      if(distToDestNm > 0.01f && userAircaft->getFuelFlowPPH() > 0.01f &&
          userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
       {
         neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
@@ -2221,7 +2221,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
           if(userAircaft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
           {
-            if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f &&
+            if(distToDestNm > 0.01f && userAircaft->getFuelFlowPPH() > 0.01f &&
                userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED &&
                neededFuelVol < INVALID_VOLUME_VALUE && neededFuelWeight < INVALID_WEIGHT_VALUE)
             {
