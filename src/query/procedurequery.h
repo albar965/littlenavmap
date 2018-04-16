@@ -88,7 +88,7 @@ public:
   int getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId,
                          float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
 
-  int getStarId(map::MapAirport destination, const QString& star,
+  int getStarId(map::MapAirport destination, const QString& star, const QString& runway = QString(),
                 float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
   int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId,
                           float distance = map::INVALID_DISTANCE_VALUE, int size = -1);

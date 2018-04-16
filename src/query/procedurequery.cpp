@@ -1638,7 +1638,8 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
   return sidTransId;
 }
 
-int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, float distance, int size)
+int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, const QString& runway,
+                              float distance, int size)
 {
   mapQuery->getAirportNavReplace(destination);
 
@@ -1650,7 +1651,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
     approachIdByNameQuery->bindValue(":type", "GPS");
     approachIdByNameQuery->bindValue(":apident", destination.ident);
 
-    starId = findApproachId(destination, approachIdByNameQuery, "A", QString(), /*No runway*/ distance, size);
+    starId = findApproachId(destination, approachIdByNameQuery, "A", runway, distance, size);
     if(starId == -1)
       qWarning() << "Loading of STAR" << star << "failed";
   }
@@ -1808,6 +1809,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     starId = getStarId(destination,
                        properties.value(pln::STAR),
+                       properties.value(pln::STARRW),
                        properties.value(pln::STARDISTANCE).toFloat(),
                        properties.value(pln::STARSIZE).toInt());
     if(starId == -1)
