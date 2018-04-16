@@ -586,7 +586,8 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isUserpoint() && types.testFlag(map::USERPOINT))
+  // No flag since visibility is defined by type
+  if(mapLayer->isUserpoint())
   {
     for(int i = userpointCache.list.size() - 1; i >= 0; i--)
     {
