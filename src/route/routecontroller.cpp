@@ -338,7 +338,7 @@ void RouteController::routeStringToClipboard() const
   qDebug() << Q_FUNC_INFO;
 
   QString str = RouteString::createStringForRoute(route,
-                                                   getSpinBoxSpeedKts(), RouteStringDialog::getOptionsFromSettings());
+                                                  getSpinBoxSpeedKts(), RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -594,12 +594,13 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     updateFlightplanFromWidgets(flightplan);
     adjustAltitude = true; // Change altitude based on airways later
   }
-  else if(flightplan.getFileFormat() == atools::fs::pln::FMS11 || flightplan.getFileFormat() == atools::fs::pln::FMS3)
+  else if(flightplan.getFileFormat() == atools::fs::pln::FMS11 || flightplan.getFileFormat() == atools::fs::pln::FMS3 ||
+          flightplan.getFileFormat() == atools::fs::pln::PLN_FSC)
   {
     // Save altitude
     int cruiseAlt = flightplan.getCruisingAltitude();
 
-    // Set type cruise altitude and speed since FMS does not support this
+    // Set type cruise altitude and speed since FMS and FSC do not support this
     updateFlightplanFromWidgets(flightplan);
 
     // Reset altitude after update from widgets
@@ -836,7 +837,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     // Save PLN, FLP or FMS
     flightplanIO->save(flightplan, routeFilename, NavApp::getDatabaseAiracCycleNav(), options);
 
-    if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9)
+    if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9 || flightplan.getFileFormat() == atools::fs::pln::PLN_FSC)
       // Old format is always saved as new after question dialog
       flightplan.setFileFormat(atools::fs::pln::PLN_FSX);
 
@@ -1745,7 +1746,7 @@ bool RouteController::doesFilenameMatchRoute(atools::fs::pln::FileFormat format)
     if(!(OptionData::instance().getFlags() & opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN))
       return true;
 
-    if(format == atools::fs::pln::PLN_FS9 || format == atools::fs::pln::PLN_FSX)
+    if(format == atools::fs::pln::PLN_FS9 || format == atools::fs::pln::PLN_FSC || format == atools::fs::pln::PLN_FSX)
       return fileIfrVfr == route.getFlightplan().getFlightplanType() &&
              fileDeparture == route.getFlightplan().getDepartureIdent() &&
              fileDestination == route.getFlightplan().getDestinationIdent();

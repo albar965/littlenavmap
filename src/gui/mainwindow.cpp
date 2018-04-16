@@ -1321,16 +1321,23 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                              arg(saveAs ? tr(" as") : QString()).
                              arg(saveAs ? tr(" ...") : QString());
 
-  if(QFileInfo::exists(routeFilename) && fileFormat == atools::fs::pln::PLN_FS9)
+  if(QFileInfo::exists(routeFilename) &&
+     (fileFormat == atools::fs::pln::PLN_FS9 || fileFormat == atools::fs::pln::PLN_FSC))
   {
     // Warn before overwriting FS9 with FSX format
     buttonList.append({saveAsButtonText.arg(tr(" &FSX/P3D PLN")), QMessageBox::Save});
 
+    QString fmt;
+    if(fileFormat == atools::fs::pln::PLN_FS9)
+      fmt = tr("FS9");
+    else if(fileFormat == atools::fs::pln::PLN_FSC)
+      fmt = tr("FSC");
+
     // We can load FS9 but saving does not make sense anymore
     // Ask before overwriting file
     result = atools::gui::Dialog(this).
-             showQuestionMsgBox(lnm::ACTIONS_SHOW_FS9_WARNING,
-                                tr("Overwrite FS9 flight plan with the FSX/P3D PLN flight plan format?\n"),
+             showQuestionMsgBox(lnm::ACTIONS_SHOW_FS9_FSC_WARNING,
+                                tr("Overwrite %1 flight plan with the FSX/P3D PLN flight plan format?\n").arg(fmt),
                                 tr("Do not show this dialog again and overwrite the Flight Plan in the future."),
                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1654,7 +1661,8 @@ bool MainWindow::routeSave()
     else if(save)
     {
 
-      bool validate = format == atools::fs::pln::PLN_FSX || format == atools::fs::pln::PLN_FS9;
+      bool validate = format == atools::fs::pln::PLN_FSX || format == atools::fs::pln::PLN_FS9 ||
+                      format == atools::fs::pln::PLN_FSC;
       if(routeExport->routeValidate(validate /* validate parking */, validate /* validate departure and destination */))
       {
         // Save in loaded format PLN, FLP or FMS
@@ -2065,7 +2073,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
   s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
 
-  s.setValue(lnm::ACTIONS_SHOW_FS9_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_FS9_FSC_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS11_WARNING, true);

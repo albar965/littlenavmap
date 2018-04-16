@@ -86,7 +86,7 @@ const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChan
 const QLatin1Literal ACTIONS_SHOW_UPDATEFAILED("Actions/ShowUpdateFailed");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 
-const QLatin1Literal ACTIONS_SHOW_FS9_WARNING("Actions/ShowFs9Warning");
+const QLatin1Literal ACTIONS_SHOW_FS9_FSC_WARNING("Actions/ShowFs9Warning");
 const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");
 const QLatin1Literal ACTIONS_SHOW_FMS3_WARNING("Actions/ShowFms3Warning");
 const QLatin1Literal ACTIONS_SHOW_FMS11_WARNING("Actions/ShowFms11Warning");
