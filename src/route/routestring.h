@@ -57,6 +57,7 @@ enum RouteStringOption
   FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
   USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
+  SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
 
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };

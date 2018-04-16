@@ -329,8 +329,15 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     QString ident = leg.getIdent();
 
     if(leg.getMapObjectType() == map::USERPOINTROUTE)
+    {
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      ident = (options& rs::GFP) ? coords::toGfpFormat(leg.getPosition()) : coords::toDegMinFormat(leg.getPosition());
+      if(options & rs::GFP)
+        ident = coords::toGfpFormat(leg.getPosition());
+      else if(options & rs::SKYVECTOR_COORDS)
+        ident = coords::toDegMinSecFormat(leg.getPosition());
+      else
+        ident = coords::toDegMinFormat(leg.getPosition());
+    }
 
     if(airway.isEmpty() || leg.isAirwaySetAndInvalid() || options & rs::NO_AIRWAYS)
     {

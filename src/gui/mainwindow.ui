@@ -69,6 +69,8 @@
      <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsGpx"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteShowSkyVector"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -7734,6 +7736,17 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
+   </property>
+  </action>
+  <action name="actionRouteShowSkyVector">
+   <property name="text">
+    <string>Show Flight Plan in Sky&amp;Vector ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the flight plan in SkyVector in the default web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the flight plan in SkyVector in the default web browser</string>
    </property>
   </action>
  </widget>

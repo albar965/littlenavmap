@@ -893,6 +893,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFpl);
   connect(ui->actionRouteSaveAsCorteIn, &QAction::triggered, routeExport, &RouteExport::routeExportCorteIn);
   connect(ui->actionRouteSaveAsGpx, &QAction::triggered, routeExport, &RouteExport::routeExportGpx);
+  connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 
   connect(ui->actionRouteSaveAsRxpGns, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGns);
   connect(ui->actionRouteSaveAsRxpGtn, &QAction::triggered, routeExport, &RouteExport::routeExportRxpGtn);
@@ -1811,6 +1812,19 @@ bool MainWindow::routeExportClean()
     }
   }
   return false;
+}
+
+bool MainWindow::openInSkyVector()
+{
+  // https://skyvector.com/?fpl=%20EDDH%20AMLU7C%20AMLUH%20M852%20POVEL%20GALMA%20UM736%20DOSEL%20DETSA%20NIKMA%20T369%20RITEB%20RITE4B%20LIRF
+
+  QString route =
+    RouteString::createStringForRoute(NavApp::getRoute(),
+                                      NavApp::getSpeedKts(),
+                                      rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
+
+  HelpHandler::openUrl(this, "https://skyvector.com/?fpl=" + route);
+  return true;
 }
 
 /* Called from menu or toolbar by action. Remove all KML from map */

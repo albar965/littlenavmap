@@ -240,6 +240,7 @@ private:
   void showOfflineHelp();
   void showNavmapLegend();
   void loadNavmapLegend();
+  bool openInSkyVector();
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
