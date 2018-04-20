@@ -816,8 +816,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
     // Remember altitude in local units and set to feet before saving
     int oldCruise = flightplan.getCruisingAltitude();
     flightplan.setCruisingAltitude(
-      atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()),
-                                   Unit::altFeetF)));
+      atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
 
     QHash<QString, QString>& properties = flightplan.getProperties();
     properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
@@ -3020,25 +3019,32 @@ QString RouteController::buildFlightplanLabel(bool html) const
         procedureText.append((arrivalLegs.mapType & proc::PROCEDURE_TRANSITION ||
                               !starLegs.isEmpty()) ? tr("and") : tr("Via"));
 
-        boldTextFlag << true;
-        procedureText.append(arrivalLegs.approachType);
-
+        // Type and suffix =======================
+        QString type(arrivalLegs.approachType);
         if(!arrivalLegs.approachSuffix.isEmpty())
-        {
-          // Add suffix
-          boldTextFlag << true;
-          procedureText.append(tr("-%1").arg(arrivalLegs.approachSuffix));
-        }
+          type += tr("-%1").arg(arrivalLegs.approachSuffix);
+
+        boldTextFlag << true;
+        procedureText.append(type);
 
         boldTextFlag << true;
         procedureText.append(arrivalLegs.approachFixIdent);
 
-        // Add runway for approach
-        boldTextFlag << false << true << false;
-        procedureText.append(procedureText.isEmpty() ? tr("At runway") : tr("at runway"));
-        procedureText.append(arrivalLegs.runwayEnd.name);
-        procedureText.append(tr("."));
-
+        // Runway =======================
+        if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
+        {
+          // Add runway for approach
+          boldTextFlag << false << true << false;
+          procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
+          procedureText.append(arrivalLegs.runwayEnd.name);
+          procedureText.append(tr("."));
+        }
+        else
+        {
+          // Add runway text
+          boldTextFlag << false;
+          procedureText.append(procedureText.isEmpty() ? tr("To runway.") : tr("to runway."));
+        }
         approachRunway = arrivalLegs.runwayEnd.name;
       }
 
