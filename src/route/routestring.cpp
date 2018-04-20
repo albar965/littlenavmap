@@ -773,7 +773,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
           }
 
           // Add information to the flight plan property list
-          procQuery->extractLegsForFlightplanProperties(
+          procQuery->fillFlightplanProcedureProperties(
             flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
         }
       }
@@ -853,7 +853,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
               starLegs = *legs;
           }
           // Add information to the flight plan property list
-          procQuery->extractLegsForFlightplanProperties(
+          procQuery->fillFlightplanProcedureProperties(
             flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
         }
       }

@@ -824,7 +824,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
   // Leave procedure information in the PLN file
   clearFlightplanProcedureProperties(proc::PROCEDURE_ALL);
 
-  ProcedureQuery::extractLegsForFlightplanProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
+  ProcedureQuery::fillFlightplanProcedureProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
 }
 
 void Route::removeRouteLegs()

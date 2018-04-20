@@ -75,7 +75,7 @@ public:
   static QString getSidAndTransition(QHash<QString, QString>& properties);
   static QString getStarAndTransition(QHash<QString, QString>& properties);
 
-  static void extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
+  static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureLegs& arrivalLegs,
                                                  const proc::MapProcedureLegs& starLegs,
                                                  const proc::MapProcedureLegs& departureLegs);
@@ -157,7 +157,7 @@ private:
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern or matches exactly */
   bool doesRunwayMatch(const QString& runway, const QString& runwayFromQuery, const QString& arincName,
-                       const QStringList& airportRunways) const;
+                       const QStringList& airportRunways, bool matchEmptyRunway) const;
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern - otherwise false */
   bool doesSidStarRunwayMatch(const QString& runway, const QString& arincName, const QStringList& airportRunways) const;
