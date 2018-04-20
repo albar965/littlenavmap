@@ -192,34 +192,48 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     else
       whazzupData = data;
 
-    manager->readFromWhazzup(codec->toUnicode(whazzupData), convertFormat(OptionData::instance().getOnlineFormat()));
-
-    QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
-    if(!whazzupVoiceUrlFromStatus.isEmpty() &&
-       lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
+    if(manager->readFromWhazzup(codec->toUnicode(whazzupData),
+                                convertFormat(OptionData::instance().getOnlineFormat()),
+                                manager->getLastUpdateTimeFromWhazzup()))
     {
-      // Next in chain is server file
-      currentState = DOWNLOADING_WHAZZUP_SERVERS;
-      downloader->setUrl(whazzupVoiceUrlFromStatus);
+      QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
+      if(!whazzupVoiceUrlFromStatus.isEmpty() &&
+         lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
+      {
+        // Next in chain is server file
+        currentState = DOWNLOADING_WHAZZUP_SERVERS;
+        downloader->setUrl(whazzupVoiceUrlFromStatus);
 
-      // Call later in the event loop to avoid recursion
-      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+        // Call later in the event loop to avoid recursion
+        QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+      }
+      else
+      {
+        // Done after downloading whazzup.txt - start timer for next session
+        startDownloadTimer();
+        currentState = NONE;
+        lastUpdateTime = QDateTime::currentDateTime();
+
+        aircraftCache.clear();
+        // Message for search tabs, map widget and info
+        emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+      }
     }
     else
     {
-      // Done after downloading whazzup.txt - start timer for next session
+      qInfo() << Q_FUNC_INFO << "whazzup.txt is not recent";
+
+      // Done after old update - try again later
       startDownloadTimer();
       currentState = NONE;
       lastUpdateTime = QDateTime::currentDateTime();
-
-      aircraftCache.clear();
-      // Message for search tabs, map widget and info
-      emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     }
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
   {
-    manager->readServersFromWhazzup(codec->toUnicode(data), convertFormat(OptionData::instance().getOnlineFormat()));
+    manager->readServersFromWhazzup(codec->toUnicode(data),
+                                    convertFormat(OptionData::instance().getOnlineFormat()),
+                                    manager->getLastUpdateTimeFromWhazzup());
     lastServerDownload = QDateTime::currentDateTime();
 
     // Done after downloading server.txt - start timer for next session
@@ -236,7 +250,12 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 
 void OnlinedataController::downloadFailed(const QString& error, QString url)
 {
-  qDebug() << Q_FUNC_INFO << "Failed" << error << url;
+  qWarning() << Q_FUNC_INFO << "Failed" << error << url;
+  stopAllProcesses();
+  QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                       tr("Download from\n\n\"%1\"\n\nfailed. Reason:\n\n%2\n\nPress OK to retry.").
+                       arg(url).arg(error));
+  startProcessing();
 }
 
 void OnlinedataController::stopAllProcesses()
