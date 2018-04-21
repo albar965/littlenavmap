@@ -1797,7 +1797,7 @@ bool MainWindow::routeExportClean()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Clean Flight Plan without Annotations"),
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
-      "pln", "Route/" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
+      "pln", "Route/Clean" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
 
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
       routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(tr(" Clean")));
