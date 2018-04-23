@@ -58,6 +58,13 @@ public:
 
   QString getDefaultType(const QString& type);
 
+  /* Inititialize the translations for types. */
+  static void initTranslateableTexts();
+
+  /* Convert type names to translated version and back. Returns type if nothing was found */
+  static QString typeToTranslated(const QString& type);
+  static QString translatedToType(const QString& type);
+
 private:
   void loadIcon(const QFileInfo& entry);
 

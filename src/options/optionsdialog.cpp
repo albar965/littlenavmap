@@ -156,9 +156,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   QTreeWidgetItem *ai =
-    addTopItem(root, tr("AI / Multiplayer Aircraft"),
-               tr("Select text labels for the AI and multiplayer aircraft."));
-  addItem(ai, tr("Registration or Number"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+    addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"),
+               tr("Select text labels for the AI, multiplayer and online client aircraft."));
+  addItem(ai, tr("Registration, Number or Callsign"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem(ai, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
   addItem(ai, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
   addItem(ai, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
@@ -700,10 +700,16 @@ void OptionsDialog::restoreState()
   OptionData& od = OptionData::instanceInternal();
   od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
   od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
-  int update = networkSettings.value("options/update").toInt();
-  if(update < 60)
+
+  int update;
+  if(networkSettings.value("options/update").toString().trimmed().toLower() == "auto")
+    update = -1;
+  else
+    update = networkSettings.value("options/update").toInt();
+
+  if(update < 60 && update != -1)
     update = 60;
-  od.onlineReloadSeconds = update;
+  od.onlineReloadSecondsConfig = update;
 
   // Disable selection based on what was found in the file
   ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoStatusUrl.isEmpty());

@@ -50,13 +50,6 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
                                  const QList<proc::MapProcedurePoint>& procPoints,
                                  const Route& route, bool airportDiagram)
 {
-#if defined(Q_OS_WIN32)
-  QColor iconBackColor(Qt::transparent);
-#else
-  // Avoid unreadable icons for some linux distributions that have a black tooltip background
-  QColor iconBackColor(QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase));
-#endif
-
   opts::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
 
   HtmlBuilder html(false);
@@ -67,6 +60,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // Objects are separated by a horizontal ruler
   // If max number of entries or lines is exceeded return the html
 
+  // User Aircraft ===========================================================================
   if(mapSearchResult.userAircraft.getPosition().isValid())
   {
     if(checkText(html, numEntries))
@@ -82,6 +76,23 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     numEntries++;
   }
 
+  // Online Aircraft ===========================================================================
+  for(const SimConnectAircraft& aircraft : mapSearchResult.onlineAircraft)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.hr();
+
+    html.p();
+    info.aircraftText(aircraft, html);
+    info.aircraftProgressText(aircraft, html, Route());
+    html.pEnd();
+    numEntries++;
+  }
+
+  // AI Aircraft ===========================================================================
   for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
   {
     if(checkText(html, numEntries))
@@ -97,6 +108,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     numEntries++;
   }
 
+  // Navaids from procedure points ===========================================================================
   if(opts & opts::TOOLTIP_NAVAID)
   {
     for(const proc::MapProcedurePoint& ap : procPoints)
@@ -114,6 +126,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
+  // Airports ===========================================================================
   if(opts & opts::TOOLTIP_AIRPORT)
   {
     for(const MapAirport& airport : mapSearchResult.airports)
@@ -134,6 +147,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
+  // Navaids ===========================================================================
   if(opts & opts::TOOLTIP_NAVAID)
   {
     for(const MapUserpoint& up : mapSearchResult.userpoints)
@@ -207,6 +221,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
+  // Airport stuff ===========================================================================
   if(airportDiagram && opts & opts::TOOLTIP_AIRPORT)
   {
     for(const MapAirport& ap : mapSearchResult.towers)
@@ -281,6 +296,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
+  // Airspaces ===========================================================================
   if(opts & opts::TOOLTIP_AIRSPACE)
   {
     for(const MapAirspace& airspace : mapSearchResult.airspaces)

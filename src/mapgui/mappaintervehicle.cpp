@@ -24,8 +24,10 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "common/unit.h"
+#include "navapp.h"
 #include "util/paintercontextsaver.h"
 #include "settings/settings.h"
+#include "common/vehicleicons.h"
 
 #include <marble/GeoPainter.h>
 
@@ -35,16 +37,6 @@ using namespace map;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectData;
-
-uint qHash(const MapPainterVehicle::PixmapKey& key)
-{
-  return static_cast<uint>(key.size | (key.type << 8) | (key.ground << 10) | (key.user << 11));
-}
-
-bool MapPainterVehicle::PixmapKey::operator==(const MapPainterVehicle::PixmapKey& other) const
-{
-  return type == other.type && ground == other.ground && user == other.user && size == other.size;
-}
 
 MapPainterVehicle::MapPainterVehicle(MapWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
@@ -73,21 +65,24 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
   {
     if(!hidden)
     {
-      int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-      int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
-
-      int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
-      int offset = -(size / 2);
-
       context->szFont(context->textSizeAircraftAi);
 
       // Position is visible
       context->painter->translate(x, y);
       if(vehicle.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
         context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
+      else
+        context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegMag() + NavApp::getMagVar(pos)));
+
+      int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
+      int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
+
+      int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
+      int offset = -(size / 2);
 
       // Draw symbol
-      context->painter->drawPixmap(offset, offset, *pixmapFromCache(vehicle, size, false));
+      context->painter->drawPixmap(offset, offset,
+                                   *NavApp::getVehicleIcons()->pixmapFromCache(vehicle, size, 0));
 
       context->painter->resetTransform();
 
@@ -119,7 +114,8 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
 
   // Draw symbol
-  context->painter->drawPixmap(offset, offset, *pixmapFromCache(userAircraft, size, true));
+  context->painter->drawPixmap(offset, offset,
+                               *NavApp::getVehicleIcons()->pixmapFromCache(userAircraft, size, 0));
   context->painter->resetTransform();
 
   // Build text label
@@ -198,7 +194,9 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
   QStringList texts;
 
   if((aircraft.isOnGround() && context->mapLayer->isAiAircraftGroundText()) || // All AI on ground
-     (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText()) || forceLabel) // All AI in the air
+     (!aircraft.isOnGround() && context->mapLayer->isAiAircraftText()) || // All AI in the air
+     (aircraft.isOnline() && context->mapLayer->isOnlineAircraftText()) || // All online
+     forceLabel) // Force label for nearby aircraft
   {
     appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_REGISTRATION),
                   context->dOpt(opts::ITEM_AI_AIRCRAFT_TYPE),
@@ -273,63 +271,6 @@ void MapPainterVehicle::paintTextLabelUser(const PaintContext *context, float x,
 
   // Draw text label
   symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2.f, y + size / 2.f, atts, 255);
-}
-
-const QPixmap *MapPainterVehicle::pixmapFromCache(const SimConnectAircraft& ac, int size,
-                                                  bool user)
-{
-  PixmapKey key;
-
-  if(ac.getCategory() == atools::fs::sc::HELICOPTER)
-    key.type = AC_HELICOPTER;
-  else if(ac.getCategory() == atools::fs::sc::BOAT)
-    key.type = AC_SHIP;
-  else if(ac.getEngineType() == atools::fs::sc::JET)
-    key.type = AC_JET;
-  else
-    key.type = AC_SMALL;
-
-  key.ground = ac.isOnGround();
-  key.user = user;
-  key.size = size;
-  return pixmapFromCache(key);
-}
-
-const QPixmap *MapPainterVehicle::pixmapFromCache(const PixmapKey& key)
-{
-  if(aircraftPixmaps.contains(key))
-    return aircraftPixmaps.object(key);
-  else
-  {
-    int size = key.size;
-    QString name = ":/littlenavmap/resources/icons/aircraft";
-    switch(key.type)
-    {
-      case AC_SMALL:
-        name += "_small";
-        break;
-      case AC_JET:
-        name += "_jet";
-        break;
-      case AC_HELICOPTER:
-        name += "_helicopter";
-        // Make helicopter a bit bigger due to image
-        size = atools::roundToInt(size * 1.2f);
-        break;
-      case AC_SHIP:
-        name += "_boat";
-        break;
-    }
-    if(key.ground)
-      name += "_ground";
-    if(key.user)
-      name += "_user";
-
-    name = atools::settings::Settings::instance().getOverloadedPath(name + ".svg");
-    QPixmap *newPx = new QPixmap(QIcon(name).pixmap(QSize(size, size)));
-    aircraftPixmaps.insert(key, newPx);
-    return newPx;
-  }
 }
 
 void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft)

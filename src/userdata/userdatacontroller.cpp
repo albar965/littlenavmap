@@ -392,7 +392,7 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     QString file = NavApp::getRouteController()->getCurrentRouteFilename();
     if(!file.isEmpty())
       description << QString() << tr("Flight Plan:") << QFileInfo(file).fileName();
-    const Route& route = NavApp::getRoute();
+    const Route& route = NavApp::getRouteConst();
 
     // Current start and destination =========================================================
     if(!route.isEmpty())

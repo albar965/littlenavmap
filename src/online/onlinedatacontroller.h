@@ -22,6 +22,14 @@
 #include <QObject>
 #include <QTimer>
 
+#include "query/querytypes.h"
+
+class MapLayer;
+
+namespace Marble {
+class GeoDataLatLonBox;
+}
+
 namespace atools {
 namespace util {
 class HttpDownloader;
@@ -62,9 +70,6 @@ public:
 
   atools::sql::SqlDatabase *getDatabase();
 
-  void preDatabaseLoad();
-  void postDatabaseLoad();
-
   /* Options dialog changed settings. Will trigger download. */
   void optionsChanged();
 
@@ -79,9 +84,28 @@ public:
   QString getNetwork() const;
   bool isNetworkActive() const;
 
+  /* Get aircraft within bounding rectangle. Objects are cached. */
+  const QList<atools::fs::sc::SimConnectAircraft> *getAircraft(const Marble::GeoDataLatLonBox& rect,
+                                                               const MapLayer *mapLayer, bool lazy);
+
+  /* Get aircraft from last bounding rectangle query from cache. */
+  const QList<atools::fs::sc::SimConnectAircraft> *getAircraftFromCache();
+
+  /* Fill aircraft object from table client */
   void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
 
   static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
+
+  /* Get client record with all field values */
+  atools::sql::SqlRecord getClientRecordById(int clientId);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
+
+  int getNumClients() const;
 
 signals:
   /* Sent whenever new data was downloaded */
@@ -129,6 +153,9 @@ private:
   bool whazzupGzipped = false;
 
   QTextCodec *codec = nullptr;
+
+  SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
+  atools::sql::SqlQuery *aircraftByRectQuery = nullptr;
 };
 
 #endif // LNM_ONLINECONTROLLER_H

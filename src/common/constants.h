@@ -49,7 +49,7 @@ namespace lnm {
 
 // ======== URLs ================================================================
 // "master" or "release/1.4"
-const QLatin1Literal HELP_BRANCH("master"); // VERSION_NUMBER
+const QLatin1Literal HELP_BRANCH("release/2.0"); // VERSION_NUMBER
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
 const QString HELP_ONLINE_URL(
@@ -86,7 +86,7 @@ const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChan
 const QLatin1Literal ACTIONS_SHOW_UPDATEFAILED("Actions/ShowUpdateFailed");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 
-const QLatin1Literal ACTIONS_SHOW_FS9_WARNING("Actions/ShowFs9Warning");
+const QLatin1Literal ACTIONS_SHOW_FS9_FSC_WARNING("Actions/ShowFs9Warning");
 const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");
 const QLatin1Literal ACTIONS_SHOW_FMS3_WARNING("Actions/ShowFms3Warning");
 const QLatin1Literal ACTIONS_SHOW_FMS11_WARNING("Actions/ShowFms11Warning");
@@ -214,6 +214,11 @@ const QLatin1Literal FILE_PATTERN_FPL("(*.fpl)");
 const QLatin1Literal FILE_PATTERN_CORTEIN("(corte.in)");
 const QLatin1Literal FILE_PATTERN_FLP("(*.flp)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms)");
+const QLatin1Literal FILE_PATTERN_UFMC("(*.ufmc)");
+const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml)");
+const QLatin1Literal FILE_PATTERN_FLTPLAN("(*.fltplan)");
+const QLatin1Literal FILE_PATTERN_BBS_PLN("(*.pln)");
+
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
 
@@ -234,6 +239,11 @@ const QLatin1Literal FILE_PATTERN_FPL("(*.fpl *.Fpl *.FPL)");
 const QLatin1Literal FILE_PATTERN_CORTEIN("(corte.in Corte.in CORTE.IN)");
 const QLatin1Literal FILE_PATTERN_FLP("(*.flp *.Flp *.FLP)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
+const QLatin1Literal FILE_PATTERN_UFMC("(*.ufmc *.Ufmc *.UFMC)");
+const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml Companyroutes.xml COMPANYROUTES.XML)");
+const QLatin1Literal FILE_PATTERN_FLTPLAN("(*.fltplan *.Fltplan *.FLTPLAN)");
+const QLatin1Literal FILE_PATTERN_BBS_PLN("(*.pln *.Pln *.PLN)");
+
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
 

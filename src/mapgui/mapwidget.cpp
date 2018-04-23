@@ -751,9 +751,9 @@ void MapWidget::showSavedPosOnStartup()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
   {
-    qDebug() << "Show Route" << NavApp::getRoute().getBoundingRect();
-    if(!NavApp::getRoute().isFlightplanEmpty())
-      showRect(NavApp::getRoute().getBoundingRect(), false);
+    qDebug() << "Show Route" << NavApp::getRouteConst().getBoundingRect();
+    if(!NavApp::getRouteConst().isFlightplanEmpty())
+      showRect(NavApp::getRouteConst().getBoundingRect(), false);
     else
       showHome();
   }
@@ -969,7 +969,7 @@ void MapWidget::routeAltitudeChanged(float altitudeFeet)
 
 bool MapWidget::isCenterLegAndAircraftActive()
 {
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
   return OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM &&
          !route.isEmpty() && route.isActiveValid() && screenIndex->getUserAircraft().isFlying();
 }
@@ -1107,7 +1107,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       bool updateAlways = od.getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY;
 
       // Check if centering of leg is reqired =======================================
-      const Route& route = NavApp::getRoute();
+      const Route& route = NavApp::getRouteConst();
       bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
       // Get position of next waypoint and check visibility
@@ -1682,6 +1682,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   map::MapAirport *airport = nullptr;
   SimConnectAircraft *aiAircraft = nullptr;
+  SimConnectAircraft *onlineAircraft = nullptr;
   SimConnectUserAircraft *userAircraft = nullptr;
   map::MapVor *vor = nullptr;
   map::MapNdb *ndb = nullptr;
@@ -1690,7 +1691,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
   map::MapHelipad *helipad = nullptr;
-  map::MapAirspace *airspace = nullptr;
+  map::MapAirspace *airspace = nullptr, *onlineCenter = nullptr;
   map::MapUserpoint *userpoint = nullptr;
 
   bool airportDestination = false, airportDeparture = false;
@@ -1702,11 +1703,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.aiAircraft.isEmpty())
     aiAircraft = &result.aiAircraft.first();
 
+  if(!result.onlineAircraft.isEmpty())
+    onlineAircraft = &result.onlineAircraft.first();
+
   if(!result.airports.isEmpty())
   {
     airport = &result.airports.first();
-    airportDestination = NavApp::getRoute().isAirportDestination(airport->ident);
-    airportDeparture = NavApp::getRoute().isAirportDeparture(airport->ident);
+    airportDestination = NavApp::getRouteConst().isAirportDestination(airport->ident);
+    airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport->ident);
   }
 
   if(!result.parkings.isEmpty())
@@ -1748,7 +1752,15 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           addRouteText, searchText, editUserpointText;
 
   if(airspace != nullptr)
-    informationText = tr("Airspace");
+  {
+    if(airspace->online)
+    {
+      onlineCenter = airspace;
+      searchText = informationText = tr("Online Center %1").arg(onlineCenter->name);
+    }
+    else
+      informationText = tr("Airspace");
+  }
 
   if(airway != nullptr)
     informationText = map::airwayText(*airway);
@@ -1808,6 +1820,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     informationText = tr("%1 / %2").arg(aiAircraft->getAirplaneRegistration()).arg(
       aiAircraft->getAirplaneModel());
+    isAircraft = true;
+  }
+
+  if(onlineAircraft != nullptr)
+  {
+    searchText = informationText = tr("Online Client Aircraft %1").arg(onlineAircraft->getAirplaneRegistration());
     isAircraft = true;
   }
 
@@ -1930,10 +1948,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // ===================================================================================
   // Update "show in search" and "add to route" only for airports an navaids
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || userpoint != nullptr)
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
+     userpoint != nullptr)
   {
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
     ui->actionRouteAddPos->setEnabled(true);
     ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(addRouteText));
     ui->actionRouteAppendPos->setEnabled(true);
@@ -1941,10 +1958,18 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else
   {
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
     ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(tr("Position")));
     ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(tr("Position")));
   }
+
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
+     userpoint != nullptr || onlineAircraft != nullptr || onlineCenter != nullptr)
+  {
+    ui->actionShowInSearch->setEnabled(true);
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
+  }
+  else
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
 
   if(airport != nullptr)
   {
@@ -1988,7 +2013,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
 
   // Update "delete in route"
-  if(routeIndex != -1 && NavApp::getRoute().canEditPoint(routeIndex))
+  if(routeIndex != -1 && NavApp::getRouteConst().canEditPoint(routeIndex))
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(routeText));
@@ -2119,6 +2144,22 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         emit showInSearch(map::USERPOINT, rec);
       }
+      else if(onlineAircraft != nullptr)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(4);
+        SqlRecord rec;
+        rec.appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration());
+
+        emit showInSearch(map::AIRCRAFT_ONLINE, rec);
+      }
+      else if(onlineCenter != nullptr)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(5);
+        SqlRecord rec;
+        rec.appendFieldAndValue("callsign", onlineCenter->name);
+
+        emit showInSearch(map::AIRSPACE_ONLINE, rec);
+      }
     }
     else if(action == ui->actionMapNavaidRange)
     {
@@ -2242,6 +2283,21 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = waypoint->id;
         type = map::WAYPOINT;
+      }
+      else if(aiAircraft != nullptr)
+      {
+        id = aiAircraft->getId();
+        type = map::AIRCRAFT_AI;
+      }
+      else if(onlineAircraft != nullptr)
+      {
+        id = onlineAircraft->getId();
+        type = map::AIRCRAFT_ONLINE;
+      }
+      else if(onlineCenter != nullptr)
+      {
+        id = onlineCenter->id;
+        type = map::AIRSPACE_ONLINE;
       }
       else
       {
@@ -2605,7 +2661,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons() == Qt::NoButton)
     {
       // No dragging going on now - update cursor over flight plan legs or markers
-      const Route& route = NavApp::getRoute();
+      const Route& route = NavApp::getRouteConst();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
@@ -2770,7 +2826,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const Route& route = NavApp::getRoute();
+        const Route& route = NavApp::getRouteConst();
 
         if(route.size() > 1)
         {
@@ -2860,6 +2916,11 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   {
     showPos(mapSearchResult.aiAircraft.first().getPosition(), 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
+  }
+  else if(!mapSearchResult.onlineAircraft.isEmpty())
+  {
+    showPos(mapSearchResult.onlineAircraft.first().getPosition(), 0.f, true);
+    mainWindow->setStatusMessage(QString(tr("Showing online client aircraft on map.")));
   }
   else if(!mapSearchResult.airports.isEmpty())
   {
@@ -2954,7 +3015,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, NavApp::getRoute(),
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip, NavApp::getRouteConst(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())

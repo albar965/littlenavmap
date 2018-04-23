@@ -61,8 +61,16 @@
      <addaction name="actionRouteSaveAsFpr"/>
      <addaction name="actionRouteSaveAsFpl"/>
      <addaction name="actionRouteSaveAsCorteIn"/>
+     <addaction name="actionRouteSaveAsIFly"/>
+     <addaction name="actionRouteSaveAsProSim"/>
+     <addaction name="actionRouteSaveAsBbsAirbus"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsUfmc"/>
+     <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsGpx"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteShowSkyVector"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -3933,41 +3941,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabOnlineCenterInfo">
-        <attribute name="title">
-         <string>Online Centers</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Online network center information</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_26">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserCenterInfo">
-           <property name="placeholderText">
-            <string>No online network center selected.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="tabOnlineClientInfo">
         <attribute name="title">
          <string>Online Clients</string>
@@ -3995,6 +3968,41 @@
           <widget class="QTextBrowser" name="textBrowserClientInfo">
            <property name="placeholderText">
             <string>No online client/aircraft selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineCenterInfo">
+        <attribute name="title">
+         <string>Online Centers</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Online network center information</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_26">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserCenterInfo">
+           <property name="placeholderText">
+            <string>No online network center selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -5828,7 +5836,7 @@
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionRouteCalcSetAlt">
@@ -6431,10 +6439,10 @@
     <string>Show AI and &amp;Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
    </property>
   </action>
   <action name="actionPrintMap">
@@ -7146,7 +7154,7 @@
     <string>If you would like show your appreciation you can donate here</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
   <action name="actionReloadSceneryCopyAirspaces">
@@ -7184,7 +7192,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan as X-Plane FMS &amp;3...</string>
+    <string>Export Flight Plan as X-Plane FMS &amp;3 ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
@@ -7199,7 +7207,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight &amp;Plan as X-Plane FMS 11...</string>
+    <string>Save Flight &amp;Plan as X-Plane FMS 11 ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
@@ -7213,7 +7221,7 @@
   </action>
   <action name="actionRouteSaveAsFpr">
    <property name="text">
-    <string>Export Flight Plan as &amp;Majestic Dash FPR...</string>
+    <string>Export Flight Plan as &amp;Majestic Dash FPR ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPR file usable Majestic Software MJC8 Q400</string>
@@ -7224,7 +7232,7 @@
   </action>
   <action name="actionRouteSaveAsFpl">
    <property name="text">
-    <string>Export Flight Plan as IXEG &amp;FPL...</string>
+    <string>Export Flight Plan as IXEG &amp;FPL ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
@@ -7235,7 +7243,7 @@
   </action>
   <action name="actionRouteSaveAsCorteIn">
    <property name="text">
-    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus...</string>
+    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</string>
    </property>
    <property name="toolTip">
     <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
@@ -7673,6 +7681,72 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsIFly">
+   <property name="text">
+    <string>Export Flight Plan as &amp;FLTPLAN for iFly ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsXFmc">
+   <property name="text">
+    <string>Export Flight Plan for &amp;X-FMC ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file usable by X-FMC</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by X-FMC</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsUfmc">
+   <property name="text">
+    <string>Export Flight Plan for &amp;UFMC ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as UFMC file</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as UFMC file</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsProSim">
+   <property name="text">
+    <string>Export Flight Plan for &amp;ProSim ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
+   </property>
+   <property name="statusTip">
+    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsBbsAirbus">
+   <property name="text">
+    <string>Export Flight Plan as PLN for &amp;BBS Airbus ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
+   </property>
+  </action>
+  <action name="actionRouteShowSkyVector">
+   <property name="text">
+    <string>Show Flight Plan in Sky&amp;Vector ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the flight plan in SkyVector in the default web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the flight plan in SkyVector in the default web browser</string>
    </property>
   </action>
  </widget>

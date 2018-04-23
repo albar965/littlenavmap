@@ -44,6 +44,7 @@ class UserdataController;
 class OnlinedataController;
 class UserdataIcons;
 class UserdataSearch;
+class VehicleIcons;
 
 namespace atools {
 
@@ -88,6 +89,8 @@ public:
   NavApp(int& argc, char **argv, int flags = ApplicationFlags);
   virtual ~NavApp();
 
+  static NavApp *navAppInstance();
+
   /* Creates all aggregated objects */
   static void init(MainWindow *mainWindowParam);
 
@@ -123,7 +126,8 @@ public:
 
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
-  static const Route& getRoute();
+  static const Route& getRouteConst();
+  static Route& getRoute();
   static float getSpeedKts();
 
   /* Currently selected simulator database */
@@ -206,6 +210,8 @@ public:
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
+  static VehicleIcons *getVehicleIcons();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
@@ -230,6 +236,7 @@ private:
   static QSplashScreen *splashScreen;
 
   static UpdateHandler *updateHandler;
+  static VehicleIcons *vehicleIcons;
 
   static bool shuttingDown;
 };

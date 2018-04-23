@@ -116,6 +116,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   airportQuery = NavApp::getAirportQueryNav();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
+  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
 
   treeWidget->setItemDelegate(gridDelegate);
@@ -158,6 +159,14 @@ ProcedureSearch::~ProcedureSearch()
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
   delete treeEventFilter;
   delete gridDelegate;
+}
+
+void ProcedureSearch::fontChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  zoomHandler->fontChanged();
+  optionsChanged();
 }
 
 void ProcedureSearch::resetSearch()
@@ -232,9 +241,9 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   ui->tabWidgetSearch->setCurrentIndex(2);
   treeWidget->setFocus();
 
-  if(NavApp::getRoute().isAirportDeparture(airport.ident))
+  if(NavApp::getRouteConst().isAirportDeparture(airport.ident))
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
-  else if(NavApp::getRoute().isAirportDestination(airport.ident))
+  else if(NavApp::getRouteConst().isAirportDestination(airport.ident))
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
   else
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
@@ -815,7 +824,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 

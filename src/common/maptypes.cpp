@@ -89,7 +89,7 @@ void initTranslateableTexts()
       {"T", QObject::tr("Tarmac")},
       {"TR", QObject::tr("Transparent")},
       {"UNKNOWN", QObject::tr("Unknown")},
-      {"INVALID", QString("Invalid")}
+      {"INVALID", QObject::tr("Invalid")}
     });
 
   /* Short size name for gate and full name for others */
@@ -1191,8 +1191,12 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & map::AIRWAY && !airways.isEmpty();
   filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
   filled |= types & map::ILS && !ils.isEmpty();
+
   filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
-  filled |= types & map::USERPOINT && !userpointIds.isEmpty();
+  filled |= types & map::USERPOINT && !userpoints.isEmpty();
+
+  filled |= types & map::AIRCRAFT_AI && !aiAircraft.isEmpty();
+  filled |= types & map::AIRCRAFT_ONLINE && !onlineAircraft.isEmpty();
   return !filled;
 }
 

@@ -19,6 +19,7 @@
 
 #include "navapp.h"
 #include "fs/util/coordinates.h"
+#include "fs/util/fsutil.h"
 #include "query/procedurequery.h"
 #include "route/route.h"
 #include "query/mapquery.h"
@@ -37,7 +38,6 @@ namespace coords = atools::fs::util;
 
 const static float MAX_WAYPOINT_DISTANCE_NM = 1000.f;
 
-const static QRegularExpression SPDALT("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
 const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
 const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,6})(\\.([A-Z0-9]{1,6}))?$");
@@ -77,6 +77,25 @@ QString RouteString::createStringForRoute(const Route& route, float speed, rs::R
 
 #else
   return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper();
+
+#endif
+}
+
+QStringList RouteString::createStringForRouteList(const Route& route, float speed, rs::RouteStringOptions options)
+{
+  if(route.isEmpty())
+    return QStringList();
+
+#ifdef DEBUG_INFORMATION_ROUTE_STRING
+
+  return createStringForRouteInternal(route, speed, options) + "\n\n" +
+         "GTN:\n" + createGfpStringForRouteInternalProc(route, false) + "\n" +
+         "GTN UWP:\n" + createGfpStringForRouteInternalProc(route, true) + "\n\n" +
+         "GFP:\n" + createGfpStringForRouteInternal(route, false) + "\n" +
+         "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
+
+#else
+  return createStringForRouteInternal(route, speed, options);
 
 #endif
 }
@@ -310,8 +329,15 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     QString ident = leg.getIdent();
 
     if(leg.getMapObjectType() == map::USERPOINTROUTE)
+    {
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      ident = (options& rs::GFP) ? coords::toGfpFormat(leg.getPosition()) : coords::toDegMinFormat(leg.getPosition());
+      if(options & rs::GFP)
+        ident = coords::toGfpFormat(leg.getPosition());
+      else if(options & rs::SKYVECTOR_COORDS)
+        ident = coords::toDegMinSecFormat(leg.getPosition());
+      else
+        ident = coords::toDegMinFormat(leg.getPosition());
+    }
 
     if(airway.isEmpty() || leg.isAirwaySetAndInvalid() || options & rs::NO_AIRWAYS)
     {
@@ -386,7 +412,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
 
     // Add speed and altitude
     if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
-      retval.insert(insertPosition, createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
+      retval.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
 
     // Add STAR
     if((options& rs::SID_STAR) && !star.isEmpty())
@@ -747,7 +773,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
           }
 
           // Add information to the flight plan property list
-          procQuery->extractLegsForFlightplanProperties(
+          procQuery->fillFlightplanProcedureProperties(
             flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
         }
       }
@@ -827,7 +853,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
               starLegs = *legs;
           }
           // Add information to the flight plan property list
-          procQuery->extractLegsForFlightplanProperties(
+          procQuery->fillFlightplanProcedureProperties(
             flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
         }
       }
@@ -1167,9 +1193,9 @@ QStringList RouteString::cleanItemList(const QStringList& items, float& speedKno
       continue;
     }
 
-    if(SPDALT.match(item).hasMatch())
+    if(atools::fs::util::speedAndAltitudeMatch(item))
     {
-      if(!extractSpeedAndAltitude(item, speedKnots, altFeet))
+      if(!atools::fs::util::extractSpeedAndAltitude(item, speedKnots, altFeet))
         appendWarning(tr("Ignoring invalid speed and altitude instruction %1.").arg(item));
       continue;
     }
@@ -1214,67 +1240,4 @@ void RouteString::removeEmptyResults(QList<ParseEntry>& resultList)
 
   if(it != resultList.end())
     resultList.erase(it, resultList.end());
-}
-
-bool RouteString::extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet)
-{
-  // N0490F360
-  // M084F330
-  // Speed
-  // K0800 (800 Kilometers)
-  // N0490 (490 Knots)
-  // M082 (Mach 0.82)
-  // Level/altitude
-  // F340 (Flight level 340)
-  // S1260 (12600 Meters)
-  // A100 (10000 Feet)
-  // M0890 (8900 Meters)
-
-  speedKnots = 0.f;
-  altFeet = 0.f;
-
-  // const static QRegularExpression SPDALT("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
-  QRegularExpressionMatch match = SPDALT.match(item);
-  if(match.hasMatch())
-  {
-    bool ok = true;
-    QString speedUnit = match.captured(1);
-    float speed = match.captured(2).toFloat(&ok);
-    if(!ok)
-      return false;
-
-    QString altUnit = match.captured(3);
-    float alt = match.captured(4).toFloat(&ok);
-    if(!ok)
-      return false;
-
-    if(altUnit == "F") // Flight Level
-      altFeet = alt * 100.f;
-    else if(altUnit == "S") // Standard Metric Level in tens of meters
-      altFeet = atools::geo::meterToFeet(alt * 10.f);
-    else if(altUnit == "A") // Altitude in hundreds of feet
-      altFeet = alt * 100.f;
-    else if(altUnit == "M") // Altitude in tens of meters
-      altFeet = atools::geo::meterToFeet(alt * 10.f);
-    else
-      return false;
-
-    if(speedUnit == "K") // km/h
-      speedKnots = atools::geo::meterToNm(speed * 1000.f);
-    else if(speedUnit == "N") // knots
-      speedKnots = speed;
-    else if(speedUnit == "M") // mach
-      speedKnots = atools::geo::machToTasFromAlt(altFeet, speed / 100.f);
-    else
-      return false;
-  }
-  return true;
-}
-
-QString RouteString::createSpeedAndAltitude(float speedKnots, float altFeet)
-{
-  if(altFeet < 18000.f)
-    return QString("N%1A%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
-  else
-    return QString("N%1F%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
 }

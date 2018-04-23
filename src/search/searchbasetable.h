@@ -70,7 +70,8 @@ class SearchBaseTable :
 
 public:
   /* Class will take ownership of columnList */
-  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, si::SearchTabIndex tabWidgetIndex);
+  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                  si::SearchTabIndex tabWidgetIndex);
   virtual ~SearchBaseTable();
 
   /* Disconnect and reconnect queries on database change */
@@ -206,6 +207,7 @@ private:
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row);
+  void fontChanged();
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;

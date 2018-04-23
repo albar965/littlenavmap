@@ -194,5 +194,7 @@
         <file>resources/icons/airspaceonline.svg</file>
         <file>resources/icons/userpoint_Unknown.svg</file>
         <file>resources/config/networks.cfg</file>
+        <file>resources/icons/aircraft_online.svg</file>
+        <file>resources/icons/aircraft_online_ground.svg</file>
     </qresource>
 </RCC>

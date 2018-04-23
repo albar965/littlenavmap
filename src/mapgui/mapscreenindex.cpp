@@ -20,7 +20,9 @@
 #include "navapp.h"
 #include "common/proctypes.h"
 #include "route/routecontroller.h"
+#include "online/onlinedatacontroller.h"
 #include "mapgui/mapscale.h"
+#include "mapgui/mapfunctions.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/mappaintlayer.h"
 #include "mapgui/maplayer.h"
@@ -66,7 +68,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon>
   {
     const QList<map::MapAirspace> *airspaces = query->getAirspaces(
       curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
-      NavApp::getRoute().getCruisingAltitudeFeet(), false);
+      NavApp::getRouteConst().getCruisingAltitudeFeet(), false);
 
     if(airspaces != nullptr)
     {
@@ -200,7 +202,7 @@ void MapScreenIndex::restoreState()
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
 {
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   routeLines.clear();
   routePoints.clear();
@@ -307,13 +309,14 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         result.userAircraft = simData.getUserAircraft();
   }
 
-  // Check for AI / multiplayer aircraft from simulator
+  // Check for AI / multiplayer aircraft from simulator ==============================
+  using maptools::insertSortedByDistance;
+  int x, y;
+
+  // Add boats ======================================
   result.aiAircraft.clear();
   if(NavApp::isConnected())
   {
-    using maptools::insertSortedByDistance;
-    int x, y;
-
     if(shown & map::AIRCRAFT_AI_SHIP && mapLayer->isAiShipLarge())
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
@@ -327,19 +330,32 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         }
       }
     }
+  }
 
-    if(shown & map::AIRCRAFT_AI && mapLayer->isAiAircraftLarge())
+  if(shown & map::AIRCRAFT_AI)
+  {
+    // Add AI or injected multiplayer aircraft ======================================
+    if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
     {
-      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+      for(const atools::fs::sc::SimConnectAircraft& obj : mapWidget->getAiAircraft())
       {
-        if(obj.getCategory() != atools::fs::sc::BOAT &&
-           (obj.getModelRadiusCorrected() * 2 > layer::LARGE_AIRCRAFT_SIZE || mapLayer->isAiAircraftSmall()) &&
-           (!obj.isOnGround() || mapLayer->isAiAircraftGround()))
+        if(obj.getCategory() != atools::fs::sc::BOAT && mapfunc::aircraftVisible(obj, mapLayer))
         {
           if(conv.wToS(obj.getPosition(), x, y))
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
               insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
         }
+      }
+    }
+
+    // Add online clients ======================================
+    for(const atools::fs::sc::SimConnectAircraft& obj : *NavApp::getOnlinedataController()->getAircraftFromCache())
+    {
+      if(mapfunc::aircraftVisible(obj, mapLayer))
+      {
+        if(conv.wToS(obj.getPosition(), x, y))
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, obj);
       }
     }
   }
@@ -350,7 +366,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   if(shown.testFlag(map::FLIGHTPLAN))
     // Get copies from flight plan if visible
-    NavApp::getRoute().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
 
   // Get points of procedure preview
   getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);
@@ -374,49 +390,17 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result)
 {
   CoordinateConverter conv(mapWidget->viewport());
-  int x, y;
-
-  using maptools::insertSortedByDistance;
-
-  for(const map::MapAirport& obj : highlights.airports)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, obj);
-
-  for(const map::MapVor& obj : highlights.vors)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, obj);
-
-  for(const map::MapNdb& obj : highlights.ndbs)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, obj);
-
-  for(const map::MapWaypoint& obj : highlights.waypoints)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
-
-  for(const map::MapUserpoint& obj : highlights.userpoints)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.userpoints, &result.userpointIds, xs, ys, obj);
-
-  for(const map::MapAirspace& obj : highlights.airspaces)
-    if(conv.wToS(obj.bounding.getCenter(), x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.airspaces, nullptr, xs, ys, obj);
-
-  for(const map::MapIls& obj : highlights.ils)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.ils, nullptr, xs, ys, obj);
-
-  for(const map::MapRunwayEnd& obj : highlights.runwayEnds)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
+  maptools::insertSorted(conv, xs, ys, highlights.airports, result.airports, &result.airportIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.vors, result.vors, &result.vorIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.airspaces, result.airspaces, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.ils, result.ils, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
+                         maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
@@ -431,35 +415,14 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
   {
     const proc::MapProcedureLeg& leg = approachHighlight.at(i);
 
-    for(const map::MapAirport& obj : leg.navaids.airports)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, obj);
-
-    for(const map::MapVor& obj : leg.navaids.vors)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, obj);
-
-    for(const map::MapNdb& obj : leg.navaids.ndbs)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, obj);
-
-    for(const map::MapWaypoint& obj : leg.navaids.waypoints)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
-
-    for(const map::MapIls& obj : leg.navaids.ils)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.ils, nullptr, xs, ys, obj);
-
-    for(const map::MapRunwayEnd& obj : leg.navaids.runwayEnds)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
     if(conv.wToS(leg.line.getPos2(), x, y))
     {

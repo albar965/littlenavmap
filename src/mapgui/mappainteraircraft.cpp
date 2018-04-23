@@ -19,11 +19,14 @@
 
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
+#include "online/onlinedatacontroller.h"
 #include "mapgui/maplayer.h"
+#include "mapgui/mapfunctions.h"
 #include "util/paintercontextsaver.h"
 #include "geo/calculations.h"
 
 #include <marble/GeoPainter.h>
+#include <marble/ViewportParams.h>
 
 using atools::fs::sc::SimConnectAircraft;
 
@@ -44,9 +47,7 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render(PaintContext *context)
 {
-  if(!context->objectTypes.testFlag(map::AIRCRAFT) &&
-     !context->objectTypes.testFlag(map::AIRCRAFT_AI) &&
-     !context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
+  if(!(context->objectTypes & map::AIRCRAFT_ALL) && !context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     // If actions are unchecked return
     return;
 
@@ -59,62 +60,78 @@ void MapPainterAircraft::render(PaintContext *context)
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
   const atools::geo::Pos& pos = userAircraft.getPosition();
 
-  if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
+  // Draw AI and online aircraft - not boats ====================================================================
+  if(context->objectTypes & map::AIRCRAFT_AI)
   {
-    // Draw AI aircraft
-    if(context->objectTypes & map::AIRCRAFT_AI && context->mapLayer->isAiAircraftLarge())
+    // Merge simulator aircraft and online aircraft
+    QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+    const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft = NavApp::getOnlinedataController()->getAircraft(
+      context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate);
+
+    for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
     {
-      struct AiDistType
-      {
-        const SimConnectAircraft *aircraft;
-        float distanceLateralMeter, distanceVerticalFt;
-      };
+      if(ac.getCategory() != atools::fs::sc::BOAT)
+        allAircraft.append(&ac);
+    }
 
-      QVector<AiDistType> aiSorted;
-
+    if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
+    {
       for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
-        aiSorted.append({&ac,
-                         pos.distanceMeterTo(ac.getPosition()),
-                         std::abs(pos.getAltitude() - ac.getPosition().getAltitude())});
-
-      std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
-                                                     const AiDistType& ai2) -> bool
       {
-        // returns ​true if the first argument is less than (i.e. is ordered before) the second.
-        return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
-      });
-
-      int num = aiSorted.size();
-      for(const AiDistType& adt : aiSorted)
-      {
-        const SimConnectAircraft& ac = *adt.aircraft;
-
-        if(ac.getCategory() != atools::fs::sc::BOAT &&
-           (ac.getModelRadiusCorrected() * 2 > layer::LARGE_AIRCRAFT_SIZE || context->mapLayer->isAiAircraftSmall()) &&
-           (!ac.isOnGround() || context->mapLayer->isAiAircraftGround()))
-        {
-          paintAiVehicle(context, ac,
-                         --num < NUM_CLOSEST_AI_LABELS &&
-                         adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
-                         adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
-        }
+        if(ac.getCategory() != atools::fs::sc::BOAT)
+          allAircraft.append(&ac);
       }
     }
 
-    if(context->objectTypes.testFlag(map::AIRCRAFT))
+    // Sort by distance to user aircraft
+    struct AiDistType
     {
-      if(pos.isValid())
-      {
-        if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
-          paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
+      const SimConnectAircraft *aircraft;
+      float distanceLateralMeter, distanceVerticalFt;
+    };
 
-        bool hidden = false;
-        float x, y;
-        if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
-        {
-          if(!hidden)
-            paintUserAircraft(context, userAircraft, x, y);
-        }
+    QVector<AiDistType> aiSorted;
+
+    for(const SimConnectAircraft *ac : allAircraft)
+      aiSorted.append({ac,
+                       pos.distanceMeterTo(ac->getPosition()),
+                       std::abs(pos.getAltitude() - ac->getPosition().getAltitude())});
+
+    std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
+                                                   const AiDistType& ai2) -> bool
+    {
+      // returns ​true if the first argument is less than (i.e. is ordered before) the second.
+      return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
+    });
+
+    int num = aiSorted.size();
+    for(const AiDistType& adt : aiSorted)
+    {
+      const SimConnectAircraft& ac = *adt.aircraft;
+      if(mapfunc::aircraftVisible(ac, context->mapLayer))
+      {
+        paintAiVehicle(context, ac,
+                       --num < NUM_CLOSEST_AI_LABELS &&
+                       adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
+                       adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
+      }
+    }
+  }
+
+  // Draw user aircraft ====================================================================
+  if(context->objectTypes.testFlag(map::AIRCRAFT))
+  {
+    if(pos.isValid())
+    {
+      if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
+        paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
+
+      bool hidden = false;
+      float x, y;
+      if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
+      {
+        if(!hidden)
+          paintUserAircraft(context, userAircraft, x, y);
       }
     }
   }

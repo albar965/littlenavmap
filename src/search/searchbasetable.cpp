@@ -124,6 +124,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   airportQuery = NavApp::getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
+  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -172,6 +173,14 @@ SearchBaseTable::~SearchBaseTable()
   delete columns;
   delete viewEventFilter;
   delete widgetEventFilter;
+}
+
+void SearchBaseTable::fontChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  zoomHandler->fontChanged();
+  optionsChanged();
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
@@ -848,8 +857,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport.ident);
     bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(airport.ident);
-    bool airportDestination = NavApp::getRoute().isAirportDestination(airport.ident);
-    bool airportDeparture = NavApp::getRoute().isAirportDeparture(airport.ident);
+    bool airportDestination = NavApp::getRouteConst().isAirportDestination(airport.ident);
+    bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(airport.ident);
 
     if(hasAnyArrival || hasDeparture)
     {
@@ -904,7 +913,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Build the menu depending on tab =========================================================================
   QMenu menu;
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionSearchShowInformation);
     if(navType == map::AIRPORT)
@@ -922,7 +933,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(followModeAction());
     menu.addSeparator();
@@ -936,7 +949,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionMapRangeRings);
 
   if(atools::contains(getTabIndex(), {si::SEARCH_NAV}))
@@ -1132,10 +1146,10 @@ void SearchBaseTable::showOnMapTriggered()
         emit showPos(result.userpoints.first().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing userpoint on map."));
       }
-      else if(!result.aiAircraft.isEmpty())
+      else if(!result.onlineAircraft.isEmpty())
       {
-        emit showPos(result.aiAircraft.first().getPosition(), 0.f, false);
-        NavApp::setStatusMessage(tr("Showing online client on map."));
+        emit showPos(result.onlineAircraft.first().getPosition(), 0.f, false);
+        NavApp::setStatusMessage(tr("Showing online client/aircraft on map."));
       }
     }
   }
@@ -1173,7 +1187,7 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   }
   else if(getTabIndex() == si::SEARCH_ONLINE_CLIENT)
   {
-    navType = map::AIRCRAFT_AI_ONLINE;
+    navType = map::AIRCRAFT_ONLINE;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else if(getTabIndex() == si::SEARCH_ONLINE_CENTER)

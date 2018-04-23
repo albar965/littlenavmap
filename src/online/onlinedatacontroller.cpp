@@ -24,6 +24,9 @@
 #include "settings/settings.h"
 #include "options/optiondata.h"
 #include "zip/gzip.h"
+#include "sql/sqlquery.h"
+#include "mapgui/maplayer.h"
+#include "fs/sc/simconnectaircraft.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -59,15 +62,11 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
     codec = QTextCodec::codecForLocale();
 
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
-  // Create a default user agent if not disabled
-  // if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
-  // downloader->setUserAgent();
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
 
   // Recurring downloads
-  downloadTimer.setInterval(OptionData::instance().getOnlineReloadTimeSeconds() * 1000);
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
@@ -77,6 +76,8 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
 OnlinedataController::~OnlinedataController()
 {
+  deInitQueries();
+
   delete downloader;
 
   // Remove all from the database to avoid confusion on startup
@@ -106,6 +107,10 @@ void OnlinedataController::startDownloadInternal()
 
   if(currentState == NONE)
   {
+    // Create a default user agent if not disabled for debugging
+    if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
+      downloader->setDefaultUserAgentShort(QString(" Config/%1").arg(getNetwork()));
+
     QString url;
     if(whazzupUrlFromStatus.isEmpty() && // Status not downloaded yet
        !onlineStatusUrl.isEmpty()) // Need  status.txt by configuration
@@ -187,33 +192,48 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     else
       whazzupData = data;
 
-    manager->readFromWhazzup(codec->toUnicode(whazzupData), convertFormat(OptionData::instance().getOnlineFormat()));
-
-    QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
-    if(!whazzupVoiceUrlFromStatus.isEmpty() &&
-       lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
+    if(manager->readFromWhazzup(codec->toUnicode(whazzupData),
+                                convertFormat(OptionData::instance().getOnlineFormat()),
+                                manager->getLastUpdateTimeFromWhazzup()))
     {
-      // Next in chain is server file
-      currentState = DOWNLOADING_WHAZZUP_SERVERS;
-      downloader->setUrl(whazzupVoiceUrlFromStatus);
+      QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
+      if(!whazzupVoiceUrlFromStatus.isEmpty() &&
+         lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
+      {
+        // Next in chain is server file
+        currentState = DOWNLOADING_WHAZZUP_SERVERS;
+        downloader->setUrl(whazzupVoiceUrlFromStatus);
 
-      // Call later in the event loop to avoid recursion
-      QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+        // Call later in the event loop to avoid recursion
+        QTimer::singleShot(0, downloader, &HttpDownloader::startDownload);
+      }
+      else
+      {
+        // Done after downloading whazzup.txt - start timer for next session
+        startDownloadTimer();
+        currentState = NONE;
+        lastUpdateTime = QDateTime::currentDateTime();
+
+        aircraftCache.clear();
+        // Message for search tabs, map widget and info
+        emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+      }
     }
     else
     {
-      // Done after downloading whazzup.txt - start timer for next session
+      qInfo() << Q_FUNC_INFO << "whazzup.txt is not recent";
+
+      // Done after old update - try again later
       startDownloadTimer();
       currentState = NONE;
       lastUpdateTime = QDateTime::currentDateTime();
-
-      // Message for search tabs, map widget and info
-      emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     }
   }
   else if(currentState == DOWNLOADING_WHAZZUP_SERVERS)
   {
-    manager->readServersFromWhazzup(codec->toUnicode(data), convertFormat(OptionData::instance().getOnlineFormat()));
+    manager->readServersFromWhazzup(codec->toUnicode(data),
+                                    convertFormat(OptionData::instance().getOnlineFormat()),
+                                    manager->getLastUpdateTimeFromWhazzup());
     lastServerDownload = QDateTime::currentDateTime();
 
     // Done after downloading server.txt - start timer for next session
@@ -221,6 +241,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     currentState = NONE;
     lastUpdateTime = QDateTime::currentDateTime();
 
+    aircraftCache.clear();
     // Message for search tabs, map widget and info
     emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
@@ -229,17 +250,12 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 
 void OnlinedataController::downloadFailed(const QString& error, QString url)
 {
-  qDebug() << Q_FUNC_INFO << "Failed" << error << url;
-}
-
-void OnlinedataController::preDatabaseLoad()
-{
-  qDebug() << Q_FUNC_INFO;
-}
-
-void OnlinedataController::postDatabaseLoad()
-{
-  qDebug() << Q_FUNC_INFO;
+  qWarning() << Q_FUNC_INFO << "Failed" << error << url;
+  stopAllProcesses();
+  QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                       tr("Download from\n\n\"%1\"\n\nfailed. Reason:\n\n%2\n\nPress OK to retry.").
+                       arg(url).arg(error));
+  startProcessing();
 }
 
 void OnlinedataController::stopAllProcesses()
@@ -264,12 +280,12 @@ void OnlinedataController::optionsChanged()
   stopAllProcesses();
   whazzupGzipped = false;
 
+  // Remove all from the database
   manager->clearData();
+  aircraftCache.clear();
+
   if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
   {
-    // Remove all from the database
-    manager->clearData();
-
     emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
     emit onlineNetworkChanged();
@@ -317,6 +333,43 @@ bool OnlinedataController::isNetworkActive() const
   return OptionData::instance().getOnlineNetwork() != opts::ONLINE_NONE;
 }
 
+const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircraftFromCache()
+{
+  return &aircraftCache.list;
+}
+
+const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircraft(const Marble::GeoDataLatLonBox& rect,
+                                                                                   const MapLayer *mapLayer, bool lazy)
+{
+  static const double queryRectInflationFactor = 0.2;
+  static const double queryRectInflationIncrement = 0.1;
+  static const int queryMaxRows = 5000;
+
+  aircraftCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
+                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersWaypoint(newLayer);
+  });
+
+  if(aircraftCache.list.isEmpty() && !lazy)
+  {
+    for(const Marble::GeoDataLatLonBox& r :
+        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    {
+      query::bindCoordinatePointInRect(r, aircraftByRectQuery);
+      aircraftByRectQuery->exec();
+      while(aircraftByRectQuery->next())
+      {
+        atools::fs::sc::SimConnectAircraft ac;
+        fillAircraftFromClient(ac, aircraftByRectQuery->record());
+        aircraftCache.list.append(ac);
+      }
+    }
+  }
+  aircraftCache.validate(queryMaxRows);
+  return &aircraftCache.list;
+}
+
 void OnlinedataController::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
 {
   manager->getClientAircraftById(aircraft, id);
@@ -328,32 +381,71 @@ void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAirc
   OnlinedataManager::fillFromClient(ac, record);
 }
 
+atools::sql::SqlRecord OnlinedataController::getClientRecordById(int clientId)
+{
+  return manager->getClientRecordById(clientId);
+}
+
+void OnlinedataController::initQueries()
+{
+  deInitQueries();
+
+  manager->initQueries();
+
+  aircraftByRectQuery = new atools::sql::SqlQuery(getDatabase());
+  aircraftByRectQuery->prepare("select * from client "
+                               "where lonx between :leftx and :rightx and "
+                               "laty between :bottomy and :topy");
+}
+
+void OnlinedataController::deInitQueries()
+{
+  aircraftCache.clear();
+
+  manager->deInitQueries();
+
+  delete aircraftByRectQuery;
+  aircraftByRectQuery = nullptr;
+}
+
+int OnlinedataController::getNumClients() const
+{
+  return manager->getNumClients();
+}
+
 void OnlinedataController::startDownloadTimer()
 {
   downloadTimer.stop();
 
   opts::OnlineNetwork onlineNetwork = OptionData::instance().getOnlineNetwork();
-  int reloadFromOptions = OptionData::instance().getOnlineReloadTimeSeconds();
+  QString source;
 
   // Use three minutes as default if nothing is given
-  int intervalSeconds = 3 * 60;
+  int intervalSeconds;
 
   if(onlineNetwork == opts::ONLINE_CUSTOM || onlineNetwork == opts::ONLINE_CUSTOM_STATUS)
+  {
     // Use options for custom network - ignore reload in whazzup.txt
-    intervalSeconds = reloadFromOptions;
+    intervalSeconds = OptionData::instance().getOnlineReloadTimeSeconds();
+    source = "options";
+  }
   else
   {
-    // Check reload time from whazzup file
-    int reloadFromWhazzupSeconds = manager->getReloadMinutesFromWhazzup() * 60;
-
-    // Safety margin 30 seconds
-    if(reloadFromWhazzupSeconds > 30)
+    int reloadFromCfg = OptionData::instance().getOnlineReloadTimeSecondsConfig();
+    if(reloadFromCfg == -1)
     {
-      // Use time from whazzup.txt
-      intervalSeconds = reloadFromWhazzupSeconds;
-      qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from whazzup";
+      // Use time from whazzup.txt - mode auto
+      intervalSeconds = std::max(manager->getReloadMinutesFromWhazzup() * 60, 60);
+      source = "whazzup";
+    }
+    else
+    {
+      intervalSeconds = std::max(reloadFromCfg, 60);
+      source = "networks.cfg";
     }
   }
+
+  qDebug() << Q_FUNC_INFO << "timer set to" << intervalSeconds << "from" << source;
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloadTimer.setInterval(2000);

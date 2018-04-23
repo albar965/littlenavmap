@@ -54,10 +54,10 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   // Create all painters
   mapPainterNav = new MapPainterNav(mapWidget, mapScale);
   mapPainterIls = new MapPainterIls(mapWidget, mapScale);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &NavApp::getRoute());
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &NavApp::getRouteConst());
+  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &NavApp::getRouteConst());
   mapPainterMark = new MapPainterMark(mapWidget, mapScale);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRoute());
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &NavApp::getRouteConst());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale);
   mapPainterShip = new MapPainterShip(mapWidget, mapScale);
   mapPainterUser = new MapPainterUser(mapWidget, mapScale);
@@ -151,6 +151,8 @@ void MapPaintLayer::initMapLayerSettings()
 
                       aiAircraftGround().aiAircraftLarge().aiAircraftSmall().aiShipLarge().aiShipSmall().
                       aiAircraftGroundText().aiAircraftText().
+
+                      onlineAircraft().onlineAircraftText().
 
                       airspaceCenter().airspaceFir().airspaceOther().airspaceRestricted().airspaceSpecial().
                       airspaceIcao().
@@ -273,6 +275,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          approachTextAndDetail(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
+         onlineAircraftText(false).
          airwayWaypoint().
          vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false).
          userpoint().userpointInfo().userpoinSymbolSize(16).userpointMaxTextLength(8).
@@ -284,6 +287,7 @@ void MapPaintLayer::initMapLayerSettings()
          approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         onlineAircraftText(false).
          ndb(false).waypoint(false).marker(false).ils(false).
          airportRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpoinSymbolSize(16).
@@ -295,6 +299,7 @@ void MapPaintLayer::initMapLayerSettings()
          approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         onlineAircraftText(false).
          airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
@@ -307,6 +312,7 @@ void MapPaintLayer::initMapLayerSettings()
          approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         onlineAircraftText(false).
          airspaceFir(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
          airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -322,6 +328,7 @@ void MapPaintLayer::initMapLayerSettings()
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         onlineAircraft(false).onlineAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
@@ -335,6 +342,7 @@ void MapPaintLayer::initMapLayerSettings()
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
+         onlineAircraft(false).onlineAircraftText(false).
          airspaceCenter(false).airspaceFir(false).airspaceOther(false).
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).

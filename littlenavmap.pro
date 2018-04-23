@@ -38,7 +38,7 @@ CONFIG(release, debug|release):CONF_TYPE=release
 
 # Windows ==================
 win32 {
-  QT_HOME=C:\\Qt\\5.9.3\\mingw53_32
+  QT_HOME=C:\\Qt\\5.9.5\\mingw53_32
   OPENSSL=C:\\OpenSSL-Win32
   GIT_BIN='C:\\Git\\bin\\git'
   MARBLE_BASE="c:\\Projekte\\marble-$${CONF_TYPE}"
@@ -46,7 +46,7 @@ win32 {
 
 # Linux ==================
 unix:!macx {
-  QT_HOME=/home/alex/Qt/5.9.3/gcc_64
+  QT_HOME=/home/alex/Qt/5.9.5/gcc_64
   MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
 
   # Use relative path to current .so directory to search for shared libraries
@@ -60,7 +60,7 @@ unix:!macx {
 
 # Mac OS X ==================
 macx {
-  QT_HOME=/Users/alex/Qt/5.9.1/clang_64
+  QT_HOME=/Users/alex/Qt/5.9.5/clang_64
   MARBLE_BASE=/Users/alex/Programme/Marble-$${CONF_TYPE}
 
   # Compatibility down to OS X 10.10
@@ -222,7 +222,10 @@ SOURCES += src/main.cpp\
     src/search/onlineserversearch.cpp \
     src/query/airspacequery.cpp \
     src/query/querytypes.cpp \
-    src/search/searchbasetable.cpp
+    src/search/searchbasetable.cpp \
+    src/mapgui/mapfunctions.cpp \
+    src/common/vehicleicons.cpp \
+    src/route/routeexport.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -321,7 +324,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/onlineserversearch.h \
     src/query/airspacequery.h \
     src/query/querytypes.h \
-    src/search/searchbasetable.h
+    src/search/searchbasetable.h \
+    src/mapgui/mapfunctions.h \
+    src/common/vehicleicons.h \
+    src/route/routeexport.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

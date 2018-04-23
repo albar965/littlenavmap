@@ -1535,10 +1535,10 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   }
 }
 
-void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
-                                                        const proc::MapProcedureLegs& arrivalLegs,
-                                                        const proc::MapProcedureLegs& starLegs,
-                                                        const proc::MapProcedureLegs& departureLegs)
+void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
+                                                       const proc::MapProcedureLegs& arrivalLegs,
+                                                       const proc::MapProcedureLegs& starLegs,
+                                                       const proc::MapProcedureLegs& departureLegs)
 {
   if(!departureLegs.isEmpty())
   {
@@ -1638,7 +1638,8 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
   return sidTransId;
 }
 
-int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, float distance, int size)
+int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, const QString& runway,
+                              float distance, int size)
 {
   mapQuery->getAirportNavReplace(destination);
 
@@ -1650,7 +1651,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
     approachIdByNameQuery->bindValue(":type", "GPS");
     approachIdByNameQuery->bindValue(":apident", destination.ident);
 
-    starId = findApproachId(destination, approachIdByNameQuery, "A", QString(), /*No runway*/ distance, size);
+    starId = findApproachId(destination, approachIdByNameQuery, "A", runway, distance, size);
     if(starId == -1)
       qWarning() << "Loading of STAR" << star << "failed";
   }
@@ -1744,7 +1745,24 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   }
 
   // Get an approach id =================================================================
-  if(properties.contains(pln::APPROACH))
+  if(properties.contains(pln::APPROACH_ARINC) && approachIdByArincNameQuery != nullptr)
+  {
+    // Use ARINC name which is more specific - potential source is new X-Plane FMS file
+    approachIdByArincNameQuery->bindValue(":arincname", properties.value(pln::APPROACH_ARINC));
+    approachIdByArincNameQuery->bindValue(":apident", destination.ident);
+
+    approachId = findApproachId(destination, approachIdByArincNameQuery,
+                                QString(),
+                                properties.value(pln::APPROACHRW),
+                                properties.value(pln::APPROACHDISTANCE).toFloat(),
+                                properties.value(pln::APPROACHSIZE).toInt());
+    if(approachId == -1)
+    {
+      qWarning() << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
+      error = true;
+    }
+  }
+  else if(properties.contains(pln::APPROACH))
   {
     // Use approach name
     QString type = properties.value(pln::APPROACHTYPE);
@@ -1762,23 +1780,6 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(approachId == -1)
     {
       qWarning() << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
-      error = true;
-    }
-  }
-  else if(properties.contains(pln::APPROACH_ARINC) && approachIdByArincNameQuery != nullptr)
-  {
-    // Use ARINC name which is more specific - potential source is new X-Plane FMS file
-    approachIdByArincNameQuery->bindValue(":arincname", properties.value(pln::APPROACH_ARINC));
-    approachIdByArincNameQuery->bindValue(":apident", destination.ident);
-
-    approachId = findApproachId(destination, approachIdByArincNameQuery,
-                                QString(),
-                                properties.value(pln::APPROACHRW),
-                                properties.value(pln::APPROACHDISTANCE).toFloat(),
-                                properties.value(pln::APPROACHSIZE).toInt());
-    if(approachId == -1)
-    {
-      qWarning() << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
       error = true;
     }
   }
@@ -1808,6 +1809,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     starId = getStarId(destination,
                        properties.value(pln::STAR),
+                       properties.value(pln::STARRW),
                        properties.value(pln::STARDISTANCE).toFloat(),
                        properties.value(pln::STARSIZE).toInt());
     if(starId == -1)
@@ -1939,9 +1941,10 @@ int ProcedureQuery::findApproachId(const map::MapAirport& airport, atools::sql::
 }
 
 bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwayFromQuery,
-                                     const QString& arincName, const QStringList& airportRunways) const
+                                     const QString& arincName, const QStringList& airportRunways,
+                                     bool matchEmptyRunway) const
 {
-  if(runway.isEmpty())
+  if(runway.isEmpty() && !matchEmptyRunway)
     // Nothing to match - get all procedures
     return true;
 
@@ -2055,7 +2058,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
                        !doesRunwayMatch(runway,
                                         query->valueStr("runway_name"),
                                         query->valueStr("arinc_name", QString()),
-                                        airportRunways)))
+                                        airportRunways, false /* Match empty rw */)))
       continue;
 
     ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
@@ -2073,8 +2076,37 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
          !doesRunwayMatch(runway,
                           query->valueStr("runway_name"),
                           query->valueStr("arinc_name"),
-                          airportRunways))
+                          airportRunways, false /* Match empty rw */))
         continue;
+
+      ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
+    }
+    query->finish();
+  }
+
+  if(ids.size() > 1 && runway.isEmpty())
+  {
+    // Runway is empty - try to load a circle-to-land approach or SID/STAR without runway
+    bool found = false;
+    query->exec();
+    while(query->next())
+    {
+      // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
+      if(!transition && (suffix != query->value("suffix").toString() ||
+                         // Runway will be compared directly to the approach and not the airport runway
+                         // The method will check here if the runway in the query result is empty
+                         !doesRunwayMatch(runway,
+                                          query->valueStr("runway_name"),
+                                          query->valueStr("arinc_name", QString()),
+                                          airportRunways, true /* Match empty rw */)))
+        continue;
+
+      if(!found)
+      {
+        // Found something - clear all previous results
+        ids.clear();
+        found = true;
+      }
 
       ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
     }

@@ -431,12 +431,12 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     if(airspace.isValid())
       result.airspaces.append(airspace);
   }
-  else if(type == map::AIRCRAFT_AI_ONLINE)
+  else if(type == map::AIRCRAFT_ONLINE)
   {
     atools::fs::sc::SimConnectAircraft aircraft;
     NavApp::getOnlinedataController()->getClientAircraftById(aircraft, id);
     if(aircraft.isValid())
-      result.aiAircraft.append(aircraft);
+      result.onlineAircraft.append(aircraft);
   }
   else if(type == map::AIRWAY)
   {
@@ -586,7 +586,8 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isUserpoint() && types.testFlag(map::USERPOINT))
+  // No flag since visibility is defined by type
+  if(mapLayer->isUserpoint())
   {
     for(int i = userpointCache.list.size() - 1; i >= 0; i--)
     {

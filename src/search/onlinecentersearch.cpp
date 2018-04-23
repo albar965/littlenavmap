@@ -53,7 +53,7 @@ OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableVie
   columns->
   append(Column("atc_id").hidden()).
 
-  append(Column("callsign", ui->lineEditOnlineCenterCallsign, tr("Callsign")).defaultSort()).
+  append(Column("callsign", ui->lineEditOnlineCenterCallsign, tr("Callsign")).defaultSort().filter()).
   append(Column("name", ui->lineEditOnlineCenterName, tr("Name")).filter()).
   append(Column("facility_type", ui->comboBoxOnlineCenterFacilityType,
                 tr("Facility\nType")).indexCondMap(facilityType)).

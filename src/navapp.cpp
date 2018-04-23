@@ -34,6 +34,7 @@
 #include "userdata/userdatacontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
+#include "common/vehicleicons.h"
 
 #include "ui_mainwindow.h"
 
@@ -62,6 +63,7 @@ atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
+VehicleIcons *NavApp::vehicleIcons = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -73,11 +75,16 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
 
-  setApplicationVersion("1.9.1.develop"); // VERSION_NUMBER
+  setApplicationVersion("2.0.0.beta"); // VERSION_NUMBER
 }
 
 NavApp::~NavApp()
 {
+}
+
+NavApp *NavApp::navAppInstance()
+{
+  return dynamic_cast<NavApp *>(QCoreApplication::instance());
 }
 
 void NavApp::init(MainWindow *mainWindowParam)
@@ -95,6 +102,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
 
+  vehicleIcons = new VehicleIcons();
+
   // Need to set this later to avoid circular database dependency
   userdataController->setMagDecReader(magDecReader);
 
@@ -104,6 +113,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   userdataController->clearTemporary();
 
   onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
+  onlinedataController->initQueries();
 
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
                           databaseManager->getDatabaseUser());
@@ -206,6 +216,10 @@ void NavApp::deInit()
   delete magDecReader;
   magDecReader = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete vehicleIcons";
+  delete vehicleIcons;
+  vehicleIcons = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete splashScreen";
   delete splashScreen;
   splashScreen = nullptr;
@@ -224,8 +238,6 @@ void NavApp::optionsChanged()
 void NavApp::preDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
-
-  onlinedataController->preDatabaseLoad();
 
   infoQuery->deInitQueries();
   airportQuerySim->deInitQueries();
@@ -257,8 +269,6 @@ void NavApp::postDatabaseLoad()
   airspaceQueryOnline->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
-
-  onlinedataController->postDatabaseLoad();
 }
 
 Ui::MainWindow *NavApp::getMainUi()
@@ -311,7 +321,12 @@ ProcedureQuery *NavApp::getProcedureQuery()
   return procedureQuery;
 }
 
-const Route& NavApp::getRoute()
+const Route& NavApp::getRouteConst()
+{
+  return mainWindow->getRouteController()->getRoute();
+}
+
+Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
 }
@@ -399,6 +414,11 @@ OnlinedataController *NavApp::getOnlinedataController()
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()
 {
   return magDecReader;
+}
+
+VehicleIcons *NavApp::getVehicleIcons()
+{
+  return vehicleIcons;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()

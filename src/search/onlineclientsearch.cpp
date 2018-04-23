@@ -42,7 +42,7 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
   columns->
   append(Column("client_id").hidden()).
 
-  append(Column("callsign", ui->lineEditOnlineClientCallsign, tr("Callsign")).defaultSort()).
+  append(Column("callsign", ui->lineEditOnlineClientCallsign, tr("Callsign")).defaultSort().filter()).
   append(Column("name", ui->lineEditOnlineClientName, tr("Name")).filter()).
   append(Column("server", ui->lineEditOnlineClientServer, tr("Server")).filter()).
   append(Column("flightplan_departure_aerodrome", ui->lineEditOnlineClientDeparture, tr("Departure")).filter()).
@@ -50,18 +50,18 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
 
   append(Column("prefile", tr("Prefile"))).
   append(Column("on_ground", tr("On Ground"))).
-  append(Column("groundspeed", tr("Groundspeed"))).
-  append(Column("altitude", tr("Altitude"))).
+  append(Column("groundspeed", tr("Groundspeed\n%speed%"))).
+  append(Column("altitude", tr("Altitude\n%alt%"))).
   append(Column("flightplan_aircraft", tr("Aircraft"))).
   append(Column("flightplan_departure_time", tr("Planned\nDeparture"))).
   append(Column("flightplan_actual_departure_time", tr("Actual\nDeparture"))).
-  append(Column("flightplan_cruising_speed", tr("Planned\nCruising Speed"))).
-  append(Column("flightplan_cruising_level", tr("Planned\nCruising Level"))).
-  append(Column("transponder_code", tr("Transponder\nCode"))).
-  append(Column("flightplan_flight_rules", tr("ICAO Flight\nRules"))).
-  append(Column("flightplan_type_of_flight", tr("ICAO Flight\nType"))).
-  append(Column("flightplan_enroute_minutes", tr("Enroute\nhh:mm"))).
-  append(Column("flightplan_endurance_minutes", tr("Endurance\nhh:mm"))).
+  append(Column("flightplan_cruising_speed", tr("Planned\nCruising Speed")).hidden()).
+  append(Column("flightplan_cruising_level", tr("Planned\nCruising Level")).hidden()).
+  append(Column("transponder_code", tr("Transponder\nCode")).hidden()).
+  append(Column("flightplan_flight_rules", tr("ICAO Flight\nRules")).hidden()).
+  append(Column("flightplan_type_of_flight", tr("ICAO Flight\nType")).hidden()).
+  append(Column("flightplan_enroute_minutes", tr("Enroute\nhh:mm")).hidden()).
+  append(Column("flightplan_endurance_minutes", tr("Endurance\nhh:mm")).hidden()).
   append(Column("combined_rating", tr("Combined\nRating"))).
   append(Column("administrative_rating", tr("Admin\nRating"))).
   append(Column("atc_pilot_rating", tr("Pilot\nRating"))).
@@ -248,7 +248,7 @@ void OnlineClientSearch::getSelectedMapObjects(map::MapSearchResult& result) con
 
         atools::fs::sc::SimConnectAircraft ac;
         NavApp::getOnlinedataController()->fillAircraftFromClient(ac, rec);
-        result.aiAircraft.append(ac);
+        result.onlineAircraft.append(ac);
       }
     }
   }

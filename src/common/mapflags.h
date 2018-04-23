@@ -73,11 +73,18 @@ enum MapObjectType
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
 
   AIRSPACE_ONLINE = 1 << 28, /* Online network center */
-  AIRCRAFT_AI_ONLINE = 1 << 29, /* Online network client/aircraft */
+  AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
+
+  /* All online, AI and multiplayer aircraft */
+  AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
+
+  /* All navaids */
   NAV_ALL = VOR | NDB | WAYPOINT,
-  NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
+
+  /* All objects that have a magvar assigned */
+  NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT,
 
   ALL = 0xffffffff
 };
@@ -141,7 +148,7 @@ enum MapAirspaceType
 Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
 
-Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 26;
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 27;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag

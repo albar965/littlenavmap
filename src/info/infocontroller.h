@@ -41,8 +41,8 @@ enum TabIndex
   INFO_WEATHER = 4,
   INFO_NAVAID = 5,
   INFO_AIRSPACE = 6,
-  INFO_ONLINE_CENTER = 7,
-  INFO_ONLINE_CLIENT = 8
+  INFO_ONLINE_CLIENT = 7,
+  INFO_ONLINE_CENTER = 8
 };
 
 enum TabIndexAircraft
@@ -118,7 +118,7 @@ private:
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
   void currentTabChanged(int index);
-  void updateAircraftText();
+  void updateUserAircraftText();
   void updateAircraftProgressText();
   void updateAiAircraftText();
   void updateAircraftInfo();
@@ -135,7 +135,6 @@ private:
   AirspaceQuery *airspaceQuery = nullptr;
   AirspaceQuery *airspaceQueryOnline = nullptr;
   AirportQuery *airportQuery = nullptr;
-  QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
