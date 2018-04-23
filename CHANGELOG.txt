@@ -86,6 +86,7 @@ from atools version 3.0.0.beta
 * Improved BGL file and scenery reading to include hidden and system files.
 * Fixed issue where approach name and/or suffix were not read correctly in X-Plane and DFD compiler.
 * Fixed error with duplicate VOR/NDB waypoints in DFD compiler.
+* Now ignoring artificial circle-to-land approaches in DFD compiler.
 
 * Flight plan export for Blackbox Simulations Airbus. albar965/littlenavmap#200
 * Added loading method for FSC flight plans.
