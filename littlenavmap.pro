@@ -447,6 +447,8 @@ unix:!macx {
   deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk*.so*  $${DEPLOY_DIR_LIB}/platformthemes &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/printsupport/libcupsprintersupport.so*  $${DEPLOY_DIR_LIB}/printsupport &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/sqldrivers/libqsqlite.so*  $${DEPLOY_DIR_LIB}/sqldrivers &&
+  deploy.commands += cp -vfa /lib/x86_64-linux-gnu/libssl.so.1.0.0 $${DEPLOY_DIR_LIB} &&
+  deploy.commands += cp -vfa /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicudata.so*  $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicui18n.so*  $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicuuc.so*  $${DEPLOY_DIR_LIB} &&
