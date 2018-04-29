@@ -1728,7 +1728,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsMapAirportDiagram">
             <property name="toolTip">
-             <string>Draw airport diagrams. 
+             <string>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</string>
             </property>
             <property name="text">
@@ -2912,7 +2912,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
        <item row="0" column="1">
         <widget class="QGroupBox" name="groupBoxOptionsOnlineWeb">
          <property name="title">
-          <string>Web Adresses</string>
+          <string>Web Addresses</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_25">
           <property name="verticalSpacing">

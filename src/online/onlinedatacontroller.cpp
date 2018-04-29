@@ -284,21 +284,14 @@ void OnlinedataController::optionsChanged()
   manager->clearData();
   aircraftCache.clear();
 
-  if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
-  {
-    emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
-    emit onlineServersUpdated(true /* load all */, true /* keep selection */);
-    emit onlineNetworkChanged();
-  }
-  else
-  {
-    lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
-    lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
+  emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+  emit onlineServersUpdated(true /* load all */, true /* keep selection */);
+  emit onlineNetworkChanged();
 
-    emit onlineNetworkChanged();
+  lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
+  lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
 
-    startDownloadInternal();
-  }
+  startDownloadInternal();
 }
 
 bool OnlinedataController::hasData() const
