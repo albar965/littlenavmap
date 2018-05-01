@@ -123,6 +123,7 @@ private:
   void startDownloadInternal();
   void startDownloadTimer();
   void stopAllProcesses();
+  void initAtcDefaultRadii();
 
   /* Show message from status.txt */
   void showMessageDialog();

@@ -2018,7 +2018,6 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     html.row2If(tr("VID:"), onlineRec.valueStr("vid"));
     html.row2If(tr("Name:"), onlineRec.valueStr("name"));
     html.row2If(tr("Server:"), onlineRec.valueStr("server"));
-    html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
 
     float qnh = onlineRec.valueFloat("qnh_mb");
     if(qnh > 0.f)
@@ -2072,7 +2071,10 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Cruising Level:"), alt);
 
     html.row2If(tr("Transponder Code:"), onlineRec.valueStr("transponder_code"));
-    html.row2If(tr("Visual Range"), Unit::distNm(onlineRec.valueFloat("visual_range")));
+
+    float range = onlineRec.valueFloat("visual_range");
+    if(range > 0.f && range < map::INVALID_ALTITUDE_VALUE)
+      html.row2If(tr("Visual Range"), Unit::distNm(range));
     html.row2If(tr("Flight Rules:"), onlineRec.valueStr("flightplan_flight_rules"));
     html.row2If(tr("Type of Flight:"), onlineRec.valueStr("flightplan_type_of_flight"));
     html.row2If(tr("Departure Time:"), onlineRec.valueStr("flightplan_departure_time"));

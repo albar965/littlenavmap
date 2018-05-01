@@ -201,10 +201,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Open online network database
     openWriteableDatabase(databaseOnline, "onlinedata", "online network", false /* backup */);
     onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline);
-    if(!onlinedataManager->hasSchema())
-      onlinedataManager->createSchema();
-    else
-      onlinedataManager->updateSchema();
+    onlinedataManager->createSchema();
     onlinedataManager->initQueries();
   }
 }

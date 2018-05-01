@@ -63,6 +63,8 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
 
+  initAtcDefaultRadii();
+
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
 
@@ -82,6 +84,30 @@ OnlinedataController::~OnlinedataController()
 
   // Remove all from the database to avoid confusion on startup
   manager->clearData();
+}
+
+void OnlinedataController::initAtcDefaultRadii()
+{
+  // Override default circle radius for certain ATC center types
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+  QHash<atools::fs::online::fac::FacilityType, int> radii;
+  for(atools::fs::online::fac::FacilityType type : atools::fs::online::allFacilityTypes())
+  {
+    QVariant defaultValue(-1);
+    if(type == atools::fs::online::fac::GROUND)
+      defaultValue = 5;
+    else if(type == atools::fs::online::fac::TOWER)
+      defaultValue = 10;
+    else if(type == atools::fs::online::fac::APPROACH)
+      defaultValue = 20;
+
+    QVariant value = settings.getAndStoreValue("Online/CenterRadius" +
+                                               atools::fs::online::facilityTypeTextSettings(type),
+                                               defaultValue);
+    radii.insert(type, value.toInt());
+  }
+  manager->setAtcRadius(radii);
 }
 
 void OnlinedataController::startProcessing()
