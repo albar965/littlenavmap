@@ -322,7 +322,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         ai.append(tr("%1 Clients / Aircraft").arg(NavApp::getOnlineNetwork()));
 
       if(!ai.isEmpty())
-        tooltip.tr().td().b(tr("AI / multiplayer / online client: ")).text(ai.join(", ")).tdEnd().trEnd();
+        tooltip.tr().td().b(tr("AI / Multiplayer / online client: ")).text(ai.join(", ")).tdEnd().trEnd();
       else
         tooltip.tr().td(tr("No AI / Multiplayer / online client")).trEnd();
       tooltip.tableEnd();

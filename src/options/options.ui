@@ -1046,7 +1046,7 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
              <string>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
-together will &quot;Treat empty airports special&quot;.</string>
+together with &quot;Treat empty airports special&quot;.</string>
             </property>
             <property name="text">
              <string>&amp;Consider all X-Plane airports not being 3D empty</string>
@@ -2074,7 +2074,7 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsSimCenterLegTable">
             <property name="toolTip">
-             <string>The actiive (magenta) leg will be shown on top of the flight plan table when a new leg is activated</string>
+             <string>The active (magenta) leg will be shown on top of the flight plan table when a new leg is activated</string>
             </property>
             <property name="text">
              <string>&amp;Keep active leg on top of flight plan table</string>

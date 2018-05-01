@@ -2738,10 +2738,10 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>File name and path it this waypoint was imported from a file</string>
+              <string>File name and path if this waypoint was imported from a file</string>
              </property>
              <property name="statusTip">
-              <string>File name and path it this waypoint was imported from a file</string>
+              <string>File name and path if this waypoint was imported from a file</string>
              </property>
              <property name="placeholderText">
               <string>Import file name and path</string>

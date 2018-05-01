@@ -1706,7 +1706,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
       html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
 
     if(!onlineRec.isNull("administrative_rating"))
-      html.row2If(tr("Aministrative Rating:"),
+      html.row2If(tr("Administrative Rating:"),
                   atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
     if(!onlineRec.isNull("atc_pilot_rating"))
       html.row2If(tr("ATC Rating:"), atools::fs::online::atcRatingText(onlineRec.valueInt("atc_pilot_rating")));
@@ -2029,7 +2029,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
 
     if(!onlineRec.isNull("administrative_rating"))
-      html.row2If(tr("Aministrative Rating:"),
+      html.row2If(tr("Administrative Rating:"),
                   atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
     if(!onlineRec.isNull("atc_pilot_rating"))
       html.row2If(tr("ATC Rating:"), atools::fs::online::pilotRatingText(onlineRec.valueInt("atc_pilot_rating")));
