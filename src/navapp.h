@@ -54,6 +54,11 @@ class Pos;
 
 namespace fs {
 
+namespace sc {
+class SimConnectUserAircraft;
+class SimConnectAircraft;
+}
+
 namespace userdata {
 class UserdataManager;
 }
@@ -110,6 +115,10 @@ public:
 
   static bool isConnected();
   static bool isUserAircraftValid();
+
+  static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
+
+  static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
   static map::MapObjectTypes getShownMapFeatures();
   static map::MapAirspaceFilter getShownMapAirspaces();

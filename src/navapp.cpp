@@ -286,6 +286,16 @@ bool NavApp::isUserAircraftValid()
   return mainWindow->getMapWidget()->getUserAircraft().getPosition().isValid();
 }
 
+const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
+{
+  return mainWindow->getMapWidget()->getUserAircraft();
+}
+
+const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
+{
+  return mainWindow->getMapWidget()->getAiAircraft();
+}
+
 AirportQuery *NavApp::getAirportQuerySim()
 {
   return airportQuerySim;

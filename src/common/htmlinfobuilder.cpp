@@ -2693,6 +2693,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     head(html, tr("Position"));
     html.row2(tr("Coordinates:"), Unit::coords(aircraft.getPosition()));
+#ifdef DEBUG_INFORMATION
+    html.row2(tr("Pos:"), QString("Pos(%1, %2)").
+              arg(aircraft.getPosition().getLonX()).
+              arg(aircraft.getPosition().getLatY()));
+#endif
     html.tableEnd();
   }
 }
