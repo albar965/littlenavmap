@@ -40,6 +40,7 @@ class Route;
 
 namespace rs {
 
+/* Do not change order since it is used to save to options */
 enum RouteStringOption
 {
   NONE = 0,
@@ -55,6 +56,7 @@ enum RouteStringOption
   RUNWAY = 1 << 8, /* Add departure runway if available. Not ATS compliant. */
   APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. */
   FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
+
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
   USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
   SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
