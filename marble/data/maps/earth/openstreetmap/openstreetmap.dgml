@@ -43,9 +43,9 @@
           <!-- <downloadUrl protocol="http" host="yevaud.openstreetmap.org" path="/"/> -->
 
           <!-- OSM content delivery network proxy servers -->
-          <downloadUrl protocol="http" host="a.tile.openstreetmap.org" path="/"/>
-          <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/>
-          <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="https" host="a.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="https" host="b.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="https" host="c.tile.openstreetmap.org" path="/"/>
 
           <!-- OSM content delivery network German proxy servers -->
           <!-- <downloadUrl protocol="http" host="a.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
