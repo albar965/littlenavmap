@@ -37,6 +37,7 @@
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
+#include "fs/weather/metarparser.h"
 #include "userdata/userdataicons.h"
 
 #include <QCommandLineParser>
@@ -193,6 +194,7 @@ int main(int argc, char *argv[])
     UserdataIcons::initTranslateableTexts();
     map::initTranslateableTexts();
     proc::initTranslateableTexts();
+    atools::fs::weather::initTranslateableTexts();
 
 #if defined(Q_OS_MACOS)
     // Check for minimum macOS version 10.10
