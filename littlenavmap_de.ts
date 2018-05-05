@@ -5838,7 +5838,7 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1069"/>
         <source>%2Nearest Weather - %1</source>
-        <translation>%2Nächstes Wetter - %1</translation>
+        <translation>%2Nahes Wetter - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1088"/>
@@ -5858,8 +5858,7 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1144"/>
         <source>%1 Nearest Weather - %2</source>
-        <translatorcomment>Alternative &quot;Nächstes&quot;, wobei das als zeitliche Angabe missverstanden werden könnte.</translatorcomment>
-        <translation>%1Nächstes Wetter - %2</translation>
+        <translation>%1 Nahes Wetter - %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1178"/>
@@ -5958,7 +5957,7 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="279"/>
         <source>%1Nearest</source>
-        <translation>%1Nächstes</translation>
+        <translation>%1Nahes</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="281"/>
@@ -5973,7 +5972,7 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="289"/>
         <source>NOAA Nearest</source>
-        <translation>Nächstes NOAA</translation>
+        <translation>NOAA Nahes</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="294"/>
@@ -5983,7 +5982,7 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="296"/>
         <source>IVAO Nearest</source>
-        <translation>Nächstes IVAO</translation>
+        <translation>IVAO Nahes</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="303"/>
