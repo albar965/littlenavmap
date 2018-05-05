@@ -5836,7 +5836,7 @@
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionRouteCalcSetAlt">
@@ -7135,9 +7135,6 @@
    <property name="statusTip">
     <string>Check for Updates</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
-   </property>
   </action>
   <action name="actionHelpDonate">
    <property name="icon">
@@ -7152,9 +7149,6 @@
    </property>
    <property name="statusTip">
     <string>If you would like show your appreciation you can donate here</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
   <action name="actionReloadSceneryCopyAirspaces">
