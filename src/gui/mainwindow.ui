@@ -28,7 +28,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -4874,7 +4874,7 @@
     <string>About Little Navmap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionHelpAboutQt">
@@ -4892,7 +4892,7 @@
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionOptions">
@@ -4910,7 +4910,7 @@
     <string>Open the options dialog</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
@@ -7135,6 +7135,9 @@
    <property name="statusTip">
     <string>Check for Updates</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionHelpDonate">
    <property name="icon">
@@ -7149,6 +7152,9 @@
    </property>
    <property name="statusTip">
     <string>If you would like show your appreciation you can donate here</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionReloadSceneryCopyAirspaces">
