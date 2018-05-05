@@ -1,6 +1,46 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.0.1.beta
+
+* Changed OSM, OpenMapSurfer and Hillshading map downloads to use SSL encrypted connections (HTTPS).
+  For fallback in case of problems replace the files
+  "Little Navmap/data/maps/earth/openstreetmap/openstreetmap.dgml",
+  "Little Navmap/data/maps/earth/openstreetmaproads/openstreetmaproads.dgml" and
+  "Little Navmap/data/maps/earth/srtm2/srtm2.dgml" with files from the previous version.
+* Fixed SSL loading problems on Linux (first noticed on Ubuntu 18.04).
+
+Online:
+* Now removing duplicate user aircraft and multiplayer aircraft from simulator and online network.
+  Keeping simulator aircraft for duplicates.
+  A valid Registration in the simulator information is needed and matched to the online client callsign to
+  find duplicates within 30 NM distance. #45
+* Visual range now only shown for online client if >0.
+* Online network database schema is now always created from scratch to cover schema changes.
+* Change online center/airspaces to ignore visual range which is often wrong.
+  Ground is now shows as a 5 NM circle, approach 20 NM and tower 10 NM. Can be changed in configuration file.
+* Added facility to override visual range for online airspace circles in configuration file.
+  See section "[Online]" in file "little_navmap.ini".
+* Visual range for online clients now uses correct units in search result.
+* Online servers remained in search result table after switching networks.
+
+Flight plan export:
+* Fixed issues in corte.in export for flight factor aircraft. Last DCT now omitted export and using full names
+  for approach ident in (I16L before, now ILS16L).
+
+Translations:
+* Added translation for Brazilian Portuguese by Ricardo.
+* Updated German translation from Stephan L.
+* Updated French translation and manual from Patrick.
+
+Other:
+* Now showing navaid ranges for navaids which are parts of procedures
+  E.g. "Show navaid range" for a NDB which is part of a procedure.
+
+from atools version 3.0.1.beta
+* Weather texts are now shown translated.
+* Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+
 Version 2.0.0.beta
 
 Flight Plan and Export:
