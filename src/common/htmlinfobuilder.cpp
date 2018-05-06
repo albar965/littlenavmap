@@ -1287,7 +1287,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!weather.isEmpty())
   {
     // Workaround for goofy texts
-    QString wtr = weather.join(", ").replace(" of in ", " in ", Qt::CaseInsensitive);
+    QString wtr = weather.join(", ").replace(tr(" of in "), tr(" in "), Qt::CaseInsensitive);
 
     if(!wtr.isEmpty())
       wtr[0] = wtr.at(0).toUpper();

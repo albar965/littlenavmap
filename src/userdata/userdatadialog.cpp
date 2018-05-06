@@ -26,7 +26,6 @@
 #include "fs/util/coordinates.h"
 #include "common/unit.h"
 #include "gui/helphandler.h"
-#include "navapp.h"
 #include "userdata/userdataicons.h"
 #include "gui/widgetstate.h"
 
@@ -140,7 +139,7 @@ void UserdataDialog::coordsEdited(const QString& text)
 void UserdataDialog::helpClicked()
 {
   atools::gui::HelpHandler::openHelpUrl(
-    NavApp::getMainWindow(), lnm::HELP_ONLINE_URL + "EDITUSERDATA.html", lnm::helpLanguagesOnline());
+    this, lnm::HELP_ONLINE_URL + "EDITUSERDATA.html", lnm::helpLanguagesOnline());
 }
 
 void UserdataDialog::resetClicked()

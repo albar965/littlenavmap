@@ -46,6 +46,7 @@ public:
 
 private:
   void coordsEdited(const QString& text);
+  void helpClicked();
 
   Ui::UserWaypointDialog *ui;
 

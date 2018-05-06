@@ -3428,6 +3428,12 @@ Changes only settings that can be done with this dialog.</string>
  </widget>
  <tabstops>
   <tabstop>tabWidgetOptions</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadKml</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadInfoContent</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadSearch</tabstop>
   <tabstop>radioButtonOptionsStartupShowLast</tabstop>
   <tabstop>radioButtonOptionsStartupShowHome</tabstop>
   <tabstop>radioButtonOptionsStartupShowFlightplan</tabstop>
@@ -3437,7 +3443,16 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
+  <tabstop>spinBoxOptionsGuiRouteText</tabstop>
+  <tabstop>spinBoxOptionsGuiSearchText</tabstop>
+  <tabstop>spinBoxOptionsGuiInfoText</tabstop>
+  <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
+  <tabstop>comboBoxOptionsGuiTheme</tabstop>
+  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
+  <tabstop>checkBoxOptionsGuiOverrideLanguage</tabstop>
+  <tabstop>checkBoxOptionsGuiOverrideLocale</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
+  <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
   <tabstop>comboBoxMapScrollDetails</tabstop>
   <tabstop>lineEditOptionsMapRangeRings</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
@@ -3447,19 +3462,34 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>
   <tabstop>checkBoxOptionsMapTooltipNavaid</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirspace</tabstop>
+  <tabstop>checkBoxOptionsMapClickAirport</tabstop>
+  <tabstop>checkBoxOptionsMapClickNavaid</tabstop>
+  <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
+  <tabstop>checkBoxOptionsMapAirportDiagram</tabstop>
+  <tabstop>checkBoxOptionsMapAirportBoundary</tabstop>
+  <tabstop>checkBoxOptionsMapAirportText</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeNavaid</tabstop>
+  <tabstop>checkBoxOptionsMapNavaidText</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftUser</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftUser</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftAi</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftAi</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanDimPassed</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanPassedColor</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
   <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessRangeDistance</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessCompassRose</tabstop>
   <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
   <tabstop>comboBoxOptionsUnitDistance</tabstop>
   <tabstop>comboBoxOptionsUnitShortDistance</tabstop>
@@ -3471,6 +3501,13 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>radioButtonOptionsSimUpdateLow</tabstop>
   <tabstop>radioButtonOptionsSimUpdateMedium</tabstop>
   <tabstop>radioButtonOptionsSimUpdateFast</tabstop>
+  <tabstop>checkBoxOptionsSimCenterLeg</tabstop>
+  <tabstop>checkBoxOptionsSimUpdatesConstant</tabstop>
+  <tabstop>spinBoxOptionsSimUpdateBox</tabstop>
+  <tabstop>checkBoxOptionsSimCenterLegTable</tabstop>
+  <tabstop>checkBoxOptionsSimDoNotFollowOnScroll</tabstop>
+  <tabstop>spinBoxSimDoNotFollowOnScrollTime</tabstop>
+  <tabstop>spinBoxSimMaxTrackPoints</tabstop>
   <tabstop>checkBoxOptionsRoutePreferVor</tabstop>
   <tabstop>checkBoxOptionsRoutePreferNdb</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
@@ -3479,14 +3516,36 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsShowTod</tabstop>
   <tabstop>doubleSpinBoxOptionsRouteTodRule</tabstop>
   <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
+  <tabstop>checkBoxOptionsRouteShortName</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoVatsim</tabstop>
+  <tabstop>checkBoxOptionsWeatherInfoIvao</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipFs</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipIvao</tabstop>
+  <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
+  <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
+  <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
+  <tabstop>lineEditOptionsWeatherIvaoUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherIvaoTest</tabstop>
+  <tabstop>radioButtonOptionsOnlineNone</tabstop>
+  <tabstop>radioButtonOptionsOnlineVatsim</tabstop>
+  <tabstop>radioButtonOptionsOnlineIvao</tabstop>
+  <tabstop>radioButtonOptionsOnlineCustomStatus</tabstop>
+  <tabstop>radioButtonOptionsOnlineCustom</tabstop>
+  <tabstop>lineEditOptionsOnlineStatusUrl</tabstop>
+  <tabstop>pushButtonOptionsOnlineTestStatusUrl</tabstop>
+  <tabstop>lineEditOptionsOnlineWhazzupUrl</tabstop>
+  <tabstop>pushButtonOptionsOnlineTestWhazzupUrl</tabstop>
+  <tabstop>spinBoxOptionsOnlineUpdate</tabstop>
+  <tabstop>comboBoxOptionsOnlineFormat</tabstop>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>spinBoxOptionsCacheDiskSize</tabstop>

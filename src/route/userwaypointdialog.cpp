@@ -20,7 +20,9 @@
 
 #include "geo/pos.h"
 #include "common/unit.h"
+#include "common/constants.h"
 #include "common/formatter.h"
+#include "gui/helphandler.h"
 #include "fs/util/coordinates.h"
 
 #include <QPushButton>
@@ -36,12 +38,22 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name, con
   ui->lineEditRouteUserWaypoint->setText(name);
   ui->lineEditRouteUserWaypointLatLon->setText(Unit::coords(pos));
 
+  coordsEdited(QString());
+
   connect(ui->lineEditRouteUserWaypointLatLon, &QLineEdit::textChanged, this, &UserWaypointDialog::coordsEdited);
+  connect(ui->buttonBoxRouteUserWaypoint->button(QDialogButtonBox::Help), &QPushButton::clicked,
+          this, &UserWaypointDialog::helpClicked);
 }
 
 UserWaypointDialog::~UserWaypointDialog()
 {
   delete ui;
+}
+
+void UserWaypointDialog::helpClicked()
+{
+  atools::gui::HelpHandler::openHelpUrl(
+    this, lnm::HELP_ONLINE_URL + "EDITFPPOSITION.html", lnm::helpLanguagesOnline());
 }
 
 QString UserWaypointDialog::getName() const
