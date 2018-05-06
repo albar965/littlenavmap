@@ -6878,6 +6878,18 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
         <translation>Keine Wolken</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1290"/>
+        <source> of in </source>
+        <translatorcomment>Workaround um falsche Wetterberichte (Schauer von im Unkreis -&gt; Schauer im Umkreis)</translatorcomment>
+        <translation> von im </translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1290"/>
+        <source> in </source>
+        <translatorcomment>Workaround um falsche Wetterberichte (Schauer von im Unkreis -&gt; Schauer im Umkreis)</translatorcomment>
+        <translation> im </translation>
+    </message>
+    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1295"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2682"/>
         <source>Conditions:</source>
@@ -15025,7 +15037,39 @@ ETD und ETA werden ignoriert. ALTERNATES funktionieren nicht zusammen mit einer 
         <translation>&amp;Breiten- und Längengrad:</translation>
     </message>
     <message>
-        <location filename="src/route/userwaypointdialog.ui" line="43"/>
+        <location filename="src/route/userwaypointdialog.ui" line="33"/>
+        <source>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
+- Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
+Degree, minute and second signs can be omitted for above formats.
+Latitude has to be first and N/S and E/W designators are required.
+A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
+Other formats:
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
+- NAT type 5020N
+Formats above have to be given exactly as shown in the examples.</source>
+        <translation>Erkannte Koordinatenformate:
+- Grad, Minuten und Sekunden: N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; oder 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
+- Grad und Minuten: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 oder 49° 26.69&apos; N 9° 12.09&apos; E
+- nur Grad:  49.4449° N 9.2015° E oder N 49.4449° E 9:2015°
+Grad, Minute und Sekunde kann in den obigen Formaten ausgelassen werden.
+Der Breitengrad muss zuerst stehen, N/S- und E/W-Bezeichnungen sind notwendig.
+Ein Leerzeichen ist nur nötig, um Breiten- und Längengrade zu trennen oder Grad/Minuten/Sekunden, wenn keine Symbole genutzt werden.
+Andere Formate:
+- Grad und Minuten: N44124W122451, N14544W017479 oder S31240E136502
+- nur Grad: 46N078W
+- Grad und Minuten: 4620N07805W
+- Grad, Minuten und Sekunden: 481200N0112842E (Skyvector)
+- Grad und Minuten als Paar: &quot;N6500 W08000&quot; oder &quot;N6500/W08000&quot;
+- NAT-Typ: 5020N
+Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
+    </message>
+    <message>
         <source>Recognized coordinate formats:
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
@@ -15041,7 +15085,7 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
-        <translation>Erkannte Koordinatenformate:
+        <translation type="vanished">Erkannte Koordinatenformate:
 - Grad, Minuten und Sekunden: N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; oder 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Grad und Minuten: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 oder 49° 26.69&apos; N 9° 12.09&apos; E
 - nur Grad:  49.4449° N 9.2015° E oder N 49.4449° E 9:2015°
@@ -15058,7 +15102,7 @@ Andere Formate:
 Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
     </message>
     <message>
-        <location filename="src/route/userwaypointdialog.ui" line="64"/>
+        <location filename="src/route/userwaypointdialog.ui" line="54"/>
         <source>&amp;Name of Position:</source>
         <translation>&amp;Positionsbezeichnung:</translation>
     </message>
@@ -15421,14 +15465,14 @@ Other formats:
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
-- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</source>
         <oldsource>Recognized coordinate formats:
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats.
+Degree, minute and second signs can be omitted for above formats. 
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -15437,7 +15481,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000
-- NAT type 5020N
+- NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation>Erkannte Koordinatenformate:
 - Grad, Minuten und Sekunden: N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; oder 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
@@ -15451,7 +15495,7 @@ Andere Formate:
 - nur Grad: 46N078W
 - Grad und Minuten: 4620N07805W
 - Grad, Minuten und Sekunden: 481200N0112842E (Skyvector)
-- Grad und Minuten als Paar: &quot;N6500 W08000&quot; oder &quot;N6500/W08000
+- Grad und Minuten als Paar: &quot;N6500 W08000&quot; oder &quot;N6500/W08000&quot;
 - NAT-Typ: 5020N
 Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
     </message>
@@ -15568,32 +15612,32 @@ Wird für den Export in X-Plane &quot;user_fix.dat&quot; benötigt.</translation
         <translation>&amp;Temporärer Nutzerpunkt. Beim nächsten Start löschen.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="56"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="55"/>
         <source> - Edit Userpoint</source>
         <translation> - Bearbeite Nutzerpunkt</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="59"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="58"/>
         <source> - Add Userpoint</source>
         <translation> - Füge Nutzerpunkt hinzu</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="65"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="64"/>
         <source> - Edit Userpoints</source>
         <translation> - Bearbeite Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="256"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="255"/>
         <source>Temporary userpoint - will be deleted on next startup</source>
         <translation>Temporärer Nutzerpunkt - wird beim nächsten Start gelöscht</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="264"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="263"/>
         <source>-</source>
         <translation>-</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="269"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="268"/>
         <source>Not imported</source>
         <translation>Nicht importiert</translation>
     </message>
