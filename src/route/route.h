@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ class FlightplanEntryBuilder;
 /*
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
  * about the active route leg and current aircraft position.
+ *
+ * The flight plan is kept in sync and contains dummy entries for all procedure legs.
  */
 class Route :
   private QList<RouteLeg>
@@ -72,10 +74,21 @@ public:
   int getDestinationIndexBeforeProcedure() const;
   const RouteLeg& getDestinationBeforeProcedure() const;
 
+  /* map::INVALID_INDEX_VALUE if no active.
+   * 1 for first leg to route.size() - 1 for active legs */
   int getActiveLegIndex() const
   {
     return activeLeg;
   }
+
+  bool isActiveValid() const
+  {
+    return activeLeg > 0 && activeLeg < size();
+  }
+
+  /* true if flight plan is not empty and airport is departure or destination */
+  bool isAirportDeparture(const QString& airportId) const;
+  bool isAirportDestination(const QString& airportId) const;
 
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;
@@ -234,7 +247,10 @@ public:
 
   void removeRouteLegs();
 
-  /* Does not delete flight plan properties */
+  /* Does not delete flight plan properties. Clears the MapProcedure structures. */
+  void clearProcedures(proc::MapProcedureTypes type);
+
+  /* Removes legs that match the given procedures */
   void clearProcedureLegs(proc::MapProcedureTypes type);
 
   /* Deletes flight plan properties too */
@@ -332,6 +348,21 @@ public:
   using QList<RouteLeg>::removeLast;
   using QList<RouteLeg>::operator[];
 
+  /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
+   *  All procedure legs are converted to normal flight plan (user) legs.  */
+  Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp) const;
+
+  /* Loads navaids from database and create all route map objects from flight plan.
+   * Flight plan will be corrected if needed. */
+  void createRouteLegsFromFlightplan();
+
+  /* @return true if departure is valid and departure airport has no parking or departure of flight plan
+   *  has parking or helipad as start position */
+  bool hasValidParking() const;
+
+  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
+  int adjustAltitude(int minAltitude) const;
+
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
@@ -352,7 +383,6 @@ private:
   void copy(const Route& other);
   void nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
-  void eraseProcedureLegs(proc::MapProcedureTypes type);
   int adjustedActiveLeg() const;
 
   atools::geo::Rect boundingRect;
@@ -367,7 +397,6 @@ private:
   map::PosCourse activePos;
   int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
       arrivalLegsOffset = map::INVALID_INDEX_VALUE;
-
 };
 
 QDebug operator<<(QDebug out, const Route& route);

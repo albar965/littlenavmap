@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 #include "route/routecommand.h"
 #include "route/route.h"
-#include "fs/pln/flightplanconstants.h"
 
 #include <QIcon>
 #include <QObject>
@@ -38,6 +37,7 @@ class SimConnectData;
 }
 namespace pln {
 class Flightplan;
+class FlightplanIO;
 class FlightplanEntry;
 }
 }
@@ -90,16 +90,6 @@ public:
   bool saveFlightplan(bool cleanExport);
 
   bool exportFlighplanAsClean(const QString& filename);
-  bool exportFlighplanAsGfp(const QString& filename);
-  bool exportFlighplanAsTxt(const QString& filename);
-  bool exportFlighplanAsRte(const QString& filename);
-  bool exportFlighplanAsFpr(const QString& filename);
-  bool exportFlighplanAsCorteIn(const QString& filename);
-
-  bool exportFlighplanAsGpx(const QString& filename);
-
-  bool exportFlighplanAsRxpGns(const QString& filename);
-  bool exportFlighplanAsRxpGtn(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -107,6 +97,11 @@ public:
 
   /* Get the route only */
   const Route& getRoute() const
+  {
+    return route;
+  }
+
+  Route& getRoute()
   {
     return route;
   }
@@ -131,15 +126,12 @@ public:
     return routeFilename;
   }
 
+  float getRouteDistanceNm() const
+  {
+    return route.getTotalDistance();
+  }
+
   bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
-
-  /* Create a default filename based on departure and destination names. Suffix includes dot. */
-  QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
-  QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
-
-  /* @return true if departure is valid and departure airport has no parking or departure of flight plan
-   *  has parking or helipad as start position */
-  bool hasValidParking() const;
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -161,7 +153,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachProcedure(const proc::MapProcedureLegs& legs);
+  void routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
@@ -307,8 +299,6 @@ private:
 
   void updateTableModel();
 
-  void createRouteLegsFromFlightplan();
-
   void routeAltChanged();
   void routeAltChangedDelayed();
   void routeSpeedChanged();
@@ -316,8 +306,6 @@ private:
   void routeTypeChanged();
 
   void clearRoute();
-
-  int adjustAltitude(int minAltitude);
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
@@ -356,7 +344,6 @@ private:
   void loadProceduresFromFlightplan(bool quiet);
   void updateIcons();
   void beforeRouteCalc();
-  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
   QIcon iconForLeg(const RouteLeg& leg, int size) const;
 
@@ -365,6 +352,7 @@ private:
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
   void nothingSelectedTriggered();
   void activateLegTriggered();
+  void fontChanged();
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -395,6 +383,7 @@ private:
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
+  atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;

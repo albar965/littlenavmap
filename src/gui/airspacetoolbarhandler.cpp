@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ AirspaceToolBarHandler::AirspaceToolBarHandler(MainWindow *parent)
 {
   connect(NavApp::getMainUi()->actionShowAirspaces, &QAction::toggled,
           this, &AirspaceToolBarHandler::allAirspacesToggled);
+  connect(NavApp::getMainUi()->actionShowAirspacesOnline, &QAction::toggled,
+          this, &AirspaceToolBarHandler::allAirspacesToggled);
 }
 
 AirspaceToolBarHandler::~AirspaceToolBarHandler()
@@ -51,6 +53,11 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
   bool hasAirspaces = NavApp::hasDatabaseAirspaces();
   airspaceAction->setEnabled(hasAirspaces);
 
+  QAction *airspaceActionOnline = NavApp::getMainUi()->actionShowAirspacesOnline;
+  bool hasAirspacesOnline = NavApp::hasOnlineData();
+  airspaceActionOnline->setEnabled(hasAirspacesOnline);
+
+  // Enable or disable all tool buttons
   for(int i = 0; i < airspaceToolButtons.size(); i++)
   {
     if(airspaceToolGroups.at(i) == nullptr)
@@ -61,7 +68,9 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
       // Depress button if the first is not selected in groups
       airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().first()->isChecked());
 
-    airspaceToolButtons.at(i)->setEnabled(airspaceAction->isChecked() && hasAirspaces);
+    // Enable button if any airspace type is enabled
+    airspaceToolButtons.at(i)->setEnabled((airspaceAction->isChecked() && hasAirspaces) ||
+                                          (airspaceActionOnline->isChecked() && hasAirspacesOnline));
   }
 }
 
@@ -83,7 +92,9 @@ void AirspaceToolBarHandler::updateAirspaceToolActions()
   }
 
   for(QAction *action : airspaceActions)
-    action->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
+    action->setEnabled(
+      NavApp::getMainUi()->actionShowAirspaces->isChecked() ||
+      NavApp::getMainUi()->actionShowAirspacesOnline->isChecked());
 }
 
 void AirspaceToolBarHandler::updateButtonsAndActions()
@@ -180,7 +191,7 @@ void AirspaceToolBarHandler::createToolButtons()
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceother.svg",
                            tr("Select centers and other airspaces"),
                            {map::CENTER, map::TOWER, map::CLEARANCE, map::GROUND, map::DEPARTURE, map::APPROACH,
-                            map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW}, {});
+                            map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW, map::ONLINE_OBSERVER}, {});
 
   createAirspaceToolButton(":/littlenavmap/resources/icons/airspacealt.svg",
                            tr("Select altitude limitations for airspace display"),
@@ -205,7 +216,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   for(const map::MapAirspaceFlags& flag : flags)
     allFlags |= flag;
 
-  ui->menuAirspaces->addSeparator();
+  ui->menuViewAirspaces->addSeparator();
 
   QToolButton *button = new QToolButton(ui->toolBarAirspaces);
   button->setIcon(QIcon(icon));
@@ -224,6 +235,8 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   {
     // Add all on / all off menu items
     QAction *action = new QAction(tr("All"), button);
+    action->setToolTip(tr("Enable all airspaces in this category"));
+    action->setStatusTip(action->toolTip());
     map::MapAirspaceFilter filterOn;
     filterOn.types = allTypes;
     filterOn.flags = map::AIRSPACE_ALL_ON | allFlags;
@@ -233,6 +246,8 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
     connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
 
     action = new QAction(tr("None"), button);
+    action->setToolTip(tr("Disable all airspaces in this category"));
+    action->setStatusTip(action->toolTip());
     map::MapAirspaceFilter filterOff;
     filterOff.types = allTypes;
     filterOff.flags = map::AIRSPACE_ALL_OFF | allFlags;
@@ -267,7 +282,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
       airspaceActions.append(action);
       if(!groupActions)
         connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
-      ui->menuAirspaces->addAction(action);
+      ui->menuViewAirspaces->addAction(action);
     }
   }
   else
@@ -290,7 +305,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
       airspaceActions.append(action);
       if(!groupActions)
         connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionTriggered);
-      ui->menuAirspaces->addAction(action);
+      ui->menuViewAirspaces->addAction(action);
     }
   }
 

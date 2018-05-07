@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ class MapPainterMark;
 class MapPainterRoute;
 class MapPainterAircraft;
 class MapPainterShip;
+class MapPainterUser;
 
 /*
  * Implements the Marble layer interface that paints upon the Marble map. Contains all painter instances
@@ -135,6 +136,7 @@ private:
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
   MapPainterShip *mapPainterShip;
+  MapPainterUser *mapPainterUser;
 
   /* Database source */
   MapQuery *mapQuery = nullptr;

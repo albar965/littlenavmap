@@ -1,8 +1,19 @@
-#-------------------------------------------------
+#*****************************************************************************
+# Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 #
-# Project created by QtCreator 2016-02-09T16:39:58
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#-------------------------------------------------
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#****************************************************************************
 
 QT       += core gui sql xml network svg printsupport
 
@@ -27,7 +38,7 @@ CONFIG(release, debug|release):CONF_TYPE=release
 
 # Windows ==================
 win32 {
-  QT_HOME=C:\\Qt\\5.9.1\\mingw53_32
+  QT_HOME=C:\\Qt\\5.9.5\\mingw53_32
   OPENSSL=C:\\OpenSSL-Win32
   GIT_BIN='C:\\Git\\bin\\git'
   MARBLE_BASE="c:\\Projekte\\marble-$${CONF_TYPE}"
@@ -35,7 +46,7 @@ win32 {
 
 # Linux ==================
 unix:!macx {
-  QT_HOME=/home/alex/Qt/5.9.1/gcc_64
+  QT_HOME=/home/alex/Qt/5.9.5/gcc_64
   MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
 
   # Use relative path to current .so directory to search for shared libraries
@@ -49,6 +60,7 @@ unix:!macx {
 
 # Mac OS X ==================
 macx {
+  QT_HOME=/Users/alex/Qt/5.9.5/clang_64
   MARBLE_BASE=/Users/alex/Programme/Marble-$${CONF_TYPE}
 
   # Compatibility down to OS X 10.10
@@ -149,7 +161,6 @@ SOURCES += src/main.cpp\
     src/route/routenetworkradio.cpp \
     src/route/routenetworkairway.cpp \
     src/route/routenetwork.cpp \
-    src/common/weatherreporter.cpp \
     src/connect/connectdialog.cpp \
     src/connect/connectclient.cpp \
     src/mapgui/mappainteraircraft.cpp \
@@ -168,7 +179,6 @@ SOURCES += src/main.cpp\
     src/options/optionsdialog.cpp \
     src/options/optiondata.cpp \
     src/common/settingsmigrate.cpp \
-    src/search/searchbase.cpp \
     src/search/sqlcontroller.cpp \
     src/print/printsupport.cpp \
     src/print/printdialog.cpp \
@@ -196,7 +206,26 @@ SOURCES += src/main.cpp\
     src/query/airportquery.cpp \
     src/query/infoquery.cpp \
     src/query/mapquery.cpp \
-    src/query/procedurequery.cpp
+    src/query/procedurequery.cpp \
+    src/mapgui/mapvisible.cpp \
+    src/search/userdatasearch.cpp \
+    src/search/usericondelegate.cpp \
+    src/userdata/userdatacontroller.cpp \
+    src/userdata/userdatadialog.cpp \
+    src/userdata/userdataicons.cpp \
+    src/mapgui/mappainteruser.cpp \
+    src/userdata/userdataexportdialog.cpp \
+    src/weather/weatherreporter.cpp \
+    src/online/onlinedatacontroller.cpp \
+    src/search/onlineclientsearch.cpp \
+    src/search/onlinecentersearch.cpp \
+    src/search/onlineserversearch.cpp \
+    src/query/airspacequery.cpp \
+    src/query/querytypes.cpp \
+    src/search/searchbasetable.cpp \
+    src/mapgui/mapfunctions.cpp \
+    src/common/vehicleicons.cpp \
+    src/route/routeexport.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -234,7 +263,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routenetworkradio.h \
     src/route/routenetworkairway.h \
     src/route/routenetwork.h \
-    src/common/weatherreporter.h \
     src/connect/connectdialog.h \
     src/connect/connectclient.h \
     src/mapgui/mappainteraircraft.h \
@@ -253,7 +281,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/options/optionsdialog.h \
     src/options/optiondata.h \
     src/common/settingsmigrate.h \
-    src/search/searchbase.h \
     src/search/sqlcontroller.h \
     src/print/printsupport.h \
     src/print/printdialog.h \
@@ -281,7 +308,26 @@ HEADERS  += src/gui/mainwindow.h \
     src/query/airportquery.h \
     src/query/infoquery.h \
     src/query/mapquery.h \
-    src/query/procedurequery.h
+    src/query/procedurequery.h \
+    src/mapgui/mapvisible.h \
+    src/search/userdatasearch.h \
+    src/search/usericondelegate.h \
+    src/userdata/userdatacontroller.h \
+    src/userdata/userdatadialog.h \
+    src/userdata/userdataicons.h \
+    src/mapgui/mappainteruser.h \
+    src/userdata/userdataexportdialog.h \
+    src/weather/weatherreporter.h \
+    src/online/onlinedatacontroller.h \
+    src/search/onlineclientsearch.h \
+    src/search/onlinecentersearch.h \
+    src/search/onlineserversearch.h \
+    src/query/airspacequery.h \
+    src/query/querytypes.h \
+    src/search/searchbasetable.h \
+    src/mapgui/mapfunctions.h \
+    src/common/vehicleicons.h \
+    src/route/routeexport.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -292,7 +338,9 @@ FORMS    += src/gui/mainwindow.ui \
     src/route/routestringdialog.ui \
     src/route/userwaypointdialog.ui \
     src/db/databaseerrordialog.ui \
-    src/gui/updatedialog.ui
+    src/gui/updatedialog.ui \
+    src/userdata/userdatadialog.ui \
+    src/userdata/userdataexportdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \
@@ -348,7 +396,7 @@ macx {
   copydata.commands += cp -vf $$PWD/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/../atools/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
-  cleandata.commands = rm -Rvf $$OUT_PWD/help $$PWD/magdec $$OUT_PWD/data $$OUT_PWD/plugins
+  cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/magdec $$OUT_PWD/data $$OUT_PWD/plugins
 }
 
 # =====================================================================
@@ -386,7 +434,6 @@ unix:!macx {
   deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $${DEPLOY_DIR} &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/iconengines/libqsvgicon.so*  $${DEPLOY_DIR_LIB}/iconengines &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqgif.so*  $${DEPLOY_DIR_LIB}/imageformats &&
-  deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjp2.so*  $${DEPLOY_DIR_LIB}/imageformats &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqjpeg.so*  $${DEPLOY_DIR_LIB}/imageformats &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqsvg.so*  $${DEPLOY_DIR_LIB}/imageformats &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/imageformats/libqwbmp.so*  $${DEPLOY_DIR_LIB}/imageformats &&
@@ -458,7 +505,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
-  deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite &&
+  deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $${DEPLOY_APP} &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -fv $$PWD/README.txt $${DEPLOY_DIR}/README-LittleNavmap.txt &&

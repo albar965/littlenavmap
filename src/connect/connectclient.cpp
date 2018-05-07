@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     if(verbose)
       qDebug() << "Metars number" << dataPacket.getMetars().size();
 
-    for(const atools::fs::sc::MetarResult& metar : dataPacket.getMetars())
+    for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
     {
       QString ident = metar.requestIdent;
       if(verbose)
@@ -229,7 +229,8 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
         qDebug() << "Interpolated" << metar.metarForInterpolated;
       }
 
-      metarIdentCache.insert(ident, atools::fs::sc::MetarResult(metar));
+      metar.simulator = true;
+      metarIdentCache.insert(ident, metar);
     }
 
     emit weatherUpdated();
@@ -288,17 +289,17 @@ void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
   }
 }
 
-atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos)
+atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos)
 {
-  static atools::fs::sc::MetarResult EMPTY;
+  static atools::fs::weather::MetarResult EMPTY;
 
   // Ignore cache if not connected
   if(!isConnected())
     return EMPTY;
 
-  const atools::fs::sc::MetarResult *result = metarIdentCache.value(station);
+  const atools::fs::weather::MetarResult *result = metarIdentCache.value(station);
   if(result != nullptr)
-    return atools::fs::sc::MetarResult(*result);
+    return atools::fs::weather::MetarResult(*result);
   else
   {
     if(verbose)
@@ -609,7 +610,7 @@ void ConnectClient::readFromSocket()
         }
         else if(!simConnectData->getMetars().isEmpty())
         {
-          for(const atools::fs::sc::MetarResult& metar : simConnectData->getMetars())
+          for(const atools::fs::weather::MetarResult& metar : simConnectData->getMetars())
             outstandingReplies.remove(metar.requestIdent);
 
           if(outstandingReplies.isEmpty() && !queuedRequests.isEmpty())

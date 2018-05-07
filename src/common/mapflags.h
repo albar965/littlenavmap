@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ namespace map {
 Q_DECL_CONSTEXPR static float INVALID_COURSE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_ALTITUDE_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_WEIGHT_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_VOLUME_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
@@ -59,7 +61,7 @@ enum MapObjectType
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */
-  USER = 1 << 18, /* Flight plan user waypoint */
+  USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,
   RUNWAYEND = 1 << 20,
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
@@ -67,10 +69,22 @@ enum MapObjectType
   PROCEDURE = 1 << 23, /* General procedure leg */
   AIRSPACE = 1 << 24, /* General airspace boundary */
   HELIPAD = 1 << 25, /* Helipads on airports */
+  COMPASS_ROSE = 1 << 26, /* Compass rose */
+  USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
+
+  AIRSPACE_ONLINE = 1 << 28, /* Online network center */
+  AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
+
+  /* All online, AI and multiplayer aircraft */
+  AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
+
+  /* All navaids */
   NAV_ALL = VOR | NDB | WAYPOINT,
-  NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
+
+  /* All objects that have a magvar assigned */
+  NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT,
 
   ALL = 0xffffffff
 };
@@ -111,12 +125,15 @@ enum MapAirspaceType
   WAVEWINDOW = 1 << 24, // Not FSX/P3D
   CAUTION = 1 << 25, // DFD
 
+  ONLINE_OBSERVER = 1 << 26, // VATSIM or IVAO observer
+
   AIRSPACE_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_FIR = CLASS_F | CLASS_G,
   AIRSPACE_CENTER = CENTER,
   AIRSPACE_RESTRICTED = RESTRICTED | PROHIBITED | GLIDERPROHIBITED | MOA | DANGER,
   AIRSPACE_SPECIAL = WARNING | ALERT | TRAINING | CAUTION,
-  AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK | WAVEWINDOW,
+  AIRSPACE_OTHER = TOWER | CLEARANCE | GROUND | DEPARTURE | APPROACH | MODEC | RADAR | NATIONAL_PARK | WAVEWINDOW |
+                   ONLINE_OBSERVER,
 
   AIRSPACE_FOR_VFR = CLASS_B | CLASS_C | CLASS_D | CLASS_E | AIRSPACE_FIR,
   AIRSPACE_FOR_IFR = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E | CENTER,
@@ -131,7 +148,7 @@ enum MapAirspaceType
 Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
 
-Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 24;
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 27;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,15 @@
 #include "fs/fspaths.h"
 #include "fs/navdatabase.h"
 #include "sql/sqlutil.h"
+#include "sql/sqltransaction.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "navapp.h"
 #include "gui/dialog.h"
+#include "fs/userdata/userdatamanager.h"
+#include "fs/online/onlinedatamanager.h"
+#include "io/fileroller.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -57,6 +61,7 @@ using atools::fs::NavDatabaseOptions;
 using atools::fs::NavDatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
+using atools::sql::SqlTransaction;
 using atools::sql::SqlQuery;
 using atools::fs::db::DatabaseMeta;
 
@@ -176,6 +181,32 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   databaseSim = new SqlDatabase(DATABASE_NAME);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
+
+  if(mainWindow != nullptr)
+  {
+    // Open only for instantiation in main window and not in main function
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
+    databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+    databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
+
+    // Open user point database
+    openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
+    userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
+    if(!userdataManager->hasSchema())
+      userdataManager->createSchema();
+    else
+      userdataManager->updateSchema();
+
+    // Open online network database
+    openWriteableDatabase(databaseOnline, "onlinedata", "online network", false /* backup */);
+    onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline);
+    if(!onlinedataManager->hasSchema())
+      onlinedataManager->createSchema();
+    else
+      onlinedataManager->updateSchema();
+    onlinedataManager->initQueries();
+  }
 }
 
 DatabaseManager::~DatabaseManager()
@@ -185,13 +216,21 @@ DatabaseManager::~DatabaseManager()
 
   delete databaseDialog;
   delete progressDialog;
+  delete userdataManager;
+  delete onlinedataManager;
 
   closeDatabases();
+  closeUserDatabase();
+  closeOnlineDatabase();
+
   delete databaseSim;
   delete databaseNav;
+  delete databaseUser;
+  delete databaseOnline;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
+  SqlDatabase::removeDatabase(DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
 }
@@ -437,7 +476,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         if(resultRemove && resultCopy)
         {
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
-          openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+          openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
           dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
           NavDatabase::runPreparationScript(tempDb);
@@ -469,7 +508,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       showSimpleProgressDialog(tr("Preparing %1 Database ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
 
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
-    openDatabaseFile(&tempDb, settingsDb, false /* readonly */);
+    openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
     NavDatabase::runPreparationScript(tempDb);
     tempDb.analyze();
     closeDatabaseFile(&tempDb);
@@ -486,6 +525,11 @@ QString DatabaseManager::getCurrentSimulatorBasePath() const
 QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const
 {
   return simulators.value(type).basePath;
+}
+
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseOnline() const
+{
+  return onlinedataManager->getDatabase();
 }
 
 void DatabaseManager::insertSimSwitchActions()
@@ -691,6 +735,74 @@ void DatabaseManager::switchSimFromMainMenu()
   }
 }
 
+void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name,
+                                            const QString& displayName, bool backup)
+{
+  QString databaseName = databaseDirectory +
+                         QDir::separator() +
+                         lnm::DATABASE_PREFIX +
+                         name +
+                         lnm::DATABASE_SUFFIX;
+
+  QString databaseNameBackup = databaseDirectory +
+                               QDir::separator() +
+                               QFileInfo(databaseName).baseName() +
+                               "_backup" +
+                               lnm::DATABASE_SUFFIX;
+
+  try
+  {
+    if(backup)
+    {
+      // Roll copies
+      // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite
+      // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite.1
+      // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite.2
+      // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite.3
+      atools::io::FileRoller roller(3);
+      roller.rollFile(databaseNameBackup);
+
+      // Copy database before opening
+      bool result = QFile(databaseName).copy(databaseNameBackup);
+      qInfo() << Q_FUNC_INFO << "Copied" << databaseName << "to" << databaseNameBackup << "result" << result;
+    }
+
+    openDatabaseFileInternal(database, databaseName, false /* readonly */, false /* createSchema */,
+                             false /* exclusive */, false /* auto transactions */);
+  }
+  catch(atools::sql::SqlException& e)
+  {
+    QMessageBox::critical(mainWindow, QApplication::applicationName(),
+                          tr("Cannot open %1 database. Reason:\n\n"
+                             "%2\n\n"
+                             "Is another %3 running?\n\n"
+                             "Exiting now.").
+                          arg(displayName).
+                          arg(e.getSqlError().databaseText()).
+                          arg(QApplication::applicationName()));
+
+    std::exit(1);
+  }
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
+}
+
+void DatabaseManager::closeUserDatabase()
+{
+  closeDatabaseFile(databaseUser);
+}
+
+void DatabaseManager::closeOnlineDatabase()
+{
+  closeDatabaseFile(databaseOnline);
+}
+
 void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
@@ -702,68 +814,16 @@ void DatabaseManager::openAllDatabases()
     navDbFile = simDbFile;
   // else if(usingNavDatabase == MIXED)
 
-  openDatabaseFile(databaseSim, simDbFile, true /* readonly */);
-  openDatabaseFile(databaseNav, navDbFile, true /* readonly */);
+  openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
+  openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
 }
 
-void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly)
+void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
+                                       bool createSchema)
 {
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-  int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
-  bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
-
-  // cache_size * 1024 bytes if value is negative
-  QStringList DATABASE_PRAGMAS({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb),
-                                "PRAGMA synchronous=OFF",
-                                "PRAGMA journal_mode=TRUNCATE",
-                                "PRAGMA page_size=8196",
-                                "PRAGMA locking_mode=EXCLUSIVE"});
-
   try
   {
-    qDebug() << "Opening database" << file;
-    db->setDatabaseName(file);
-
-    // Set foreign keys only on demand because they can decrease loading performance
-    if(foreignKeys)
-      DATABASE_PRAGMAS.append("PRAGMA foreign_keys = ON");
-    else
-      DATABASE_PRAGMAS.append("PRAGMA foreign_keys = OFF");
-
-    bool autocommit = db->isAutocommit();
-    db->setAutocommit(false);
-    db->open(DATABASE_PRAGMAS);
-
-    db->setAutocommit(autocommit);
-
-    if(!hasSchema(db))
-    {
-      if(db->isReadonly())
-      {
-        // Reopen database read/write
-        db->close();
-        db->setReadonly(false);
-        db->open(DATABASE_PRAGMAS);
-      }
-
-      createEmptySchema(db);
-      db->commit();
-    }
-
-    if(readonly && !db->isReadonly())
-    {
-      // Readonly requested - reopen database
-      db->close();
-      db->setReadonly();
-      db->open(DATABASE_PRAGMAS);
-    }
-
-    DatabaseMeta dbmeta(db);
-    qInfo().nospace() << "Database version "
-                      << dbmeta.getMajorVersion() << "." << dbmeta.getMinorVersion();
-
-    qInfo().nospace() << "Application database version "
-                      << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
+    openDatabaseFileInternal(db, file, readonly, createSchema, true /* exclusive */, true /* auto transactions */);
   }
   catch(atools::Exception& e)
   {
@@ -773,6 +833,82 @@ void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QStri
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
+}
+
+void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
+                                               bool createSchema, bool exclusive, bool autoTransactions)
+{
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  int databaseCacheKb = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "CacheKb", 50000).toInt();
+  bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
+
+  // cache_size * 1024 bytes if value is negative
+  QStringList databasePragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb), "PRAGMA page_size=8196"});
+
+  if(exclusive)
+  {
+    // Best settings for loading databases accessed write only - unsafe
+    databasePragmas.append("PRAGMA locking_mode=EXCLUSIVE");
+    databasePragmas.append("PRAGMA journal_mode=TRUNCATE");
+    databasePragmas.append("PRAGMA synchronous=OFF");
+  }
+  else
+  {
+    // Best settings for online and user databases which are updated often - read/write
+    databasePragmas.append("PRAGMA locking_mode=NORMAL");
+    databasePragmas.append("PRAGMA journal_mode=DELETE");
+    databasePragmas.append("PRAGMA synchronous=NORMAL");
+  }
+
+  if(!readonly)
+    databasePragmas.append("PRAGMA busy_timeout=2000");
+
+  qDebug() << "Opening database" << file;
+  db->setDatabaseName(file);
+
+  // Set foreign keys only on demand because they can decrease loading performance
+  if(foreignKeys)
+    databasePragmas.append("PRAGMA foreign_keys = ON");
+  else
+    databasePragmas.append("PRAGMA foreign_keys = OFF");
+
+  bool autocommit = db->isAutocommit();
+  db->setAutocommit(false);
+  db->setAutomaticTransactions(autoTransactions);
+  db->open(databasePragmas);
+
+  db->setAutocommit(autocommit);
+
+  if(createSchema)
+  {
+    if(!hasSchema(db))
+    {
+      if(db->isReadonly())
+      {
+        // Reopen database read/write
+        db->close();
+        db->setReadonly(false);
+        db->open(databasePragmas);
+      }
+
+      createEmptySchema(db);
+    }
+  }
+
+  if(readonly && !db->isReadonly())
+  {
+    // Readonly requested - reopen database
+    db->close();
+    db->setReadonly();
+    db->open(databasePragmas);
+  }
+
+  DatabaseMeta dbmeta(db);
+  qInfo().nospace() << "Database version "
+                    << dbmeta.getMajorVersion() << "." << dbmeta.getMinorVersion();
+
+  qInfo().nospace() << "Application database version "
+                    << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
 }
 
 void DatabaseManager::closeDatabases()
@@ -862,9 +998,11 @@ void DatabaseManager::copyAirspaces()
           // X-Plane database file has a boundary table
           QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
+          SqlTransaction transaction(xpDb);
+
           // Delete
           xpDb.exec("delete from boundary");
-          xpDb.commit();
+          transaction.commit();
 
           // Build statements
           SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), databaseSim);
@@ -884,7 +1022,7 @@ void DatabaseManager::copyAirspaces()
               return true;
             };
           int copied = SqlUtil::copyResultValues(fromQuery, xpQuery, func);
-          xpDb.commit();
+          transaction.commit();
 
           QGuiApplication::restoreOverrideCursor();
           QMessageBox::information(mainWindow, QApplication::applicationName(),
@@ -956,7 +1094,7 @@ bool DatabaseManager::runInternal()
             qInfo() << "Removed" << (tempFilename + "-journal");
 
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
-          openDatabaseFile(&tempDb, tempFilename, false /* readonly */);
+          openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
 
           if(loadScenery(&tempDb))
           {
@@ -1080,6 +1218,8 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   atools::fs::NavDatabaseErrors errors;
+
+  qInfo() << Q_FUNC_INFO << navDatabaseOpts;
 
   try
   {

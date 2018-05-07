@@ -1,3 +1,192 @@
+Numbers (#) refer to Github issues. For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
+
+Version 1.9.1.develop
+
+Userpoints #3
+
+* Added Userpoints (aka. user defined waypoint or bookmark or POI or whatever) management.
+* New main menu "Userdata" which provides various import and export options and more.
+* A new search tab "Userpoints" in the "Search Window" for editing and searching with the same functionality as
+  the other search tabs.
+* New menu entries in map context menu to add, edit, delete or move userpoints.
+* Information window and map tooltips can display userpoint information.
+* New add/edit dialog for userpoints also allowing bulk edits on more than one selected point.
+
+* Add userpoint dialog remembers input to ease adding more than one similar point.
+  Content can be cleared using the reset button.
+* Add dialog is context sensitive and prefills airport data if you add a bookmark on an airport for example.
+* Coordinates can be edited manually in edit/add dialog. More than 10 coordinate formats are recognized. See tooltip on
+  "Latitude and Longitude" field.
+* Userpoints can be added to a flight plan and are converted to flight plan user defined waypoints (green square).
+* A timestamp of last change is kept for each userpoint which allows to find latest changes.
+* Flight plan drag and drop editing allows to add userpoints.
+
+* Import and export for CSV (format from other well known programs), Garmin "user.wpt" and X-Plane "user_fix.dat".
+* Export to a XML file suitable for the FSX/P3D BGL compiler.
+
+* Userpoint database is backed up to CSV on startup.
+
+* Icons and types can be extended by placing SVG files with names like "userdata_MYTYPE.svg"
+  in the settings directory. Icons for stock types can be changed by placing an icon with the same name
+  like "userdata_Airstrip.svg" in the settings directory.
+
+* Option for automatic creation of userpoint entry of type "Logbook" for each takeoff and landing.
+* Logbook entry for landing contains trip information like average speed, fuel consumption and more.
+* Skipping logbook creation when simulator is paused or in replay mode.
+
+Flying
+
+* Added option to keep active leg on top of flight plan table. "Options" on tab "Simulator Aircraft".
+
+* Added new flight plan and aircraft centering mode which keeps active leg and aircraft visible
+  on the map when flying. Falls back to center aircraft on ground.
+  "Options" on tab "Simulator Aircraft". #133
+
+* Added "jump back to aircraft" after given time when flying. "Options" on tab "Simulator Aircraft".
+  Allows zooming and scrolling during flight without disabling "Center Aircraft". #133
+
+* Added option to dim passed legs of flight plan on the map and display them in a different color.
+  Labels for passed legs are omitted to unclutter the map. Added color selection for passed flight
+  plan legs. "Options" on tab "Map Display". All #218
+
+* Adjusted label display for nearest five AI to show within 20 nm if vertical difference is not more than
+  5000 ft.
+
+* On-ground indication was unreliable for first packets from X-Plane causing first leg already centered
+  on ground. #133
+
+Weather
+
+* Weather reports older than six hours are now shown in red in information window on tab "Weather".
+
+* Fixed error on METAR stations improperly reporting CAVOK 9999.
+* Weather report now corrects old dates back to last valid date instead of creating future dates.
+* Variable winds are now reported correctly when speed is missing. #212
+* Now reporting variable winds together with wind/direction if given. #212
+* Fixed report on clouds when altitude was not given. #212
+* Mitigated problem with X-Plane METAR.rwx containing duplicate records. #212
+
+Flight Plan
+
+* Added menu options to save waypoints instead of SID/STAR or approaches. This affects all flight
+  plan formats. #195
+
+* Coordinates of flight plan user defined waypoints can now be changed in edit dialog. See tooltip on coordinate
+  field for recognized coordinate formats.
+
+* Added option to save FSX/P3D flight plans using short names. "Options" on tab "Flight Plan".
+
+* Now highlighting flight plan segments traveling against one-way airways in red to indicate error.
+
+* Fixed issue when loading Fsbuild created flight plans which are missing the altitude field.
+* Fixed problem where SID and STAR transitions could not be loaded from flight plans due to uncertain
+  type in P3D scenery databases.
+* Fixed errors in ATS route string parser. Now nearest airport or navaid is used for non unique names instead
+  of giving preference to (possibly far away) waypoints. #213
+
+Map
+
+* Split Map menu into Map and View since it got too big.
+
+* Added option to disable all airport diagram features except runways for all who like to use the
+  OpenStreetMap background. See dialog "Options" on tab "Map Display".
+* Added options to disable label background color for airport, flight plan and navaids. "Options" on tab "Map Display".
+* White airport background can be disabled now. "Options" on tab "Map Display".
+
+* Added compass rose showing magnetic direction plus option for line thickness ("Options" on tab "Map Display").
+  Compass rose is always visible when enabled. Heading and track lines are displayed as well if an aircraft is shown.
+  Rose adjusts to screen size with a maximum of 500 nm radius. Enable in menu "View" -> "Show compass rose". #141
+
+* Added options to disable map clicks for airports, navaids and airspaces similar to tooltips.
+  Dialog "Options" on tab "Map".
+
+* Added X-Plane 3D airport flag as additional criteria for treating empty airports. This can be used to hide or dim
+  all X-Plane airports which are not 3D. "Options" on tab "Map".
+
+* Tooltips now show exact procedure type.
+* Improved text display between overlapping procedure legs to avoid text labels hiding each other.
+* Fixed issues with procedure display where restriction texts were not drawn in case of intercept legs.
+
+* Fixed overlays reappearing randomly when switching map theme.
+
+Information and Search
+
+* Added zero fuel weight and total payload to window "Simulator Aircraft" on tab "Aircraft".
+* Added estimated fuel at destination and TOD was well as estimated gross weight at destination to
+  window "Simulator Aircraft" on tab "Progress".
+
+* Added zulu time and day of month to status bar on the right.
+* Added display of magnetic declination below cursor to status bar.
+
+* Added override mode for airport ICAO search. All other search options will be ignored if a user
+  enters more than two characters in the "ICAO Code" field. Override is indicate in the bottom label below the search
+  result table. This helps to quickly find an airport without resetting search options.
+
+* Changed context menu "Show Procedures" to show different texts when airport is destination or
+  departure of current flight plan. Show procedures now sets filter to departure or arrival
+  procedures depending on selected airport.
+
+* Added follow selection mode to context menus of the flight plan and all search windows. Will center
+  selected navaid, airport or procedures on the map using the current zoomlevel when enabled. #129
+
+* Changes for SID and STAR that use multiple or parallel runway assignments indicated by e.g. "All" or "23L/23R".
+  Added sub menu in procedure search for SID/STAR selection if more than one runway can be selected.
+  Procedures are now correctly resolved if loading or assigning such cases. This solves problems when saving
+  procedures in X-Plane FMC 11 format or other various formats. #179
+* Now showing a red warning message on top of the flight plan window if STAR and approach runways do not match. #179
+
+* Increased maximum search radius for airports to 8000.
+
+* Fixed problem where fixes for long (> 200 NM) SID or STAR procedures could not be resolved and showed
+  red waypoint errors in the procedure search tree.
+* Fixed issue where airway information was not reloaded in information display after startup.
+
+General
+
+* Fixes to translatable texts. About dialog "Contact:" and other texts are now translated.
+* Translated windows titles in menu "Window" are now correct and not lower case.
+* Now all export menu items are disabled if not flight plan is loaded.
+* Extended version comparison for update checking release candidates where 1.1.1.rc2 is
+  smaller than stable 1.1.1 for example.
+
+Scenery Database
+
+* Updated magnetic declination file to 2018.
+
+* FSX/P3D only: Now reading FSX/P3D scenery entries pointing to "scenery" instead of the base directory
+  which is allowed in P3D. These were silently omitted previously.
+* FSX/P3D only: Reading ".../Roaming/.../add-on.cfg" and ".../ProgramData/.../add-on.cfg" now. #211
+
+* X-Plane only: Fixed problem where CIFP files with lower case names were not recognized correctly.
+* X-Plane only: Fixed approach lighting system indication for airports in X-Plane compiler.
+* X-Plane only: Fixed issue with X-Plane airports that have wrong reference position. Now falling back to center of
+  bounding rectangle or center of a single runway.
+* X-Plane only: Fixed issues with file or directory exclusion for X-Plane scenery loader which did not work
+  properly in some cases.
+
+* X-Plane only: "Custom Scenery/Global Airports/Earth nav data/earth_nav.dat" is now read to get fixed ILS.
+  This fixes wrong ILS heading in many places like LOWI.
+
+* Navigraph only: Added transition altitude to airport.
+* Navigraph only: Now updating magnetic declination for VOR, DME or TACAN with calculated value where missing.
+* Navigraph only: Corrected wrong runway heading for Navigraph compilation. #214
+
+* X-Plane and Navigraph only: SID and STAR common routes are now merged correctly into procedures for
+  Navigraph and X-Plane compiler. This results in correct SID/STAR and also removes the "ghost" entries. #193
+
+* X-Plane and Navigraph only: Now removing all unneeded dummy NDB and VOR waypoints that were created for
+  airway generation. #201
+* Fixes for missing airway segments in DFD compiler. Fixed overly eager de-duplication of waypoints. #201
+
+
+Version 1.8.5
+
+* Updated from Qt 5.9.1 to 5.9.3
+* Updated included Navigraph database with fixed version that now has complete airways.
+
+from atools version 2.8.5
+* Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. albar965/littlenavmap#202
+
 Version 1.8.4
 
 Reloading the database is hightly recommended to avoid problems when saving flight plans.

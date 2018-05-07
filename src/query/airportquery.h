@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,13 @@ public:
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
   atools::geo::Pos getAirportCoordinatesByIdent(const QString& ident);
 
-  bool hasProcedures(int airportId) const;
   bool hasProcedures(const QString& ident) const;
+
+  /* True if there are STAR or approaches */
+  bool hasAnyArrivalProcedures(const QString& ident) const;
+
+  /* True if airport has SID */
+  bool hasDepartureProcedures(const QString& ident) const;
 
   /* Get the region for airports where it is missing. This uses an expensive query to get the
    * region from the nearest waypoints. Region is set in MapAirport.
@@ -106,6 +111,7 @@ public:
   const QList<map::MapRunway> *getRunways(int airportId);
   QStringList getRunwayNames(int airportId);
   void getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
+  map::MapRunwayEnd getRunwayEndByName(int airportId, const QString& runway);
 
   const QList<map::MapApron> *getAprons(int airportId);
 
@@ -116,6 +122,14 @@ public:
   const QList<map::MapStart> *getStartPositionsForAirport(int airportId);
 
   const QList<map::MapHelipad> *getHelipads(int airportId);
+
+  /* Get a list of runways of all airports inside rectangle sorted by distance to pos */
+  void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos);
+
+  /* Get the best fitting runway end from the given list of runways according to heading.
+   *  Only the rearest airport is returned if no runway was found */
+  void getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+                                  const QVector<map::MapRunway>& runways, float heading);
 
   map::MapRunwayEnd getRunwayEndById(int id);
 
@@ -130,6 +144,7 @@ public:
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
 
   static QStringList airportColumns(const atools::sql::SqlDatabase *db);
+  static QStringList airportOverviewColumns(const atools::sql::SqlDatabase *db);
 
 private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
@@ -137,6 +152,7 @@ private:
                                               bool lazy, bool overview);
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
+  bool hasQueryByAirportIdent(atools::sql::SqlQuery& query, const QString& ident) const;
 
   const int queryRowLimit = 5000;
 
@@ -167,8 +183,9 @@ private:
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportCoordsByIdentQuery = nullptr;
   atools::sql::SqlQuery *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr;
-  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
-                        *airportProcByIdentQuery = nullptr;
+  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr,
+                        *airportProcByIdentQuery = nullptr,
+                        *procArrivalByAirportIdentQuery = nullptr, *procDepartureByAirportIdentQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTQUERY_H

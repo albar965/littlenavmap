@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ void MapPainterShip::render(PaintContext *context)
       {
         if(ac.getCategory() == atools::fs::sc::BOAT &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
-          paintAiVehicle(context, ac);
+          paintAiVehicle(context, ac, false /* force label */);
       }
     }
   }

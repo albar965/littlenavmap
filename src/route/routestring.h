@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ enum RouteStringOption
   FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
   USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
+  SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
 
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR
 };
@@ -78,12 +79,19 @@ public:
   RouteString(FlightplanEntryBuilder *flightplanEntryBuilder = nullptr);
   virtual ~RouteString();
 
+  /* Create a flight plan for the given route string and include speed and altitude if given.
+   *  Get error messages with getMessages() */
+  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
+  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                             float& speedKts, bool& altIncluded);
+
   /*
    * Create a route string like
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options);
+  static QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options);
+  static QStringList createStringForRouteList(const Route& route, float speed, rs::RouteStringOptions options);
 
   /*
    * Create a route string in garming flight plan format (GFP):
@@ -91,12 +99,7 @@ public:
    *
    * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
    */
-  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption);
-
-  /* Create a flight plan for the given route string and include speed and altitude if given */
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
-  bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
-                             float& speedKts, bool& altIncluded);
+  static QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption);
 
   const QStringList& getMessages() const
   {
@@ -130,22 +133,28 @@ private:
   void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
 
-  QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
+  static QStringList createStringForRouteInternal(const Route& route, float speed, rs::RouteStringOptions options);
 
   /* Garming GFP format */
-  QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption);
+  static QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption);
 
   /* Garming GFP format with procedures */
-  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
+  static QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption);
+
+  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapSearchResult& result,
+                           const atools::geo::Pos& nearestPos);
+
+  /* Get a result set with the single closest element */
+  void resultWithClosest(map::MapSearchResult& resultWithClosest, const map::MapSearchResult& result,
+                         const atools::geo::Pos& nearestPos, map::MapObjectTypes types);
 
   void findWaypoints(map::MapSearchResult& result, const QString& item);
-  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
+  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, const map::MapSearchResult *lastResult,
+                       float maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
   bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
-  bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet);
-  QString createSpeedAndAltitude(float speedKnots, float altFeet);
 
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr;
@@ -153,6 +162,7 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList messages;
   bool plaintextMessages = false;
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H

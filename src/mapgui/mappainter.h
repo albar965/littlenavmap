@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class GeoPainter;
 class SymbolPainter;
 class MapLayer;
 class MapQuery;
+class AirspaceQuery;
 class AirportQuery;
 class MapScale;
 class MapWidget;
@@ -62,8 +63,14 @@ struct PaintContext
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
+  float distance; /* Zoom distance in NM */
+  QStringList userPointTypes, /* In menu selected types */
+              userPointTypesAll; /* All available tyes */
+  bool userPointTypeUnknown; /* Show unknown types */
 
   opts::DisplayOptions dispOpts;
+  opts::Flags flags;
+  opts::Flags2 flags2;
 
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
@@ -77,6 +84,7 @@ struct PaintContext
   float textSizeAirport = 1.f;
   float thicknessTrail = 1.f;
   float thicknessRangeDistance = 1.f;
+  float thicknessCompassRose = 1.f;
 
   // Needs to be larger than number of highest level airports
   static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 4000;
@@ -153,11 +161,14 @@ protected:
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
-                   int radiusNm, bool fast, int& xtext, int& ytext);
+                   float radiusNm, bool fast, int& xtext, int& ytext);
 
   void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
   void drawLine(const PaintContext *context, const atools::geo::Line& line);
+
+  /* No GC and no rhumb */
+  void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
 
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left);
 
@@ -177,6 +188,7 @@ protected:
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
+  AirspaceQuery *airspaceQuery, *airspaceQueryOnline;
   AirportQuery *airportQuery;
   MapScale *scale;
 

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>903</height>
+    <height>913</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,8 +61,16 @@
      <addaction name="actionRouteSaveAsFpr"/>
      <addaction name="actionRouteSaveAsFpl"/>
      <addaction name="actionRouteSaveAsCorteIn"/>
+     <addaction name="actionRouteSaveAsIFly"/>
+     <addaction name="actionRouteSaveAsProSim"/>
+     <addaction name="actionRouteSaveAsBbsAirbus"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsUfmc"/>
+     <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsGpx"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteShowSkyVector"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -77,6 +85,9 @@
     <addaction name="actionRouteSaveAsClean"/>
     <addaction name="actionRouteSaveAsFms3"/>
     <addaction name="menuEXport"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteSaveApprWaypoints"/>
+    <addaction name="actionRouteSaveSidStarWaypoints"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -141,83 +152,15 @@
     <property name="title">
      <string>&amp;Map</string>
     </property>
-    <widget class="QMenu" name="menuMapProjection">
-     <property name="title">
-      <string>&amp;Projection</string>
-     </property>
-     <addaction name="actionMapProjectionMercator"/>
-     <addaction name="actionMapProjectionSpherical"/>
-    </widget>
-    <widget class="QMenu" name="menuMapTheme">
-     <property name="title">
-      <string>&amp;Theme</string>
-     </property>
-     <addaction name="actionMapThemeOpenStreetMap"/>
-     <addaction name="actionMapThemeOpenStreetMapRoads"/>
-     <addaction name="actionMapThemeOpenTopoMap"/>
-     <addaction name="actionMapThemeStamenTerrain"/>
-     <addaction name="actionMapThemeCartoLight"/>
-     <addaction name="actionMapThemeCartoDark"/>
-     <addaction name="separator"/>
-     <addaction name="actionMapThemeSimple"/>
-     <addaction name="actionMapThemePlain"/>
-     <addaction name="actionMapThemeAtlas"/>
-     <addaction name="separator"/>
-    </widget>
-    <widget class="QMenu" name="menuAirspaces">
-     <property name="title">
-      <string>Air&amp;spaces</string>
-     </property>
-     <addaction name="actionShowAirspaces"/>
-    </widget>
-    <widget class="QMenu" name="menuDetails">
-     <property name="title">
-      <string>Details</string>
-     </property>
-     <addaction name="actionMapMoreDetails"/>
-     <addaction name="actionMapDefaultDetails"/>
-     <addaction name="actionMapLessDetails"/>
-    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapResetSettings"/>
     <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
     <addaction name="separator"/>
     <addaction name="actionMapBack"/>
     <addaction name="actionMapNext"/>
-    <addaction name="separator"/>
-    <addaction name="menuDetails"/>
-    <addaction name="menuMapProjection"/>
-    <addaction name="menuMapTheme"/>
-    <addaction name="menuAirspaces"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowAddonAirports"/>
-    <addaction name="actionMapShowAirports"/>
-    <addaction name="actionMapShowSoftAirports"/>
-    <addaction name="actionMapShowEmptyAirports"/>
-    <addaction name="actionMapShowVor"/>
-    <addaction name="actionMapShowNdb"/>
-    <addaction name="actionMapShowWp"/>
-    <addaction name="actionMapShowIls"/>
-    <addaction name="actionMapShowVictorAirways"/>
-    <addaction name="actionMapShowJetAirways"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowRoute"/>
-    <addaction name="actionInfoApproachShowMissedAppr"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowAircraft"/>
-    <addaction name="actionMapShowAircraftTrack"/>
-    <addaction name="actionMapShowAircraftAi"/>
-    <addaction name="actionMapShowAircraftAiBoat"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowGrid"/>
-    <addaction name="actionMapShowCities"/>
-    <addaction name="actionMapShowHillshading"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -246,10 +189,113 @@
     <addaction name="actionReloadSceneryCopyAirspaces"/>
     <addaction name="actionReloadScenery"/>
    </widget>
+   <widget class="QMenu" name="menuUserdata">
+    <property name="title">
+     <string>&amp;Userdata</string>
+    </property>
+    <addaction name="actionUserdataShowSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataImportCSV"/>
+    <addaction name="actionUserdataImportUserfixDat"/>
+    <addaction name="actionUserdataImportGarminGTN"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataExportCSV"/>
+    <addaction name="actionUserdataExportUserfixDat"/>
+    <addaction name="actionUserdataExportGarminGTN"/>
+    <addaction name="actionUserdataExportXmlBgl"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataCreateLogbook"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataClearDatabase"/>
+   </widget>
+   <widget class="QMenu" name="menuMapView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuViewDetails">
+     <property name="title">
+      <string>&amp;Details</string>
+     </property>
+     <addaction name="actionMapMoreDetails"/>
+     <addaction name="actionMapDefaultDetails"/>
+     <addaction name="actionMapLessDetails"/>
+    </widget>
+    <widget class="QMenu" name="menuViewAirspaces">
+     <property name="title">
+      <string>&amp;Airspaces</string>
+     </property>
+     <addaction name="actionShowAirspaces"/>
+     <addaction name="actionShowAirspacesOnline"/>
+    </widget>
+    <widget class="QMenu" name="menuViewProjection">
+     <property name="title">
+      <string>&amp;Projection</string>
+     </property>
+     <addaction name="actionMapProjectionMercator"/>
+     <addaction name="actionMapProjectionSpherical"/>
+    </widget>
+    <widget class="QMenu" name="menuViewTheme">
+     <property name="title">
+      <string>&amp;Theme</string>
+     </property>
+     <addaction name="actionMapThemeOpenStreetMap"/>
+     <addaction name="actionMapThemeOpenStreetMapRoads"/>
+     <addaction name="actionMapThemeOpenTopoMap"/>
+     <addaction name="actionMapThemeStamenTerrain"/>
+     <addaction name="actionMapThemeCartoLight"/>
+     <addaction name="actionMapThemeCartoDark"/>
+     <addaction name="separator"/>
+     <addaction name="actionMapThemeSimple"/>
+     <addaction name="actionMapThemePlain"/>
+     <addaction name="actionMapThemeAtlas"/>
+    </widget>
+    <widget class="QMenu" name="menuViewUserpoints">
+     <property name="title">
+      <string>Userpoints</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="actionMapResetSettings"/>
+    <addaction name="menuViewDetails"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowAddonAirports"/>
+    <addaction name="actionMapShowAirports"/>
+    <addaction name="actionMapShowSoftAirports"/>
+    <addaction name="actionMapShowEmptyAirports"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowVor"/>
+    <addaction name="actionMapShowNdb"/>
+    <addaction name="actionMapShowWp"/>
+    <addaction name="actionMapShowIls"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowVictorAirways"/>
+    <addaction name="actionMapShowJetAirways"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewAirspaces"/>
+    <addaction name="menuViewUserpoints"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowRoute"/>
+    <addaction name="actionInfoApproachShowMissedAppr"/>
+    <addaction name="actionMapShowAircraft"/>
+    <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowCompassRose"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowAircraftAi"/>
+    <addaction name="actionMapShowAircraftAiBoat"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowGrid"/>
+    <addaction name="actionMapShowCities"/>
+    <addaction name="actionMapShowHillshading"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewProjection"/>
+    <addaction name="menuViewTheme"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuMap"/>
+   <addaction name="menuMapView"/>
    <addaction name="menuDatabase"/>
+   <addaction name="menuUserdata"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
@@ -299,12 +345,18 @@
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
+       <property name="tabShape">
+        <enum>QTabWidget::Rounded</enum>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
          <string>Airports</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for airports</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <property name="spacing">
@@ -1237,7 +1289,7 @@
                 <string> %dist%</string>
                </property>
                <property name="maximum">
-                <number>3000</number>
+                <number>8000</number>
                </property>
                <property name="singleStep">
                 <number>100</number>
@@ -1284,7 +1336,7 @@
                 <number>100</number>
                </property>
                <property name="maximum">
-                <number>3000</number>
+                <number>8000</number>
                </property>
                <property name="singleStep">
                 <number>100</number>
@@ -1450,6 +1502,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="labelAirportSearchOverride">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -1457,6 +1516,9 @@
        <widget class="QWidget" name="tabNavIdSearch">
         <attribute name="title">
          <string>Navaids</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for VOR, NDB and waypoints</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="spacing">
@@ -2168,6 +2230,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="labelNavSearchOverride">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -2175,6 +2244,9 @@
        <widget class="QWidget" name="tabProcedureSearch">
         <attribute name="title">
          <string>Procedures</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for SID, STAR and approach procedures of an airport</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <property name="spacing">
@@ -2335,6 +2407,994 @@
            </property>
            <attribute name="headerMinimumSectionSize">
             <number>3</number>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabUserdataSearch">
+        <attribute name="title">
+         <string>Userpoints</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search, add and edit user defined waypoints</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutUserdata">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataIdent">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Short ident of the userpoint</string>
+             </property>
+             <property name="statusTip">
+              <string>Short ident of the userpoint</string>
+             </property>
+             <property name="maxLength">
+              <number>8</number>
+             </property>
+             <property name="placeholderText">
+              <string>Ident</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataRegion">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Two-letter code for ICAO region</string>
+             </property>
+             <property name="statusTip">
+              <string>Two-letter code for ICAO region</string>
+             </property>
+             <property name="placeholderText">
+              <string>Region</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxUserdataType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Userpoint type</string>
+             </property>
+             <property name="statusTip">
+              <string>Userpoint type</string>
+             </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
+             <property name="maxVisibleItems">
+              <number>30</number>
+             </property>
+             <property name="insertPolicy">
+              <enum>QComboBox::NoInsert</enum>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataAdd">
+             <property name="toolTip">
+              <string>Add a new userpoint</string>
+             </property>
+             <property name="statusTip">
+              <string>Add a new userpoint</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataEdit">
+             <property name="toolTip">
+              <string>Edit one or more userpoints</string>
+             </property>
+             <property name="statusTip">
+              <string>Edit one or more userpoints</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataDel">
+             <property name="toolTip">
+              <string>Remove one or more userpoints</string>
+             </property>
+             <property name="statusTip">
+              <string>Remove one or more userpoints</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataClearSelection">
+             <property name="toolTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonUserdataHelp">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for the userdata search tab</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="toolButtonUserdata">
+             <property name="toolTip">
+              <string>Show or hide search options</string>
+             </property>
+             <property name="statusTip">
+              <string>Show or hide search options</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::InstantPopup</enum>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="lineUserdataMore">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutUserdataMore">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataName">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Name</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataDescription">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Description</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataTags">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Tags</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditUserdataFilepath">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>File name and path it this waypoint was imported from a file</string>
+             </property>
+             <property name="statusTip">
+              <string>File name and path it this waypoint was imported from a file</string>
+             </property>
+             <property name="placeholderText">
+              <string>Import file name and path</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTableView" name="tableViewUserdata">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>3</number>
+           </attribute>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelUserdata">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelUserdataOverride">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineClientSearch">
+        <attribute name="title">
+         <string>Online Clients</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for online network clients/aircraft</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_23">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutOnlineClient">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineClientCallsign">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Client Callsign</string>
+             </property>
+             <property name="statusTip">
+              <string>Client Callsign</string>
+             </property>
+             <property name="placeholderText">
+              <string>Callsign</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineClientName">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>4</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Client Name</string>
+             </property>
+             <property name="statusTip">
+              <string>Client Name</string>
+             </property>
+             <property name="placeholderText">
+              <string>Name</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineClientDeparture">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Departure airport ICAO code</string>
+             </property>
+             <property name="statusTip">
+              <string>Departure airport ICAO code</string>
+             </property>
+             <property name="placeholderText">
+              <string>Departure</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineClientDestination">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Destination airport ICAO code</string>
+             </property>
+             <property name="statusTip">
+              <string>Destination airport ICAO code</string>
+             </property>
+             <property name="placeholderText">
+              <string>Destination</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineClientServer">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Network server</string>
+             </property>
+             <property name="statusTip">
+              <string>Network server</string>
+             </property>
+             <property name="placeholderText">
+              <string>Server</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonOnlineClientSearchReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonOnlineClientSearchClearSelection">
+             <property name="toolTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonOnlineClientHelpSearch">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for the navaid search tab</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTableView" name="tableViewOnlineClientSearch">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>3</number>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelOnlineClientSearchStatus">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineCenterSearch">
+        <attribute name="title">
+         <string>Online Centers</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for online network centers</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_24">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutOnlineCenter">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineCenterCallsign">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Callsign</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineCenterName">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>2</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="placeholderText">
+              <string>Name</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditOnlineCenterServer">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Network server</string>
+             </property>
+             <property name="statusTip">
+              <string>Network server</string>
+             </property>
+             <property name="placeholderText">
+              <string>Server</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxOnlineCenterFacilityType">
+             <property name="toolTip">
+              <string>Facility Type</string>
+             </property>
+             <property name="statusTip">
+              <string>Facility Type</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>All Facility Types</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>No Observer</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Observer</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Flight Information</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Delivery</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ground</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Tower</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Approach</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ACC</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Departure</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonOnlineCenterSearchReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonOnlineCenterSearchClearSelection">
+             <property name="toolTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear selection and remove any highlights on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonOnlineCenterHelpSearch">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for the navaid search tab</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTableView" name="tableViewOnlineCenterSearch">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>3</number>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelOnlineCenterSearchStatus">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineServerSearch">
+        <attribute name="title">
+         <string>Online Server</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Search for online network servers</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_25">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTableView" name="tableViewOnlineServerSearch">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>3</number>
+           </attribute>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
            </attribute>
           </widget>
          </item>
@@ -2658,7 +3718,10 @@
        </widget>
        <widget class="QWidget" name="tabRunwayInfo">
         <attribute name="title">
-         <string>Runways/Helipads</string>
+         <string>Runways</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Runway and helipad information</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <property name="spacing">
@@ -2695,6 +3758,9 @@
         <attribute name="title">
          <string>Com</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Airport communication frequencies</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_11">
          <property name="spacing">
           <number>2</number>
@@ -2729,6 +3795,9 @@
        <widget class="QWidget" name="tabProceduresInfo">
         <attribute name="title">
          <string>Procedures</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Airport approach procedures</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_22">
          <property name="spacing">
@@ -2771,6 +3840,9 @@
         <attribute name="title">
          <string>Weather</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>Decoded weather information for airport</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_19">
          <property name="spacing">
           <number>2</number>
@@ -2801,7 +3873,10 @@
        </widget>
        <widget class="QWidget" name="tabNavaidInfo">
         <attribute name="title">
-         <string>Navaid/Airways</string>
+         <string>Navaids</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>VOR, NDB, waypoint, airway and userpoint information</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <property name="spacing">
@@ -2825,7 +3900,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No VOR, NDB, waypoint or airway selected.</string>
+            <string>No VOR, NDB, waypoint, airway or userpoint selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2858,6 +3933,76 @@
           <widget class="QTextBrowser" name="textBrowserAirspaceInfo">
            <property name="placeholderText">
             <string>No airspace selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineClientInfo">
+        <attribute name="title">
+         <string>Online Clients</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Online network client/aircraft information</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_27">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserClientInfo">
+           <property name="placeholderText">
+            <string>No online client/aircraft selected.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabOnlineCenterInfo">
+        <attribute name="title">
+         <string>Online Centers</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Online network center information</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_26">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserCenterInfo">
+           <property name="placeholderText">
+            <string>No online network center selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2921,6 +4066,7 @@
    <addaction name="separator"/>
    <addaction name="actionMapShowAircraft"/>
    <addaction name="actionMapShowAircraftTrack"/>
+   <addaction name="actionMapShowCompassRose"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowAircraftAi"/>
    <addaction name="actionMapShowAircraftAiBoat"/>
@@ -3043,6 +4189,9 @@
         <attribute name="title">
          <string>Aircraft</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>General user aircraft information</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_16">
          <property name="spacing">
           <number>2</number>
@@ -3078,6 +4227,9 @@
         <attribute name="title">
          <string>Progress</string>
         </attribute>
+        <attribute name="toolTip">
+         <string>User aircraft progress and environment information</string>
+        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_17">
          <property name="spacing">
           <number>2</number>
@@ -3112,6 +4264,9 @@
        <widget class="QWidget" name="tabAircraftAiInfo">
         <attribute name="title">
          <string>AI / Multiplayer</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Information about AI or multplayer aircraft or ships</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_18">
          <property name="spacing">
@@ -3312,6 +4467,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowAirspaces"/>
+   <addaction name="actionShowAirspacesOnline"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -4680,7 +5836,7 @@
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionRouteCalcSetAlt">
@@ -5283,10 +6439,10 @@
     <string>Show AI and &amp;Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
    </property>
   </action>
   <action name="actionPrintMap">
@@ -5473,13 +6629,13 @@
      <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit Name for %1</string>
+    <string>Edit Flight Plan %1</string>
    </property>
    <property name="toolTip">
-    <string>Edit user waypoint name</string>
+    <string>Edit name and coordinates of user defined flight plan position</string>
    </property>
    <property name="statusTip">
-    <string>Edit user waypoint name</string>
+    <string>Edit name and coordinates of user defined flight plan position</string>
    </property>
   </action>
   <action name="actionHelpContentsOffline">
@@ -5583,6 +6739,9 @@
    <property name="statusTip">
     <string>Show missed approach legs on the map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+M</string>
+   </property>
   </action>
   <action name="actionInfoApproachesForAirport">
    <property name="icon">
@@ -5620,7 +6779,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Procedures for %1</string>
+    <string>Show %1&amp;Procedures for %2</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -5635,7 +6794,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Procedures</string>
+    <string>Show %1&amp;Procedures</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -5653,7 +6812,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Procedures</string>
+    <string>Show %1&amp;Procedures</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -5818,7 +6977,7 @@
     <string>Reset the map display settings back to the default values</string>
    </property>
    <property name="statusTip">
-    <string>Reset sort order, column order and column sizes to default</string>
+    <string>Reset the map display settings back to the default values</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+R</string>
@@ -5995,7 +7154,7 @@
     <string>If you would like show your appreciation you can donate here</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
   <action name="actionReloadSceneryCopyAirspaces">
@@ -6033,7 +7192,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan as X-Plane FMS &amp;3...</string>
+    <string>Export Flight Plan as X-Plane FMS &amp;3 ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 3 file usable by all X-Plane versions</string>
@@ -6048,7 +7207,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight &amp;Plan as X-Plane FMS 11...</string>
+    <string>Save Flight &amp;Plan as X-Plane FMS 11 ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
@@ -6062,7 +7221,7 @@
   </action>
   <action name="actionRouteSaveAsFpr">
    <property name="text">
-    <string>Export Flight Plan as &amp;Majestic Dash FPR...</string>
+    <string>Export Flight Plan as &amp;Majestic Dash FPR ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPR file usable Majestic Software MJC8 Q400</string>
@@ -6073,7 +7232,7 @@
   </action>
   <action name="actionRouteSaveAsFpl">
    <property name="text">
-    <string>Export Flight Plan as IXEG &amp;FPL...</string>
+    <string>Export Flight Plan as IXEG &amp;FPL ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as FPL file usable by the IXEG Boeing</string>
@@ -6084,7 +7243,7 @@
   </action>
   <action name="actionRouteSaveAsCorteIn">
    <property name="text">
-    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus...</string>
+    <string>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</string>
    </property>
    <property name="toolTip">
     <string>Append flight plan to the corte.in file for the Flight Factor Airbus</string>
@@ -6113,6 +7272,481 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</string>
+   </property>
+  </action>
+  <action name="actionMapShowCompassRose">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/compassrose.svg</normaloff>:/littlenavmap/resources/icons/compassrose.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Compass Rose</string>
+   </property>
+   <property name="toolTip">
+    <string>Show compass rose around user aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Show compass rose around user aircraft</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+C</string>
+   </property>
+  </action>
+  <action name="actionRouteFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected flight plan waypoint on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected flight plan waypoint on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchAirportFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected airport on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected airport on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchProcedureFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected procedure on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected procedure on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchNavaidFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchUserdataFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected userpoint on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionUserdataSearchShowMoreOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>More search options</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show navaid distance search options</string>
+   </property>
+  </action>
+  <action name="actionUserdataShowSearch">
+   <property name="text">
+    <string>&amp;Show Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Userpoint Search Tab</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Userpoint Search Tab</string>
+   </property>
+  </action>
+  <action name="actionUserdataImportCSV">
+   <property name="text">
+    <string>Import &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Userpoints from CSV File</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Userpoints from CSV File</string>
+   </property>
+  </action>
+  <action name="actionUserdataImportUserfixDat">
+   <property name="text">
+    <string>Import &amp;X-Plane user_fix.dat ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Userpoints from X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Userpoints from X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
+  </action>
+  <action name="actionUserdataImportGarminGTN">
+   <property name="text">
+    <string>Import &amp;Garmin GTN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportCSV">
+   <property name="text">
+    <string>Export &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Userpoints to CSV File</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to CSV File</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportUserfixDat">
+   <property name="text">
+    <string>Export &amp;X-Plane user_fix.dat ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Userpoints to X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to X-Plane &quot;user_fix.dat&quot; file</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportGarminGTN">
+   <property name="text">
+    <string>Export &amp;Garmin GTN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Userpoints to Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to Garmin GTN &quot;user.wpt&quot; file</string>
+   </property>
+  </action>
+  <action name="actionUserdataExportXmlBgl">
+   <property name="text">
+    <string>Export &amp;XML for FSX/P3D BGL Compiler ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Userpoints to XML File for FSX/P3D BGL Compiler</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Userpoints to XML File for FSX/P3D BGL Compiler</string>
+   </property>
+  </action>
+  <action name="actionUserdataClearDatabase">
+   <property name="text">
+    <string>Clear database</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear Userpoint Database</string>
+   </property>
+   <property name="statusTip">
+    <string>Clear Userpoint Database</string>
+   </property>
+  </action>
+  <action name="actionUserdataEdit">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
+  <action name="actionUserdataAdd">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Add Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ins</string>
+   </property>
+  </action>
+  <action name="actionUserdataDelete">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Userpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete Userpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataAdd">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_add.svg</normaloff>:/littlenavmap/resources/icons/userdata_add.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Add Userpoint</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataEdit">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit Userpoint</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataDelete">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete Userpoint</string>
+   </property>
+  </action>
+  <action name="actionMapUserdataMove">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/userdata_move.svg</normaloff>:/littlenavmap/resources/icons/userdata_move.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Move Userpoint %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Move Userpoint</string>
+   </property>
+   <property name="statusTip">
+    <string>Move Userpoint</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveApprWaypoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Save Waypoints for &amp;Approaches</string>
+   </property>
+   <property name="toolTip">
+    <string>Save procedure waypoints instead of approach information</string>
+   </property>
+   <property name="statusTip">
+    <string>Save procedure waypoints instead of approach information</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveSidStarWaypoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Save Waypoints for &amp;SID and STAR</string>
+   </property>
+   <property name="toolTip">
+    <string>Save procedure waypoints instead of SID/STAR information</string>
+   </property>
+   <property name="statusTip">
+    <string>Save procedure waypoints instead of SID/STAR information</string>
+   </property>
+  </action>
+  <action name="actionUserdataCreateLogbook">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Create Logbook entries</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a Userpoint of type Logbook including flight information for each takeoff and landing</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a Userpoint of type Logbook including flight information for each takeoff and landing</string>
+   </property>
+  </action>
+  <action name="actionSearchOnlineClientFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected client position on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionSearchOnlineCenterFollowSelection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Follow Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Centers the selected center on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Centers the selected navaid on the map</string>
+   </property>
+  </action>
+  <action name="actionShowAirspacesOnline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Online Network Airspaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsIFly">
+   <property name="text">
+    <string>Export Flight Plan as &amp;FLTPLAN for iFly ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FLTPLAN file usable by iFly aircraft</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsXFmc">
+   <property name="text">
+    <string>Export Flight Plan for &amp;X-FMC ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file usable by X-FMC</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by X-FMC</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsUfmc">
+   <property name="text">
+    <string>Export Flight Plan for &amp;UFMC ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as UFMC file</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as UFMC file</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsProSim">
+   <property name="text">
+    <string>Export Flight Plan for &amp;ProSim ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
+   </property>
+   <property name="statusTip">
+    <string>Append flight plan to the companyroutes.xml file for ProSim</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsBbsAirbus">
+   <property name="text">
+    <string>Export Flight Plan as PLN for &amp;BBS Airbus ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</string>
+   </property>
+  </action>
+  <action name="actionRouteShowSkyVector">
+   <property name="text">
+    <string>Show Flight Plan in Sky&amp;Vector ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the flight plan in SkyVector in the default web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the flight plan in SkyVector in the default web browser</string>
    </property>
   </action>
  </widget>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QMainWindow;
+class QMenu;
+class QAction;
 class ProcedureQuery;
 class AirportQuery;
 class HtmlInfoBuilder;
@@ -57,7 +59,7 @@ class ProcedureSearch :
   Q_OBJECT
 
 public:
-  ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex);
+  ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex);
   virtual ~ProcedureSearch();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
@@ -89,7 +91,7 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Add the complete procedure to the route */
-  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
 
   /* Show information info window on navaid on double click */
   void showInformation(map::MapSearchResult result);
@@ -97,6 +99,13 @@ signals:
 private:
   friend class TreeEventFilter;
 
+  struct ProcData
+  {
+    proc::MapProcedureRef procedureRef;
+    QStringList sidStarRunways; // Only filled for all or parallel runway assignments in SID and STAR
+  };
+
+  /* comboBoxProcedureSearchFilter index */
   enum FilterIndex
   {
     FILTER_ALL_PROCEDURES,
@@ -132,7 +141,7 @@ private:
   void setItemStyle(QTreeWidgetItem *item, const proc::MapProcedureLeg& leg);
 
   /* Show transition, approach or waypoint on map */
-  void showEntry(QTreeWidgetItem *item, bool doubleClick);
+  void showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom);
 
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
@@ -157,15 +166,19 @@ private:
   void updateFilterBoxes();
   void resetSearch();
   void dockVisibilityChanged(bool visible);
+  void fontChanged();
 
   static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
+
+  QVector<QAction *> buildRunwaySubmenu(QMenu& menu, const ProcData& procData);
+
   void fetchSingleTransitionId(proc::MapProcedureRef& ref);
   QString approachAndTransitionText(const QTreeWidgetItem *item);
   void clearSelectionTriggered();
 
   // item's types are the indexes into this array with approach, transition and leg ids
-  QVector<proc::MapProcedureRef> itemIndex;
+  QVector<ProcData> itemIndex;
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set

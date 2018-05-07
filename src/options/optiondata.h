@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 namespace opts {
 enum Flag
 {
+  NO_FLAGS = 0,
+
   /* Reload KML files on startup.
    * ui->checkBoxOptionsStartupLoadKml  */
   STARTUP_LOAD_KML = 1 << 0,
@@ -139,11 +141,63 @@ enum Flag
 
   /* checkBoxOptionsRouteExportUserWpt */
   ROUTE_GARMIN_USER_WPT = 1 << 30
-
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
+
+/* Extension from flags to avoid overflow */
+enum Flag2
+{
+  NO_FLAGS2 = 0,
+
+  /* Treat empty airports special.
+   * ui->checkBoxOptionsMapEmptyAirports3D */
+  MAP_EMPTY_AIRPORTS_3D = 1 << 0,
+
+  /* Save PLN using short names
+   * ui->checkBoxOptionsRouteShortName */
+  ROUTE_SAVE_SHORT_NAME = 1 << 1,
+
+  /* ui->checkBoxOptionsMapAirportText */
+  MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
+
+  /* ui->checkBoxOptionsMapNavaidText */
+  MAP_NAVAID_TEXT_BACKGROUND = 1 << 3,
+
+  /* ui->checkBoxOptionsMapFlightplanText */
+  MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
+
+  /* ui->checkBoxOptionsMapAirportBoundary */
+  MAP_AIRPORT_BOUNDARY = 1 << 5,
+
+  /* ui->checkBoxOptionsMapFlightplanDimPassed */
+  MAP_ROUTE_DIM_PASSED = 1 << 6,
+
+  /* ui->checkBoxOptionsSimDoNotFollowOnScroll */
+  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7,
+
+  /* ui->checkBoxOptionsSimCenterLeg */
+  ROUTE_AUTOZOOM = 1 << 8,
+
+  /* ui->checkBoxOptionsMapAirportDiagram */
+  MAP_AIRPORT_DIAGRAM = 1 << 9,
+
+  /* ui->checkBoxOptionsSimCenterLegTable */
+  ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
+
+  /* Show IVAO weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoIvao*/
+  WEATHER_INFO_IVAO = 1 << 11,
+
+  /* Show IVAO weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipIvao*/
+  WEATHER_TOOLTIP_IVAO = 1 << 12
+
+};
+
+Q_DECLARE_FLAGS(Flags2, Flag2);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags2);
 
 /* Changing these option values will also change the saved values thus invalidatin user settings */
 enum DisplayOption
@@ -193,6 +247,17 @@ enum DisplayTooltipOption
 
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayTooltipOptions);
+
+enum DisplayClickOption
+{
+  CLICK_NONE = 0,
+  CLICK_AIRPORT = 1 << 1,
+  CLICK_NAVAID = 1 << 2,
+  CLICK_AIRSPACE = 1 << 3
+};
+
+Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayClickOptions);
 
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
@@ -295,6 +360,23 @@ enum UpdateChannels
   STABLE_BETA_DEVELOP
 };
 
+/* comboBoxOptionsStartupUpdateChannels - what updates to check for */
+enum OnlineNetwork
+{
+  ONLINE_NONE,
+  ONLINE_VATSIM,
+  ONLINE_IVAO,
+  ONLINE_CUSTOM_STATUS,
+  ONLINE_CUSTOM
+};
+
+/* comboBoxOptionsOnlineFormat whazzup.txt file format */
+enum OnlineFormat
+{
+  ONLINE_FORMAT_VATSIM,
+  ONLINE_FORMAT_IVAO
+};
+
 }
 
 /*
@@ -316,6 +398,11 @@ public:
   opts::Flags getFlags() const
   {
     return flags;
+  }
+
+  opts::Flags2 getFlags2() const
+  {
+    return flags2;
   }
 
   opts::UnitDist getUnitDist() const
@@ -373,6 +460,11 @@ public:
   const QString& getWeatherVatsimUrl() const
   {
     return weatherVatsimUrl;
+  }
+
+  const QString& getWeatherIvaoUrl() const
+  {
+    return weatherIvaoUrl;
   }
 
   /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
@@ -556,6 +648,11 @@ public:
     return flightplanActiveColor;
   }
 
+  const QColor& getFlightplanPassedSegmentColor() const
+  {
+    return flightplanPassedColor;
+  }
+
   const QColor& getTrailColor() const
   {
     return trailColor;
@@ -571,9 +668,19 @@ public:
     return displayTooltipOptions;
   }
 
+  opts::DisplayClickOptions getDisplayClickOptions() const
+  {
+    return displayClickOptions;
+  }
+
   int getDisplayThicknessRangeDistance() const
   {
     return displayThicknessRangeDistance;
+  }
+
+  int getDisplayThicknessCompassRose() const
+  {
+    return displayThicknessCompassRose;
   }
 
   float getRouteTodRule() const
@@ -616,6 +723,36 @@ public:
     return aircraftTrackMaxPoints;
   }
 
+  int getSimNoFollowAircraftOnScrollSeconds() const
+  {
+    return simNoFollowAircraftOnScroll;
+  }
+
+  opts::OnlineNetwork getOnlineNetwork() const
+  {
+    return onlineNetwork;
+  }
+
+  opts::OnlineFormat getOnlineFormat() const;
+
+  /* URL to "status.txt" or empty if not applicable */
+  QString getOnlineStatusUrl() const;
+
+  /* URL to "whazzup.txt" or empty if not applicable */
+  QString getOnlineWhazzupUrl() const;
+
+  /* Reload files or automatic or not applicable if -1 */
+  int getOnlineReloadTimeSeconds() const
+  {
+    return onlineReloadSeconds;
+  }
+
+  /* Value from networks.cfg or -1 if auto */
+  int getOnlineReloadTimeSecondsConfig() const
+  {
+    return onlineReloadSecondsConfig;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -648,11 +785,13 @@ private:
     opts::WEATHER_TOOLTIP_FS |
     opts::WEATHER_TOOLTIP_ACTIVESKY |
     opts::WEATHER_TOOLTIP_NOAA |
-    opts::WEATHER_TOOLTIP_VATSIM |
 
     opts::FLIGHT_PLAN_SHOW_TOD |
     opts::CACHE_USE_ONLINE_ELEVATION
   ;
+
+  opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
+                        opts::MAP_AIRPORT_BOUNDARY | opts::MAP_AIRPORT_DIAGRAM;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
@@ -660,7 +799,8 @@ private:
   // ui->lineEditOptionsWeatherAsnPath
   QString weatherActiveSkyPath,
           weatherNoaaUrl = "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
-          weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1";
+          weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1",
+          weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
   QString cacheOfflineElevationPath;
 
@@ -789,14 +929,21 @@ private:
   // spinBoxOptionsDisplayThicknessRangeDistance
   int displayThicknessRangeDistance = 100;
 
+  // spinBoxOptionsDisplayThicknessCompassRose
+  int displayThicknessCompassRose = 100;
+
   // spinBoxSimMaxTrackPoints
   int aircraftTrackMaxPoints = 20000;
 
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor;
+  // spinBoxSimDoNotFollowOnScrollTime
+  int simNoFollowAircraftOnScroll = 10;
+
+  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
 
+  /* Default values are set by widget states - these are needed for the reset button */
   opts::DisplayOptions displayOptions =
     opts::ITEM_AIRPORT_NAME | opts::ITEM_AIRPORT_TOWER | opts::ITEM_AIRPORT_ATIS |
     opts::ITEM_AIRPORT_RUNWAY |
@@ -809,6 +956,7 @@ private:
 
   opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
                                                       opts::TOOLTIP_NAVAID;
+  opts::DisplayClickOptions displayClickOptions = opts::CLICK_AIRPORT | opts::CLICK_AIRSPACE | opts::CLICK_NAVAID;
 
   opts::UpdateRate updateRate = opts::DAILY;
   opts::UpdateChannels updateChannels = opts::STABLE;
@@ -816,6 +964,15 @@ private:
   // Used in the singelton to check if data was already loaded
   bool valid = false;
 
+  /* Online network configuration ========================================= */
+  opts::OnlineNetwork onlineNetwork = opts::ONLINE_NONE;
+  opts::OnlineFormat onlineFormat = opts::ONLINE_FORMAT_VATSIM;
+  QString onlineStatusUrl, onlineWhazzupUrl;
+
+  /* Values loaded from networks.cfg */
+  int onlineReloadSeconds = 180, onlineReloadSecondsConfig = 180;
+  QString onlineVatsimStatusUrl;
+  QString onlineIvaoStatusUrl;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

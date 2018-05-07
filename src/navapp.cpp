@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "query/procedurequery.h"
 #include "connect/connectclient.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "db/databasemanager.h"
 #include "fs/db/databasemeta.h"
@@ -30,6 +31,10 @@
 #include "common/elevationprovider.h"
 #include "fs/common/magdecreader.h"
 #include "common/updatehandler.h"
+#include "userdata/userdatacontroller.h"
+#include "online/onlinedatacontroller.h"
+#include "search/searchcontroller.h"
+#include "common/vehicleicons.h"
 
 #include "ui_mainwindow.h"
 
@@ -41,6 +46,8 @@
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
 MapQuery *NavApp::mapQuery = nullptr;
+AirspaceQuery *NavApp::airspaceQuery = nullptr;
+AirspaceQuery *NavApp::airspaceQueryOnline = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
 
@@ -54,6 +61,9 @@ QSplashScreen *NavApp::splashScreen = nullptr;
 
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
+UserdataController *NavApp::userdataController = nullptr;
+OnlinedataController *NavApp::onlinedataController = nullptr;
+VehicleIcons *NavApp::vehicleIcons = nullptr;
 
 bool NavApp::shuttingDown = false;
 
@@ -65,11 +75,16 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
 
-  setApplicationVersion("1.8.4"); // VERSION_NUMBER
+  setApplicationVersion("1.9.1.develop"); // VERSION_NUMBER
 }
 
 NavApp::~NavApp()
 {
+}
+
+NavApp *NavApp::navAppInstance()
+{
+  return dynamic_cast<NavApp *>(QCoreApplication::instance());
 }
 
 void NavApp::init(MainWindow *mainWindowParam)
@@ -79,6 +94,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   NavApp::mainWindow = mainWindowParam;
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases();
+  userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
 
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
@@ -86,8 +102,28 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
 
-  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav());
+  vehicleIcons = new VehicleIcons();
+
+  // Need to set this later to avoid circular database dependency
+  userdataController->setMagDecReader(magDecReader);
+
+  // Create a CSV backup - not needed since the database is backed up now
+  // userdataController->backup();
+  // Clear temporary userpoints
+  userdataController->clearTemporary();
+
+  onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
+  onlinedataController->initQueries();
+
+  mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
+                          databaseManager->getDatabaseUser());
   mapQuery->initQueries();
+
+  airspaceQuery = new AirspaceQuery(mainWindow, databaseManager->getDatabaseNav(), false /* online database */);
+  airspaceQuery->initQueries();
+
+  airspaceQueryOnline = new AirspaceQuery(mainWindow, databaseManager->getDatabaseOnline(), true /* online database */);
+  airspaceQueryOnline->initQueries();
 
   airportQuerySim = new AirportQuery(mainWindow, databaseManager->getDatabaseSim(), false /* nav */);
   airportQuerySim->initQueries();
@@ -101,10 +137,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
   procedureQuery->initQueries();
 
-  qDebug() << "MainWindow Creating ConnectClient";
   connectClient = new ConnectClient(mainWindow);
 
-  qDebug() << "MainWindow Creating UpdateCheck";
   updateHandler = new UpdateHandler(mainWindow);
   // The check will be called on main window shown
 }
@@ -117,6 +151,14 @@ void NavApp::initElevationProvider()
 void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
+
+  qDebug() << Q_FUNC_INFO << "delete userdataController";
+  delete userdataController;
+  userdataController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete onlinedataController";
+  delete onlinedataController;
+  onlinedataController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete updateHandler";
   delete updateHandler;
@@ -142,6 +184,14 @@ void NavApp::deInit()
   delete mapQuery;
   mapQuery = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete airspaceQuery";
+  delete airspaceQuery;
+  airspaceQuery = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete airspaceQueryOnline";
+  delete airspaceQueryOnline;
+  airspaceQueryOnline = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
   infoQuery = nullptr;
@@ -166,6 +216,10 @@ void NavApp::deInit()
   delete magDecReader;
   magDecReader = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete vehicleIcons";
+  delete vehicleIcons;
+  vehicleIcons = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete splashScreen";
   delete splashScreen;
   splashScreen = nullptr;
@@ -189,6 +243,8 @@ void NavApp::preDatabaseLoad()
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   mapQuery->deInitQueries();
+  airspaceQuery->deInitQueries();
+  airspaceQueryOnline->deInitQueries();
   procedureQuery->deInitQueries();
 
   delete databaseMeta;
@@ -209,6 +265,8 @@ void NavApp::postDatabaseLoad()
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
+  airspaceQuery->initQueries();
+  airspaceQueryOnline->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
 }
@@ -221,6 +279,11 @@ Ui::MainWindow *NavApp::getMainUi()
 bool NavApp::isConnected()
 {
   return NavApp::getConnectClient()->isConnected();
+}
+
+bool NavApp::isUserAircraftValid()
+{
+  return mainWindow->getMapWidget()->getUserAircraft().getPosition().isValid();
 }
 
 AirportQuery *NavApp::getAirportQuerySim()
@@ -238,6 +301,16 @@ MapQuery *NavApp::getMapQuery()
   return mapQuery;
 }
 
+AirspaceQuery *NavApp::getAirspaceQuery()
+{
+  return airspaceQuery;
+}
+
+AirspaceQuery *NavApp::getAirspaceQueryOnline()
+{
+  return airspaceQueryOnline;
+}
+
 InfoQuery *NavApp::getInfoQuery()
 {
   return infoQuery;
@@ -248,7 +321,12 @@ ProcedureQuery *NavApp::getProcedureQuery()
   return procedureQuery;
 }
 
-const Route& NavApp::getRoute()
+const Route& NavApp::getRouteConst()
+{
+  return mainWindow->getRouteController()->getRoute();
+}
+
+Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
 }
@@ -278,6 +356,11 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorBasePath(type);
 }
 
+bool NavApp::isNavdataOnly()
+{
+  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
+}
+
 QString NavApp::getCurrentSimulatorShortName()
 {
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());
@@ -301,6 +384,51 @@ atools::sql::SqlDatabase *NavApp::getDatabaseSim()
 atools::sql::SqlDatabase *NavApp::getDatabaseNav()
 {
   return getDatabaseManager()->getDatabaseNav();
+}
+
+atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()
+{
+  return databaseManager->getUserdataManager();
+}
+
+UserdataIcons *NavApp::getUserdataIcons()
+{
+  return userdataController->getUserdataIcons();
+}
+
+UserdataSearch *NavApp::getUserdataSearch()
+{
+  return mainWindow->getSearchController()->getUserdataSearch();
+}
+
+UserdataController *NavApp::getUserdataController()
+{
+  return userdataController;
+}
+
+OnlinedataController *NavApp::getOnlinedataController()
+{
+  return onlinedataController;
+}
+
+atools::fs::common::MagDecReader *NavApp::getMagDecReader()
+{
+  return magDecReader;
+}
+
+VehicleIcons *NavApp::getVehicleIcons()
+{
+  return vehicleIcons;
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseUser()
+{
+  return databaseManager->getDatabaseUser();
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseOnline()
+{
+  return onlinedataController->getDatabase();
 }
 
 ElevationProvider *NavApp::getElevationProvider()
@@ -371,6 +499,21 @@ QString NavApp::getDatabaseAiracCycleNav()
 bool NavApp::hasDatabaseAirspaces()
 {
   return databaseMetaNav->hasAirspaces();
+}
+
+bool NavApp::hasOnlineData()
+{
+  return onlinedataController->hasData();
+}
+
+QString NavApp::getOnlineNetwork()
+{
+  return onlinedataController->getNetwork();
+}
+
+bool NavApp::isOnlineNetworkActive()
+{
+  return onlinedataController->isNetworkActive();
 }
 
 const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaSim()

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,23 @@
 #include "search/navsearch.h"
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
+#include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
+#include "search/userdatasearch.h"
 #include "common/constants.h"
 #include "search/proceduresearch.h"
 #include "options/optiondata.h"
+#include "userdata/userdatacontroller.h"
+#include "search/onlineclientsearch.h"
+#include "search/onlinecentersearch.h"
+#include "search/onlineserversearch.h"
 
 #include <QTabWidget>
 #include <QUrl>
 
 using atools::gui::HelpHandler;
 
-SearchController::SearchController(QMainWindow *parent,
-                                   QTabWidget *tabWidgetSearch)
+SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearch)
   : mapQuery(NavApp::getMapQuery()), mainWindow(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
@@ -45,6 +50,14 @@ SearchController::SearchController(QMainWindow *parent,
           this, &SearchController::helpPressed);
   connect(NavApp::getMainUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedProcedure);
+
+  connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
+          this, &SearchController::helpPressedUserdata);
+
+  connect(NavApp::getMainUi()->pushButtonOnlineClientHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressedOnlineClient);
+  connect(NavApp::getMainUi()->pushButtonOnlineCenterHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressedOnlineCenter);
 }
 
 SearchController::~SearchController()
@@ -52,6 +65,10 @@ SearchController::~SearchController()
   delete airportSearch;
   delete navSearch;
   delete procedureSearch;
+  delete userdataSearch;
+  delete onlineClientSearch;
+  delete onlineCenterSearch;
+  delete onlineServerSearch;
 }
 
 void SearchController::getSelectedMapObjects(map::MapSearchResult& result) const
@@ -73,6 +90,21 @@ void SearchController::helpPressed()
 void SearchController::helpPressedProcedure()
 {
   HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHPROCS.html", lnm::helpLanguagesOnline());
+}
+
+void SearchController::helpPressedUserdata()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHUSERDATA.html", lnm::helpLanguagesOnline());
+}
+
+void SearchController::helpPressedOnlineClient()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHONLINECLIENT.html", lnm::helpLanguagesOnline());
+}
+
+void SearchController::helpPressedOnlineCenter()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHONLINECENTER.html", lnm::helpLanguagesOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */
@@ -101,19 +133,52 @@ void SearchController::restoreState()
 
 void SearchController::createAirportSearch(QTableView *tableView)
 {
-  airportSearch = new AirportSearch(mainWindow, tableView, 0);
+  airportSearch = new AirportSearch(mainWindow, tableView, si::SEARCH_AIRPORT);
   postCreateSearch(airportSearch);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
 {
-  navSearch = new NavSearch(mainWindow, tableView, 1);
+  navSearch = new NavSearch(mainWindow, tableView, si::SEARCH_NAV);
   postCreateSearch(navSearch);
+}
+
+void SearchController::createUserdataSearch(QTableView *tableView)
+{
+  userdataSearch = new UserdataSearch(mainWindow, tableView, si::SEARCH_USER);
+  postCreateSearch(userdataSearch);
+
+  // Get edit and delete signals from user search action and pushbuttons
+  connect(userdataSearch, &UserdataSearch::editUserpoints,
+          NavApp::getUserdataController(), &UserdataController::editUserpoints);
+  connect(userdataSearch, &UserdataSearch::deleteUserpoints,
+          NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
+  connect(userdataSearch, &UserdataSearch::addUserpoint,
+          NavApp::getUserdataController(), &UserdataController::addUserpoint);
+
+}
+
+void SearchController::createOnlineClientSearch(QTableView *tableView)
+{
+  onlineClientSearch = new OnlineClientSearch(mainWindow, tableView, si::SEARCH_ONLINE_CLIENT);
+  postCreateSearch(onlineClientSearch);
+}
+
+void SearchController::createOnlineCenterSearch(QTableView *tableView)
+{
+  onlineCenterSearch = new OnlineCenterSearch(mainWindow, tableView, si::SEARCH_ONLINE_CENTER);
+  postCreateSearch(onlineCenterSearch);
+}
+
+void SearchController::createOnlineServerSearch(QTableView *tableView)
+{
+  onlineServerSearch = new OnlineServerSearch(mainWindow, tableView, si::SEARCH_ONLINE_SERVER);
+  postCreateSearch(onlineServerSearch);
 }
 
 void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
 {
-  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, 2);
+  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, si::SEARCH_PROC);
   postCreateSearch(procedureSearch);
 }
 
@@ -142,25 +207,49 @@ void SearchController::postDatabaseLoad()
     search->postDatabaseLoad();
 }
 
-void SearchController::showInSearch(map::MapObjectTypes type, const QString& ident,
-                                    const QString& region, const QString& airportIdent)
+void SearchController::refreshUserdata()
 {
-  qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
+  userdataSearch->refreshData(false /* load all */, true /* keep selection */);
+}
+
+void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record)
+{
+  qDebug() << Q_FUNC_INFO << record;
 
   switch(type)
   {
     case map::AIRPORT:
       // Shown in airport tab
       airportSearch->resetSearch();
-      airportSearch->filterByIdent(ident);
+      airportSearch->filterByRecord(record);
       break;
+
     case map::NDB:
     case map::VOR:
     case map::WAYPOINT:
       // Shown in navaid tab
       navSearch->resetSearch();
-      navSearch->filterByIdent(ident, region, airportIdent);
+      navSearch->filterByRecord(record);
       break;
+
+    case map::USERPOINT:
+      // Shown in user search tab
+      userdataSearch->resetSearch();
+      userdataSearch->filterByRecord(record);
+      break;
+
+    case map::AIRCRAFT_ONLINE:
+      // Shown in user search tab
+      onlineClientSearch->resetSearch();
+      onlineClientSearch->filterByRecord(record);
+      break;
+
+    case map::AIRSPACE_ONLINE:
+      // Shown in user search tab
+      onlineCenterSearch->resetSearch();
+      onlineCenterSearch->filterByRecord(record);
+      break;
+
     case map::ILS:
     case map::MARKER:
     case map::NONE:

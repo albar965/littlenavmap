@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -130,9 +130,8 @@ public:
   /* Get the database id for the row at the index or -1 if the index is not valid */
   int getIdForRow(const QModelIndex& index);
 
-  /* Reset search and filter by ident, region and airport */
-  void filterByIdent(const QString& ident, const QString& region = QString(),
-                     const QString& airportIdent = QString());
+  /* Reset search and filter by fields in record */
+  void filterByRecord(const atools::sql::SqlRecord& record);
 
   /* Start or end distance search depending if center is valid or not */
   void filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
@@ -173,6 +172,18 @@ public:
   void postDatabaseLoad();
 
   void updateHeaderData();
+
+  /* Update query on changes in the database. Loads all data needed to restore selection if keepSelection is true */
+  void refreshData(bool loadAll, bool keepSelection);
+
+  /* Update view only */
+  void refreshView();
+
+  /* True if the row exists in the model */
+  bool hasRow(int row) const;
+
+  /* True if query contains column */
+  bool hasColumn(const QString& colName) const;
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

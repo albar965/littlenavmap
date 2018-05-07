@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,8 +76,8 @@ private:
   void paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj, bool preview);
   void paintNdb(const PaintContext *context, int x, int y, bool preview);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y, bool preview);
-  void paintProcedure(const PaintContext *context,
-                     const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
+  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
+                      const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
   void paintWaypointText(const PaintContext *context, int x, int y, const map::MapWaypoint& obj, bool drawAsRoute,
                          const QStringList *additionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj, bool drawAsRoute,
@@ -90,7 +90,8 @@ private:
   void paintUserpoint(const PaintContext *context, int x, int y, bool preview);
   void paintProcedurePoint(const PaintContext *context, int x, int y, bool preview);
 
-  void paintApproachPoints(const PaintContext *context, const proc::MapProcedureLegs& legs, int index, bool preview);
+  void paintApproachPoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context, const proc::MapProcedureLegs& legs, int index, bool preview,
+                           bool drawText);
 
   void drawSymbols(const PaintContext *context, const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints,
                    bool preview);
@@ -99,14 +100,15 @@ private:
                            const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
-                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview);
+                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview,
+                            bool draw);
 
   void paintTopOfDescent(const PaintContext *context);
 
   QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
-                           QPointF intersectPoint);
+                           QPointF intersectPoint, bool draw);
   void paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
-                        const proc::MapProcedureLeg& leg);
+                        const proc::MapProcedureLeg& leg, bool draw);
 
   void paintProcedureFlyover(const PaintContext *context, int x, int y, int size);
 

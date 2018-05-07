@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ public:
   void setSort(const QString& colname, Qt::SortOrder order);
 
   /* Reset search and filter by ident, region and airport */
-  void filterByIdent(const QString& ident, const QString& region, const QString& airportIdent);
+  void filterByRecord(const atools::sql::SqlRecord& record);
 
   /* Get empty record (no data) containing field/column information */
   atools::sql::SqlRecord getSqlRecord() const;
@@ -145,8 +145,8 @@ public:
    * @param role Data role
    * @return a variant. Mostly string for display role.
    */
-  typedef std::function<QVariant(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
-                                 const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
+  typedef std::function<QVariant(int colIndex, int rowIndex, const Column * col, const QVariant &roleValue,
+                                 const QVariant &displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
 
   /*
    * Sets a data callback that is called for each table cell and the given item data roles.
@@ -155,9 +155,20 @@ public:
    */
   void setDataCallback(const DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles);
 
+  bool isOverrideModeActive() const
+  {
+    return overrideModeActive;
+  }
+
+  /* Update model after data change */
+  void refreshData();
+
 signals:
   /* Emitted when more data was fetched */
   void fetchedMore();
+
+  /* One or more columns overrides all other search options */
+  void overrideMode(const QStringList& overrideColumnTitles);
 
 private:
   // Hide the record method
@@ -166,7 +177,8 @@ private:
   struct WhereCondition
   {
     QString oper; /* operator (like, not like) */
-    QVariant value; /* Condition value */
+    QVariant value; /* Condition value including % or other SQL characters */
+    QVariant valueRaw; /* Raw value as entered in the search form */
     const Column *col; /* Column descriptor */
   };
 
@@ -174,7 +186,7 @@ private:
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
-  QString buildWhere(const atools::sql::SqlRecord& tableCols);
+  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();
@@ -182,6 +194,7 @@ private:
   QString  sortOrderToSql(Qt::SortOrder order);
   QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
+  void updateTotalCount();
 
   /* Default - all conditions are combined using "and" */
   const QString WHERE_OPERATOR = "and";
@@ -189,7 +202,7 @@ private:
   QString orderByCol /* Order by column name */, orderByOrder /* "asc" or "desc" */;
   int orderByColIndex = 0;
 
-  QString currentSqlQuery;
+  QString currentSqlQuery, currentSqlCountQuery;
 
   /* Data callback */
   DataFunctionType dataFunction = nullptr;
@@ -209,6 +222,9 @@ private:
 
   QWidget *parentWidget;
   int totalRowCount = 0;
+
+  /* Set by buildWhere. Will ignore all other filter options */
+  bool overrideModeActive = false;
 
 };
 

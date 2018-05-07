@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 class MainWindow;
 class MapQuery;
 class AirportQuery;
+class AirspaceQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
@@ -39,7 +40,9 @@ enum TabIndex
   INFO_APPROACHES = 3,
   INFO_WEATHER = 4,
   INFO_NAVAID = 5,
-  INFO_AIRSPACE = 6
+  INFO_AIRSPACE = 6,
+  INFO_ONLINE_CLIENT = 7,
+  INFO_ONLINE_CENTER = 8
 };
 
 enum TabIndexAircraft
@@ -94,6 +97,10 @@ public:
 
   void updateAllInformation();
 
+  void onlineClientAndAtcUpdated();
+
+  void onlineNetworkChanged();
+
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
@@ -107,13 +114,14 @@ private:
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(const map::MapSearchResult& result, bool showWindows);
+  void showInformationInternal(map::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
   void currentTabChanged(int index);
-  void updateAircraftText();
+  void updateUserAircraftText();
   void updateAircraftProgressText();
   void updateAiAircraftText();
+  void updateAircraftInfo();
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -124,13 +132,12 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
+  AirspaceQuery *airspaceQuery = nullptr;
+  AirspaceQuery *airspaceQueryOnline = nullptr;
   AirportQuery *airportQuery = nullptr;
-  QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
-
-  void updateAircraftInfo();
 
 };
 

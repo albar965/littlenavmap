@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
 #include "navapp.h"
 #include "common/proctypes.h"
 #include "route/routecontroller.h"
+#include "online/onlinedatacontroller.h"
 #include "mapgui/mapscale.h"
+#include "mapgui/mapfunctions.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/mappaintlayer.h"
 #include "mapgui/maplayer.h"
@@ -28,6 +30,8 @@
 #include "query/airportquery.h"
 #include "common/maptools.h"
 #include "query/mapquery.h"
+#include "query/airspacequery.h"
+#include "query/airportquery.h"
 #include "common/coordinateconverter.h"
 #include "common/constants.h"
 #include "settings/settings.h"
@@ -45,6 +49,8 @@ MapScreenIndex::MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintL
   : mapWidget(parentWidget), paintLayer(mapPaintLayer)
 {
   mapQuery = NavApp::getMapQuery();
+  airspaceQuery = NavApp::getAirspaceQuery();
+  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
 }
 
@@ -53,20 +59,16 @@ MapScreenIndex::~MapScreenIndex()
 
 }
 
-void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
+void MapScreenIndex::updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
+                                                  const Marble::GeoDataLatLonAltBox& curBox)
 {
-  airspacePolygons.clear();
-
-  if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
-    return;
-
   CoordinateConverter conv(mapWidget->viewport());
   const MapScale *scale = paintLayer->getMapScale();
   if(scale->isValid())
   {
-    const QList<map::MapAirspace> *airspaces = mapQuery->getAirspaces(
+    const QList<map::MapAirspace> *airspaces = query->getAirspaces(
       curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
-      NavApp::getRoute().getCruisingAltitudeFeet(), false);
+      NavApp::getRouteConst().getCruisingAltitudeFeet(), false);
 
     if(airspaces != nullptr)
     {
@@ -84,7 +86,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
           QPolygon polygon;
           int x, y;
 
-          const atools::geo::LineString *lines = mapQuery->getAirspaceGeometry(airspace.id);
+          const atools::geo::LineString *lines = query->getAirspaceGeometry(airspace.id);
 
           for(const Pos& pos : *lines)
           {
@@ -99,11 +101,35 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
 
           // qDebug() << airspace.name << polygon;
 
-          airspacePolygons.append(std::make_pair(airspace.id, polygon));
+          polygons.append(std::make_pair(airspace.id, polygon));
         }
       }
     }
   }
+}
+
+void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
+{
+  // Clear internal caches
+  airspaceQueryOnline->deInitQueries();
+  airspaceQueryOnline->initQueries();
+}
+
+void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
+{
+  airspacePolygons.clear();
+  airspacePolygonsOnline.clear();
+
+  if(!paintLayer->getMapLayer()->isAirspace() ||
+     !(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE) ||
+       paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE)))
+    return;
+
+  if(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+    updateAirspaceScreenGeometry(airspacePolygons, airspaceQuery, curBox);
+
+  if(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE))
+    updateAirspaceScreenGeometry(airspacePolygonsOnline, airspaceQueryOnline, curBox);
 }
 
 void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
@@ -176,7 +202,7 @@ void MapScreenIndex::restoreState()
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
 {
-  const Route& route = NavApp::getRoute();
+  const Route& route = NavApp::getRouteConst();
 
   routeLines.clear();
   routePoints.clear();
@@ -283,13 +309,14 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         result.userAircraft = simData.getUserAircraft();
   }
 
-  // Check for AI / multiplayer aircraft
+  // Check for AI / multiplayer aircraft from simulator ==============================
+  using maptools::insertSortedByDistance;
+  int x, y;
+
+  // Add boats ======================================
   result.aiAircraft.clear();
   if(NavApp::isConnected())
   {
-    using maptools::insertSortedByDistance;
-    int x, y;
-
     if(shown & map::AIRCRAFT_AI_SHIP && mapLayer->isAiShipLarge())
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
@@ -303,19 +330,32 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         }
       }
     }
+  }
 
-    if(shown & map::AIRCRAFT_AI && mapLayer->isAiAircraftLarge())
+  if(shown & map::AIRCRAFT_AI)
+  {
+    // Add AI or injected multiplayer aircraft ======================================
+    if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
     {
-      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+      for(const atools::fs::sc::SimConnectAircraft& obj : mapWidget->getAiAircraft())
       {
-        if(obj.getCategory() != atools::fs::sc::BOAT &&
-           (obj.getModelRadiusCorrected() * 2 > layer::LARGE_AIRCRAFT_SIZE || mapLayer->isAiAircraftSmall()) &&
-           (!obj.isOnGround() || mapLayer->isAiAircraftGround()))
+        if(obj.getCategory() != atools::fs::sc::BOAT && mapfunc::aircraftVisible(obj, mapLayer))
         {
           if(conv.wToS(obj.getPosition(), x, y))
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
               insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
         }
+      }
+    }
+
+    // Add online clients ======================================
+    for(const atools::fs::sc::SimConnectAircraft& obj : *NavApp::getOnlinedataController()->getAircraftFromCache())
+    {
+      if(mapfunc::aircraftVisible(obj, mapLayer))
+      {
+        if(conv.wToS(obj.getPosition(), x, y))
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, obj);
       }
     }
   }
@@ -326,7 +366,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   if(shown.testFlag(map::FLIGHTPLAN))
     // Get copies from flight plan if visible
-    NavApp::getRoute().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
 
   // Get points of procedure preview
   getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);
@@ -338,7 +378,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               shown &
                               (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT |
-                               map::MARKER | map::AIRWAYJ | map::AIRWAYV),
+                               map::MARKER | map::AIRWAYJ | map::AIRWAYV | map::USERPOINT),
                               xs, ys, maxDistance, result);
 
   // Update all incomplete objects, especially from search
@@ -350,39 +390,17 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result)
 {
   CoordinateConverter conv(mapWidget->viewport());
-  int x, y;
-
-  using maptools::insertSortedByDistance;
-
-  for(const map::MapAirport& obj : highlights.airports)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, obj);
-
-  for(const map::MapVor& obj : highlights.vors)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, obj);
-
-  for(const map::MapNdb& obj : highlights.ndbs)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, obj);
-
-  for(const map::MapWaypoint& obj : highlights.waypoints)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
-
-  for(const map::MapIls& obj : highlights.ils)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.ils, nullptr, xs, ys, obj);
-
-  for(const map::MapRunwayEnd& obj : highlights.runwayEnds)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
+  maptools::insertSorted(conv, xs, ys, highlights.airports, result.airports, &result.airportIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.vors, result.vors, &result.vorIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.airspaces, result.airspaces, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.ils, result.ils, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
+                         maxDistance);
+  maptools::insertSorted(conv, xs, ys, highlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
@@ -397,35 +415,14 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
   {
     const proc::MapProcedureLeg& leg = approachHighlight.at(i);
 
-    for(const map::MapAirport& obj : leg.navaids.airports)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, obj);
-
-    for(const map::MapVor& obj : leg.navaids.vors)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, obj);
-
-    for(const map::MapNdb& obj : leg.navaids.ndbs)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, obj);
-
-    for(const map::MapWaypoint& obj : leg.navaids.waypoints)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
-
-    for(const map::MapIls& obj : leg.navaids.ils)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.ils, nullptr, xs, ys, obj);
-
-    for(const map::MapRunwayEnd& obj : leg.navaids.runwayEnds)
-      if(conv.wToS(obj.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
+    maptools::insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
     if(conv.wToS(leg.line.getPos2(), x, y))
     {
@@ -475,19 +472,30 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance)
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& result)
 {
-  if(!paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
+  if(!paintLayer->getShownMapObjects().testFlag(map::AIRSPACE) &&
+     !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE))
     return;
 
   for(int i = 0; i < airspacePolygons.size(); i++)
   {
     const std::pair<int, QPolygon>& polyPair = airspacePolygons.at(i);
 
-    const QPolygon& poly = polyPair.second;
-
-    if(poly.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
+    if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
     {
       map::MapAirspace airspace;
-      mapQuery->getAirspaceById(airspace, polyPair.first);
+      NavApp::getAirspaceQuery()->getAirspaceById(airspace, polyPair.first);
+      result.airspaces.append(airspace);
+    }
+  }
+
+  for(int i = 0; i < airspacePolygonsOnline.size(); i++)
+  {
+    const std::pair<int, QPolygon>& polyPair = airspacePolygonsOnline.at(i);
+
+    if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
+    {
+      map::MapAirspace airspace;
+      NavApp::getAirspaceQueryOnline()->getAirspaceById(airspace, polyPair.first);
       result.airspaces.append(airspace);
     }
   }

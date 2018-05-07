@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ RouteStringDialog::~RouteStringDialog()
 
 void RouteStringDialog::updateButtonClicked()
 {
-  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRoute(),
+  ui->plainTextEditRouteString->setPlainText(RouteString::createStringForRoute(NavApp::getRouteConst(),
                                                                                NavApp::getSpeedKts(), options));
 }
 
@@ -152,7 +152,7 @@ void RouteStringDialog::restoreState()
   options = getOptionsFromSettings();
   updateButtonState();
 
-  ui->plainTextEditRouteString->setPlainText(routeString->createStringForRoute(NavApp::getRoute(),
+  ui->plainTextEditRouteString->setPlainText(RouteString::createStringForRoute(NavApp::getRouteConst(),
                                                                                NavApp::getSpeedKts(), options));
 }
 
@@ -193,11 +193,11 @@ void RouteStringDialog::readButtonClicked()
 
     QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
     if(!sid.isEmpty())
-      msg += tr("Found departure procedure <b>%1</b>.<br/>").arg(sid);
+      msg += tr("Found SID <b>%1</b>.<br/>").arg(sid);
 
     QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
     if(!star.isEmpty())
-      msg += tr("Found arrival procedure <b>%1</b>.<br/>").arg(star);
+      msg += tr("Found STAR <b>%1</b>.<br/>").arg(star);
 
     ui->textEditRouteStringErrors->setHtml(msg);
   }
@@ -277,7 +277,7 @@ void RouteStringDialog::updateButtonState()
   QStringList cleanString = RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText());
 
   ui->pushButtonRouteStringRead->setEnabled(!cleanString.isEmpty());
-  ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRoute().isEmpty());
+  ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRouteConst().isEmpty());
 
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
 

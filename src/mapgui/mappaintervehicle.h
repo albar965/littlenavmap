@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,23 +53,6 @@ public:
 
   virtual void render(PaintContext *context) = 0;
 
-  enum AircraftType
-  {
-    AC_SMALL,
-    AC_JET,
-    AC_HELICOPTER,
-    AC_SHIP
-  };
-
-  struct PixmapKey
-  {
-    bool operator==(const MapPainterVehicle::PixmapKey& other) const;
-
-    AircraftType type;
-    bool ground;
-    bool user;
-    int size;
-  };
 
 protected:
   void paintTrack(const PaintContext *context);
@@ -77,12 +60,12 @@ protected:
   void paintUserAircraft(const PaintContext *context,
                          const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
   void paintAiVehicle(const PaintContext *context,
-                      const atools::fs::sc::SimConnectAircraft& vehicle);
+                      const atools::fs::sc::SimConnectAircraft& vehicle, bool forceLabel);
 
   void paintTextLabelUser(const PaintContext *context, float x, float y, int size,
                           const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void paintTextLabelAi(const PaintContext *context, float x, float y, int size,
-                        const atools::fs::sc::SimConnectAircraft& aircraft);
+                        const atools::fs::sc::SimConnectAircraft& aircraft, bool forceLabel);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
   void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
                      bool registration, bool type, bool airline, bool flightnumber);
@@ -95,17 +78,10 @@ protected:
   void paintTextLabelWind(const PaintContext *context, int x, int y, int size,
                           const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
-  const QPixmap *pixmapFromCache(const PixmapKey& key);
-  const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, bool user);
-
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 
   static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
-
-private:
-  /* Caches pixmaps generated from SVG graphics */
-  QCache<PixmapKey, QPixmap> aircraftPixmaps;
 
 };
 

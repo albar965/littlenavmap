@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -401,15 +401,51 @@ MapLayer& MapLayer::aiAircraftText(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::maxTextLength(int size)
+MapLayer& MapLayer::onlineAircraft(bool value)
 {
-  maximumTextLength = size;
+  layerOnlineAircraft = value;
+  return *this;
+}
+
+MapLayer& MapLayer::onlineAircraftText(bool value)
+{
+  layerOnlineAircraftText = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMaxTextLength(int size)
+{
+  maximumTextLengthAirport = size;
   return *this;
 }
 
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::userpoint(bool value)
+{
+  layerUserpoint = value;
+  return *this;
+}
+
+MapLayer& MapLayer::userpointInfo(bool value)
+{
+  layerUserpointInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::userpoinSymbolSize(int size)
+{
+  layerUserpointSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::userpointMaxTextLength(int length)
+{
+  maximumTextLengthUserpoint = length;
   return *this;
 }
 

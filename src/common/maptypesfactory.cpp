@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,12 @@ MapTypesFactory::~MapTypesFactory()
 
 }
 
-void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav)
+void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
+                                  bool xplane)
 {
   fillAirportBase(record, airport, complete);
   airport.navdata = nav;
+  airport.xplane = xplane;
 
   if(complete)
   {
@@ -61,17 +63,17 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
-void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport)
+void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane)
 {
   fillAirportBase(record, airport, true);
+  airport.navdata = nav;
+  airport.xplane = xplane;
 
-  airport.navdata = false;
   airport.flags = fillAirportFlags(record, true);
   airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
-void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway,
-                                 bool overview)
+void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview)
 {
   if(!overview)
   {
@@ -79,8 +81,6 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.shoulder = record.valueStr("shoulder", QString()); // Optional X-Plane field
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
-    runway.primaryEndId = record.valueInt("primary_end_id");
-    runway.secondaryEndId = record.valueInt("secondary_end_id");
     runway.edgeLight = record.valueStr("edge_light");
     runway.width = record.valueInt("width");
     runway.primaryOffset = record.valueInt("primary_offset_threshold");
@@ -105,6 +105,12 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.secondaryClosed = 0;
   }
 
+  runway.primaryEndId = record.valueInt("primary_end_id", -1);
+  runway.secondaryEndId = record.valueInt("secondary_end_id", -1);
+
+  // Optional in AirportQuery::getRunways
+  runway.airportId = record.valueInt("airport_id", -1);
+
   runway.length = record.valueInt("length");
   runway.heading = record.valueFloat("heading");
   runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
@@ -119,8 +125,6 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
   end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   end.secondary = record.valueStr("end_type") == "S";
   end.heading = record.valueFloat("heading");
-  if(end.secondary)
-    end.heading = atools::geo::opposedCourseDeg(end.heading);
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)
@@ -136,6 +140,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
+    ap.transitionAltitude = record.valueInt("transition_altitude", 0);
 
     ap.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                        record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
@@ -303,6 +308,19 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
     vor.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 }
 
+void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint& obj)
+{
+  obj.id = rec.valueInt("userdata_id");
+  obj.ident = rec.valueStr("ident");
+  obj.region = rec.valueStr("region");
+  obj.name = rec.valueStr("name");
+  obj.type = rec.valueStr("type");
+  obj.description = rec.valueStr("description");
+  obj.tags = rec.valueStr("tags");
+  obj.temp = rec.valueBool("temp", false);
+  obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
+}
+
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
 {
   ndb.id = record.valueInt("ndb_id");
@@ -465,19 +483,28 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
 }
 
-void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace)
+void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, bool online)
 {
-  airspace.id = record.valueInt("boundary_id");
+  if(record.contains("boundary_id"))
+    airspace.id = record.valueInt("boundary_id");
+  else if(record.contains("atc_id"))
+    airspace.id = record.valueInt("atc_id");
+
+  airspace.online = online;
 
   airspace.type = map::airspaceTypeFromDatabase(record.valueStr("type"));
-  airspace.name = record.valueStr("name");
+  airspace.name = record.valueStr(online ? "callsign" : "name");
   airspace.comType = record.valueStr("com_type");
-  airspace.comFrequency = record.valueInt("com_frequency");
-  airspace.comName = record.valueStr("com_name");
-  airspace.minAltitudeType = record.valueStr("min_altitude_type");
-  airspace.maxAltitudeType = record.valueStr("max_altitude_type");
-  airspace.maxAltitude = record.valueInt("max_altitude");
-  airspace.minAltitude = record.valueInt("min_altitude");
+
+  for(const QString& str : record.valueStr("com_frequency", QString()).split("&"))
+    airspace.comFrequencies.append(str.toInt());
+
+  // Use default values for online network ATC centers
+  airspace.comName = record.valueStr("com_name", QString());
+  airspace.minAltitudeType = record.valueStr("min_altitude_type", QString());
+  airspace.maxAltitudeType = record.valueStr("max_altitude_type", QString());
+  airspace.maxAltitude = record.valueInt("max_altitude", 0);
+  airspace.minAltitude = record.valueInt("min_altitude", 60000);
 
   // explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
   airspace.bounding = Rect(record.valueFloat("min_lonx"), record.valueFloat("max_laty"),

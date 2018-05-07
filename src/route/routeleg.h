@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,8 +76,9 @@ public:
   /* Get magvar from all known objects */
   void updateMagvar();
 
-  /* Change user defined waypoint name */
+  /* Change user defined waypoint name and position */
   void updateUserName(const QString& name);
+  void updateUserPosition(const atools::geo::Pos& pos);
 
   /* Set parking and start position. Does not modify the flight plan entry. */
   void setDepartureParking(const map::MapParking& departureParking);
@@ -175,6 +176,12 @@ public:
     return waypoint;
   }
 
+  /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
+  map::MapRunwayEnd getRunwayEnd() const
+  {
+    return runwayEnd;
+  }
+
   /* Great circle distance to this route map object from the predecessor in nautical miles or 0 if first in route */
   float getDistanceTo() const
   {
@@ -266,15 +273,13 @@ public:
     return index;
   }
 
-  /* true if airway given but not found in database */
-  bool isAirwaySetAndInvalid() const
-  {
-    return !getAirwayName().isEmpty() && !airway.isValid();
-  }
+  /* true if airway given but not found in database. Also true if one-way direction is violated */
+  bool isAirwaySetAndInvalid() const;
+
+  const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
 private:
-  const atools::fs::pln::FlightplanEntry& curEntry() const;
-
+  // TODO assign functions are duplicatd in FlightplanEntryBuilder
   void assignIntersection(const map::MapSearchResult& mapobjectResult,
                           atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignVor(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
@@ -282,6 +287,8 @@ private:
   void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
                        float maxDistance);
   void assignRunwayOrHelipad(const QString& name);
+  void assignAirport(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;

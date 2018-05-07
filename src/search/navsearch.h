@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVSEARCH_H
 #define LITTLENAVMAP_NAVSEARCH_H
 
-#include "search/searchbase.h"
+#include "search/searchbasetable.h"
 
 #include <QObject>
 
@@ -46,7 +46,7 @@ class NavSearch :
   Q_OBJECT
 
 public:
-  NavSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex);
+  NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
   virtual ~NavSearch();
 
   /* All state saving is done through the widget state */
@@ -62,11 +62,13 @@ private:
   virtual void saveViewState(bool distSearchActive) override;
   virtual void restoreViewState(bool distSearchActive) override;
   virtual void updatePushButtons() override;
+  QAction *followModeAction() override;
 
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+  void overrideMode(const QStringList& overrideColumnTitles);
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> navSearchWidgets;

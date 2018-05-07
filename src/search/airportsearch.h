@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_AIRPORTSEARCH_H
 #define LITTLENAVMAP_AIRPORTSEARCH_H
 
-#include "search/searchbase.h"
+#include "search/searchbasetable.h"
 
 #include <QObject>
 
@@ -41,7 +41,7 @@ class AirportSearch :
   Q_OBJECT
 
 public:
-  AirportSearch(QMainWindow *parent, QTableView *tableView, int tabWidgetIndex);
+  AirportSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
   virtual ~AirportSearch();
 
   /* All state saving is done through the widget state */
@@ -57,11 +57,13 @@ private:
   virtual void saveViewState(bool distSearchActive) override;
   virtual void restoreViewState(bool distSearchActive) override;
   virtual void updatePushButtons() override;
+  QAction *followModeAction() override;
 
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+  void overrideMode(const QStringList& overrideColumnTitles);
 
   static const QSet<QString> NUMBER_COLUMNS;
 
@@ -73,6 +75,7 @@ private:
 
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,14 @@
 #include "fs/fspaths.h"
 #include "common/mapflags.h"
 #include "geo/linestring.h"
-#include "fs/sc/simconnectaircraft.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "fs/weather/weathertypes.h"
 #include "fs/common/xpgeometry.h"
 
 #include <QColor>
 #include <QString>
+
+class OptionData;
 
 namespace proc {
 
@@ -103,11 +105,12 @@ struct MapAirport
 {
   QString ident, /* ICAO ident*/ name, region;
   int id; /* Database id airport.airport_id */
-  int longestRunwayLength = 0, longestRunwayHeading = 0;
+  int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0;
   int rating = -1;
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
-  bool navdata; /* true if source is third party nav database, false if source is simulator data */
+  bool navdata, /* true if source is third party nav database, false if source is simulator data */
+       xplane; /* true if data source is X-Plane */
 
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
   atools::geo::Pos position, towerCoords;
@@ -132,12 +135,18 @@ struct MapAirport
   bool apron() const;
   bool taxiway() const;
   bool parking() const;
-  bool empty() const;
   bool als() const;
   bool vasi() const;
   bool fence() const;
   bool closedRunways() const;
   bool procedure() const;
+
+  /* Check if airport should be drawn empty */
+  bool emptyDraw() const;
+  bool emptyDraw(const OptionData& od) const;
+
+  /* Check if airport has any scenery elements */
+  bool empty() const;
 
   bool isValid() const
   {
@@ -174,6 +183,9 @@ struct MapRunway
       primaryOffset, secondaryOffset, /* part of the runway length */
       primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length */
   atools::geo::Pos position, primaryPosition, secondaryPosition;
+
+  /* Used by AirportQuery::getRunways */
+  int airportId;
 
   bool primaryClosed, secondaryClosed; /* true if ends have closed markings */
 
@@ -455,13 +467,38 @@ struct MapAirwayWaypoint
 };
 
 /* User defined waypoint of a flight plan */
-struct MapUserpoint
+struct MapUserpointRoute
 {
   QString name;
   int id; /* Sequence number as it was added to the flight plan */
   float magvar;
   atools::geo::Pos position;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
+/* User defined waypoint from the user database */
+struct MapUserpoint
+{
+  QString name, ident, region, type, description, tags;
+  int id;
+  atools::geo::Pos position;
+  bool temp = false;
 
   bool isValid() const
   {
@@ -585,11 +622,18 @@ struct MapAirspace
 {
   int id;
   int minAltitude, maxAltitude;
-  QString name, comName, comType, minAltitudeType, maxAltitudeType;
-  int comFrequency;
+  QString name, /* Airspace name or callsign for online ATC */
+          comName, comType, minAltitudeType, maxAltitudeType;
+  QVector<int> comFrequencies;
   map::MapAirspaceTypes type;
+  bool online = false;
 
   atools::geo::Rect bounding;
+
+  atools::geo::Pos getPosition() const
+  {
+    return bounding.getCenter();
+  }
 
   bool isValid() const
   {
@@ -607,7 +651,7 @@ struct MapAirspace
 struct MapSearchResult
 {
   QList<MapAirport> airports;
-  QSet<int> airportIds; /* Ids used to deduplicate */
+  QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
 
   QList<MapRunwayEnd> runwayEnds;
   QList<MapAirport> towers;
@@ -630,12 +674,29 @@ struct MapSearchResult
   QList<MapAirspace> airspaces;
 
   /* User defined route points */
-  QList<MapUserpoint> userPoints;
+  QList<MapUserpointRoute> userPointsRoute;
+
+  /* User defined waypoints */
+  QList<MapUserpoint> userpoints;
+  QSet<int> userpointIds; /* Ids used to deduplicate */
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
 
+  QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
+  QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
+
   bool isEmpty(const map::MapObjectTypes& types) const;
+
+  bool hasAirports() const
+  {
+    return !airports.isEmpty();
+  }
+
+  bool hasAirways() const
+  {
+    return !airways.isEmpty();
+  }
 
   bool hasVor() const
   {
@@ -645,6 +706,11 @@ struct MapSearchResult
   bool hasNdb() const
   {
     return !ndbs.isEmpty();
+  }
+
+  bool hasUserpoints() const
+  {
+    return !userpoints.isEmpty();
   }
 
   bool hasIls() const
@@ -663,6 +729,8 @@ struct MapSearchResult
   }
 
 };
+
+QDebug operator<<(QDebug out, const map::MapSearchResult& record);
 
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
@@ -715,11 +783,19 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
-  atools::fs::sc::MetarResult fsMetar;
+  atools::fs::weather::MetarResult fsMetar, ivaoMetar, noaaMetar;
   bool isAsDeparture = false, isAsDestination = false;
-  QString asMetar, asType, vatsimMetar, noaaMetar, ident;
+  QString asMetar, asType, vatsimMetar, ident;
+
+  bool isEmpty() const
+  {
+    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() &&
+           ivaoMetar.isEmpty();
+  }
 
 };
+
+QDebug operator<<(QDebug out, const map::WeatherContext& record);
 
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
@@ -780,7 +856,8 @@ QString vorType(const map::MapVor& vor);
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
-QString userpointText(const map::MapUserpoint& userpoint);
+QString userpointRouteText(const map::MapUserpointRoute& userpoint);
+QString userpointText(const MapUserpoint& userpoint);
 QString airwayText(const map::MapAirway& airway);
 
 /* Altitude text for airways */
@@ -789,7 +866,7 @@ QString airwayAltText(const MapAirway& airway);
 /* Short for map display */
 QString airwayAltTextShort(const MapAirway& airway);
 
-QString magvarText(float magvar);
+QString magvarText(float magvar, bool shortText = false);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
@@ -815,7 +892,7 @@ Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapUserpoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapSearchResult, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);

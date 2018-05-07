@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@ struct MapVor;
 
 struct MapWaypoint;
 
+struct MapUserpoint;
+
 struct MapSearchResult;
 
 }
@@ -65,7 +67,7 @@ public:
 
   void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            map::MapObjectTypes type = map::NONE);
+                            map::MapObjectTypes type);
 
   void buildFlightplanEntry(const map::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
@@ -83,6 +85,8 @@ public:
 
   void entryFromWaypoint(const map::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
                          bool resolveWaypoints) const;
+
+  void entryFromUserpoint(const map::MapUserpoint& userpoint, atools::fs::pln::FlightplanEntry& entry);
 
   int getCurUserpointNumber() const
   {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,12 @@
 
 #include "geo/pos.h"
 
-const static QString COORDS_DEC_FORMAT("%L1° %L2 %L3° %L4");
-const static QString COORDS_DM_FORMAT("%L1° %L2' %L3 %L4° %L5' %L6");
-const static QString COORDS_DMS_FORMAT("%L1° %L2' %L3\" %L4 %L5° %L6' %L7\" %L8");
+const static QString COORDS_DEC_FORMAT_LONX("%L1° %L2");
+const static QString COORDS_DEC_FORMAT_LATY("%L1° %L2");
+const static QString COORDS_DMS_FORMAT_LONX("%L1° %L2' %L3\" %L4");
+const static QString COORDS_DMS_FORMAT_LATY("%L1° %L2' %L3\" %L4");
+const static QString COORDS_DM_FORMAT_LONX("%L1° %L2' %L3");
+const static QString COORDS_DM_FORMAT_LATY("%L1° %L2' %L3");
 
 QLocale *Unit::locale = nullptr;
 QLocale *Unit::clocale = nullptr;
@@ -343,34 +346,61 @@ QString Unit::coords(const atools::geo::Pos& pos)
   if(!pos.isValid())
     return QObject::tr("Invalid");
 
+  return coordsLatY(pos) + " " + coordsLonX(pos);
+}
+
+QString Unit::coordsLonX(const atools::geo::Pos& pos)
+{
+  if(!pos.isValid())
+    return QObject::tr("Invalid");
+
   switch(unitCoords)
   {
     case opts::COORDS_DMS:
-      return COORDS_DMS_FORMAT.
-             arg(atools::absInt(pos.getLatYDeg())).
-             arg(atools::absInt(pos.getLatYMin())).
-             arg(std::abs(pos.getLatYSec()), 0, 'f', 2).
-             arg(pos.getLatY() > 0.f ? "N" : "S").
+      return COORDS_DMS_FORMAT_LONX.
              arg(atools::absInt(pos.getLonXDeg())).
              arg(atools::absInt(pos.getLonXMin())).
              arg(std::abs(pos.getLonXSec()), 0, 'f', 2).
              arg(pos.getLonX() > 0.f ? "E" : "W");
 
     case opts::COORDS_DEC:
-      return COORDS_DEC_FORMAT.
-             arg(std::abs(pos.getLatY()), 0, 'f', 4, QChar('0')).
-             arg(pos.getLatY() > 0.f ? "N" : "S").
+      return COORDS_DEC_FORMAT_LONX.
              arg(std::abs(pos.getLonX()), 0, 'f', 4, QChar('0')).
              arg(pos.getLonX() > 0.f ? "E" : "W");
 
     case opts::COORDS_DM:
-      return COORDS_DM_FORMAT.
-             arg(atools::absInt(pos.getLatYDeg())).
-             arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2).
-             arg(pos.getLatY() > 0.f ? "N" : "S").
+      return COORDS_DM_FORMAT_LONX.
              arg(atools::absInt(pos.getLonXDeg())).
              arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2).
              arg(pos.getLonX() > 0.f ? "E" : "W");
+  }
+  return QString();
+}
+
+QString Unit::coordsLatY(const atools::geo::Pos& pos)
+{
+  if(!pos.isValid())
+    return QObject::tr("Invalid");
+
+  switch(unitCoords)
+  {
+    case opts::COORDS_DMS:
+      return COORDS_DMS_FORMAT_LATY.
+             arg(atools::absInt(pos.getLatYDeg())).
+             arg(atools::absInt(pos.getLatYMin())).
+             arg(std::abs(pos.getLatYSec()), 0, 'f', 2).
+             arg(pos.getLatY() > 0.f ? "N" : "S");
+
+    case opts::COORDS_DEC:
+      return COORDS_DEC_FORMAT_LATY.
+             arg(std::abs(pos.getLatY()), 0, 'f', 4, QChar('0')).
+             arg(pos.getLatY() > 0.f ? "N" : "S");
+
+    case opts::COORDS_DM:
+      return COORDS_DM_FORMAT_LATY.
+             arg(atools::absInt(pos.getLatYDeg())).
+             arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2).
+             arg(pos.getLatY() > 0.f ? "N" : "S");
   }
   return QString();
 }

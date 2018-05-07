@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,8 @@ extern QColor airwayTextColor;
 extern QColor distanceRhumbColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
+extern QColor compassRoseColor;
+extern QColor compassRoseTextColor;
 extern QColor distanceColor;
 
 /* Elevation profile colors and pens */
@@ -140,9 +142,11 @@ const QColor highlightColorFast = QColor(Qt::darkYellow);
 const QColor highlightApproachColor = QColor(150, 150, 255);
 const QColor highlightApproachColorFast = QColor(0, 0, 150);
 
+/* Flight plan or userpoint cross line colors */
+const QColor mapDragColor = QColor(Qt::darkYellow);
+
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
-const QColor routeDragColor = QColor(Qt::darkYellow);
 
 const QColor routeProcedurePreviewOutlineColor = QColor(Qt::black);
 const QColor routeProcedurePreviewColor = QColor(0, 180, 255);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "fs/pln/flightplan.h"
 #include "common/maptools.h"
 #include "atools.h"
+#include "fs/util/fsutil.h"
 #include "route/route.h"
 #include "navapp.h"
 
@@ -175,21 +176,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIcaoIdent());
       if(!mapobjectResult.airports.isEmpty())
       {
-        type = map::AIRPORT;
-        flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
-
-        airport = mapobjectResult.airports.first();
-
-        Q_ASSERT(!airport.navdata);
-
+        assignAirport(mapobjectResult, flightplanEntry);
         valid = true;
-        if(!flightplanEntry->getPosition().isValid())
-          flightplanEntry->setPosition(airport.position);
 
-        // values which are not saved in PLN but other formats
-        flightplanEntry->setName(airport.name);
-        flightplanEntry->setMagvar(airport.magvar);
-
+        // Resolve parking ==============================
         QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && prevLeg == nullptr)
         {
@@ -267,11 +257,25 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // =============================== Navaid waypoint
     case atools::fs::pln::entry::INTERSECTION:
-      mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT, flightplanEntry->getIcaoIdent(), region,
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::AIRPORT,
+                                    flightplanEntry->getIcaoIdent(), region, /* region is ignored for airports */
                                     QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
       if(!mapobjectResult.waypoints.isEmpty())
       {
         assignIntersection(mapobjectResult, flightplanEntry);
+        valid = true;
+      }
+      else if(!mapobjectResult.airports.isEmpty())
+      {
+        // FSC saves airports in the flight plan wrongly as intersections
+        assignAirport(mapobjectResult, flightplanEntry);
+        valid = true;
+      }
+      else if(!atools::fs::util::isValidIdent(flightplanEntry->getIcaoIdent()))
+      {
+        // Name contains funny characters - must me a user fix from FSC
+        flightplanEntry->setWaypointId(flightplanEntry->getIcaoIdent());
+        assignUser(flightplanEntry);
         valid = true;
       }
       break;
@@ -300,13 +304,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // =============================== Navaid user coordinates
     case atools::fs::pln::entry::USER:
+      assignUser(flightplanEntry);
       valid = true;
-      type = map::USER;
-      flightplanEntry->setIcaoIdent(QString());
-      flightplanEntry->setIcaoRegion(QString());
-      flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
-
-      // flightplanEntry->setWaypointId(userName);
       break;
   }
 
@@ -422,6 +421,11 @@ void RouteLeg::updateUserName(const QString& name)
   flightplan->getEntries()[index].setWaypointId(name);
 }
 
+void RouteLeg::updateUserPosition(const atools::geo::Pos& pos)
+{
+  flightplan->getEntries()[index].setPosition(pos);
+}
+
 int RouteLeg::getId() const
 {
   if(type == map::INVALID)
@@ -486,7 +490,7 @@ QString RouteLeg::getMapObjectTypeName() const
     return tr("ILS");
   else if(runwayEnd.isValid())
     return tr("Runway");
-  else if(type == map::USER)
+  else if(type == map::USERPOINTROUTE)
     return EMPTY_STRING;
   else
     return EMPTY_STRING;
@@ -511,8 +515,8 @@ const atools::geo::Pos& RouteLeg::getPosition() const
   {
     if(type == map::INVALID)
     {
-      if(curEntry().getPosition().isValid())
-        return curEntry().getPosition();
+      if(getFlightplanEntry().getPosition().isValid())
+        return getFlightplanEntry().getPosition();
       else
         return atools::geo::EMPTY_POS;
     }
@@ -529,8 +533,8 @@ const atools::geo::Pos& RouteLeg::getPosition() const
       return ils.position;
     else if(runwayEnd.isValid())
       return runwayEnd.position;
-    else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
-      return curEntry().getPosition();
+    else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+      return getFlightplanEntry().getPosition();
   }
   return atools::geo::EMPTY_POS;
 }
@@ -552,10 +556,10 @@ QString RouteLeg::getIdent() const
   else if(!procedureLeg.displayText.isEmpty())
     return procedureLeg.displayText.first();
   else if(type == map::INVALID)
-    return curEntry().getIcaoIdent();
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
-    return curEntry().getWaypointId();
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+    return getFlightplanEntry().getIcaoIdent();
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return getFlightplanEntry().getWaypointId();
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
     return EMPTY_STRING;
   else
     return EMPTY_STRING;
@@ -577,9 +581,9 @@ bool RouteLeg::isNavdata() const
     return runwayEnd.navdata;
   else if(type == map::INVALID)
     return true;
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
     return true;
-  else if(curEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
     return true;
 
   return true;
@@ -617,7 +621,7 @@ QString RouteLeg::getName() const
 const QString& RouteLeg::getAirwayName() const
 {
   if(isRoute())
-    return curEntry().getAirway();
+    return getFlightplanEntry().getAirway();
   else
     return EMPTY_STRING;
 }
@@ -653,7 +657,7 @@ int RouteLeg::getFrequency() const
   return 0;
 }
 
-const atools::fs::pln::FlightplanEntry& RouteLeg::curEntry() const
+const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
   if(isRoute())
     return flightplan->at(index);
@@ -676,7 +680,50 @@ bool RouteLeg::isApproachPoint() const
           procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
+bool RouteLeg::isAirwaySetAndInvalid() const
+{
+  if(!getAirwayName().isEmpty() && airway.isValid())
+  {
+    // Set and valid - check direction
+    if(airway.direction == map::DIR_BOTH)
+      // Always valid in both directions
+      return false;
+    else if(airway.direction == map::DIR_FORWARD)
+      // From this to airway "from" is wrong direction - invalid
+      return getId() == airway.fromWaypointId;
+    else if(airway.direction == map::DIR_BACKWARD)
+      // From this to airway "to" is wrong direction for backward - invalid
+      return getId() == airway.toWaypointId;
+  }
+
+  return !getAirwayName().isEmpty() && !airway.isValid();
+}
+
 // TODO assign functions are duplicatd in FlightplanEntryBuilder
+void RouteLeg::assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::USERPOINTROUTE;
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::USER);
+  flightplanEntry->setIcaoIdent(QString());
+  flightplanEntry->setIcaoRegion(QString());
+  flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
+}
+
+void RouteLeg::assignAirport(const map::MapSearchResult& mapobjectResult,
+                             atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  type = map::AIRPORT;
+  airport = mapobjectResult.airports.first();
+
+  flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
+  if(!flightplanEntry->getPosition().isValid())
+    flightplanEntry->setPosition(airport.position);
+
+  // values which are not saved in PLN but other formats
+  flightplanEntry->setName(airport.name);
+  flightplanEntry->setMagvar(airport.magvar);
+}
+
 void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
@@ -745,6 +792,8 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
       << "ident" << leg.getIdent()
       << "nav" << leg.isNavdata()
       << leg.getIdent() << leg.getMapObjectTypeName()
-      << proc::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
+      << proc::procedureLegTypeStr(leg.getProcedureLegType())
+      << "airway" << leg.getAirway().id << leg.getAirwayName() << (leg.getAirway().isValid() ? "valid" : "invalid")
+      << "]";
   return out;
 }

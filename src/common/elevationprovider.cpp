@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void ElevationProvider::marbleUpdateAvailable()
     emit updateAvailable();
 }
 
-float ElevationProvider::getElevation(const atools::geo::Pos& pos)
+float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos)
 {
   QMutexLocker locker(&mutex);
 

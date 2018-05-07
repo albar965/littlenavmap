@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,12 +35,15 @@ class QTimer;
 class CsvExporter;
 class Column;
 class ViewEventFilter;
-class LineEditEventFilter;
+class SearchWidgetEventFilter;
 class QLineEdit;
+class QAction;
+class QComboBox;
 
 namespace atools {
 namespace sql {
 class SqlDatabase;
+class SqlRecord;
 }
 
 namespace geo {
@@ -67,7 +70,8 @@ class SearchBaseTable :
 
 public:
   /* Class will take ownership of columnList */
-  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList, int tabWidgetIndex);
+  SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                  si::SearchTabIndex tabWidgetIndex);
   virtual ~SearchBaseTable();
 
   /* Disconnect and reconnect queries on database change */
@@ -81,8 +85,7 @@ public:
   void searchMarkChanged(const atools::geo::Pos& mark);
 
   /* Set the search filter to ident, region, airport ident and update the search result */
-  void filterByIdent(const QString& ident, const QString& region = QString(),
-                     const QString& airportIdent = QString());
+  void filterByRecord(const atools::sql::SqlRecord& record);
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;
@@ -102,12 +105,33 @@ public:
 
   void nothingSelectedTriggered();
 
+  /* Refresh table after updates in the database */
+  void refreshData(bool loadAll, bool keepSelection);
+  void refreshView();
+
+  /* Number of rows currently loaded into the table view */
+  int getVisibleRowCount() const;
+
+  /* Total number of rows returned by the last query */
+  int getTotalRowCount() const;
+
+  /* Number of selected rows */
+  int getSelectedRowCount() const;
+
+  /* Get ids of all selected objects */
+  QVector<int> getSelectedIds() const;
+
+  /* Default handler */
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
+  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Show point object (airport) on double click or menu selection */
-  void showPos(const atools::geo::Pos& pos, int zoom, bool doubleClick);
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
   /* Search center changed in context menu */
   void changeSearchMark(const atools::geo::Pos& pos);
@@ -135,6 +159,9 @@ protected:
   virtual void updateButtonMenu() = 0;
   virtual void updatePushButtons() = 0;
 
+  /* Return the action that defines follow mode */
+  virtual QAction *followModeAction() = 0;
+
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */
   void initViewAndController(atools::sql::SqlDatabase *db);
 
@@ -143,7 +170,7 @@ protected:
 
   void distanceSearchChanged(bool checked, bool changeViewState);
 
-  void connectLineEdit(QLineEdit *lineEdit);
+  void installEventFilterForWidget(QWidget *widget);
 
   /* Table/view controller */
   SqlController *controller = nullptr;
@@ -180,6 +207,7 @@ private:
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row);
+  void fontChanged();
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
@@ -190,7 +218,7 @@ private:
   QTimer *updateTimer;
 
   ViewEventFilter *viewEventFilter = nullptr;
-  LineEditEventFilter *lineEditEventFilter = nullptr;
+  SearchWidgetEventFilter *widgetEventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_SEARCHBASE_H

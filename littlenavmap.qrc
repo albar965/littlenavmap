@@ -168,5 +168,33 @@
         <file>resources/icons/checkbox_dark_checked.png</file>
         <file>resources/icons/radiobutton_dark_unchecked.png</file>
         <file>resources/icons/radiobutton_dark_checked.png</file>
+        <file>resources/icons/compassrose.svg</file>
+        <file>resources/icons/userpoint_Pin.svg</file>
+        <file>resources/icons/userpoint_Flag.svg</file>
+        <file>resources/icons/userpoint_Marker.svg</file>
+        <file>resources/icons/userpoint_Location.svg</file>
+        <file>resources/icons/userpoint_VRP.svg</file>
+        <file>resources/icons/userpoint_Closed.svg</file>
+        <file>resources/icons/userpoint_POI.svg</file>
+        <file>resources/icons/userpoint_Waypoint.svg</file>
+        <file>resources/icons/userpoint_Bookmark.svg</file>
+        <file>resources/icons/userpoint_Obstacle.svg</file>
+        <file>resources/icons/userpoint_Seaport.svg</file>
+        <file>resources/icons/userpoint_Airstrip.svg</file>
+        <file>resources/icons/userpoint_Helipad.svg</file>
+        <file>resources/icons/userpoint_Cabin.svg</file>
+        <file>resources/icons/userdata_add.svg</file>
+        <file>resources/icons/userdata_edit.svg</file>
+        <file>resources/icons/userdata_delete.svg</file>
+        <file>resources/icons/userpoint_Error.svg</file>
+        <file>resources/icons/userdata_move.svg</file>
+        <file>resources/icons/userpoint_Airport.svg</file>
+        <file>resources/icons/userpoint_Mountain.svg</file>
+        <file>resources/icons/userpoint_Logbook.svg</file>
+        <file>resources/icons/airspaceonline.svg</file>
+        <file>resources/icons/userpoint_Unknown.svg</file>
+        <file>resources/config/networks.cfg</file>
+        <file>resources/icons/aircraft_online.svg</file>
+        <file>resources/icons/aircraft_online_ground.svg</file>
     </qresource>
 </RCC>

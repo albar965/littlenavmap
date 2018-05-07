@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ int CsvExporter::exportSelected(bool open)
 
 #endif
 
-int CsvExporter::selectionAsCsv(QTableView *view, bool includeHeader, QString& result,
+int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QString& result,
                                 const QStringList& additionalHeader,
                                 std::function<QStringList(int index)> additionalFields)
 {
@@ -165,37 +165,56 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool includeHeader, QString& r
 
   QAbstractItemModel *model = view->model();
 
-  if(view->selectionModel() != nullptr && view->selectionModel()->hasSelection())
+  QItemSelectionModel *selection = view->selectionModel();
+  if(selection != nullptr && selection->hasSelection())
   {
-    QTextStream stream(&result, QIODevice::WriteOnly);
-    QHeaderView *header = view->horizontalHeader();
-    if(includeHeader)
+    if(rows)
     {
-      QStringList headers;
-      for(int i = 0; i < model->columnCount(); i++)
-        if(!view->isColumnHidden(i))
-          headers.append(model->headerData(header->logicalIndex(i), Qt::Horizontal).
-                         toString().replace("-\n", "").replace("\n", " "));
-
-      stream << exporter.getResultSetHeader(headers) +
-      (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalHeader.join(";")) << endl;
-    }
-
-    for(QItemSelectionRange rng : view->selectionModel()->selection())
-    {
-      for(int row = rng.top(); row <= rng.bottom(); ++row)
+      // Copy full rows
+      QTextStream stream(&result, QIODevice::WriteOnly);
+      QHeaderView *headerView = view->horizontalHeader();
+      if(header)
       {
-        QVariantList vars;
+        // Build CSV header
+        QStringList headers;
         for(int i = 0; i < model->columnCount(); i++)
           if(!view->isColumnHidden(i))
-            vars.append(model->data(model->index(row, header->logicalIndex(i))));
-        stream << exporter.getResultSetRow(vars) +
-        (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << endl;
+            headers.append(model->headerData(headerView->logicalIndex(i), Qt::Horizontal).
+                           toString().replace("-\n", "").replace("\n", " "));
 
+        stream << exporter.getResultSetHeader(headers) +
+        (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalHeader.join(";")) << endl;
+      }
+
+      for(QItemSelectionRange rng : selection->selection())
+      {
+        // Add data
+        for(int row = rng.top(); row <= rng.bottom(); ++row)
+        {
+          QVariantList vars;
+          for(int i = 0; i < model->columnCount(); i++)
+            if(!view->isColumnHidden(i))
+              vars.append(model->data(model->index(row, headerView->logicalIndex(i))));
+          stream << exporter.getResultSetRow(vars) +
+          (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << endl;
+
+          exported++;
+        }
+      }
+      stream.flush();
+    }
+    else
+    {
+      // Copy selected fields only
+      QStringList resultList;
+      QModelIndexList indexes = selection->selectedIndexes();
+      for(const QModelIndex& index : indexes)
+      {
+        resultList.append(model->data(index).toString());
         exported++;
       }
+      result = resultList.join(";");
     }
-    stream.flush();
   }
   return exported;
 }

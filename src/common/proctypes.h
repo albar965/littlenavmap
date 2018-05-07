@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "geo/linestring.h"
 
 #include <QColor>
+#include <QRegularExpression>
 #include <QString>
 
 /*
@@ -46,9 +47,13 @@ enum MapProcedureType
   PROCEDURE_STAR = 1 << 5,
   PROCEDURE_STAR_TRANSITION = 1 << 6,
 
+  /* Approach */
   PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
+
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
   PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
+
+  PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
 
   PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR_ALL,
 
@@ -96,7 +101,7 @@ struct MapSpeedRestriction
   };
 
   Descriptor descriptor = NONE;
-  float speed;
+  float speed = 0.f;
 
   bool isValid() const
   {
@@ -141,6 +146,7 @@ QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
 
 struct MapProcedureLeg;
 
+/* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
 {
   MapProcedurePoint(const MapProcedureLeg& leg);
@@ -148,6 +154,8 @@ struct MapProcedurePoint
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
 
   QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+
+  proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
   QStringList displayText, remarks;
   MapAltRestriction altRestriction;
@@ -353,6 +361,12 @@ struct MapProcedureLeg
 
 QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);
 
+/* True if e.g. "RW10B" for a SID or STAR which means that 10L, 10C and 10R can be used. */
+bool hasSidStarParallelRunways(const QString& approachArincName);
+
+/* True if "ALL" for a SID or STAR. Means SID/STAR can be used for all runways of an airport. */
+bool hasSidStarAllRunways(const QString& approachArincName);
+
 /* All legs for a arrival or departure including STAR, transition and approach in order or
  * legs for SID only.
  * SID contains all in approach and legs transition fields.
@@ -389,6 +403,22 @@ struct MapProcedureLegs
   int size() const
   {
     return transitionLegs.size() + approachLegs.size();
+  }
+
+  /* If it has arinc names like "ALL" or "RW10B" */
+  bool hasSidOrStarMultipleRunways() const
+  {
+    return hasSidOrStarAllRunways() || hasSidOrStarParallelRunways();
+  }
+
+  bool hasSidOrStarParallelRunways() const
+  {
+    return proc::hasSidStarParallelRunways(approachArincName);
+  }
+
+  bool hasSidOrStarAllRunways() const
+  {
+    return proc::hasSidStarAllRunways(approachArincName);
   }
 
   /* first in list is transition and then approach  or STAR only.
@@ -431,6 +461,7 @@ private:
 
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 
+QString procedureTypeText(proc::MapProcedureTypes mapType);
 QString procedureTypeText(const proc::MapProcedureLeg& leg);
 QString procedureFixType(const QString& type);
 QString procedureType(const QString& type);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   bool updateWidget = false;
 
-  if(!NavApp::getRoute().isFlightplanEmpty())
+  if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
     const Route& route = routeController->getRoute();
 
@@ -209,11 +209,11 @@ float ProfileWidget::calcGroundBuffer(float maxElevation)
 /* Check if the aircraft track is large enough on the screen to be shown and to alter the profile altitude */
 bool ProfileWidget::aircraftTrackValid()
 {
-  if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
+  if(!NavApp::getRouteConst().isFlightplanEmpty() && showAircraftTrack)
   {
     // Check if the track size is large enough to alter the maximum height
     int minTrackX = std::numeric_limits<int>::max(), maxTrackX = 0;
-    if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
+    if(!NavApp::getRouteConst().isFlightplanEmpty() && showAircraftTrack)
     {
       for(const at::AircraftTrackPos& trackPos : NavApp::getMapWidget()->getAircraftTrack())
       {
@@ -257,7 +257,7 @@ void ProfileWidget::updateScreenCoords()
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getUserAircraft().getPosition().isValid() &&
-     (showAircraft || showAircraftTrack) && !NavApp::getRoute().isFlightplanEmpty())
+     (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
     maxWindowAlt = std::max(maxWindowAlt, simData.getUserAircraft().getPosition().getAltitude());
 
   if(showAircraftTrack)
@@ -296,7 +296,7 @@ void ProfileWidget::updateScreenCoords()
   landPolygon.append(QPoint(X0 + w, h + Y0));
 
   aircraftTrackPoints.clear();
-  if(!NavApp::getRoute().isFlightplanEmpty() && showAircraftTrack)
+  if(!NavApp::getRouteConst().isFlightplanEmpty() && showAircraftTrack)
   {
     // Update aircraft track screen coordinates
     const Route& route = legList.route;
@@ -466,7 +466,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
       symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 14, flags, 10, true);
     }
-    else if(type == map::USER)
+    else if(type == map::USERPOINTROUTE)
     {
       symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
@@ -571,7 +571,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
                      labelColor, X0 - 8, flightplanY, textatt::BOLD | textatt::RIGHT, 255);
 
-  if(!NavApp::getRoute().isFlightplanEmpty())
+  if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
     if(todX < X0 + w && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     {

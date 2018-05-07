@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 OptionData *OptionData::optionData = nullptr;
 
+/* Default values for well known networks */
+
 OptionData::OptionData()
   : flightplanColor(Qt::yellow), flightplanActiveColor(Qt::magenta), trailColor(Qt::black)
 {
@@ -32,6 +34,62 @@ OptionData::OptionData()
 OptionData::~OptionData()
 {
 
+}
+
+opts::OnlineFormat OptionData::getOnlineFormat() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_CUSTOM:
+    case opts::ONLINE_CUSTOM_STATUS:
+    case opts::ONLINE_NONE:
+      return onlineFormat;
+
+    case opts::ONLINE_VATSIM:
+      return opts::ONLINE_FORMAT_VATSIM;
+
+    case opts::ONLINE_IVAO:
+      return opts::ONLINE_FORMAT_IVAO;
+  }
+  return opts::ONLINE_FORMAT_VATSIM;
+}
+
+QString OptionData::getOnlineStatusUrl() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_CUSTOM:
+    case opts::ONLINE_NONE:
+      return QString();
+
+    case opts::ONLINE_VATSIM:
+      return onlineVatsimStatusUrl;
+
+    case opts::ONLINE_IVAO:
+      return onlineIvaoStatusUrl;
+
+    case opts::ONLINE_CUSTOM_STATUS:
+      return onlineStatusUrl;
+  }
+  return QString();
+}
+
+QString OptionData::getOnlineWhazzupUrl() const
+{
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_NONE:
+      return QString();
+
+    case opts::ONLINE_CUSTOM:
+      return onlineWhazzupUrl;
+
+    case opts::ONLINE_VATSIM:
+    case opts::ONLINE_IVAO:
+    case opts::ONLINE_CUSTOM_STATUS:
+      return QString();
+  }
+  return QString();
 }
 
 const OptionData& OptionData::instance()

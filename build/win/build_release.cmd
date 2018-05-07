@@ -24,7 +24,7 @@ IF ERRORLEVEL 1 goto :err
 popd
 
 setlocal
-set PATH=%PATH%;C:\Qt\5.9.1\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin
+set PATH=%PATH%;C:\Qt\5.9.5\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin
 
 rem ===========================================================================
 rem ========================== atools 32 bit
@@ -58,7 +58,7 @@ endlocal
 rem ===========================================================================
 rem ========================== littlenavmap 32 bit
 setlocal
-set PATH=%PATH%;C:\Qt\5.9.1\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin
+set PATH=%PATH%;C:\Qt\5.9.5\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin
 pushd "%APROJECTS%\build-littlenavmap-release"
 del /S /Q /F "%APROJECTS%\build-littlenavmap-release"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlenavmap-release"') do rd /s /q "%APROJECTS%\build-littlenavmap-release\%%f"
