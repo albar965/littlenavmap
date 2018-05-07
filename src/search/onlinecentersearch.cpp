@@ -202,6 +202,11 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
         freqs.append(QLocale().toString(str.toDouble() / 1000., 'f', 3));
       return freqs.join(tr(", "));
     }
+    else if(col->getColumnName() == "visual_range")
+      return !displayRoleValue.isNull() &&
+             displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE &&
+             displayRoleValue.toFloat() > 0.f ?
+             Unit::distNm(displayRoleValue.toFloat(), false) : QString();
     else if(col->getColumnName() == "administrative_rating")
       return atools::fs::online::admRatingText(
         static_cast<atools::fs::online::adm::AdministrativeRating>(displayRoleValue.toInt()));

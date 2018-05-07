@@ -24,9 +24,11 @@
 #include "settings/settings.h"
 #include "options/optiondata.h"
 #include "zip/gzip.h"
+#include "geo/calculations.h"
 #include "sql/sqlquery.h"
 #include "mapgui/maplayer.h"
-#include "fs/sc/simconnectaircraft.h"
+#include "fs/sc/simconnectuseraircraft.h"
+#include "navapp.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -36,6 +38,9 @@
 // #define DEBUG_ONLINE_DOWNLOAD 1
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
+
+// Remove if duplicates with same registration if they are this close (500 kts for 3 min)
+static const int MIN_DISTANCE_DUPLICATE = atools::geo::nmToMeter(30);
 
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
@@ -63,6 +68,8 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
 
+  initAtcDefaultRadii();
+
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
 
@@ -82,6 +89,30 @@ OnlinedataController::~OnlinedataController()
 
   // Remove all from the database to avoid confusion on startup
   manager->clearData();
+}
+
+void OnlinedataController::initAtcDefaultRadii()
+{
+  // Override default circle radius for certain ATC center types
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+  QHash<atools::fs::online::fac::FacilityType, int> radii;
+  for(atools::fs::online::fac::FacilityType type : atools::fs::online::allFacilityTypes())
+  {
+    QVariant defaultValue(-1);
+    if(type == atools::fs::online::fac::GROUND)
+      defaultValue = 5;
+    else if(type == atools::fs::online::fac::TOWER)
+      defaultValue = 10;
+    else if(type == atools::fs::online::fac::APPROACH)
+      defaultValue = 20;
+
+    QVariant value = settings.getAndStoreValue("Online/CenterRadius" +
+                                               atools::fs::online::facilityTypeTextSettings(type),
+                                               defaultValue);
+    radii.insert(type, value.toInt());
+  }
+  manager->setAtcRadius(radii);
 }
 
 void OnlinedataController::startProcessing()
@@ -215,6 +246,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
         lastUpdateTime = QDateTime::currentDateTime();
 
         aircraftCache.clear();
+        simulatorAiRegistrations.clear();
+
         // Message for search tabs, map widget and info
         emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
       }
@@ -242,6 +275,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     lastUpdateTime = QDateTime::currentDateTime();
 
     aircraftCache.clear();
+    simulatorAiRegistrations.clear();
+
     // Message for search tabs, map widget and info
     emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
@@ -263,6 +298,7 @@ void OnlinedataController::stopAllProcesses()
   downloader->cancelDownload();
   downloadTimer.stop();
   currentState = NONE;
+  simulatorAiRegistrations.clear();
 }
 
 void OnlinedataController::showMessageDialog()
@@ -283,22 +319,16 @@ void OnlinedataController::optionsChanged()
   // Remove all from the database
   manager->clearData();
   aircraftCache.clear();
+  simulatorAiRegistrations.clear();
 
-  if(OptionData::instance().getOnlineNetwork() == opts::ONLINE_NONE)
-  {
-    emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
-    emit onlineServersUpdated(true /* load all */, true /* keep selection */);
-    emit onlineNetworkChanged();
-  }
-  else
-  {
-    lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
-    lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
+  emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+  emit onlineServersUpdated(true /* load all */, true /* keep selection */);
+  emit onlineNetworkChanged();
 
-    emit onlineNetworkChanged();
+  lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
+  lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
 
-    startDownloadInternal();
-  }
+  startDownloadInternal();
 }
 
 bool OnlinedataController::hasData() const
@@ -351,7 +381,24 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
     return curLayer->hasSameQueryParametersWaypoint(newLayer);
   });
 
-  if(aircraftCache.list.isEmpty() && !lazy)
+  // Remember user aircraft registration aircraft for disambiguation
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
+  QHash<QString, atools::geo::Pos> curRegistrations;
+  curRegistrations.insert(userAircraft.getAirplaneRegistration(), userAircraft.getPosition());
+
+  // Remember valid registrations from simulator aircraft for disambiguation
+  if(NavApp::isConnected() || userAircraft.isDebug())
+  {
+    for(const atools::fs::sc::SimConnectAircraft& aircraft : NavApp::getAiAircraft())
+      curRegistrations.insert(aircraft.getAirplaneRegistration(), aircraft.getPosition());
+  }
+  curRegistrations.remove(QString());
+
+  if(simulatorAiRegistrations.keys() != curRegistrations.keys())
+    // List of registrations has changed - clear cache and reload
+    aircraftCache.clear();
+
+  if((aircraftCache.list.isEmpty() && !lazy))
   {
     for(const Marble::GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
@@ -360,11 +407,17 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
       aircraftByRectQuery->exec();
       while(aircraftByRectQuery->next())
       {
-        atools::fs::sc::SimConnectAircraft ac;
-        fillAircraftFromClient(ac, aircraftByRectQuery->record());
-        aircraftCache.list.append(ac);
+        atools::fs::sc::SimConnectAircraft aircraft;
+        fillAircraftFromClient(aircraft, aircraftByRectQuery->record());
+
+        if(!curRegistrations.contains(aircraft.getAirplaneRegistration()) ||
+           aircraft.getPosition().distanceMeterTo(curRegistrations.value(aircraft.getAirplaneRegistration())) >
+           MIN_DISTANCE_DUPLICATE)
+          // Avoid duplicates with simulator aircraft that are close by
+          aircraftCache.list.append(aircraft);
       }
     }
+    simulatorAiRegistrations = curRegistrations;
   }
   aircraftCache.validate(queryMaxRows);
   return &aircraftCache.list;

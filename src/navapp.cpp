@@ -75,7 +75,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
 
-  setApplicationVersion("1.9.1.develop"); // VERSION_NUMBER
+  setApplicationVersion("2.0.1.beta"); // VERSION_NUMBER
 }
 
 NavApp::~NavApp()
@@ -284,6 +284,16 @@ bool NavApp::isConnected()
 bool NavApp::isUserAircraftValid()
 {
   return mainWindow->getMapWidget()->getUserAircraft().getPosition().isValid();
+}
+
+const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
+{
+  return mainWindow->getMapWidget()->getUserAircraft();
+}
+
+const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
+{
+  return mainWindow->getMapWidget()->getAiAircraft();
 }
 
 AirportQuery *NavApp::getAirportQuerySim()

@@ -32,7 +32,7 @@
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/roads/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
+          <downloadUrl protocol="https" host="korona.geog.uni-heidelberg.de" path="/tiles/roads/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
           <downloadPolicy usage="Browse" maximumConnections="2"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
@@ -41,7 +41,7 @@
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/asterh/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
+          <downloadUrl protocol="https" host="korona.geog.uni-heidelberg.de" path="/tiles/asterh/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
           <blending name="AlphaBlending"/>
           <downloadPolicy usage="Browse" maximumConnections="2"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>

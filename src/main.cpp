@@ -37,6 +37,7 @@
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
+#include "fs/weather/metarparser.h"
 #include "userdata/userdataicons.h"
 
 #include <QCommandLineParser>
@@ -46,6 +47,7 @@
 #include <QStyleFactory>
 #include <QSharedMemory>
 #include <QMessageBox>
+#include <QLibrary>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -60,6 +62,15 @@ using atools::gui::Translator;
 
 int main(int argc, char *argv[])
 {
+#ifdef Q_OS_LINUX
+  // Attempt to override buggy Qt SSL loading - on some platforms it tries to load newer unsupported versions
+  QLibrary libcrypto, libssl;
+  libcrypto.setFileNameAndVersion(QLatin1String("crypto"), QLatin1String("1.0.0"));
+  bool libCryptoLoaded = libcrypto.load();
+  libssl.setFileNameAndVersion(QLatin1String("ssl"), QLatin1String("1.0.0"));
+  bool libSslLoaded = libssl.load();
+#endif
+
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
 
@@ -139,6 +150,10 @@ int main(int argc, char *argv[])
             << "build library" << QSslSocket::sslLibraryBuildVersionString()
             << "library" << QSslSocket::sslLibraryVersionString();
 
+#ifdef Q_OS_LINUX
+    qInfo() << "libCryptoLoaded" << libCryptoLoaded << "libSslLoaded" << libSslLoaded;
+#endif
+
     qInfo() << "Available styles" << QStyleFactory::keys();
 
     qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
@@ -179,6 +194,7 @@ int main(int argc, char *argv[])
     UserdataIcons::initTranslateableTexts();
     map::initTranslateableTexts();
     proc::initTranslateableTexts();
+    atools::fs::weather::initTranslateableTexts();
 
 #if defined(Q_OS_MACOS)
     // Check for minimum macOS version 10.10

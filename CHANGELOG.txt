@@ -1,4 +1,140 @@
-Numbers (#) refer to Github issues. For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
+Numbers (#) refer to Github issues.
+For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
+
+Version 2.0.1.beta
+
+* Changed OSM, OpenMapSurfer and Hillshading map downloads to use SSL encrypted connections (HTTPS).
+  For fallback in case of problems replace the files
+  "Little Navmap/data/maps/earth/openstreetmap/openstreetmap.dgml",
+  "Little Navmap/data/maps/earth/openstreetmaproads/openstreetmaproads.dgml" and
+  "Little Navmap/data/maps/earth/srtm2/srtm2.dgml" with files from the previous version.
+* Fixed SSL loading problems on Linux (first noticed on Ubuntu 18.04).
+
+Online:
+* Now removing duplicate user aircraft and multiplayer aircraft from simulator and online network.
+  Keeping simulator aircraft for duplicates.
+  A valid Registration in the simulator information is needed and matched to the online client callsign to
+  find duplicates within 30 NM distance. #45
+* Visual range now only shown for online client if >0.
+* Online network database schema is now always created from scratch to cover schema changes.
+* Change online center/airspaces to ignore visual range which is often wrong.
+  Ground is now shows as a 5 NM circle, approach 20 NM and tower 10 NM. Can be changed in configuration file.
+* Added facility to override visual range for online airspace circles in configuration file.
+  See section "[Online]" in file "little_navmap.ini".
+* Visual range for online clients now uses correct units in search result.
+* Online servers remained in search result table after switching networks.
+
+Flight plan export:
+* Fixed issues in corte.in export for flight factor aircraft. Last DCT now omitted export and using full names
+  for approach ident in (I16L before, now ILS16L).
+
+Translations:
+* Added translation for Brazilian Portuguese by Ricardo.
+* Updated German translation from Stephan L.
+* Updated French translation and manual from Patrick.
+
+Other:
+* Now showing navaid ranges for navaids which are parts of procedures
+  E.g. "Show navaid range" for a NDB which is part of a procedure.
+
+from atools version 3.0.1.beta
+* Weather texts are now shown translated.
+* Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+
+Version 2.0.0.beta
+
+Flight Plan and Export:
+* Export clean PLN flight plan file now remembers its own directory to allow saving to separate folder.
+  This is needed since later P3D versions show the misbehaviour of overwriting the PLN file on *loading*.
+* Support for loading of FSC flight plan files. Does not load procedures.
+* Flight plan export for Blackbox Simulations Airbus. #200
+* Export for iFly flight plan file #231
+* Added ProSim flight plan export. #204
+* Added UFMC export format. #207
+* Added export for X-FMC. #208
+* Added show in SkyVector to export menu.
+* Fixed issues where circle-to-land procedures were not loaded correctly and were incorrectly assigned to a runway.
+* Fixed issue where STAR procedures with runway assignment were not loaded correctly.
+* Improved loading of malformed flight plans where airports and user defined waypoints are saved as intersections.
+
+Online Networks:
+* Added IVAO, VATSIM and custom online networks (#45). IVAO and VATSIM are currently disabled due to missing clearance.
+  * Update rate and URL configuration in dialog "Options" on tab "Online Flying".
+  * Display of clients, servers and online centers on map, in information windows, search tabs and context menus.
+  * Search highlights and tooltips for centers and client aircraft.
+  * CSV export via clipboard for all online information.
+  * Added embedded configuration file to enable or disable online networks.
+* Online network tabs and menu items are hidden in Little Navmap until online is activated in
+  dialog "Options" on tab "Online Flying".
+
+Weather:
+* Removed METAR date for simulator weather since it was wrongly parsed and corresponds to simulator date.
+* Added display for NOAA nearest weather stations. Now downloading index page from NOAA to avoid empty requests.
+* Added IVAO weather reports including options, URL configuration, URL test and display of nearest station. #132
+* Fixed variable wind reported for "///KT" METAR. #224
+* Fixed X-Plane weather file not reloaded in some cases.
+
+Userpoints (#3)
+* Prepared translation for userpoint types (can be translated but is not active yet).
+* Added extra icon for unknown user point types.
+* Added metadata display for last edit time and import file to userpoint edit dialog.
+* Added option for volatile/temporary userpoints.
+* Changed draw order of userpoints. These are now displayed before navaids in tooltip and info as on map.
+* Fixed inconsistencies when creating new userpoints. Filename is now erased for new points.
+* Made naming in GUI more consistent. "Userpoints" are bookmarks, VRPs, etc. "Positions" are
+  user defined positions in a flight plan.
+* Added coordinate validation in userpoint import functions.
+* Fixed issues with elevation and units in userpoints.
+* Added tooltip for userpoint description in search result table.
+* New userpoint from map is now filled with actual elevation at clicked position (only for GLOBE data).
+* Disabled CSV backup of userpoints and creating backups of file "little_navmap_userdata.sqlite" on startup now.
+* Changed database settings to avoid data loss on crash.
+* Added manual transactions to userpoint management to avoid locked up application.
+* Error reporting on locked user database on startup.
+
+Flight Plan Description:
+* Improved route string parsing to check for either nearest navaid or a navaid with matching airway.
+* Fixed several issues when parsing route strings. Now takes nearest navaid only if no waypoint/airway match was found.
+
+GUI and Map Display:
+* Added ILS frequency in flight plan table for ILS and LOC approach procedures.
+* Added "zoom to departure" option in parking question dialog which shows up before saving.
+* Added approach procedure suffix to flight plan window label. Made display of suffix consistent across the program.
+* Fixed issues with procedure display where restriction texts were not drawn on map in case of intercept legs.
+* Improved text display between overlapping procedure legs slightly to avoid text labels hiding each other.
+* Tooltips now show exact procedure type.
+* Fixed wrong display o procedure suffix and runway in flight plan window top label.
+* Added tooltips for all tab headers on main window and shortened some tab labels to save space.
+* Fixed issues where estimated gross weight at destination disappeared in progress tab for window "Simulator Aircraft".
+* Now showing real aircraft icons as on the map in tooltips and information tabs instead of the generic icon.
+* Now falling back to magnetic heading for aircraft rotation on map if true heading is not available.
+  Should solve wrong aircraft heading on some online clients.
+* Fixed issues with background color in icons on information, tooltips and tables.
+* Follow mode does not trigger now if an element is unselected.
+
+* Updated from Qt 5.9.3 to 5.9.5
+
+from atools version 3.0.0.beta
+
+* Added complete data management and parsing for IVAO, VATSIM and custom "status.txt" and "whazzup.txt" files.
+* Fixed issues with X-Plane user_fix.dat export. Now using correct metadata so that X-Plane can read the file.
+* Issues with X-Plane and Garmin userpoint import and export fixed.
+
+* Added script by Gérard to clean out fake runways for AI in FSX/P3D.
+* Added logging for airport altitude when reading delete records from FSX/P3D.
+  Example: "Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft"
+* Improved BGL file and scenery reading to include hidden and system files.
+* Fixed issue where approach name and/or suffix were not read correctly in X-Plane and DFD compiler.
+* Fixed error with duplicate VOR/NDB waypoints in DFD compiler.
+* Now ignoring artificial circle-to-land approaches in DFD compiler.
+
+* Flight plan export for Blackbox Simulations Airbus. albar965/littlenavmap#200
+* Added loading method for FSC flight plans.
+* Export for iFly flight plan file. albar965/littlenavmap#231
+
+* Now removing empty journal files from database when closing.
+* Database locking improved.
+* Added gzip tools.
 
 Version 1.9.1.develop
 

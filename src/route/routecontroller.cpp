@@ -1576,10 +1576,20 @@ void RouteController::tableContextMenu(const QPoint& pos)
       for(int idx : selectedRouteLegIndexes)
       {
         const RouteLeg& routeLegSel = route.at(idx);
-        if(routeLegSel.getMapObjectType() == map::VOR || routeLegSel.getMapObjectType() == map::NDB)
-          NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), routeLegSel.getMapObjectType(),
+        if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
+        {
+          map::MapObjectTypes type = routeLegSel.getMapObjectType();
+          if(routeLegSel.isAnyProcedure())
+          {
+            if(routeLegSel.getNdb().isValid())
+              type = map::NDB;
+            if(routeLegSel.getVor().isValid())
+              type = map::VOR;
+          }
+          NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), type,
                                                   routeLegSel.getIdent(), routeLegSel.getFrequencyOrChannel(),
                                                   routeLegSel.getRange());
+        }
       }
     }
     else if(action == ui->actionMapHideRangeRings)
@@ -2637,7 +2647,8 @@ void RouteController::updateTableModel()
       itemRow[rc::RANGE] = new QStandardItem(Unit::distNm(leg.getRange(), false));
 
     // Course =====================
-    if(row > 0 && !afterArrivalAirport)
+    if(row > 0 && !afterArrivalAirport && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE &&
+       leg.getDistanceTo() > 0.f)
     {
       if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
         itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));

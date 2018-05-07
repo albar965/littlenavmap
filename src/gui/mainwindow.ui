@@ -2738,10 +2738,10 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>File name and path it this waypoint was imported from a file</string>
+              <string>File name and path if this waypoint was imported from a file</string>
              </property>
              <property name="statusTip">
-              <string>File name and path it this waypoint was imported from a file</string>
+              <string>File name and path if this waypoint was imported from a file</string>
              </property>
              <property name="placeholderText">
               <string>Import file name and path</string>
@@ -4352,7 +4352,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetLegend">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabLegendNav">
         <attribute name="title">
@@ -4874,7 +4874,7 @@
     <string>About Little Navmap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionHelpAboutQt">
@@ -4892,7 +4892,7 @@
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionOptions">
@@ -4910,7 +4910,7 @@
     <string>Open the options dialog</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::TextHeuristicRole</enum>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
@@ -5836,7 +5836,7 @@
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionRouteCalcSetAlt">
@@ -7136,7 +7136,7 @@
     <string>Check for Updates</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionHelpDonate">
@@ -7154,7 +7154,7 @@
     <string>If you would like show your appreciation you can donate here</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::TextHeuristicRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionReloadSceneryCopyAirspaces">
@@ -7752,21 +7752,41 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
+  <tabstop>pushButtonRouteClearSelection</tabstop>
+  <tabstop>pushButtonRouteHelp</tabstop>
+  <tabstop>spinBoxRouteSpeed</tabstop>
+  <tabstop>spinBoxRouteAlt</tabstop>
+  <tabstop>comboBoxRouteType</tabstop>
+  <tabstop>tableViewRoute</tabstop>
+  <tabstop>tabWidgetInformation</tabstop>
+  <tabstop>textBrowserAirportInfo</tabstop>
+  <tabstop>textBrowserRunwayInfo</tabstop>
+  <tabstop>textBrowserComInfo</tabstop>
+  <tabstop>textBrowserApproachInfo</tabstop>
+  <tabstop>textBrowserWeatherInfo</tabstop>
+  <tabstop>textBrowserNavaidInfo</tabstop>
+  <tabstop>textBrowserAirspaceInfo</tabstop>
+  <tabstop>textBrowserClientInfo</tabstop>
+  <tabstop>textBrowserCenterInfo</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
   <tabstop>lineEditAirportIcaoSearch</tabstop>
   <tabstop>lineEditAirportNameSearch</tabstop>
+  <tabstop>pushButtonAirportSearchReset</tabstop>
+  <tabstop>pushButtonAirportSearchClearSelection</tabstop>
   <tabstop>pushButtonAirportHelpSearch</tabstop>
   <tabstop>toolButtonAirportSearch</tabstop>
   <tabstop>lineEditAirportCitySearch</tabstop>
   <tabstop>lineEditAirportStateSearch</tabstop>
   <tabstop>lineEditAirportCountrySearch</tabstop>
+  <tabstop>checkBoxAirportAddonSearch</tabstop>
   <tabstop>checkBoxAirportLightSearch</tabstop>
-  <tabstop>checkBoxAirportTowerSearch</tabstop>
   <tabstop>checkBoxAirportIlsSearch</tabstop>
-  <tabstop>checkBoxAirportApprSearch</tabstop>
   <tabstop>checkBoxAirportMilSearch</tabstop>
-  <tabstop>checkBoxAirportClosedSearch</tabstop>
   <tabstop>checkBoxAirportAvgasSearch</tabstop>
+  <tabstop>comboBoxAirportRatingSearch</tabstop>
+  <tabstop>checkBoxAirportTowerSearch</tabstop>
+  <tabstop>checkBoxAirportApprSearch</tabstop>
+  <tabstop>checkBoxAirportClosedSearch</tabstop>
   <tabstop>checkBoxAirportJetASearch</tabstop>
   <tabstop>comboBoxAirportRampSearch</tabstop>
   <tabstop>comboBoxAirportGateSearch</tabstop>
@@ -7787,6 +7807,8 @@
   <tabstop>lineEditNavNameSearch</tabstop>
   <tabstop>lineEditNavRegionSearch</tabstop>
   <tabstop>lineEditNavAirportIcaoSearch</tabstop>
+  <tabstop>pushButtonNavSearchReset</tabstop>
+  <tabstop>pushButtonNavSearchClearSelection</tabstop>
   <tabstop>pushButtonNavHelpSearch</tabstop>
   <tabstop>toolButtonNavSearch</tabstop>
   <tabstop>spinBoxNavMaxRangeSearch</tabstop>
@@ -7799,6 +7821,44 @@
   <tabstop>lineEditNavScenerySearch</tabstop>
   <tabstop>lineEditNavFileSearch</tabstop>
   <tabstop>tableViewNavSearch</tabstop>
+  <tabstop>comboBoxProcedureSearchFilter</tabstop>
+  <tabstop>comboBoxProcedureRunwayFilter</tabstop>
+  <tabstop>pushButtonProcedureSearchClearSelection</tabstop>
+  <tabstop>pushButtonProcedureHelpSearch</tabstop>
+  <tabstop>treeWidgetApproachSearch</tabstop>
+  <tabstop>lineEditUserdataIdent</tabstop>
+  <tabstop>lineEditUserdataRegion</tabstop>
+  <tabstop>comboBoxUserdataType</tabstop>
+  <tabstop>pushButtonUserdataAdd</tabstop>
+  <tabstop>pushButtonUserdataEdit</tabstop>
+  <tabstop>pushButtonUserdataDel</tabstop>
+  <tabstop>pushButtonUserdataReset</tabstop>
+  <tabstop>pushButtonUserdataClearSelection</tabstop>
+  <tabstop>pushButtonUserdataHelp</tabstop>
+  <tabstop>toolButtonUserdata</tabstop>
+  <tabstop>lineEditUserdataName</tabstop>
+  <tabstop>lineEditUserdataDescription</tabstop>
+  <tabstop>lineEditUserdataTags</tabstop>
+  <tabstop>lineEditUserdataFilepath</tabstop>
+  <tabstop>tableViewUserdata</tabstop>
+  <tabstop>lineEditOnlineClientCallsign</tabstop>
+  <tabstop>lineEditOnlineClientName</tabstop>
+  <tabstop>lineEditOnlineClientDeparture</tabstop>
+  <tabstop>lineEditOnlineClientDestination</tabstop>
+  <tabstop>lineEditOnlineClientServer</tabstop>
+  <tabstop>pushButtonOnlineClientSearchReset</tabstop>
+  <tabstop>pushButtonOnlineClientSearchClearSelection</tabstop>
+  <tabstop>pushButtonOnlineClientHelpSearch</tabstop>
+  <tabstop>tableViewOnlineClientSearch</tabstop>
+  <tabstop>lineEditOnlineCenterCallsign</tabstop>
+  <tabstop>lineEditOnlineCenterName</tabstop>
+  <tabstop>lineEditOnlineCenterServer</tabstop>
+  <tabstop>comboBoxOnlineCenterFacilityType</tabstop>
+  <tabstop>pushButtonOnlineCenterSearchReset</tabstop>
+  <tabstop>pushButtonOnlineCenterSearchClearSelection</tabstop>
+  <tabstop>pushButtonOnlineCenterHelpSearch</tabstop>
+  <tabstop>tableViewOnlineCenterSearch</tabstop>
+  <tabstop>tableViewOnlineServerSearch</tabstop>
   <tabstop>tabWidgetLegend</tabstop>
   <tabstop>textBrowserLegendNavInfo</tabstop>
   <tabstop>textBrowserLegendInfo</tabstop>
@@ -7806,12 +7866,6 @@
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
-  <tabstop>textBrowserNavaidInfo</tabstop>
-  <tabstop>textBrowserRunwayInfo</tabstop>
-  <tabstop>textBrowserComInfo</tabstop>
-  <tabstop>textBrowserWeatherInfo</tabstop>
-  <tabstop>tabWidgetInformation</tabstop>
-  <tabstop>textBrowserAirportInfo</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

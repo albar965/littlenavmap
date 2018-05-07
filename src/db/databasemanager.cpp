@@ -201,10 +201,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Open online network database
     openWriteableDatabase(databaseOnline, "onlinedata", "online network", false /* backup */);
     onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline);
-    if(!onlinedataManager->hasSchema())
-      onlinedataManager->createSchema();
-    else
-      onlinedataManager->updateSchema();
+    onlinedataManager->createSchema();
     onlinedataManager->initQueries();
   }
 }
@@ -1089,9 +1086,17 @@ bool DatabaseManager::runInternal()
 
           if(QFile::remove(tempFilename))
             qInfo() << "Removed" << tempFilename;
+          else
+            qWarning() << "Removing" << tempFilename << "failed";
 
-          if(QFile::remove(tempFilename + "-journal"))
-            qInfo() << "Removed" << (tempFilename + "-journal");
+          QFile journal(tempFilename + "-journal");
+          if(journal.exists() && journal.size() == 0)
+          {
+            if(journal.remove())
+              qInfo() << "Removed" << journal.fileName();
+            else
+              qWarning() << "Removing" << journal.fileName() << "failed";
+          }
 
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
           openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
@@ -1107,11 +1112,15 @@ bool DatabaseManager::runInternal()
             closeDatabases();
 
             // Remove old database
-            if(!QFile::remove(selectedFilename))
+            if(QFile::remove(selectedFilename))
+              qInfo() << "Removed" << selectedFilename;
+            else
               qWarning() << "Removing" << selectedFilename << "failed";
 
             // Rename temporary file to new database
-            if(!QFile::rename(tempFilename, selectedFilename))
+            if(QFile::rename(tempFilename, selectedFilename))
+              qInfo() << "Renamed" << tempFilename << "to" << selectedFilename;
+            else
               qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
 
             // Syncronize display with loaded database
@@ -1125,9 +1134,17 @@ bool DatabaseManager::runInternal()
             closeDatabaseFile(&tempDb);
             if(QFile::remove(tempFilename))
               qInfo() << "Removed" << tempFilename;
+            else
+              qWarning() << "Removing" << tempFilename << "failed";
 
-            if(QFile::remove(tempFilename + "-journal"))
-              qInfo() << "Removed" << (tempFilename + "-journal");
+            QFile journal2(tempFilename + "-journal");
+            if(journal2.exists() && journal2.size() == 0)
+            {
+              if(journal2.remove())
+                qInfo() << "Removed" << journal2.fileName();
+              else
+                qWarning() << "Removing" << journal2.fileName() << "failed";
+            }
           }
         }
         else

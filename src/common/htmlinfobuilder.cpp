@@ -1287,7 +1287,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!weather.isEmpty())
   {
     // Workaround for goofy texts
-    QString wtr = weather.join(", ").toLower().replace(" of in ", " in ");
+    QString wtr = weather.join(", ").replace(tr(" of in "), tr(" in "), Qt::CaseInsensitive);
 
     if(!wtr.isEmpty())
       wtr[0] = wtr.at(0).toUpper();
@@ -1706,7 +1706,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
       html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
 
     if(!onlineRec.isNull("administrative_rating"))
-      html.row2If(tr("Aministrative Rating:"),
+      html.row2If(tr("Administrative Rating:"),
                   atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
     if(!onlineRec.isNull("atc_pilot_rating"))
       html.row2If(tr("ATC Rating:"), atools::fs::online::atcRatingText(onlineRec.valueInt("atc_pilot_rating")));
@@ -2018,7 +2018,6 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     html.row2If(tr("VID:"), onlineRec.valueStr("vid"));
     html.row2If(tr("Name:"), onlineRec.valueStr("name"));
     html.row2If(tr("Server:"), onlineRec.valueStr("server"));
-    html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
 
     float qnh = onlineRec.valueFloat("qnh_mb");
     if(qnh > 0.f)
@@ -2029,7 +2028,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
 
     if(!onlineRec.isNull("administrative_rating"))
-      html.row2If(tr("Aministrative Rating:"),
+      html.row2If(tr("Administrative Rating:"),
                   atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
     if(!onlineRec.isNull("atc_pilot_rating"))
       html.row2If(tr("ATC Rating:"), atools::fs::online::pilotRatingText(onlineRec.valueInt("atc_pilot_rating")));
@@ -2072,7 +2071,10 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Cruising Level:"), alt);
 
     html.row2If(tr("Transponder Code:"), onlineRec.valueStr("transponder_code"));
-    html.row2If(tr("Visual Range"), Unit::distNm(onlineRec.valueFloat("visual_range")));
+
+    float range = onlineRec.valueFloat("visual_range");
+    if(range > 0.f && range < map::INVALID_ALTITUDE_VALUE)
+      html.row2If(tr("Visual Range"), Unit::distNm(range));
     html.row2If(tr("Flight Rules:"), onlineRec.valueStr("flightplan_flight_rules"));
     html.row2If(tr("Type of Flight:"), onlineRec.valueStr("flightplan_type_of_flight"));
     html.row2If(tr("Departure Time:"), onlineRec.valueStr("flightplan_departure_time"));
@@ -2691,6 +2693,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     head(html, tr("Position"));
     html.row2(tr("Coordinates:"), Unit::coords(aircraft.getPosition()));
+#ifdef DEBUG_INFORMATION
+    html.row2(tr("Pos:"), QString("Pos(%1, %2)").
+              arg(aircraft.getPosition().getLonX()).
+              arg(aircraft.getPosition().getLatY()));
+#endif
     html.tableEnd();
   }
 }

@@ -31,6 +31,10 @@ class GeoDataLatLonBox;
 }
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
 namespace util {
 class HttpDownloader;
 }
@@ -123,6 +127,7 @@ private:
   void startDownloadInternal();
   void startDownloadTimer();
   void stopAllProcesses();
+  void initAtcDefaultRadii();
 
   /* Show message from status.txt */
   void showMessageDialog();
@@ -153,6 +158,9 @@ private:
   bool whazzupGzipped = false;
 
   QTextCodec *codec = nullptr;
+
+  /* Simulator aircraft registrations and positions */
+  QHash<QString, atools::geo::Pos> simulatorAiRegistrations;
 
   SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
   atools::sql::SqlQuery *aircraftByRectQuery = nullptr;
