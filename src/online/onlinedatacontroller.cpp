@@ -290,7 +290,9 @@ void OnlinedataController::downloadFailed(const QString& error, QString url)
   QMessageBox::warning(mainWindow, QApplication::applicationName(),
                        tr("Download from\n\n\"%1\"\n\nfailed. Reason:\n\n%2\n\nPress OK to retry.").
                        arg(url).arg(error));
-  startProcessing();
+
+  // Delay next download for three minutes to give the user a chance to correct the URLs
+  QTimer::singleShot(180 * 1000, this, &OnlinedataController::startProcessing);
 }
 
 void OnlinedataController::stopAllProcesses()
