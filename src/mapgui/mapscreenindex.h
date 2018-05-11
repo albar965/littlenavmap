@@ -143,17 +143,17 @@ public:
 
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft()
   {
-    return simData.getUserAircraft();
+    return simData.getUserAircraftConst();
   }
 
   const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft()
   {
-    return lastSimData.getUserAircraft();
+    return lastSimData.getUserAircraftConst();
   }
 
   const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft()
   {
-    return simData.getAiAircraft();
+    return simData.getAiAircraftConst();
   }
 
   void updateSimData(const atools::fs::sc::SimConnectData& data)
@@ -163,7 +163,7 @@ public:
 
   bool isUserAircraftValid() const
   {
-    return simData.getUserAircraft().getPosition().isValid();
+    return simData.getUserAircraftConst().getPosition().isValid();
   }
 
   void updateLastSimData(const atools::fs::sc::SimConnectData& data)

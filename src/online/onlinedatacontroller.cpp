@@ -40,7 +40,11 @@
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 
 // Remove if duplicates with same registration if they are this close (500 kts for 3 min)
+#ifdef DEBUG_INFORMATION
+static const int MIN_DISTANCE_DUPLICATE = atools::geo::nmToMeter(300);
+#else
 static const int MIN_DISTANCE_DUPLICATE = atools::geo::nmToMeter(30);
+#endif
 
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
@@ -227,6 +231,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
                                 convertFormat(OptionData::instance().getOnlineFormat()),
                                 manager->getLastUpdateTimeFromWhazzup()))
     {
+      // Get all callsigns and positions from online list to allow deduplication
+      manager->getClientCallsignAndPosMap(clientCallsignAndPosMap);
+
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
       if(!whazzupVoiceUrlFromStatus.isEmpty() &&
          lastServerDownload < QDateTime::currentDateTime().addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
@@ -301,6 +308,7 @@ void OnlinedataController::stopAllProcesses()
   downloadTimer.stop();
   currentState = NONE;
   simulatorAiRegistrations.clear();
+  clientCallsignAndPosMap.clear();
 }
 
 void OnlinedataController::showMessageDialog()
@@ -322,6 +330,7 @@ void OnlinedataController::optionsChanged()
   manager->clearData();
   aircraftCache.clear();
   simulatorAiRegistrations.clear();
+  clientCallsignAndPosMap.clear();
 
   emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
   emit onlineServersUpdated(true /* load all */, true /* keep selection */);
@@ -443,6 +452,32 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
   }
   aircraftCache.validate(queryMaxRows);
   return &aircraftCache.list;
+}
+
+bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft& aircraft,
+                                             const atools::fs::sc::SimConnectAircraft& simAircraft)
+{
+  if(isShadowAircraft(simAircraft))
+  {
+    atools::sql::SqlRecordVector clients = manager->getClientRecordsByCallsign(simAircraft.getAirplaneRegistration());
+
+    if(!clients.isEmpty())
+    {
+      fillAircraftFromClient(aircraft, clients.first());
+      return true;
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "No client found for" << simAircraft.getAirplaneRegistration();
+  }
+  return false;
+}
+
+bool OnlinedataController::isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft)
+{
+  const atools::geo::Pos pos = clientCallsignAndPosMap.value(simAircraft.getAirplaneRegistration());
+
+  return simAircraft.isOnlineShadow() ||
+         (pos.isValid() && pos.distanceMeterTo(simAircraft.getPosition()) < MIN_DISTANCE_DUPLICATE);
 }
 
 void OnlinedataController::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)

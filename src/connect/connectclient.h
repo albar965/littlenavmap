@@ -74,7 +74,7 @@ public:
   atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
 
 signals:
-  /* Emitted when new data was received from the server (Little Navconnect).
+  /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */
   void dataPacketReceived(atools::fs::sc::SimConnectData simConnectData);
 

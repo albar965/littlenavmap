@@ -1623,8 +1623,8 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   QString network;
   if(airspace.online)
   {
-    if(!NavApp::getOnlineNetwork().isEmpty())
-      network = tr(" (%1)").arg(NavApp::getOnlineNetwork());
+    if(!NavApp::getOnlineNetworkTranslated().isEmpty())
+      network = tr(" (%1)").arg(NavApp::getOnlineNetworkTranslated());
   }
 
   if(airspace.name.isEmpty())
@@ -2003,6 +2003,20 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
 #ifdef DEBUG_INFORMATION
   html.p().small(QString("Object ID: %1").arg(aircraft.getId())).pEnd();
+  QStringList flags;
+  if(aircraft.isUser())
+    flags << "User";
+  if(aircraft.isOnGround())
+    flags << "Ground";
+  if(aircraft.isOnline())
+    flags << "Online";
+  if(aircraft.isOnlineShadow())
+    flags << "Online Shadow";
+  if(aircraft.isSimPaused())
+    flags << "Pause";
+  if(aircraft.isSimReplay())
+    flags << "Replay";
+  html.p().small(QString("Flags: %1").arg(flags.join(","))).pEnd();
 #endif
 }
 
@@ -2720,14 +2734,14 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   if(aircraft.isUser())
     html.img(icon, tr("User Vehicle"), QString(), SYMBOL_SIZE_VEHICLE);
   else if(aircraft.isOnline())
-    html.img(icon, tr("Online Client (%1)").arg(NavApp::getOnlineNetwork()), QString(), SYMBOL_SIZE_VEHICLE);
+    html.img(icon, tr("Online Client (%1)").arg(NavApp::getOnlineNetworkTranslated()), QString(), SYMBOL_SIZE_VEHICLE);
   else
     html.img(icon, tr("AI / Multiplayer Vehicle"), QString(), SYMBOL_SIZE_VEHICLE);
   html.nbsp().nbsp();
 
   QString title(aircraft.getAirplaneRegistration());
   QString title2 = airplaneType(aircraft);
-  QString title3 = aircraft.isOnline() ? NavApp::getOnlineNetwork() : QString();
+  QString title3 = aircraft.isOnline() ? NavApp::getOnlineNetworkTranslated() : QString();
 
   if(!aircraft.getAirplaneModel().isEmpty())
     title2 += (title2.isEmpty() ? "" : ", ") + aircraft.getAirplaneModel();

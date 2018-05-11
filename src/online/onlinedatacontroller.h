@@ -114,6 +114,13 @@ public:
 
   int getNumClients() const;
 
+  /* Get an online network aircraft that has the same registration as the simulator aircraft and is close by */
+  bool getShadowAircraft(atools::fs::sc::SimConnectAircraft& aircraft,
+                         const atools::fs::sc::SimConnectAircraft& simAircraft);
+
+  /* True if there is an online network aircraft that has the same registration as the simulator aircraft and is close */
+  bool isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft);
+
 signals:
   /* Sent whenever new data was downloaded */
   void onlineClientAndAtcUpdated(bool loadAll, bool keepSelection);
@@ -164,6 +171,8 @@ private:
 
   /* Simulator aircraft registrations and positions */
   QHash<QString, atools::geo::Pos> simulatorAiRegistrations;
+
+  QHash<QString, atools::geo::Pos> clientCallsignAndPosMap;
 
   SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
   atools::sql::SqlQuery *aircraftByRectQuery = nullptr;

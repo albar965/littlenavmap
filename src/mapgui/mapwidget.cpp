@@ -33,6 +33,7 @@
 #include "route/route.h"
 #include "userdata/userdataicons.h"
 #include "route/routecontroller.h"
+#include "online/onlinedatacontroller.h"
 #include "atools.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
@@ -976,7 +977,7 @@ bool MapWidget::isCenterLegAndAircraftActive()
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
   if(databaseLoadStatus || !aircraft.isValid())
     return;
 
@@ -1076,7 +1077,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       bool aiVisible = false;
       if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
       {
-        for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraft())
+        for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())
         {
           if(currentViewBoundingBox.contains(
                Marble::GeoDataCoordinates(ai.getPosition().getLonX(), ai.getPosition().getLatY(), 0,
@@ -1705,6 +1706,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(!result.onlineAircraft.isEmpty())
     onlineAircraft = &result.onlineAircraft.first();
+
+  // Add shadow for "show in search"
+  SimConnectAircraft shadowAircraft;
+  if(userAircraft != nullptr && NavApp::getOnlinedataController()->getShadowAircraft(shadowAircraft, *userAircraft))
+    onlineAircraft = &shadowAircraft;
 
   if(!result.airports.isEmpty())
   {

@@ -198,7 +198,7 @@ public:
   /* True if online data and ATC centers are available */
   static bool hasOnlineData();
 
-  static QString getOnlineNetwork();
+  static QString getOnlineNetworkTranslated();
   static bool isOnlineNetworkActive();
 
   static const AircraftTrack& getAircraftTrack();

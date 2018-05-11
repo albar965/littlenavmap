@@ -308,7 +308,7 @@ void InfoController::updateProgress()
   {
     // ok - scrollbars not pressed
     html.clear();
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRouteConst());
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
   }
 }
@@ -435,10 +435,11 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   // Online aircraft
   if(!result.onlineAircraft.isEmpty())
   {
+    OnlinedataController *odc = NavApp::getOnlinedataController();
+
     // Clear current result and add only shown aircraft
     currentSearchResult.onlineAircraft.clear();
     currentSearchResult.onlineAircraftIds.clear();
-    OnlinedataController *odc = NavApp::getOnlinedataController();
 
     html.clear();
     int num = 1;
@@ -713,14 +714,14 @@ void InfoController::updateUserAircraftText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraft().getPosition().isValid())
+    if(lastSimData.getUserAircraftConst().getPosition().isValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
-        infoBuilder->aircraftText(lastSimData.getUserAircraft(), html);
-        infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraft(), html);
+        infoBuilder->aircraftText(lastSimData.getUserAircraftConst(), html);
+        infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraftConst(), html);
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
       }
     }
@@ -740,13 +741,13 @@ void InfoController::updateAircraftProgressText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraft().getPosition().isValid())
+    if(lastSimData.getUserAircraftConst().getPosition().isValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
-        infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, NavApp::getRouteConst());
+        infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
       }
     }
@@ -766,7 +767,7 @@ void InfoController::updateAiAircraftText()
   if(NavApp::isConnected())
 #endif
   {
-    if(lastSimData.getUserAircraft().getPosition().isValid())
+    if(lastSimData.getUserAircraftConst().getPosition().isValid())
     {
       if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {
@@ -778,7 +779,7 @@ void InfoController::updateAiAircraftText()
           int num = 1;
           for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
           {
-            infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
+            infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraftConst().size());
             infoBuilder->aircraftProgressText(aircraft, html, Route());
             num++;
           }
@@ -787,7 +788,7 @@ void InfoController::updateAiAircraftText()
         }
         else
         {
-          int numAi = lastSimData.getAiAircraft().size();
+          int numAi = lastSimData.getAiAircraftConst().size();
           QString text;
 
           if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
@@ -821,7 +822,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
     Ui::MainWindow *ui = NavApp::getMainUi();
 
     lastSimData = data;
-    if(data.getUserAircraft().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
+    if(data.getUserAircraftConst().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
     {
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER)
         updateUserAircraftText();
@@ -841,7 +842,7 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
   if(data.getPacketId() > 0)
   {
     // Ignore weather updates
-    const QVector<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraft();
+    const QVector<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraftConst();
     QVector<atools::fs::sc::SimConnectAircraft> newAiAircraftShown;
 
     // Find all aircraft currently shown on the page in the newly arrived ai list

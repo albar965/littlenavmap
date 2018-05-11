@@ -297,6 +297,8 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                    QList<proc::MapProcedurePoint>& procPoints)
 {
+  using maptools::insertSortedByDistance;
+
   CoordinateConverter conv(mapWidget->viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
@@ -307,14 +309,16 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
   if(shown & map::AIRCRAFT && NavApp::isConnected())
   {
+    const atools::fs::sc::SimConnectUserAircraft& user = simData.getUserAircraftConst();
     int x, y;
-    if(conv.wToS(simData.getUserAircraft().getPosition(), x, y))
+    if(conv.wToS(user.getPosition(), x, y))
+    {
       if(atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
-        result.userAircraft = simData.getUserAircraft();
+        result.userAircraft = user;
+    }
   }
 
   // Check for AI / multiplayer aircraft from simulator ==============================
-  using maptools::insertSortedByDistance;
   int x, y;
 
   // Add boats ======================================
@@ -323,7 +327,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   {
     if(shown & map::AIRCRAFT_AI_SHIP && mapLayer->isAiShipLarge())
     {
-      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraftConst())
       {
         if(obj.getCategory() == atools::fs::sc::BOAT &&
            (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
@@ -346,8 +350,17 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
         if(obj.getCategory() != atools::fs::sc::BOAT && mapfunc::aircraftVisible(obj, mapLayer))
         {
           if(conv.wToS(obj.getPosition(), x, y))
+          {
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+            {
+              // Add online network shadow aircraft from simulator to online list
+              atools::fs::sc::SimConnectAircraft shadow;
+              if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, obj))
+                insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, shadow);
+              else
+                insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+            }
+          }
         }
       }
     }

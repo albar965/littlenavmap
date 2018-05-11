@@ -116,7 +116,8 @@ const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAir
 {
   PixmapKey key;
 
-  if(ac.isOnline())
+  if((ac.isOnline() || ac.isOnlineShadow()) && !ac.isUser())
+    // Also use online icon for simulator shadows but not for the user aircraft
     key.type = AC_ONLINE;
   else if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;

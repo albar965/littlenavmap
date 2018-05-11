@@ -516,9 +516,9 @@ bool NavApp::hasOnlineData()
   return onlinedataController->hasData();
 }
 
-QString NavApp::getOnlineNetwork()
+QString NavApp::getOnlineNetworkTranslated()
 {
-  return onlinedataController->getNetwork();
+  return onlinedataController->getNetworkTranslated();
 }
 
 bool NavApp::isOnlineNetworkActive()

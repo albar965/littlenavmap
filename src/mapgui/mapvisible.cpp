@@ -319,7 +319,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         }
       }
       if(shown & map::AIRCRAFT_AI && NavApp::isOnlineNetworkActive())
-        ai.append(tr("%1 Clients / Aircraft").arg(NavApp::getOnlineNetwork()));
+        ai.append(tr("%1 Clients / Aircraft").arg(NavApp::getOnlineNetworkTranslated()));
 
       if(!ai.isEmpty())
         tooltip.tr().td().b(tr("AI / Multiplayer / online client: ")).text(ai.join(", ")).tdEnd().trEnd();

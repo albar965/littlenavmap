@@ -22,6 +22,7 @@
 #include "fs/sc/simconnectreply.h"
 #include "fs/sc/datareaderthread.h"
 #include "gui/dialog.h"
+#include "online/onlinedatacontroller.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
@@ -210,6 +211,18 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 /* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
+  // Modify AI aircraft and set shadow flag if a online network with the same callsign exists
+  for(atools::fs::sc::SimConnectAircraft& aircraft : dataPacket.getAiAircraft())
+  {
+    if(NavApp::getOnlinedataController()->isShadowAircraft(aircraft))
+      aircraft.setFlags(atools::fs::sc::SIM_ONLINE_SHADOW | aircraft.getFlags());
+  }
+
+  // Same as above for user aircraft
+  atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
+  if(NavApp::getOnlinedataController()->isShadowAircraft(userAircraft))
+    userAircraft.setFlags(atools::fs::sc::SIM_ONLINE_SHADOW | userAircraft.getFlags());
+
   emit dataPacketReceived(dataPacket);
 
   if(!dataPacket.getMetars().isEmpty())

@@ -2785,7 +2785,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
   {
     if(simulatorData.isUserAircraftValid())
     {
-      const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
+      const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
 
       // Sequence only for airborne airplanes
       // Use more than one parameter since first X-Plane data packets are unreliable
