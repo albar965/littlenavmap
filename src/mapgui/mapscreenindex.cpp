@@ -125,6 +125,10 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAlt
        paintLayer->getShownMapObjects().testFlag(map::AIRSPACE_ONLINE)))
     return;
 
+  // Do not put into index if nothing is drawn
+  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
+    return;
+
   if(paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
     updateAirspaceScreenGeometry(airspacePolygons, airspaceQuery, curBox);
 
