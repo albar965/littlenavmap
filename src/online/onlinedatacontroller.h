@@ -84,7 +84,10 @@ public:
 
   bool hasData() const;
 
-  /* VATSIM, IVAO or Custom */
+  /* VATSIM, IVAO or Custom (localized) */
+  QString getNetworkTranslated() const;
+
+  /* VATSIM, IVAO or Custom (not localized) */
   QString getNetwork() const;
   bool isNetworkActive() const;
 

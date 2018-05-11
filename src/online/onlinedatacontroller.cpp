@@ -338,7 +338,7 @@ bool OnlinedataController::hasData() const
   return manager->hasData();
 }
 
-QString OnlinedataController::getNetwork() const
+QString OnlinedataController::getNetworkTranslated() const
 {
   opts::OnlineNetwork onlineNetwork = OptionData::instance().getOnlineNetwork();
   switch(onlineNetwork)
@@ -355,7 +355,27 @@ QString OnlinedataController::getNetwork() const
     case opts::ONLINE_CUSTOM_STATUS:
     case opts::ONLINE_CUSTOM:
       return tr("Custom Network");
+  }
+  return QString();
+}
 
+QString OnlinedataController::getNetwork() const
+{
+  opts::OnlineNetwork onlineNetwork = OptionData::instance().getOnlineNetwork();
+  switch(onlineNetwork)
+  {
+    case opts::ONLINE_NONE:
+      return QString();
+
+    case opts::ONLINE_VATSIM:
+      return "VATSIM";
+
+    case opts::ONLINE_IVAO:
+      return "IVAO";
+
+    case opts::ONLINE_CUSTOM_STATUS:
+    case opts::ONLINE_CUSTOM:
+      return "Custom Network";
   }
   return QString();
 }
