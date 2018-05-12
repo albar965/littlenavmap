@@ -49,7 +49,7 @@ enum UserdataDialogMode
 class UserdataIcons;
 
 /*
- * Dialog allows to edit one or more userdata records.
+ * Dialog allows to edit one or more userdata records or add one.
  */
 class UserdataDialog :
   public QDialog

@@ -140,7 +140,7 @@ void UserdataDialog::coordsEdited(const QString& text)
 void UserdataDialog::helpClicked()
 {
   atools::gui::HelpHandler::openHelpUrl(
-    this, lnm::HELP_ONLINE_URL + "EDITUSERDATA.html", lnm::helpLanguagesOnline());
+    this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-add-edit", lnm::helpLanguagesOnline());
 }
 
 void UserdataDialog::resetClicked()

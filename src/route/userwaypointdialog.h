@@ -32,6 +32,9 @@ class Pos;
 }
 }
 
+/*
+ * Edit coordinates or the name of a user defined flight plan position.
+ */
 class UserWaypointDialog :
   public QDialog
 {

@@ -94,17 +94,17 @@ void SearchController::helpPressedProcedure()
 
 void SearchController::helpPressedUserdata()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINTSEARCH.html", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#search", lnm::helpLanguagesOnline());
 }
 
 void SearchController::helpPressedOnlineClient()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINESEARCH.html", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-client", lnm::helpLanguagesOnline());
 }
 
 void SearchController::helpPressedOnlineCenter()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINESEARCH.html", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-center", lnm::helpLanguagesOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */

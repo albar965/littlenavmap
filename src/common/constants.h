@@ -48,18 +48,24 @@
 namespace lnm {
 
 // ======== URLs ================================================================
+#ifdef DEBUG_HELP
+// For local testing - do not use trailing slash which confuses Gitbook
+const QLatin1Literal HELP_BASE_URL("http://localhost:4000");
+const QLatin1Literal HELP_BRANCH("");
+#else
+// Gitbook base URL
+const QLatin1Literal HELP_BASE_URL("https://albar965.gitbooks.io/little-navmap-user-manual/content/v/");
+
 // "master" or "release/1.4"
 const QLatin1Literal HELP_BRANCH("release/2.0"); // VERSION_NUMBER
+#endif
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
-const QString HELP_ONLINE_URL(
-  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/");
+const QString HELP_ONLINE_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/");
 
-const QString HELP_ONLINE_TUTORIALS_URL(
-  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
+const QString HELP_ONLINE_TUTORIALS_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
 
-const QString HELP_ONLINE_LEGEND_URL(
-  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
+const QString HELP_ONLINE_LEGEND_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/LEGEND.html");
 
 const QLatin1Literal HELP_LEGEND_INLINE_FILE("help/legend-${LANG}.html");
 
