@@ -1506,7 +1506,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
       if(!rec.isNull("visible_from"))
         html.row2If(tr("Visible from :"), Unit::distNm(rec.valueFloat("visible_from")));
 
-      html.row2(tr("Last Change:"), rec.value("last_edit_timestamp").toDateTime().toString());
+      html.row2(tr("Last Change:"), QLocale().toString(rec.value("last_edit_timestamp").toDateTime()));
       html.tableEnd();
     }
 

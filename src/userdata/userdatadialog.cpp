@@ -20,6 +20,7 @@
 #include "ui_userdatadialog.h"
 #include "sql/sqlrecord.h"
 #include "geo/pos.h"
+#include "atools.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "gui/mainwindow.h"
@@ -268,11 +269,11 @@ void UserdataDialog::recordToDialog()
     ui->labelUserdataFilepath->setText(tr("Not imported"));
 
   if(!record->isNull("visible_from"))
-    ui->spinBoxUserdataVisible->setValue(Unit::distNmF(record->valueInt("visible_from")));
+    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(record->valueInt("visible_from"))));
   else
-    ui->spinBoxUserdataVisible->setValue(Unit::distNmF(250.f));
+    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(250.f)));
 
-  ui->spinBoxUserdataAltitude->setValue(Unit::altFeetF(record->valueInt("altitude")));
+  ui->spinBoxUserdataAltitude->setValue(atools::roundToInt(Unit::altFeetF(record->valueInt("altitude"))));
 
   if(!record->isNull("lonx") && !record->isNull("laty"))
     ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),

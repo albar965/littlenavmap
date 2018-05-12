@@ -365,7 +365,7 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
 
     // Build record for new userpoint
     SqlRecord record = manager->getEmptyRecord();
-    record.setValue("last_edit_timestamp", QDateTime::currentDateTime());
+    record.setValue("last_edit_timestamp", QDateTime::currentDateTime().toString(Qt::ISODate));
     record.setValue("lonx", position.getLonX());
     record.setValue("laty", position.getLatY());
     record.setValue("ident", airport.ident);
