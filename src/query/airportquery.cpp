@@ -736,12 +736,12 @@ void AirportQuery::initQueries()
   airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
 
   airportProcByIdentQuery = new SqlQuery(db);
-  airportProcByIdentQuery->prepare("select 1 from airport where ident = :ident limit 1");
+  airportProcByIdentQuery->prepare("select 1 from approach where airport_ident = :ident limit 1");
 
   procArrivalByAirportIdentQuery = new SqlQuery(db);
   procArrivalByAirportIdentQuery->prepare("select 1 from approach  "
                                           "where airport_ident = :ident and  "
-                                          "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null))");
+                                          "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null)) limit 1");
 
   procDepartureByAirportIdentQuery = new SqlQuery(db);
   procDepartureByAirportIdentQuery->prepare("select 1 from approach "
