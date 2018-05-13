@@ -349,6 +349,7 @@ void MapPainterVehicle::paintWindPointer(const PaintContext *context,
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
+    context->szFont(1.f);
     paintTextLabelWind(context, x, y, WIND_POINTER_SIZE, aircraft);
   }
 }
