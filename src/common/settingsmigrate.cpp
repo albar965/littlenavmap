@@ -25,6 +25,9 @@
 #include <QDebug>
 #include <QApplication>
 #include <QRegularExpression>
+#include <QFile>
+#include <QDir>
+#include <QSettings>
 
 using atools::settings::Settings;
 using  atools::util::Version;
@@ -40,6 +43,29 @@ void checkAndMigrateSettings()
 
   if(optionsVersion.isValid())
   {
+    // Migrate map style file =======================================================================
+    QFile mapstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_mapstyle.ini");
+    QSettings mapstyleSettings(mapstyleFile.fileName(), QSettings::IniFormat);
+    Version mapstyleVersion(mapstyleSettings.value("Options/Version").toString());
+
+    // No version or old
+    if(!mapstyleVersion.isValid() || mapstyleVersion < Version("2.0.1.beta"))
+    {
+      qInfo() << Q_FUNC_INFO << "Moving little_navmap_mapstyle.ini to backup";
+
+      // Backup with version name
+      QString newName = Settings::getPath() + QDir::separator() + "little_navmap_mapstyle_backup" +
+                        (mapstyleVersion.isValid() ? "_" + mapstyleVersion.getVersionString() : "") +
+                        ".ini";
+
+      // Rename so LNM can create a new one later
+      if(mapstyleFile.rename(newName))
+        qInfo() << "Renamed" << mapstyleFile.fileName() << "to" << newName;
+      else
+        qWarning() << "Renaming" << mapstyleFile.fileName() << "to" << newName << "failed";
+    }
+
+    // Migrate settings =======================================================================
     if(optionsVersion != appVersion)
     {
       qInfo().nospace().noquote() << "Found settings version mismatch. Settings file: " <<

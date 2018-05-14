@@ -43,9 +43,9 @@ QColor ilsTextColor(0, 30, 0);
 
 QColor waypointSymbolColor(200, 0, 200);
 
-QPen airwayVictorPen(QColor("#969696"), 1.5);
-QPen airwayJetPen(QColor("#000080"), 1.5);
-QPen airwayBothPen(QColor("#646464"), 1.5);
+QPen airwayVictorPen(QColor("#969696"), 1.);
+QPen airwayJetPen(QColor("#000080"), 1.);
+QPen airwayBothPen(QColor("#646464"), 1.);
 QColor airwayTextColor(80, 80, 80);
 
 QColor distanceRhumbColor(80, 80, 80);
@@ -305,7 +305,7 @@ const QPen aircraftTrailPen(float size)
 static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   {
     {map::AIRSPACE_NONE, QColor("#00000000")},
-    {map::CENTER, QColor("#00808080")},
+    {map::CENTER, QColor("#30808080")},
     {map::CLASS_A, QColor("#308d0200")},
     {map::CLASS_B, QColor("#30902ece")},
     {map::CLASS_C, QColor("#308594ec")},
@@ -473,6 +473,8 @@ void syncColors()
   QString filename = atools::settings::Settings::instance().getConfigFilename("_mapstyle.ini");
 
   QSettings colorSettings(filename, QSettings::IniFormat);
+  colorSettings.setValue("Options/Version", QApplication::applicationVersion());
+
   colorSettings.beginGroup("Airport");
   syncColor(colorSettings, "DiagramBackgroundColor", airportDetailBackColor);
   syncColor(colorSettings, "EmptyColor", airportEmptyColor);
