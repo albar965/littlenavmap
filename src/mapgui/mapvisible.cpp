@@ -47,8 +47,8 @@ void MapVisible::updateVisibleObjectsStatusBar()
   }
   else
   {
-
     const MapLayer *layer = paintLayer->getMapLayer();
+    bool onlineNetworkActive = NavApp::isOnlineNetworkActive();
 
     if(layer != nullptr)
     {
@@ -204,7 +204,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       }
 
       QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip;
-      if(shown & map::AIRSPACE || shown & map::AIRSPACE_ONLINE)
+      if(shown & map::AIRSPACE || (shown & map::AIRSPACE_ONLINE && onlineNetworkActive))
       {
         map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
         // Collect airspace information ==========================================================
@@ -253,12 +253,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td(tr("No navaids")).trEnd();
 
       QString asText, asGroupText;
-      if(shown & map::AIRSPACE_ONLINE && shown & map::AIRSPACE)
+      if(shown & map::AIRSPACE_ONLINE && onlineNetworkActive && shown & map::AIRSPACE)
       {
         asText = tr("Airspaces and Online Centers: ");
         asGroupText = tr("Airspace and Online Center Groups: ");
       }
-      else if(shown & map::AIRSPACE_ONLINE)
+      else if(shown & map::AIRSPACE_ONLINE && onlineNetworkActive)
       {
         asText = tr("Online Centers: ");
         asGroupText = tr("Online Center Groups: ");
