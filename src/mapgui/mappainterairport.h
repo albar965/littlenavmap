@@ -26,6 +26,7 @@ class SymbolPainter;
 
 namespace map {
 struct MapAirport;
+
 struct MapApron;
 
 struct MapRunway;
@@ -62,17 +63,9 @@ private:
   void drawFsApron(const PaintContext *context, const map::MapApron& apron);
   void drawXplaneApron(const PaintContext *context, const map::MapApron& apron, bool fast);
 
-  /* All sizes in pixel */
-  static Q_DECL_CONSTEXPR int RUNWAY_HEADING_FONT_SIZE = 12;
-  static Q_DECL_CONSTEXPR int RUNWAY_TEXT_FONT_SIZE = 16;
-  static Q_DECL_CONSTEXPR int RUNWAY_NUMBER_FONT_SIZE = 20;
-  static Q_DECL_CONSTEXPR int TAXIWAY_TEXT_MIN_LENGTH = 20;
-  static Q_DECL_CONSTEXPR int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
-  static Q_DECL_CONSTEXPR float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
   const Route *route;
 
-  QPainterPath pathForBoundary(const atools::fs::common::Boundary& boundaryNodes,
-                               bool fast);
+  QPainterPath pathForBoundary(const atools::fs::common::Boundary& boundaryNodes, bool fast);
 
 };
 

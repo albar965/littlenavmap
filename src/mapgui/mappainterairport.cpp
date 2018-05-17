@@ -36,6 +36,17 @@
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
+/* Minimum width for runway diagram */
+static const int RUNWAY_MIN_WIDTH_FT = 4;
+
+/* All sizes in pixel */
+static const int RUNWAY_HEADING_FONT_SIZE = 12;
+static const int RUNWAY_TEXT_FONT_SIZE = 16;
+static const int RUNWAY_NUMBER_FONT_SIZE = 20;
+static const int TAXIWAY_TEXT_MIN_LENGTH = 20;
+static const int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
+static const float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
+
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
@@ -1157,10 +1168,8 @@ void MapPainterAirport::runwayCoords(const QList<map::MapRunway> *runways, QList
     // Get an approximation of the runway length on the screen
     int length = atools::geo::simpleDistance(xr1, yr1, xr2, yr2);
 
-    int width = 6;
-    if(r.width > 0)
-      // Get an approximation of the runway width on the screen
-      width = scale->getPixelIntForFeet(r.width, r.heading + 90.f);
+    // Get an approximation of the runway width on the screen minimum six feet
+    int width = scale->getPixelIntForFeet(std::max(r.width, RUNWAY_MIN_WIDTH_FT), r.heading + 90.f);
 
     int backgroundSize = scale->getPixelIntForMeter(AIRPORT_DIAGRAM_BACKGROUND_METER);
 
