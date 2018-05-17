@@ -245,7 +245,7 @@ void UserdataDialog::recordToDialog()
   ui->textEditUserdataDescription->setText(record->valueStr("description"));
   ui->lineEditUserdataTags->setText(record->valueStr("tags"));
 
-  if(record->contains("temp") && !record->value("temp").isNull())
+  if(record->contains("temp") && record->valueBool("temp"))
   {
     // temp point
     if(editMode == ud::ADD)
@@ -264,9 +264,16 @@ void UserdataDialog::recordToDialog()
     ui->labelUserdataFilepath->setText(tr("-"));
 
   if(!record->value("import_file_path").isNull())
+  {
+    ui->labelUserdataFile->setVisible(true);
+    ui->labelUserdataFilepath->setVisible(true);
     ui->labelUserdataFilepath->setText(record->valueStr("import_file_path"));
+  }
   else
-    ui->labelUserdataFilepath->setText(tr("Not imported"));
+  {
+    ui->labelUserdataFile->setVisible(false);
+    ui->labelUserdataFilepath->setVisible(false);
+  }
 
   if(!record->isNull("visible_from"))
     ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(record->valueInt("visible_from"))));

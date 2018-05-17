@@ -789,7 +789,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
                                       ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange,
-                                      ui->actionSearchShowApproaches});
+                                      ui->actionSearchShowApproaches,
+                                      ui->actionUserdataAdd, ui->actionUserdataDelete});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -927,6 +928,18 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Add extra menu items in the user defined waypoint table - these are already connected
   if(getTabIndex() == si::SEARCH_USER)
   {
+    int rows = getSelectedRowCount();
+    if(rows > 1)
+    {
+      ui->actionUserdataEdit->setText(tr("&Edit Userpoints"));
+      ui->actionUserdataDelete->setText(tr("&Delete Userpoints"));
+    }
+    else
+    {
+      ui->actionUserdataEdit->setText(tr("&Edit Userpoint"));
+      ui->actionUserdataDelete->setText(tr("&Delete Userpoint"));
+    }
+
     menu.addAction(ui->actionUserdataAdd);
     menu.addAction(ui->actionUserdataEdit);
     menu.addAction(ui->actionUserdataDelete);

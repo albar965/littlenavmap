@@ -104,7 +104,7 @@ p, li { white-space: pre-wrap; }
      <item row="1" column="3">
       <widget class="QCheckBox" name="checkBoxUserdataRegion">
        <property name="toolTip">
-        <string>Check to change ident for all selected waypoints</string>
+        <string>Check to change region for all selected waypoints</string>
        </property>
        <property name="text">
         <string/>

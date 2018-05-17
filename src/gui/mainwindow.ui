@@ -5614,10 +5614,10 @@
     <string>Add %1 to Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Add airport, navaid or map position to the nearest flight plan leg</string>
+    <string>Add selected entry to the nearest flight plan leg</string>
    </property>
    <property name="statusTip">
-    <string>Add airport, navaid or map position to the nearest flight plan leg</string>
+    <string>Add selected entry to the nearest flight plan leg</string>
    </property>
   </action>
   <action name="actionRouteDeleteLeg">
@@ -6207,10 +6207,10 @@
     <string>Show Information</string>
    </property>
    <property name="toolTip">
-    <string>Show information about the airport or navaid</string>
+    <string>Show information about the selected entry</string>
    </property>
    <property name="statusTip">
-    <string>Show information about the airport or navaid</string>
+    <string>Show information about the selected entry</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -6225,10 +6225,10 @@
     <string>Show on Map</string>
    </property>
    <property name="toolTip">
-    <string>Show the airport or navaid on the map</string>
+    <string>Show the selected entry on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show the airport or navaid on the map</string>
+    <string>Show the selected entry on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
@@ -7365,7 +7365,7 @@
     <string>Centers the selected userpoint on the map</string>
    </property>
    <property name="statusTip">
-    <string>Centers the selected navaid on the map</string>
+    <string>Centers the selected userpoint on the map</string>
    </property>
   </action>
   <action name="actionUserdataSearchShowMoreOptions">
@@ -7490,10 +7490,13 @@
      <normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</normaloff>:/littlenavmap/resources/icons/userdata_edit.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Edit Userpoint</string>
+    <string>&amp;Edit Userpoint(s)</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit one or more userpoints</string>
    </property>
    <property name="statusTip">
-    <string>Edit Userpoint</string>
+    <string>Edit one or more userpoints</string>
    </property>
    <property name="shortcut">
     <string>Return</string>
@@ -7520,13 +7523,13 @@
      <normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</normaloff>:/littlenavmap/resources/icons/userdata_delete.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Delete Userpoint</string>
+    <string>&amp;Delete Userpoint(s)</string>
    </property>
    <property name="toolTip">
-    <string>Delete Userpoint</string>
+    <string>Remove one or more userpoints</string>
    </property>
    <property name="statusTip">
-    <string>Delete Userpoint</string>
+    <string>Remove one or more userpoints</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
@@ -7645,7 +7648,7 @@
     <string>Centers the selected client position on the map</string>
    </property>
    <property name="statusTip">
-    <string>Centers the selected navaid on the map</string>
+    <string>Centers the selected client position on the map</string>
    </property>
   </action>
   <action name="actionSearchOnlineCenterFollowSelection">
@@ -7659,7 +7662,7 @@
     <string>Centers the selected center on the map</string>
    </property>
    <property name="statusTip">
-    <string>Centers the selected navaid on the map</string>
+    <string>Centers the selected center on the map</string>
    </property>
   </action>
   <action name="actionShowAirspacesOnline">
