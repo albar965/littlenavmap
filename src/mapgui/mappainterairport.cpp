@@ -38,6 +38,7 @@
 
 /* Minimum width for runway diagram */
 static const int RUNWAY_MIN_WIDTH_FT = 4;
+static const int RUNWAY_OVERVIEW_WIDTH_PIX = 6;
 
 /* All sizes in pixel */
 static const int RUNWAY_HEADING_FONT_SIZE = 12;
@@ -233,7 +234,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
   // Calculate all runway screen coordinates
   QList<QPoint> runwayCenters;
   QList<QRect> runwayRects, runwayOutlineRects;
-  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects);
+  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
   // Draw white background ---------------------------------
   // For runways
@@ -386,7 +387,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   // Calculate all runway screen coordinates
   QList<QPoint> runwayCenters;
   QList<QRect> runwayRects, runwayOutlineRects;
-  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects);
+  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
 
   if(!fast && context->flags2 & opts::MAP_AIRPORT_DIAGRAM)
   {
@@ -1075,7 +1076,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 
     QList<QPoint> centers;
     QList<QRect> rects, innerRects;
-    runwayCoords(rw, &centers, &rects, &innerRects, nullptr);
+    runwayCoords(rw, &centers, &rects, &innerRects, nullptr, true /* overview */);
 
     // Draw outline in airport color (magenta or green depending on tower)
     painter->setBrush(QBrush(apColor));
@@ -1146,7 +1147,7 @@ void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapA
  */
 void MapPainterAirport::runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers,
                                      QList<QRect> *rects, QList<QRect> *innerRects,
-                                     QList<QRect> *outlineRects)
+                                     QList<QRect> *outlineRects, bool overview)
 {
   for(const map::MapRunway& r : *runways)
   {
@@ -1169,7 +1170,9 @@ void MapPainterAirport::runwayCoords(const QList<map::MapRunway> *runways, QList
     int length = atools::geo::simpleDistance(xr1, yr1, xr2, yr2);
 
     // Get an approximation of the runway width on the screen minimum six feet
-    int width = scale->getPixelIntForFeet(std::max(r.width, RUNWAY_MIN_WIDTH_FT), r.heading + 90.f);
+    int width = overview ?
+                RUNWAY_OVERVIEW_WIDTH_PIX :
+                scale->getPixelIntForFeet(std::max(r.width, RUNWAY_MIN_WIDTH_FT), r.heading + 90.f);
 
     int backgroundSize = scale->getPixelIntForMeter(AIRPORT_DIAGRAM_BACKGROUND_METER);
 
