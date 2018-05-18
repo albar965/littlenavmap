@@ -503,8 +503,7 @@ void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
   addUserpointInternal(id, pos, SqlRecord());
 }
 
-void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos,
-                                              const SqlRecord& prefill)
+void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefill)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -524,6 +523,9 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
   if(rec.isEmpty())
     // Otherwise fill nothing
     rec = manager->getEmptyRecord();
+
+  if(rec.valueStr("type").isEmpty())
+    rec.setValue("type", UserdataDialog::DEFAULT_TYPE);
 
   if(pos.isValid())
   {

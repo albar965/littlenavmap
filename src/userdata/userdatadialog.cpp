@@ -68,10 +68,8 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   }
 
   // Update units
-  ui->spinBoxUserdataAltitude->setSuffix(
-    Unit::replacePlaceholders(ui->spinBoxUserdataAltitude->suffix()));
-  ui->spinBoxUserdataVisible->setSuffix(
-    Unit::replacePlaceholders(ui->spinBoxUserdataVisible->suffix()));
+  ui->spinBoxUserdataAltitude->setSuffix(Unit::replacePlaceholders(ui->spinBoxUserdataAltitude->suffix()));
+  ui->spinBoxUserdataVisible->setSuffix(Unit::replacePlaceholders(ui->spinBoxUserdataVisible->suffix()));
 
   // Show checkboxes when editing more than one entry
   ui->checkBoxUserdataAltitude->setVisible(showCheckbox);
@@ -349,7 +347,7 @@ void UserdataDialog::dialogToRecord()
   record->setValue("last_edit_timestamp", QDateTime::currentDateTime());
 
   if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataVisible->isChecked())
-    record->setValue("visible_from", Unit::rev(ui->spinBoxUserdataVisible->value(), Unit::distNmF));
+    record->setValue("visible_from", atools::roundToInt(Unit::rev(ui->spinBoxUserdataVisible->value(), Unit::distNmF)));
   else if(editMode == ud::EDIT_MULTIPLE)
     record->remove("visible_from");
 
@@ -378,11 +376,6 @@ void UserdataDialog::fillTypeComboBox(const QString& type)
   if(index != -1)
     // Current type does match - set index
     ui->comboBoxUserdataType->setCurrentIndex(index);
-  else if(type.isEmpty())
-  {
-    // Current type does not match - add to list and set default icon
-    ui->comboBoxUserdataType->setCurrentIndex(ui->comboBoxUserdataType->findText(DEFAULT_TYPE));
-  }
   else
   {
     // Current type does not match - add to list and set default icon
