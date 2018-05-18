@@ -3905,6 +3905,18 @@ Beende jetzt.</translation>
         <translation>Strg+I</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="6210"/>
+        <location filename="src/gui/mainwindow.ui" line="6213"/>
+        <source>Show information about the selected entry</source>
+        <translation>Zeige Informationen über den ausgewählten Eintrag</translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="6228"/>
+        <location filename="src/gui/mainwindow.ui" line="6231"/>
+        <source>Show the selected entry on the map</source>
+        <translation>Zeige den ausgewählten Eintrag auf der Karte</translation>
+    </message>
+    <message>
         <location filename="src/gui/mainwindow.ui" line="6245"/>
         <source>&amp;Mercator</source>
         <translation>&amp;Mercator</translation>
@@ -4057,6 +4069,11 @@ Beende jetzt.</translation>
         <location filename="src/gui/mainwindow.ui" line="6445"/>
         <source>Show simulator AI, multiplayer and online client aircraft position and data on map</source>
         <translation>Zeige Position und Daten von Simulator-AI-, Multiplayer und Onlineclient-Flugzeugen auf Karte</translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="7526"/>
+        <source>&amp;Delete Userpoint(s)</source>
+        <translation>&amp;Lösche Nutzerpunkt(e)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7691"/>
@@ -5898,7 +5915,8 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1507"/>
-        <source>Visible from :</source>
+        <source>Visible from:</source>
+        <oldsource>Visible from :</oldsource>
         <translation>Sichtbar von:</translation>
     </message>
     <message>
@@ -15273,12 +15291,12 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>Logbucheintrag für %1 zu %2%3 hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="558"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="560"/>
         <source>Userpoint added.</source>
         <translation>Nutzerpunkt hinzugefügt.</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="584"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="586"/>
         <source>%n userpoint(s) updated.</source>
         <translation>
             <numerusform>%n Nutzerpunkt hinzugefügt.</numerusform>
@@ -15286,7 +15304,7 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="598"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="600"/>
         <source>Delete %n userpoint(s)?</source>
         <translation>
             <numerusform>%n Nutzerpunkt löschen?</numerusform>
@@ -15294,7 +15312,7 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="608"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="610"/>
         <source>%n userpoint(s) deleted.</source>
         <translation>
             <numerusform>%n Nutzerpunkt gelöscht.</numerusform>
@@ -15302,20 +15320,20 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         </translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="619"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="621"/>
         <source>Open Userpoint CSV File(s)</source>
         <translation>Öffne Nutzerpunkt CSV-Datei(en)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="620"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="710"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="622"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="712"/>
         <source>CSV Files %1;;All Files (*)</source>
         <translation>CSV Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="631"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="659"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="686"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="633"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="661"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="688"/>
         <source>%n userpoint(s) imported.</source>
         <translation>
             <numerusform>%n Nutzerpunkt importiert.</numerusform>
@@ -15323,37 +15341,37 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         </translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="652"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="654"/>
         <source>Open X-Plane user_fix.dat File</source>
         <translation>Öffne X-Plane user_fix.dat-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="653"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="745"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="655"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="747"/>
         <source>X-Plane User Fix Files %1;;All Files (*)</source>
         <translation>X-Plane User Fix-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="679"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="681"/>
         <source>Open Garmin User Waypoint File</source>
         <translation>Öffne Garmin Nutzerwegpunkt-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="680"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="781"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="682"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="783"/>
         <source>Garmin User Waypoint Files %1;;All Files (*)</source>
         <translation>Garmin Nutzerwegpunkt-Datei %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="709"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="711"/>
         <source>Export Userpoint CSV File</source>
         <translation>Exportiere Nutzerpunkt CSV-Datei</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="721"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="757"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="793"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="828"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="723"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="759"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="795"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="830"/>
         <source>%n userpoint(s) exported.</source>
         <translation>
             <numerusform>%n Nutzerpunkt exportiert.</numerusform>
@@ -15361,27 +15379,27 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         </translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="744"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="746"/>
         <source>Export X-Plane user_fix.dat File</source>
         <translation>Exportiere X-Plane user_fix.dat-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="780"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="782"/>
         <source>Export Garmin User Waypoint File</source>
         <translation>Exportiere Garmin Nutzerwegpunkt-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="816"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="818"/>
         <source>Export XML File for FSX/P3D BGL Compiler</source>
         <translation>Exportiere XML-Datei für FSX/P3D BGL Compiler</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="817"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="819"/>
         <source>XML Files %1;;All Files (*)</source>
         <translation>XML Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="848"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="850"/>
         <source>Really delete all userpoints?
 
 A backup will be created in
@@ -15488,6 +15506,11 @@ Andere Formate:
 - Grad und Minuten als Paar: &quot;N6500 W08000&quot; oder &quot;N6500/W08000&quot;
 - NAT-Typ: 5020N
 Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
+    </message>
+    <message>
+        <location filename="src/userdata/userdatadialog.ui" line="107"/>
+        <source>Check to change region for all selected waypoints</source>
+        <translation>Aktivieren, um die Region aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="138"/>
@@ -15617,12 +15640,12 @@ Wird für den Export in X-Plane &quot;user_fix.dat&quot; benötigt.</translation
         <translation> - Bearbeite Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="256"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="258"/>
         <source>Temporary userpoint - will be deleted on next startup</source>
         <translation>Temporärer Nutzerpunkt - wird beim nächsten Start gelöscht</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.cpp" line="264"/>
+        <location filename="src/userdata/userdatadialog.cpp" line="266"/>
         <source>-</source>
         <translation>-</translation>
     </message>
