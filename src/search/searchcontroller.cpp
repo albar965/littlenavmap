@@ -94,7 +94,7 @@ void SearchController::helpPressedProcedure()
 
 void SearchController::helpPressedUserdata()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#search", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-search", lnm::helpLanguagesOnline());
 }
 
 void SearchController::helpPressedOnlineClient()

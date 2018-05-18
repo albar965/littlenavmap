@@ -137,8 +137,12 @@ void UserdataDialog::coordsEdited(const QString& text)
 
 void UserdataDialog::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrl(
-    this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-add-edit", lnm::helpLanguagesOnline());
+  if(editMode == ud::ADD)
+    atools::gui::HelpHandler::openHelpUrl(
+      this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-add", lnm::helpLanguagesOnline());
+  else
+    atools::gui::HelpHandler::openHelpUrl(
+      this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-edit", lnm::helpLanguagesOnline());
 }
 
 void UserdataDialog::resetClicked()
