@@ -42,9 +42,11 @@ const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM
 const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
 const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,6})(\\.([A-Z0-9]{1,6}))?$");
 
-const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT |
-                                             map::VOR | map::NDB | map::USERPOINTROUTE |
-                                             map::AIRWAY);
+const static map::MapObjectTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT |
+                                                        map::VOR | map::NDB | map::USERPOINTROUTE |
+                                                        map::AIRWAY);
+
+const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
 
 const static QString SPANERR("<span style=\"color: #ff0000; font-weight:600\">");
 const static QString SPANWARN("<span style=\"color: #ff3000\">");
@@ -497,7 +499,6 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   QList<ParseEntry> resultList;
   for(const QString& item : cleanItems)
   {
-
     // Simply fetch all possible waypoints
     MapSearchResult result;
     findWaypoints(result, item);
@@ -509,7 +510,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     // Sort lists by distance and remove all which are too far away and update last pos
     filterWaypoints(result, lastPos, lastResult, maxDistance);
 
-    if(!result.isEmpty(ROUTE_TYPES))
+    if(!result.isEmpty(ROUTE_TYPES_AND_AIRWAY))
       resultList.append({item, QString(), result});
     else
       appendWarning(tr("Nothing found for %1. Ignoring.").arg(item));
@@ -1042,14 +1043,18 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
     if(lastResult.waypoints.isEmpty())
     {
-      appendWarning(tr("No waypoint before airway %1. Ignoring flight plan segment.").arg(airwayName));
+      if(result.isEmpty(ROUTE_TYPES))
+        // Print a warning only if nothing else was found
+        appendWarning(tr("No waypoint before airway %1. Ignoring flight plan segment.").arg(airwayName));
       result.airways.clear();
       return;
     }
 
     if(nextResult.waypoints.isEmpty())
     {
-      appendWarning(tr("No waypoint after airway %1. Ignoring flight plan segment.").arg(airwayName));
+      if(result.isEmpty(ROUTE_TYPES))
+        // Print a warning only if nothing else was found
+        appendWarning(tr("No waypoint after airway %1. Ignoring flight plan segment.").arg(airwayName));
       result.airways.clear();
       return;
     }
@@ -1155,7 +1160,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
   }
   else
   {
-    mapQuery->getMapObjectByIdent(result, ROUTE_TYPES, item);
+    mapQuery->getMapObjectByIdent(result, ROUTE_TYPES_AND_AIRWAY, item);
 
     if(item.length() == 5 && result.waypoints.isEmpty())
     {
@@ -1237,7 +1242,7 @@ void RouteString::removeEmptyResults(QList<ParseEntry>& resultList)
   auto it = std::remove_if(resultList.begin(), resultList.end(),
                            [](const ParseEntry& type) -> bool
   {
-    return type.result.isEmpty(ROUTE_TYPES);
+    return type.result.isEmpty(ROUTE_TYPES_AND_AIRWAY);
   });
 
   if(it != resultList.end())
