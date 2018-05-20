@@ -1135,49 +1135,49 @@ Je quitte maintenant.</translation>
         <translation>Erreur lors de l&apos;ouverture du chemin &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="637"/>
+        <location filename="src/info/infocontroller.cpp" line="704"/>
         <source>Showing information for navaid.</source>
         <translation type="unfinished">Afficher les informations sur le navaid.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="639"/>
+        <location filename="src/info/infocontroller.cpp" line="701"/>
         <source>Showing information for airport.</source>
         <translation type="unfinished">Afficher les informations sur l&apos;aérodrome.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="641"/>
+        <location filename="src/info/infocontroller.cpp" line="707"/>
         <source>Showing information for airspace.</source>
         <translation type="unfinished">Afficher les informations sur l&apos;espace aérien.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="643"/>
+        <location filename="src/info/infocontroller.cpp" line="713"/>
         <source>Showing information for online center.</source>
         <translation type="unfinished">Afficher le centre d&apos;information connecté.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="645"/>
+        <location filename="src/info/infocontroller.cpp" line="710"/>
         <source>Showing information for online clients.</source>
         <translation type="unfinished">Afficher les informations sur les clients connectés.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="729"/>
-        <location filename="src/info/infocontroller.cpp" line="755"/>
-        <location filename="src/info/infocontroller.cpp" line="805"/>
+        <location filename="src/info/infocontroller.cpp" line="765"/>
+        <location filename="src/info/infocontroller.cpp" line="791"/>
+        <location filename="src/info/infocontroller.cpp" line="841"/>
         <source>Connected. Waiting for update.</source>
         <translation type="unfinished">Connecté. En attente de mise à jour.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="795"/>
+        <location filename="src/info/infocontroller.cpp" line="831"/>
         <source>&lt;b&gt;AI and multiplayer aircraft are not shown on map.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;AI et les aéronefs multijoueurs ne sont pas montrés sur la carte.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="797"/>
+        <location filename="src/info/infocontroller.cpp" line="833"/>
         <source>No AI or multiplayer aircraft selected.&lt;br/&gt;Found %1 AI or multiplayer aircraft.</source>
         <translation>Aucun AI ou aéronef multijoueur sélectionné.&lt;br/&gt;Trouvé %1 AI ou aéronef multijoueur.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="799"/>
+        <location filename="src/info/infocontroller.cpp" line="835"/>
         <source>no</source>
         <translation>aucun</translation>
     </message>
@@ -8543,156 +8543,156 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1765"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1766"/>
         <source>Online Center %1</source>
         <translation type="unfinished">Centre(s) connecté(s) %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1768"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1769"/>
         <source>Airspace</source>
         <translation>Espace aérien</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1801"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1803"/>
         <source>Helipad %1</source>
         <translation>Hélisurface %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1827"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1830"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1834"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1837"/>
         <source>Online Client Aircraft %1</source>
         <translation type="unfinished">Clients connectés Aéronefs %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1840"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1843"/>
         <source>User Aircraft</source>
         <translation type="unfinished">Aéronef utilisateur</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1919"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1922"/>
         <source> and more</source>
         <translation> et plus</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1967"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1968"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2028"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2037"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1970"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1971"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2031"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2040"/>
         <source>Position</source>
         <translation>position</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1992"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1995"/>
         <source>Departure </source>
         <translation type="unfinished">Départ </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1996"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1999"/>
         <source>Show procedures (%1 has no departure procedure)</source>
         <translation type="unfinished">Afficher les procédures (%1 n&apos;a pas de procédures de départ)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2003"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2006"/>
         <source>Arrival </source>
         <translation type="unfinished">Arrivée </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2007"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2010"/>
         <source>Show procedures (%1 has no arrival procedure)</source>
         <translation type="unfinished">Afficher les procédures (%1 n&apos;a pas de procédures d&apos;arrivée)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2012"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2015"/>
         <source>all </source>
         <translation type="unfinished">tout </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2016"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2019"/>
         <source>Show procedures (%1 has no procedure)</source>
         <translation type="unfinished">Afficher les procédures (%1 n&apos;a pas de procédures)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2929"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2933"/>
         <source>Showing online client aircraft on map.</source>
         <translation type="unfinished">Afficher les aéronefs clients connectés sur la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2948"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2952"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation type="unfinished">Afficher le navaid ou le Point Utilisateur sur la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3306"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3310"/>
         <source>Jumped back to aircraft.</source>
         <translation type="unfinished">Je suis retourné à l&apos;aéronef.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2057"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2058"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2060"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2061"/>
         <source>here</source>
         <translation>ici</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2184"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2188"/>
         <source>Range ring removed from map.</source>
         <translation>Anneaux de portée de distance retirés de la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2190"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2194"/>
         <source>Measurement line removed from map.</source>
         <translation>Ligne de mesure supprimée de la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2390"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2394"/>
         <source>Added range rings for %1.</source>
         <translation>Anneaux de portée de distance ajoutés pour %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2407"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2411"/>
         <source>Added range rings for position.</source>
         <translation>Anneaux de portée de distance ajoutés pour la position.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2419"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2423"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Tous les anneaux de portée et lignes de mesure ont été retirés de la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2919"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2923"/>
         <source>Showing user aircraft on map.</source>
         <translation>Afficher utilisateur aréonef sur la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2924"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2928"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Affichage AI / multijoueur sur la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2934"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2938"/>
         <source>Showing airport on map.</source>
         <translation>Affichage de l&apos;aérodrome sur la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3048"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3052"/>
         <source>Aircraft track removed from map.</source>
         <translation>Piste de l&apos;aérodrome retirée de la carte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3203"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3207"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3210"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3214"/>
         <source>Detail %1</source>
         <translation type="unfinished">Niveau de détail: %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3211"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3215"/>
         <source>Map detail level changed.</source>
         <translation>Le niveau de détail de la carte a changé.</translation>
     </message>
@@ -13616,8 +13616,9 @@ hh:mm</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="100"/>
-        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aérodrome et un système d&apos;information d&apos;aérodrome pour Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel 
+        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
+        <translation>&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aérodrome et un système d&apos;information d&apos;aérodrome pour X-Plane 11, Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel 
 &lt;/a&gt;.&lt;/p&gt;&lt;p&gt;© 2017-2018 Traduction Française par Patrick JUNG alias Patbest&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
 </context>
@@ -14429,99 +14430,99 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
 <context>
     <name>RouteString</name>
     <message>
-        <location filename="src/route/routestring.cpp" line="478"/>
+        <location filename="src/route/routestring.cpp" line="480"/>
         <source>Need at least departure and destination.</source>
         <translation>Besoin d&apos;au moins le départ et la destination.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="489"/>
+        <location filename="src/route/routestring.cpp" line="491"/>
         <source>Using &lt;b&gt;%1&lt;/b&gt; and cruise altitude &lt;b&gt;%2&lt;/b&gt;.</source>
         <translation type="unfinished">Utiliser une vitesse de &lt;b&gt;%1&lt;/b&gt; et l&apos;altitude de croisière de &lt;b&gt;%2&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="515"/>
+        <location filename="src/route/routestring.cpp" line="516"/>
         <source>Nothing found for %1. Ignoring.</source>
         <translation>Rien trouvé pour %1. Ignorer.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="544"/>
+        <location filename="src/route/routestring.cpp" line="545"/>
         <source>Found airway %1 instead of waypoint as first entry in enroute list. Ignoring.</source>
         <translation>Trouvé la voie aérienne %1 au lieu du repère de balisage comme première entrée dans la liste en route. Ignorer.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="564"/>
+        <location filename="src/route/routestring.cpp" line="565"/>
         <source>No navaid found for %1 on airway %2. Ignoring.</source>
         <translation>Aucune navaid trouvée pour %1 sur les voies aériennes %2. Ignorer.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="592"/>
+        <location filename="src/route/routestring.cpp" line="593"/>
         <source>No navaid found for %1. Ignoring.</source>
         <translation>Aucune aide n&apos; a été trouvée pour %1. Ignorer.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="718"/>
-        <location filename="src/route/routestring.cpp" line="799"/>
+        <location filename="src/route/routestring.cpp" line="719"/>
+        <location filename="src/route/routestring.cpp" line="800"/>
         <source>Ignoring time specification for airport %1.</source>
         <translation>Ignorer la spécification de temps pour l&apos;aérodrome %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="787"/>
+        <location filename="src/route/routestring.cpp" line="788"/>
         <source>Mandatory departure airport %1 not found.</source>
         <translation>L&apos;aérodrome de départ obligatoire, soit %1 n&apos;a pas été trouvé.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="868"/>
+        <location filename="src/route/routestring.cpp" line="869"/>
         <source>Mandatory destination airport %1 not found.</source>
         <translation>L&apos;aérodrome de destination obligatoire, soit %1 n&apos;a pas été trouvé.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1045"/>
+        <location filename="src/route/routestring.cpp" line="1048"/>
         <source>No waypoint before airway %1. Ignoring flight plan segment.</source>
         <translation>Aucun waypoint avant le %1. Ignorer le plan de vol.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1052"/>
+        <location filename="src/route/routestring.cpp" line="1057"/>
         <source>No waypoint after airway %1. Ignoring flight plan segment.</source>
         <translation>Aucun waypoint après voies aériennes %1. Ignorer le plan de vol.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1116"/>
         <location filename="src/route/routestring.cpp" line="1121"/>
+        <location filename="src/route/routestring.cpp" line="1126"/>
         <source>Waypoint %1 not found in airway %2. Ignoring flight plan segment.</source>
         <translation>Waypoint %1 non trouvé dans les voies aériennes %2. Ignorer le plan de vol.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1129"/>
+        <location filename="src/route/routestring.cpp" line="1134"/>
         <source>No waypoints found for airway %1. Ignoring flight plan segment.</source>
         <translation>Aucun waypoints trouvés pour les voies aériennes %1. Ignorer le plan de vol.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1136"/>
+        <location filename="src/route/routestring.cpp" line="1141"/>
         <source>No waypoint %1 found at airway %2. Ignoring flight plan segment.</source>
         <translation>Aucun waypoint %1 trouvé sur les voies aériennes %2. Ignorer le plan de vol.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1188"/>
+        <location filename="src/route/routestring.cpp" line="1193"/>
         <source>Replacing plain SID instruction with DCT (direct).</source>
         <translation>Remplacement de l&apos;instruction SID simple par DCT (direct).</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1194"/>
+        <location filename="src/route/routestring.cpp" line="1199"/>
         <source>Replacing STAR instruction with DCT (direct).</source>
         <translation>Remplacement de l&apos;instruction STAR par DCT (direct).</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1201"/>
+        <location filename="src/route/routestring.cpp" line="1206"/>
         <source>Ignoring invalid speed and altitude instruction %1.</source>
         <translation>Ignorer l&apos;instruction de vitesse et d&apos;altitude invalide %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1209"/>
+        <location filename="src/route/routestring.cpp" line="1214"/>
         <source>Ignoring speed and altitude at waypoint %1.</source>
         <translation>Ignorer la vitesse et l&apos;altitude au point de cheminement %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routestring.cpp" line="1216"/>
+        <location filename="src/route/routestring.cpp" line="1221"/>
         <source>Ignoring time for airport %1.</source>
         <translation>Temps d&apos;attente pour l&apos;aérodrome %1.</translation>
     </message>
