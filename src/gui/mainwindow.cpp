@@ -2272,7 +2272,7 @@ void MainWindow::updateActionStates()
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
-  ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
+  ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsTxt->setEnabled(hasFlightplan);
