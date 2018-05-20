@@ -241,7 +241,7 @@ signals:
   void routeAltitudeChanged(float altitudeFeet);
 
   /* Show information about the airports or navaids in the search result */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
 
   /* Show approach information about the airport */
   void showProcedures(map::MapAirport airport);

@@ -94,7 +94,7 @@ signals:
   void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
 
   /* Show information info window on navaid on double click */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
 
 private:
   friend class TreeEventFilter;

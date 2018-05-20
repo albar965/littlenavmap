@@ -286,7 +286,7 @@ void InfoController::restoreState()
                                  refsStrList.at(i).toInt(), false /* airport from nav database */);
 
     updateTextEditFontSizes();
-    showInformationInternal(res, false);
+    showInformationInternal(res, map::NONE, false);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
     atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
@@ -374,14 +374,14 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserCenterInfo->clear();
 }
 
-void InfoController::showInformation(map::MapSearchResult result)
+void InfoController::showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType)
 {
-  showInformationInternal(result, true);
+  showInformationInternal(result, preferredType, true /* Show windows */);
 }
 
 void InfoController::updateAllInformation()
 {
-  showInformationInternal(currentSearchResult, false);
+  showInformationInternal(currentSearchResult, map::NONE, false);
 }
 
 void InfoController::onlineNetworkChanged()
@@ -396,17 +396,18 @@ void InfoController::onlineNetworkChanged()
       airspaces.append(airspace);
   currentSearchResult.airspaces = airspaces;
 
-  showInformationInternal(currentSearchResult, false);
+  showInformationInternal(currentSearchResult, map::NONE, false);
 }
 
 void InfoController::onlineClientAndAtcUpdated()
 {
-  showInformationInternal(currentSearchResult, false);
+  showInformationInternal(currentSearchResult, map::NONE, false);
 }
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
+void InfoController::showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
+                                             bool showWindows)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -632,18 +633,6 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
   if(showWindows)
   {
-    // Select message ==========================================================
-    if(foundNavaid)
-      mainWindow->setStatusMessage(tr("Showing information for navaid."));
-    else if(foundAirport)
-      mainWindow->setStatusMessage(tr("Showing information for airport."));
-    else if(foundAirspace)
-      mainWindow->setStatusMessage(tr("Showing information for airspace."));
-    else if(foundOnlineCenter)
-      mainWindow->setStatusMessage(tr("Showing information for online center."));
-    else if(foundOnlineClient)
-      mainWindow->setStatusMessage(tr("Showing information for online clients."));
-
     // Select tab to activate ==========================================================
     ic::TabIndex idx = static_cast<ic::TabIndex>(ui->tabWidgetInformation->currentIndex());
     // Is any airport related tab active?
@@ -655,28 +644,75 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
     ic::TabIndex newIdx = idx;
 
-    // Decide which tab to activate
-    if(foundAirspace && !foundOnlineClient && !foundOnlineCenter && !foundNavaid && !foundAirport)
-      newIdx = ic::INFO_AIRSPACE;
-    else if(foundOnlineCenter && !foundOnlineClient && !foundNavaid && !foundAirport)
-      newIdx = ic::INFO_ONLINE_CENTER;
-    else if(foundOnlineClient && !foundNavaid && !foundAirport)
-      newIdx = ic::INFO_ONLINE_CLIENT;
-    else if(foundAirport && !foundNavaid)
+    if(preferredType != map::NONE)
     {
-      if(!airportActive)
-        // Show airport tab if no airport related tab was active
-        newIdx = ic::INFO_AIRPORT;
+      // Select the tab to activate by preferred type so that it matches the selected menu item
+      if(preferredType & map::AIRPORT)
+      {
+        if(!airportActive)
+          newIdx = ic::INFO_AIRPORT;
+      }
+      else if(preferredType & map::NAV_ALL || preferredType & map::USERPOINT)
+        newIdx = ic::INFO_NAVAID;
+      else if(preferredType & map::AIRSPACE_ONLINE)
+        newIdx = ic::INFO_ONLINE_CENTER;
+      else if(preferredType & map::AIRCRAFT_ONLINE)
+        newIdx = ic::INFO_ONLINE_CLIENT;
+      else if(preferredType & map::AIRSPACE)
+        newIdx = ic::INFO_AIRSPACE;
     }
-    else if(foundNavaid && !foundAirport)
-      newIdx = ic::INFO_NAVAID;
-    else if(foundNavaid && foundAirport)
+    else
     {
-      if(!airportActive && !navaidActive)
-        newIdx = ic::INFO_AIRPORT;
+      // Decide which tab to activate automatically so that it tries to keep the current tab in front
+      if(foundAirspace && !foundOnlineClient && !foundOnlineCenter && !foundNavaid && !foundAirport)
+        // Only airspace found
+        newIdx = ic::INFO_AIRSPACE;
+      else if(foundOnlineCenter && !foundOnlineClient && !foundNavaid && !foundAirport)
+        // Only online center found
+        newIdx = ic::INFO_ONLINE_CENTER;
+      else if(foundOnlineClient && !foundNavaid && !foundAirport)
+        // Only online client found
+        newIdx = ic::INFO_ONLINE_CLIENT;
+      else if(foundAirport && !foundNavaid)
+      {
+        if(!airportActive)
+          // Show airport tab if no airport related tab was active
+          newIdx = ic::INFO_AIRPORT;
+      }
+      else if(foundNavaid && !foundAirport)
+        newIdx = ic::INFO_NAVAID;
+      else if(foundNavaid && foundAirport)
+      {
+        if(!airportActive && !navaidActive)
+          newIdx = ic::INFO_AIRPORT;
+      }
     }
 
     ui->tabWidgetInformation->setCurrentIndex(newIdx);
+
+    // Select message ==========================================================
+    switch(newIdx)
+    {
+      case ic::INFO_AIRPORT:
+      case ic::INFO_RUNWAYS:
+      case ic::INFO_COM:
+      case ic::INFO_APPROACHES:
+      case ic::INFO_WEATHER:
+        mainWindow->setStatusMessage(tr("Showing information for airport."));
+        break;
+      case ic::INFO_NAVAID:
+        mainWindow->setStatusMessage(tr("Showing information for navaid."));
+        break;
+      case ic::INFO_AIRSPACE:
+        mainWindow->setStatusMessage(tr("Showing information for airspace."));
+        break;
+      case ic::INFO_ONLINE_CLIENT:
+        mainWindow->setStatusMessage(tr("Showing information for online clients."));
+        break;
+      case ic::INFO_ONLINE_CENTER:
+        mainWindow->setStatusMessage(tr("Showing information for online center."));
+        break;
+    }
 
     // Switch to a tab in aircraft window
     ic::TabIndexAircraft acidx = static_cast<ic::TabIndexAircraft>(ui->tabWidgetAircraft->currentIndex());
@@ -887,7 +923,7 @@ void InfoController::updateAircraftInfo()
 void InfoController::optionsChanged()
 {
   updateTextEditFontSizes();
-  showInformationInternal(currentSearchResult, false);
+  showInformationInternal(currentSearchResult, map::NONE, false);
 }
 
 /* Update font size in text browsers if options have changed */

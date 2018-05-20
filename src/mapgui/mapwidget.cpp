@@ -1695,7 +1695,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapAirspace *airspace = nullptr, *onlineCenter = nullptr;
   map::MapUserpoint *userpoint = nullptr;
 
-  bool airportDestination = false, airportDeparture = false;
+  bool airportDestination = false, airportDeparture = false, routeVisible = getShownMapFeatures() & map::FLIGHTPLAN;
   // ===================================================================================
   // Get only one object of each type
   if(result.userAircraft.isValid())
@@ -1754,7 +1754,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
   bool isAircraft = false;
-  QString informationText, measureText, rangeRingText, departureText, departureParkingText, destinationText,
+  QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
+          destinationText,
           addRouteText, searchText, editUserpointText;
 
   if(airspace != nullptr)
@@ -1768,15 +1769,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       informationText = tr("Airspace");
   }
 
+  // Fill texts in reverse order of priority
   if(airway != nullptr)
     informationText = map::airwayText(*airway);
 
   if(userpointRoute != nullptr)
     // No show information on user point
     informationText.clear();
-
-  if(userpoint != nullptr)
-    editUserpointText = informationText = measureText = addRouteText = searchText = map::userpointText(*userpoint);
 
   if(waypoint != nullptr)
     informationText = measureText = addRouteText = searchText = map::waypointText(*waypoint);
@@ -1788,8 +1787,17 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText = measureText = rangeRingText = addRouteText = searchText = map::vorText(*vor);
 
   if(airport != nullptr)
-    informationText = measureText = departureText
-                                      = destinationText = addRouteText = searchText = map::airportText(*airport);
+    procedureText = informationText = measureText = departureText
+                                                      = destinationText = addRouteText =
+                                                                            searchText = map::airportText(*airport);
+
+  // Userpoints are drawn on top of all features
+  if(userpoint != nullptr)
+    editUserpointText = informationText = addRouteText = searchText = map::userpointText(*userpoint);
+
+  // Override airport if part of route and visible
+  if((airportDeparture || airportDestination) && airport != nullptr && routeVisible)
+    informationText = addRouteText = map::airportText(*airport);
 
   int departureParkingAirportId = -1;
   // Parking or helipad only if no airport at cursor
@@ -1815,6 +1823,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     // Clear texts which are not valid for parking positions
     informationText.clear();
+    procedureText.clear();
     measureText.clear();
     rangeRingText.clear();
     destinationText.clear();
@@ -1990,7 +1999,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         {
           ui->actionMapShowApproaches->setEnabled(true);
           ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("Departure ")).
-                                               arg(informationText));
+                                               arg(procedureText));
         }
         else
           ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no departure procedure)").arg(airport->ident));
@@ -2001,7 +2010,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         {
           ui->actionMapShowApproaches->setEnabled(true);
           ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("Arrival ")).
-                                               arg(informationText));
+                                               arg(procedureText));
         }
         else
           ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no arrival procedure)").arg(airport->ident));
@@ -2009,7 +2018,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       else
       {
         ui->actionMapShowApproaches->setEnabled(true);
-        ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("all ")).arg(informationText));
+        ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(tr("all ")).arg(procedureText));
       }
     }
     else
@@ -2068,6 +2077,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << "routeIndex " << routeIndex;
   qDebug() << "userpointRoute " << userpointRoute;
   qDebug() << "informationText" << informationText;
+  qDebug() << "procedureText" << procedureText;
   qDebug() << "measureText" << measureText;
   qDebug() << "departureText" << departureText;
   qDebug() << "destinationText" << destinationText;
@@ -2098,7 +2108,24 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       // This works only with line edit fields
       ui->dockWidgetSearch->raise();
       ui->dockWidgetSearch->show();
-      if(airport != nullptr)
+      if(userpoint != nullptr)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(3);
+        SqlRecord rec;
+        if(!userpoint->ident.isEmpty())
+          rec.appendFieldAndValue("ident", userpoint->ident);
+        if(!userpoint->region.isEmpty())
+          rec.appendFieldAndValue("region", userpoint->region);
+        if(!userpoint->name.isEmpty())
+          rec.appendFieldAndValue("name", userpoint->name);
+        if(!userpoint->type.isEmpty())
+          rec.appendFieldAndValue("type", userpoint->type);
+        if(!userpoint->tags.isEmpty())
+          rec.appendFieldAndValue("tags", userpoint->tags);
+
+        emit showInSearch(map::USERPOINT, rec);
+      }
+      else if(airport != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(0);
         emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident));
@@ -2132,23 +2159,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           rec.appendFieldAndValue("region", waypoint->region);
 
         emit showInSearch(map::WAYPOINT, rec);
-      }
-      else if(userpoint != nullptr)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(3);
-        SqlRecord rec;
-        if(!userpoint->ident.isEmpty())
-          rec.appendFieldAndValue("ident", userpoint->ident);
-        if(!userpoint->region.isEmpty())
-          rec.appendFieldAndValue("region", userpoint->region);
-        if(!userpoint->name.isEmpty())
-          rec.appendFieldAndValue("name", userpoint->name);
-        if(!userpoint->type.isEmpty())
-          rec.appendFieldAndValue("type", userpoint->type);
-        if(!userpoint->tags.isEmpty())
-          rec.appendFieldAndValue("tags", userpoint->tags);
-
-        emit showInSearch(map::USERPOINT, rec);
       }
       else if(onlineAircraft != nullptr)
       {
@@ -2255,7 +2265,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       map::MapObjectTypes type;
 
       int id = -1;
-      if(airport != nullptr)
+      if(userpoint != nullptr)
+      {
+        id = userpoint->id;
+        type = map::USERPOINT;
+      }
+      else if(airport != nullptr)
       {
         id = airport->id;
         type = map::AIRPORT;
@@ -2279,11 +2294,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = ndb->id;
         type = map::NDB;
-      }
-      else if(userpoint != nullptr)
-      {
-        id = userpoint->id;
-        type = map::USERPOINT;
       }
       else if(waypoint != nullptr)
       {
@@ -2313,6 +2323,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         position = pos;
       }
 
+      // use airport if it is departure or desination and flight plan is visible to get quick information
+      if((airportDeparture || airportDestination) && airport != nullptr && routeVisible)
+      {
+        id = airport->id;
+        type = map::AIRPORT;
+      }
+
       if(action == ui->actionRouteAirportStart && parking != nullptr)
         emit routeSetParkingStart(*parking);
       else if(action == ui->actionRouteAirportStart && helipad != nullptr)
@@ -2336,7 +2353,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       else if(action == ui->actionRouteAirportDest)
         emit routeSetDest(*airport);
       else if(action == ui->actionMapShowInformation)
-        emit showInformation(result);
+        emit showInformation(result, type);
     }
     else if(action == ui->actionMapShowApproaches)
       emit showApproaches(*airport);
@@ -3146,7 +3163,7 @@ void MapWidget::handleInfoClick(QPoint pos)
   if(!(opts & opts::CLICK_AIRSPACE))
     result.airspaces.clear();
 
-  emit showInformation(result);
+  emit showInformation(result, map::NONE);
 }
 
 bool MapWidget::loadKml(const QString& filename, bool center)

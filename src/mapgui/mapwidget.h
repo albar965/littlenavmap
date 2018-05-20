@@ -340,7 +340,7 @@ signals:
   void updateActionStates();
 
   /* Show information about objects from single click or context menu */
-  void showInformation(map::MapSearchResult result);
+  void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
 
   /* Add user point and pass result to it so it can prefill the dialog */
   void addUserpointFromMap(map::MapSearchResult result, const atools::geo::Pos& pos);
