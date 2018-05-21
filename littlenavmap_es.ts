@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>ICAO</source>
-        <translation>OACI</translation>
+        <translation>ICAO</translation>
     </message>
     <message>
         <source>Name</source>
@@ -216,11 +216,11 @@ Magn.°</translation>
     </message>
     <message>
         <source>3D</source>
-        <translation type="unfinished">3D</translation>
+        <translation>3D</translation>
     </message>
     <message>
         <source>%1 overriding all other search options.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sobreescribiendo todas las demás opciones.</translation>
     </message>
 </context>
 <context>
@@ -259,11 +259,11 @@ Magn.°</translation>
     </message>
     <message>
         <source>Enable all airspaces in this category</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar todo espacio aéreo en esta categoría</translation>
     </message>
     <message>
         <source>Disable all airspaces in this category</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilitar todos los espacios aéreos en esta categoría</translation>
     </message>
 </context>
 <context>
@@ -769,7 +769,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
-        <translation>&lt;hr/&gt;Algunos archivos o directorios de escenarios no se pudieron leer.&lt;br/&gt;Verifique si los aeropuertos de los escenarios afectados y su info  se muestran correctamente. &lt;hr/&gt;</translation>
+        <translation>&lt;hr/&gt;Algunos archivos o directorios de escenarios no se pudieron leer.&lt;br/&gt;Verifique si los aeropuertos de los escenarios afectados y su info se muestran correctamente. &lt;hr/&gt;</translation>
     </message>
     <message>
         <source>Use %1 for &amp;Navaids and Procedures</source>
@@ -819,7 +819,12 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 Is another %3 running?
 
 Exiting now.</source>
-        <translation type="unfinished"></translation>
+        <translation>No puedo abrir base de datos %1 Razón:
+
+%2
+Hay otro %3 ejecutándose?
+
+Saliendo ahora.</translation>
     </message>
 </context>
 <context>
@@ -927,11 +932,11 @@ Exiting now.</source>
     </message>
     <message>
         <source>Showing information for online center.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrando información para centro en línea.</translation>
     </message>
     <message>
         <source>Showing information for online clients.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrando información para clientes en línea.</translation>
     </message>
 </context>
 <context>
@@ -1062,7 +1067,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>Save Map as Image</source>
-        <translation>Grabar el mapa como imagen</translation>
+        <translation>Grabar el mapa como Imagen</translation>
     </message>
     <message>
         <source>Facilities</source>
@@ -1118,7 +1123,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>Ident</source>
-        <translation>Identificación</translation>
+        <translation>Identificador</translation>
     </message>
     <message>
         <source>M&amp;in:</source>
@@ -1218,7 +1223,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>Could not find a&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition or&lt;/li&gt;&lt;li&gt;Prepar3D installation&lt;/li&gt;&lt;/ul&gt;on this computer. Also, no scenery library databases were found.&lt;br/&gt;&lt;br/&gt;You can copy a Little Navmap scenery library database from another computer.&lt;br/&gt;Press the help button for more information on this.&lt;br/&gt;&lt;br/&gt;If you have X-Plane 11 installed you can go to the scenery library loading dialog by clicking the X-Plane button below.&lt;br/&gt;&lt;br/&gt;</source>
-        <translation>No se pudo encontrar un &lt;ul&gt; &lt;li&gt; Microsoft Flight Simulator X, &lt;/li&gt; &lt;li&gt; Flight Simulator - Steam Edition o &lt;/li&gt; &lt;li&gt; Prepar3D installation &lt;/li&gt; &lt;/ul&gt; en este equipo. Además, no se encontraron bases de datos de bibliotecas de escenarios. &lt;br/&gt; &lt;br/&gt; Puede copiar un pequeño mapa de navegación desde otra computadora. &lt;br/&gt; Presione el botón de ayuda para obtener más información al respecto. &lt;br/&gt; &lt;br&gt; /&gt; Si tiene instalado X-Plane 11  puede ir a la librería de escenarios clickeando el botón X-Plane a continuación. &lt;br/&gt; &lt;br/&gt;</translation>
+        <translation>No se pudo encontrar un&lt;ul&gt;&lt;li&gt;Microsoft Flight Simulator X,&lt;/li&gt;&lt;li&gt;Flight Simulator - Steam Edition o&lt;/li&gt;&lt;li&gt;Prepar3D instalados&lt;/li&gt;&lt;/ul&gt;en este equipo. Además, no se encontraron bases de datos de bibliotecas de escenarios.&lt;br/&gt;&lt;br/&gt; Puede copiar un pequeño mapa de navegación desde otra computadora.&lt;br/&gt;Presione el botón de ayuda para obtener más información al respecto.&lt;br/&gt;&lt;br/&gt;Si tiene instalado X-Plane 11 puede ir a la librería de escenarios clickeando el botón X-Plane a continuación.&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&amp;Contents (Online)</source>
@@ -1318,7 +1323,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>At least one Ramp Military Combat</source>
-        <translation>Al menos una rampa militar de combate</translation>
+        <translation>Al menos una Rampa Militar de Combate</translation>
     </message>
     <message>
         <source>Filter by entries including text</source>
@@ -1338,7 +1343,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>CARTO &amp;Dark</source>
-        <translation>CARTO  O&amp;scurecer</translation>
+        <translation>CARTO oscurecer &amp;D</translation>
     </message>
     <message>
         <source>Minimum range of a VOR or NDB</source>
@@ -1362,7 +1367,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>Search for all navaids within the given distance limits around the distance search center</source>
-        <translation>Buscar todas las ayudas a la navegación desde límite de distancia dada alrededor del centro</translation>
+        <translation>Buscar todas las navaids dentro de los límites de distancia alrededor del centro de búsqueda</translation>
     </message>
     <message>
         <source>VOR/VORTAC - Low</source>
@@ -1434,7 +1439,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>Airports that have avgas</source>
-        <translation>Aeropuertos que tienen avgas</translation>
+        <translation>Aeropuertos que tienen AvGas</translation>
     </message>
     <message>
         <source>Airport state or province</source>
@@ -1608,7 +1613,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>At least one Ramp Military Cargo</source>
-        <translation>Al menos una rampa militar de carga</translation>
+        <translation>Al menos una Rampa Militar de Carga</translation>
     </message>
     <message>
         <source>Flight Plan Toolbar</source>
@@ -1664,7 +1669,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>All message dialogs reset.</source>
-        <translation>Reiniciar todos los mensajes de diálogos.</translation>
+        <translation>Reiniciar todos los mensajes de diálogo.</translation>
     </message>
     <message>
         <source>CARTO Dark online map theme</source>
@@ -1712,7 +1717,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>&amp;About Little Navmap</source>
-        <translation>&amp;A cerca de Little Navmap</translation>
+        <translation>&amp;Acerca de Little Navmap</translation>
     </message>
     <message>
         <source>About Little Navmap</source>
@@ -1774,7 +1779,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Show help for the procedure search tab</source>
-        <translation>Mostrar ayuda para la pestaña de búsqueda PROCEDIMIENTO</translation>
+        <translation>Mostrar ayuda para la pestaña de búsqueda Procedimiento</translation>
     </message>
     <message>
         <source>Force map to show add-on airports</source>
@@ -1890,7 +1895,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Airports that have certain ramp parking types</source>
-        <translation>Aeródromos que tienen ciertos tipos de rampas de estacionamiento</translation>
+        <translation>Aeropuertos que tienen ciertos tipos de rampas de estacionamiento</translation>
     </message>
     <message>
         <source>Show &amp;VOR Stations</source>
@@ -1978,7 +1983,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>The old X-Plane FMS format version 3 does not allow saving of:&lt;ul&gt;&lt;li&gt;Procedures&lt;/li&gt;&lt;li&gt;Airways&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;/ul&gt;This information will be lost when reloading the file.&lt;br/&gt;&lt;br/&gt;Really save as FMS file?&lt;br/&gt;</source>
-        <translation>El antiguo formato X-Plane FMS versión 3 no permite guardar: &lt;ul&gt; &lt;li&gt; Procedimientos &lt;/li&gt; &lt;li&gt; &lt;/li&gt; &lt;li&gt; Velocidad de avance &lt;/li&gt; &lt;li&gt; Posición de estacionamiento de salida &lt;/li&gt; &lt;li&gt; Tipos (IFR / VFR, Alt bajo / Alt alto) &lt;/li&gt; &lt;/ul&gt; Esta información se perderá al volver a cargar el archivo. &lt;br/&gt; &lt;br/&gt; ¿Realmente guardar como archivo FMS? &lt;br/&gt;</translation>
+        <translation>El antiguo formato X-Plane FMS versión 3 no permite guardar:&lt;ul&gt;&lt;li&gt;Procedimientos &lt;/li&gt;&lt;li&gt;&lt;/li&gt;&lt;li&gt;Velocidad de avance&lt;/li&gt;&lt;li&gt;Posición de estacionamiento de salida &lt;/li&gt;&lt;li&gt;Tipos (IFR / VFR, Alt bajo / Alt alto)&lt;/li&gt;&lt;/ul&gt;Esta información se perderá al volver a cargar el archivo.&lt;br/&gt;&lt;br/&gt;¿Realmente guardar como archivo FMS?&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Only DME</source>
@@ -2006,15 +2011,15 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>At least Gate Heavy</source>
-        <translation>Al menos una puerta grande</translation>
+        <translation>Al menos una Puerta Grande</translation>
     </message>
     <message>
         <source>At least Gate Small</source>
-        <translation>Al menos una puerta pequeña</translation>
+        <translation>Al menos una Puerta Pequeña</translation>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;&lt;big&gt;This new format can only be loaded from&lt;br/&gt;X-Plane 11.10 and above.&lt;br/&gt;&lt;br/&gt;Do not use it with X-Plane 11.05 or lower.&lt;br/&gt;It might crash the simulator.&lt;/big&gt;&lt;br/&gt;&lt;br/&gt;Use &quot;Export Flight Plan as X-Plane FMS 3...&quot; instead.&lt;/b&gt;&lt;/p&gt;The new X-Plane FMS format version 11 does not allow saving of:&lt;ul&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;/ul&gt;This information will be lost when reloading the file.&lt;br/&gt;&lt;br/&gt;Really save as FMS file?&lt;br/&gt;</source>
-        <translation>&lt;p&gt; &lt;b&gt; &lt;grande&gt; Este nuevo formato solo se puede cargar desde &lt;br/&gt; X-Plane 11.10 o superior. &lt;br/&gt; &lt;br/&gt; No lo use con X-Plane 11.05 o inferior. &lt;br/&gt; Puede bloquear el simulador. &lt;/Big&gt; &lt;br/&gt; &lt;br/&gt; Use &quot;Exportar Plan  de Vuelo como X-Plane FMS 3 ...&quot; en su lugar. &lt;/B&gt; &lt;/p&gt; El nuevo X-Plane La versión 11 del formato FMS no permite guardar: &lt;ul&gt; &lt;li&gt; Velocidad de pista &lt;/li&gt; &lt;li&gt; Posición de salida de estacionamiento &lt;/li&gt; &lt;li&gt; Tipos (IFR / VFR, Alt bajo / Alto) &lt;/li&gt; &lt;/ul&gt; Esta información se perderá al volver a cargar el archivo. &lt;br/&gt; &lt;br/&gt; ¿Realmente guardar como archivo FMS? &lt;br/&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;&lt;big&gt;Este nuevo formato solo se puede cargar desde &lt;br/&gt;X-Plane 11.10 o superior.&lt;br/&gt;&lt;br/&gt;No lo use con X-Plane 11.05 o inferior.&lt;br/&gt;Puede bloquear el simulador.&lt;/big&gt;&lt;br/&gt;&lt;br/&gt;Use &quot;Exportar Plan de Vuelo como X-Plane FMS 3 ...&quot; en su lugar.&lt;/b&gt;&lt;/p&gt;El nuevo X-Plane La versión 11 del formato FMS no permite guardar:&lt;ul&gt;&lt;li&gt;Velocidad de pista&lt;/li&gt;&lt;li&gt;Posición de salida de estacionamiento&lt;/li&gt;&lt;li&gt;Tipos (IFR / VFR, Alt bajo / Alto)&lt;/li&gt;&lt;/ul&gt;Esta información se perderá al volver a cargar el archivo.&lt;br/&gt;&lt;br/&gt;¿Realmente guardar como archivo FMS?&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Move selected Legs Up</source>
@@ -2210,7 +2215,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Delete Aircraft &amp;Trail</source>
-        <translation>Borrar &amp;trayectoria de aeronave</translation>
+        <translation>Borrar &amp;trazos de trayectoria de aeronave</translation>
     </message>
     <message>
         <source>Load all entries into the view</source>
@@ -2238,7 +2243,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Show or hide the compass map floating overlay</source>
-        <translation>Muestra/Ocultar el compás flotante en el mapa</translation>
+        <translation>Mostrar/Ocultar el compás flotante en el mapa</translation>
     </message>
     <message>
         <source>Work offline and stop loading of map data</source>
@@ -2378,7 +2383,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>All NDB</source>
-        <translation>Todos los  NDB</translation>
+        <translation>Todos los NDB</translation>
     </message>
     <message>
         <source>Flight plan altitude which is also used to calculate a flight plan based on given altitude</source>
@@ -2462,7 +2467,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Save Map as &amp;Image ...</source>
-        <translation>Grabar el mapa como &amp;imagen ...</translation>
+        <translation>Grabar el mapa como &amp;Imagen ...</translation>
     </message>
     <message>
         <source>Show airport elevation search options</source>
@@ -2546,11 +2551,11 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Calculate a low altitude (Victor airways) flight plan between selected legs</source>
-        <translation>Calcular un Plan de Vuelo para una altitud baja (aerovías Victor)  entre tramos elegidos</translation>
+        <translation>Calcular un Plan de Vuelo para una altitud baja (aerovías Victor) entre tramos elegidos</translation>
     </message>
     <message>
         <source>At least Ramp GA Small</source>
-        <translation>Al menos una rampa chica GA</translation>
+        <translation>Al menos una Rampa GA Chica</translation>
     </message>
     <message>
         <source>&amp;Scalebar</source>
@@ -2578,7 +2583,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>At least Ramp GA Large</source>
-        <translation>Al menos una rampa grande GA</translation>
+        <translation>Al menos una Rampa GA Grande</translation>
     </message>
     <message>
         <source>Return to the overview showing all procedures for an airport</source>
@@ -2666,7 +2671,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Military airports</source>
-        <translation>Aeropuertos militares</translation>
+        <translation>Aeropuertos Militares</translation>
     </message>
     <message>
         <source>Goto Center for &amp;Distance Search</source>
@@ -2734,7 +2739,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>At least Ramp GA Medium</source>
-        <translation>Al menos una rampa GA mediana</translation>
+        <translation>Al menos una Rampa GA Mediana</translation>
     </message>
     <message>
         <source>Show navaid distance search options</source>
@@ -2834,7 +2839,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Show or hide the overview map floating overlay</source>
-        <translation>Muestra/Oculta la sobreimpresión de mapa flotante</translation>
+        <translation>Mostrar/Ocultar sobreimpresión de mapa flotante</translation>
     </message>
     <message>
         <source>Calculate flight plan based on given altitude using Victor or Jet airways between selected legs</source>
@@ -2878,7 +2883,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Database contains no AIRAC cycle information which is required for the X-Plane FSM 11 flight plan format.&lt;br/&gt;&lt;br/&gt;This can happen if you save a flight plan based on FSX or Prepar3D scenery.&lt;br/&gt;&lt;br/&gt;Really continue?</source>
-        <translation>La base de datos no contiene información del ciclo AIRAC que se requiere para el formato del plan de vuelo X-Plane FSM 11. &lt;br/&gt; &lt;br/&gt; Esto puede suceder si guarda un plan de vuelo basado en el escenario FSX o Prepar3D. &lt;br/&gt; &lt;br/&gt; ¿Realmente desea continuar?</translation>
+        <translation>La base de datos no contiene información del ciclo AIRAC que se requiere para el formato del plan de vuelo X-Plane FSM 11. &lt;br/&gt;&lt;br/&gt;Esto puede suceder si guarda un Plan de Vuelo basado en el escenario FSX o Prepar3D.&lt;br/&gt;&lt;br/&gt;¿Realmente desea continuar?</translation>
     </message>
     <message>
         <source>Min &amp;Range:</source>
@@ -2954,7 +2959,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Show or hide the scalebar map floating overlay</source>
-        <translation>Muestra/Oculta barra de escalas sobrepuesta al mapa</translation>
+        <translation>Mostrar/Ocultar barra de escalas sobrepuesta al mapa</translation>
     </message>
     <message>
         <source>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</source>
@@ -2998,11 +3003,11 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Airports that have certain runway surfaces</source>
-        <translation>Aeropuertos que tienen ciertos tipos de revestimientos d epista</translation>
+        <translation>Aeropuertos que tienen ciertos tipos de revestimientos de epista</translation>
     </message>
     <message>
         <source>Save flight plan as FPL file usable by the Reality XP GNS 530W/430W V2</source>
-        <translation>Graba Plan de vuelo como FPL utilizable por Reality XP GNS 530W/430W V2</translation>
+        <translation>Grabar Plan de vuelo como FPL utilizable por Reality XP GNS 530W/430W V2</translation>
     </message>
     <message>
         <source>Flight Plan Files %1;;All Files (*)</source>
@@ -3014,7 +3019,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Show or hide the navigation map floating overlay</source>
-        <translation>Muestra/Oculta mapa de navegación flotante</translation>
+        <translation>Mostrar/Ocultar mapa de navegación flotante</translation>
     </message>
     <message>
         <source>Elevation</source>
@@ -3194,7 +3199,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Airport Name</source>
-        <translation>Nombre de aeropuerto</translation>
+        <translation>Nombre de Aeropuerto</translation>
     </message>
     <message>
         <source>Airport city</source>
@@ -3210,7 +3215,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>At least one Ramp Cargo</source>
-        <translation>Al menos una rampa de carga (cargo)</translation>
+        <translation>Al menos una Rampa de Carga (cargo)</translation>
     </message>
     <message>
         <source>Check for &amp;Updates</source>
@@ -3234,7 +3239,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Increase font size in table view</source>
-        <translation>Aumentar tamaño de texto en la vista</translation>
+        <translation>Aumentar tamaño de texto en tabla</translation>
     </message>
     <message>
         <source>Show information about the airport or navaid</source>
@@ -3382,7 +3387,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Really Quit?</source>
-        <translation>Realmente desea salirr?</translation>
+        <translation>Realmente desea salir?</translation>
     </message>
     <message>
         <source>Ctrl+Alt+A</source>
@@ -3466,7 +3471,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Export Flight Plan as GP&amp;X ...</source>
-        <translation>Exportar Plan de Vuelo como  GP&amp;X ...</translation>
+        <translation>Exportar Plan de Vuelo como GP&amp;X ...</translation>
     </message>
     <message>
         <source>Navaid name</source>
@@ -3538,606 +3543,609 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>&amp;Userdata</source>
-        <translation type="unfinished"></translation>
+        <translation>Dato de &amp;Usuario</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ver</translation>
     </message>
     <message>
         <source>&amp;Details</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Detalles</translation>
     </message>
     <message>
         <source>&amp;Airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>Espacios &amp;Aéreos</translation>
     </message>
     <message>
         <source>Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntos de usuario</translation>
     </message>
     <message>
         <source>Search for airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar aeropuertos</translation>
     </message>
     <message>
         <source>Search for VOR, NDB and waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar VOR, NDB y waypoints</translation>
     </message>
     <message>
         <source>Search for SID, STAR and approach procedures of an airport</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar SID, STAR y procedimientos de aproximación a un aeropuerto</translation>
     </message>
     <message>
         <source>Search, add and edit user defined waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar, agregar y editar waypoints definidos por el usuario</translation>
     </message>
     <message>
         <source>Short ident of the userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificador corto del punto de usuario</translation>
     </message>
     <message>
         <source>Two-letter code for ICAO region</source>
-        <translation type="unfinished"></translation>
+        <translation>Código ICAO regional de dos letras</translation>
     </message>
     <message>
         <source>Userpoint type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de punto de usuario</translation>
     </message>
     <message>
         <source>Add a new userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar nuevo punto de usuario</translation>
     </message>
     <message>
         <source>Edit one or more userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar uno o más puntos de usuario</translation>
     </message>
     <message>
         <source>Remove one or more userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover uno o más puntos de usuario</translation>
     </message>
     <message>
         <source>Show help for the userdata search tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar ayuda para la pestaña de búsqueda datos de usuario</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Descripción</translation>
+        <translation>Descripción</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiquetas</translation>
     </message>
     <message>
         <source>File name and path if this waypoint was imported from a file</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de archivo y ruta si este waypoint fue importado de un archivo</translation>
     </message>
     <message>
         <source>Import file name and path</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar nombre de archivo y ruta</translation>
     </message>
     <message>
         <source>Online Clients</source>
-        <translation type="unfinished"></translation>
+        <translation>Clientes En Línea</translation>
     </message>
     <message>
         <source>Search for online network clients/aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar por redes clientes/aeronaves en línea</translation>
     </message>
     <message>
         <source>Client Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificador (Callsign) del Cliente</translation>
     </message>
     <message>
         <source>Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificador (Callsign)</translation>
     </message>
     <message>
         <source>Client Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre del Cliente</translation>
     </message>
     <message>
         <source>Departure airport ICAO code</source>
-        <translation type="unfinished"></translation>
+        <translation>Código ICAO aeropuerto de partida</translation>
     </message>
     <message>
         <source>Departure</source>
-        <translation type="unfinished">Partida</translation>
+        <translation>Partida</translation>
     </message>
     <message>
         <source>Destination airport ICAO code</source>
-        <translation type="unfinished"></translation>
+        <translation>Código ICAO aeropuerto de Destino</translation>
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destino</translation>
     </message>
     <message>
         <source>Network server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor de Red</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <source>Online Centers</source>
-        <translation type="unfinished"></translation>
+        <translation>Centros En Línea</translation>
     </message>
     <message>
         <source>Search for online network centers</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar por redes con centros en línea</translation>
     </message>
     <message>
         <source>Facility Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de Servicios</translation>
     </message>
     <message>
         <source>All Facility Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Tipos de Facilidades</translation>
     </message>
     <message>
         <source>No Observer</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin Observador</translation>
     </message>
     <message>
         <source>Observer</source>
-        <translation type="unfinished"></translation>
+        <translation>Observador</translation>
     </message>
     <message>
         <source>Flight Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información de Vuelo</translation>
     </message>
     <message>
         <source>Delivery</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrega</translation>
     </message>
     <message>
         <source>Ground</source>
-        <translation type="unfinished">Tierra</translation>
+        <translation>Tierra</translation>
     </message>
     <message>
         <source>Tower</source>
-        <translation type="unfinished"></translation>
+        <translation>Torre</translation>
     </message>
     <message>
         <source>Approach</source>
-        <translation type="unfinished">Aproximación</translation>
+        <translation>Aproximación</translation>
     </message>
     <message>
         <source>ACC</source>
-        <translation type="unfinished"></translation>
+        <translation>ACC</translation>
     </message>
     <message>
         <source>Online Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor en Línea</translation>
     </message>
     <message>
         <source>Search for online network servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar Servidores en Línea</translation>
     </message>
     <message>
         <source>Runways</source>
-        <translation type="unfinished">Pistas</translation>
+        <translation>Pistas</translation>
     </message>
     <message>
         <source>Runway and helipad information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información de Pistas y Helipuertos</translation>
     </message>
     <message>
         <source>Airport communication frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Frecuencias de comunicación del Aeropuerto</translation>
     </message>
     <message>
         <source>Airport approach procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>Procedimientos de aproximación Aeropuerto</translation>
     </message>
     <message>
         <source>Decoded weather information for airport</source>
-        <translation type="unfinished"></translation>
+        <translation>Información climática decodificada para aeropuerto</translation>
     </message>
     <message>
         <source>VOR, NDB, waypoint, airway and userpoint information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información VOR, NDB, waypoint, aerovía y punto de usuario</translation>
     </message>
     <message>
         <source>No VOR, NDB, waypoint, airway or userpoint selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin VOR, NDB, waypoint, aerovía o punto de usuario seleccionado.</translation>
     </message>
     <message>
         <source>Online network client/aircraft information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información en línea de cliente/aeronave</translation>
     </message>
     <message>
         <source>No online client/aircraft selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>No seleccionado cliente/aeronave en línea.</translation>
     </message>
     <message>
         <source>Online network center information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información de Red Central en Línea</translation>
     </message>
     <message>
         <source>No online network center selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>No seleccionado Red Central en Línea.</translation>
     </message>
     <message>
         <source>General user aircraft information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información general aeronave de usuario</translation>
     </message>
     <message>
         <source>User aircraft progress and environment information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información de progreso y entorno aeronave de usuario</translation>
     </message>
     <message>
         <source>Information about AI or multplayer aircraft or ships</source>
-        <translation type="unfinished"></translation>
+        <translation>Información acerca de naves o aeronaves de IA/Multijugador</translation>
+    </message>
+    <message>
+        <source>Add selected entry to the nearest flight plan leg</source>
+        <translation>Agregar entrada seleccionada al tramo de Plan de Vuelo más cercano</translation>
+    </message>
+    <message>
+        <source>Show information about the selected entry</source>
+        <translation>Mostrar información acerca de la entrada seleccionada</translation>
+    </message>
+    <message>
+        <source>Show the selected entry on the map</source>
+        <translation>Mostrar la entrada seleccionada en el mapa</translation>
     </message>
     <message>
         <source>Show simulator AI, multiplayer and online client aircraft position and data on map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar la posición y datos de IA del simulador, multijugador y avión cliente en línea en el mapa</translation>
     </message>
     <message>
         <source>Edit Flight Plan %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar Plan de Vuelo %1</translation>
     </message>
     <message>
         <source>Edit name and coordinates of user defined flight plan position</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar el nombre y coordenadas de posición del Plan de Vuelo definido por el usuario</translation>
     </message>
     <message>
         <source>Ctrl+Alt+M</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+M</translation>
     </message>
     <message>
         <source>Show %1&amp;Procedures for %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar %1&amp;Procedimientos para %2</translation>
     </message>
     <message>
         <source>Show %1&amp;Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar %1&amp;Procedimientos</translation>
     </message>
     <message>
         <source>Export Flight Plan as X-Plane FMS &amp;3 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo como X-Plane FMS &amp;3 ...</translation>
     </message>
     <message>
         <source>Save Flight &amp;Plan as X-Plane FMS 11 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar &amp;Plan de Vuelo como X-Plane FMS 11 ...</translation>
     </message>
     <message>
         <source>Export Flight Plan as &amp;Majestic Dash FPR ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo como &amp;Majestic Dash FPR ...</translation>
     </message>
     <message>
         <source>Export Flight Plan as IXEG &amp;FPL ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo como IXEG &amp;FPL ...</translation>
     </message>
     <message>
         <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo a &amp;corte.in para Flight Factor Airbus ...</translation>
     </message>
     <message>
         <source>Show Compass Rose</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Rosa de los Vientos</translation>
     </message>
     <message>
         <source>Show compass rose around user aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Rosa de los Vientos alrededor aeronave de usuario</translation>
     </message>
     <message>
         <source>&amp;Follow Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Seguir Selección &amp;F</translation>
     </message>
     <message>
         <source>Centers the selected flight plan waypoint on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centra el waypoint del plan de vuelo seleccionado en el mapa</translation>
     </message>
     <message>
         <source>Centers the selected airport on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centra el aeropuerto seleccionado en el mapa</translation>
     </message>
     <message>
         <source>Centers the selected procedure on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centra el procedimiento seleccionado en el mapa</translation>
     </message>
     <message>
         <source>Centers the selected navaid on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centra las navaids seleccionadas en el mapa</translation>
     </message>
     <message>
         <source>Centers the selected userpoint on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centra el punto de usuario seleccionado en el mapa</translation>
     </message>
     <message>
         <source>More search options</source>
-        <translation type="unfinished"></translation>
+        <translation>Más opciones de búsqueda</translation>
     </message>
     <message>
         <source>Show more search options</source>
-        <translation type="unfinished"></translation>
+        <translation>Muestra más opciones de búsqueda</translation>
     </message>
     <message>
         <source>&amp;Show Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Muestra Búsqueda &amp;S</translation>
     </message>
     <message>
         <source>Show Userpoint Search Tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Muestra Pestaña de búsqueda punto de usuario</translation>
     </message>
     <message>
         <source>Import &amp;CSV ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar &amp;CSV ...</translation>
     </message>
     <message>
         <source>Import Userpoints from CSV File</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar puntos de usuario de archivo CSV</translation>
     </message>
     <message>
         <source>Import &amp;X-Plane user_fix.dat ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar user_fix.dat de &amp;X-Plane ...</translation>
     </message>
     <message>
         <source>Import Userpoints from X-Plane &quot;user_fix.dat&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar puntos de usuario  de archivo &quot;user_fix.dat&quot; de X-Plane</translation>
     </message>
     <message>
         <source>Import &amp;Garmin GTN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar &amp;Garmin GTN ...</translation>
     </message>
     <message>
         <source>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar puntos de usuario de archivo &quot;user.wpt&quot; Garmin GTN</translation>
     </message>
     <message>
         <source>Export &amp;CSV ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;CSV ...</translation>
     </message>
     <message>
         <source>Export Userpoints to CSV File</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar puntos de usuario a archivo CSV</translation>
     </message>
     <message>
         <source>Export &amp;X-Plane user_fix.dat ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar user_fix.dat &amp;X-Plane ...</translation>
     </message>
     <message>
         <source>Export Userpoints to X-Plane &quot;user_fix.dat&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar archivo &quot;user_fix.dat&quot; a X-Plane</translation>
     </message>
     <message>
         <source>Export &amp;Garmin GTN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Garmin GTN ...</translation>
     </message>
     <message>
         <source>Export Userpoints to Garmin GTN &quot;user.wpt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar puntos de usuario &quot;user.wpt&quot; a Garmin GTN</translation>
     </message>
     <message>
         <source>Export &amp;XML for FSX/P3D BGL Compiler ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;XML para compilador FSX/P3D BGL ...</translation>
     </message>
     <message>
         <source>Export Userpoints to XML File for FSX/P3D BGL Compiler</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar puntos de usuario a XML para compilador FSx/P3D BGL</translation>
     </message>
     <message>
         <source>Clear database</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar Base de Datos</translation>
     </message>
     <message>
         <source>Clear Userpoint Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar Base de Datos de puntos de usuario</translation>
     </message>
     <message>
-        <source>Edit Userpoint</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Edit Userpoint(s)</source>
+        <translation>&amp;Editar punto(s) de usuario</translation>
     </message>
     <message>
         <source>Return</source>
-        <translation type="unfinished"></translation>
+        <translation>Volver</translation>
     </message>
     <message>
         <source>&amp;Add Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Agregar punto de usuario</translation>
     </message>
     <message>
         <source>Add Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar punto de usuario</translation>
     </message>
     <message>
         <source>Ins</source>
-        <translation type="unfinished"></translation>
+        <translation>Ins</translation>
     </message>
     <message>
-        <source>Delete Userpoint</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Delete Userpoint(s)</source>
+        <translation>Borrar punto(s) de usuario &amp;D</translation>
     </message>
     <message>
         <source>Del</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <source>&amp;Add Userpoint %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Agregar punto de usuario %1</translation>
     </message>
     <message>
         <source>&amp;Edit Userpoint %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar punto de usuario %1</translation>
+    </message>
+    <message>
+        <source>Edit Userpoint</source>
+        <translation>Editar punto de usuario</translation>
     </message>
     <message>
         <source>&amp;Delete Userpoint %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar punto de usuario %1 &amp;D</translation>
+    </message>
+    <message>
+        <source>Delete Userpoint</source>
+        <translation>Borrar punto de usuario</translation>
     </message>
     <message>
         <source>&amp;Move Userpoint %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Mover punto de usuario %1</translation>
     </message>
     <message>
         <source>Move Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover punto de usuario</translation>
     </message>
     <message>
         <source>Save Waypoints for &amp;Approaches</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar waypoints para &amp;Aproximaciones</translation>
     </message>
     <message>
         <source>Save procedure waypoints instead of approach information</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar waypoints de procedimiento en lugar de información de aproximación</translation>
     </message>
     <message>
         <source>Save Waypoints for &amp;SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar waypoints para &amp;SID y STAR</translation>
     </message>
     <message>
         <source>Save procedure waypoints instead of SID/STAR information</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar waypoints de procedimiento en lugar de información SID / STAR</translation>
     </message>
     <message>
         <source>&amp;Create Logbook entries</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Crear entradas al Libro de registro</translation>
     </message>
     <message>
         <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear un punto de usuario del tipo libro de registro incluyendo información de vuelo para cada despegue y aterrizaje</translation>
     </message>
     <message>
         <source>Centers the selected client position on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrar en el Mapa la posición del cliente seleccionado</translation>
     </message>
     <message>
         <source>Centers the selected center on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrar el centro seleccionado en el Mapa</translation>
     </message>
     <message>
         <source>Show Online Network Airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar espacios aéreos de red en línea</translation>
     </message>
     <message>
         <source>Show or hide airspaces from online networks like VATSIM or IVAO</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar u ocultar espacios aéreos de redes en línea como VATSIM o IVAO</translation>
     </message>
     <message>
         <source>Ctrl+Alt+O</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Alt+O</translation>
     </message>
     <message>
         <source>Export Flight Plan as &amp;FLTPLAN for iFly ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo como &amp;FLTPLAN para iFly ...</translation>
     </message>
     <message>
         <source>Save flight plan as FLTPLAN file usable by iFly aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo como FLTPLAN utilizable por aeronaves iFly</translation>
     </message>
     <message>
         <source>Export Flight Plan for &amp;X-FMC ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo para &amp;X-FMC ...</translation>
     </message>
     <message>
         <source>Save flight plan as FPL file usable by X-FMC</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo como archivo FPL utilizable por X-FMC</translation>
     </message>
     <message>
         <source>Export Flight Plan for &amp;UFMC ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo para &amp;UFMC ...</translation>
     </message>
     <message>
         <source>Save flight plan as UFMC file</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo como archivo UFMC</translation>
     </message>
     <message>
         <source>Export Flight Plan for &amp;ProSim ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo para &amp;ProSim ...</translation>
     </message>
     <message>
         <source>Append flight plan to the companyroutes.xml file for ProSim</source>
-        <translation type="unfinished"></translation>
+        <translation>Adjuntar Plan de Vuelo al archivo companyroutes.xml de ProSim</translation>
     </message>
     <message>
         <source>Export Flight Plan as PLN for &amp;BBS Airbus ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plan de Vuelo com PLN para &amp;BBS Airbus ...</translation>
     </message>
     <message>
         <source>Save flight plan as PLN file usable by the Blackbox Simulations Airbus</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo como PLN utilizable por Blackbox Simulations Airbus</translation>
     </message>
     <message>
         <source>Show Flight Plan in Sky&amp;Vector ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Plan de Vuelo en Sky&amp;Vector ...</translation>
     </message>
     <message>
         <source>Show the flight plan in SkyVector in the default web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar el plan de vuelo en SkyVector en el navegador por defecto</translation>
     </message>
     <message>
         <source>Day of month and UTC time.
 %1
 Local: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Día de mes y hora UTC.
+%1
+Local: %2</translation>
     </message>
     <message>
         <source>Coordinates and elevation at cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Posición de coordenadas y elevación bajo el cursor.</translation>
     </message>
     <message>
         <source>Magnetic declination at cursor position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Declinación magnética en posición del cursor.</translation>
     </message>
     <message>
         <source>Day of month and UTC time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Día del mes y hora UTC.</translation>
     </message>
     <message>
         <source>FS9</source>
-        <translation type="unfinished"></translation>
+        <translation>FS9</translation>
     </message>
     <message>
         <source>FSC</source>
-        <translation type="unfinished"></translation>
+        <translation>FSC</translation>
     </message>
     <message>
         <source>Overwrite %1 flight plan with the FSX/P3D PLN flight plan format?
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescribir Plan de Vuelo %1 con el formato de FSX/P3D PLN?
+</translation>
     </message>
     <message>
         <source>The FLP format does not allow saving of:&lt;ul&gt;&lt;li&gt;Procedures (limited, can result in mismatches)&lt;/li&gt;&lt;li&gt;Position names&lt;/li&gt;&lt;li&gt;Cruise Altitude&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;/ul&gt;This information will be lost when reloading the file.&lt;br/&gt;&lt;br/&gt;Really save as FLP file?&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>El formato FLP no permite guardar:&lt;ul&gt;&lt;li&gt;Procedimientos (limitados, pueden dar lugar a errores)&lt;/li&gt;&lt;li&gt; Nombres de posición&lt;/li&gt;&lt;li&gt;Altitud de crucero&lt;/li&gt;&lt;li&gt;Velocidad del Suelo&lt;/li&gt;&lt;li&gt;Posición de estacionamiento de partida&lt;/li&gt;&lt;li&gt;Tipos (IFR / VFR, Alt bajo / Alt alto)&lt;/li&gt;&lt;/ul&gt;Esta información se perderá al volver a cargar el archivo.&lt;br/&gt;&lt;br/&gt;¿Realmente guardar como archivo FLP? &lt;br/&gt;</translation>
     </message>
     <message>
         <source>%1 of %2 %3 selected, %4 visible.%5</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 de %2 %3 seleccionados, %4 visible %5</translation>
     </message>
     <message>
         <source>Clients</source>
-        <translation type="unfinished"></translation>
+        <translation>Clientes</translation>
     </message>
     <message>
         <source> Last Update: %1</source>
-        <translation type="unfinished"></translation>
+        <translation> Última actualización: %1</translation>
     </message>
     <message>
         <source>Centers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add selected entry to the nearest flight plan leg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show information about the selected entry</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show the selected entry on the map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Edit Userpoint(s)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Delete Userpoint(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Centros</translation>
     </message>
 </context>
 <context>
@@ -4280,7 +4288,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Fix:</source>
-        <translation>Fijot:</translation>
+        <translation>Fijo:</translation>
     </message>
     <message>
         <source>Full</source>
@@ -4576,7 +4584,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Vertical Path Dev.:</source>
-        <translation>Desviación de senda verticall:</translation>
+        <translation>Desviación de senda vertical:</translation>
     </message>
     <message>
         <source>Airline Codes: </source>
@@ -4640,7 +4648,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Waypoints Ident/Region:</source>
-        <translation>Identificador waypoint/región:</translation>
+        <translation>Identificador Waypoint/Región:</translation>
     </message>
     <message>
         <source>Length:</source>
@@ -4948,7 +4956,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Airport has no runway.</source>
-        <translation>El aeródromo no tiene pista.</translation>
+        <translation>El Aeropuerto no tiene pista.</translation>
     </message>
     <message>
         <source>Position</source>
@@ -4972,7 +4980,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Waypoint: </source>
-        <translation>WAYPOINT: </translation>
+        <translation>Waypoint: </translation>
     </message>
     <message>
         <source> - Approach</source>
@@ -4992,7 +5000,7 @@ Local: %2</source>
     </message>
     <message>
         <source> - Transition</source>
-        <translation> - Trancisión</translation>
+        <translation> - Transición</translation>
     </message>
     <message>
         <source>Military Cargo:</source>
@@ -5032,7 +5040,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Airport has no COM Frequency.</source>
-        <translation>El aeródromo no tiene frecuencia COM.</translation>
+        <translation>El Aeródromo no tiene frecuencia COM.</translation>
     </message>
     <message>
         <source>No Active Flight Plan Leg</source>
@@ -5112,7 +5120,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Leg Type:</source>
-        <translation>Tramo Tipo:</translation>
+        <translation>Tipo de Tramo:</translation>
     </message>
     <message>
         <source>User Vehicle</source>
@@ -5580,287 +5588,287 @@ Local: %2</source>
     </message>
     <message>
         <source>Transition altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>Altitud de transición:</translation>
     </message>
     <message>
         <source>%1 </source>
-        <translation type="unfinished">%1 </translation>
+        <translation>%1 </translation>
     </message>
     <message>
         <source>%1Station</source>
-        <translation type="unfinished"></translation>
+        <translation>%1Estación</translation>
     </message>
     <message>
         <source>%1Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>%1Cercana</translation>
     </message>
     <message>
         <source>%1Interpolated</source>
-        <translation type="unfinished"></translation>
+        <translation>%1Interpolada</translation>
     </message>
     <message>
         <source>NOAA Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Estación NOAA</translation>
     </message>
     <message>
         <source>NOAA Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>NOAA Cercano</translation>
     </message>
     <message>
         <source>IVAO Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Estación IVAO</translation>
     </message>
     <message>
         <source>IVAO Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>IVAO Cercano</translation>
     </message>
     <message>
         <source>%1Station Weather</source>
-        <translation type="unfinished"></translation>
+        <translation>%1Estación Meteorológica</translation>
     </message>
     <message>
         <source>%2Nearest Weather - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%2Meteorología más cercana - %1</translation>
     </message>
     <message>
         <source>%2Interpolated Weather - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%2Meteorología Interpolada - %1</translation>
     </message>
     <message>
         <source>IVAO</source>
-        <translation type="unfinished"></translation>
+        <translation>IVAO</translation>
     </message>
     <message>
         <source>%1 Station Weather</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Estación Meteorológica</translation>
     </message>
     <message>
         <source>%1 Nearest Weather - %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Meteorología cercana - %2</translation>
     </message>
     <message>
         <source>%1 (%2), %3, %4</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2), %3, %4</translation>
     </message>
     <message>
         <source>No wind</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin viento</translation>
     </message>
     <message>
         <source> of in </source>
-        <translation type="unfinished"></translation>
+        <translation> de en </translation>
     </message>
     <message>
         <source> in </source>
-        <translation type="unfinished"></translation>
+        <translation> en </translation>
     </message>
     <message>
         <source>Userpoint%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Punto de usuario%1</translation>
     </message>
     <message>
         <source> (Temporary)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Temporalmente)</translation>
     </message>
     <message>
         <source>Ident:</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificador:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Descripción:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Last Change:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation type="unfinished">Archivo</translation>
-    </message>
-    <message>
-        <source>Imported from:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VID:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Server:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Facility Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Visual Range:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ATIS Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Combined Rating:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Administrative Rating:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ATC Rating:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connection Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Software:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> ► </source>
-        <translation type="unfinished"> ► </translation>
-    </message>
-    <message>
-        <source>%1/%2%3%4/%5</source>
-        <translation type="unfinished">%1/%2%3%4/%5</translation>
-    </message>
-    <message>
-        <source>Segment:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Position: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Online Client</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AI / Multiplayer</source>
-        <translation type="unfinished">IA / Multijugador</translation>
-    </message>
-    <message>
-        <source>%1%2 - %3 of %4 Vehicles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1%2</source>
-        <translation type="unfinished">%1%2</translation>
-    </message>
-    <message>
-        <source>No %2 shown on map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Online Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Is Prefile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cruising Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cruising Level:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Transponder Code:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Visual Range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flight Rules:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type of Flight:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Departure Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Actual Departure Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enroute hh:mm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Endurance hh:mm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alternates:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alternate:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Route:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Information:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Persons on Board:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zero Fuel Weight:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total Payload:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date and Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Destination</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top of Descent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Online Client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiquetas:</translation>
     </message>
     <message>
         <source>Visible from:</source>
-        <translation type="unfinished"></translation>
+        <translation>Visible desde:</translation>
+    </message>
+    <message>
+        <source>Last Change:</source>
+        <translation>Último Cambio:</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>Archivo</translation>
+    </message>
+    <message>
+        <source>Imported from:</source>
+        <translation>Importado desde:</translation>
+    </message>
+    <message>
+        <source>VID:</source>
+        <translation>VID:</translation>
+    </message>
+    <message>
+        <source>Server:</source>
+        <translation>Servidor:</translation>
+    </message>
+    <message>
+        <source>Facility Type:</source>
+        <translation>Tipo de Facilidad:</translation>
+    </message>
+    <message>
+        <source>Visual Range:</source>
+        <translation>Rango Visual:</translation>
+    </message>
+    <message>
+        <source>ATIS Time:</source>
+        <translation>Tiempo ATIS:</translation>
+    </message>
+    <message>
+        <source>Combined Rating:</source>
+        <translation>Medición Combinada:</translation>
+    </message>
+    <message>
+        <source>Administrative Rating:</source>
+        <translation>Medición Administrativa:</translation>
+    </message>
+    <message>
+        <source>ATC Rating:</source>
+        <translation>Medición ATC:</translation>
+    </message>
+    <message>
+        <source>Connection Time:</source>
+        <translation>Tiempo de Conexión:</translation>
+    </message>
+    <message>
+        <source>Software:</source>
+        <translation>Programa:</translation>
+    </message>
+    <message>
+        <source> ► </source>
+        <translation> ► </translation>
+    </message>
+    <message>
+        <source>%1/%2%3%4/%5</source>
+        <translation>%1/%2%3%4/%5</translation>
+    </message>
+    <message>
+        <source>Segment:</source>
+        <translation>Segmento:</translation>
+    </message>
+    <message>
+        <source>Position: </source>
+        <translation>Posición: </translation>
+    </message>
+    <message>
+        <source>Online Client</source>
+        <translation>Clente en Línea</translation>
+    </message>
+    <message>
+        <source>AI / Multiplayer</source>
+        <translation>IA / Multijugador</translation>
+    </message>
+    <message>
+        <source>%1%2 - %3 of %4 Vehicles</source>
+        <translation>%1%2 - %3 de %4 Vehículos</translation>
+    </message>
+    <message>
+        <source>%1%2</source>
+        <translation>%1%2</translation>
+    </message>
+    <message>
+        <source>No %2 shown on map.</source>
+        <translation>%2 no mostrado en el mapa.</translation>
+    </message>
+    <message>
+        <source>Online Information</source>
+        <translation>Información en Línea</translation>
+    </message>
+    <message>
+        <source>Is Prefile</source>
+        <translation>Es Prearchivo</translation>
+    </message>
+    <message>
+        <source>Cruising Speed</source>
+        <translation>Velocidad Crucero</translation>
+    </message>
+    <message>
+        <source>Cruising Level:</source>
+        <translation>Nivel Crucero:</translation>
+    </message>
+    <message>
+        <source>Transponder Code:</source>
+        <translation>Código de Transponder:</translation>
+    </message>
+    <message>
+        <source>Visual Range</source>
+        <translation>Rango Visual</translation>
+    </message>
+    <message>
+        <source>Flight Rules:</source>
+        <translation>Reglas de Vuelo:</translation>
+    </message>
+    <message>
+        <source>Type of Flight:</source>
+        <translation>Tipo de Vuelo:</translation>
+    </message>
+    <message>
+        <source>Departure Time:</source>
+        <translation>Hora de Salida:</translation>
+    </message>
+    <message>
+        <source>Actual Departure Time:</source>
+        <translation>Hora Actual de Salida:</translation>
+    </message>
+    <message>
+        <source>Enroute hh:mm</source>
+        <translation>En viaje hh:mm</translation>
+    </message>
+    <message>
+        <source>Endurance hh:mm</source>
+        <translation>Resistencia hh:mm</translation>
+    </message>
+    <message>
+        <source>Alternates:</source>
+        <translation>Alternativos:</translation>
+    </message>
+    <message>
+        <source>Alternate:</source>
+        <translation>Alternativo:</translation>
+    </message>
+    <message>
+        <source>Route:</source>
+        <translation>Ruta:</translation>
+    </message>
+    <message>
+        <source>Other Information:</source>
+        <translation>Otra información:</translation>
+    </message>
+    <message>
+        <source>Persons on Board:</source>
+        <translation>Personas a bordo:</translation>
+    </message>
+    <message>
+        <source>Zero Fuel Weight:</source>
+        <translation>Peso SIN combusitble (Zero Fuel):</translation>
+    </message>
+    <message>
+        <source>Total Payload:</source>
+        <translation>Total de Carga (Payload):</translation>
+    </message>
+    <message>
+        <source>Date and Time:</source>
+        <translation>Día y Hora:</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>Destino</translation>
+    </message>
+    <message>
+        <source>Top of Descent</source>
+        <translation>Tope de Descenso</translation>
+    </message>
+    <message>
+        <source>Online Client (%1)</source>
+        <translation>Cliente en Línea (%1)</translation>
     </message>
 </context>
 <context>
@@ -6000,288 +6008,288 @@ Local: %2</source>
     <message>
         <source>N</source>
         <comment>North</comment>
-        <translation type="unfinished">N</translation>
+        <translation>N</translation>
     </message>
     <message>
         <source>E</source>
         <comment>East</comment>
-        <translation type="unfinished">E</translation>
+        <translation>E</translation>
     </message>
     <message>
         <source>S</source>
         <comment>South</comment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <source>W</source>
         <comment>West</comment>
-        <translation type="unfinished">O</translation>
+        <translation>W</translation>
     </message>
     <message>
         <source>%1°M</source>
-        <translation type="unfinished">%1°M</translation>
+        <translation>%1°M</translation>
     </message>
     <message>
         <source>TRK</source>
-        <translation type="unfinished"></translation>
+        <translation>TRK</translation>
     </message>
 </context>
 <context>
     <name>MapTooltip</name>
     <message>
         <source>More ...</source>
-        <translation>Mas ...</translation>
+        <translation>Más ...</translation>
     </message>
 </context>
 <context>
     <name>MapVisible</name>
     <message>
         <source>&lt;b style=&quot;color:red&quot;&gt;Database empty.&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b style=&quot;color:red&quot;&gt;Base de Datos vacía.&lt;/b&gt;</translation>
+        <translation>&lt;b style=&quot;color:red&quot;&gt;Base de Datos vacía.&lt;/b&gt;</translation>
     </message>
     <message>
         <source>The currently selected Scenery Database is empty.</source>
-        <translation type="unfinished">La Base de Datos de escenarios está vacía.</translation>
+        <translation>La Base de Datos de escenarios está vacía.</translation>
     </message>
     <message>
         <source>Currently shown on map:</source>
-        <translation type="unfinished">Actualmente mostrado en el mapa:</translation>
+        <translation>Actualmente mostrado en el mapa:</translation>
     </message>
     <message>
         <source> soft runways (S)</source>
-        <translation type="unfinished"> pistas fáciles (S)</translation>
+        <translation> pistas livianas (S)</translation>
     </message>
     <message>
         <source>,S</source>
-        <translation type="unfinished">,S</translation>
+        <translation>,S</translation>
     </message>
     <message>
         <source> hard runways (H)</source>
-        <translation type="unfinished"> pistas difíciles (H)</translation>
+        <translation> pistas pesadas (H)</translation>
     </message>
     <message>
         <source>,H</source>
-        <translation type="unfinished">,H</translation>
+        <translation>,H</translation>
     </message>
     <message>
         <source> all runway types (H,S)</source>
-        <translation type="unfinished"> todos los tipos de pistas (H,S)</translation>
+        <translation> todos los tipos de pistas (H,S)</translation>
     </message>
     <message>
         <source>,H,S</source>
-        <translation type="unfinished">,H,S</translation>
+        <translation>,H,S</translation>
     </message>
     <message>
         <source>AP,A,E</source>
-        <translation type="unfinished">AP,A,E</translation>
+        <translation>AP,A,E</translation>
     </message>
     <message>
         <source>AP,A</source>
-        <translation type="unfinished">AP,A</translation>
+        <translation>AP,A</translation>
     </message>
     <message>
         <source>AP,E</source>
-        <translation type="unfinished">AP,E</translation>
+        <translation>AP,E</translation>
     </message>
     <message>
         <source>AP</source>
-        <translation type="unfinished">AP</translation>
+        <translation>AP</translation>
     </message>
     <message>
         <source>Airports (AP) with runway length &gt; %1 and%2</source>
-        <translation type="unfinished">Aeropuertos (AP) con largos de pista &gt; %1 y%2</translation>
+        <translation>Aeropuertos (AP) con largos de pista &gt; %1 y%2</translation>
     </message>
     <message>
         <source>Add-on airports with runway length &gt; %1</source>
-        <translation type="unfinished">Agregando aeropuertos con largo de pista &gt; %1</translation>
+        <translation>Aeropuertos agregados con largo de pista &gt; %1</translation>
     </message>
     <message>
         <source>Airports (AP) with%1</source>
-        <translation type="unfinished">Aeropuetos (AP) con %1</translation>
+        <translation>Aeropuetos (AP) con %1</translation>
     </message>
     <message>
         <source>Add-on airports (A)</source>
-        <translation type="unfinished">Aeropuertos agregados (A)</translation>
+        <translation>Aeropuertos agregados (A)</translation>
     </message>
     <message>
         <source>&gt;%1%2</source>
-        <translation type="unfinished">&gt;%1%2</translation>
+        <translation>&gt;%1%2</translation>
     </message>
     <message>
         <source>Add-on airports (A) with runway length &gt; %1</source>
-        <translation type="unfinished">Aeropuertos agregados (A) con largo de pista &gt; %1</translation>
+        <translation>Aeropuertos agregados (A) con largo de pista &gt; %1</translation>
     </message>
     <message>
         <source>&gt;%1,H</source>
-        <translation type="unfinished">&gt;%1,H</translation>
+        <translation>&gt;%1,H</translation>
     </message>
     <message>
         <source>Airports (AP) with runway length &gt; %1 and hard runways (H)</source>
-        <translation type="unfinished">Aeropuertos (AP) con largo de pista &gt; %1 y pistas difíciles (H)</translation>
+        <translation>Aeropuertos (AP) con largo de pista &gt; %1 y pistas difíciles (H)</translation>
     </message>
     <message>
         <source>Empty airports (E) with zero rating</source>
-        <translation type="unfinished">Aeropuertos vacíos (E) con calificación nula</translation>
+        <translation>Aeropuertos vacíos (E) con calificación nula</translation>
     </message>
     <message>
         <source>V</source>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
     <message>
         <source>VOR (V)</source>
-        <translation type="unfinished">VOR (V)</translation>
+        <translation>VOR (V)</translation>
     </message>
     <message>
         <source>N</source>
-        <translation type="unfinished">N</translation>
+        <translation>N</translation>
     </message>
     <message>
         <source>NDB (N)</source>
-        <translation type="unfinished">NDB (N)</translation>
+        <translation>NDB (N)</translation>
     </message>
     <message>
         <source>I</source>
-        <translation type="unfinished">I</translation>
+        <translation>I</translation>
     </message>
     <message>
         <source>ILS (I)</source>
-        <translation type="unfinished">ILS (I)</translation>
+        <translation>ILS (I)</translation>
     </message>
     <message>
         <source>W</source>
-        <translation type="unfinished">O</translation>
+        <translation>W</translation>
     </message>
     <message>
         <source>Waypoints (W)</source>
-        <translation type="unfinished">Waypoints (W)</translation>
+        <translation>Waypoints (W)</translation>
     </message>
     <message>
         <source>JA</source>
-        <translation type="unfinished">JA</translation>
+        <translation>JA</translation>
     </message>
     <message>
         <source>Jet Airways (JA)</source>
-        <translation type="unfinished">Rutas de Jets (JA)</translation>
+        <translation>Rutas de Jets (JA)</translation>
     </message>
     <message>
         <source>VA</source>
-        <translation type="unfinished">VA</translation>
+        <translation>VA</translation>
     </message>
     <message>
         <source>Victor Airways (VA)</source>
-        <translation type="unfinished">Vector de Aerovías (VA)</translation>
+        <translation>Vector de Aerovías (VA)</translation>
     </message>
     <message>
         <source>ICAO</source>
-        <translation type="unfinished">OACI</translation>
+        <translation>ICAO</translation>
     </message>
     <message>
         <source>Class A-E (ICAO)</source>
-        <translation type="unfinished">Clase A-E (OACI)</translation>
+        <translation>Clase A-E (OACI)</translation>
     </message>
     <message>
         <source>FIR</source>
-        <translation type="unfinished">FIR</translation>
+        <translation>FIR</translation>
     </message>
     <message>
         <source>Flight Information Region, class F and/or G (FIR)</source>
-        <translation type="unfinished">Información de Región de Vuelo, clase F y/o G (FIR)</translation>
+        <translation>Información de Región de Vuelo, clase F y/o G (FIR)</translation>
     </message>
     <message>
         <source>RSTR</source>
-        <translation type="unfinished">RSTR</translation>
+        <translation>RSTR</translation>
     </message>
     <message>
         <source>Restricted (RSTR)</source>
-        <translation type="unfinished">Restringidas (RSTR)</translation>
+        <translation>Restringidas (RSTR)</translation>
     </message>
     <message>
         <source>SPEC</source>
-        <translation type="unfinished">SPEC</translation>
+        <translation>SPEC</translation>
     </message>
     <message>
         <source>Special (SPEC)</source>
-        <translation type="unfinished">Especial (SPEC)</translation>
+        <translation>Especial (SPEC)</translation>
     </message>
     <message>
         <source>OTR</source>
-        <translation type="unfinished">OTR</translation>
+        <translation>OTR</translation>
     </message>
     <message>
         <source>Centers and others (OTR)</source>
-        <translation type="unfinished">Centros y otros (OTR)</translation>
+        <translation>Centros y otros (OTR)</translation>
     </message>
     <message>
         <source>Navaids: </source>
-        <translation type="unfinished">Navaids: </translation>
+        <translation>Navaids: </translation>
     </message>
     <message>
         <source>No navaids</source>
-        <translation type="unfinished">Sin navaids</translation>
+        <translation>Sin navaids</translation>
     </message>
     <message>
         <source>Airspaces and Online Centers: </source>
-        <translation type="unfinished"></translation>
+        <translation>Centros en línea y Espacios Aéreos: </translation>
     </message>
     <message>
         <source>Airspace and Online Center Groups: </source>
-        <translation type="unfinished"></translation>
+        <translation>Grupos de Espacios Aéreos y centros en línea: </translation>
     </message>
     <message>
         <source>Online Centers: </source>
-        <translation type="unfinished"></translation>
+        <translation>Centros en Línea: </translation>
     </message>
     <message>
         <source>Online Center Groups: </source>
-        <translation type="unfinished"></translation>
+        <translation>Grupos de Centros en Línea: </translation>
     </message>
     <message>
         <source>Airspaces: </source>
-        <translation type="unfinished">Espacios Aéreos: </translation>
+        <translation>Espacios Aéreos: </translation>
     </message>
     <message>
         <source>Airspace Groups: </source>
-        <translation type="unfinished">Grupos Aeroespaciales: </translation>
+        <translation>Grupos Espacio Aéreo: </translation>
     </message>
     <message>
         <source>No airspaces</source>
-        <translation type="unfinished">Sin espacios aéreos</translation>
+        <translation>Sin espacios aéreos</translation>
     </message>
     <message>
         <source>Aircraft &gt; %1 ft</source>
-        <translation type="unfinished">Aeronaves &gt; %1 ft</translation>
+        <translation>Aeronaves &gt; %1 ft</translation>
     </message>
     <message>
         <source>Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeronave</translation>
     </message>
     <message>
         <source> on ground</source>
-        <translation type="unfinished"> en tierra</translation>
+        <translation> en tierra</translation>
     </message>
     <message>
         <source>Ships &gt; %1 ft</source>
-        <translation type="unfinished">Naves &gt; %1 ft</translation>
+        <translation>Naves &gt; %1 ft</translation>
     </message>
     <message>
         <source>Ships</source>
-        <translation type="unfinished">Naves</translation>
+        <translation>Naves</translation>
     </message>
     <message>
         <source>%1 Clients / Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Clientes / Aeronave</translation>
     </message>
     <message>
         <source>AI / Multiplayer / online client: </source>
-        <translation type="unfinished"></translation>
+        <translation>IA/Multijugador / Cliente en línea: </translation>
     </message>
     <message>
         <source>No AI / Multiplayer / online client</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin IA/Multijugador / Cliente en Línea</translation>
     </message>
     <message>
         <source>,</source>
-        <translation type="unfinished">,</translation>
+        <translation>,</translation>
     </message>
 </context>
 <context>
@@ -6308,7 +6316,7 @@ Local: %2</source>
     </message>
     <message>
         <source>Aircraft track removed from map.</source>
-        <translation>Pista removida del mapa.</translation>
+        <translation>Rastro de aeronave removido del mapa.</translation>
     </message>
     <message>
         <source> and more</source>
@@ -6336,11 +6344,11 @@ Local: %2</source>
     </message>
     <message>
         <source>Added range rings for position.</source>
-        <translation>Agregando anillos de rango para la posición.</translation>
+        <translation>Agregados anillos de rango para la posición.</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation>posición</translation>
+        <translation>Posición</translation>
     </message>
     <message>
         <source>Show procedures (%1 has no procedure)</source>
@@ -6400,51 +6408,51 @@ Local: %2</source>
     </message>
     <message>
         <source> to Flight Plan</source>
-        <translation> a Plan de Vuelo</translation>
+        <translation> al Plan de Vuelo</translation>
     </message>
     <message>
         <source>Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Punto de Usuario</translation>
     </message>
     <message>
         <source>Online Center %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro en línea %1</translation>
     </message>
     <message>
         <source>Online Client Aircraft %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeronave Cliente en línea %1</translation>
     </message>
     <message>
         <source>Departure </source>
-        <translation type="unfinished"></translation>
+        <translation>Partida </translation>
     </message>
     <message>
         <source>Show procedures (%1 has no departure procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (%1 no tiene procedimiento de partida)</translation>
     </message>
     <message>
         <source>Arrival </source>
-        <translation type="unfinished"></translation>
+        <translation>Arribo </translation>
     </message>
     <message>
         <source>Show procedures (%1 has no arrival procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (%1 no tiene procedimiento de arribo)</translation>
     </message>
     <message>
         <source>all </source>
-        <translation type="unfinished"></translation>
+        <translation>todo </translation>
     </message>
     <message>
         <source>Showing online client aircraft on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar en mapa aeronave del cliente en línea.</translation>
     </message>
     <message>
         <source>Showing navaid or userpoint on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar navaid o punto de usuario en mapa.</translation>
     </message>
     <message>
         <source>Jumped back to aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>Saltó a la aeronave.</translation>
     </message>
 </context>
 <context>
@@ -6455,7 +6463,7 @@ Local: %2</source>
     </message>
     <message>
         <source>ICAO</source>
-        <translation>OACI</translation>
+        <translation>ICAO</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6523,238 +6531,243 @@ Navaid</translation>
     <message>
         <source>Mag.
 Decl.°</source>
-        <translation>Mag.
-Decl.°</translation>
+        <translation>Decl.
+Magn.°</translation>
     </message>
     <message>
         <source>%1 overriding all other search options.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sobreescribiendo todas las opciones de búsqueda.</translation>
     </message>
 </context>
 <context>
     <name>OnlineCenterSearch</name>
     <message>
         <source>Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificación (Callsign)</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Facility
 Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de
+Facilidad</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <source>Frequency
 MHz</source>
-        <translation type="unfinished"></translation>
+        <translation>Frecuencia
+MHz</translation>
     </message>
     <message>
         <source>Range
 %dist%</source>
-        <translation type="unfinished">Rango
+        <translation>Rango
 %dist%</translation>
     </message>
     <message>
         <source>Combined
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Clasificación
+Combinada</translation>
     </message>
     <message>
         <source>Admin
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Clasificación
+Admin</translation>
     </message>
     <message>
         <source>ATC
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Clasificación
+ATC</translation>
     </message>
     <message>
         <source>ATIS</source>
-        <translation type="unfinished">ATIS</translation>
+        <translation>ATIS</translation>
     </message>
     <message>
         <source>ATIS
 Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo
+ATIS</translation>
     </message>
     <message>
         <source>Connection
 Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo de
+Conexión</translation>
     </message>
     <message>
         <source>, </source>
-        <translation type="unfinished">, </translation>
+        <translation>, </translation>
     </message>
 </context>
 <context>
     <name>OnlineClientSearch</name>
     <message>
         <source>Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificación (Callsign)</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <source>Departure</source>
-        <translation type="unfinished">Partida</translation>
+        <translation>Partida</translation>
     </message>
     <message>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destino</translation>
     </message>
     <message>
         <source>Prefile</source>
-        <translation type="unfinished"></translation>
+        <translation>Prearchivo</translation>
     </message>
     <message>
         <source>On Ground</source>
-        <translation type="unfinished"></translation>
+        <translation>En Tierra</translation>
     </message>
     <message>
         <source>Groundspeed
 %speed%</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad de pista
+%speed%</translation>
     </message>
     <message>
         <source>Altitude
 %alt%</source>
-        <translation type="unfinished"></translation>
+        <translation>Altitud
+%alt%</translation>
     </message>
     <message>
         <source>Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeronave</translation>
     </message>
     <message>
         <source>Planned
 Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>Partida
+Planeada</translation>
     </message>
     <message>
         <source>Actual
 Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>Partida
+Actual</translation>
     </message>
     <message>
         <source>Planned
 Cruising Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad crucero
+Planeada</translation>
     </message>
     <message>
         <source>Planned
 Cruising Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Nivel Crucero
+Planeado</translation>
     </message>
     <message>
         <source>Transponder
 Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Código de
+Transponder</translation>
     </message>
     <message>
         <source>ICAO Flight
 Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Reglas de Vuelo
+ICAO</translation>
     </message>
     <message>
         <source>ICAO Flight
 Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de Vuelo
+ICAO</translation>
     </message>
     <message>
         <source>Enroute
 hh:mm</source>
-        <translation type="unfinished"></translation>
+        <translation>En viaje
+hh:mm</translation>
     </message>
     <message>
         <source>Endurance
 hh:mm</source>
-        <translation type="unfinished"></translation>
+        <translation>Duración
+hh:mm</translation>
     </message>
     <message>
         <source>Combined
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Calificación
+Combinada</translation>
     </message>
     <message>
         <source>Admin
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Calificación
+Admin</translation>
     </message>
     <message>
         <source>Pilot
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Calificación
+Piloto</translation>
     </message>
     <message>
         <source>Connection
 Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo de
+Conexión</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí</translation>
     </message>
 </context>
 <context>
     <name>OnlineServerSearch</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Ident</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificador</translation>
     </message>
     <message>
         <source>Hostname or
 IP-Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de Host
+o Dirección IP</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubicación</translation>
     </message>
     <message>
         <source>Voice
 Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de
+Voz</translation>
     </message>
 </context>
 <context>
     <name>OnlinedataController</name>
-    <message>
-        <source>Message from downloaded status file:
-
-%2
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VATSIM</source>
-        <translation type="unfinished">VATSIM</translation>
-    </message>
-    <message>
-        <source>IVAO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom Network</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Download from
 
@@ -6765,7 +6778,34 @@ failed. Reason:
 %2
 
 Press OK to retry again in three minutes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar desde
+
+&quot;%1&quot;
+falló. Motivo:
+%2
+Presione OK para reintentar en tres minutos.</translation>
+    </message>
+    <message>
+        <source>Message from downloaded status file:
+
+%2
+</source>
+        <translation>Mensaje desde archivo estado de descarga:
+
+%2
+</translation>
+    </message>
+    <message>
+        <source>VATSIM</source>
+        <translation>VATSIM</translation>
+    </message>
+    <message>
+        <source>IVAO</source>
+        <translation>IVAO</translation>
+    </message>
+    <message>
+        <source>Custom Network</source>
+        <translation>Red personalizada</translation>
     </message>
 </context>
 <context>
@@ -6910,7 +6950,7 @@ aerovías:</translation>
     </message>
     <message>
         <source>Show for &amp;navaids and airways</source>
-        <translation>Ver por &amp;navaids y aerovías</translation>
+        <translation>Mostrar por &amp;navaids y aerovías</translation>
     </message>
     <message>
         <source>Send a test request to the VATSIM weather service.</source>
@@ -6960,7 +7000,7 @@ Tiene que volver a cargar los escenarios para que el cambio surta efecto.</trans
     </message>
     <message>
         <source>Procedure Leg Color</source>
-        <translation>Color de la tramo de partida</translation>
+        <translation>Color del tramo de partida</translation>
     </message>
     <message>
         <source>Center Google Earth &amp;KML after loading</source>
@@ -7047,7 +7087,7 @@ Cambia solo la configuración que se puede hacer con este diálogo.</translation
 which implies &quot;.&quot; as decimal separator, &quot;,&quot; as thousands separator, am/pm time and other changes.
 A restart is required for the settings to take effect.</source>
         <translation>Anula las configuraciones locales como formatos de número y fecha y fuerza los formatos en inglés
-lo que implica &quot;.&quot; como separador decimal, &quot;,&quot; como separador de miles, hora am / pm y otros cambios.
+lo que implica &quot;.&quot; como separador decimal, &quot;,&quot; como separador de miles, hora am/pm y otros cambios.
 Se requiere un reinicio para que la configuración surta efecto.</translation>
     </message>
     <message>
@@ -7100,7 +7140,7 @@ proporcione un botón de la barra de herramientas para deshabilitarlos si esta c
     </message>
     <message>
         <source>C&amp;lear Disk Cache</source>
-        <translation>Borrar e&amp;l caché de disco</translation>
+        <translation>Limpiar e&amp;l caché de disco</translation>
     </message>
     <message>
         <source>Flight Plan Calculation</source>
@@ -7176,7 +7216,7 @@ Sur / Norte: Igual que Norte / Sur pero invirtiendo impares a pares.</translatio
     </message>
     <message>
         <source>How often to check for updates on startup.</source>
-        <translation>Con qué frecuencia buscar actualizaciones al inicio.</translation>
+        <translation>Con qué frecuencia buscará actualizaciones al inicio.</translation>
     </message>
     <message>
         <source>&amp;Coordinates:</source>
@@ -7286,7 +7326,7 @@ Debe volver a cargar la biblioteca de escenarios para que los cambios surtan efe
     </message>
     <message>
         <source>Weather Display in Information Panels</source>
-        <translation>Mostrar clima en Panel de Información</translation>
+        <translation>Mostrar Clima en Panel de Información</translation>
     </message>
     <message>
         <source>&amp;Airports:</source>
@@ -7331,8 +7371,8 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     <message>
         <source>Complete URL of the VATSIM network weather service.
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</source>
-        <translation>DirecciónURL completa del servicio meteorológico de VATSIM.
-&quot;%1&quot; es un marcador de posición que se sustituirá por el identificador del aeropuerto de la OACI..</translation>
+        <translation>Dirección URL completa del servicio meteorológico de VATSIM.
+&quot;%1&quot; es un marcador de posición que se sustituirá por el identificador del aeropuerto de la ICAO..</translation>
     </message>
     <message>
         <source>Never / Manual</source>
@@ -7383,7 +7423,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
 &lt;/ul&gt;
 &lt;b&gt;Note that is not possible to export procedures if this is enabled.&lt;/b&gt;
 &lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Esto graba todos los waypoints como definidos por el usuario cuando se exporta el plan de vuelo a una unidad Garmin.. &lt;br/&gt;Esto evita bloquear los waypoints mientras diferentes ciclos AIRAC y afecta la función de exportación bajo: &lt;/p&gt;
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Esto graba todos los waypoints como definidos por el usuario cuando se exporta el plan de vuelo a una unidad Garmin.. &lt;br/&gt;Así evita bloquear los waypoints con diferentes ciclos AIRAC y afecta la función de exportación de abajo: &lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Exportar Plan de Vuelo en Formato GTN GFP Garmin... &lt;/li&gt;
 &lt;li&gt;Exportar Plan de Vuelo en Formato FPL para XP GNS ... &lt;/li&gt;
@@ -7478,7 +7518,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>Use Offline GLOBE Elevation Data</source>
-        <translation>Usando Datos de Elevación Offline GLOBE</translation>
+        <translation>Usar Datos de Elevación Offline GLOBE</translation>
     </message>
     <message>
         <source>&amp;Flight plan:</source>
@@ -7486,7 +7526,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>A&amp;dd ...</source>
-        <translation>A&amp;gregar ...</translation>
+        <translation>Agregar &amp;d ...</translation>
     </message>
     <message>
         <source>Define which weather service METARs are to be shown in the map tooltip of an airport.</source>
@@ -7498,7 +7538,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>Load last used &amp;flight plan</source>
-        <translation>Carga el último plan de vuelo &amp;facilitado</translation>
+        <translation>Carga el último Plan de Vuelo &amp;facilitado</translation>
     </message>
     <message>
         <source>Text size for &amp;search result tables and procedure view:</source>
@@ -7526,7 +7566,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>South / North (e.g. New Zealand)</source>
-        <translation>Sur / Norte (P/ej. Nueva Zelandia)</translation>
+        <translation>Sur / Norte (P/ej. Argentina EEUU)</translation>
     </message>
     <message>
         <source>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</source>
@@ -7610,7 +7650,7 @@ Se requiere un reinicio para que la configuración surta efecto.</translation>
     </message>
     <message>
         <source>Higher - Show all details but defer reload after scrolling or zooming</source>
-        <translation>Elevados - Muestra todos los detalles pero demora después de scroll o zoom</translation>
+        <translation>Elevados - Muestra todos los detalles pero demora después de mover o ampliar</translation>
     </message>
     <message>
         <source>&amp;Range ring radii for red range rings (%dist%):</source>
@@ -7666,7 +7706,7 @@ Los valores más pequeños se acercarán más a un aeropuerto o navaid. </transl
         <source>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
 when transitioning from airport to airway.</source>
         <translation>Prefiere el VOR más cercano que sea parte de una vía aérea en lugar del punto de ruta más cercano
-cuando se realiza la transición del aeropuerto a la vía aérea .</translation>
+cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source> % Brightness</source>
@@ -7682,354 +7722,373 @@ cuando se realiza la transición del aeropuerto a la vía aérea .</translation>
     </message>
     <message>
         <source>Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualizaciones</translation>
     </message>
     <message>
         <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
-        <translation type="unfinished"></translation>
+        <translation>Marque esta opción para evitar sobrescribir los Planes de Vuelo con una nueva partida o destino después de cambiarlos.
+Aparecerá el cuadro de diálogo &quot;Guardar como&quot; en lugar de sobrescribir el Plan de Vuelo actual cuando, por ejemplo, invierta la ruta.</translation>
     </message>
     <message>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma</translation>
     </message>
     <message>
         <source>Text Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de Texto</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Estilo</translation>
     </message>
     <message>
         <source>Information Clicks</source>
-        <translation type="unfinished"></translation>
+        <translation>Clicks de Información</translation>
     </message>
     <message>
         <source>Show information for airports when clicking on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar informacioón para aeropuertos cuando clickea en el mapa</translation>
     </message>
     <message>
         <source>&amp;Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aeropuertos</translation>
     </message>
     <message>
         <source>Show information for waypoints, VOR, NDB and airways when clicking on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar información para waypoints, VOR, NDB y aerovías cuando clickea en el mapa</translation>
     </message>
     <message>
         <source>&amp;Navaids and airways</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Navaids y aerovías</translation>
     </message>
     <message>
         <source>Show information for airspaces when clicking on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar información de espacios aéreos cuando clickea en el mapa</translation>
     </message>
     <message>
         <source>&amp;Airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>Espacios &amp;Aéreos</translation>
     </message>
     <message>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
 Smaller values will zoom in closer to an airport or navaid.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Distancia del punto de vista sobre  superficie de la tierra al ampliar luego de seleccionar &quot;Mostrar en mapa&quot; o hacer click en los enlaces en ventanas de información.
+Los valores más pequeños se acercarán más a un aeropuerto o una navaid.
+</translation>
     </message>
     <message>
         <source>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
 together with &quot;Treat empty airports special&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los aeropuertos de X-Plane que no son 3D ni complementos
+se mostrarán debajo de todos los otros aeropuertos, use un símbolo gris y
+provea un botón de la barra de herramientas para deshabilitarlos si esta casilla de verificación está habilitada
+junto con &quot;Tratar aeropuertos vacíos especiales&quot;.</translation>
     </message>
     <message>
         <source>&amp;Consider all X-Plane airports not being 3D empty</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Considerar todos los aeropuertos de X-Plane no 3D vacíos</translation>
     </message>
     <message>
         <source>Draw white background boundary around airport diagram</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibujar límites en fondo blanco alrededor de diagrama de aeropuerto</translation>
     </message>
     <message>
         <source>Diagram &amp;Boundary</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de Diagrama &amp;B</translation>
     </message>
     <message>
         <source>Color for the procedure legs of a flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Color para procedimiento de tramos de Plan de Vuelo</translation>
     </message>
     <message>
         <source>Draw bright yellow background for flight plan labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibujar en amarillo brillante el fondo para etiquetas de Plan de Vuelo</translation>
     </message>
     <message>
         <source>Text &amp;Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto y Fondo &amp;B</translation>
     </message>
     <message>
         <source>Color for flight plan line</source>
-        <translation type="unfinished"></translation>
+        <translation>Color para línea de Plan de Vuelo</translation>
     </message>
     <message>
         <source>Color for the active flight plan leg</source>
-        <translation type="unfinished"></translation>
+        <translation>Color para el tramo activo del Plan de Vuelo</translation>
     </message>
     <message>
         <source>Color for passed flight plan legs.
 Enable &quot;Dim passed Legs&quot; to see his color.</source>
-        <translation type="unfinished"></translation>
+        <translation>Color para las líneas de tramos pasados
+del plan de vuelo. &quot;Atenuar tramos pasados&quot; para ver el color.</translation>
     </message>
     <message>
         <source>Passed Leg Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color del tramo pasado</translation>
     </message>
     <message>
         <source>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
 Change color with the &quot;Passed Leg Color&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibuje los tramos ya volados en un color diferente y oculte textos del punto de referencia para despejar el mapa.
+Cambie el color con el &quot;Color del tramo volado&quot;.</translation>
     </message>
     <message>
         <source>&amp;Dim passed Legs</source>
-        <translation type="unfinished"></translation>
+        <translation>Atenuar tramos ya pasados &amp;D</translation>
     </message>
     <message>
         <source>Draw white background for airport labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Fondos blancos para etiquetas de aeropuertos</translation>
     </message>
     <message>
         <source>Draw white background for navaid labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Fondo blanco para etiquetas de navaids</translation>
     </message>
     <message>
         <source>Thickness of the range ring and distance measurment lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Grosor del anillo de rango y líneas de medidas de distancia</translation>
     </message>
     <message>
         <source>&amp;Range rings and distanc measurement lines:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anillos de &amp;Rango y medidas de líneas de distancia:</translation>
     </message>
     <message>
         <source>Thickness of the compass rose lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Espesor de líneas Rosa de los Vientos</translation>
     </message>
     <message>
         <source>&amp;Compass rose line thickness:</source>
-        <translation type="unfinished"></translation>
+        <translation>Espesor de Rosa del &amp;Compás:</translation>
     </message>
     <message>
         <source>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibujar diagrama de aeropuerto
+Estacionamiento, aprons, taxiways, combustible y posición de torre se omiten si no se marca.</translation>
     </message>
     <message>
         <source>&amp;Diagram</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Diagrama</translation>
     </message>
     <message>
         <source>Display Options for Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Etiquetas de Opciones</translation>
     </message>
     <message>
         <source>While flying</source>
-        <translation type="unfinished"></translation>
+        <translation>Mientras vuela</translation>
     </message>
     <message>
         <source>Time until aircraft following is activated again after any map interaction like scrolling or zooming</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo mientras aeronave seguida es activada de nuevo después de interacción con el mapa</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation> segundos</translation>
     </message>
     <message>
         <source>&amp;Jump back to aircraft and resume aircraft following after this time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Regrese a la aeronave y reanude avión siguiente luego de esta hora &amp;J:</translation>
     </message>
     <message>
         <source>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming</source>
-        <translation type="unfinished"></translation>
+        <translation>El mapa detiene seguimiento de aeronave en cierto tiempo si el usuario no interactúa con él</translation>
     </message>
     <message>
         <source>&amp;Allow scrolling and zooming in the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir Mover, &amp;Ampliar y Reducir en el mapa</translation>
     </message>
     <message>
         <source>The active (magenta) leg will be shown on top of the flight plan table when a new leg is activated</source>
-        <translation type="unfinished"></translation>
+        <translation>El tramo activo (magenta) se mostrará en la parte superior de la tabla del Plan de Vuelo cuando active un tramo nuevo</translation>
     </message>
     <message>
         <source>&amp;Keep active leg on top of flight plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantener activo el tramo en la parte superior de la tabla &amp;K</translation>
     </message>
     <message>
         <source>Map Movement</source>
-        <translation type="unfinished"></translation>
+        <translation>Movimiento del Mapa</translation>
     </message>
     <message>
         <source>Map will follow the aircraft constantly when checked.
 This is als used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa sigue a la aeronave constantemente cuando se chequea.
+Esto es usado por &quot;Centrar mapa en aeronave y próximo waypoint de Plan de Vuelo&quot;.</translation>
     </message>
     <message>
         <source>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantiene aeronave y proximo waypoint de Plan de Vuelo visible en el mapa en vez de simplemente centrar el avión</translation>
     </message>
     <message>
         <source>&amp;Center map on aircraft and next flight plan waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Centrar mapa en aeronave y próximo punto del Plan de Vuelo</translation>
     </message>
     <message>
         <source>Smaller values keep the aircraft centered and will move the map often.
 Bigger values will update map only when aircraft reaches map boundary.
 Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is checked and a flight plan is set.</source>
-        <translation type="unfinished"></translation>
+        <translation>Valores pequeños mantienen el avión centrado y moverán el mapa con frecuencia.
+Valores grandes actualizarán el mapa solo cuando la aeronave alcance el límite del mapa.
+Ignorado cuando &quot;Centrar Mapa en aeronave y próximo waypoint del Plan de Vuelo&quot;  si se marca y hay Plan de Vuelo configurado.</translation>
     </message>
     <message>
         <source>Aircraft Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Trazo de aeronave</translation>
     </message>
     <message>
         <source>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX or P3D flight plans instead of the long name</source>
-        <translation type="unfinished"></translation>
+        <translation>Use un nombre corto &quot;ICAO_ICAO.pln&quot; cuando graba Plan de Vuelo FSX o P3D en vez de nombre largo</translation>
     </message>
     <message>
         <source>&amp;IVAO</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;IVAO</translation>
     </message>
     <message>
         <source>Files and Web Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos y Direcciones Web</translation>
     </message>
     <message>
         <source>&amp;IVAO Weather Download URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL de descarga de clima &amp;IVAO:</translation>
     </message>
     <message>
         <source>Download URL for the IVAO weather file</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar URL para archivo de clima IVAO</translation>
     </message>
     <message>
         <source>http://wx.ivao.aero/metar.php</source>
-        <translation type="unfinished"></translation>
+        <translation>http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
         <source>No URL set. IVAO weather reports are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>No seleccionó URL. Reporte de clima IVAO deshabilitado.</translation>
     </message>
     <message>
         <source>Test the IVAO download URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Testear URL de descarga IVAO</translation>
     </message>
     <message>
         <source>Online Flying</source>
-        <translation type="unfinished"></translation>
+        <translation>Volando en línea</translation>
     </message>
     <message>
         <source>Online Service</source>
-        <translation type="unfinished"></translation>
+        <translation>Servicio en línea</translation>
     </message>
     <message>
         <source>Do not use any online flying services</source>
-        <translation type="unfinished"></translation>
+        <translation>No use ningún servicio de vuelo en línea</translation>
     </message>
     <message>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ninguno</translation>
     </message>
     <message>
         <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation type="unfinished"></translation>
+        <translation>Use la configuración predefinida de red VATSIM para vuelo en línea</translation>
     </message>
     <message>
         <source>Use the IVAO network pre-defined configuration for online flying</source>
-        <translation type="unfinished"></translation>
+        <translation>Use la configuración de red IVAO predefinida para vuelo en línea</translation>
     </message>
     <message>
         <source>Use a custom web address for the &quot;status.txt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Use una web personalizada para archivo &quot;status.txt&quot;</translation>
     </message>
     <message>
         <source>Custom with &amp;Status File</source>
-        <translation type="unfinished"></translation>
+        <translation>Personalizada con Archivo E&amp;stado</translation>
     </message>
     <message>
         <source>Use a custom web address for the &quot;whazzup.txt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Use una dirección web personalizada para archivo &quot;whazzup.txt&quot;</translation>
     </message>
     <message>
         <source>&amp;Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Personalizado &amp;C</translation>
     </message>
     <message>
         <source>Web Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>Dirección Web</translation>
     </message>
     <message>
         <source>Web address of the &quot;whazzup.txt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Dirección web para archivo &quot;whazzup.txt&quot;</translation>
     </message>
     <message>
         <source>No web address for &quot;whazzup.txt&quot; entered.</source>
-        <translation type="unfinished"></translation>
+        <translation>No ingresó dirección para &quot;whazzup.txt&quot;.</translation>
     </message>
     <message>
         <source>Download &quot;whazzup.txt&quot; file from given URL and check validity</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar &quot;whazzup.txt&quot; desde la URL dada y chequear validez</translation>
     </message>
     <message>
         <source>&amp;Whazzup File URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL de archivo &amp;Whazzup:</translation>
     </message>
     <message>
         <source>Web address of the &quot;status.txt&quot; file</source>
-        <translation type="unfinished"></translation>
+        <translation>Dirección web de archivo &quot;status.txt&quot;</translation>
     </message>
     <message>
         <source>No web address for &quot;status.txt&quot; entered.</source>
-        <translation type="unfinished"></translation>
+        <translation>No ingresó dirección para &quot;status.txt&quot;.</translation>
     </message>
     <message>
         <source>&amp;Status File URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL de archivo Estado &amp;S:</translation>
     </message>
     <message>
         <source>Download &quot;status.txt&quot; file from given URL and check validity</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar &quot;status.txt&quot; desde la URL dada y chequear validez</translation>
     </message>
     <message>
         <source>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.
 Never use values smaller than two minutes for official networks like VATSIM or IVAO.
 Use lower values only for private networks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargue archivo &quot;whazzup.txt&quot; o &quot;status.txt&quot; periódicamente.
+Nunca use valores menores a dos minutos para redes oficiales como VATSIM o IVAO.
+Use valores más bajos solo para redes privadas.</translation>
     </message>
     <message>
         <source>&amp;Update every:</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualizar cada &amp;U:</translation>
     </message>
     <message>
         <source>VATSIM</source>
-        <translation type="unfinished">VATSIM</translation>
+        <translation>VATSIM</translation>
     </message>
     <message>
         <source>IVAO</source>
-        <translation type="unfinished"></translation>
+        <translation>IVAO</translation>
     </message>
     <message>
         <source>&amp;Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Formato:</translation>
     </message>
     <message>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar datos de elevación en línea para mostrar altura del terreno en Plan de Vuelo
+Tiene mas resolución que los datos fuera de línea, pero serán mas lentos.
+La fuente tiene demasiados errores.</translation>
     </message>
     <message>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</source>
-        <translation type="unfinished"></translation>
+        <translation>Recomendado.
+Use Datos de Elevación GLOBE fuera de línea. Puede bajarlos gratis.
+La resolución es menor que la fuente en línea pero actualiza muy rápido.
+Tiene un Arco de 30 segundos de grilla (Aproxim. 900 metros cerca del Ecuador).</translation>
     </message>
 </context>
 <context>
@@ -8120,7 +8179,7 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</source>
     </message>
     <message>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
-        <translation>Archivos de instantánea de clima Sky  %1;; Todos los archivos (*)</translation>
+        <translation>Archivos de instantánea de clima Sky %1;; Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Wind Direction and Speed</source>
@@ -8252,25 +8311,27 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>AI, Multiplayer and Online Client Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>AI, Multiplayer y aeronave Cliente en línea</translation>
     </message>
     <message>
         <source>Select text labels for the AI, multiplayer and online client aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elija etiquetas para la IA, Multiplayer y aeronave cliente en línea.</translation>
     </message>
     <message>
         <source>Registration, Number or Callsign</source>
-        <translation type="unfinished"></translation>
+        <translation>Registración, Número o Identificación (Callsign)</translation>
     </message>
     <message>
         <source>Success. First lines in file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exitoso. Primera línea en archivo:
+%1</translation>
     </message>
     <message>
         <source>Success. First METARs in file:
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exitoso. Primer METAR en archivo:
+%1</translation>
     </message>
 </context>
 <context>
@@ -8371,7 +8432,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>Print Flight Plan</source>
-        <translation>Imprimer le plan de vol</translation>
+        <translation>Imprimir Plan de Vuelo</translation>
     </message>
 </context>
 <context>
@@ -8465,7 +8526,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>Runway %1</source>
-        <translation>Pista n° %1</translation>
+        <translation>Pista %1</translation>
     </message>
     <message>
         <source>Restriction
@@ -8489,7 +8550,7 @@ Really use it?</source>
     </message>
     <message>
         <source>Remarks</source>
-        <translation>Marcas</translation>
+        <translation>Observaciones</translation>
     </message>
     <message>
         <source>Description</source>
@@ -8517,39 +8578,39 @@ Really use it?</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Todo</translation>
+        <translation>Todo</translation>
     </message>
     <message>
         <source>&amp;Insert %1 into Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inserte %1 en Plan de Vuelo</translation>
     </message>
     <message>
         <source>&amp;Use %1 and %2 as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Use %1 y %2 como Destino</translation>
     </message>
     <message>
         <source>&amp;Use %1 and %2 as Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Use %1 y %2 como Partida</translation>
     </message>
     <message>
         <source>Departure from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Partida desde %1</translation>
     </message>
     <message>
         <source>Select departure runway for this SID</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione pista de partida para este SID</translation>
     </message>
     <message>
         <source>Arrival at %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Arribo a %1</translation>
     </message>
     <message>
         <source>Select arrival runway for this STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione pista de arribo para este STAR</translation>
     </message>
     <message>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
 </context>
 <context>
@@ -8596,7 +8657,7 @@ Really use it?</source>
     </message>
     <message>
         <source>&lt;b&gt;To Destination: %1, to Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
-        <translation>&lt;b&gt;Destino: %1,a tope de Descenso: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+        <translation>&lt;b&gt;Destino: %1, a tope de Descenso: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
         <source>No Flight Plan</source>
@@ -9091,7 +9152,7 @@ Really use it?</source>
     </message>
     <message>
         <source>Ident</source>
-        <translation>Identificación</translation>
+        <translation>Identificador</translation>
     </message>
     <message>
         <source>Large</source>
@@ -9320,7 +9381,7 @@ hh:mm</translation>
     <message>
         <source>Freq.
 MHz/kHz/Cha.</source>
-        <translation>Fréquence
+        <translation>Frecuencia
 MHz/kHz/Cha.</translation>
     </message>
     <message>
@@ -9565,7 +9626,7 @@ Restante</translation>
     </message>
     <message>
         <source>Volmet</source>
-        <translation>VOLMET</translation>
+        <translation>Volmet</translation>
     </message>
     <message>
         <source>Hold to altitude</source>
@@ -9595,7 +9656,7 @@ Restante</translation>
     </message>
     <message>
         <source>Pilot Activated Lighting</source>
-        <translation>Piloto de Iluminación activada</translation>
+        <translation>Iluminación Activada por Piloto</translation>
     </message>
     <message>
         <source>Parking</source>
@@ -9919,7 +9980,7 @@ Restante</translation>
     </message>
     <message>
         <source>Controlled, IFR and VFR, ATC clearance required.</source>
-        <translation>Controlado, IFR y VFR, requerida  autorización de ATC.</translation>
+        <translation>Controlado, IFR y VFR, requiere autorización de ATC.</translation>
     </message>
     <message>
         <source>Related: %1</source>
@@ -10161,48 +10222,51 @@ hh:mm</translation>
     </message>
     <message>
         <source>Coordinates are valid: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenadas son válidas: %1</translation>
     </message>
     <message>
         <source>Coordinates are valid.</source>
-        <translation type="unfinished"></translation>
+        <translation>Coordenadas son válidas.</translation>
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Coordinates are not valid.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Coordenadas no son válidas.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Online Observer</source>
-        <translation type="unfinished"></translation>
+        <translation>Observador en línea</translation>
     </message>
     <message>
         <source>Online network observer</source>
-        <translation type="unfinished"></translation>
+        <translation>Red de Observador en línea</translation>
     </message>
     <message>
         <source>Userpoint %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Punto de Usuario %1</translation>
     </message>
     <message>
         <source>Position %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Posición %1</translation>
     </message>
     <message>
         <source>%1°%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1°%2</translation>
     </message>
     <message>
         <source> West</source>
-        <translation type="unfinished"></translation>
+        <translation> Oeste</translation>
     </message>
     <message>
         <source> East</source>
-        <translation type="unfinished"></translation>
+        <translation> Este</translation>
     </message>
     <message>
         <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar &lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterioro.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2017 Alexander Barthel 
-&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;©Copyright 2015-2017 Alexander Barthel - Traducción al Español: Daniel &quot;Wolf&quot; Machini &lt;/b&gt;&lt;/p&gt; {3D?} {1&quot;?} {3.0&quot;?} {3&lt;?} {965&quot;?} {965.?} {965.?} {2015-2018 ?}</translation>
+        <translation type="obsolete">&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;aquí&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterior.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel &lt;/b&gt;.&lt;/p&gt; - Traducción al Español: Daniel &quot;Wolf&quot; Machini - wolfinformatica@gmail.com - http://www.wolfinformatica.com - www.facebook.com/servicewolf&lt;/b&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -10235,7 +10299,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Depart via SID</source>
-        <translation>Partida vía SID</translation>
+        <translation>Partida via SID</translation>
     </message>
     <message>
         <source>%1 to %2 %3</source>
@@ -10299,7 +10363,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Undo flight plan change.</source>
-        <translation>Anular cambios del Plan de Vuelo.</translation>
+        <translation>Deshacer cambios del Plan de Vuelo.</translation>
     </message>
     <message>
         <source>Append</source>
@@ -10359,7 +10423,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Radionnav Flight Plan Calculation</source>
-        <translation>Cálculo de Plan de Vuelo por Radionnav</translation>
+        <translation>Cálculo de Plan de Vuelo por Radionav</translation>
     </message>
     <message>
         <source>Destination set to %1.</source>
@@ -10367,7 +10431,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Reverse</source>
-        <translation>Reversa</translation>
+        <translation>Inverso</translation>
     </message>
     <message>
         <source>Removed waypoint from flight plan.</source>
@@ -10447,11 +10511,11 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Departure set to %1 parking %2.</source>
-        <translation>Partida configurada a%1 estacionamiento %2.</translation>
+        <translation>Partida configurada a %1 estacionamiento %2.</translation>
     </message>
     <message>
         <source>Copied %1 entries to clipboard.</source>
-        <translation>Copiar %1 entradas al portapapeles.</translation>
+        <translation>Copiadas %1 entradas al portapapeles.</translation>
     </message>
     <message>
         <source>Added waypoint to flight plan.</source>
@@ -10463,7 +10527,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Departure set to %1 start position %2.</source>
-        <translation>Partida puesta a%1 posición de inicio %2.</translation>
+        <translation>Partida puesta a %1 posición de inicio %2.</translation>
     </message>
     <message>
         <source>High Altitude</source>
@@ -10483,7 +10547,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>&amp;Undo Flight Plan</source>
-        <translation>An&amp;ular Plan de Vuelo</translation>
+        <translation>Deshacer Plan de Vuelo &amp;U</translation>
     </message>
     <message>
         <source>&amp;Redo Flight Plan</source>
@@ -10525,286 +10589,286 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <source>Replaced waypoint in flight plan.</source>
-        <translation>Reemplacar waypoint en Plan de Vuelo.</translation>
+        <translation>Reemplazar waypoint en Plan de Vuelo.</translation>
     </message>
     <message>
         <source>Departure </source>
-        <translation type="unfinished"></translation>
+        <translation>Partida </translation>
     </message>
     <message>
         <source>Show procedures (airport has no departure procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (aeropuerto no tiene procedimiento de partida)</translation>
     </message>
     <message>
         <source>Arrival </source>
-        <translation type="unfinished"></translation>
+        <translation>Arribo </translation>
     </message>
     <message>
         <source>Show procedures (airport has no arrival procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (aeropuerto no tiene procedimiento de arribo)</translation>
     </message>
     <message>
         <source>all </source>
-        <translation type="unfinished"></translation>
+        <translation>todo </translation>
     </message>
     <message>
         <source>Show procedures (airport has no procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (aeropuerto no tiene procedimiento)</translation>
     </message>
     <message>
         <source>Show procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos</translation>
     </message>
     <message>
         <source>Edit Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar Posición</translation>
     </message>
     <message>
         <source>ILS</source>
-        <translation type="unfinished">ILS</translation>
+        <translation>ILS</translation>
     </message>
     <message>
         <source>Depart runway</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista de partida</translation>
     </message>
     <message>
         <source>.</source>
-        <translation type="unfinished">.</translation>
+        <translation>.</translation>
     </message>
     <message>
         <source>Arrive via STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>Arribo via STAR</translation>
     </message>
     <message>
         <source>at runway</source>
-        <translation type="unfinished"></translation>
+        <translation>en pista</translation>
     </message>
     <message>
         <source>(&lt;b&gt;%1&lt;/b&gt;)</source>
-        <translation type="unfinished"></translation>
+        <translation>(&lt;b&gt;%1&lt;/b&gt;)</translation>
     </message>
     <message>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <source>To runway.</source>
-        <translation type="unfinished"></translation>
+        <translation>A la Pista.</translation>
     </message>
     <message>
         <source>to runway.</source>
-        <translation type="unfinished"></translation>
+        <translation>a la Pista.</translation>
     </message>
     <message>
         <source>&lt;br/&gt;&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;Runway mismatch: %1 &amp;ne; %2.&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br/&gt;&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;Pista equivocada: %1 &amp;ne; %2.&lt;/span&gt;</translation>
     </message>
 </context>
 <context>
     <name>RouteExport</name>
     <message>
         <source>Save Flight Plan as FPL for Reality XP GNS</source>
-        <translation type="unfinished">Graba Plan de Vuelo como  FPL para Reality XP GNS</translation>
+        <translation>Grabar Plan de Vuelo como  FPL para Reality XP GNS</translation>
     </message>
     <message>
         <source>FPL Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivos FPL %1;;Todos los archivos (*)</translation>
+        <translation>Archivos FPL %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as FPL.</source>
-        <translation type="unfinished">Plan de Vuelo grabado como FPL.</translation>
+        <translation>Plan de Vuelo grabado como FPL.</translation>
     </message>
     <message>
         <source>Save Flight Plan as GFP for Reality XP GTN</source>
-        <translation type="unfinished">Grabar Plan de Vuelo como GFP para Reality XP GTN</translation>
+        <translation>Grabar Plan de Vuelo como GFP para Reality XP GTN</translation>
     </message>
     <message>
         <source>Garmin GFP Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivos Garmin GFP %1;;Todos los archivos (*)</translation>
+        <translation>Archivos Garmin GFP %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as GFP.</source>
-        <translation type="unfinished">Plan de Vuelo grabado como GFP.</translation>
+        <translation>Plan de Vuelo grabado como GFP.</translation>
     </message>
     <message>
         <source>Save Flight Plan as Garmin GFP Format</source>
-        <translation type="unfinished">Grabar Plan de Vuelo como formato GFP Garmin</translation>
+        <translation>Grabar Plan de Vuelo en formato GFP Garmin</translation>
     </message>
     <message>
         <source>Save Flight Plan as TXT Format</source>
-        <translation type="unfinished">Grabar Plan de Vuelo en formato TXT</translation>
+        <translation>Grabar Plan de Vuelo en formato TXT</translation>
     </message>
     <message>
         <source>Text Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivos de texto %1;;Todos los archivos (*)</translation>
+        <translation>Archivos de texto %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as TXT.</source>
-        <translation type="unfinished">Plan de Vuelo grabado como TXT.</translation>
+        <translation>Plan de Vuelo grabado como TXT.</translation>
     </message>
     <message>
         <source>Save Flight Plan as PMDG RTE Format</source>
-        <translation type="unfinished">Grabar Plan de Vuelo como PMDG RTE</translation>
+        <translation>Grabar Plan de Vuelo como PMDG RTE</translation>
     </message>
     <message>
         <source>RTE Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivos RTE %1;;Todos los archivos (*)</translation>
+        <translation>Archivos RTE %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as RTE.</source>
-        <translation type="unfinished">Plan de Vuelo grabado como RTE.</translation>
+        <translation>Plan de Vuelo grabado como RTE.</translation>
     </message>
     <message>
         <source>Save Flight Plan as Majestic Dash FPR...</source>
-        <translation type="unfinished">Grabar Plan de Vuelo como Majestic Dash FPR...</translation>
+        <translation>Grabar Plan de Vuelo como Majestic Dash FPR...</translation>
     </message>
     <message>
         <source>FPR Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivos RPF %1;; Todos los archivos (*)</translation>
+        <translation>Archivos RPF %1;; Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as FPR.</source>
-        <translation type="unfinished">Plan de Vuelo grabado como FPR.</translation>
+        <translation>Plan de Vuelo grabado como FPR.</translation>
     </message>
     <message>
         <source>Save Flight Plan as IXEG FPL Format</source>
-        <translation type="unfinished">Grabar Plan de Vuelo con formato IXEG FPL</translation>
+        <translation>Grabar Plan de Vuelo con formato IXEG FPL</translation>
     </message>
     <message>
         <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="unfinished">Grabar Plan de Vuelo a &quot;corte.in&quot; para Flight Factor Airbus</translation>
+        <translation>Grabar Plan de Vuelo a &quot;corte.in&quot; para Flight Factor Airbus</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivo &quot;corte.in&quot; %1;;Todos los archivos (*)</translation>
+        <translation>Archivo &quot;corte.in&quot; %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan added to corte.in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de Vuelo agregado a corte.in.</translation>
     </message>
     <message>
         <source>Save Flight Plan as FLTPLAN for iFly</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo como FLTPLAN para iFly</translation>
     </message>
     <message>
         <source>iFly FLTPLAN Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos iFly FLPLAN %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as FLTPLAN for iFly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de vuelo grabado como FLTPLAN para iFly.</translation>
     </message>
     <message>
         <source>Save Flight Plan as FPL for X-FMC</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo como FPL para X-FMC</translation>
     </message>
     <message>
         <source>X-FMC Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos X-FMC %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as FPL for X-FMC.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de vuelo grabado como FPL para X-FMC.</translation>
     </message>
     <message>
         <source>Save Flight Plan for UFMC</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo para UFMC</translation>
     </message>
     <message>
         <source>UFMC Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos UMFC %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved for UFMC.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de Vuelo grabado para UFMC.</translation>
     </message>
     <message>
         <source>Save Flight Plan to companyroutes.xml for ProSim</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de vuelo a companyroutes.xml para ProSim</translation>
     </message>
     <message>
         <source>companyroutes.xml Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos companyroutes.xml %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan added to companyroutes.xml.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de Vuelo agregado a companyroutes.xml.</translation>
     </message>
     <message>
         <source>Save Flight Plan for BBS Airbus</source>
-        <translation type="unfinished"></translation>
+        <translation>Grabar Plan de Vuelo para BBS Airbus</translation>
     </message>
     <message>
         <source>PLN Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos PLN %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved for BBS.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de Vuelo grabado para BBS.</translation>
     </message>
     <message>
         <source>Save Flight Plan as GPX Format</source>
-        <translation type="unfinished">Grabar Plan de Vuelo en formato GPX</translation>
+        <translation>Grabar Plan de Vuelo en formato GPX</translation>
     </message>
     <message>
         <source>Save Flightplan and Track as GPX Format</source>
-        <translation type="unfinished">Grabar Plan de Vuelo y traza en formato GPX</translation>
+        <translation>Grabar Plan de Vuelo y traza en formato GPX</translation>
     </message>
     <message>
         <source>GPX Files %1;;All Files (*)</source>
-        <translation type="unfinished">Archivos GPX %1;;Todos los archivos (*)</translation>
+        <translation>Archivos GPX %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <source>Flight plan saved as GPX.</source>
-        <translation type="unfinished">Plan de Vuelo grabado como GPX.</translation>
+        <translation>Plan de Vuelo grabado como GPX.</translation>
     </message>
     <message>
         <source>Flight plan and track saved as GPX.</source>
-        <translation type="unfinished">Plan de Vuelo y traza grabada como GPX.</translation>
+        <translation>Plan de Vuelo y traza grabada como GPX.</translation>
     </message>
     <message>
         <source>Select Start &amp;Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione &amp;Posición de inicio</translation>
     </message>
     <message>
         <source>Flight Plan must have a valid airport as start and destination and will not be usable by the Simulator.</source>
-        <translation type="unfinished">El Plan de Vuelo debe debe tener aeropuertos válidos de inicio y destino,o el simulador no podrá usarlo.</translation>
+        <translation>El Plan de Vuelo debe debe tener aeropuertos válidos de inicio y destino, o el simulador no podrá usarlo.</translation>
     </message>
     <message>
         <source>Do not show this dialog again and save Flight Plan in the future.</source>
-        <translation type="unfinished">No vuelva a mostrar este cuadro de diálogo y guarde Plan de Vuelo en el futuro.</translation>
+        <translation>No vuelva a mostrar este cuadro de diálogo y guarde Plan de Vuelo en el futuro.</translation>
     </message>
     <message>
         <source>Show &amp;Departure on Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Partida en el mapa &amp;D</translation>
     </message>
     <message>
         <source>The start airport has parking spots but no parking was selected for this Flight Plan</source>
-        <translation type="unfinished">El aeropuerto de salida tiene estacionamiento pero no seleccionó uno para este Plan de Vuelo</translation>
+        <translation>El aeropuerto de salida tiene estacionamiento pero no seleccionó uno para este Plan de Vuelo</translation>
     </message>
     <message>
         <source>While saving GFP file:</source>
-        <translation type="unfinished">Mientras graba en archivo GFP:</translation>
+        <translation>Mientras graba en archivo GFP:</translation>
     </message>
     <message>
         <source>While saving TXT or FPL file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mientras graba archivo TXT o FPL:</translation>
     </message>
     <message>
         <source>While saving UFMC file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mientras graba archivo UFMC:</translation>
     </message>
     <message>
         <source>While saving to corte.in file:</source>
-        <translation type="unfinished">Mientras grabamos a archivo &quot;corte.in&quot;:</translation>
+        <translation>Mientras graba en archivo &quot;corte.in&quot;:</translation>
     </message>
     <message>
         <source>While reading from companyroutes.xml file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mientras lee el archivo companyroutes.xml:</translation>
     </message>
     <message>
         <source>While saving to companyroutes.xml file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mientras graba al archivo companyroutes.xml:</translation>
     </message>
 </context>
 <context>
@@ -10910,7 +10974,7 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <source>Waypoint %1 not found in airway %2. Ignoring flight plan segment.</source>
-        <translation>Waypoint %1 no encontrado en aerovía %2. Ignora el Plan de Vuelo.</translation>
+        <translation>Waypoint %1 no encontrado en aerovía %2. Ignora segmento del Plan de Vuelo.</translation>
     </message>
     <message>
         <source>Ignoring time specification for airport %1.</source>
@@ -11029,11 +11093,11 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
     <message>
         <source>Found SID &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>SID encontrado &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Found STAR &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>STAR encontrado &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
 </context>
 <context>
@@ -11080,71 +11144,71 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
     <message>
         <source>Departure </source>
-        <translation type="unfinished"></translation>
+        <translation>Partida </translation>
     </message>
     <message>
         <source>Show procedures (airport has no departure procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (aeropuerto no tiene procedimiento de partida)</translation>
     </message>
     <message>
         <source>Arrival </source>
-        <translation type="unfinished"></translation>
+        <translation>Llegada </translation>
     </message>
     <message>
         <source>Show procedures (airport has no arrival procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (aeropuerto no tiene procedimiento de llegada)</translation>
     </message>
     <message>
         <source>all </source>
-        <translation type="unfinished"></translation>
+        <translation>todo </translation>
     </message>
     <message>
         <source>Show procedures (airport has no procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos (aeropuerto no tiene procedimiento)</translation>
     </message>
     <message>
         <source>Show procedures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing airspace on map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing VOR on map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing NDB on map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing waypoint on map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing userpoint on map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Showing online client/aircraft on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar procedimientos</translation>
     </message>
     <message>
         <source>&amp;Edit Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar Puntos de Usuario</translation>
     </message>
     <message>
         <source>&amp;Delete Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar Puntos &amp;De Usuario</translation>
     </message>
     <message>
         <source>&amp;Edit Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar Punto de Usuario</translation>
     </message>
     <message>
         <source>&amp;Delete Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar Punto &amp;De Usuario</translation>
+    </message>
+    <message>
+        <source>Showing airspace on map.</source>
+        <translation>Mostrar espacio aéreo en mapa.</translation>
+    </message>
+    <message>
+        <source>Showing VOR on map.</source>
+        <translation>Mostrando VOR en mapa.</translation>
+    </message>
+    <message>
+        <source>Showing NDB on map.</source>
+        <translation>Mostrar NDB en mapa.</translation>
+    </message>
+    <message>
+        <source>Showing waypoint on map.</source>
+        <translation>Mostrar waypoint en mapa.</translation>
+    </message>
+    <message>
+        <source>Showing userpoint on map.</source>
+        <translation>Mostrar punto de usuario en mapa.</translation>
+    </message>
+    <message>
+        <source>Showing online client/aircraft on map.</source>
+        <translation>Mostrando en mapa cliente/aeronave en línea.</translation>
     </message>
 </context>
 <context>
@@ -11326,11 +11390,11 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     <name>UserWaypointDialog</name>
     <message>
         <source>Little Navmap - Edit Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - Editar Posición</translation>
     </message>
     <message>
         <source>&amp;Latitude and Longitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Latitud y Longitud:</translation>
     </message>
     <message>
         <source>Recognized coordinate formats:
@@ -11348,233 +11412,247 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatos de coordenadas reconocidos:
+- Grados, minutos y segundos: N49 ° 26 &apos;41.57 &quot;E9 ° 12&apos; 5.49&quot; o 49 ° 26 &apos;41.57 &quot;N 9 ° 12&apos; 5.49&quot; E
+- Grados y minutos: N54 * 16.82 &apos;W008 * 35.95&apos;, N 52 33.58 E 13 17.26 o 49 ° 26.69 &apos;N 9 ° 12.09&apos; E
+- Grados solamente: 49.4449 ° N 9.2015 ° E o N 49.4449 ° E 9: 2015 °
+Los signos de Grado, minutos y segundos se pueden omitir en los formatos anteriores.
+Latitud tiene que ser el primero y precisan designadores N / S y E / W.
+Solo necesita un espacio para separar latitud y longitud o grados/minutos/segundos si no utiliza signos.
+Otros formatos:
+- Grados y minutos: N44124W122451, N14544W017479 o S31240E136502
+- Grados solo 46N078W
+- Grados y minutos 4620N07805W
+- Grados, minutos y segundos 481200N0112842E (Skyvector)
+- Grados y minutos en par &quot;N6500 W08000&quot; o &quot;N6500 / W08000&quot;
+- NAT tipo 5020N
+Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.</translation>
     </message>
     <message>
         <source>&amp;Name of Position:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nombre de Posición:</translation>
     </message>
 </context>
 <context>
     <name>UserdataController</name>
     <message>
         <source>Select userpoints for display</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar puntos de usuario para mostrar</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Todo</translation>
+        <translation>Todo</translation>
     </message>
     <message>
         <source>Enable all userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar todos los puntos de usuario</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Ninguno</translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <source>Disable all userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilitar todos los puntos de usuario</translation>
     </message>
     <message>
         <source>Unknown Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipos desconocidos</translation>
     </message>
     <message>
         <source>Enable or disable unknown userpoint types</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilita o deshabilita puntos de usuario desconocidos</translation>
     </message>
     <message>
         <source>Userpoint moved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Punto de usuario movido.</translation>
     </message>
     <message>
         <source>Departure</source>
-        <translation type="unfinished">Partida</translation>
+        <translation>Partida</translation>
     </message>
     <message>
         <source>Arrival</source>
-        <translation type="unfinished"></translation>
+        <translation>Arribo</translation>
     </message>
     <message>
         <source> runway %1</source>
-        <translation type="unfinished"></translation>
+        <translation> pista %1</translation>
     </message>
     <message>
         <source>%1 at %2%3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 a %2%3</translation>
     </message>
     <message>
         <source>Simulator Date and Time: %1 %2, %3 %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Fecha y Hora del Simulador: %1 %2, %3 %4</translation>
     </message>
     <message>
         <source>Date and Time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fecha y Hora: %1</translation>
     </message>
     <message>
         <source>Flight Plan:</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan de Vuelo:</translation>
     </message>
     <message>
         <source>From: %2 to %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Desde: %2 a %3</translation>
     </message>
     <message>
         <source>Cruising altitude: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Altitud crucero: %1</translation>
     </message>
     <message>
         <source>Aircraft:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeronave:</translation>
     </message>
     <message>
         <source>Title: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Título: %1</translation>
     </message>
     <message>
         <source>Airline: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aerolínea: %1</translation>
     </message>
     <message>
         <source>Flight Number: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nro de Vuelo: %1</translation>
     </message>
     <message>
         <source>Model: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Modelo: %1</translation>
     </message>
     <message>
         <source>Registration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Registro: %1</translation>
     </message>
     <message>
         <source>Type: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo: %1</translation>
     </message>
     <message>
         <source>Trip:</source>
-        <translation type="unfinished"></translation>
+        <translation>Viaje:</translation>
     </message>
     <message>
         <source>Time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo: %1</translation>
     </message>
     <message>
         <source>Flight Plan Distance: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Distancia Plan de Vuelo: %1</translation>
     </message>
     <message>
         <source>Flown Distance: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Distancia de Vuelo: %1</translation>
     </message>
     <message>
         <source>Average Groundspeed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad media terrestre: %1</translation>
     </message>
     <message>
         <source>Average True Airspeed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad media verdadera del aire: %1</translation>
     </message>
     <message>
         <source>Fuel consumed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Combustible consumido: %1</translation>
     </message>
     <message>
         <source>, </source>
-        <translation type="unfinished">, </translation>
+        <translation>, </translation>
     </message>
     <message>
         <source>Average fuel flow: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Flujo promedio combustible: %1</translation>
     </message>
     <message>
         <source>Logbook Entry for %1 at %2%3 added.</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregada entrada al libro de registro para %1 en %2%3.</translation>
     </message>
     <message>
         <source>Userpoint added.</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregado punto de usuario.</translation>
     </message>
     <message numerus="yes">
         <source>%n userpoint(s) updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n punto de usuario actualizado.</numerusform>
+            <numerusform>%n puntos de usuarios actualizados.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Delete %n userpoint(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Borrar %n punto de usuario?</numerusform>
+            <numerusform>Borrar %n puntos de usuarios?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n userpoint(s) deleted.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n punto de usuario borrado.</numerusform>
+            <numerusform>%n puntos de usuarios borrados.</numerusform>
         </translation>
     </message>
     <message>
         <source>Open Userpoint CSV File(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir archivo(s) CSV puntos de usuario</translation>
     </message>
     <message>
         <source>CSV Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos CSV %1;;Todos los Archivos (*)</translation>
     </message>
     <message numerus="yes">
         <source>%n userpoint(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n de punto de usuario importado.</numerusform>
+            <numerusform>%n de puntos de usuarios importados.</numerusform>
         </translation>
     </message>
     <message>
         <source>Open X-Plane user_fix.dat File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir archivo user_fix.dat de X-Plane</translation>
     </message>
     <message>
         <source>X-Plane User Fix Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos User Fix X-Plane %1;;Todos los Archivos (*)</translation>
     </message>
     <message>
         <source>Open Garmin User Waypoint File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir archivo Garmin Waypoint de Usuario</translation>
     </message>
     <message>
         <source>Garmin User Waypoint Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos Garmin User Waypoints %1;;Todos los Archivos (*)</translation>
     </message>
     <message>
         <source>Export Userpoint CSV File</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar puntos de usuario archivo CSV</translation>
     </message>
     <message numerus="yes">
         <source>%n userpoint(s) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n punto exportado.</numerusform>
+            <numerusform>%n puntos exportados.</numerusform>
         </translation>
     </message>
     <message>
         <source>Export X-Plane user_fix.dat File</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar archivo X-Plane user_fix.dat</translation>
     </message>
     <message>
         <source>Export Garmin User Waypoint File</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar archivo Garmin Waypoint usuario</translation>
     </message>
     <message>
         <source>Export XML File for FSX/P3D BGL Compiler</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar archivo XML para compilador FSX/P3D BGL</translation>
     </message>
     <message>
         <source>XML Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos XML %1;;Todos los Archivos (*)</translation>
     </message>
     <message>
         <source>Really delete all userpoints?
@@ -11582,18 +11660,22 @@ Formats above have to be given exactly as shown in the examples.</source>
 A backup will be created in
 &quot;%1&quot;
 before deleting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Realmente borrar todos los puntos de usuario?
+
+Se creará un backup en
+&quot;%1&quot;
+antes de borrar.</translation>
     </message>
 </context>
 <context>
     <name>UserdataDialog</name>
     <message>
         <source>Little Navmap - Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - Punto de Usuario</translation>
     </message>
     <message>
         <source>Check to change type for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar para cambiar tipo para todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11601,23 +11683,27 @@ before deleting.</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta nombre=&quot;qrichtext&quot; contenido=&quot;1&quot; /&gt;&lt;style tipo=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body estilo=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p estilo=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&amp;Ident:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Identificador:</translation>
     </message>
     <message>
         <source>&amp;Latitude and Longitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Latitud y Longitud:</translation>
     </message>
     <message>
         <source>&amp;Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nombre:</translation>
     </message>
     <message>
-        <source>Check to change ident for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <source>Check to change region for all selected waypoints</source>
+        <translation>Marcar para cambiar región para todos los waypoints</translation>
     </message>
     <message>
         <source>Recognized coordinate formats:
@@ -11635,135 +11721,150 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatos de coordenadas reconocidos:
+- Grados, minutos y segundos: N49 ° 26 &apos;41.57 &quot;E9 ° 12&apos; 5.49&quot; o 49 ° 26 &apos;41.57 &quot;N 9 ° 12&apos; 5.49&quot; E
+- Grados y minutos: N54 * 16.82 &apos;W008 * 35.95&apos;, N 52 33.58 E 13 17.26 o 49 ° 26.69 &apos;N 9 ° 12.09&apos; E
+- Grados solamente: 49.4449 ° N 9.2015 ° E o N 49.4449 ° E 9: 2015 °
+Grado, minutos y segundos, los signos se pueden omitir en los formatos anteriores.
+Latitude tiene que ser el primero y se requieren designadores N / S y E / W.
+Solo se necesita un espacio para separar latitud y longitud o grados/minutos/segundos si no se utilizan signos.
+Otros formatos:
+- Grados y minutos: N44124W122451, N14544W017479 o S31240E136502
+- Grados solo 46N078W
+- Grados y minutos 4620N07805W
+- Grados, minutos y segundos 481200N0112842E (Skyvector)
+- Grados y minutos en par &quot;N6500 W08000&quot; o &quot;N6500 / W08000&quot;
+- NAT tipo 5020N
+Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Código identificador del waypoint. &lt;/p&gt;&lt;p&gt;Se precisan hasta cinco caracteres para exportar a otro formato para X-Plane &amp;quot;user_fix.dat&amp;quot; o Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Check to change visibility for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar para cambiar visibilidad de todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>Check to change description for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar para cambiar descripción para todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>&amp;Region:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Región:</translation>
     </message>
     <message>
         <source>&amp;Elevation or altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Elevación o altitud:</translation>
     </message>
     <message>
         <source>Imported from file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Importado desde archivo:</translation>
+    </message>
+    <message>
+        <source>Check to change ident for all selected waypoints</source>
+        <translation>Chequear para cambiar identificación para todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>&amp;Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tipo:</translation>
     </message>
     <message>
         <source>Elevation or altitude of this waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Elevación o Altitud de este waypoint</translation>
     </message>
     <message>
         <source> %alt%</source>
-        <translation type="unfinished"> %alt%</translation>
+        <translation> %alt%</translation>
     </message>
     <message>
         <source>Check to change tags for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar para cambiar etiquetas para todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>Check to change elevation for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar para cambiar elevación para todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>&amp;Visible from:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visible desde:</translation>
     </message>
     <message>
         <source>Type which will determine the used icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo que determinará el ícono usado</translation>
     </message>
     <message>
         <source>&amp;Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;Tiquetas:</translation>
     </message>
     <message>
         <source>List of tags. Simple textfield for various purposes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lista de etiquetas. Campo de texto simple para varios fines.</translation>
     </message>
     <message>
         <source>Last Change:</source>
-        <translation type="unfinished"></translation>
+        <translation>Último Cambio:</translation>
     </message>
     <message>
         <source>&amp;Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Descripción:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define la máxima distancia de vista que este waypoint mostrará en el mapa.&lt;/p&gt;&lt;p&gt;La distancia de vista se muestra en la barra de estado.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source> %dist%</source>
-        <translation type="unfinished"> %dist%</translation>
+        <translation> %dist%</translation>
     </message>
     <message>
         <source>Two letter ICAO region code.
 Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Precisa código ICAO de 2 letras.
+Requerido para exportar a &quot;user_fix.dat&quot; de X-Plane.</translation>
     </message>
     <message>
         <source>Check to change name for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar para cambiar nombre de todos los waypoints seleccionados</translation>
     </message>
     <message>
         <source>&amp;Temporary userpoint. Delete on next startup.</source>
-        <translation type="unfinished"></translation>
+        <translation>Punto de Usuario &amp;Temporal. Borrado en próximo arranque.</translation>
     </message>
     <message>
         <source> - Edit Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation> - Editar Punto de Usuario</translation>
     </message>
     <message>
         <source> - Add Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation> - Agregar Punto de Usuario</translation>
     </message>
     <message>
         <source> - Edit Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation> - Editar Punto de Usuario</translation>
     </message>
     <message>
         <source>Temporary userpoint - will be deleted on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Punto de Usuario temporal - Será borrado en proximo arranque</translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="unfinished">-</translation>
-    </message>
-    <message>
-        <source>Check to change region for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
 </context>
 <context>
     <name>UserdataExportDialog</name>
     <message>
         <source>Little Navmap - Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - Opciones Exportación</translation>
     </message>
     <message>
         <source>Export &amp;selected userpoints only</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Solo Puntos de Usuario elegidos</translation>
     </message>
     <message>
         <source>&amp;Append to an already present file</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Agregar a un archivo ya presente</translation>
     </message>
 </context>
 <context>
@@ -11771,147 +11872,150 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
     <message>
         <source>Airport</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished">Aeropuerto</translation>
+        <translation>Aeropuerto</translation>
     </message>
     <message>
         <source>Airstrip</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Pista de aterrizaje</translation>
     </message>
     <message>
         <source>Bookmark</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Señalador (punto de usuario)</translation>
     </message>
     <message>
         <source>Cabin</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cabina (punto de usuario)</translation>
     </message>
     <message>
         <source>Closed</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished">Cerrado</translation>
+        <translation>Cerrado (punto de usuario)</translation>
     </message>
     <message>
         <source>Error</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Error (punto de usuario)</translation>
     </message>
     <message>
         <source>Flag</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bandera (punto de usuario)</translation>
     </message>
     <message>
         <source>Helipad</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished">Helipuerto</translation>
+        <translation>Helipuerto (punto de usuario)</translation>
     </message>
     <message>
         <source>Location</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ubicación (punto de usuario)</translation>
     </message>
     <message>
         <source>Logbook</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Libro de registro (punto de usuario)</translation>
     </message>
     <message>
         <source>Marker</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Marcador (punto de usuario)</translation>
     </message>
     <message>
         <source>Mountain</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Montaña (punto de usuario)</translation>
     </message>
     <message>
         <source>Obstacle</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Obstáculo (punto de usuario)</translation>
     </message>
     <message>
         <source>Pin</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Pin (punto de usuario)</translation>
     </message>
     <message>
         <source>POI</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>POI (punto de usuario)</translation>
     </message>
     <message>
         <source>Seaport</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>Puerto marino (punto de usuario)</translation>
     </message>
     <message>
         <source>Unknown</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished">Desconocido</translation>
+        <translation>Desconocido (punto de usuario)</translation>
     </message>
     <message>
         <source>VRP</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished"></translation>
+        <translation>VRP (punto de usuario)</translation>
     </message>
     <message>
         <source>Waypoint</source>
         <comment>UserpointType</comment>
-        <translation type="unfinished">Waypoint</translation>
+        <translation>Waypoint (punto de usuario)</translation>
     </message>
 </context>
 <context>
     <name>UserdataSearch</name>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Tipo</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <source>Last Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Último cambio</translation>
     </message>
     <message>
         <source>Ident</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificador</translation>
     </message>
     <message>
         <source>Region</source>
-        <translation type="unfinished">Región</translation>
+        <translation>Región</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Nombre</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiquetas</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Descripción</translation>
+        <translation>Descripción</translation>
     </message>
     <message>
         <source>Visible from
 %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation>Visible desde
+%dist%</translation>
     </message>
     <message>
         <source>Elevation
 %alt%</source>
-        <translation type="unfinished"></translation>
+        <translation>Elevación
+%alt%</translation>
     </message>
     <message>
         <source>Imported
 from File</source>
-        <translation type="unfinished"></translation>
+        <translation>Importado
+desde archivo</translation>
     </message>
     <message>
         <source>%1 overriding all other search options.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sobreescribiendo demás opciones de búsqueda.</translation>
     </message>
 </context>
 <context>
