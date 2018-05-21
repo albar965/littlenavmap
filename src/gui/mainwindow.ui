@@ -5032,13 +5032,13 @@
      <normaloff>:/littlenavmap/resources/icons/detailmore.svg</normaloff>:/littlenavmap/resources/icons/detailmore.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;More Details</string>
+    <string>&amp;More Detail</string>
    </property>
    <property name="toolTip">
-    <string>Show more details on map</string>
+    <string>Show more detail on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show more details on map</string>
+    <string>Show more detail on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl++</string>
@@ -5050,13 +5050,13 @@
      <normaloff>:/littlenavmap/resources/icons/detailless.svg</normaloff>:/littlenavmap/resources/icons/detailless.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Less Details</string>
+    <string>&amp;Less Detail</string>
    </property>
    <property name="toolTip">
-    <string>Show less details on map</string>
+    <string>Show less detail on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show less details on map</string>
+    <string>Show less detail on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
@@ -5296,13 +5296,13 @@
      <normaloff>:/littlenavmap/resources/icons/detaildefault.svg</normaloff>:/littlenavmap/resources/icons/detaildefault.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Default Details</string>
+    <string>&amp;Default Detail</string>
    </property>
    <property name="toolTip">
-    <string>Go back to default details on map</string>
+    <string>Go back to default detail on the map</string>
    </property>
    <property name="statusTip">
-    <string>Go back to default details on map</string>
+    <string>Go back to default detail on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
