@@ -164,7 +164,7 @@ void PrintDialog::buttonBoxClicked(QAbstractButton *button)
     emit printPreviewClicked();
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "PRINT.html#printing-the-flight-plan",
-                                          lnm::helpLanguagesOnline());
+                                          lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Close))
     QDialog::reject();
 }

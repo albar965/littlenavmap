@@ -139,10 +139,10 @@ void UserdataDialog::helpClicked()
 {
   if(editMode == ud::ADD)
     atools::gui::HelpHandler::openHelpUrl(
-      this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-add", lnm::helpLanguagesOnline());
+      this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-add", lnm::helpLanguageOnline());
   else
     atools::gui::HelpHandler::openHelpUrl(
-      this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-edit", lnm::helpLanguagesOnline());
+      this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-edit", lnm::helpLanguageOnline());
 }
 
 void UserdataDialog::resetClicked()

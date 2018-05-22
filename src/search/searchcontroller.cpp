@@ -84,27 +84,27 @@ void SearchController::optionsChanged()
 
 void SearchController::helpPressed()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCH.html", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCH.html", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedProcedure()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHPROCS.html", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHPROCS.html", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedUserdata()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-search", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-search", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineClient()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-client", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-client", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineCenter()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-center", lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-center", lnm::helpLanguageOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */

@@ -365,7 +365,7 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openHelpUrl(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguagesOnline());
+    helpHandler->openHelpUrl(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguageOnline());
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
@@ -375,7 +375,8 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendFile = HelpHandler::getHelpFile(lnm::HELP_LEGEND_INLINE_FILE, lnm::helpLanguagesOffline());
+  legendFile = HelpHandler::getHelpFile(lnm::HELP_LEGEND_INLINE_FILE,
+                                        OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE);
   qDebug() << "legendUrl" << legendFile;
 
   QString legendText;
@@ -404,12 +405,12 @@ void MainWindow::checkForUpdates()
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showOnlineTutorials()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguagesOnline());
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showDonationPage()
@@ -419,7 +420,8 @@ void MainWindow::showDonationPage()
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_FILE, lnm::helpLanguagesOffline());
+  HelpHandler::openUrl(this, HelpHandler::getHelpFile(lnm::HELP_OFFLINE_FILE,
+                                                      OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE));
 }
 
 /* Show marble legend */
@@ -435,7 +437,7 @@ void MainWindow::showMapLegend()
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguagesOnline());
+    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguageOnline());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1422,7 +1424,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
   }
   else if(result == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html",
-                                          lnm::helpLanguagesOnline());
+                                          lnm::helpLanguageOnline());
   // else cancel
 
   saveAs = false;

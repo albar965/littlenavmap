@@ -320,10 +320,16 @@ const unsigned char DEFAULT_MAINWINDOW_STATE[841] =
   0x0
 };
 
-/* Supported languages for the online help system. Will be determined by the
- * installation of offline PDF manual. */
-const QStringList helpLanguagesOnline();
-const QStringList helpLanguagesOffline();
+/*
+ * Supported language for the online help system. Will be determined by presence of the file
+ * little-navmap-user-manual-${LANG}.online in folder help and the current language settings of the system
+ * as well as any override settings in the options dialog.
+ *
+ * Falls back to English if indicator file is missing.
+ *
+ * This will consider region fallbacks in both directions like pt_BR -> pt or pt -> pt_BR
+ */
+const QString helpLanguageOnline();
 
 } // namespace lnm
 

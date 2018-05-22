@@ -19,42 +19,42 @@
 
 #include "gui/helphandler.h"
 
-#include <options/optiondata.h>
+#include "options/optiondata.h"
 
-static QStringList supportedLanguagesOnline, supportedLanguagesOffline;
+#include <QDir>
+#include <QRegularExpression>
+
+static QString supportedLanguageOnline;
 
 namespace lnm {
 
-const QStringList helpLanguagesOnline()
+const QString helpLanguageOnline()
 {
-  if(supportedLanguagesOnline.isEmpty())
+  if(supportedLanguageOnline.isEmpty())
   {
     if(OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE)
       // Stick to English as forced in options
-      supportedLanguagesOnline.append("en");
+      supportedLanguageOnline = "en";
     else
-      // Otherwise determine manual language by installed PDF files
-      supportedLanguagesOnline = atools::gui::HelpHandler::getInstalledLanguages(
-        "help", "little-navmap-user-manual-([a-z]{2})\\.online");
+    {
+      // Get the online indicator file
+      QString onlineFlagFile = atools::gui::HelpHandler::getHelpFile(
+        QString("help") + QDir::separator() + "little-navmap-user-manual-${LANG}.online",
+        OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE);
+
+      // Extract language from the file
+      QRegularExpression regexp("little-navmap-user-manual-(.+)\\.online", QRegularExpression::CaseInsensitiveOption);
+      QRegularExpressionMatch match = regexp.match(onlineFlagFile);
+      if(match.hasMatch() && !match.captured(1).isEmpty())
+        supportedLanguageOnline = match.captured(1);
+
+      // Fall back to English
+      if(supportedLanguageOnline.isEmpty())
+        supportedLanguageOnline = "en";
+    }
   }
 
-  return supportedLanguagesOnline;
-}
-
-const QStringList helpLanguagesOffline()
-{
-  if(supportedLanguagesOffline.isEmpty())
-  {
-    if(OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE)
-      // Stick to English as forced in options
-      supportedLanguagesOffline.append("en");
-    else
-      // Otherwise determine manual language by installed PDF files
-      supportedLanguagesOffline = atools::gui::HelpHandler::getInstalledLanguages(
-        "help", "little-navmap-user-manual-([a-z]{2})\\.pdf");
-  }
-
-  return supportedLanguagesOffline;
+  return supportedLanguageOnline;
 }
 
 } // namespace lnm

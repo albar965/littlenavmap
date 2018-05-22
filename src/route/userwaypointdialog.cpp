@@ -53,7 +53,7 @@ UserWaypointDialog::~UserWaypointDialog()
 void UserWaypointDialog::helpClicked()
 {
   atools::gui::HelpHandler::openHelpUrl(
-    this, lnm::HELP_ONLINE_URL + "EDITFPPOSITION.html", lnm::helpLanguagesOnline());
+    this, lnm::HELP_ONLINE_URL + "EDITFPPOSITION.html", lnm::helpLanguageOnline());
 }
 
 QString UserWaypointDialog::getName() const
