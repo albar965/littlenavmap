@@ -1465,6 +1465,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowOnMap->setEnabled(false);
     ui->actionMapRangeRings->setEnabled(false);
     ui->actionSearchSetMark->setEnabled(false);
+
+    ui->actionRouteShowApproaches->setText(tr("Show procedures"));
   }
 
   // Get selected rows in ascending order
