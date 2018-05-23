@@ -512,6 +512,9 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $${DEPLOY_APP} &&
+  deploy.commands += cp -fv $${QT_HOME}/translations/qt_??.qm  $${DEPLOY_APP}/Contents/MacOS &&
+  deploy.commands += cp -fv $${QT_HOME}/translations/qt_??_??.qm  $${DEPLOY_APP}/Contents/MacOS &&
+  deploy.commands += cp -fv $${QT_HOME}/translations/qtbase*.qm  $${DEPLOY_APP}/Contents/MacOS &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -fv $$PWD/README.txt $${DEPLOY_DIR}/README-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/CHANGELOG.txt $${DEPLOY_DIR}/CHANGELOG-LittleNavmap.txt
