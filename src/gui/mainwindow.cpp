@@ -365,7 +365,7 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openHelpUrl(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguageOnline());
+    helpHandler->openHelpUrlWeb(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguageOnline());
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
@@ -405,23 +405,24 @@ void MainWindow::checkForUpdates()
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showOnlineTutorials()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showDonationPage()
 {
-  HelpHandler::openUrl(this, lnm::HELP_DONTATE_URL);
+  HelpHandler::openUrlWeb(this, lnm::HELP_DONTATE_URL);
 }
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openUrl(this, HelpHandler::getHelpFile(lnm::HELP_OFFLINE_FILE,
-                                                      OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE));
+  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::HELP_OFFLINE_FILE,
+                                                          OptionData::instance().getFlags() &
+                                                          opts::GUI_OVERRIDE_LANGUAGE));
 }
 
 /* Show marble legend */
@@ -437,7 +438,7 @@ void MainWindow::showMapLegend()
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguageOnline());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1423,8 +1424,8 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     return true;
   }
   else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html",
-                                          lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html",
+                                             lnm::helpLanguageOnline());
   // else cancel
 
   saveAs = false;
@@ -1825,7 +1826,7 @@ bool MainWindow::openInSkyVector()
                                       NavApp::getSpeedKts(),
                                       rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
-  HelpHandler::openUrl(this, "https://skyvector.com/?fpl=" + route);
+  HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
   return true;
 }
 
@@ -2178,7 +2179,7 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguageOnline());
+          HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguageOnline());
         else if(result == QMessageBox::Open)
           databaseManager->run();
       }

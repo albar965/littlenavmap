@@ -52,7 +52,7 @@ UserWaypointDialog::~UserWaypointDialog()
 
 void UserWaypointDialog::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrl(
+  atools::gui::HelpHandler::openHelpUrlWeb(
     this, lnm::HELP_ONLINE_URL + "EDITFPPOSITION.html", lnm::helpLanguageOnline());
 }
 

@@ -138,10 +138,10 @@ void UserdataDialog::coordsEdited(const QString& text)
 void UserdataDialog::helpClicked()
 {
   if(editMode == ud::ADD)
-    atools::gui::HelpHandler::openHelpUrl(
+    atools::gui::HelpHandler::openHelpUrlWeb(
       this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-add", lnm::helpLanguageOnline());
   else
-    atools::gui::HelpHandler::openHelpUrl(
+    atools::gui::HelpHandler::openHelpUrlWeb(
       this, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-dialog-edit", lnm::helpLanguageOnline());
 }
 
