@@ -492,6 +492,7 @@ void RouteController::restoreState()
           fileDestination.clear();
           fileIfrVfr = pln::VFR;
           route.clear();
+          routeFileFormat = atools::fs::pln::PLN_FSX;
         }
       }
       else
@@ -501,6 +502,7 @@ void RouteController::restoreState()
         fileDestination.clear();
         fileIfrVfr = pln::VFR;
         route.clear();
+        routeFileFormat = atools::fs::pln::PLN_FSX;
       }
     }
   }
@@ -618,6 +620,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   route.setFlightplan(flightplan);
 
   routeFilename = filename;
+  routeFileFormat = flightplan.getFileFormat();
   fileDeparture = flightplan.getDepartureIdent();
   fileDestination = flightplan.getDestinationIdent();
   fileIfrVfr = flightplan.getFlightplanType();
@@ -792,6 +795,7 @@ bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat t
 {
   qDebug() << Q_FUNC_INFO << filename << targetFileFormat;
   routeFilename = filename;
+  routeFileFormat = targetFileFormat;
   route.getFlightplan().setFileFormat(targetFileFormat);
   return saveFlightplan(false);
 }
@@ -800,7 +804,8 @@ bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat t
 bool RouteController::saveFlightplan(bool cleanExport)
 {
   Flightplan flightplan = RouteExport::routeAdjustedToProcedureOptions(route).getFlightplan();
-  qDebug() << Q_FUNC_INFO << flightplan.getFileFormat();
+  qDebug() << Q_FUNC_INFO << "flightplan.getFileFormat()" << flightplan.getFileFormat()
+           << "routeFileFormat" << routeFileFormat;
 
   try
   {
@@ -837,8 +842,11 @@ bool RouteController::saveFlightplan(bool cleanExport)
     flightplanIO->save(flightplan, routeFilename, NavApp::getDatabaseAiracCycleNav(), options);
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9 || flightplan.getFileFormat() == atools::fs::pln::PLN_FSC)
+    {
       // Old format is always saved as new after question dialog
       flightplan.setFileFormat(atools::fs::pln::PLN_FSX);
+      routeFileFormat = atools::fs::pln::PLN_FSX;
+    }
 
     flightplan.setCruisingAltitude(oldCruise);
 
@@ -867,12 +875,17 @@ bool RouteController::saveFlightplan(bool cleanExport)
 bool RouteController::exportFlighplanAsClean(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
+
   QString savedFilename = routeFilename;
+  atools::fs::pln::FileFormat savedFileFormat = routeFileFormat;
+
   routeFilename = filename;
-  bool retval = saveFlightplan(true);
+  routeFileFormat = atools::fs::pln::PLN_FSX;
+  bool retval = saveFlightplan(true /* clean export */);
 
   // Revert back to original name
   routeFilename = savedFilename;
+  routeFileFormat = savedFileFormat;
   return retval;
 }
 
@@ -1341,7 +1354,7 @@ void RouteController::activateLegTriggered()
 void RouteController::helpClicked()
 {
   atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "FLIGHTPLAN.html",
-                                        lnm::helpLanguageOnline());
+                                           lnm::helpLanguageOnline());
 }
 
 void RouteController::nothingSelectedTriggered()
@@ -1716,6 +1729,9 @@ void RouteController::undoMerge()
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   route.setFlightplan(newFlightplan);
+
+  // Change format in plan according to last saved format
+  route.getFlightplan().setFileFormat(routeFileFormat);
 
   route.createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(true /* quiet */);
@@ -3150,6 +3166,8 @@ void RouteController::clearRoute()
   route.setTotalDistance(0.f);
 
   routeFilename.clear();
+  routeFileFormat = atools::fs::pln::PLN_FSX;
+
   fileDeparture.clear();
   fileDestination.clear();
   fileIfrVfr = pln::VFR;

@@ -374,6 +374,9 @@ private:
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
   QString routeFilename, fileDeparture, fileDestination;
+
+  /* Current loaded or saved format since the plans in the undo stack have different values */
+  atools::fs::pln::FileFormat routeFileFormat = atools::fs::pln::PLN_FSX;
   atools::fs::pln::FlightplanType fileIfrVfr;
 
   QMainWindow *mainWindow;
