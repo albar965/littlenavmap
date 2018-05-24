@@ -113,6 +113,8 @@ public:
 
   static Ui::MainWindow *getMainUi();
 
+  static bool isFetchAiAircraft();
+  static bool isFetchAiShip();
   static bool isConnected();
   static bool isUserAircraftValid();
 

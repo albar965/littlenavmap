@@ -73,6 +73,9 @@ public:
 
   atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
 
+  bool isFetchAiShip() const;
+  bool isFetchAiAircraft() const;
+
 signals:
   /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */
@@ -86,6 +89,9 @@ signals:
 
   /* Emitted when disconnected manually or due to error */
   void disconnectedFromSimulator();
+
+  /* Fetch boat or aircraft AI has been changed */
+  void aiFetchOptionsChanged();
 
 private:
   /* Try to reconnect every 5 seconds when network connection is lost */

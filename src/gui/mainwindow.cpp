@@ -421,8 +421,8 @@ void MainWindow::showDonationPage()
 void MainWindow::showOfflineHelp()
 {
   HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::HELP_OFFLINE_FILE,
-                                                          OptionData::instance().getFlags() &
-                                                          opts::GUI_OVERRIDE_LANGUAGE));
+                                                       OptionData::instance().getFlags() &
+                                                       opts::GUI_OVERRIDE_LANGUAGE));
 }
 
 /* Show marble legend */
@@ -1096,6 +1096,7 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::connectedToSimulator, profileWidget, &ProfileWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget,
           &ProfileWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
   connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
@@ -2342,11 +2343,13 @@ void MainWindow::updateActionStates()
   ui->actionMapShowAircraftAi->setEnabled(true);
   ui->actionMapShowAircraftAiBoat->setEnabled(true);
 #else
-  ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
   ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
-  ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() ||
+  ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
+
+  ui->actionMapShowAircraftAi->setEnabled((NavApp::isConnected() && NavApp::isFetchAiAircraft()) ||
                                           NavApp::getOnlinedataController()->isNetworkActive());
-  ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected());
+
+  ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected() && NavApp::isFetchAiShip());
 #endif
 
   ui->actionMapShowAircraftTrack->setEnabled(true);

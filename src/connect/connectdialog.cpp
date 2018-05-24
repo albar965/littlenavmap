@@ -186,6 +186,8 @@ bool ConnectDialog::isFetchAiShip(cd::ConnectSimType type) const
 {
   if(type == cd::FSX_P3D)
     return ui->checkBoxConnectFetchAiShipFsx->isChecked();
+  else if(type == cd::XPLANE)
+    return false;
 
   // Not relevant for remote connections since Little Navconnect decides
   return true;

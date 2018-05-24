@@ -276,6 +276,16 @@ Ui::MainWindow *NavApp::getMainUi()
   return mainWindow->getUi();
 }
 
+bool NavApp::isFetchAiAircraft()
+{
+  return connectClient->isFetchAiAircraft();
+}
+
+bool NavApp::isFetchAiShip()
+{
+  return connectClient->isFetchAiShip();
+}
+
 bool NavApp::isConnected()
 {
   return NavApp::getConnectClient()->isConnected();

@@ -299,6 +299,8 @@ void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
       options |= atools::fs::sc::FETCH_AI_BOAT;
 
     dataReader->setSimconnectOptions(options);
+
+    emit aiFetchOptionsChanged();
   }
 }
 
@@ -336,6 +338,16 @@ atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& st
     }
     return EMPTY;
   }
+}
+
+bool ConnectClient::isFetchAiShip() const
+{
+  return dialog->isFetchAiShip(dialog->getCurrentSimType());
+}
+
+bool ConnectClient::isFetchAiAircraft() const
+{
+  return dialog->isFetchAiAircraft(dialog->getCurrentSimType());
 }
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
