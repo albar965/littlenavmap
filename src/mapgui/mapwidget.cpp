@@ -1495,19 +1495,33 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
       action->setData(QVariantList({obj.id, map::WAYPOINT}));
       menu.addAction(action);
     }
+
+    int numUserpoints = 0;
     for(const map::MapUserpoint& obj : result.userpoints)
     {
-      QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                                    menuPrefix + map::userpointText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, map::USERPOINT}));
-      menu.addAction(action);
+      QAction *action = nullptr;
+      if(numUserpoints > 5)
+      {
+        action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), tr("More ..."), this);
+        action->setDisabled(true);
+        menu.addAction(action);
+        break;
+      }
+      else
+      {
+        action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
+                             menuPrefix + map::userpointText(obj) + menuSuffix, this);
+        action->setData(QVariantList({obj.id, map::USERPOINT}));
+        menu.addAction(action);
+      }
+      numUserpoints++;
     }
 
     // Always present - userpoint
     menu.addSeparator();
     {
       QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                                    menuPrefix + tr("Userpoint") + menuSuffix, this);
+                                    menuPrefix + tr("Position") + menuSuffix, this);
       action->setData(QVariantList({-1, map::USERPOINTROUTE}));
       menu.addAction(action);
     }
