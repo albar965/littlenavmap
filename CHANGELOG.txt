@@ -1,6 +1,88 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.0.2.rc1
+
+>> X-Plane users: Reinstall Xpconnect 1.0.9.rc1 for bug fixes regarding inverted magnetic variation. <<
+
+Translations:
+* Added updated English and French (WIP) PDF offline manuals.
+* Updated translations: Dutch, Brazilian Portuguese, French, Spanish and German. All complete.
+
+Help:
+* Online manual available on Gitbook: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/
+* All help buttons and menu items are working now and point to the updated online manual.
+* Updated legend for compass rose and online aircraft.
+* New online manual chapters and/or changes:
+  - Userpoints: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/USERPOINT.html
+  - Userdata menu: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/MENUS.html#userdata-menu
+  - Userpoint map context menu items: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/MAPDISPLAY.html#add-userpoint
+  - Online Networks: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/ONLINENETWORKS.html
+  - Compass Rose: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/COMPASSROSE.html
+  - Edit flight plan positions: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/EDITFPPOSITION.html
+  - Coordinate formats: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/COORDINATES.html
+  - Customize display radius for online centers: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/CUSTOMIZE.html#customize-online-center
+  - Customize userpoint icons: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/en/CUSTOMIZE.html#customize-userpoint-icons
+
+Navdata:
+* The included Navigraph AIRAC database was updated to cycle 1801. This fixes two problems:
+  - Wrong magnetic declination for VOR stations.
+  - Procedures of three letter airports were not recognized.
+
+GUI:
+* Save button is now always enabled to allow saving PLN file again after P3D changes file.
+* Fixed misleading warning in route string parser if airport name as intermediate destination is equal to an airway.
+* Fixed tooltip and information display showing facility "Procedures" for all airports.
+* Improved handing of information dialog to raise the correct tab when selecting from context menu.
+
+Userpoints:
+* Fixed small issues on userpoint CSV export where fields used floating point numbers wrongly.
+* Now exporting userdata columns last_edit_timestamp and visible_from to CSV. Columns are optional for import.
+* Issue with wrong default type fixed in add dialog if type is empty.
+* Corrected wrong display for userpoints all indicated as temporary in edit dialog.
+* Fixed non localized date in user point information.
+
+Online:
+* Now merging simulator aircraft and online network aircraft with same callsign/registration. These shadow aircraft are now displayed as online network aircraft (orange) and have online network tooltips and information. #45
+* Fixed display of shown features in status bar which indicated online airspaces when online networks were off.
+* Changed fill color for centers for better visibility.
+* Now waiting three minutes for next download to give user a chance to correct.
+* Fixed issue where program went into endless error dialog loop when entering a wrong online network address.
+
+Customization:
+* Added reset/migration for mapstyle INI file and adding version now to file.
+* Added customize folder and icons.zip for icon templates to allow users creating their own icons based on default ones.
+* Program will create a backup of "little_navmap_mapstyle.ini" and replace file with new colors (blue airways).
+  All customization files are now versioned. Section "[Options]".
+
+Small changes:
+* Userpoints now have the same priority in menus as in map display.
+* Fix in userpoint edit dialog tooltip.
+* Fixes to wrong status bar and tooltips and misleading context menu items in search.
+* Small fix for runway display using wrong width when 0.
+* Corrected text for wind pointer which was scaled together with AI aircraft text.
+* Fixed issue where user agent got translated request type included (e.g. "Custom"). #45
+* Fixed issue where airspace tooltips were shown in high zoom distances with no airspaces displayed.
+* Corrected tab order in main window and options dialog.
+* Added help button to user waypoint dialog.
+* Removed menu items from macOS application menu since automatic adaption from Qt does not work.
+* Fixes for missing about dialog on macOS.
+* Help system now more flexible and can load legend and help files if present for language.
+  Also uses a fuzzy way to find files by ignoring language region like "pt" vs. "pt_BR".
+* Fixed issue where flight plan was saved in the wrong format after undo/redo and using "Save as".
+* FSX/P3D is not hidden in the scenery library menu if the simulator folder from the registry does not exist.
+* Now disabling show AI aircraft and ship actions according to fetch settings in connection dialog.
+
+from atools version 3.0.2.rc1
+
+* Updated translations: Brazilian Portuguese, French, Spanish and German. All finished.
+* Now exporting all userdata columns to CSV: Added "last_edit_timestamp" and "visible_from".
+  Columns are optional for import. See manual.
+* Fixed region field not adjusted in X-Plane userdata export.
+* Now using minimum and maximum circle radii for online ATC geometry.
+
+===============================================================================
+
 Version 2.0.1.beta
 
 * Changed OSM, OpenMapSurfer and Hillshading map downloads to use SSL encrypted connections (HTTPS).
@@ -40,6 +122,8 @@ Other:
 from atools version 3.0.1.beta
 * Weather texts are now shown translated.
 * Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+
+===============================================================================
 
 Version 2.0.0.beta
 
@@ -135,6 +219,8 @@ from atools version 3.0.0.beta
 * Now removing empty journal files from database when closing.
 * Database locking improved.
 * Added gzip tools.
+
+===============================================================================
 
 Version 1.9.1.develop
 
