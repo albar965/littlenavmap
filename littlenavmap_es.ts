@@ -6411,10 +6411,6 @@ Local: %2</translation>
         <translation> al Plan de Vuelo</translation>
     </message>
     <message>
-        <source>Userpoint</source>
-        <translation>Punto de Usuario</translation>
-    </message>
-    <message>
         <source>Online Center %1</source>
         <translation>Centro en línea %1</translation>
     </message>
@@ -6453,6 +6449,10 @@ Local: %2</translation>
     <message>
         <source>Jumped back to aircraft.</source>
         <translation>Saltó a la aeronave.</translation>
+    </message>
+    <message>
+        <source>More ...</source>
+        <translation>Más ...</translation>
     </message>
 </context>
 <context>

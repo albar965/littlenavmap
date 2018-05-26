@@ -8557,10 +8557,6 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
         <translation> zum Flugplan</translation>
     </message>
     <message>
-        <source>Userpoint</source>
-        <translation type="vanished">Nutzerpunkt</translation>
-    </message>
-    <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1532"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
