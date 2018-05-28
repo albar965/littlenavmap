@@ -572,12 +572,6 @@ Los valores más bajos darán como resultado un movimiento más fluido de la aer
         <translation>Little Navmap - Cargar librería de escenarios</translation>
     </message>
     <message>
-        <source>Will read also the inactive scenery entries when checked. 
-Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation>Leerá también entradas de escenarios inactivos cuando esté marcada.
-Útil si usa herramientas para desactivar y habilitar ciertos escenarios en.cada vuelo.</translation>
-    </message>
-    <message>
         <source>Read &amp;inactive Scenery Entries</source>
         <translation>Leer entradas de escenarios &amp;inactivos</translation>
     </message>
@@ -612,6 +606,11 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <source>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</source>
         <translation>Ingrese la ruta al directorio base del simulador de vuelo. &lt;br/&gt; Este es el que contiene el directorio &quot;scenery&quot; y el fsx.exe o el p3d.exe. &lt;br/&gt; Para X-Plane esta es la ruta que contiene la X -Plane.exe.</translation>
+    </message>
+    <message>
+        <source>Will read also the inactive scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9578,7 +9577,7 @@ Restante</translation>
         <source>Restriction
 %alt%/%speed%</source>
         <translation>Restricción
-%alt%/%veloc%</translation>
+%alt%/%speed%</translation>
     </message>
     <message>
         <source>Wave Window</source>
@@ -11702,38 +11701,6 @@ p, li { white-space: pre-wrap; }
         <translation>Marcar para cambiar región para todos los waypoints</translation>
     </message>
     <message>
-        <source>Recognized coordinate formats:
-- Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
-- Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
-- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
-Latitude has to be first and N/S and E/W designators are required.
-A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
-Other formats:
-- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
-- Degrees only 46N078W
-- Degrees and minutes 4620N07805W
-- Degrees, minutes and seconds 481200N0112842E (Skyvector)
-- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
-Formats above have to be given exactly as shown in the examples.</source>
-        <translation>Formatos de coordenadas reconocidos:
-- Grados, minutos y segundos: N49 ° 26 &apos;41.57 &quot;E9 ° 12&apos; 5.49&quot; o 49 ° 26 &apos;41.57 &quot;N 9 ° 12&apos; 5.49&quot; E
-- Grados y minutos: N54 * 16.82 &apos;W008 * 35.95&apos;, N 52 33.58 E 13 17.26 o 49 ° 26.69 &apos;N 9 ° 12.09&apos; E
-- Grados solamente: 49.4449 ° N 9.2015 ° E o N 49.4449 ° E 9: 2015 °
-Grado, minutos y segundos, los signos se pueden omitir en los formatos anteriores.
-Latitude tiene que ser el primero y se requieren designadores N / S y E / W.
-Solo se necesita un espacio para separar latitud y longitud o grados/minutos/segundos si no se utilizan signos.
-Otros formatos:
-- Grados y minutos: N44124W122451, N14544W017479 o S31240E136502
-- Grados solo 46N078W
-- Grados y minutos 4620N07805W
-- Grados, minutos y segundos 481200N0112842E (Skyvector)
-- Grados y minutos en par &quot;N6500 W08000&quot; o &quot;N6500 / W08000&quot;
-- NAT tipo 5020N
-Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.</translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Código identificador del waypoint. &lt;/p&gt;&lt;p&gt;Se precisan hasta cinco caracteres para exportar a otro formato para X-Plane &amp;quot;user_fix.dat&amp;quot; o Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -11846,6 +11813,24 @@ Requerido para exportar a &quot;user_fix.dat&quot; de X-Plane.</translation>
     <message>
         <source>-</source>
         <translation>-</translation>
+    </message>
+    <message>
+        <source>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
+- Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
+Degree, minute and second signs can be omitted for above formats. 
+Latitude has to be first and N/S and E/W designators are required.
+A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
+Other formats:
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (Skyvector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
+- NAT type 5020N 
+Formats above have to be given exactly as shown in the examples.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
