@@ -384,6 +384,7 @@ void MainWindow::loadNavmapLegend()
   if(legend.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&legend);
+    stream.setCodec("UTF-8");
     legendText.append(stream.readAll());
 
     QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
