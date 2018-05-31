@@ -1,13 +1,13 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
-Version 2.0.2.rc1
+Version 2.0.2
 
->> X-Plane users: Reinstall Xpconnect 1.0.9.rc1 for bug fixes regarding inverted magnetic variation. <<
+>> X-Plane users: Reinstall Xpconnect 1.0.9 for bug fixes regarding inverted magnetic variation. <<
 
 Translations:
-* Added updated English and French (WIP) PDF offline manuals.
 * Updated translations: Dutch, Brazilian Portuguese, French, Spanish and German. All complete.
+French offline PDF manual is from previous version. Full translation will be provided as an update package.
 
 Help:
 * Online manual available on Gitbook: https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.0/
