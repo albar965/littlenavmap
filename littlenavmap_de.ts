@@ -5958,8 +5958,7 @@ Nur JPG, PNG und BMP sind erlaubt.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="175"/>
         <source>Transition altitude:</source>
-        <translatorcomment>Würde ich nicht übersetzen...</translatorcomment>
-        <translation>Transition altitude:</translation>
+        <translation>Übergangshöhe:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="276"/>

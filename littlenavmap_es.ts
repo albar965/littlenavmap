@@ -610,7 +610,8 @@ Los valores más bajos darán como resultado un movimiento más fluido de la aer
     <message>
         <source>Will read also the inactive scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leerá también las entradas de escenarios inactivos cuando esté marcada.
+Útil si usa herramientas para desactivar y habilitar ciertos escenarios para cada vuelo.</translation>
     </message>
 </context>
 <context>
@@ -11830,7 +11831,21 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatos de coordenadas reconocidos:
+- Grados, minutos y segundos: N49 ° 26 &apos;41.57 &quot;E9 ° 12&apos; 5.49&quot; o 49 ° 26 &apos;41.57 &quot;N 9 ° 12&apos; 5.49&quot; E
+- Grados y minutos: N54 * 16.82 &apos;W008 * 35.95&apos;, N 52 33.58 E 13 17.26 o 49 ° 26.69 &apos;N 9 ° 12.09&apos; E
+- Grados solamente: 49.4449 ° N 9.2015 ° E o N 49.4449 ° E 9: 2015 °
+Los signos de Grados, minutos y segundos se pueden omitir en los formatos anteriores.
+Latitud tiene que ser el primero y se requieren designadores N / S y E / W.
+Solo se necesita un espacio para separar latitud y longitud o grados / minutos / segundos si no se utilizan signos.
+Otros formatos:
+- Grados y minutos: N44124W122451, N14544W017479 o S31240E136502
+- Grados solamente 46N078W
+- Grados y minutos 4620N07805W
+- Grados, minutos y segundos 481200N0112842E (Skyvector)
+- Grados y minutos en par &quot;N6500 W08000&quot; o &quot;N6500 / W08000&quot;
+- Tipo NAT 5020N
+Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.</translation>
     </message>
 </context>
 <context>

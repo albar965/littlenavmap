@@ -644,7 +644,7 @@ Vai reconectar automaticamente se a opção &quot;Conectar Automaticamente&quot;
     <message>
         <location filename="src/db/databasedialog.ui" line="66"/>
         <source>&amp;Flight Simulator Base Path:</source>
-        <translation>&amp;Flight Simulator Diretório Principal:</translation>
+        <translation>&amp;Diretório Principal do Flight Simulator:</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="43"/>
@@ -682,7 +682,7 @@ Vai reconectar automaticamente se a opção &quot;Conectar Automaticamente&quot;
         <location filename="src/db/databasedialog.ui" line="86"/>
         <location filename="src/db/databasedialog.ui" line="89"/>
         <source>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</source>
-        <translation>Digite o caminho para o diretório base do simulador de voo.&lt;br/&gt;Este é o que contém o diretório &quot;cenário&quot; e o fsx.exe ou o p3d.exe.&lt;br/&gt;Para X-Plane, este é o caminho que contém o X-Plane.exe.</translation>
+        <translation>Digite o caminho para o diretório base do simulador de voo.&lt;br/&gt;Este é o que contém o diretório &quot;scenery&quot; e o fsx.exe ou o p3d.exe.&lt;br/&gt;Para X-Plane, este é o caminho que contém o X-Plane.exe.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="14"/>
@@ -841,7 +841,7 @@ Será útil se você utilizar ferramentas para desabilitar e habilitar determina
     <message>
         <location filename="src/db/databasemanager.cpp" line="1590"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;big&gt;Atualmente Carregado:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;big&gt;Carregado Atualmente:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1040"/>
@@ -1650,7 +1650,7 @@ Saindo agora.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="194"/>
         <source>&amp;Userdata</source>
-        <translation>&amp;Banco de dados do usuário</translation>
+        <translation>&amp;Banco de dados do Usuário</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="213"/>
@@ -3954,7 +3954,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3450"/>
         <source>No Flight Plan loaded</source>
-        <translation>Nenhum Plano de Voo carregado</translation>
+        <translation>Nenhum Plano de Voo Carregado</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3173"/>
@@ -13416,7 +13416,7 @@ de Procedimento</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="291"/>
         <source>Unnamed</source>
-        <translation>Sem nomeamento</translation>
+        <translation>Sem nomeação</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="372"/>

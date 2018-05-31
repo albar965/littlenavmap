@@ -3189,7 +3189,7 @@ Nu verlaten.</translation>
         <location filename="src/gui/mainwindow.ui" line="5620"/>
         <source>Add selected entry to the nearest flight plan leg</source>
         <oldsource>Add airport, navaid or map position to the nearest flight plan leg</oldsource>
-        <translation type="unfinished">Voeg luchthaven, navaid of kaartpositie toe aan dichtste deel van het vluchtplan</translation>
+        <translation>Voeg geselecteerde gegevens toe aan dichtste deel van het vluchtplan</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5629"/>
@@ -3206,13 +3206,13 @@ Nu verlaten.</translation>
         <location filename="src/gui/mainwindow.ui" line="6210"/>
         <location filename="src/gui/mainwindow.ui" line="6213"/>
         <source>Show information about the selected entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon informatie over de geselecteerde ingave</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6228"/>
         <location filename="src/gui/mainwindow.ui" line="6231"/>
         <source>Show the selected entry on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>Toon geselecteerde gegevens op de kaart</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6442"/>
@@ -3470,7 +3470,7 @@ Nu verlaten.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7526"/>
         <source>&amp;Delete Userpoint(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wis Gebruikerspunt(en)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7562"/>
@@ -5865,12 +5865,12 @@ Alleen JPG, PNG en BMP zijn toegestaan.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1290"/>
         <source> of in </source>
-        <translation type="unfinished"></translation>
+        <translation> van in </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1290"/>
         <source> in </source>
-        <translation type="unfinished"></translation>
+        <translation> in </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1473"/>
@@ -7442,7 +7442,7 @@ Alleen JPG, PNG en BMP zijn toegestaan.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="1709"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2045"/>
         <source>Administrative Rating:</source>
-        <translation type="unfinished"></translation>
+        <translation>Administratieve Beoordeling:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1766"/>
@@ -8629,7 +8629,7 @@ Alleen JPG, PNG en BMP zijn toegestaan.</translation>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1505"/>
         <source>More ...</source>
-        <translation type="unfinished">Meer ...</translation>
+        <translation>Meer ...</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2208"/>
@@ -9074,7 +9074,15 @@ failed. Reason:
 %2
 
 Press OK to retry again in three minutes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Download van
+
+&quot;%1&quot;
+
+mislukt. Reden:
+
+%2
+
+Druk OK om opnieuw te proberen binnen 3 minuten.</translation>
     </message>
     <message>
         <location filename="src/online/onlinedatacontroller.cpp" line="317"/>
@@ -10236,7 +10244,7 @@ Verander kleur naar de &quot;Reeds gepasseerde Delen Kleur&quot;.</translation>
     <message>
         <location filename="src/options/options.ui" line="1714"/>
         <source>&amp;Compass rose line thickness:</source>
-        <translation>&amp;Lijndikte van het kompas</translation>
+        <translation>&amp;Lijndikte van het kompas:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1731"/>
@@ -14732,22 +14740,22 @@ ETD en ETA worden niet meegeteld. ALTERNATES werken niet in combinatie met een S
     <message>
         <location filename="src/search/searchbasetable.cpp" line="934"/>
         <source>&amp;Edit Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bewerk Gebruikerspunten</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="935"/>
         <source>&amp;Delete Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wis Gebruikerspunten</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="939"/>
         <source>&amp;Edit Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bewerk Gebruikerspunt</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="940"/>
         <source>&amp;Delete Userpoint</source>
-        <translation type="unfinished">&amp;Verwijder Gebruikerspunt</translation>
+        <translation>&amp;Verwijder Gebruikerspunt</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1135"/>
@@ -15245,7 +15253,7 @@ Bovenstaande formaten moet exact ingevoerd worden zoals in de voorbeelden.</tran
         <location filename="src/userdata/userdatacontroller.cpp" line="586"/>
         <source>%n userpoint(s) updated.</source>
         <translation>
-            <numerusform>%n gebruikerspunt(en) geupdate.</numerusform>
+            <numerusform>%n gebruikerspunt(en) up-to-date.</numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -15253,7 +15261,7 @@ Bovenstaande formaten moet exact ingevoerd worden zoals in de voorbeelden.</tran
         <location filename="src/userdata/userdatacontroller.cpp" line="600"/>
         <source>Delete %n userpoint(s)?</source>
         <translation>
-            <numerusform>Delete %n userpoint(s)?</numerusform>
+            <numerusform>Wis %n gebruikerspunt(en)?</numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -15455,7 +15463,7 @@ Bovenstaande formaten moet exact ingevoerd worden zoals in de voorbeelden.</tran
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="107"/>
         <source>Check to change region for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Vink aan om de regio te wijzigen voor de geselecteerde waypoints</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="138"/>
