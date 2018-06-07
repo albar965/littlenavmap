@@ -2324,6 +2324,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = onlineAircraft->getId();
         type = map::AIRCRAFT_ONLINE;
       }
+      else if(airspace!= nullptr)
+      {
+        id = airspace->id;
+        type = map::AIRSPACE;
+      }
       else if(onlineCenter != nullptr)
       {
         id = onlineCenter->id;

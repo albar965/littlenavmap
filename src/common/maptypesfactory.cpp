@@ -497,7 +497,13 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   airspace.comType = record.valueStr("com_type");
 
   for(const QString& str : record.valueStr("com_frequency", QString()).split("&"))
-    airspace.comFrequencies.append(str.toInt());
+  {
+    bool ok;
+    int frequency = str.toInt(&ok);
+
+    if(frequency > 0 && ok)
+      airspace.comFrequencies.append(frequency);
+  }
 
   // Use default values for online network ATC centers
   airspace.comName = record.valueStr("com_name", QString());
