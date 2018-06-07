@@ -51,11 +51,21 @@ unix:!macx {
 
   # Use relative path to current .so directory to search for shared libraries
   # Makes the shell script and setting LD_LIBRARY_PATH redundant
+  # RPath in Marble libraries has to be set using patchelf below during deploy
   QMAKE_RPATHDIR=.
   QMAKE_RPATHDIR+=./lib
 
   # Search path for the Marble widget so while linking
   QMAKE_RPATHLINKDIR=/home/alex/Programme/Marble-$${CONF_TYPE}/lib
+
+  # Find OpenSSL location
+  exists( /lib/x86_64-linux-gnu/libssl.so.1.0.0 ) {
+    OPENSSL=/lib/x86_64-linux-gnu
+  }
+  exists( /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 ) {
+    OPENSSL=/usr/lib/x86_64-linux-gnu
+  }
+  QMAKE_LFLAGS += -no-pie
 }
 
 # Mac OS X ==================
@@ -419,6 +429,8 @@ unix:!macx {
   deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/printsupport &&
   deploy.commands += mkdir -pv $${DEPLOY_DIR_LIB}/sqldrivers &&
   deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.so* $${DEPLOY_DIR_LIB} &&
+  deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $${DEPLOY_DIR_LIB}/libmarblewidget-qt5.so* &&
+  deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $${DEPLOY_DIR_LIB}/libastro.so* &&
   deploy.commands += cp -Rvf $${OUT_PWD}/plugins $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/data $${DEPLOY_DIR} &&
   deploy.commands += cp -Rvf $${OUT_PWD}/help $${DEPLOY_DIR} &&
@@ -450,8 +462,8 @@ unix:!macx {
   deploy.commands += cp -vfa $${QT_HOME}/plugins/platformthemes/libqgtk*.so*  $${DEPLOY_DIR_LIB}/platformthemes &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/printsupport/libcupsprintersupport.so*  $${DEPLOY_DIR_LIB}/printsupport &&
   deploy.commands += cp -vfa $${QT_HOME}/plugins/sqldrivers/libqsqlite.so*  $${DEPLOY_DIR_LIB}/sqldrivers &&
-  deploy.commands += cp -vfa /lib/x86_64-linux-gnu/libssl.so.1.0.0 $${DEPLOY_DIR_LIB} &&
-  deploy.commands += cp -vfa /lib/x86_64-linux-gnu/libcrypto.so.1.0.0 $${DEPLOY_DIR_LIB} &&
+  deploy.commands += cp -vfa $${OPENSSL}/libssl.so.1.0.0 $${DEPLOY_DIR_LIB} &&
+  deploy.commands += cp -vfa $${OPENSSL}/libcrypto.so.1.0.0 $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicudata.so*  $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicui18n.so*  $${DEPLOY_DIR_LIB} &&
   deploy.commands += cp -vfa $${QT_HOME}/lib/libicuuc.so*  $${DEPLOY_DIR_LIB} &&
