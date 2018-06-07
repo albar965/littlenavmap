@@ -43,7 +43,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIn
   navSearchWidgets =
   {
     ui->horizontalLayoutNavNameSearch,
-    ui->horizontalLayoutNavExtSearch,
+    ui->gridLayoutNavSearchType,
     ui->horizontalLayoutNavScenerySearch,
     ui->lineNavDistSearch,
     ui->lineNavScenerySearch,

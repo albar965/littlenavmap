@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>913</height>
+    <height>943</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -828,11 +828,11 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayoutAirportFuelParkSearch">
+            <layout class="QGridLayout" name="gridLayoutAirportSearchParking">
              <property name="spacing">
               <number>2</number>
              </property>
-             <item>
+             <item row="0" column="0">
               <widget class="QComboBox" name="comboBoxAirportRampSearch">
                <property name="toolTip">
                 <string>Airports that have certain ramp parking types</string>
@@ -877,7 +877,7 @@
                </item>
               </widget>
              </item>
-             <item>
+             <item row="1" column="0">
               <widget class="QComboBox" name="comboBoxAirportGateSearch">
                <property name="toolTip">
                 <string>Airports that have certain gate parking types</string>
@@ -907,7 +907,7 @@
                </item>
               </widget>
              </item>
-             <item>
+             <item row="0" column="1">
               <widget class="QComboBox" name="comboBoxAirportHelipadSearch">
                <property name="toolTip">
                 <string>Airports that have helipads</string>
@@ -948,11 +948,11 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayoutAirportRunwaySearch">
+            <layout class="QGridLayout" name="gridLayoutAirportSearchRunway">
              <property name="spacing">
               <number>2</number>
              </property>
-             <item>
+             <item row="0" column="0">
               <widget class="QLabel" name="labelAirportRunwayMinSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -971,51 +971,7 @@
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QSpinBox" name="spinBoxAirportRunwaysMinSearch">
-               <property name="toolTip">
-                <string>Airports that have at least one runway that is longer than this value</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports that have at least one runway that is longer than this value</string>
-               </property>
-               <property name="showGroupSeparator" stdset="0">
-                <bool>true</bool>
-               </property>
-               <property name="suffix">
-                <string> %distshort%</string>
-               </property>
-               <property name="maximum">
-                <number>50000</number>
-               </property>
-               <property name="singleStep">
-                <number>100</number>
-               </property>
-               <property name="displayIntegerBase">
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="labelAirportRunwayMaxSearch">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>&amp;Max:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="buddy">
-                <cstring>spinBoxAirportRunwaysMaxSearch</cstring>
-               </property>
-              </widget>
-             </item>
-             <item>
+             <item row="0" column="4">
               <widget class="QSpinBox" name="spinBoxAirportRunwaysMaxSearch">
                <property name="toolTip">
                 <string>Airports that have no runway that is longer than this value</string>
@@ -1043,7 +999,51 @@
                </property>
               </widget>
              </item>
-             <item>
+             <item row="0" column="2">
+              <widget class="QSpinBox" name="spinBoxAirportRunwaysMinSearch">
+               <property name="toolTip">
+                <string>Airports that have at least one runway that is longer than this value</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have at least one runway that is longer than this value</string>
+               </property>
+               <property name="showGroupSeparator" stdset="0">
+                <bool>true</bool>
+               </property>
+               <property name="suffix">
+                <string> %distshort%</string>
+               </property>
+               <property name="maximum">
+                <number>50000</number>
+               </property>
+               <property name="singleStep">
+                <number>100</number>
+               </property>
+               <property name="displayIntegerBase">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QLabel" name="labelAirportRunwayMaxSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&amp;Max:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportRunwaysMaxSearch</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3" colspan="2">
               <widget class="QComboBox" name="comboBoxAirportSurfaceSearch">
                <property name="toolTip">
                 <string>Airports that have certain runway surfaces</string>
@@ -1756,30 +1756,14 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayoutNavExtSearch">
-             <property name="spacing">
-              <number>2</number>
-             </property>
+            <layout class="QGridLayout" name="gridLayoutNavSearchType">
              <property name="topMargin">
               <number>0</number>
              </property>
-             <item>
-              <widget class="QLabel" name="labelNavMaxRangeSearch">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Min &amp;Range:</string>
-               </property>
-               <property name="buddy">
-                <cstring>spinBoxNavMaxRangeSearch</cstring>
-               </property>
-              </widget>
-             </item>
-             <item>
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <item row="3" column="3">
               <widget class="QSpinBox" name="spinBoxNavMaxRangeSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1813,7 +1797,23 @@
                </property>
               </widget>
              </item>
-             <item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelNavMaxRangeSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Min &amp;Range:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxNavMaxRangeSearch</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2" colspan="2">
               <widget class="QComboBox" name="comboBoxNavTypeSearch">
                <property name="toolTip">
                 <string>Navaid types</string>
@@ -1883,7 +1883,7 @@
                </item>
               </widget>
              </item>
-             <item>
+             <item row="2" column="1">
               <widget class="QComboBox" name="comboBoxNavNavAidSearch">
                <property name="toolTip">
                 <string>Navaid categories</string>
@@ -7771,7 +7771,6 @@
   <tabstop>textBrowserAirspaceInfo</tabstop>
   <tabstop>textBrowserClientInfo</tabstop>
   <tabstop>textBrowserCenterInfo</tabstop>
-  <tabstop>tabWidgetSearch</tabstop>
   <tabstop>lineEditAirportIcaoSearch</tabstop>
   <tabstop>lineEditAirportNameSearch</tabstop>
   <tabstop>pushButtonAirportSearchReset</tabstop>
@@ -7792,11 +7791,7 @@
   <tabstop>checkBoxAirportClosedSearch</tabstop>
   <tabstop>checkBoxAirportJetASearch</tabstop>
   <tabstop>comboBoxAirportRampSearch</tabstop>
-  <tabstop>comboBoxAirportGateSearch</tabstop>
-  <tabstop>comboBoxAirportHelipadSearch</tabstop>
   <tabstop>spinBoxAirportRunwaysMinSearch</tabstop>
-  <tabstop>spinBoxAirportRunwaysMaxSearch</tabstop>
-  <tabstop>comboBoxAirportSurfaceSearch</tabstop>
   <tabstop>spinBoxAirportAltitudeMinSearch</tabstop>
   <tabstop>spinBoxAirportAltitudeMaxSearch</tabstop>
   <tabstop>checkBoxAirportDistSearch</tabstop>
@@ -7814,9 +7809,6 @@
   <tabstop>pushButtonNavSearchClearSelection</tabstop>
   <tabstop>pushButtonNavHelpSearch</tabstop>
   <tabstop>toolButtonNavSearch</tabstop>
-  <tabstop>spinBoxNavMaxRangeSearch</tabstop>
-  <tabstop>comboBoxNavTypeSearch</tabstop>
-  <tabstop>comboBoxNavNavAidSearch</tabstop>
   <tabstop>checkBoxNavDistSearch</tabstop>
   <tabstop>spinBoxNavDistMinSearch</tabstop>
   <tabstop>spinBoxNavDistMaxSearch</tabstop>

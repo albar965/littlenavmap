@@ -53,8 +53,8 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Sea
     ui->horizontalLayoutAirportNameSearch2,
     ui->gridLayoutAirportExtSearch,
     ui->horizontalLayoutAirportRatingSearch,
-    ui->horizontalLayoutAirportFuelParkSearch,
-    ui->horizontalLayoutAirportRunwaySearch,
+    ui->gridLayoutAirportSearchParking,
+    ui->gridLayoutAirportSearchRunway,
     ui->horizontalLayoutAirportAltitudeSearch,
     ui->horizontalLayoutAirportScenerySearch,
     ui->lineAirportExtSearch,
@@ -318,14 +318,14 @@ void AirportSearch::connectSearchSlots()
 
   connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [ = ](bool state)
   {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state,
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchParking}, state,
                                               {ui->lineAirportFuelParkSearch});
     updateButtonMenu();
   });
 
   connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [ = ](bool state)
   {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state,
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchRunway}, state,
                                               {ui->lineAirportRunwaySearch});
     updateButtonMenu();
   });
@@ -565,11 +565,11 @@ void AirportSearch::updateButtonMenu()
                                             {ui->gridLayoutAirportExtSearch, ui->horizontalLayoutAirportRatingSearch}));
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
                                           atools::gui::util::anyWidgetChanged(
-                                            {ui->horizontalLayoutAirportFuelParkSearch}));
+                                            {ui->gridLayoutAirportSearchParking}));
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowRunwayOptions,
                                           atools::gui::util::anyWidgetChanged(
-                                            {ui->horizontalLayoutAirportRunwaySearch}));
+                                            {ui->gridLayoutAirportSearchRunway}));
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowAltOptions,
                                           atools::gui::util::anyWidgetChanged(
