@@ -23,6 +23,7 @@
 #include "geo/line.h"
 #include "geo/linestring.h"
 #include "geo/pos.h"
+#include "gui/dialog.h"
 #include "geo/calculations.h"
 
 #include <marble/GeoDataCoordinates.h>
@@ -161,8 +162,8 @@ void ElevationProvider::updateReader()
     if(!GlobeReader::isDirValid(path))
     {
       NavApp::deleteSplashScreen();
-      QMessageBox::warning(NavApp::getQMainWidget(), NavApp::applicationName(),
-                           tr("GLOBE elevation data directory is not valid:<br/><i>%1</i>").arg(path));
+      atools::gui::Dialog::warning(NavApp::getQMainWidget(),
+                                   tr("GLOBE elevation data directory is not valid:<br/><i>%1</i>").arg(path));
     }
     else
     {
@@ -174,8 +175,8 @@ void ElevationProvider::updateReader()
         if(!globeReader->openFiles())
         {
           NavApp::deleteSplashScreen();
-          QMessageBox::warning(NavApp::getQMainWidget(), NavApp::applicationName(),
-                               tr("Cannot open GLOBE data in directory<br/><i>%1</i>").arg(path));
+          atools::gui::Dialog::warning(NavApp::getQMainWidget(),
+                                       tr("Cannot open GLOBE data in directory<br/><i>%1</i>").arg(path));
           qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
         }
       }

@@ -581,8 +581,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 
     if(!ok)
     {
-      QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("Loading of FLP flight plan failed:<br/><br/>") + rs.getMessages().join("<br/>"));
+      atools::gui::Dialog::warning(mainWindow,
+                                   tr("Loading of FLP flight plan failed:<br/><br/>") + rs.getMessages().join("<br/>"));
       return;
 
     }

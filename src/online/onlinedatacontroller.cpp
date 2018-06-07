@@ -24,6 +24,7 @@
 #include "settings/settings.h"
 #include "options/optiondata.h"
 #include "zip/gzip.h"
+#include "gui/dialog.h"
 #include "geo/calculations.h"
 #include "sql/sqlquery.h"
 #include "mapgui/maplayer.h"
@@ -294,9 +295,9 @@ void OnlinedataController::downloadFailed(const QString& error, QString url)
 {
   qWarning() << Q_FUNC_INFO << "Failed" << error << url;
   stopAllProcesses();
-  QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                       tr("Download from\n\n\"%1\"\n\nfailed. Reason:\n\n%2\n\nPress OK to retry again in three minutes.").
-                       arg(url).arg(error));
+  atools::gui::Dialog::warning(mainWindow,
+                               tr("Download from\n\n\"%1\"\n\nfailed. "
+                                  "Reason:\n\n%2\n\nPress OK to retry again in three minutes.").arg(url).arg(error));
 
   // Delay next download for three minutes to give the user a chance to correct the URLs
   QTimer::singleShot(180 * 1000, this, &OnlinedataController::startProcessing);

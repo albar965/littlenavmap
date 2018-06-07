@@ -515,7 +515,7 @@ void OptionsDialog::onlineTestUrl(const QString& url)
     QMessageBox::information(this, QApplication::applicationName(),
                              tr("Success. First lines in file:\n%1").arg(result));
   else
-    QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result));
 }
 
 void OptionsDialog::updateOnlineWidgetStatus()
@@ -924,7 +924,7 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
     QMessageBox::information(this, QApplication::applicationName(),
                              tr("Success. First METARs in file:\n%1").arg(result));
   else
-    QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result));
 }
 
 void OptionsDialog::testWeatherUrl(const QString& url)
@@ -933,7 +933,7 @@ void OptionsDialog::testWeatherUrl(const QString& url)
   if(WeatherReporter::testUrl(url, "KORD", result))
     QMessageBox::information(this, QApplication::applicationName(), tr("Success. Result:\n%1").arg(result));
   else
-    QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result));
 }
 
 /* Show directory dialog to add exclude path */
@@ -1607,6 +1607,5 @@ void OptionsDialog::showDiskCacheClicked()
   QUrl url = QUrl::fromLocalFile(localPath);
 
   if(!QDesktopServices::openUrl(url))
-    QMessageBox::warning(this, QApplication::applicationName(), QString(
-                           tr("Error opening help URL \"%1\"")).arg(url.toDisplayString()));
+    atools::gui::Dialog::warning(this, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
 }

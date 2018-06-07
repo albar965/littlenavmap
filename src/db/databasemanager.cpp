@@ -341,9 +341,9 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           else
           {
             qWarning() << "Removing database failed" << dbfile;
-            QMessageBox::warning(nullptr, QApplication::applicationName(),
-                                 tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
-                                    "Remove the database file manually and restart the program.").arg(dbfile));
+            atools::gui::Dialog::warning(nullptr,
+                                         tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                            "Remove the database file manually and restart the program.").arg(dbfile));
             ok = false;
           }
           i++;
@@ -487,14 +487,14 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         deleteSimpleProgressDialog(dialog);
 
         if(!resultRemove)
-          QMessageBox::warning(nullptr, QApplication::applicationName(),
-                               tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
-                                  "Remove the database file manually and restart the program.").arg(settingsDb));
+          atools::gui::Dialog::warning(nullptr,
+                                       tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                          "Remove the database file manually and restart the program.").arg(settingsDb));
 
         if(!resultCopy)
-          QMessageBox::warning(nullptr, QApplication::applicationName(),
-                               tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
-                                  "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
+          atools::gui::Dialog::warning(nullptr,
+                                       tr("Cannot copy database<br/><br/><i>%1</i><br/><br/>to<br/><br/>"
+                                          "<i>%2</i><br/><br/>.").arg(appDb).arg(settingsDb));
       }
     }
   }
@@ -1027,17 +1027,17 @@ void DatabaseManager::copyAirspaces()
                                    arg(copied));
         }
         else
-          QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                               tr("X-Plane database has no airspace boundary table.").arg(targetFile));
+          atools::gui::Dialog::warning(mainWindow,
+                                       tr("X-Plane database has no airspace boundary table.").arg(targetFile));
         xpDb.close();
       }
       else
-        QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                             tr("X-Plane database \"%1\" does not exist.").arg(targetFile));
+        atools::gui::Dialog::warning(mainWindow,
+                                     tr("X-Plane database \"%1\" does not exist.").arg(targetFile));
     }
     else
-      QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("Airspace boundary table not found in currently selected database"));
+      atools::gui::Dialog::warning(mainWindow,
+                                   tr("Airspace boundary table not found in currently selected database"));
   }
   catch(atools::Exception& e)
   {
@@ -1148,12 +1148,12 @@ bool DatabaseManager::runInternal()
           }
         }
         else
-          QMessageBox::warning(databaseDialog, QApplication::applicationName(), tr("Cannot read \"%1\". Reason: %2.").
-                               arg(databaseDialog->getSceneryConfigFile()).arg(err));
+          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read \"%1\". Reason: %2.").
+                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
       }
       else
-        QMessageBox::warning(databaseDialog, QApplication::applicationName(), tr("Cannot read \"%1\". Reason: %2.").
-                             arg(databaseDialog->getBasePath()).arg(err));
+        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read \"%1\". Reason: %2.").
+                                     arg(databaseDialog->getBasePath()).arg(err));
     }
     else
       // User hit close

@@ -1216,8 +1216,7 @@ void MainWindow::showDatabaseFiles()
   QUrl url = QUrl::fromLocalFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 
   if(!QDesktopServices::openUrl(url))
-    QMessageBox::warning(this, QApplication::applicationName(), QString(
-                           tr("Error opening help URL \"%1\"")).arg(url.toDisplayString()));
+    atools::gui::Dialog::warning(this, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
 }
 
 /* Updates label and tooltip for connection status */
@@ -1631,8 +1630,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       NavApp::deleteSplashScreen();
 
       // File not valid remove from history
-      QMessageBox::warning(this, QApplication::applicationName(),
-                           tr("File \"%1\" does not exist").arg(routeFile));
+      atools::gui::Dialog::warning(this, tr("File \"%1\" does not exist").arg(routeFile));
       routeFileHistory->removeFile(routeFile);
     }
   }
@@ -1894,8 +1892,7 @@ void MainWindow::mapSaveImage()
     PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
 
     if(!pixmap.save(imageFile))
-      QMessageBox::warning(this, QApplication::applicationName(), tr("Error saving image.\n"
-                                                                     "Only JPG, PNG and BMP are allowed."));
+      atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
   }
 }
 

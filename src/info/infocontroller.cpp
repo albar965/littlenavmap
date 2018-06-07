@@ -25,6 +25,7 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
+#include "gui/dialog.h"
 #include "query/mapquery.h"
 #include "query/airspacequery.h"
 #include "query/airportquery.h"
@@ -213,8 +214,8 @@ void InfoController::anchorClicked(const QUrl& url)
           // If the item to select doesn't exist, try to open its parent
           QUrl fileUrl = QUrl::fromLocalFile(fp.path());
           if(!QDesktopServices::openUrl(fileUrl))
-            QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
-                                   tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
+            atools::gui::Dialog::warning(mainWindow,
+                                         tr("Error opening path \"%1\"").arg(url.toDisplayString()));
         }
 #else
         // if(!QProcess::startDetached("nautilus", {query.queryItemValue("filepath")}, QDir::homePath()))
@@ -222,8 +223,7 @@ void InfoController::anchorClicked(const QUrl& url)
         QUrl fileUrl = QUrl::fromLocalFile(QFileInfo(query.queryItemValue("filepath")).path());
 
         if(!QDesktopServices::openUrl(fileUrl))
-          QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
-                                 tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
+          atools::gui::Dialog::warning(mainWindow, tr("Error opening path \"%1\"").arg(url.toDisplayString()));
         // }
 #endif
       }
