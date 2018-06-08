@@ -71,6 +71,18 @@ void checkAndMigrateSettings()
       qInfo().nospace().noquote() << "Found settings version mismatch. Settings file: " <<
         optionsVersion << ". Program " << appVersion << ".";
 
+      // CenterRadiusACC=60 and CenterRadiusFIR=60
+      if(optionsVersion <= Version(2, 0, 2))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting Online/CenterRadiusACC and Online/CenterRadiusFIR";
+        if(settings.valueInt("Online/CenterRadiusACC", -1) == -1)
+          settings.setValue("Online/CenterRadiusACC", 100);
+        if(settings.valueInt("Online/CenterRadiusFIR", -1) == -1)
+          settings.setValue("Online/CenterRadiusFIR", 100);
+
+        settings.syncSettings();
+      }
+
       // ------------------------------------------------------
       // Migrate/delete any settings that are not compatible right here
       // ------------------------------------------------------

@@ -111,6 +111,10 @@ void OnlinedataController::initAtcDefaultRadii()
       defaultValue = 10;
     else if(type == atools::fs::online::fac::APPROACH)
       defaultValue = 20;
+    else if(type == atools::fs::online::fac::FLIGHT_INFORMATION)
+      defaultValue = 100;
+    else if(type == atools::fs::online::fac::ACC)
+      defaultValue = 100;
 
     QVariant value = settings.getAndStoreValue("Online/CenterRadius" +
                                                atools::fs::online::facilityTypeTextSettings(type),
