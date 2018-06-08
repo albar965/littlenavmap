@@ -52,6 +52,9 @@ void MapPainterAirspace::render(PaintContext *context)
      !(context->objectTypes.testFlag(map::AIRSPACE) || context->objectTypes.testFlag(map::AIRSPACE_ONLINE)))
     return;
 
+  if(context->mapLayerEffective->isAirportDiagram())
+    return;
+
   // Get online and offline airspace and merge then into one list =============
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   QList<const MapAirspace *> airspaces;
