@@ -75,6 +75,7 @@
 #include <QDesktopWidget>
 #include <QDir>
 #include <QFileInfoList>
+#include <QSslSocket>
 
 #include "ui_mainwindow.h"
 
@@ -2093,7 +2094,8 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS11_WARNING, true);
-  s.setValue(lnm::ACTIONS_SHOW_UPDATEFAILED, true);
+  s.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
+  s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
 
   setStatusMessage(tr("All message dialogs reset."));
@@ -2140,6 +2142,26 @@ void MainWindow::mainWindowShown()
 
   // Focus map widget instead of a random widget
   mapWidget->setFocus();
+
+  // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
+  if(!QSslSocket::supportsSsl())
+  {
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_INSTALL_REDIST, lnm::helpLanguageOnline());
+    QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
+                                    "<p>The program will not be able to use encrypted network connections<br/>"
+                                    "(i.e. HTTPS) that are needed to check for updates or<br/>"
+                                    "to load online maps.</p>");
+
+#if defined(Q_OS_WIN32)
+    QString message2 = QObject::tr("<p><b>Click the link below for more information:<br/><br/>"
+                                   "<a href=\"%1\">Online Manual - Installation</a></b><br/></p>").
+                       arg(url.toString());
+    message += message2;
+#endif
+
+    atools::gui::Dialog(nullptr).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
+                                                QObject::tr("Do not &show this dialog again."));
+  }
 
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   if(firstApplicationStart)

@@ -10264,6 +10264,18 @@ hh:mm</translation>
         <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para X-Plane, Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;aquí&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterior.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel &lt;/b&gt;.&lt;/p&gt; - Traducción al Español: Daniel &quot;Wolf&quot; Machini - wolfinformatica@gmail.com - http://www.wolfinformatica.com - www.facebook.com/servicewolf&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>&lt;p&gt;Error initializing SSL subsystem.&lt;/p&gt;&lt;p&gt;The program will not be able to use encrypted network connections&lt;br/&gt;(i.e. HTTPS) that are needed to check for updates or&lt;br/&gt;to load online maps.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Installation&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not &amp;show this dialog again.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RouteController</name>
