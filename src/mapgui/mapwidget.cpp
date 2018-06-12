@@ -1059,7 +1059,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   // ================================================================================
   // Check if screen has to be updated/scrolled/zoomed
-  if(paintLayer->getShownMapObjects() & map::AIRCRAFT || paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
+  if(paintLayer->getShownMapObjects() & map::AIRCRAFT ||
+     paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
+     paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
   {
     // Show aircraft is enabled
     bool centerAircraft = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
@@ -1075,7 +1077,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
       // Check if any AI aircraft are visible
       bool aiVisible = false;
-      if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
+      if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
+         paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
       {
         for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())
         {
@@ -1122,12 +1125,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
         nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
       }
 
-      bool mapUpdated = false;
       if(centerAircraft && !contextMenuActive) // centering required by button but not while menu is open
       {
         if(!curPosVisible || // Not visible on world map
-           posHasChanged || // Significant change in position might require zooming or re-centering
-           aiVisible) // Paint always for visible AI
+           posHasChanged) // Significant change in position might require zooming or re-centering
         {
           // Do not update if user is using drag and drop or scrolling around
           if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBackToAircraftActive)
@@ -1232,10 +1233,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 }
                 else if(rect.isValid())
                   centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
-
-                mapUpdated = true;
-              }
-            }
+              } // if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
+            } // if(centerAircraftAndLeg)
             else
             {
               // Calculate the amount that has to be substracted from each side of the rectangle
@@ -1255,7 +1254,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 double savedDistance = distance();
                 centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
                 setDistance(savedDistance);
-                mapUpdated = true;
               }
             }
           }
@@ -1265,7 +1263,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       if(!updatesEnabled())
         setUpdatesEnabled(true);
 
-      if(mapUpdated || dataHasChanged)
+      if((dataHasChanged || aiVisible) && !contextMenuActive)
         // Not scrolled or zoomed but needs a redraw
         update();
     }
@@ -1276,7 +1274,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(!last.isValid() || diff.manhattanLength() > 4)
     {
       screenIndex->updateLastSimData(simulatorData);
-      update();
+
+      if(!contextMenuActive)
+        update();
     }
   }
 }
@@ -2324,7 +2324,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = onlineAircraft->getId();
         type = map::AIRCRAFT_ONLINE;
       }
-      else if(airspace!= nullptr)
+      else if(airspace != nullptr)
       {
         id = airspace->id;
         type = map::AIRSPACE;
