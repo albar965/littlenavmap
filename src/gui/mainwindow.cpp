@@ -61,6 +61,7 @@
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
 #include "route/routeexport.h"
+#include "query/airspacequery.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -825,7 +826,9 @@ void MainWindow::connectAllSlots()
   connect(onlinedataController, &OnlinedataController::onlineServersUpdated,
           serverSearch, &OnlineServerSearch::refreshData);
 
-  // Update map widget
+  // Clear cache and update map widget
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
+          NavApp::getAirspaceQueryOnline(), &AirspaceQuery::clearCache);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           mapWidget, &MapWidget::onlineClientAndAtcUpdated);
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
