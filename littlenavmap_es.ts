@@ -6033,6 +6033,14 @@ Local: %2</translation>
         <source>TRK</source>
         <translation>TRK</translation>
     </message>
+    <message>
+        <source>%1 to %2</source>
+        <translation type="unfinished">%1 a %2 {1 ?}</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Ninguno</translation>
+    </message>
 </context>
 <context>
     <name>MapTooltip</name>
@@ -8332,6 +8340,10 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
 %1</source>
         <translation>Exitoso. Primer METAR en archivo:
 %1</translation>
+    </message>
+    <message>
+        <source>Departure and Destination</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
