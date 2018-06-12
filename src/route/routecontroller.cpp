@@ -1112,7 +1112,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       route.removeDuplicateRouteLegs();
       route.updateAll();
 
-      bool adjustRouteType = type != atools::fs::pln::HIGH_ALTITUDE && type != atools::fs::pln::LOW_ALTITUDE;
+      bool adjustRouteType = type != atools::fs::pln::HIGH_ALTITUDE && type != atools::fs::pln::LOW_ALTITUDE &&
+                             type != atools::fs::pln::VOR;
       route.updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */, adjustRouteType);
 
       route.updateActiveLegAndPos(true /* force update */);
