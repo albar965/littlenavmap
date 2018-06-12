@@ -199,7 +199,7 @@ enum Flag2
 Q_DECLARE_FLAGS(Flags2, Flag2);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags2);
 
-/* Changing these option values will also change the saved values thus invalidatin user settings */
+/* Changing these option values will also change the saved values thus invalidating user settings */
 enum DisplayOption
 {
   ITEM_NONE = 0,
@@ -223,6 +223,7 @@ enum DisplayOption
   ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
   ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
 
+  ITEM_AI_AIRCRAFT_DEP_DEST = 1 << 21,
   ITEM_AI_AIRCRAFT_REGISTRATION = 1 << 22,
   ITEM_AI_AIRCRAFT_TYPE = 1 << 23,
   ITEM_AI_AIRCRAFT_AIRLINE = 1 << 24,
@@ -952,7 +953,7 @@ private:
     opts::ITEM_USER_AIRCRAFT_WIND_POINTER |
     opts::ITEM_AI_AIRCRAFT_REGISTRATION | opts::ITEM_AI_AIRCRAFT_TYPE |
     opts::ITEM_AI_AIRCRAFT_AIRLINE | opts::ITEM_AI_AIRCRAFT_GS |
-    opts::ITEM_AI_AIRCRAFT_ALTITUDE;
+    opts::ITEM_AI_AIRCRAFT_ALTITUDE | opts::ITEM_AI_AIRCRAFT_DEP_DEST;
 
   opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
                                                       opts::TOOLTIP_NAVAID;

@@ -167,6 +167,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem(ai, tr("Climb- and Sinkrate"), QString(), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
   addItem(ai, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
   addItem(ai, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem(ai, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
 
   // Collect names and palettes from all styles
   for(const QString& styleName : QStyleFactory::keys())

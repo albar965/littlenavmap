@@ -207,6 +207,14 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
       appendSpeedText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_IAS),
                       context->dOpt(opts::ITEM_AI_AIRCRAFT_GS));
 
+    if(context->dOpt(opts::ITEM_AI_AIRCRAFT_DEP_DEST) &&
+       (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
+    {
+      texts.append(tr("%1 to %2").
+                   arg(aircraft.getFromIdent().isEmpty() ? tr("None") : aircraft.getFromIdent()).
+                   arg(aircraft.getToIdent().isEmpty() ? tr("None") : aircraft.getToIdent()));
+    }
+
     if(!aircraft.isOnGround())
     {
       if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
