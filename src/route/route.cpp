@@ -1378,8 +1378,12 @@ bool Route::hasValidParking() const
 }
 
 /* Fetch airways by waypoint and name and adjust route altititude if needed */
-void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
+void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteType)
 {
+  if(isEmpty())
+    return;
+
+  bool hasAirway = false;
   int minAltitude = 0;
   for(int i = 1; i < size(); i++)
   {
@@ -1394,13 +1398,14 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
 
+      hasAirway |= !routeLeg.getAirwayName().isEmpty();
       // qDebug() << "min" << airway.minAltitude << "max" << airway.maxAltitude;
     }
     else
       routeLeg.setAirway(map::MapAirway());
   }
 
-  if(adjustRouteAltitude && minAltitude > 0 && !isEmpty())
+  if(minAltitude > 0 && adjustRouteAltitude)
   {
     if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
       // Apply simplified east/west rule
@@ -1408,11 +1413,21 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
     getFlightplan().setCruisingAltitude(minAltitude);
 
     qDebug() << Q_FUNC_INFO << "Updating flight plan altitude to" << minAltitude;
+  }
 
-    if(getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
-      getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+  if(adjustRouteType)
+  {
+    if(hasAirway)
+    {
+      if(getFlightplan().getCruisingAltitude() >= Unit::altFeetF(20000))
+        getFlightplan().setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+      else
+        getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
+    }
     else
-      getFlightplan().setRouteType(atools::fs::pln::LOW_ALTITUDE);
+      getFlightplan().setRouteType(atools::fs::pln::DIRECT);
+
+    qDebug() << Q_FUNC_INFO << "Updating flight plan route type to" << getFlightplan().getRouteType();
   }
 }
 

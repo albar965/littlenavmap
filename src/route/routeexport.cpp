@@ -931,7 +931,7 @@ Route RouteExport::routeAdjustedToProcedureOptions(const Route& route)
                                               NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked());
 
   // Update airway structures
-  rt.updateAirwaysAndAltitude(false);
+  rt.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
 
   return rt;
 }

@@ -360,7 +360,7 @@ public:
    *  has parking or helipad as start position */
   bool hasValidParking() const;
 
-  void updateAirwaysAndAltitude(bool adjustRouteAltitude = false);
+  void updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteType);
   int adjustAltitude(int minAltitude) const;
 
 private:
