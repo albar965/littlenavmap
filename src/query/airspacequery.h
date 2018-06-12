@@ -61,6 +61,7 @@ public:
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   map::MapAirspace getAirspaceById(int airspaceId);
+  bool hasAirspaceById(int airspaceId);
 
   /* Get record with all rows from atc table */
   atools::sql::SqlRecord getAirspaceRecordById(int airspaceId);

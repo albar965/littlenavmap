@@ -70,6 +70,17 @@ map::MapAirspace AirspaceQuery::getAirspaceById(int airspaceId)
   return airspace;
 }
 
+bool AirspaceQuery::hasAirspaceById(int airspaceId)
+{
+  bool retval = false;
+  airspaceByIdQuery->bindValue(":id", airspaceId);
+  airspaceByIdQuery->exec();
+  if(airspaceByIdQuery->next())
+    retval = true;
+  airspaceByIdQuery->finish();
+  return retval;
+}
+
 SqlRecord AirspaceQuery::getAirspaceRecordById(int airspaceId)
 {
   SqlQuery query(db);

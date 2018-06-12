@@ -411,7 +411,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 {
   qDebug() << Q_FUNC_INFO;
 
-  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false,
+  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundUserAircraftShadow = false,
        foundAiAircraft = false, foundOnlineClient = false,
        foundAirspace = false, foundOnlineCenter = false;
   HtmlBuilder html(true);
@@ -420,6 +420,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 
   currentSearchResult.userAircraft = result.userAircraft;
   foundUserAircraft = currentSearchResult.userAircraft.getPosition().isValid();
+  if(foundUserAircraft)
+    foundUserAircraftShadow = currentSearchResult.userAircraft.isOnlineShadow();
 
   // Remember the clicked AI for the next update
   if(!result.aiAircraft.isEmpty())
@@ -433,27 +435,37 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   for(const SimConnectAircraft& ac : currentSearchResult.aiAircraft)
     qDebug() << "Show AI" << ac.getAirplaneRegistration() << "id" << ac.getObjectId();
 
-  // Online aircraft
-  if(!result.onlineAircraft.isEmpty())
+  if(foundUserAircraftShadow || !result.onlineAircraft.isEmpty())
   {
     OnlinedataController *odc = NavApp::getOnlinedataController();
-
-    // Clear current result and add only shown aircraft
-    currentSearchResult.onlineAircraft.clear();
-    currentSearchResult.onlineAircraftIds.clear();
-
-    html.clear();
     int num = 1;
-    for(const SimConnectAircraft& ac : result.onlineAircraft)
+    if(foundUserAircraftShadow)
     {
+      SimConnectAircraft ac;
+      odc->getShadowAircraft(ac, currentSearchResult.userAircraft);
       infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
       infoBuilder->aircraftProgressText(ac, html, Route());
       infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
-
-      atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml());
-      foundOnlineClient = true;
-      currentSearchResult.onlineAircraft.append(ac);
     }
+
+    // Online aircraft
+    if(!result.onlineAircraft.isEmpty())
+    {
+      // Clear current result and add only shown aircraft
+      currentSearchResult.onlineAircraft.clear();
+      currentSearchResult.onlineAircraftIds.clear();
+
+      for(const SimConnectAircraft& ac : result.onlineAircraft)
+      {
+        infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
+        infoBuilder->aircraftProgressText(ac, html, Route());
+        infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
+
+        currentSearchResult.onlineAircraft.append(ac);
+      }
+    }
+    atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml());
+    foundOnlineClient = true;
   }
 
   // Airport ================================================================
@@ -517,6 +529,16 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 
     // Online Center ==================================
     html.clear();
+
+    // Delete all airspaces that were removed from the database inbetween
+    QList<map::MapAirspace>::iterator it = std::remove_if(result.airspaces.begin(), result.airspaces.end(),
+                                                          [](const map::MapAirspace& airspace) -> bool
+    {
+      return !NavApp::getAirspaceQueryOnline()->hasAirspaceById(airspace.id);
+    });
+    if(it != result.airspaces.end())
+      result.airspaces.erase(it, result.airspaces.end());
+
     for(const map::MapAirspace& airspace : result.airspaces)
     {
       if(!airspace.online)
@@ -618,7 +640,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   // Show dock windows if needed
   if(showWindows)
   {
-    if(foundNavaid || foundAirport || foundAirspace || foundOnlineCenter || foundOnlineClient)
+    if(foundNavaid || foundAirport || foundAirspace || foundOnlineCenter || foundOnlineClient ||
+       foundUserAircraftShadow)
     {
       NavApp::getMainUi()->dockWidgetInformation->show();
       NavApp::getMainUi()->dockWidgetInformation->raise();
@@ -670,7 +693,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       else if(foundOnlineCenter && !foundOnlineClient && !foundNavaid && !foundAirport)
         // Only online center found
         newIdx = ic::INFO_ONLINE_CENTER;
-      else if(foundOnlineClient && !foundNavaid && !foundAirport)
+      else if((foundOnlineClient || foundUserAircraftShadow) && !foundNavaid && !foundAirport)
         // Only online client found
         newIdx = ic::INFO_ONLINE_CLIENT;
       else if(foundAirport && !foundNavaid)
