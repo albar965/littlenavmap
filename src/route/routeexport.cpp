@@ -734,7 +734,7 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
 
 bool RouteExport::exportFlighplan(const QString& filename,
                                   std::function<void(const atools::fs::pln::Flightplan& plan,
-                                                     const QString &file)> exportFunc)
+                                                     const QString& file)> exportFunc)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -762,15 +762,45 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
                                                   rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
                                                   rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
 
-  txt.prepend(QString("RTE %1%2 ").
-              arg(NavApp::getRouteConst().getFlightplan().getDepartureIdent()).
-              arg(NavApp::getRouteConst().getFlightplan().getDestinationIdent()));
+  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
+
+  QSet<QString> routeNames;
+  QFile file(filename);
+  if(file.open(QFile::ReadOnly | QIODevice::Text))
+  {
+    while(!file.atEnd())
+    {
+      QString line = file.readLine().toUpper().simplified();
+      if(line.isEmpty())
+        continue;
+
+      // RTE LHRAMS01 EGLL 27L BPK7G BPK DCT CLN UL620 REDFA REDF1A EHAM I18R SPL CI30 FL250
+      routeNames.insert(line.section(" ", 1, 1));
+    }
+    file.close();
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While reading corte.in file:"));
+    return false;
+  }
+
+  QString name = flightplan.getDepartureIdent() + flightplan.getDestinationIdent();
+
+  // Find a unique name between all loaded
+  int i = 1;
+  while(routeNames.contains(name) && i < 99)
+  {
+    QString str = name.left(6);
+    name = QString("%1%2").arg(str).arg(i++, 8 - str.size(), 10, QChar('0'));
+  }
+
+  txt.prepend(QString("RTE %1 ").arg(name));
 
   // Check if we have to insert an endl first
   bool endsWithEol = atools::fileEndsWithEol(filename);
 
   // Append string to file
-  QFile file(filename);
   if(file.open(QFile::Append | QIODevice::Text))
   {
     QTextStream stream(&file);

@@ -303,7 +303,13 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   route.getRunwayNames(depRwy, destRwy);
   route.getArrivalNames(arrivalName, arrivalTransition);
   if(route.hasAnyArrivalProcedure() && !route.getArrivalLegs().approachType.isEmpty())
-    arrivalName = route.getArrivalLegs().approachType + destRwy;
+  {
+    // Flight factor specialities - there are probably more to guess
+    if(route.getArrivalLegs().approachType == "RNAV")
+      arrivalName = "RNV" + destRwy;
+    else
+      arrivalName = route.getArrivalLegs().approachType + destRwy;
+  }
 
   if(route.isEmpty())
     return retval;
