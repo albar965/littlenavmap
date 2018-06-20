@@ -133,6 +133,7 @@ private:
   /* HTTP download signal slots */
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, QString url);
+  void statusBarMessage();
 
   void startDownloadInternal();
   void startDownloadTimer();

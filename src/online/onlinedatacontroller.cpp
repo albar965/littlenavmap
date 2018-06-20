@@ -262,6 +262,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 
         // Message for search tabs, map widget and info
         emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+        statusBarMessage();
       }
     }
     else
@@ -292,6 +293,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     // Message for search tabs, map widget and info
     emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
     emit onlineServersUpdated(true /* load all */, true /* keep selection */);
+    statusBarMessage();
   }
 }
 
@@ -299,12 +301,19 @@ void OnlinedataController::downloadFailed(const QString& error, QString url)
 {
   qWarning() << Q_FUNC_INFO << "Failed" << error << url;
   stopAllProcesses();
-  atools::gui::Dialog::warning(mainWindow,
-                               tr("Download from\n\n\"%1\"\n\nfailed. "
-                                  "Reason:\n\n%2\n\nPress OK to retry again in three minutes.").arg(url).arg(error));
+
+  mainWindow->setOnlineConnectionStatusMessageText(tr("Failed"),
+                                                   tr("Download from\n\"%1\"\nfailed. "
+                                                      "Reason:\n%2\nRetrying again in three minutes.").
+                                                   arg(url).arg(error));
 
   // Delay next download for three minutes to give the user a chance to correct the URLs
   QTimer::singleShot(180 * 1000, this, &OnlinedataController::startProcessing);
+}
+
+void OnlinedataController::statusBarMessage()
+{
+  mainWindow->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(getNetworkTranslated()));
 }
 
 void OnlinedataController::stopAllProcesses()
@@ -340,6 +349,7 @@ void OnlinedataController::optionsChanged()
   emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
   emit onlineServersUpdated(true /* load all */, true /* keep selection */);
   emit onlineNetworkChanged();
+  statusBarMessage();
 
   lastUpdateTime = QDateTime::fromSecsSinceEpoch(0);
   lastServerDownload = QDateTime::fromSecsSinceEpoch(0);

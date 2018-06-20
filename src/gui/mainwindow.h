@@ -137,6 +137,7 @@ public:
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
   void setConnectionStatusMessageText(const QString& text, const QString& tooltipText);
+  void setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText);
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
   void setStatusMessage(const QString& message);
@@ -178,6 +179,9 @@ private:
   void restoreStateMain();
   void updateActionStates();
   void updateOnlineActionStates();
+
+  /* Update status bar section for online status */
+  void updateConnectionStatusMessageText();
 
   void setupUi();
 
@@ -279,6 +283,9 @@ private:
   /* Status bar labels */
   QLabel *mapDistanceLabel = nullptr, *mapPosLabel = nullptr, *magvarLabel = nullptr, *renderStatusLabel = nullptr,
          *detailLabel = nullptr, *messageLabel = nullptr, *connectStatusLabel = nullptr, *timeLabel = nullptr;
+
+  /* Connection field and tooltip in statusbar */
+  QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;
 
   /* List of status bar messages (currently only one) */
   QStringList statusMessages;

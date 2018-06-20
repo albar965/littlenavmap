@@ -1226,8 +1226,30 @@ void MainWindow::showDatabaseFiles()
 /* Updates label and tooltip for connection status */
 void MainWindow::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
 {
-  connectStatusLabel->setText(text);
-  connectStatusLabel->setToolTip(tooltipText);
+  connectionStatus = text;
+  connectionStatusTooltip = tooltipText;
+  updateConnectionStatusMessageText();
+}
+
+void MainWindow::setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText)
+{
+  onlineConnectionStatus = text;
+  onlineConnectionStatusTooltip = tooltipText;
+  updateConnectionStatusMessageText();
+}
+
+void MainWindow::updateConnectionStatusMessageText()
+{
+  if(onlineConnectionStatus.isEmpty())
+    connectStatusLabel->setText(connectionStatus);
+  else
+    connectStatusLabel->setText(tr("%1/%2").arg(connectionStatus).arg(onlineConnectionStatus));
+
+  if(onlineConnectionStatusTooltip.isEmpty())
+    connectStatusLabel->setToolTip(connectionStatusTooltip);
+  else
+    connectStatusLabel->setToolTip(tr("Simulator:\n%1\n\nOnline Network:\n%2").
+                                   arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
 }
 
 /* Updates label and tooltip for objects shown on map */
