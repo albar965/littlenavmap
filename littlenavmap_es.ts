@@ -4147,6 +4147,18 @@ Local: %2</translation>
         <source>Go back to default detail on the map</source>
         <translation>Poner detalles del mapa en valor por defecto</translation>
     </message>
+    <message>
+        <source>%1/%2</source>
+        <translation type="unfinished">%1/%2</translation>
+    </message>
+    <message>
+        <source>Simulator:
+%1
+
+Online Network:
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapHtmlInfoBuilder</name>
@@ -6777,23 +6789,6 @@ Voz</translation>
 <context>
     <name>OnlinedataController</name>
     <message>
-        <source>Download from
-
-&quot;%1&quot;
-
-failed. Reason:
-
-%2
-
-Press OK to retry again in three minutes.</source>
-        <translation>Descargar desde
-
-&quot;%1&quot;
-falló. Motivo:
-%2
-Presione OK para reintentar en tres minutos.</translation>
-    </message>
-    <message>
         <source>Message from downloaded status file:
 
 %2
@@ -6814,6 +6809,22 @@ Presione OK para reintentar en tres minutos.</translation>
     <message>
         <source>Custom Network</source>
         <translation>Red personalizada</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download from
+&quot;%1&quot;
+failed. Reason:
+%2
+Retrying again in three minutes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected to %1.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10889,6 +10900,10 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     <message>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Mientras graba al archivo companyroutes.xml:</translation>
+    </message>
+    <message>
+        <source>While reading corte.in file:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
