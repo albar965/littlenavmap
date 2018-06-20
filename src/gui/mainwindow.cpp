@@ -673,7 +673,7 @@ void MainWindow::setupUi()
 
   timeLabel = new QLabel();
   timeLabel->setAlignment(Qt::AlignCenter);
-  timeLabel->setMinimumWidth(50);
+  timeLabel->setMinimumWidth(55);
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
 }
