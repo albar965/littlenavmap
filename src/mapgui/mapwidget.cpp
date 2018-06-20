@@ -1078,6 +1078,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       // Check if any AI aircraft are visible
       bool aiVisible = false;
       if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
+         paintLayer->getShownMapObjects() & map::AIRCRAFT_AI_SHIP ||
          paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
       {
         for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())

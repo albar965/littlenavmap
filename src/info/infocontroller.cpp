@@ -35,6 +35,7 @@
 #include "util/htmlbuilder.h"
 #include "options/optiondata.h"
 #include "sql/sqlrecord.h"
+#include "mapgui/mapwidget.h"
 
 #include <QDebug>
 #include <QScrollBar>
@@ -152,9 +153,27 @@ void InfoController::anchorClicked(const QUrl& url)
         if(type & map::AIRPORT)
           emit showRect(airportQuery->getAirportById(id).bounding, false);
         if(type & map::AIRSPACE)
-          emit showRect(airspaceQuery->getAirspaceById(id).bounding, false);
+        {
+          map::MapAirspace airspace = airspaceQuery->getAirspaceById(id);
+#ifdef DEBUG_INFORMATION
+          map::MapSearchResult searchHighlights = NavApp::getMapWidget()->getSearchHighlights();
+          searchHighlights.airspaces.clear();
+          searchHighlights.airspaces.append(airspace);
+          NavApp::getMapWidget()->changeSearchHighlights(searchHighlights);
+#endif
+          emit showRect(airspace.bounding, false);
+        }
         if(type & map::AIRSPACE_ONLINE)
-          emit showRect(airspaceQueryOnline->getAirspaceById(id).bounding, false);
+        {
+          map::MapAirspace airspace = airspaceQueryOnline->getAirspaceById(id);
+#ifdef DEBUG_INFORMATION
+          map::MapSearchResult searchHighlights = NavApp::getMapWidget()->getSearchHighlights();
+          searchHighlights.airspaces.clear();
+          searchHighlights.airspaces.append(airspace);
+          NavApp::getMapWidget()->changeSearchHighlights(searchHighlights);
+#endif
+          emit showRect(airspace.bounding, false);
+        }
       }
       else if(query.hasQueryItem("airport"))
       {

@@ -173,33 +173,37 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   // Draw boundary for selected online network airspaces ------------------------------------------
   for(const MapAirspace& airspace: highlightResults.airspaces)
   {
+    const LineString *airspaceGeometry = nullptr;
     if(airspace.online)
+      airspaceGeometry = airspaceQueryOnline->getAirspaceGeometry(airspace.id);
+#ifdef DEBUG_INFORMATION
+    else
+      airspaceGeometry = airspaceQuery->getAirspaceGeometry(airspace.id);
+#endif
+
+    if(airspaceGeometry != nullptr)
     {
-      const LineString *airspaceGeometry = airspaceQueryOnline->getAirspaceGeometry(airspace.id);
-      if(airspaceGeometry != nullptr)
+      if(context->viewportRect.overlaps(airspace.bounding))
       {
-        if(context->viewportRect.overlaps(airspace.bounding))
+        if(context->objCount())
+          return;
+
+        // qDebug() << airspace.getId() << airspace.name;
+
+        Marble::GeoDataLinearRing linearRing;
+        linearRing.setTessellate(true);
+
+        for(const Pos& pos : *airspaceGeometry)
+          linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+
+        if(!context->drawFast)
         {
-          if(context->objCount())
-            return;
-
-          // qDebug() << airspace.getId() << airspace.name;
-
-          Marble::GeoDataLinearRing linearRing;
-          linearRing.setTessellate(true);
-
-          for(const Pos& pos : *airspaceGeometry)
-            linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
-
-          if(!context->drawFast)
-          {
-            // Draw black background for outline
-            painter->setPen(outerPen);
-            painter->drawPolygon(linearRing);
-            painter->setPen(innerPen);
-          }
+          // Draw black background for outline
+          painter->setPen(outerPen);
           painter->drawPolygon(linearRing);
+          painter->setPen(innerPen);
         }
+        painter->drawPolygon(linearRing);
       }
     }
   }
