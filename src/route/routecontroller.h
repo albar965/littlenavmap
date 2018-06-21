@@ -350,7 +350,10 @@ private:
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
+
   void nothingSelectedTriggered();
+  void selectAllTriggered();
+
   void activateLegTriggered();
   void fontChanged();
 

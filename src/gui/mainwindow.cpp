@@ -348,7 +348,7 @@ void MainWindow::updateMap() const
 
 void MainWindow::updateClock() const
 {
-  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d hh:mm:ss Z"));
+  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   hh:mm:ss Z"));
   timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
                         .arg(QDateTime::currentDateTimeUtc().toString())
                         .arg(QDateTime::currentDateTime().toString()));
@@ -673,7 +673,11 @@ void MainWindow::setupUi()
 
   timeLabel = new QLabel();
   timeLabel->setAlignment(Qt::AlignCenter);
+#ifdef Q_OS_MACOS
+  timeLabel->setMinimumWidth(60);
+#else
   timeLabel->setMinimumWidth(55);
+#endif
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
 }

@@ -7752,6 +7752,50 @@
     <string>Show the flight plan in SkyVector in the default web browser</string>
    </property>
   </action>
+  <action name="actionRouteTableSelectAll">
+   <property name="text">
+    <string>Select &amp;All</string>
+   </property>
+   <property name="toolTip">
+    <string>Select all entries in the table</string>
+   </property>
+   <property name="statusTip">
+    <string>Select all entries in the table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionRouteResetView">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/cleartable.svg</normaloff>:/littlenavmap/resources/icons/cleartable.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset View</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset sort order, column order and column sizes to default</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset sort order, column order and column sizes to default</string>
+   </property>
+  </action>
+  <action name="actionRouteSetMark">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set Center for Distance Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Set center mark for distance search</string>
+   </property>
+   <property name="statusTip">
+    <string>Set center mark for distance search</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

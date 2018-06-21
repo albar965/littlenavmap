@@ -193,23 +193,25 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteTableSelectAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteActivateLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-
-  // Avoid stealing of Ctrl - C from other default menus
+  ui->actionRouteSetMark->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteResetView->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  // Need extra action connected to catch the default Ctrl-C in the table view
-  connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
 
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionRouteShowApproaches,
-                    ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteActivateLeg});
+                    ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
+                    ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark});
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
   connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
+  // Connect actions - actions without shortcut key are used in the context menu method directly
+  connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
   connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveSelectedLegsDown);
   connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUp);
   connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegs);
@@ -220,12 +222,12 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::nothingSelectedTriggered);
+  connect(ui->actionRouteTableSelectAll, &QAction::triggered, this, &RouteController::selectAllTriggered);
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::nothingSelectedTriggered);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
 
   updateSpinboxSuffices();
-
 }
 
 RouteController::~RouteController()
@@ -1369,6 +1371,11 @@ void RouteController::nothingSelectedTriggered()
   view->clearSelection();
 }
 
+void RouteController::selectAllTriggered()
+{
+  view->selectAll();
+}
+
 void RouteController::tableContextMenu(const QPoint& pos)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1394,8 +1401,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteCalcRadionavSelected, ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected,
     ui->actionRouteCalcSetAltSelected,
     ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
-    ui->actionSearchTableCopy, ui->actionSearchTableSelectAll, ui->actionRouteTableSelectNothing,
-    ui->actionSearchResetView, ui->actionSearchSetMark
+    ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
+    ui->actionRouteResetView, ui->actionRouteSetMark
   });
   Q_UNUSED(stateSaver);
 
@@ -1409,7 +1416,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   updateMoveAndDeleteActions();
 
-  ui->actionSearchTableCopy->setEnabled(index.isValid());
+  ui->actionRouteTableCopy->setEnabled(index.isValid());
 
   ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
                                           !NavApp::getMapWidget()->getRangeRings().isEmpty());
@@ -1466,7 +1473,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
-    ui->actionSearchSetMark->setEnabled(true);
+    ui->actionRouteSetMark->setEnabled(true);
 
     // ui->actionRouteDeleteLeg->setText(route->isAnyProcedure() ?
     // tr("Delete Procedure") : tr("Delete selected Legs"));
@@ -1484,7 +1491,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteActivateLeg->setEnabled(false);
     ui->actionRouteShowOnMap->setEnabled(false);
     ui->actionMapRangeRings->setEnabled(false);
-    ui->actionSearchSetMark->setEnabled(false);
+    ui->actionRouteSetMark->setEnabled(false);
 
     ui->actionRouteShowApproaches->setText(tr("Show procedures"));
   }
@@ -1509,6 +1516,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionMapNavaidRange->setEnabled(false);
 
   ui->actionRouteTableSelectNothing->setEnabled(view->selectionModel()->hasSelection());
+  ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
@@ -1556,15 +1564,15 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionMapHideRangeRings);
   menu.addSeparator();
 
-  menu.addAction(ui->actionSearchTableCopy);
-  menu.addAction(ui->actionSearchTableSelectAll);
+  menu.addAction(ui->actionRouteTableCopy);
+  menu.addAction(ui->actionRouteTableSelectAll);
   menu.addAction(ui->actionRouteTableSelectNothing);
   menu.addSeparator();
 
-  menu.addAction(ui->actionSearchResetView);
+  menu.addAction(ui->actionRouteResetView);
   menu.addSeparator();
 
-  menu.addAction(ui->actionSearchSetMark);
+  menu.addAction(ui->actionRouteSetMark);
 
   QAction *action = menu.exec(menuPos);
   if(action != nullptr)
@@ -1574,7 +1582,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   if(action != nullptr)
   {
-    if(action == ui->actionSearchResetView)
+    if(action == ui->actionRouteResetView)
     {
       // Reorder columns to match model order
       QHeaderView *header = view->horizontalHeader();
@@ -1584,11 +1592,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       view->resizeColumnsToContents();
       NavApp::setStatusMessage(tr("Table view reset to defaults."));
     }
-    else if(action == ui->actionSearchTableSelectAll)
-      view->selectAll();
-    else if(action == ui->actionRouteTableSelectNothing)
-      view->clearSelection();
-    else if(action == ui->actionSearchSetMark && routeLeg != nullptr)
+    else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
       NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
