@@ -1,6 +1,42 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.0.3.rc1
+
+Online Networks:
+* Fixed issue where simulator, AI or multiplayer aircraft did not move or were not updated on the map with certain settings.
+* Now showing both online client and simulator aircraft tabs if user clicks on own aircraft when using online network.
+* Fixed issue where online ATC was not removed from the map when the related center shut down.
+* Online network ACC and FIR regions now have a default radius of 100.
+* Removed error dialog for online network downloads. Now showing online network errors/status
+  in statusbar on the connection status label and tooltip.
+* Fixed issue when parsing whazzup with small timeintervals. (atools)
+* Now assuming that aircraft is on ground for VATSIM and GS < 30 kts (VATSIM has no on_ground indication). (atools)
+
+User Interface:
+* Rearranged controls in search window to allow smaller dock windows.
+* Now showing warning message box if SSL/HTTPs was not initialized due to missing MSVC redist.
+* Increased size of status bar field for time to avoid creeping/flickering field in macOS.
+
+Flight Plan:
+* Fixed several issues with copy CSV to clipboard from flight plan and search result tables.
+* Fixed issue where route type (High/Low Alt) was assigned wrongly after flight plan calculation or loading flight plan.
+* Fixes for flight factor flight plan export to corte.in. RNAV approaches should be recognized now.
+* Flight plan names for flight factor flight plan export to corte.in are now made unique when saving.
+* Fixed issues with export for flight plans for iFly 737 that could crash the simulator. (atools)
+
+Map:
+* Added departure and destination to label for online network and AI aircraft.
+* Disabled SSL for OpenMapSurfer theme due to obscure SSL problems on macOS.
+* Now hiding all airspaces at small zoom distance when airport diagram is shown.
+* Fixed issue where airspace was not displayed when selecting "show information".
+* Now ignoring null frequencies on airspaces.
+
+Misc:
+* Fixed issue where program cannot be opened by Linux file managers.
+* Fixed translation issues in navserver resulting in confusing messages in Little Navconnect log window. (atools)
+* Increased Garmin userdata export ident length. (atools)
+
 Version 2.0.2
 
 >> X-Plane users: Reinstall Xpconnect 1.0.9 for bug fixes regarding inverted magnetic variation. <<
