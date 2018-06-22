@@ -36,6 +36,7 @@ Misc:
 * Fixed issue where program cannot be opened by Linux file managers.
 * Fixed translation issues in navserver resulting in confusing messages in Little Navconnect log window. (atools)
 * Increased Garmin userdata export ident length. (atools)
+* Updated manual to fix freezes with Adobe Reader on Windows.
 
 Version 2.0.2
 
