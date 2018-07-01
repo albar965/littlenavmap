@@ -360,8 +360,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
               atools::fs::sc::SimConnectAircraft shadow;
               if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, obj))
                 insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, shadow);
-              else
-                insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+
+              insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
             }
           }
         }

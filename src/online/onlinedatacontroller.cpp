@@ -42,13 +42,15 @@ static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 
 // Remove if duplicates with same registration if they are this close (500 kts for 3 min)
 #ifdef DEBUG_INFORMATION
-static const int MIN_DISTANCE_DUPLICATE = atools::geo::nmToMeter(300);
+static const int MIN_DISTANCE_DUPLICATE_M = atools::geo::nmToMeter(900);
 #else
-static const int MIN_DISTANCE_DUPLICATE = atools::geo::nmToMeter(30);
+static const int MIN_DISTANCE_DUPLICATE_M = atools::geo::nmToMeter(30);
 #endif
 
+using atools::fs::sc::SimConnectAircraft;
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
+using atools::geo::Pos;
 
 atools::fs::online::Format convertFormat(opts::OnlineFormat format)
 {
@@ -458,7 +460,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
 
         if(!curRegistrations.contains(aircraft.getAirplaneRegistration()) ||
            aircraft.getPosition().distanceMeterTo(curRegistrations.value(aircraft.getAirplaneRegistration())) >
-           MIN_DISTANCE_DUPLICATE)
+           MIN_DISTANCE_DUPLICATE_M)
           // Avoid duplicates with simulator aircraft that are close by
           aircraftCache.list.append(aircraft);
       }
@@ -492,7 +494,7 @@ bool OnlinedataController::isShadowAircraft(const atools::fs::sc::SimConnectAirc
   const atools::geo::Pos pos = clientCallsignAndPosMap.value(simAircraft.getAirplaneRegistration());
 
   return simAircraft.isOnlineShadow() ||
-         (pos.isValid() && pos.distanceMeterTo(simAircraft.getPosition()) < MIN_DISTANCE_DUPLICATE);
+         (pos.isValid() && pos.distanceMeterTo(simAircraft.getPosition()) < MIN_DISTANCE_DUPLICATE_M);
 }
 
 void OnlinedataController::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
@@ -504,6 +506,32 @@ void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAirc
                                                   const atools::sql::SqlRecord& record)
 {
   OnlinedataManager::fillFromClient(ac, record);
+}
+
+/* Removes the online aircraft from the result which also have a simulator shadow in the result */
+void OnlinedataController::filterOnlineShadowAircraft(QList<SimConnectAircraft>& onlineAircraft,
+                                                      const QList<SimConnectAircraft>& simAircraft)
+{
+  // Collect simulator shadow aircraft
+  QHash<QString, Pos> registrations;
+  for(const SimConnectAircraft& ac : simAircraft)
+  {
+    if(ac.isOnlineShadow() && !ac.getAirplaneRegistration().isEmpty() &&
+       simulatorAiRegistrations.contains(ac.getAirplaneRegistration()))
+      registrations.insert(ac.getAirplaneRegistration(), ac.getPosition());
+  }
+
+  // Remove the shadow aircraft from the online list
+  QList<SimConnectAircraft>::iterator it = std::remove_if(onlineAircraft.begin(), onlineAircraft.end(), [registrations](
+                                                            const SimConnectAircraft& aircraft) -> bool
+  {
+    return registrations.contains(aircraft.getAirplaneRegistration()) &&
+    aircraft.getPosition().distanceMeterTo(registrations.value(aircraft.getAirplaneRegistration())) <=
+    MIN_DISTANCE_DUPLICATE_M;
+  });
+
+  if(it != onlineAircraft.end())
+    onlineAircraft.erase(it, onlineAircraft.end());
 }
 
 atools::sql::SqlRecord OnlinedataController::getClientRecordById(int clientId)

@@ -53,6 +53,11 @@ class OnlinedataManager;
 }
 }
 
+namespace map {
+struct MapSearchResult;
+
+}
+
 class MainWindow;
 class QTextCodec;
 
@@ -103,6 +108,9 @@ public:
 
   static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
+  /* Removes the online aircraft from the result which also have a simulator shadow in the result */
+  void filterOnlineShadowAircraft(QList<atools::fs::sc::SimConnectAircraft>& onlineAircraft, const QList<atools::fs::sc::SimConnectAircraft>& simAircraft);
+
   /* Get client record with all field values */
   atools::sql::SqlRecord getClientRecordById(int clientId);
 
@@ -118,7 +126,8 @@ public:
   bool getShadowAircraft(atools::fs::sc::SimConnectAircraft& aircraft,
                          const atools::fs::sc::SimConnectAircraft& simAircraft);
 
-  /* True if there is an online network aircraft that has the same registration as the simulator aircraft and is close */
+  /* True if there is an online network aircraft that has the same registration as the simulator aircraft and is close.
+   * Used by connect client to set the flag in the simulator data. */
   bool isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft);
 
 signals:
