@@ -199,7 +199,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteResetView->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionRouteShowApproaches,
@@ -423,7 +422,8 @@ void RouteController::routeTypeChanged()
 
 bool RouteController::selectDepartureParking()
 {
-  qDebug() << "selectDepartureParking";
+  qDebug() << Q_FUNC_INFO << "selectDepartureParking";
+
   const map::MapAirport& airport = route.first().getAirport();
   ParkingDialog dialog(mainWindow, airport);
 

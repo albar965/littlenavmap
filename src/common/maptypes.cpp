@@ -451,6 +451,50 @@ void initTranslateableTexts()
 
 }
 
+static QHash<QString, QString> parkingNameMapUntranslated(
+  {
+    {"INVALID", QLatin1Literal("Invalid")},
+    {"UNKNOWN", QLatin1Literal("Unknown")},
+    {"NONE", QLatin1Literal("No Parking")},
+    {"P", QLatin1Literal("Parking")},
+    {"NP", QLatin1Literal("N Parking")},
+    {"NEP", QLatin1Literal("NE Parking")},
+    {"EP", QLatin1Literal("E Parking")},
+    {"SEP", QLatin1Literal("SE Parking")},
+    {"SP", QLatin1Literal("S Parking")},
+    {"SWP", QLatin1Literal("SW Parking")},
+    {"WP", QLatin1Literal("W Parking")},
+    {"NWP", QLatin1Literal("NW Parking")},
+    {"G", QLatin1Literal("Gate")},
+    {"D", QLatin1Literal("Dock")},
+    {"GA", QLatin1Literal("Gate A")},
+    {"GB", QLatin1Literal("Gate B")},
+    {"GC", QLatin1Literal("Gate C")},
+    {"GD", QLatin1Literal("Gate D")},
+    {"GE", QLatin1Literal("Gate E")},
+    {"GF", QLatin1Literal("Gate F")},
+    {"GG", QLatin1Literal("Gate G")},
+    {"GH", QLatin1Literal("Gate H")},
+    {"GI", QLatin1Literal("Gate I")},
+    {"GJ", QLatin1Literal("Gate J")},
+    {"GK", QLatin1Literal("Gate K")},
+    {"GL", QLatin1Literal("Gate L")},
+    {"GM", QLatin1Literal("Gate M")},
+    {"GN", QLatin1Literal("Gate N")},
+    {"GO", QLatin1Literal("Gate O")},
+    {"GP", QLatin1Literal("Gate P")},
+    {"GQ", QLatin1Literal("Gate Q")},
+    {"GR", QLatin1Literal("Gate R")},
+    {"GS", QLatin1Literal("Gate S")},
+    {"GT", QLatin1Literal("Gate T")},
+    {"GU", QLatin1Literal("Gate U")},
+    {"GV", QLatin1Literal("Gate V")},
+    {"GW", QLatin1Literal("Gate W")},
+    {"GX", QLatin1Literal("Gate X")},
+    {"GY", QLatin1Literal("Gate Y")},
+    {"GZ", QLatin1Literal("Gate Z")}
+  });
+
 /* The higher the better */
 static QHash<QString, int> surfaceQualityMap(
   {
@@ -726,7 +770,7 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
     return parking.name;
   else
     // FSX/P3D type
-    return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);
+    return parkingNameMapUntranslated.value(parking.name).toUpper() + " " + QString::number(parking.number);
 }
 
 bool MapAirport::closed() const
