@@ -4159,6 +4159,14 @@ Online Network:
 %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show navaid type search options</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapHtmlInfoBuilder</name>
