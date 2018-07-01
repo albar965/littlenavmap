@@ -1561,8 +1561,10 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
 
 void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-  qDebug() << "contextMenuEvent state" << mouseState
-           << "modifiers" << event->modifiers() << "reason" << event->reason()
+  qDebug() << Q_FUNC_INFO
+           << "state" << mouseState
+           << "modifiers" << event->modifiers()
+           << "reason" << event->reason()
            << "pos" << event->pos();
 
   if(mouseState != mw::NONE)
@@ -2123,7 +2125,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       // This works only with line edit fields
       ui->dockWidgetSearch->raise();
       ui->dockWidgetSearch->show();
-      if(userpoint != nullptr)
+      if(userpoint != nullptr && !isAircraft)
       {
         ui->tabWidgetSearch->setCurrentIndex(3);
         SqlRecord rec;
@@ -2140,12 +2142,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         emit showInSearch(map::USERPOINT, rec);
       }
-      else if(airport != nullptr)
+      else if(airport != nullptr && !isAircraft)
       {
         ui->tabWidgetSearch->setCurrentIndex(0);
         emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident));
       }
-      else if(vor != nullptr)
+      else if(vor != nullptr && !isAircraft)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
         SqlRecord rec;
@@ -2155,7 +2157,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         emit showInSearch(map::VOR, rec);
       }
-      else if(ndb != nullptr)
+      else if(ndb != nullptr && !isAircraft)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
         SqlRecord rec;
@@ -2165,7 +2167,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         emit showInSearch(map::NDB, rec);
       }
-      else if(waypoint != nullptr)
+      else if(waypoint != nullptr && !isAircraft)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
         SqlRecord rec;
@@ -2343,7 +2345,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         position = pos;
       }
 
-      // use airport if it is departure or desination and flight plan is visible to get quick information
+      // use airport if it is departure or destination and flight plan is visible to get quick information
       if((airportDeparture || airportDestination) && airport != nullptr && routeVisible)
       {
         id = airport->id;
@@ -2373,7 +2375,37 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       else if(action == ui->actionRouteAirportDest)
         emit routeSetDest(*airport);
       else if(action == ui->actionMapShowInformation)
+      {
+        if(isAircraft)
+        {
+          // Aircraft have preference above all for information
+          if(userAircraft != nullptr)
+          {
+            id = userAircraft->getId();
+            type = map::AIRCRAFT;
+
+            if(userAircraft->isOnlineShadow())
+              // Show both online and simulator aircraft information
+              type |= map::AIRCRAFT_ONLINE;
+          }
+          else if(aiAircraft != nullptr)
+          {
+            id = aiAircraft->getId();
+            type = map::AIRCRAFT_AI;
+
+            if(aiAircraft->isOnlineShadow())
+              // Show both online and simulator aircraft information
+              type |= map::AIRCRAFT_ONLINE;
+          }
+          else if(onlineAircraft != nullptr)
+          {
+            id = onlineAircraft->getId();
+            type = map::AIRCRAFT_ONLINE;
+          }
+        }
+
         emit showInformation(result, type);
+      }
     }
     else if(action == ui->actionMapShowApproaches)
       emit showApproaches(*airport);

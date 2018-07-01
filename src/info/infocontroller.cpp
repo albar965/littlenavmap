@@ -430,6 +430,10 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 {
   qDebug() << Q_FUNC_INFO;
 
+  if(preferredType != map::NONE)
+    // Clear all except preferred - used by context menu "Show information for ..." to update only one topic
+    result.clear(~preferredType);
+
   bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundUserAircraftShadow = false,
        foundAiAircraft = false, foundOnlineClient = false,
        foundAirspace = false, foundOnlineCenter = false;
@@ -582,20 +586,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   // Navaids ================================================================
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty() ||
      !result.userpoints.isEmpty())
-  {
     // if any navaids are to be shown clear search result before
-    currentSearchResult.vors.clear();
-    currentSearchResult.vorIds.clear();
-    currentSearchResult.ndbs.clear();
-    currentSearchResult.ndbIds.clear();
-    currentSearchResult.ils.clear();
-    currentSearchResult.runwayEnds.clear();
-    currentSearchResult.waypoints.clear();
-    currentSearchResult.waypointIds.clear();
-    currentSearchResult.userpoints.clear();
-    currentSearchResult.userpointIds.clear();
-    currentSearchResult.airways.clear();
-  }
+    currentSearchResult.clear(map::NAV_ALL | map::USERPOINT | map::ILS | map::AIRWAY | map::RUNWAYEND);
 
   html.clear();
   // Userpoints on top of the list
@@ -681,9 +673,6 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     bool airportActive = idx == ic::INFO_AIRPORT || idx == ic::INFO_RUNWAYS || idx == ic::INFO_COM ||
                          idx == ic::INFO_APPROACHES || idx == ic::INFO_WEATHER;
 
-    // Is the navaid tab active
-    bool navaidActive = idx == ic::INFO_NAVAID;
-
     ic::TabIndex newIdx = idx;
 
     if(preferredType != map::NONE)
@@ -705,29 +694,26 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     }
     else
     {
+      bool onlineClient = foundOnlineClient || foundUserAircraftShadow;
+
       // Decide which tab to activate automatically so that it tries to keep the current tab in front
-      if(foundAirspace && !foundOnlineClient && !foundOnlineCenter && !foundNavaid && !foundAirport)
-        // Only airspace found
+      if(foundAirspace && !foundOnlineCenter && !foundNavaid && !foundAirport && !onlineClient)
+        // Only airspace found - lowest priority
         newIdx = ic::INFO_AIRSPACE;
-      else if(foundOnlineCenter && !foundOnlineClient && !foundNavaid && !foundAirport)
+      else if(foundOnlineCenter && !foundNavaid && !foundAirport && !onlineClient)
         // Only online center found
         newIdx = ic::INFO_ONLINE_CENTER;
-      else if((foundOnlineClient || foundUserAircraftShadow) && !foundNavaid && !foundAirport)
-        // Only online client found
-        newIdx = ic::INFO_ONLINE_CLIENT;
-      else if(foundAirport && !foundNavaid)
+      else if(foundNavaid && !foundAirport && !onlineClient)
+        newIdx = ic::INFO_NAVAID;
+      else if(foundAirport && !onlineClient)
       {
         if(!airportActive)
           // Show airport tab if no airport related tab was active
           newIdx = ic::INFO_AIRPORT;
       }
-      else if(foundNavaid && !foundAirport)
-        newIdx = ic::INFO_NAVAID;
-      else if(foundNavaid && foundAirport)
-      {
-        if(!airportActive && !navaidActive)
-          newIdx = ic::INFO_AIRPORT;
-      }
+      else if(onlineClient)
+        // Only online client found
+        newIdx = ic::INFO_ONLINE_CLIENT;
     }
 
     ui->tabWidgetInformation->setCurrentIndex(newIdx);

@@ -1181,6 +1181,66 @@ QString parkingShortName(const QString& name)
     return QString();
 }
 
+void MapSearchResult::clear(const MapObjectTypes& types)
+{
+  if(types & map::AIRPORT)
+  {
+    airports.clear();
+    airportIds.clear();
+  }
+
+  if(types & map::WAYPOINT)
+  {
+    waypoints.clear();
+    waypointIds.clear();
+  }
+
+  if(types & map::VOR)
+  {
+    vors.clear();
+    vorIds.clear();
+  }
+
+  if(types & map::NDB)
+  {
+    ndbs.clear();
+    ndbIds.clear();
+  }
+
+  if(types & map::AIRWAY)
+    airways.clear();
+
+  if(types & map::AIRSPACE)
+    airspaces.clear();
+
+  if(types & map::RUNWAYEND)
+    runwayEnds.clear();
+
+  if(types & map::ILS)
+    ils.clear();
+
+  if(types & map::USERPOINTROUTE)
+    userPointsRoute.clear();
+
+  if(types & map::USERPOINT)
+  {
+    userpoints.clear();
+    userpointIds.clear();
+  }
+
+  if(types & map::AIRCRAFT_AI)
+    aiAircraft.clear();
+
+  if(types & map::AIRCRAFT)
+    userAircraft = atools::fs::sc::SimConnectUserAircraft();
+
+  if(types & map::AIRCRAFT_ONLINE)
+  {
+    onlineAircraft.clear();
+    onlineAircraftIds.clear();
+  }
+}
+
 bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
 {
   bool filled = false;

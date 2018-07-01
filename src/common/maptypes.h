@@ -686,7 +686,8 @@ struct MapSearchResult
   QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
-  bool isEmpty(const map::MapObjectTypes& types) const;
+  bool isEmpty(const map::MapObjectTypes& types = map::ALL) const;
+  void clear(const MapObjectTypes& types = map::ALL);
 
   bool hasAirports() const
   {
