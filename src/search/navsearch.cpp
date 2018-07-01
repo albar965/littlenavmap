@@ -33,6 +33,7 @@
 #include "atools.h"
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
+#include "settings/settings.h"
 
 NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
@@ -45,9 +46,10 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIn
     ui->horizontalLayoutNavNameSearch,
     ui->gridLayoutNavSearchType,
     ui->horizontalLayoutNavScenerySearch,
-    ui->lineNavDistSearch,
+    ui->lineNavDistanceSearch,
     ui->lineNavScenerySearch,
     ui->actionNavSearchShowAllOptions,
+    ui->actionNavSearchShowTypeOptions,
     ui->actionNavSearchShowDistOptions,
     ui->actionNavSearchShowSceneryOptions
   };
@@ -56,6 +58,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIn
   navSearchMenuActions =
   {
     ui->actionNavSearchShowAllOptions,
+    ui->actionNavSearchShowTypeOptions,
     ui->actionNavSearchShowDistOptions,
     ui->actionNavSearchShowSceneryOptions
   };
@@ -218,14 +221,22 @@ void NavSearch::connectSearchSlots()
   // Connect widgets to the controller
   SearchBaseTable::connectSearchWidgets();
   ui->toolButtonNavSearch->addActions({ui->actionNavSearchShowAllOptions,
+                                       ui->actionNavSearchShowTypeOptions,
                                        ui->actionNavSearchShowDistOptions,
                                        ui->actionNavSearchShowSceneryOptions});
 
   // Drop down menu actions
+  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, [ = ](bool state)
+  {
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutNavSearchType}, state,
+                                              {ui->lineNavTypeSearch});
+    updateButtonMenu();
+  });
+
   connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
-                                              {ui->lineNavDistSearch});
+                                              {ui->lineNavDistanceSearch});
     updateButtonMenu();
   });
   connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
@@ -250,6 +261,7 @@ void NavSearch::saveState()
 
 void NavSearch::restoreState()
 {
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
@@ -258,7 +270,6 @@ void NavSearch::restoreState()
     // Need to block signals here to avoid unwanted behavior (will enable
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
-    Ui::MainWindow *ui = NavApp::getMainUi();
     widgetState.restore({ui->horizontalLayoutNavDistanceSearch, ui->actionSearchNavaidFollowSelection});
     restoreViewState(ui->checkBoxNavDistSearch->isChecked());
 
@@ -274,6 +285,14 @@ void NavSearch::restoreState()
   }
   else
     atools::gui::WidgetState(lnm::SEARCHTAB_NAV_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewNavSearch);
+
+  if(!atools::settings::Settings::instance().childGroups().contains("SearchPaneNav"))
+  {
+    // Disable the less used search options on a clean installation
+    ui->actionNavSearchShowTypeOptions->setChecked(false);
+    ui->actionNavSearchShowDistOptions->setChecked(false);
+    ui->actionNavSearchShowSceneryOptions->setChecked(false);
+  }
 }
 
 void NavSearch::saveViewState(bool distSearchActive)
@@ -430,9 +449,12 @@ void NavSearch::updateButtonMenu()
 
   // Change state of show all action
   ui->actionNavSearchShowAllOptions->blockSignals(true);
-  if(atools::gui::util::allChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
+  if(atools::gui::util::allChecked({ui->actionNavSearchShowTypeOptions,
+                                    ui->actionNavSearchShowDistOptions,
+                                    ui->actionNavSearchShowSceneryOptions}))
     ui->actionNavSearchShowAllOptions->setChecked(true);
-  else if(atools::gui::util::noneChecked({ui->actionNavSearchShowDistOptions,
+  else if(atools::gui::util::noneChecked({ui->actionNavSearchShowTypeOptions,
+                                          ui->actionNavSearchShowDistOptions,
                                           ui->actionNavSearchShowSceneryOptions}))
     ui->actionNavSearchShowAllOptions->setChecked(false);
   else
@@ -445,6 +467,9 @@ void NavSearch::updateButtonMenu()
     distanceSearchChanged = atools::gui::util::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
 
   atools::gui::util::changeStarIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
+
+  atools::gui::util::changeStarIndication(ui->actionNavSearchShowTypeOptions,
+                                          atools::gui::util::anyWidgetChanged({ui->gridLayoutNavSearchType}));
 
   atools::gui::util::changeStarIndication(ui->actionNavSearchShowSceneryOptions,
                                           atools::gui::util::anyWidgetChanged(

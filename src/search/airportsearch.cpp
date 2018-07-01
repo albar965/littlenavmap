@@ -32,6 +32,7 @@
 #include "common/mapcolors.h"
 #include "atools.h"
 #include "sql/sqlrecord.h"
+#include "settings/settings.h"
 
 // Align right and omit if value is 0
 const QSet<QString> AirportSearch::NUMBER_COLUMNS(
@@ -150,7 +151,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Sea
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort().
-         override().minOverrideLength(3)).
+         override ().minOverrideLength(3)).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
@@ -366,6 +367,7 @@ void AirportSearch::saveState()
 
 void AirportSearch::restoreState()
 {
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
@@ -374,7 +376,6 @@ void AirportSearch::restoreState()
     // Need to block signals here to avoid unwanted behavior (will enable
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
-    Ui::MainWindow *ui = NavApp::getMainUi();
     widgetState.restore({ui->horizontalLayoutAirportDistanceSearch, ui->actionSearchAirportFollowSelection});
     restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
 
@@ -393,6 +394,14 @@ void AirportSearch::restoreState()
   }
   else
     atools::gui::WidgetState(lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewAirportSearch);
+
+  if(!atools::settings::Settings::instance().childGroups().contains("SearchPaneAirport"))
+  {
+    // Disable the less used search options on a clean installation
+    ui->actionAirportSearchShowSceneryOptions->setChecked(false);
+    ui->actionAirportSearchShowAltOptions->setChecked(false);
+    ui->actionAirportSearchShowFuelParkOptions->setChecked(false);
+  }
 }
 
 void AirportSearch::saveViewState(bool distSearchActive)
@@ -503,19 +512,19 @@ void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
-    for(const QItemSelectionRange& rng :  selection)
+  for(const QItemSelectionRange& rng :  selection)
+  {
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      for(int row = rng.top(); row <= rng.bottom(); ++row)
-      {
-        map::MapAirport ap;
-        rec.setValue(0, controller->getRawData(row, idColumnName));
-        rec.setValue(1, controller->getRawData(row, "lonx"));
-        rec.setValue(2, controller->getRawData(row, "laty"));
+      map::MapAirport ap;
+      rec.setValue(0, controller->getRawData(row, idColumnName));
+      rec.setValue(1, controller->getRawData(row, "lonx"));
+      rec.setValue(2, controller->getRawData(row, "laty"));
 
-        // Not fully populated
-        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
-                            NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
-        result.airports.append(ap);
+      // Not fully populated
+      factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
+                          NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+      result.airports.append(ap);
     }
   }
 }
