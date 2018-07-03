@@ -1,6 +1,24 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.0.3.rc2
+
+* Fixed issue where translated parking names were used in PLN files. #243
+* Fixed issues with map context menu where "Show ..." and "Show ... in search" used the wrong map objects.
+* Now using consistent order where online and simulator aircraft are above airports when clicking in the map.
+* Now disabling less used search options for first installation.
+* Both online and simulator information is now shown when clicking on shadow AI/multiuser/simulator aircraft.
+* Fixed wrong tooltip for online shadow aircraft which appeared both in simulator and online network.
+  Now showing tooltip for simulator.
+* Updated manual with fixed broken links.
+* Added option to disable type filters in nav search.
+* Updated French translation from Patrick.
+
+from atools Version 3.0.3.rc2
+
+* Updated French translation from Patrick.
+* Fix missing first update of X-Plane weather.
+
 Version 2.0.3.rc1
 
 Online Networks:
