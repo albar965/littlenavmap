@@ -1,5 +1,6 @@
-Little Navmap
-=============
+------------------------------------------------------------------------------
+-- Little Navmap -------------------------------------------------------------
+------------------------------------------------------------------------------
 
 Little Navmap is a free open source flight planner, navigation tool, moving map, airport search and
 airport information system for Flight Simulator X, Prepar3D and X-Plane.
@@ -9,9 +10,9 @@ of many online or included offline maps.
 
 Navigraph provides updates for all navigation data. A cycle 1707 database is included.
 
-It supports approach and departure procedures, offers several automatic flight plan calculation options
-and multiple export formats like GFP, GPX, RTE, FLP and FMS as well as drag and drop
-flight plan editing on the map.
+It supports approach and departure procedures, offers several automatic flight plan calculation
+options and multiple export formats like GFP, GPX, RTE, FLP and FMS as well as drag and drop flight
+plan editing on the map.
 
 An elevation profile is shown for the flight plan allowing to find a safe cruise altitude.
 
@@ -20,41 +21,68 @@ criteria also including a spatial search.
 
 The program can generate an route description string from flight plans and vice versa.
 
-Little Navmap supports FSX, FSX Steam Edition, Prepar3d Versions 2, 3, 4 and X-Plane
+Little Navmap supports FSX, FSX Steam Edition, Prepar3d Versions 2, 3, 4 and X-Plane 11.
 
 ------------------------------------------------------------------------------
 
-See the Little Navmap help for more information. All online here: https://www.gitbook.com/@albar965
+See the Little Navmap help for more information.
+All online here: https://albar965.gitbooks.io/little-navmap-user-manual/content/en/
 
 ------------------------------------------------------------------------------
 -- INSTALLATION --------------------------------------------------------------
 ------------------------------------------------------------------------------
 
-The installation of Little Navmap does not change any registry entries (in Windows) and involves a simple
-copy of files therefore an installer or setup program is not required.
+See online manual for a more detailed description:
+https://albar965.gitbooks.io/little-navmap-user-manual/content/en/INSTALLATION.html
 
-Do not extract the archive into the folder "c:\Program Files\" or "c:\Program Files (x86)\" since this
-requires administrative privileges for some Windows versions. Windows keeps control of these folders,
-therefore other problems might occur like replaced or deleted files.
+The installation of Little Navmap does not change any registry entries (in Windows) and involves a
+simple copy of files therefore an installer or setup program is not required.
+
+Do not extract the archive into the folder "c:\Program Files\" or "c:\Program Files (x86)\" since
+this requires administrative privileges on Windows. Windows keeps control of these
+folders, therefore other problems might occur like replaced or deleted files.
 
 Extract the Zip archive into a folder like "c:\Little Navmap". Then start the program by
-double-clicking "littlenavmap.exe". See online manual for more information on the first start after installation.
+double-clicking "littlenavmap.exe". See online manual for more information on the first start after
+installation (https://albar965.gitbooks.io/little-navmap-user-manual/content/en/INTRO.html#first-start).
 
 In some cases you have to install the MS Visual C++ 2013 Redistributable package
-(https://www.microsoft.com/en-US/download/details.aspx?id=40784). Install both 32 and 64 bit versions.
-Usually this is already installed since many other programs require it.
+(https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads). Install
+both 32 and 64 bit versions. Usually this is already installed since many other programs require it.
 
-See the online manual if installing for other Simulators than FSX SP2.
+The installation on Linux and macOS computers is similar except different paths and no
+redistributable needed.
 
-I recommend to delete all installed files of a previous Little Navmap version before installing a new version.
-All files from the previous ZIP can be deleted since settings are stored in separate directories
-except custom map themes. In any case do not merge the installation directories.
+------------------------------------------------------------------------------
+-- Updating Little Navmap ----------------------------------------------------
 
-See the online manual for more information about configuration and database files. Do not delete these.
+I strongly recommend to delete all installed files of a previous Little Navmap version before installing a
+new version. All files from the previous ZIP archive can be deleted since settings are stored in separate
+directories except custom map themes.
 
-Little Navmap is a 32-bit application and was tested with Windows 7, Windows 8 and Windows 10 (32-bit & 64-bit).
+In any case do not merge the installation directories.
 
-The installation on Linux and macOS computers is simlar except different paths.
+The program automatically checks for updates. See here in the manual:
+https://albar965.gitbooks.io/little-navmap-user-manual/content/en/UPDATE.html
+
+------------------------------------------------------------------------------
+-- FSX and Prepar3D ----------------------------------------------------------
+
+See the online manual if installing for other Simulators than FSX SP2. You might have to install an
+additional SimConnect version since Little Navmap is compatible from FSX SP2 up.
+
+See the online manual for more information about configuration and database
+files (https://albar965.gitbooks.io/little-navmap-user-manual/content/en/FILES.html).
+Do not delete these.
+
+Little Navmap is a 32-bit application and was tested with Windows 7, Windows 8 and Windows 10
+(32-bit & 64-bit).
+
+------------------------------------------------------------------------------
+-- X-Plane 11 ----------------------------------------------------------------
+
+You have to install the Little Xpconnect X-Plane plugin to connect to X-Plane. The plugin is included
+in the Little Navmap ZIP archive. See the file README.txt in the folder "Little Xpconnect".
 
 ------------------------------------------------------------------------------
 -- OTHER PROGRAMS INCLUDED ---------------------------------------------------
