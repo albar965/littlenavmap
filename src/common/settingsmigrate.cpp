@@ -100,7 +100,7 @@ void checkAndMigrateSettings()
       if(!settings.contains(lnm::OPTIONS_UPDATE_CHANNELS) || (optionsVersion.isStable() && !appVersion.isStable()))
       {
         // No channel assigned yet or user moved from a stable to beta or development version
-        if(appVersion.isBeta())
+        if(appVersion.isBeta() || appVersion.isReleaseCandidate())
         {
           qInfo() << "Adjusting update channel to beta";
           settings.setValue(lnm::OPTIONS_UPDATE_CHANNELS, opts::STABLE_BETA);
