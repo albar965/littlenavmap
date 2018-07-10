@@ -1850,8 +1850,17 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(aiAircraft != nullptr)
   {
-    informationText = tr("%1 / %2").arg(aiAircraft->getAirplaneRegistration()).arg(
-      aiAircraft->getAirplaneModel());
+    QStringList info;
+    if(!aiAircraft->getAirplaneRegistration().isEmpty())
+      info.append(aiAircraft->getAirplaneRegistration());
+    if(!aiAircraft->getAirplaneModel().isEmpty())
+      info.append(aiAircraft->getAirplaneModel());
+
+    if(info.isEmpty())
+      // X-Plane does not give any useful information at all
+      info.append(tr("AI / Multiplayer") + tr(" %1").arg(aiAircraft->getObjectId() + 1));
+
+    informationText = info.join(tr(" / "));
     isAircraft = true;
   }
 
@@ -2279,7 +2288,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {
       Pos position = pos;
-      map::MapObjectTypes type;
+      map::MapObjectTypes type = map::NONE;
 
       int id = -1;
       if(userpoint != nullptr)
@@ -2379,6 +2388,21 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         if(isAircraft)
         {
           // Aircraft have preference above all for information
+
+          // Use same order as above in if(aiAircraft != nullptr) ...
+          if(aiAircraft != nullptr)
+          {
+            type = map::AIRCRAFT_AI;
+
+            if(aiAircraft->isOnlineShadow())
+              // Show both online and simulator aircraft information
+              type |= map::AIRCRAFT_ONLINE;
+          }
+
+          if(onlineAircraft != nullptr && !(type & map::AIRCRAFT_ONLINE))
+            // Only use online if previous AI was not a shadow
+            type = map::AIRCRAFT_ONLINE;
+
           if(userAircraft != nullptr)
           {
             type = map::AIRCRAFT;
@@ -2387,16 +2411,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
               // Show both online and simulator aircraft information
               type |= map::AIRCRAFT_ONLINE;
           }
-          else if(aiAircraft != nullptr)
-          {
-            type = map::AIRCRAFT_AI;
-
-            if(aiAircraft->isOnlineShadow())
-              // Show both online and simulator aircraft information
-              type |= map::AIRCRAFT_ONLINE;
-          }
-          else if(onlineAircraft != nullptr)
-            type = map::AIRCRAFT_ONLINE;
         }
 
         emit showInformation(result, type);
