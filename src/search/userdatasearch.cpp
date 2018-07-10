@@ -79,11 +79,10 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::S
   append(Column("temp").hidden()).
 
   append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
+  append(Column("lonx", tr("Longitude"))).
+  append(Column("laty", tr("Latitude"))).
   append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
-  append(Column("import_file_path", ui->lineEditUserdataFilepath, tr("Imported\nfrom File")).filter()).
-
-  append(Column("lonx").hidden()).
-  append(Column("laty").hidden())
+  append(Column("import_file_path", ui->lineEditUserdataFilepath, tr("Imported\nfrom File")).filter())
   ;
 
   ui->labelUserdataOverride->hide();
@@ -269,6 +268,10 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   if(col->getColumnName() == "altitude")
     return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
            Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
+  else if(col->getColumnName() == "lonx")
+    return Unit::coordsLonX(atools::geo::Pos(displayRoleValue.toFloat(), 0.f));
+  else if(col->getColumnName() == "laty")
+    return Unit::coordsLatY(atools::geo::Pos(0.f, displayRoleValue.toFloat()));
   else if(col->getColumnName() == "last_edit_timestamp")
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
   else if(col->getColumnName() == "description")

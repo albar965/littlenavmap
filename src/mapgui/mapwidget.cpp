@@ -2381,7 +2381,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           // Aircraft have preference above all for information
           if(userAircraft != nullptr)
           {
-            id = userAircraft->getId();
             type = map::AIRCRAFT;
 
             if(userAircraft->isOnlineShadow())
@@ -2390,7 +2389,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           }
           else if(aiAircraft != nullptr)
           {
-            id = aiAircraft->getId();
             type = map::AIRCRAFT_AI;
 
             if(aiAircraft->isOnlineShadow())
@@ -2398,10 +2396,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
               type |= map::AIRCRAFT_ONLINE;
           }
           else if(onlineAircraft != nullptr)
-          {
-            id = onlineAircraft->getId();
             type = map::AIRCRAFT_ONLINE;
-          }
         }
 
         emit showInformation(result, type);
