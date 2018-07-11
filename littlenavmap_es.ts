@@ -6383,10 +6383,6 @@ Online Network:
         <translation>Mostrar procedimientos (%1 que no tienen procedimientos)</translation>
     </message>
     <message>
-        <source>%1 / %2</source>
-        <translation>%1 / %2</translation>
-    </message>
-    <message>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Todas las líneas de rango de anillos de medición removidas del mapa.</translation>
     </message>
@@ -6481,6 +6477,18 @@ Online Network:
     <message>
         <source>More ...</source>
         <translation>Más ...</translation>
+    </message>
+    <message>
+        <source>AI / Multiplayer</source>
+        <translation type="unfinished">IA / Multijugador</translation>
+    </message>
+    <message>
+        <source> %1</source>
+        <translation type="unfinished"> %1</translation>
+    </message>
+    <message>
+        <source> / </source>
+        <translation type="unfinished"> / </translation>
     </message>
 </context>
 <context>
@@ -12059,6 +12067,14 @@ desde archivo</translation>
     <message>
         <source>%1 overriding all other search options.</source>
         <translation>%1 sobreescribiendo demás opciones de búsqueda.</translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation type="unfinished">Longitud</translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation type="unfinished">Latitude</translation>
     </message>
 </context>
 <context>

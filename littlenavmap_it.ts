@@ -8531,77 +8531,72 @@ Only JPG, PNG and BMP are allowed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1853"/>
-        <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1860"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1869"/>
         <source>Online Client Aircraft %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1866"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1875"/>
         <source>User Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1945"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1954"/>
         <source> and more</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1525"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1993"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1994"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2054"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2002"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2003"/>
         <location filename="src/mapgui/mapwidget.cpp" line="2063"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2072"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2018"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2027"/>
         <source>Departure </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2022"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2031"/>
         <source>Show procedures (%1 has no departure procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2029"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2038"/>
         <source>Arrival </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2033"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2042"/>
         <source>Show procedures (%1 has no arrival procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2038"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2047"/>
         <source>all </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2042"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2051"/>
         <source>Show procedures (%1 has no procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3017"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3026"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3378"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3387"/>
         <source>Jumped back to aircraft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2083"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2084"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2092"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2093"/>
         <source>here</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8611,67 +8606,82 @@ Only JPG, PNG and BMP are allowed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2211"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1861"/>
+        <source>AI / Multiplayer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapwidget.cpp" line="1861"/>
+        <source> %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapwidget.cpp" line="1863"/>
+        <source> / </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapwidget.cpp" line="2220"/>
         <source>Range ring removed from map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2217"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2226"/>
         <source>Measurement line removed from map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2459"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2468"/>
         <source>Added range rings for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2476"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2485"/>
         <source>Added range rings for position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2488"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2497"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2988"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2997"/>
         <source>Showing user aircraft on map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2993"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3002"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2998"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3007"/>
         <source>Showing online client aircraft on map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3003"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3012"/>
         <source>Showing airport on map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3117"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3126"/>
         <source>Aircraft track removed from map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3275"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3284"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3282"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3291"/>
         <source>Detail %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3283"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3292"/>
         <source>Map detail level changed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15633,18 +15643,28 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
     </message>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="82"/>
+        <source>Longitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/search/userdatasearch.cpp" line="83"/>
+        <source>Latitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/search/userdatasearch.cpp" line="84"/>
         <source>Elevation
 %alt%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/userdatasearch.cpp" line="83"/>
+        <location filename="src/search/userdatasearch.cpp" line="85"/>
         <source>Imported
 from File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/userdatasearch.cpp" line="118"/>
+        <location filename="src/search/userdatasearch.cpp" line="117"/>
         <source>%1 overriding all other search options.</source>
         <translation type="unfinished"></translation>
     </message>

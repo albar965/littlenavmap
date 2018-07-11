@@ -8593,82 +8593,77 @@ Alleen JPG, PNG en BMP zijn toegestaan.</translation>
         <translation>Helipad %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1853"/>
-        <source>%1 / %2</source>
-        <translation>%1 / %2</translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1860"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1869"/>
         <source>Online Client Aircraft %1</source>
         <translation>Online Gebruikers Vleigtuig %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1866"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1875"/>
         <source>User Aircraft</source>
         <translation>Vliegtuig Gebruiker</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1945"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1954"/>
         <source> and more</source>
         <translation> en meer</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1525"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1993"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1994"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2054"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2002"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2003"/>
         <location filename="src/mapgui/mapwidget.cpp" line="2063"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2072"/>
         <source>Position</source>
         <translation>Positie</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2018"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2027"/>
         <source>Departure </source>
         <translation>Vertrek </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2022"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2031"/>
         <source>Show procedures (%1 has no departure procedure)</source>
         <translation>Toon procedures (%1 heeft geen vertrekprocedure)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2029"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2038"/>
         <source>Arrival </source>
         <translation>Aankomst </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2033"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2042"/>
         <source>Show procedures (%1 has no arrival procedure)</source>
         <translation>Toon procedures (%1 heeft geen aankomst procedure)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2038"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2047"/>
         <source>all </source>
         <translation>alle </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2042"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2051"/>
         <source>Show procedures (%1 has no procedure)</source>
         <translation>Toon procedures (%1 heeft geen procedure)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2998"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3007"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Toon online gebruikers vliegtuig op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3017"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3026"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation>Toon navaid of gebruikerspunt op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3378"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3387"/>
         <source>Jumped back to aircraft.</source>
         <translation>Teruggekeerd naar vliegtuig.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2083"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2084"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2092"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2093"/>
         <source>here</source>
         <translation>hier</translation>
     </message>
@@ -8678,62 +8673,77 @@ Alleen JPG, PNG en BMP zijn toegestaan.</translation>
         <translation>Meer ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2211"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1861"/>
+        <source>AI / Multiplayer</source>
+        <translation type="unfinished">AI / Multiplayer</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapwidget.cpp" line="1861"/>
+        <source> %1</source>
+        <translation type="unfinished"> %1</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapwidget.cpp" line="1863"/>
+        <source> / </source>
+        <translation type="unfinished"> / </translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapwidget.cpp" line="2220"/>
         <source>Range ring removed from map.</source>
         <translation>Ring bereik verwijderd van kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2217"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2226"/>
         <source>Measurement line removed from map.</source>
         <translation>Meetlijn verwijderd van kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2459"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2468"/>
         <source>Added range rings for %1.</source>
         <translation>Ringen bereik voor %1 toegevoegd.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2476"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2485"/>
         <source>Added range rings for position.</source>
         <translation>Ringen bereik van positie toegevoegd.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2488"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2497"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Alle ringen bereik en meetlijnen verwijderd van kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2988"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2997"/>
         <source>Showing user aircraft on map.</source>
         <translation>Tonen vliegtuig gebruiker op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2993"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3002"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Tonen AI / multiplayer vliegtuigen op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3003"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3012"/>
         <source>Showing airport on map.</source>
         <translation>Tonen luchthaven op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3117"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3126"/>
         <source>Aircraft track removed from map.</source>
         <translation>Spoor vliegtuig verwijderd van de kaart.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3275"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3284"/>
         <source>Normal</source>
         <translation>Normaal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3282"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3291"/>
         <source>Detail %1</source>
         <translation>Detail %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3283"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3292"/>
         <source>Map detail level changed.</source>
         <translation>Niveau kaartdetail is gewijzigd.</translation>
     </message>
@@ -15892,20 +15902,30 @@ Nodig voor het exporteren naar X-Plane &quot;user_fix.dat&quot;.</translation>
     </message>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="82"/>
+        <source>Longitude</source>
+        <translation type="unfinished">Lengtegraad</translation>
+    </message>
+    <message>
+        <location filename="src/search/userdatasearch.cpp" line="83"/>
+        <source>Latitude</source>
+        <translation type="unfinished">Breedtegraad</translation>
+    </message>
+    <message>
+        <location filename="src/search/userdatasearch.cpp" line="84"/>
         <source>Elevation
 %alt%</source>
         <translation>Hoogtepeil
 %alt%</translation>
     </message>
     <message>
-        <location filename="src/search/userdatasearch.cpp" line="83"/>
+        <location filename="src/search/userdatasearch.cpp" line="85"/>
         <source>Imported
 from File</source>
         <translation>Geimporteerd
 van Bestand</translation>
     </message>
     <message>
-        <location filename="src/search/userdatasearch.cpp" line="118"/>
+        <location filename="src/search/userdatasearch.cpp" line="117"/>
         <source>%1 overriding all other search options.</source>
         <translation>%1 negeert alle andere zoekopties.</translation>
     </message>
