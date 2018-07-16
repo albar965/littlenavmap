@@ -1140,7 +1140,10 @@ void MainWindow::themeMenuTriggered(bool checked)
 /* Look for new directories with a valid DGML file in the earth dir */
 void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
 {
-  QDir dir("data/maps/earth");
+  QDir dir(atools::buildPath({QCoreApplication::applicationDirPath(), "data", "maps", "earth"}));
+
+  qDebug() << Q_FUNC_INFO << "Looking for custom maps in" << dir;
+
   QFileInfoList entries = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
   // Look for new map themes
   for(const QFileInfo& info : entries)
@@ -1157,7 +1160,7 @@ void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
         QString dgmlFileRelative(QString("earth") +
                                  QDir::separator() + dir.relativeFilePath(info.absoluteFilePath()) +
                                  QDir::separator() + info.baseName() + ".dgml");
-        qDebug() << "Custom theme DGML" << dgml.absoluteFilePath() << "relative path" << dgmlFileRelative;
+        qInfo() << "Custom theme DGML" << dgml.absoluteFilePath() << "relative path" << dgmlFileRelative;
         customDgmlFiles.append(dgmlFileRelative);
       }
       else
