@@ -875,7 +875,7 @@ void MainWindow::connectAllSlots()
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
-  connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionReloadSceneryCopyAirspaces, &QAction::triggered,
           NavApp::getDatabaseManager(), &DatabaseManager::copyAirspaces);
@@ -883,6 +883,12 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
+
+  // Windows menu ============================================================
+  connect(ui->actionShowMapWindow, &QAction::triggered, this, &MainWindow::showMapWindow);
+
+  // File menu ============================================================
+  connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
 
   // Flight plan file actions ============================================================
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
@@ -2164,16 +2170,13 @@ void MainWindow::options()
 /* Called by window shown event when the main window is visible the first time */
 void MainWindow::mainWindowShown()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "enter";
 
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
   profileWidget->mainWindowShown();
 
   mapWidget->showSavedPosOnStartup();
-
-  // Focus map widget instead of a random widget
-  mapWidget->setFocus();
 
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
@@ -2253,6 +2256,12 @@ void MainWindow::mainWindowShown()
     databaseManager->run();
   }
 
+  // Focus map widget instead of a random widget
+  ui->dockWidgetMap->show();
+  ui->dockWidgetMap->raise();
+  ui->dockWidgetMap->activateWindow();
+  mapWidget->setFocus();
+
   // If enabled connect to simulator without showing dialog
   NavApp::getConnectClient()->tryConnectOnStartup();
 
@@ -2271,6 +2280,7 @@ void MainWindow::mainWindowShown()
 
   // TODO DEBUG
   // routeNewFromString();
+  qDebug() << Q_FUNC_INFO << "leave";
 }
 
 /* Enable or disable actions related to online networks */
@@ -2430,6 +2440,14 @@ void MainWindow::resetWindowLayout()
 
   const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
   restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)), lnm::MAINWINDOW_STATE_VERSION);
+}
+
+void MainWindow::showMapWindow()
+{
+  mapWidget->setFocus();
+  ui->dockWidgetMap->show();
+  ui->dockWidgetMap->raise();
+  ui->dockWidgetMap->activateWindow();
 }
 
 /* Read settings for all windows, docks, controller and manager classes */

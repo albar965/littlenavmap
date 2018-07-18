@@ -116,6 +116,7 @@
     </widget>
     <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
+    <addaction name="actionShowMapWindow"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
     <addaction name="actionResetLayout"/>
@@ -7824,6 +7825,20 @@
    </property>
    <property name="statusTip">
     <string>Show navaid scenery search options</string>
+   </property>
+  </action>
+  <action name="actionShowMapWindow">
+   <property name="text">
+    <string>Show Map Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise and show the map window if undocked</string>
+   </property>
+   <property name="statusTip">
+    <string>Raise and show the map window if undocked</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+0</string>
    </property>
   </action>
  </widget>
