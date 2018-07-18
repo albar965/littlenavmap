@@ -56,6 +56,7 @@ struct PaintContext
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
+  float zoomDistanceMeter;
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
   map::MapObjectTypes objectTypes; /* Object types that should be drawn */

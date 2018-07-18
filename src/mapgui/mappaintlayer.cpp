@@ -400,6 +400,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.userPointTypes = NavApp::getUserdataController()->getSelectedTypes();
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
+      context.zoomDistanceMeter = static_cast<float>(mapWidget->distance() * 1000.);
 
       // Copy default font
       context.defaultFont = painter->font();

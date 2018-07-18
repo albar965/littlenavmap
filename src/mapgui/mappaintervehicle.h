@@ -53,7 +53,6 @@ public:
 
   virtual void render(PaintContext *context) = 0;
 
-
 protected:
   void paintTrack(const PaintContext *context);
 
@@ -77,6 +76,9 @@ protected:
                         int x, int y);
   void paintTextLabelWind(const PaintContext *context, int x, int y, int size,
                           const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
+  /* Calculate rotation for aircraft icon */
+  float calcRotation(const PaintContext *context, const atools::fs::sc::SimConnectAircraft& aircraft);
 
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;

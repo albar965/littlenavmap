@@ -65,30 +65,32 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
   {
     if(!hidden)
     {
-      context->szFont(context->textSizeAircraftAi);
+      float rotate = calcRotation(context, vehicle);
 
-      // Position is visible
-      context->painter->translate(x, y);
-      if(vehicle.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-        context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegTrue()));
-      else
-        context->painter->rotate(atools::geo::normalizeCourse(vehicle.getHeadingDegMag() + NavApp::getMagVar(pos)));
+      if(rotate < map::INVALID_COURSE_VALUE)
+      {
+        // Position is visible
+        context->painter->translate(x, y);
+        context->painter->rotate(rotate);
 
-      int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-      int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
+        int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
+        int minSize = vehicle.getCategory() == atools::fs::sc::BOAT ? 28 : 32;
 
-      int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
-      int offset = -(size / 2);
+        int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
+        int offset = -(size / 2);
 
-      // Draw symbol
-      context->painter->drawPixmap(offset, offset,
-                                   *NavApp::getVehicleIcons()->pixmapFromCache(vehicle, size, 0));
+        // Draw symbol
+        context->painter->drawPixmap(offset, offset, *NavApp::getVehicleIcons()->pixmapFromCache(vehicle, size, 0));
 
-      context->painter->resetTransform();
+        context->painter->resetTransform();
 
-      // Build text label
-      if(vehicle.getCategory() != atools::fs::sc::BOAT)
-        paintTextLabelAi(context, x, y, size, vehicle, forceLabel);
+        // Build text label
+        if(vehicle.getCategory() != atools::fs::sc::BOAT)
+        {
+          context->szFont(context->textSizeAircraftAi);
+          paintTextLabelAi(context, x, y, size, vehicle, forceLabel);
+        }
+      }
     }
   }
 }
@@ -107,19 +109,43 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   if(context->dOpt(opts::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
      userAircraft.getGroundSpeedKts() > 30 &&
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-    symbolPainter->drawTrackLine(context->painter, x, y, size * 2, userAircraft.getTrackDegTrue());
+  {
+    // Get projection corrected rotation angle
+    float rotate = scale->getScreenRotation(userAircraft.getTrackDegTrue(),
+                                            userAircraft.getPosition(), context->zoomDistanceMeter);
+
+    if(rotate < map::INVALID_COURSE_VALUE)
+      symbolPainter->drawTrackLine(context->painter, x, y, size * 2, rotate);
+  }
 
   // Position is visible
-  context->painter->translate(x, y);
-  context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
+  // Get projection corrected rotation angle
+  float rotate = calcRotation(context, userAircraft);
 
-  // Draw symbol
-  context->painter->drawPixmap(offset, offset,
-                               *NavApp::getVehicleIcons()->pixmapFromCache(userAircraft, size, 0));
-  context->painter->resetTransform();
+  if(rotate < map::INVALID_COURSE_VALUE)
+  {
+    context->painter->translate(x, y);
+    context->painter->rotate(atools::geo::normalizeCourse(rotate));
 
-  // Build text label
-  paintTextLabelUser(context, x, y, size, userAircraft);
+    // Draw symbol
+    context->painter->drawPixmap(offset, offset, *NavApp::getVehicleIcons()->pixmapFromCache(userAircraft, size, 0));
+    context->painter->resetTransform();
+
+    // Build text label
+    paintTextLabelUser(context, x, y, size, userAircraft);
+  }
+}
+
+float MapPainterVehicle::calcRotation(const PaintContext *context, const SimConnectAircraft& aircraft)
+{
+  float rotate;
+  if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+    rotate = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue());
+  else
+    rotate = atools::geo::normalizeCourse(aircraft.getHeadingDegMag() + NavApp::getMagVar(aircraft.getPosition()));
+
+  // Get projection corrected rotation angle
+  return scale->getScreenRotation(rotate, aircraft.getPosition(), context->zoomDistanceMeter);
 }
 
 void MapPainterVehicle::paintTrack(const PaintContext *context)

@@ -41,7 +41,7 @@ public:
   MapScale();
 
   /* Update internal values */
-  bool update(Marble::ViewportParams *viewport, double distance);
+  bool update(Marble::ViewportParams *viewportParams, double distance);
 
   /* Use if angle is unknown */
   static Q_DECL_CONSTEXPR float DEFAULT_ANGLE = 45.f;
@@ -65,6 +65,11 @@ public:
     return !scales.isEmpty();
   }
 
+  /* Calculate the needed projection corrected rotation for e.g. aircraft icons.
+   * The corrections is only needed for the spherical projection.
+   * Returns map::INVALID_COURSE_VALUE if the value cannot be calculated. */
+  float getScreenRotation(float angle, const atools::geo::Pos& position, float zoomDistanceMeter) const;
+
 private:
   friend QDebug operator<<(QDebug out, const MapScale& scale);
 
@@ -74,6 +79,7 @@ private:
 
   /* Screen pixel per km for eight directions */
   QVector<float> scales;
+  Marble::ViewportParams *viewport = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPSCALE_H

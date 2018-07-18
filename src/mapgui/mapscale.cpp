@@ -21,6 +21,9 @@
 #include "geo/pos.h"
 #include "geo/calculations.h"
 #include "geo/rect.h"
+#include "common/maptypes.h"
+
+#include <QLineF>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -30,20 +33,21 @@ MapScale::MapScale()
 
 }
 
-bool MapScale::update(ViewportParams *viewport, double distance)
+bool MapScale::update(ViewportParams *viewportParams, double distance)
 {
-  CoordinateConverter converter(viewport);
+  viewport = viewportParams;
+  CoordinateConverter converter(viewportParams);
 
   if(distance != lastDistance ||
-     viewport->centerLatitude() != lastCenterLatYRad ||
-     viewport->centerLongitude() != lastCenterLonXRad ||
-     viewport->projection() != lastProjection)
+     viewportParams->centerLatitude() != lastCenterLatYRad ||
+     viewportParams->centerLongitude() != lastCenterLonXRad ||
+     viewportParams->projection() != lastProjection)
   {
     // zoom, center of projection has changed
     lastDistance = distance;
-    lastCenterLonXRad = viewport->centerLongitude();
-    lastCenterLatYRad = viewport->centerLatitude();
-    lastProjection = viewport->projection();
+    lastCenterLonXRad = viewportParams->centerLongitude();
+    lastCenterLatYRad = viewportParams->centerLatitude();
+    lastProjection = viewportParams->projection();
 
     // Calculate center point on screen
     Pos center(lastCenterLonXRad, lastCenterLatYRad);
@@ -76,6 +80,46 @@ QSize MapScale::getScreeenSizeForRect(const atools::geo::Rect& rect) const
 
   // Use maximum of top width and bottom width
   return QSize(std::max(topWidth, bottomWidth) * 2, height * 2);
+}
+
+float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position, float zoomDistanceMeter) const
+{
+  if(viewport != nullptr && viewport->projection() == Marble::Spherical && zoomDistanceMeter > 50)
+  {
+    // Get screen coordinates or origin
+    Marble::GeoDataCoordinates coords(position.getLonX(), position.getLatY(), 0., GeoDataCoordinates::Degree);
+    bool globeHidesPoint = false, globeHidesPointEnd = false;
+    double x = 0., y = 0., xEnd = 0., yEnd = 0.;
+    bool visible = viewport->screenCoordinates(coords, x, y, globeHidesPoint);
+
+    if(globeHidesPoint || !visible)
+      // Not visible
+      return map::INVALID_COURSE_VALUE;
+
+    // Use a tenth of the zoom distance which results in a screen length of 15 - 30 pixel
+    // Calculate endpoint in global coordinate system
+    Pos end = position.endpoint(zoomDistanceMeter / 10.f, angle);
+
+    // Calculate screen coordinates of endpoint
+    Marble::GeoDataCoordinates endcoords(end.getLonX(), end.getLatY(), 0., GeoDataCoordinates::Degree);
+    viewport->screenCoordinates(endcoords, xEnd, yEnd, globeHidesPointEnd);
+
+    if(!globeHidesPointEnd)
+    {
+      QLineF line(x, y, xEnd, yEnd);
+      qDebug() << Q_FUNC_INFO << line.length();
+
+      if(line.length() > 5.)
+        angle = atools::geo::normalizeCourse(
+          static_cast<float>(atools::geo::angleFromQt(line.angle())));
+      else
+        return map::INVALID_COURSE_VALUE;
+    }
+    else
+      // Hide if endpoint is not visible
+      return map::INVALID_COURSE_VALUE;
+  }
+  return angle;
 }
 
 int MapScale::getPixelIntForMeter(float meter, float directionDeg) const
@@ -129,9 +173,9 @@ QDebug operator<<(QDebug out, const MapScale& scale)
   QDebugStateSaver saver(out);
 
   out << "Scale["
-  << "lastDistance" << scale.lastDistance
-  << "lastCenterLonX" << scale.lastCenterLonXRad
-  << "lastCenterLatY" << scale.lastCenterLatYRad
-  << scale.scales << "]";
+      << "lastDistance" << scale.lastDistance
+      << "lastCenterLonX" << scale.lastCenterLonXRad
+      << "lastCenterLatY" << scale.lastCenterLatYRad
+      << scale.scales << "]";
   return out;
 }
