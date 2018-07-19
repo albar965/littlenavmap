@@ -99,6 +99,7 @@ float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position,
     // Use a tenth of the zoom distance which results in a screen length of 15 - 30 pixel
     // Calculate endpoint in global coordinate system
     Pos end = position.endpoint(zoomDistanceMeter / 10.f, angle);
+    end.normalize();
 
     // Calculate screen coordinates of endpoint
     Marble::GeoDataCoordinates endcoords(end.getLonX(), end.getLatY(), 0., GeoDataCoordinates::Degree);
