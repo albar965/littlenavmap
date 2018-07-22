@@ -348,6 +348,11 @@ struct MapProcedureLeg
     return mapType & proc::PROCEDURE_MISSED;
   }
 
+  bool isDirectToRunway() const
+  {
+    return type == proc::DIRECT_TO_RUNWAY;
+  }
+
   bool isHold() const;
   bool isCircular() const;
 

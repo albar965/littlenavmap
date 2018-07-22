@@ -90,7 +90,8 @@ private:
   void paintUserpoint(const PaintContext *context, int x, int y, bool preview);
   void paintProcedurePoint(const PaintContext *context, int x, int y, bool preview);
 
-  void paintApproachPoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context, const proc::MapProcedureLegs& legs, int index, bool preview,
+  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
+                           const proc::MapProcedureLegs& legs, int index, bool preview,
                            bool drawText);
 
   void drawSymbols(const PaintContext *context, const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints,
@@ -99,16 +100,16 @@ private:
   void drawRouteSymbolText(const PaintContext *context,
                            const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
-                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview,
-                            bool draw);
+  void paintProcedureSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
+                             int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview,
+                             bool draw);
 
   void paintTopOfDescent(const PaintContext *context);
 
-  QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
-                           QPointF intersectPoint, bool draw);
-  void paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
-                        const proc::MapProcedureLeg& leg, bool draw);
+  QLineF paintProcedureTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
+                            QPointF intersectPoint, bool draw);
+  void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
+                         const proc::MapProcedureLeg& leg, bool draw);
 
   void paintProcedureFlyover(const PaintContext *context, int x, int y, int size);
 

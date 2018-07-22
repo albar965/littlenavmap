@@ -148,11 +148,10 @@ const QColor mapDragColor = QColor(Qt::darkYellow);
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
 
-const QColor routeProcedurePreviewOutlineColor = QColor(Qt::black);
+const QColor routeProcedureOutlineColor = QColor(Qt::black);
+
 const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
-
-const QColor routeProcedureOutlineColor = QColor(Qt::black);
 
 const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);

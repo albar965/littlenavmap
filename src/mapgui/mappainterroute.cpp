@@ -117,7 +117,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
     else
     {
-      // Text and lines are drawn by paintApproach
+      // Text and lines are drawn by paintProcedure
       routeTexts.append(QString());
       lines.append(Line());
     }
@@ -326,7 +326,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
   QLineF lastLine, lastActiveLine;
 
-  painter->setPen(QPen(mapcolors::routeProcedurePreviewOutlineColor, outerlinewidth,
+  painter->setPen(QPen(mapcolors::routeProcedureOutlineColor, outerlinewidth,
                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   for(int i = 0; i < legs.size(); i++)
   {
@@ -379,8 +379,8 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   if(!preview && activeValid && activeProcLeg >= 0 && activeProcLeg < legs.size())
   {
     painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen);
-    paintApproachSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
-                         true /* draw */);
+    paintProcedureSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
+                          true /* draw */);
   }
 
   if(!context->drawFast)
@@ -454,13 +454,13 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // No text labels for passed points
     bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
-    paintApproachPoint(lastLegPoint, context, legs, i, preview, drawText);
+    paintProcedurePoint(lastLegPoint, context, legs, i, preview, drawText);
   }
 }
 
-void MapPainterRoute::paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
-                                           int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
-                                           bool noText, bool preview, bool draw)
+void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
+                                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
+                                            bool noText, bool preview, bool draw)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
 
@@ -549,7 +549,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
       if(!lastLine.p2().isNull() && lineDist > 2)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
-        paintApproachBow(prevLeg, lastLine, painter, line, leg, draw);
+        paintProcedureBow(prevLeg, lastLine, painter, line, leg, draw);
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line with course but not distance
@@ -560,7 +560,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
         // Lines are connected but a turn direction is given
         // Draw a small arc if a turn direction is given
 
-        QLineF nextLine = paintApproachTurn(lastLine, line, leg, painter, intersectPoint, draw);
+        QLineF nextLine = paintProcedureTurn(lastLine, line, leg, painter, intersectPoint, draw);
 
         Pos p1 = sToW(nextLine.p1());
         Pos p2 = sToW(nextLine.p2());
@@ -700,8 +700,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const pr
   }
 }
 
-void MapPainterRoute::paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
-                                       QLineF line, const proc::MapProcedureLeg& leg, bool draw)
+void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
+                                        QLineF line, const proc::MapProcedureLeg& leg, bool draw)
 {
   if(!prevLeg->line.getPos2().isValid() || !leg.line.getPos1().isValid())
     return;
@@ -741,8 +741,8 @@ void MapPainterRoute::paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLi
   }
 }
 
-QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg,
-                                          QPainter *painter, QPointF intersectPoint, bool draw)
+QLineF MapPainterRoute::paintProcedureTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg,
+                                           QPainter *painter, QPointF intersectPoint, bool draw)
 {
   QPointF endPos = line.p2();
   if(leg.interceptPos.isValid())
@@ -791,8 +791,8 @@ QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const p
   return nextLine;
 }
 
-void MapPainterRoute::paintApproachPoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
-                                         const proc::MapProcedureLegs& legs, int index, bool preview, bool drawText)
+void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const PaintContext *context,
+                                          const proc::MapProcedureLegs& legs, int index, bool preview, bool drawText)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
   bool drawTextDetail = context->mapLayer->isApproachTextAndDetail() && drawText;
