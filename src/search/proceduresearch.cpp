@@ -175,7 +175,7 @@ void ProcedureSearch::resetSearch()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     // Only reset if this tab is active
-    ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
+    ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
   }
 }
@@ -242,9 +242,15 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   treeWidget->setFocus();
 
   if(NavApp::getRouteConst().isAirportDeparture(airport.ident))
+  {
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_DEPARTURE_PROCEDURES);
+    ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
+  }
   else if(NavApp::getRouteConst().isAirportDestination(airport.ident))
+  {
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ARRIVAL_PROCEDURES);
+    ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
+  }
   else
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_ALL_PROCEDURES);
 
@@ -329,7 +335,7 @@ void ProcedureSearch::clearRunwayFilter()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   ui->comboBoxProcedureRunwayFilter->blockSignals(true);
-  ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
+  ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
   ui->comboBoxProcedureRunwayFilter->clear();
   ui->comboBoxProcedureRunwayFilter->addItem(tr("All Runways"));
   ui->comboBoxProcedureRunwayFilter->blockSignals(false);

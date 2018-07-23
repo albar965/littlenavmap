@@ -60,7 +60,7 @@ class ProcedureSearch :
 
 public:
   ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex);
-  virtual ~ProcedureSearch();
+  virtual ~ProcedureSearch() override;
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
   void showProcedures(map::MapAirport airport);
@@ -112,6 +112,13 @@ private:
     FILTER_DEPARTURE_PROCEDURES,
     FILTER_ARRIVAL_PROCEDURES,
     FILTER_APPROACH_AND_TRANSITIONS
+  };
+
+  enum RunwayFilterIndex
+  {
+    FILTER_ALL_RUNWAYS,
+    FILTER_NO_RUNWAYS /* Only if empty runways exist */
+    /* Runways follow */
   };
 
   virtual void tabDeactivated() override;
