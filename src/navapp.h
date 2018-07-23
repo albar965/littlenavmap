@@ -45,6 +45,7 @@ class OnlinedataController;
 class UserdataIcons;
 class UserdataSearch;
 class VehicleIcons;
+class ApronGeometryCache;
 
 namespace atools {
 
@@ -223,6 +224,8 @@ public:
 
   static VehicleIcons *getVehicleIcons();
 
+  static ApronGeometryCache* getApronGeometryCache();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
@@ -231,6 +234,7 @@ private:
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
+  static ApronGeometryCache *apronGeometryCache;
 
   /* Most important handlers */
   static ConnectClient *connectClient;

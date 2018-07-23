@@ -250,6 +250,7 @@ struct MapRunwayEnd
 /* Apron including full geometry */
 struct MapApron
 {
+  int apronId;
   /* FSX/P3D simple geometry */
   atools::geo::LineString vertices;
 
@@ -266,7 +267,7 @@ struct MapApron
 
   int getId() const
   {
-    return -1;
+    return apronId;
   }
 
 };

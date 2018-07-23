@@ -35,6 +35,7 @@
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
 #include "common/vehicleicons.h"
+#include "mapgui/aprongeometrycache.h"
 
 #include "ui_mainwindow.h"
 
@@ -50,6 +51,7 @@ AirspaceQuery *NavApp::airspaceQuery = nullptr;
 AirspaceQuery *NavApp::airspaceQueryOnline = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
+ApronGeometryCache *NavApp::apronGeometryCache = nullptr;
 
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
@@ -137,9 +139,12 @@ void NavApp::init(MainWindow *mainWindowParam)
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
   procedureQuery->initQueries();
 
+  apronGeometryCache = new ApronGeometryCache();
+
   connectClient = new ConnectClient(mainWindow);
 
   updateHandler = new UpdateHandler(mainWindow);
+
   // The check will be called on main window shown
 }
 
@@ -200,6 +205,10 @@ void NavApp::deInit()
   delete procedureQuery;
   procedureQuery = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete apronGeometryCache";
+  delete apronGeometryCache;
+  apronGeometryCache = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete databaseManager";
   delete databaseManager;
   databaseManager = nullptr;
@@ -246,6 +255,8 @@ void NavApp::preDatabaseLoad()
   airspaceQuery->deInitQueries();
   airspaceQueryOnline->deInitQueries();
   procedureQuery->deInitQueries();
+
+  apronGeometryCache->clear();
 
   delete databaseMeta;
   databaseMeta = nullptr;
@@ -439,6 +450,11 @@ atools::fs::common::MagDecReader *NavApp::getMagDecReader()
 VehicleIcons *NavApp::getVehicleIcons()
 {
   return vehicleIcons;
+}
+
+ApronGeometryCache *NavApp::getApronGeometryCache()
+{
+  return apronGeometryCache;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()

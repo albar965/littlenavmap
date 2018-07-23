@@ -38,6 +38,7 @@
 #include "logging/loggingguiabort.h"
 #include "query/airportquery.h"
 #include "mapgui/mapwidget.h"
+#include "mapgui/aprongeometrycache.h"
 #include "profile/profilewidget.h"
 #include "route/routecontroller.h"
 #include "gui/filehistoryhandler.h"
@@ -246,6 +247,9 @@ MainWindow::MainWindow()
     updateMapObjectsShown();
 
     profileWidget->updateProfileShowFeatures();
+
+    // Initialize the X-Plane apron geometry cache
+    NavApp::getApronGeometryCache()->setViewportParams(NavApp::getMapWidget()->viewport());
 
     loadNavmapLegend();
     updateLegend();

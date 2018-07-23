@@ -29,7 +29,9 @@
 #include "mapgui/mapwidget.h"
 #include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
+#include "mapgui/aprongeometrycache.h"
 #include "atools.h"
+#include "navapp.h"
 
 #include <QElapsedTimer>
 
@@ -180,13 +182,13 @@ void MapPainterAirport::render(PaintContext *context)
     // Airport diagram is not influenced by detail level
     if(!context->mapLayerEffective->isAirportDiagram())
       // Draw simplified runway lines
-      drawAirportSymbolOverview(context, *airport, pt.x(), pt.y());
+      drawAirportSymbolOverview(context, *airport, static_cast<float>(pt.x()), static_cast<float>(pt.y()));
 
     // More detailed symbol will be drawn by the route painter - so skip here
     if(!routeAirportIdMap.contains(airport->id))
     {
       // Symbol will be omitted for runway overview
-      drawAirportSymbol(context, *airport, pt.x(), pt.y());
+      drawAirportSymbol(context, *airport, static_cast<float>(pt.x()), static_cast<float>(pt.y()));
 
       // Build and draw airport text
       textflags::TextFlags flags;
@@ -203,8 +205,8 @@ void MapPainterAirport::render(PaintContext *context)
         flags |= textflags::NO_BACKGROUND;
 
       context->szFont(context->textSizeAirport);
-      symbolPainter->drawAirportText(context->painter, *airport, pt.x(), pt.y(), context->dispOpts,
-                                     flags,
+      symbolPainter->drawAirportText(context->painter, *airport, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
+                                     context->dispOpts, flags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagram(),
@@ -270,7 +272,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
       if(!apron.vertices.isEmpty())
         drawFsApron(context, apron);
       if(!apron.geometry.boundary.isEmpty())
-        drawXplaneApron(context, apron, true);
+        drawXplaneApron(context, apron, true /* draw fast */);
     }
   }
 }
@@ -285,89 +287,14 @@ void MapPainterAirport::drawFsApron(const PaintContext *context, const map::MapA
   context->painter->QPainter::drawPolygon(apronPoints.data(), apronPoints.size());
 }
 
-/* Draw X-Plane aprons including bezier curves */
-QPainterPath MapPainterAirport::pathForBoundary(const atools::fs::common::Boundary& boundaryNodes, bool fast)
-{
-  bool visible;
-  QPainterPath apronPath;
-  atools::fs::common::Node lastNode;
-
-  // Create a copy and close the geometry
-  atools::fs::common::Boundary boundary = boundaryNodes;
-
-  if(!boundary.isEmpty())
-    boundary.append(boundary.first());
-
-  int i = 0;
-  for(const atools::fs::common::Node& node : boundary)
-  {
-    // QPen pen = painter->pen();
-    // painter->setPen(QPen(QColor(200, 200, 200), 1, Qt::SolidLine, Qt::FlatCap));
-    QPointF lastPt = wToSF(lastNode.node, DEFAULT_WTOS_SIZE, &visible);
-    QPointF pt = wToSF(node.node, DEFAULT_WTOS_SIZE, &visible);
-    // painter->drawEllipse(pt, 5, 5);
-    // painter->drawText(pt, QString("%1").arg(i));
-    // if(node.control.isValid())
-    // {
-    // QPointF ctlpt = wToSF(node.control, DEFAULT_WTOS_SIZE, &visible);
-    // painter->drawEllipse(ctlpt, 5, 2);
-    // painter->drawText(ctlpt + QPointF(0, 10), QString("C_%1").arg(i));
-    // painter->drawEllipse(pt + (pt - ctlpt), 2, 5);
-    // painter->drawText(pt + (pt - ctlpt) + QPointF(0, 10), QString("CX_%1").arg(i));
-    // painter->drawLine(ctlpt, pt + (pt - ctlpt));
-    // }
-    // painter->setPen(pen);
-
-    if(i == 0)
-      // Fist point
-      apronPath.moveTo(wToS(node.node, DEFAULT_WTOS_SIZE, &visible));
-    else if(fast)
-      // Use lines only for fast drawing
-      apronPath.lineTo(pt);
-    else
-    {
-      if(lastNode.control.isValid() && node.control.isValid())
-      {
-        // Two successive control points - use cubic curve
-        QPointF ctlpt = wToSF(lastNode.control, DEFAULT_WTOS_SIZE, &visible);
-        QPointF ctlpt2 = wToSF(node.control, DEFAULT_WTOS_SIZE, &visible);
-        apronPath.cubicTo(ctlpt, pt + (pt - ctlpt2), pt);
-      }
-      else if(lastNode.control.isValid())
-      {
-        // One control point - use quad curve
-        if(lastPt != pt)
-          apronPath.quadTo(wToSF(lastNode.control, DEFAULT_WTOS_SIZE, &visible), pt);
-      }
-      else if(node.control.isValid())
-      {
-        // One control point - use quad curve
-        if(lastPt != pt)
-          apronPath.quadTo(pt + (pt - wToSF(node.control, DEFAULT_WTOS_SIZE, &visible)), pt);
-      }
-      else
-        apronPath.lineTo(pt);
-    }
-
-    lastNode = node;
-    i++;
-  }
-  return apronPath;
-}
-
 void MapPainterAirport::drawXplaneApron(const PaintContext *context, const map::MapApron& apron, bool fast)
 {
-  // Create the apron boundary
-  QPainterPath boundaryPath = pathForBoundary(apron.geometry.boundary, fast);
+  // Create the apron boundary or get it from the cache for this zoom distance
+  QPainterPath boundaryPath =
+    NavApp::getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
 
-  if(!fast)
-  {
-    // Substract holes
-    for(atools::fs::common::Boundary hole : apron.geometry.holes)
-      boundaryPath = boundaryPath.subtracted(pathForBoundary(hole, fast));
-  }
-
-  context->painter->drawPath(boundaryPath);
+  if(!boundaryPath.isEmpty())
+    context->painter->drawPath(boundaryPath);
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */

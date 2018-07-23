@@ -65,8 +65,6 @@ private:
 
   const Route *route;
 
-  QPainterPath pathForBoundary(const atools::fs::common::Boundary& boundaryNodes, bool fast);
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

@@ -234,6 +234,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
     {
       map::MapApron ap;
 
+      ap.apronId = apronQuery->valueInt("apron_id");
       ap.surface = apronQuery->value("surface").toString();
       ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 

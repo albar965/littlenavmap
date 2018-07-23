@@ -235,7 +235,8 @@ SOURCES += src/main.cpp\
     src/search/searchbasetable.cpp \
     src/mapgui/mapfunctions.cpp \
     src/common/vehicleicons.cpp \
-    src/route/routeexport.cpp
+    src/route/routeexport.cpp \
+    src/mapgui/aprongeometrycache.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -337,7 +338,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/searchbasetable.h \
     src/mapgui/mapfunctions.h \
     src/common/vehicleicons.h \
-    src/route/routeexport.h
+    src/route/routeexport.h \
+    src/mapgui/aprongeometrycache.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
