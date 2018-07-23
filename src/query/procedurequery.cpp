@@ -858,13 +858,24 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
           if(leg.fixType != "R" && legs.runwayEnd.isValid())
           {
             // Not a runway fix and runway reference is valid - add own runway fix
+            // This is a circle to land approach
             proc::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
             rwleg.type = proc::DIRECT_TO_RUNWAY;
-            rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
+
+            // At 50ft above threshold
+            // TODO this does not consider displaced thresholds
+            rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f;
             rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
             rwleg.mapType = proc::PROCEDURE_APPROACH;
 
-            legs.approachLegs.insert(i + 1 - legs.transitionLegs.size(), rwleg);
+            int insertPosition = i + 1 - legs.transitionLegs.size();
+            legs.approachLegs.insert(insertPosition, rwleg);
+
+            // Coordinates for missed after CTL legs are already correct since this new leg is missing when the
+            // coordinates are calculated
+            // proc::MapProcedureLeg& mapLeg = legs[insertPosition + 1];
+            // mapLeg.line.setPos1(rwleg.line.getPos1());
+
             break;
           }
         }
@@ -905,7 +916,6 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
   for(int i = 0; i < legs.size(); i++)
   {
     proc::MapProcedureLeg& leg = legs[i];
-    const proc::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     proc::ProcedureLegType type = leg.type;
 
     if(!leg.line.isValid())
@@ -1029,13 +1039,18 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
 
+    const proc::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     if(prevLeg != nullptr && !leg.intercept && type != proc::INITIAL_FIX)
+    {
       // Add distance from any existing gaps, bows or turns except for intercept legs
-      leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
+      // Use first position (MAP) of last leg for circle-to-land approaches
+      Pos lastPos = prevLeg->isDirectToRunway() && leg.isMissed() ? prevLeg->line.getPos1() : prevLeg->line.getPos2();
+      leg.calculatedDistance += meterToNm(lastPos.distanceMeterTo(leg.line.getPos1()));
+    }
 
     if(leg.calculatedDistance >= map::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedDistance = 0.f;
-    if(leg.calculatedTrueCourse >= map::INVALID_DISTANCE_VALUE / 2)
+    if(leg.calculatedTrueCourse >= map::INVALID_COURSE_VALUE / 2)
       leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
 
     if(leg.isTransition() || leg.isSidTransition() || leg.isStarTransition())
@@ -1315,6 +1330,11 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
         {
           bool nextIsArc = next->isCircular();
           Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
+
+          if(prevLeg != nullptr && prevLeg->isDirectToRunway() && leg.isMissed())
+            // Use first position (MAP) of last leg for circle-to-land approaches
+            start = prevLeg->line.getPos1();
+
           Pos intersect;
           if(nextIsArc)
           {

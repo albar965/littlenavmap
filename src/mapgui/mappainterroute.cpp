@@ -331,8 +331,12 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   for(int i = 0; i < legs.size(); i++)
   {
     // Do not draw background for passed legs but calculate lastLine
-    bool draw = i >= passedProcLeg || !activeValid || preview;
-    paintApproachSegment(context, legs, i, lastLine, nullptr, true /* no text */, preview, draw);
+    bool draw = (i >= passedProcLeg) || !activeValid || preview;
+    if(legs.at(i).isDirectToRunway())
+      // Do not draw outline for circle-to-land approach legs
+      draw = false;
+
+    paintProcedureSegment(context, legs, i, lastLine, nullptr, true /* no text */, preview, draw);
   }
 
   QPen missedPen(color, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
@@ -372,13 +376,31 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
       // Remember for drawing the active one
       lastActiveLine = lastLine;
 
-    paintApproachSegment(context, legs, i, lastLine, &drawTextLines, noText, preview, true /* draw */);
+    if(legs.at(i).isDirectToRunway())
+    {
+      // Use different pattern and smaller line for circle-to-land approaches
+      QPen pen = painter->pen();
+      pen.setStyle(Qt::DotLine);
+      pen.setWidthF(pen.widthF() * 3.f / 4.f);
+      painter->setPen(pen);
+    }
+
+    paintProcedureSegment(context, legs, i, lastLine, &drawTextLines, noText, preview, true /* draw */);
   }
 
   // Paint active leg if in range for this procedure
   if(!preview && activeValid && activeProcLeg >= 0 && activeProcLeg < legs.size())
   {
-    painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen);
+    QPen pen = legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen;
+
+    if(legs.at(activeProcLeg).isDirectToRunway())
+    {
+      // Use different pattern and smaller line if active is circle-to-land leg
+      pen.setStyle(Qt::DotLine);
+      pen.setWidthF(pen.widthF() * 3.f / 4.f);
+    }
+    painter->setPen(pen);
+
     paintProcedureSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
                           true /* draw */);
   }
@@ -541,9 +563,8 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::COURSE_TO_INTERCEPT,
                               proc::HEADING_TO_INTERCEPT}))
   {
-    if(contains(leg.turnDirection,
-                {"R", "L" /*, "B"*/}) && prevLeg != nullptr && prevLeg->type != proc::INITIAL_FIX &&
-       prevLeg->type != proc::START_OF_PROCEDURE)
+    if(contains(leg.turnDirection, {"R", "L" /*, "B"*/}) &&
+       prevLeg != nullptr && prevLeg->type != proc::INITIAL_FIX && prevLeg->type != proc::START_OF_PROCEDURE)
     {
       float lineDist = static_cast<float>(QLineF(lastLine.p2(), line.p1()).length());
       if(!lastLine.p2().isNull() && lineDist > 2)
@@ -598,8 +619,11 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
         if(draw)
         {
           if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
-            // Close any gaps in the lines
-            painter->drawLine(lastLine.p2(), line.p1());
+          {
+            if(!(prevLeg != nullptr && prevLeg->isDirectToRunway() && leg.isMissed()))
+              // Close any gaps in the lines but not for circle-to-land legs
+              painter->drawLine(lastLine.p2(), line.p1());
+          }
 
           painter->drawLine(line);
         }
