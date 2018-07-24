@@ -28,6 +28,7 @@
 #include "fs/navdatabaseprogress.h"
 #include "common/formatter.h"
 #include "fs/fspaths.h"
+#include "gui/helphandler.h"
 #include "fs/navdatabase.h"
 #include "sql/sqlutil.h"
 #include "sql/sqltransaction.h"
@@ -657,6 +658,21 @@ void DatabaseManager::switchNavFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
 
+  if(navDbActionAll->isChecked())
+  {
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_NAVDATABASES, lnm::helpLanguageOnline());
+    QString message = QObject::tr(
+      "<p>Note that airport information is limited in this mode.<br/>"
+      "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.</p>"
+      "<p>Additionally, smaller airports might be missing.</p>"
+        "<p>Runway layout might not match the runway layout in the simulator if you use stock or older airport scenery.</p>"
+          "<p><b>Click the link below for more information:<br/><br/>"
+          "<a href=\"%1\">Online Manual - Navigation Databases</a></b><br/></p>").arg(url.toString());
+
+    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
+                                                QObject::tr("Do not &show this dialog again."));
+  }
+
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   // Disconnect all queries
@@ -1011,7 +1027,7 @@ void DatabaseManager::copyAirspaces()
                                                       true /* named bindings */));
 
           // Copy from one database to another
-          std::function<bool(SqlQuery&, SqlQuery &)> func =
+          std::function<bool(SqlQuery&, SqlQuery&)> func =
             [](SqlQuery&, SqlQuery& to) -> bool
             {
               // use an invalid value for file_id to avoid display in information window

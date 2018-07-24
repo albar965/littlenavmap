@@ -2139,6 +2139,8 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
+  s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
+
 
   setStatusMessage(tr("All message dialogs reset."));
 }
