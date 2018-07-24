@@ -109,7 +109,10 @@ WeatherReporter::~WeatherReporter()
 
 atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
 {
-  return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(airportIdent);
+  if(!NavApp::isLoadingDatabase())
+    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(airportIdent);
+  else
+    return atools::geo::EMPTY_POS;
 }
 
 void WeatherReporter::noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line)

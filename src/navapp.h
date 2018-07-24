@@ -224,7 +224,10 @@ public:
 
   static VehicleIcons *getVehicleIcons();
 
-  static ApronGeometryCache* getApronGeometryCache();
+  static ApronGeometryCache *getApronGeometryCache();
+
+  /* Not entirely reliable since other modules might be initialized later */
+  static bool isLoadingDatabase();
 
 private:
   /* Database query helpers and caches */
@@ -253,6 +256,7 @@ private:
   static UpdateHandler *updateHandler;
   static VehicleIcons *vehicleIcons;
 
+  static bool loadingDatabase;
   static bool shuttingDown;
 };
 

@@ -68,6 +68,7 @@ OnlinedataController *NavApp::onlinedataController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
 
 bool NavApp::shuttingDown = false;
+bool NavApp::loadingDatabase = false;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -248,6 +249,7 @@ void NavApp::preDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
 
+  loadingDatabase = true;
   infoQuery->deInitQueries();
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
@@ -280,6 +282,7 @@ void NavApp::postDatabaseLoad()
   airspaceQueryOnline->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
+  loadingDatabase = false;
 }
 
 Ui::MainWindow *NavApp::getMainUi()
@@ -455,6 +458,11 @@ VehicleIcons *NavApp::getVehicleIcons()
 ApronGeometryCache *NavApp::getApronGeometryCache()
 {
   return apronGeometryCache;
+}
+
+bool NavApp::isLoadingDatabase()
+{
+  return loadingDatabase;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()
