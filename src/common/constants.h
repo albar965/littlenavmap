@@ -98,6 +98,7 @@ const QLatin1Literal ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 
 const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
+const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
 
 const QLatin1Literal ACTIONS_SHOW_FS9_FSC_WARNING("Actions/ShowFs9Warning");
 const QLatin1Literal ACTIONS_SHOW_FLP_WARNING("Actions/ShowFlpWarning");

@@ -1351,10 +1351,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
   // Show a simple warning for the rare case that altitude is null
   if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 1.f))
   {
-    QMessageBox box(this);
-    box.setText(tr("Flight plan cruise altitude is zero.\nSimulator might not be able to load the flight plan."));
-    box.setButtonText(QMessageBox::Ok, tr("&Continue"));
-    box.exec();
+    QString message = tr("Flight plan cruise altitude is zero.\nSimulator might not be able to load the flight plan.");
+
+    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, message,
+                                                QObject::tr("Do not &show this dialog again."));
   }
 
   // Use a button box including a save as button
@@ -2149,6 +2149,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
   s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
