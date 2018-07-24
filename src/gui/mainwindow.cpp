@@ -1348,6 +1348,15 @@ bool MainWindow::routeSaveCheckFMS11Warnings()
 /* Display warning dialogs depending on format to save and allow to cancel out or save as */
 bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat)
 {
+  // Show a simple warning for the rare case that altitude is null
+  if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 1.f))
+  {
+    QMessageBox box(this);
+    box.setText(tr("Flight plan cruise altitude is zero.\nSimulator might not be able to load the flight plan."));
+    box.setButtonText(QMessageBox::Ok, tr("&Continue"));
+    box.exec();
+  }
+
   // Use a button box including a save as button
   atools::gui::DialogButtonList buttonList =
   {
@@ -2140,7 +2149,6 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
   s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
-
 
   setStatusMessage(tr("All message dialogs reset."));
 }
