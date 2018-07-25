@@ -69,6 +69,8 @@ const QString HELP_ONLINE_LEGEND_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/LEG
 
 const QString HELP_ONLINE_INSTALL_REDIST(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/INSTALLATION.html#windows");
 
+const QString HELP_ONLINE_INSTALL_GLOBE(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/OPTIONS.html#cache-elevation");
+
 const QString HELP_ONLINE_NAVDATABASES(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/NAVDATA.html");
 
 const QLatin1Literal HELP_LEGEND_INLINE_FILE("help/legend-${LANG}.html");
@@ -95,6 +97,7 @@ const QLatin1Literal ACTIONS_SHOWROUTE_PROC_ERROR("Actions/ShowRouteProcedureErr
 const QLatin1Literal ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChanged");
 const QLatin1Literal ACTIONS_SHOW_UPDATE_FAILED("Actions/ShowUpdateFailed");
 const QLatin1Literal ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
+const QLatin1Literal ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 
 const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");

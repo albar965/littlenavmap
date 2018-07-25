@@ -2150,6 +2150,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
   s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
@@ -2210,6 +2211,21 @@ void MainWindow::mainWindowShown()
 #endif
 
     atools::gui::Dialog(nullptr).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
+                                                QObject::tr("Do not &show this dialog again."));
+  }
+
+  if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
+  {
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_INSTALL_GLOBE, lnm::helpLanguageOnline());
+    QString message = QObject::tr("<p>The online elevation data which is used by default for the elevation profile "
+                                    "is limited and has a lot of errors.<br/>"
+                                    "Therefore, it is recommended to download and use the offline GLOBE elevation data "
+                                    "which provides world wide coverage.</p>"
+                                    "<p><b>Click the link below for more information:<br/><br/>"
+                                    "<a href=\"%1\">Online Manual - Options Dialog / Flight Plan Elevation Profile</a></b><br/></p>")
+                      .arg(url.toString());
+
+    atools::gui::Dialog(nullptr).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
                                                 QObject::tr("Do not &show this dialog again."));
   }
 
