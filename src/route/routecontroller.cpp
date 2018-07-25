@@ -649,11 +649,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   bool forceUpdate = flightplan.getFileFormat() != atools::fs::pln::PLN_FSX;
 
   // Do not create an entry on the undo stack since this plan file type does not support it
-  bool quietUpdate = flightplan.getFileFormat() != atools::fs::pln::PLN_FSX ? false : !quiet;
-
-  if(updateStartPositionBestRunway(forceUpdate /* force */, quietUpdate /* undo */))
+  if(updateStartPositionBestRunway(forceUpdate /* force */, false /* undo */))
   {
-    if(quietUpdate)
+    if(flightplan.getFileFormat() != atools::fs::pln::PLN_FSX ? false : !quiet)
     {
       NavApp::deleteSplashScreen();
 
