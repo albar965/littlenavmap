@@ -196,5 +196,6 @@
         <file>resources/config/networks.cfg</file>
         <file>resources/icons/aircraft_online.svg</file>
         <file>resources/icons/aircraft_online_ground.svg</file>
+        <file>resources/icons/mapshadow.svg</file>
     </qresource>
 </RCC>

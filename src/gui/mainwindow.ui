@@ -256,6 +256,16 @@
      </property>
      <addaction name="separator"/>
     </widget>
+    <widget class="QMenu" name="menuSunShading">
+     <property name="title">
+      <string>Sun Shading</string>
+     </property>
+     <addaction name="actionMapShowSunShadingSimulatorTime"/>
+     <addaction name="actionMapShowSunShadingRealTime"/>
+     <addaction name="actionMapShowSunShadingUserTime"/>
+     <addaction name="separator"/>
+     <addaction name="actionMapShowSunShadingSetTime"/>
+    </widget>
     <addaction name="actionMapResetSettings"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
@@ -287,6 +297,9 @@
     <addaction name="actionMapShowGrid"/>
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowHillshading"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowSunShading"/>
+    <addaction name="menuSunShading"/>
     <addaction name="separator"/>
     <addaction name="menuViewProjection"/>
     <addaction name="menuViewTheme"/>
@@ -4088,6 +4101,7 @@
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
    <addaction name="actionMapShowHillshading"/>
+   <addaction name="actionMapShowSunShading"/>
   </widget>
   <widget class="QToolBar" name="toolBarRoute">
    <property name="windowTitle">
@@ -7839,6 +7853,83 @@
    </property>
    <property name="shortcut">
     <string>Alt+0</string>
+   </property>
+  </action>
+  <action name="actionMapShowSunShading">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapshadow.svg</normaloff>:/littlenavmap/resources/icons/mapshadow.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Sun &amp;Shading</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the sun shadind on the globe</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the sun shadind on the globe</string>
+   </property>
+  </action>
+  <action name="actionMapShowSunShadingRealTime">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Real UTC Time</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw sun shading based on UTC real time</string>
+   </property>
+   <property name="statusTip">
+    <string>Draw sun shading based on UTC real time</string>
+   </property>
+  </action>
+  <action name="actionMapShowSunShadingSimulatorTime">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Simulator Time</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw sun shading based on simulator time</string>
+   </property>
+   <property name="statusTip">
+    <string>Draw sun shading based on simulator time</string>
+   </property>
+  </action>
+  <action name="actionMapShowSunShadingUserTime">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;User defined Time</string>
+   </property>
+   <property name="toolTip">
+    <string>Draw sun shading based on user defined time</string>
+   </property>
+   <property name="statusTip">
+    <string>Draw sun shading based on user defined time</string>
+   </property>
+  </action>
+  <action name="actionMapShowSunShadingSetTime">
+   <property name="text">
+    <string>&amp;Set User defined Time</string>
+   </property>
+   <property name="toolTip">
+    <string>Set user defined time for sun shading</string>
+   </property>
+   <property name="statusTip">
+    <string>Set user defined time for sun shading</string>
    </property>
   </action>
  </widget>

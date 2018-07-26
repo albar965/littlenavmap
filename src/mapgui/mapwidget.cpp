@@ -138,6 +138,7 @@ MapWidget::MapWidget(MainWindow *parent)
 
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
+  setSunShadingDimFactor(static_cast<double>(100 - OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
   // "Compass" id "compass"
   // "License" id "license"
@@ -200,6 +201,7 @@ void MapWidget::setTheme(const QString& theme, int index)
     // Enable all buttons for custom maps
     ui->actionMapShowCities->setEnabled(true);
     ui->actionMapShowHillshading->setEnabled(true);
+    ui->actionMapShowSunShading->setEnabled(true);
   }
   else
   {
@@ -209,24 +211,32 @@ void MapWidget::setTheme(const QString& theme, int index)
       case MapWidget::STAMENTERRAIN:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
+        ui->actionMapShowSunShading->setEnabled(true);
         break;
+
       case MapWidget::OPENTOPOMAP:
         setPropertyValue("ice", false);
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
+        ui->actionMapShowSunShading->setEnabled(true);
         break;
+
       case MapWidget::OPENSTREETMAPROADS:
       case MapWidget::OPENSTREETMAP:
       case MapWidget::CARTODARK:
       case MapWidget::CARTOLIGHT:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(true);
+        ui->actionMapShowSunShading->setEnabled(true);
+        ui->actionMapShowSunShading->setEnabled(true);
         break;
+
       case MapWidget::SIMPLE:
       case MapWidget::PLAIN:
       case MapWidget::ATLAS:
         ui->actionMapShowCities->setEnabled(true);
         ui->actionMapShowHillshading->setEnabled(false);
+        ui->actionMapShowSunShading->setEnabled(false);
         break;
       case MapWidget::INVALID:
         qWarning() << "Invalid theme index" << index;
@@ -248,6 +258,11 @@ void MapWidget::optionsChanged()
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
 
+  // Updated sun shadow and force a tile refresh by changing the show status again
+  setSunShadingDimFactor(static_cast<double>(100 - OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
+  setShowSunShading(showSunShading());
+
+  // reloadMap();
   updateCacheSizes();
   update();
 }
@@ -272,6 +287,11 @@ void MapWidget::updateCacheSizes()
 void MapWidget::updateMapObjectsShown()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
+
+  setShowMapSunShading(ui->actionMapShowSunShading->isChecked() &&
+                       currentComboIndex != MapWidget::SIMPLE && currentComboIndex != MapWidget::PLAIN
+                       && currentComboIndex != MapWidget::ATLAS);
+
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
                  (currentComboIndex == MapWidget::SIMPLE || currentComboIndex == MapWidget::PLAIN
                   || currentComboIndex == MapWidget::ATLAS));
@@ -342,6 +362,26 @@ void MapWidget::updateMapObjectsShown()
 
   // Update widget
   update();
+}
+
+void MapWidget::setShowMapSunShading(bool show)
+{
+  setShowSunShading(show);
+}
+
+QDateTime MapWidget::getSunShadingDateTime() const
+{
+  return model()->clockDateTime();
+}
+
+void MapWidget::setSunShadingDateTime(const QDateTime& datetime)
+{
+  if(std::abs(datetime.toSecsSinceEpoch() - model()->clockDateTime().toSecsSinceEpoch()) > 300)
+  {
+    // Update only if difference more than 5 minutes
+    model()->setClockDateTime(datetime);
+    update();
+  }
 }
 
 void MapWidget::setShowMapPois(bool show)
@@ -476,16 +516,27 @@ void MapWidget::saveState()
   s.remove("plugin_overviewmap/path_uranus");
   s.remove("plugin_overviewmap/path_venus");
 
+  // Mark coordinates
   s.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());
   s.setValue(lnm::MAP_MARKLATY, searchMarkPos.getLatY());
 
+  // Home coordinates and zoom
   s.setValue(lnm::MAP_HOMELONX, homePos.getLonX());
   s.setValue(lnm::MAP_HOMELATY, homePos.getLatY());
   s.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
-  s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
 
+  s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
   s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
   s.setValueVar(lnm::MAP_AIRSPACES, QVariant::fromValue(paintLayer->getShownAirspaces()));
+
+  // Sun shading settings
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->actionMapShowSunShadingSimulatorTime->isChecked())
+    s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, MapWidget::SUN_SHADING_SIMULATOR_TIME);
+  else if(ui->actionMapShowSunShadingRealTime->isChecked())
+    s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, MapWidget::SUN_SHADING_REAL_TIME);
+  else if(ui->actionMapShowSunShadingUserTime->isChecked())
+    s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, MapWidget::SUN_SHADING_USER_TIME);
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
@@ -582,6 +633,23 @@ void MapWidget::restoreState()
   else
     mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
   setMapDetail(mapDetailLevel);
+
+  // Sun shading settings
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  MapSunShadingIndex sunShading =
+    static_cast<MapSunShadingIndex>(s.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, SUN_SHADING_SIMULATOR_TIME));
+  switch(sunShading)
+  {
+    case MapWidget::SUN_SHADING_SIMULATOR_TIME:
+      ui->actionMapShowSunShadingSimulatorTime->setChecked(true);
+      break;
+    case MapWidget::SUN_SHADING_REAL_TIME:
+      ui->actionMapShowSunShadingRealTime->setChecked(true);
+      break;
+    case MapWidget::SUN_SHADING_USER_TIME:
+      ui->actionMapShowSunShadingUserTime->setChecked(true);
+      break;
+  }
 
   if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
     searchMarkPos = Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
@@ -980,6 +1048,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
   if(databaseLoadStatus || !aircraft.isValid())
     return;
+
+  if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
+    // Update sun shade on globe with simulator time
+    setSunShadingDateTime(aircraft.getZuluTime());
 
   screenIndex->updateSimData(simulatorData);
   const atools::fs::sc::SimConnectUserAircraft& last = screenIndex->getLastUserAircraft();

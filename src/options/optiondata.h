@@ -684,6 +684,11 @@ public:
     return displayThicknessCompassRose;
   }
 
+  int getDisplaySunShadingDimFactor() const
+  {
+    return displaySunShadingDimFactor;
+  }
+
   float getRouteTodRule() const
   {
     return routeTodRule;
@@ -932,6 +937,9 @@ private:
 
   // spinBoxOptionsDisplayThicknessCompassRose
   int displayThicknessCompassRose = 100;
+
+  // spinBoxOptionsDisplaySunShadeDarkness
+  int displaySunShadingDimFactor = 60;
 
   // spinBoxSimMaxTrackPoints
   int aircraftTrackMaxPoints = 20000;

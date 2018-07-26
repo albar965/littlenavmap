@@ -63,6 +63,7 @@
 #include "search/onlineserversearch.h"
 #include "route/routeexport.h"
 #include "query/airspacequery.h"
+#include "gui/timedialog.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -321,6 +322,8 @@ MainWindow::~MainWindow()
   delete actionGroupMapProjection;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
   delete actionGroupMapTheme;
+  qDebug() << Q_FUNC_INFO << "delete actionGroupMapSunShading";
+  delete actionGroupMapSunShading;
 
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
@@ -506,6 +509,12 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
   ui->toolbarMapOptions->addWidget(mapThemeComboBox);
+
+  // Sun shading sub menu
+  actionGroupMapSunShading = new QActionGroup(ui->menuSunShading);
+  actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingSimulatorTime);
+  actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingRealTime);
+  actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingUserTime);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
@@ -1044,6 +1053,13 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
+
+  // Sun shading
+  connect(ui->actionMapShowSunShading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowSunShadingSimulatorTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
+  connect(ui->actionMapShowSunShadingRealTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
+  connect(ui->actionMapShowSunShadingUserTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
+  connect(ui->actionMapShowSunShadingSetTime, &QAction::triggered, this, &MainWindow::sunShadingTimeSet);
 
   // Order is important here. First let the mapwidget delete the track then notify the profile
   connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, mapWidget, &MapWidget::deleteAircraftTrack);
@@ -1948,6 +1964,39 @@ void MainWindow::mapSaveImage()
   }
 }
 
+void MainWindow::sunShadingTimeChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(ui->actionMapShowSunShadingRealTime->isChecked() || ui->actionMapShowSunShadingUserTime->isChecked())
+    // User time defaults to current time until set
+    mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
+  else if(ui->actionMapShowSunShadingSimulatorTime->isChecked())
+  {
+    if(!NavApp::isConnected())
+      // Use current time if not connected
+      mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
+    // else  Updated by simDataChanged
+  }
+}
+
+void MainWindow::sunShadingTimeSet()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Initalize dialog with current time
+  TimeDialog timeDialog(this, mapWidget->getSunShadingDateTime());
+  if(timeDialog.exec() == QDialog::Accepted)
+  {
+    qDebug() << Q_FUNC_INFO << timeDialog.getDateTime();
+
+    // Select user option and update
+    ui->actionMapShowSunShadingUserTime->setChecked(true);
+    mapWidget->setSunShadingDateTime(timeDialog.getDateTime());
+    mapWidget->update();
+  }
+}
+
 /* Selection in flight plan table has changed */
 void MainWindow::routeSelectionChanged(int selected, int total)
 {
@@ -2546,6 +2595,7 @@ void MainWindow::restoreStateMain()
   widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
+    // Restore map settings if desired by the user
     widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                          ui->actionMapShowEmptyAirports,
                          ui->actionMapShowAddonAirports,
@@ -2562,12 +2612,12 @@ void MainWindow::restoreStateMain()
   else
     mapWidget->resetSettingActionsToDefault();
 
+  // Map settings that are always loaded
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
-                       ui->actionMapShowCities,
-                       ui->actionMapShowHillshading, ui->actionRouteEditMode,
-                       ui->actionWorkOffline,
-                       ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                       ui->actionUserdataCreateLogbook});
+                       ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
+                       ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
+                       ui->actionUserdataCreateLogbook,
+                       ui->actionMapShowSunShading});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -2686,7 +2736,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapAircraftCenter,
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                    ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                    ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading,
+                    ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,

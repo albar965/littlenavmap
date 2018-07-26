@@ -236,7 +236,8 @@ SOURCES += src/main.cpp\
     src/mapgui/mapfunctions.cpp \
     src/common/vehicleicons.cpp \
     src/route/routeexport.cpp \
-    src/mapgui/aprongeometrycache.cpp
+    src/mapgui/aprongeometrycache.cpp \
+    src/gui/timedialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -339,7 +340,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mapfunctions.h \
     src/common/vehicleicons.h \
     src/route/routeexport.h \
-    src/mapgui/aprongeometrycache.h
+    src/mapgui/aprongeometrycache.h \
+    src/gui/timedialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -352,7 +354,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/db/databaseerrordialog.ui \
     src/gui/updatedialog.ui \
     src/userdata/userdatadialog.ui \
-    src/userdata/userdataexportdialog.ui
+    src/userdata/userdataexportdialog.ui \
+    src/gui/timedialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

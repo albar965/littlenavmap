@@ -264,6 +264,12 @@ private:
   void checkForUpdates();
   void updateClock() const;
 
+  /* Actions that define the time source call this*/
+  void sunShadingTimeChanged();
+
+  /* Set user defined time for sun shading */
+  void sunShadingTimeSet();
+
   /* Original unchanged window title */
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
@@ -311,7 +317,7 @@ private:
   RouteExport *routeExport = nullptr;
 
   /* Action  groups for main menu */
-  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr;
+  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr;
 
   QTimer weatherUpdateTimer;
 

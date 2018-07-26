@@ -230,6 +230,11 @@ public:
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
 
+  /* Globe shadow */
+  void setShowMapSunShading(bool show);
+  void setSunShadingDateTime(const QDateTime& datetime);
+  QDateTime getSunShadingDateTime() const;
+
   /* Define which airport or navaid types are shown on the map */
   void setShowMapFeatures(map::MapObjectTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
@@ -298,6 +303,13 @@ public:
     ATLAS,
     CUSTOM, /* Custom maps count from this index up */
     INVALID = -1
+  };
+
+  enum MapSunShadingIndex
+  {
+    SUN_SHADING_SIMULATOR_TIME,
+    SUN_SHADING_REAL_TIME,
+    SUN_SHADING_USER_TIME
   };
 
   void restoreHistoryState();
