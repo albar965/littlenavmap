@@ -75,7 +75,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   context->painter->setBrush(Qt::NoBrush);
 
-  drawStartParking(context);
+  if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
+    drawStartParking(context);
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -106,7 +107,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival()) // empty space from STAR to transition or approach
       )
     {
-      if(i >= passedRouteLeg)
+      if(i >= passedRouteLeg || context->distance > layer::DISTANCE_CUT_OFF_LIMIT)
         routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
                           QString::number(leg.getCourseToRhumbMag(), 'f', 0) + tr("°M"));
       else
@@ -227,19 +228,22 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Remember last point across procedures to avoid overlaying text
   proc::MapProcedureLeg lastLegPoint;
 
-  // Draw arrival and departure procedures ============================
-  const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
-  if(route->hasAnyDepartureProcedure())
-    paintProcedure(lastLegPoint, context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
-                   flightplanProcedureColor, false /* preview */);
+  if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
+  {
+    // Draw arrival and departure procedures ============================
+    const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
+    if(route->hasAnyDepartureProcedure())
+      paintProcedure(lastLegPoint, context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
+                     flightplanProcedureColor, false /* preview */);
 
-  if(route->hasAnyStarProcedure())
-    paintProcedure(lastLegPoint, context, route->getStarLegs(), route->getStarLegsOffset(),
-                   flightplanProcedureColor, false /* preview */);
+    if(route->hasAnyStarProcedure())
+      paintProcedure(lastLegPoint, context, route->getStarLegs(), route->getStarLegsOffset(),
+                     flightplanProcedureColor, false /* preview */);
 
-  if(route->hasAnyArrivalProcedure())
-    paintProcedure(lastLegPoint, context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
-                   flightplanProcedureColor, false /* preview */);
+    if(route->hasAnyArrivalProcedure())
+      paintProcedure(lastLegPoint, context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
+                     flightplanProcedureColor, false /* preview */);
+  }
 
 #ifdef DEBUG_ROUTE_PAINT
   context->painter->save();
@@ -540,7 +544,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
     else
     {
       if(draw)
-        painter->drawLine(line);
+        drawLine(painter, line);
       lastLine = line;
 
       if(drawTextLines != nullptr)
@@ -605,8 +609,8 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
         // Intercept a CF leg
         if(draw)
         {
-          painter->drawLine(line.p1(), intersectPoint);
-          painter->drawLine(intersectPoint, line.p2());
+          drawLine(painter, line.p1(), intersectPoint);
+          drawLine(painter, intersectPoint, line.p2());
         }
         lastLine = QLineF(intersectPoint, line.p2());
 
@@ -622,10 +626,10 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
           {
             if(!(prevLeg != nullptr && prevLeg->isDirectToRunway() && leg.isMissed()))
               // Close any gaps in the lines but not for circle-to-land legs
-              painter->drawLine(lastLine.p2(), line.p1());
+              drawLine(painter, lastLine.p2(), line.p1());
           }
 
-          painter->drawLine(line);
+          drawLine(painter, line);
         }
         lastLine = line;
 
@@ -645,7 +649,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::DIRECT_TO_RUNWAY}))
   {
     if(draw)
-      painter->drawLine(line);
+      drawLine(painter, line);
     lastLine = line;
 
     if(drawTextLines != nullptr)
@@ -716,7 +720,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                                  mapcolors::routeTextBackgroundColor);
 
     if(draw)
-      painter->drawLine(line.p1(), pc);
+      drawLine(painter, line.p1(), pc);
 
     if(drawTextLines != nullptr)
       // Can draw a label along the line
@@ -759,7 +763,7 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QL
       path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
       painter->drawPath(path);
 
-      painter->drawLine(lineDraw);
+      drawLine(painter, lineDraw);
     }
     lastLine = lineDraw;
   }
@@ -803,11 +807,11 @@ QLineF MapPainterRoute::paintProcedureTurn(QLineF& lastLine, QLineF line, const 
   QLineF nextLine(arc.p2(), endPos);
   if(draw)
   {
-    painter->drawLine(nextLine);
+    drawLine(painter, nextLine);
 
     if(leg.interceptPos.isValid())
       // Add line from intercept leg
-      painter->drawLine(endPos, line.p2());
+      drawLine(painter, endPos, line.p2());
   }
 
   lastLine = nextLine.toLine();
@@ -860,11 +864,11 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
     QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
 
-    painter->drawLine(pt1, pt2);
+    drawLine(painter, pt1, pt2);
   }
 
   painter->setPen(QPen(Qt::darkBlue, 10));
-  painter->drawLine(holdLine);
+  drawLine(painter, holdLine);
 
   painter->setPen(QPen(Qt::darkBlue, 7));
   for(int i = 0; i < leg.geometry.size(); i++)

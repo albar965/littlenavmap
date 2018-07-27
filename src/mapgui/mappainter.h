@@ -171,6 +171,12 @@ protected:
   /* No GC and no rhumb */
   void drawLineStraight(const PaintContext *context, const atools::geo::Line& line);
 
+  /* Save versions of drawLine which check for valid coordinates and bounds */
+  void drawLine(QPainter *painter, const QLine& line);
+  void drawLine(QPainter *painter, const QLineF& line);
+  void drawLine(QPainter *painter, const QPoint& p1, const QPoint& p2);
+  void drawLine(QPainter *painter, const QPointF& p1, const QPointF& p2);
+
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left);
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
