@@ -2691,6 +2691,10 @@ void MainWindow::saveStateMain()
   if(optionsDialog != nullptr)
     optionsDialog->saveState();
 
+  qDebug() << "styleHandler";
+  if(NavApp::getStyleHandler() != nullptr)
+    NavApp::getStyleHandler()->saveState();
+
   saveActionStates();
 
   Settings& settings = Settings::instance();
