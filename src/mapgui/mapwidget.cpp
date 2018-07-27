@@ -267,6 +267,11 @@ void MapWidget::optionsChanged()
   update();
 }
 
+void MapWidget::styleChanged()
+{
+  update();
+}
+
 void MapWidget::updateCacheSizes()
 {
   quint64 volCacheKb = OptionData::instance().getCacheSizeMemoryMb() * 1000L;

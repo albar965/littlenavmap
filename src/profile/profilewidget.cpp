@@ -323,7 +323,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 {
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  bool darkStyle = OptionData::instance().isGuiStyleDark();
+  bool darkStyle = NavApp::isCurrentGuiStyleNight();
 
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
@@ -649,7 +649,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Dim the whole map
-  if(OptionData::instance().isGuiStyleDark())
+  if(NavApp::isCurrentGuiStyleNight())
   {
     int dim = OptionData::instance().getGuiStyleMapDimming();
     QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));

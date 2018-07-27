@@ -200,14 +200,21 @@ void ProcedureSearch::filterIndexRunwayChanged(int index)
 
 void ProcedureSearch::optionsChanged()
 {
+  QBitArray state = saveTreeViewState();
+
   // Adapt table view text size
+  gridDelegate->styleChanged();
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
   createFonts();
   updateTreeHeader();
   fillApproachTreeWidget();
-  emit procedureSelected(proc::MapProcedureRef());
-  emit procedureLegSelected(proc::MapProcedureRef());
 
+  restoreTreeViewState(state, true /* block signals */);
+}
+
+void ProcedureSearch::styleChanged()
+{
+  optionsChanged();
 }
 
 void ProcedureSearch::preDatabaseLoad()
@@ -271,7 +278,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
 
   fillApproachTreeWidget();
 
-  restoreTreeViewState(recentTreeState.value(currentAirportNav.id));
+  restoreTreeViewState(recentTreeState.value(currentAirportNav.id), false /* block signals */);
   updateHeaderLabel();
 }
 
@@ -581,7 +588,7 @@ void ProcedureSearch::restoreState()
   {
     // Restoring state will emit above signal
     if(currentAirportNav.isValid() && currentAirportNav.procedure())
-      restoreTreeViewState(state);
+      restoreTreeViewState(state, false /* block signals */);
   }
 
   updateHeaderLabel();
@@ -1193,11 +1200,11 @@ void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg&
     {
       item->setFont(i, leg.missed ? missedLegFont : legFont);
       if(leg.missed)
-        item->setForeground(i, OptionData::instance().isGuiStyleDark() ?
+        item->setForeground(i, NavApp::isCurrentGuiStyleNight() ?
                             mapcolors::routeProcedureMissedTableColorDark :
                             mapcolors::routeProcedureMissedTableColor);
       else
-        item->setForeground(i, OptionData::instance().isGuiStyleDark() ?
+        item->setForeground(i, NavApp::isCurrentGuiStyleNight() ?
                             mapcolors::routeProcedureTableColorDark :
                             mapcolors::routeProcedureTableColor);
     }
@@ -1258,7 +1265,7 @@ QBitArray ProcedureSearch::saveTreeViewState()
   return state;
 }
 
-void ProcedureSearch::restoreTreeViewState(const QBitArray& state)
+void ProcedureSearch::restoreTreeViewState(const QBitArray& state, bool blockSignals)
 {
   if(state.isEmpty())
     return;
@@ -1295,7 +1302,12 @@ void ProcedureSearch::restoreTreeViewState(const QBitArray& state)
   // Center the selected item
   if(selectedItem != nullptr)
   {
+    if(blockSignals)
+      treeWidget->blockSignals(true);
     selectedItem->setSelected(true);
+    if(blockSignals)
+      treeWidget->blockSignals(false);
+
     treeWidget->scrollToItem(selectedItem, QAbstractItemView::PositionAtTop);
   }
 }

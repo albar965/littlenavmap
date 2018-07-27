@@ -260,6 +260,11 @@ void SearchBaseTable::optionsChanged()
   view->update();
 }
 
+void SearchBaseTable::styleChanged()
+{
+  view->update();
+}
+
 void SearchBaseTable::updateTableSelection()
 {
   tableSelectionChanged();
@@ -963,13 +968,16 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   }
 
   if(atools::contains(getTabIndex(),
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionMapRangeRings);
 
   if(atools::contains(getTabIndex(), {si::SEARCH_NAV}))
     menu.addAction(ui->actionMapNavaidRange);
 
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionMapHideRangeRings);
     menu.addSeparator();
@@ -997,7 +1005,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetView);
   menu.addSeparator();
 
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(),
+                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                       si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);

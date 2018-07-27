@@ -71,6 +71,9 @@ public:
   /* Options dialog has changed some options */
   virtual void optionsChanged() = 0;
 
+  /* GUI style has changed */
+  virtual void styleChanged() = 0;
+
   /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
   virtual void connectSearchSlots() = 0;
 

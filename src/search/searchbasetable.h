@@ -72,7 +72,7 @@ public:
   /* Class will take ownership of columnList */
   SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
                   si::SearchTabIndex tabWidgetIndex);
-  virtual ~SearchBaseTable();
+  virtual ~SearchBaseTable() override;
 
   /* Disconnect and reconnect queries on database change */
   virtual void preDatabaseLoad() override;
@@ -89,6 +89,9 @@ public:
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;
+
+  /* GUI style has changed */
+  virtual void styleChanged() override;
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
   virtual void updateTableSelection() override;

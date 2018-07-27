@@ -131,6 +131,9 @@ public:
   /* Options have changed. Update table font, empty airport handling etc. */
   void optionsChanged();
 
+  /* GUI style has changed */
+  void styleChanged();
+
   /* Refresh after import or changes */
   void refreshUserdata();
 

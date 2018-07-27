@@ -72,6 +72,9 @@ public:
   /* Update fonts units, etc. */
   virtual void optionsChanged() override;
 
+  /* GUI style has changed */
+  virtual void styleChanged() override;
+
   virtual void preDatabaseLoad() override;
   virtual void postDatabaseLoad() override;
 
@@ -133,7 +136,7 @@ private:
 
   // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
-  void restoreTreeViewState(const QBitArray& state);
+  void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp,

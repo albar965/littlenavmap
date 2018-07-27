@@ -204,7 +204,11 @@ public:
   /* Disconnect painter to avoid updates while no data is available */
   void preDatabaseLoad();
 
+  /* Changes in options dialog */
   void optionsChanged();
+
+  /* GUI style has changed */
+  void styleChanged();
 
   /* Update map */
   void postDatabaseLoad();

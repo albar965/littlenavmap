@@ -30,7 +30,6 @@
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
-#include "gui/palettesettings.h"
 #include "util/updatecheck.h"
 
 #include <QFileInfo>
@@ -39,7 +38,6 @@
 #include <QRegularExpressionValidator>
 #include <QDesktopServices>
 #include <QColorDialog>
-#include <QStyleFactory>
 #include <QGuiApplication>
 #include <QMainWindow>
 #include <QUrl>
@@ -168,72 +166,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem(ai, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
   addItem(ai, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
   addItem(ai, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
-
-  // Collect names and palettes from all styles
-  for(const QString& styleName : QStyleFactory::keys())
-  {
-    ui->comboBoxOptionsGuiTheme->addItem(styleName, styleName);
-    QStyle *style = QStyleFactory::create(styleName);
-
-    QPalette palette = style->standardPalette();
-    if(styleName == "Fusion")
-    {
-      // Store fusion palette settings a in a separate ini file
-      QString filename = Settings::instance().getConfigFilename("_fusionstyle.ini");
-      atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
-      paletteSettings.syncPalette(palette);
-    }
-    stylePalettes.append(palette);
-    stylesheets.append(QString());
-    delete style;
-  }
-
-  QPalette darkPalette(QGuiApplication::palette());
-  darkPalette.setColor(QPalette::Window, QColor(15, 15, 15));
-  darkPalette.setColor(QPalette::WindowText, QColor(200, 200, 200));
-  darkPalette.setColor(QPalette::Base, QColor(20, 20, 20));
-  darkPalette.setColor(QPalette::AlternateBase, QColor(35, 35, 35));
-  darkPalette.setColor(QPalette::ToolTipBase, QColor(35, 35, 35));
-  darkPalette.setColor(QPalette::ToolTipText, QColor(200, 200, 200));
-  darkPalette.setColor(QPalette::Text, QColor(200, 200, 200));
-  darkPalette.setColor(QPalette::Button, QColor(35, 35, 35));
-  darkPalette.setColor(QPalette::ButtonText, QColor(200, 200, 200));
-  darkPalette.setColor(QPalette::BrightText, QColor(250, 250, 250));
-  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-
-  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-
-  darkPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
-  darkPalette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
-  darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
-
-  // Add additional night mode
-  ui->comboBoxOptionsGuiTheme->addItem("Night", "Fusion");
-
-  // Add stylesheet for better checkbox radio button and toolbutton visibility
-  stylesheets.append(
-    QLatin1Literal("QCheckBox::indicator:checked "
-                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
-    QLatin1Literal("QCheckBox::indicator:unchecked "
-                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }") +
-    QLatin1Literal("QRadioButton::indicator:checked "
-                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
-    QLatin1Literal("QRadioButton::indicator:unchecked "
-                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
-    QString("QToolButton:checked { background-color: %1;}").arg(darkPalette.color(QPalette::Window).lighter(600).name())
-    );
-
-  // Store dark palette settings a in a separate ini file
-  QString filename = Settings::instance().getConfigFilename("_nightstyle.ini");
-  atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
-  paletteSettings.syncPalette(darkPalette);
-
-  // darkPalette.setColor(QPalette::Active, QPalette::Text, QColor(100, 100, 100));
-  // darkPalette.setColor(QPalette::Active, QPalette::ButtonText, QColor(100, 100, 100));
-  // darkPalette.setColor(QPalette::Inactive, QPalette::Text, QColor(100, 100, 100));
-  // darkPalette.setColor(QPalette::Inactive, QPalette::ButtonText, QColor(100, 100, 100));
-  stylePalettes.append(darkPalette);
 
   rangeRingValidator = new RangeRingValidator;
 
@@ -373,10 +305,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
-  // GUI widgets
-  connect(ui->comboBoxOptionsGuiTheme, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &OptionsDialog::updateGuiStyleSpinboxState);
-
   // Weather widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::selectActiveSkyPathClicked);
@@ -493,7 +421,6 @@ int OptionsDialog::exec()
   updateCacheElevationStates();
   updateWidgetUnits();
   updateDatabaseButtonState();
-  updateGuiStyleSpinboxState();
   updateOnlineWidgetStatus();
 
   return QDialog::exec();
@@ -571,22 +498,6 @@ void OptionsDialog::updateWidgetUnits()
     Unit::replacePlaceholders(labelOptionsMapRangeRingsText));
 }
 
-void OptionsDialog::applyStyle()
-{
-  int idx = ui->comboBoxOptionsGuiTheme->currentIndex();
-  qDebug() << Q_FUNC_INFO << "index" << idx;
-
-  QApplication::setStyle(QStyleFactory::create(ui->comboBoxOptionsGuiTheme->currentData().toString()));
-
-  if(idx >= 0 && idx < stylePalettes.size())
-  {
-    qApp->setPalette(stylePalettes.at(idx));
-    qApp->setStyleSheet(stylesheets.at(idx));
-  }
-  else
-    qWarning() << "Invalid style index" << idx;
-}
-
 bool OptionsDialog::isOverrideLanguage()
 {
   return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LANGUAGE, false);
@@ -605,7 +516,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   {
     widgetsToOptionData();
     saveState();
-    applyStyle();
     emit optionsChanged();
 
     // Update dialog internal stuff
@@ -619,7 +529,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     widgetsToOptionData();
     saveState();
     updateWidgetUnits();
-    applyStyle();
     emit optionsChanged();
     accept();
   }
@@ -638,19 +547,14 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     if(result == QMessageBox::Yes)
     {
       // Reset option instance and set it to valid
-      int guiStyleIndex = OptionData::instanceInternal().guiStyleIndex;
       OptionData::instanceInternal() = OptionData();
       OptionData::instanceInternal().valid = true;
-
-      // Do not reset style
-      OptionData::instanceInternal().guiStyleIndex = guiStyleIndex;
 
       optionDataToWidgets();
       saveState();
       emit optionsChanged();
 
       updateWidgetUnits();
-      applyStyle();
       updateActiveSkyPathStatus();
       updateWeatherButtonState();
       updateDatabaseButtonState();
@@ -685,8 +589,6 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, flightplanPassedColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
-
-  settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
 
   settings.syncSettings();
 }
@@ -737,36 +639,11 @@ void OptionsDialog::restoreState()
   trailColor =
     settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
-  if(settings.contains(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX))
-  {
-    int idx = settings.valueInt(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX);
-    if(idx >= 0 && idx < ui->comboBoxOptionsGuiTheme->count())
-      ui->comboBoxOptionsGuiTheme->setCurrentIndex(idx);
-    else
-      qWarning() << "Invalid style index" << idx;
-  }
-  else
-  {
-    int index = 0;
-    QStyle *currentStyle = QApplication::style();
-
-    for(const QString& styleName : QStyleFactory::keys())
-    {
-      if(styleName.compare(currentStyle->objectName(), Qt::CaseInsensitive) == 0)
-      {
-        ui->comboBoxOptionsGuiTheme->setCurrentIndex(index);
-        break;
-      }
-      index++;
-    }
-  }
-
   widgetsToOptionData();
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
   mapEmptyAirportsClicked(false);
   simNoFollowAircraftOnScrollClicked(false);
-  applyStyle();
   updateButtonColors();
 }
 
@@ -995,12 +872,6 @@ void OptionsDialog::updateDatabaseButtonState()
     ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
 }
 
-void OptionsDialog::updateGuiStyleSpinboxState()
-{
-  ui->spinBoxOptionsGuiThemeMapDimming->setEnabled(
-    ui->comboBoxOptionsGuiTheme->currentIndex() == ui->comboBoxOptionsGuiTheme->count() - 1);
-}
-
 void OptionsDialog::simUpdatesConstantClicked(bool state)
 {
   Q_UNUSED(state);
@@ -1143,9 +1014,7 @@ void OptionsDialog::widgetsToOptionData()
   data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
 
-  data.guiStyleIndex = ui->comboBoxOptionsGuiTheme->currentIndex();
   data.guiStyleMapDimming = ui->spinBoxOptionsGuiThemeMapDimming->value();
-  data.guiStyleDark = data.guiStyleIndex == ui->comboBoxOptionsGuiTheme->count() - 1;
 
   data.mapClickSensitivity = ui->spinBoxOptionsMapClickRect->value();
   data.mapTooltipSensitivity = ui->spinBoxOptionsMapTooltipRect->value();
@@ -1323,7 +1192,6 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
 
-  ui->comboBoxOptionsGuiTheme->setCurrentIndex(data.guiStyleIndex);
   ui->spinBoxOptionsGuiThemeMapDimming->setValue(data.guiStyleMapDimming);
 
   ui->spinBoxOptionsMapClickRect->setValue(data.mapClickSensitivity);

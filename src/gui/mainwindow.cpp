@@ -22,6 +22,7 @@
 #include "navapp.h"
 #include "atools.h"
 #include "common/mapcolors.h"
+#include "gui/stylehandler.h"
 #include "gui/application.h"
 #include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -170,6 +171,10 @@ MainWindow::MainWindow()
     qDebug() << "MainWindow Creating DatabaseManager";
 
     NavApp::init(this);
+
+    NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
+    NavApp::getStyleHandler()->restoreState();
+    mapcolors::init();
 
     // Add actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();
@@ -728,7 +733,12 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
 
-  connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
+  // Style handler ===================================================================
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapWidget::styleChanged);
 
   // Route export signals =======================================================
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapWidget::showRect);
@@ -1077,6 +1087,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapMoreDetails, &QAction::triggered, mapWidget, &MapWidget::increaseMapDetail);
   connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
   connect(ui->actionMapDefaultDetails, &QAction::triggered, mapWidget, &MapWidget::defaultMapDetail);
+
+  connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 

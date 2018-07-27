@@ -114,7 +114,14 @@
      <addaction name="actionMapOverlayScalebar"/>
      <addaction name="actionMapOverlayNavigation"/>
     </widget>
+    <widget class="QMenu" name="menuWindowStyle">
+     <property name="title">
+      <string>Style</string>
+     </property>
+    </widget>
     <addaction name="menuViewOverlays"/>
+    <addaction name="separator"/>
+    <addaction name="menuWindowStyle"/>
     <addaction name="separator"/>
     <addaction name="actionShowMapWindow"/>
     <addaction name="actionShowStatusbar"/>

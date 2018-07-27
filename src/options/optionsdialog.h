@@ -45,7 +45,7 @@ class OptionsDialog :
 
 public:
   OptionsDialog(QMainWindow *parentWindow);
-  virtual ~OptionsDialog();
+  virtual ~OptionsDialog() override;
 
   /* Saves the state of all widgets */
   void saveState();
@@ -114,8 +114,6 @@ private:
   void restoreDisplayOptItemStates();
   void displayOptWidgetToOptionData();
   void displayOptDataToWidget();
-  void updateGuiStyleSpinboxState();
-  void applyStyle();
   void updateButtonColors();
   void updateCacheElevationStates();
   void offlineDataSelectClicked();
@@ -143,12 +141,6 @@ private:
   QString doubleSpinBoxOptionsMapZoomShowMapSuffix, doubleSpinBoxOptionsMapZoomShowMapMenuSuffix,
           spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText,
           doubleSpinBoxOptionsRouteTodRuleSuffix;
-
-  // Collect data for all available styles
-  QVector<QPalette> stylePalettes;
-  QStringList stylesheets;
-
-  int lastStyleIndex = 0;
 
 };
 

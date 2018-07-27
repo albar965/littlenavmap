@@ -36,6 +36,7 @@
 #include "search/searchcontroller.h"
 #include "common/vehicleicons.h"
 #include "mapgui/aprongeometrycache.h"
+#include "gui/stylehandler.h"
 
 #include "ui_mainwindow.h"
 
@@ -66,6 +67,7 @@ UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
+StyleHandler *NavApp::styleHandler = nullptr;
 
 bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
@@ -146,6 +148,8 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   updateHandler = new UpdateHandler(mainWindow);
 
+  styleHandler = new StyleHandler();
+
   // The check will be called on main window shown
 }
 
@@ -157,6 +161,10 @@ void NavApp::initElevationProvider()
 void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
+
+  qDebug() << Q_FUNC_INFO << "delete styleHandler ";
+  delete styleHandler;
+  styleHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete userdataController";
   delete userdataController;
@@ -463,6 +471,21 @@ ApronGeometryCache *NavApp::getApronGeometryCache()
 bool NavApp::isLoadingDatabase()
 {
   return loadingDatabase;
+}
+
+QString NavApp::getCurrentGuiStyleDisplayName()
+{
+  return styleHandler->getCurrentGuiStyleDisplayName();
+}
+
+bool NavApp::isCurrentGuiStyleNight()
+{
+  return styleHandler->isCurrentGuiStyleNight();
+}
+
+StyleHandler *NavApp::getStyleHandler()
+{
+  return styleHandler;
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()

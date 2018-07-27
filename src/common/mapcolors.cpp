@@ -77,6 +77,27 @@ QPen profileSafeAltLineDarkPen(Qt::darkRed, 4, Qt::SolidLine);
 QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
 QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine);
 
+/* Alternating colors */
+static QColor rowBgColor;
+static QColor rowAltBgColor;
+
+/* Slightly darker background for sort column */
+static QColor rowSortBgColor;
+static QColor rowSortAltBgColor;
+
+void styleChanged()
+{
+  rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+  rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
+  rowSortBgColor = rowBgColor.darker(106);
+  rowSortAltBgColor = rowAltBgColor.darker(106);
+}
+
+void init()
+{
+  styleChanged();
+}
+
 const QColor& colorForAirport(const map::MapAirport& ap)
 {
   if(ap.emptyDraw())
@@ -89,14 +110,6 @@ const QColor& colorForAirport(const map::MapAirport& ap)
 
 const QColor& alternatingRowColor(int row, bool isSort)
 {
-  /* Alternating colors */
-  static const QColor rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-  static const QColor rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
-
-  /* Slightly darker background for sort column */
-  static const QColor rowSortBgColor = rowBgColor.darker(106);
-  static const QColor rowSortAltBgColor = rowAltBgColor.darker(106);
-
   if((row % 2) == 0)
     return isSort ? rowSortBgColor : rowBgColor;
   else

@@ -46,6 +46,7 @@ class UserdataIcons;
 class UserdataSearch;
 class VehicleIcons;
 class ApronGeometryCache;
+class StyleHandler;
 
 namespace atools {
 
@@ -229,6 +230,11 @@ public:
   /* Not entirely reliable since other modules might be initialized later */
   static bool isLoadingDatabase();
 
+  static QString getCurrentGuiStyleDisplayName();
+  static bool isCurrentGuiStyleNight();
+
+  static StyleHandler *getStyleHandler();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
@@ -255,6 +261,7 @@ private:
 
   static UpdateHandler *updateHandler;
   static VehicleIcons *vehicleIcons;
+  static StyleHandler *styleHandler;
 
   static bool loadingDatabase;
   static bool shuttingDown;

@@ -699,11 +699,6 @@ public:
     return guiStyleMapDimming;
   }
 
-  bool isGuiStyleDark() const
-  {
-    return guiStyleDark;
-  }
-
   const QString& getOfflineElevationPath() const
   {
     return cacheOfflineElevationPath;
@@ -843,10 +838,6 @@ private:
 
   // ui->spinBoxOptionsGuiSearchText
   int guiSearchTableTextSize = 100;
-
-  // ui->comboBoxOptionsGuiTheme
-  int guiStyleIndex = 0;
-  bool guiStyleDark = false;
 
   // ui->spinBoxOptionsGuiThemeMapDimming
   int guiStyleMapDimming = 50;

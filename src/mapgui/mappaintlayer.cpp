@@ -496,7 +496,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     }
 
     // Dim the map by drawing a semi-transparent black rectangle
-    if(OptionData::instance().isGuiStyleDark())
+    if(NavApp::isCurrentGuiStyleNight())
     {
       int dim = OptionData::instance().getGuiStyleMapDimming();
       QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));

@@ -1753,6 +1753,12 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   emit routeChanged(true);
 }
 
+void RouteController::styleChanged()
+{
+  highlightProcedureItems();
+  highlightNextWaypoint(route.getActiveLegIndexCorrected());
+}
+
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
@@ -2864,7 +2870,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
   {
     if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
     {
-      QColor color = OptionData::instance().isGuiStyleDark() ?
+      QColor color = NavApp::isCurrentGuiStyleNight() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
       for(int col = rc::FIRST_COLUMN; col <= rc::LAST_COLUMN; ++col)
@@ -2900,11 +2906,11 @@ void RouteController::highlightProcedureItems()
         if(leg.isAnyProcedure())
         {
           if(leg.getProcedureLeg().isMissed())
-            item->setForeground(OptionData::instance().isGuiStyleDark() ?
+            item->setForeground(NavApp::isCurrentGuiStyleNight() ?
                                 mapcolors::routeProcedureMissedTableColorDark :
                                 mapcolors::routeProcedureMissedTableColor);
           else
-            item->setForeground(OptionData::instance().isGuiStyleDark() ?
+            item->setForeground(NavApp::isCurrentGuiStyleNight() ?
                                 mapcolors::routeProcedureTableColorDark :
                                 mapcolors::routeProcedureTableColor);
         }

@@ -38,9 +38,16 @@ namespace mapcolors {
 /* Load/save colors from/to configuration file */
 void syncColors();
 
+/* Update some colors on GUI style change */
+void styleChanged();
+
+/* Initialize some color after applying style initially */
+void init();
+
 // ==========================================================================
 /* Colors and pens that are updated from confguration file by syncColors */
 extern QColor airportDetailBackColor;
+
 extern QColor airportEmptyColor;
 extern QColor toweredAirportColor;
 extern QColor unToweredAirportColor;

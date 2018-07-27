@@ -82,6 +82,12 @@ void SearchController::optionsChanged()
     search->optionsChanged();
 }
 
+void SearchController::styleChanged()
+{
+  for(AbstractSearch *search : allSearchTabs)
+    search->styleChanged();
+}
+
 void SearchController::helpPressed()
 {
   HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "SEARCH.html", lnm::helpLanguageOnline());
@@ -94,17 +100,20 @@ void SearchController::helpPressedProcedure()
 
 void SearchController::helpPressedUserdata()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-search", lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-search",
+                              lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineClient()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-client", lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-client",
+                              lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineCenter()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-center", lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-center",
+                              lnm::helpLanguageOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */

@@ -195,6 +195,7 @@ public:
   void reverseRoute();
 
   void optionsChanged();
+  void styleChanged();
 
   /* Get the route table as a HTML document only containing the table and header */
   QString flightplanTableAsHtml(int iconSizePixel) const;
