@@ -930,7 +930,7 @@ private:
   int displayThicknessCompassRose = 100;
 
   // spinBoxOptionsDisplaySunShadeDarkness
-  int displaySunShadingDimFactor = 60;
+  int displaySunShadingDimFactor = 40;
 
   // spinBoxSimMaxTrackPoints
   int aircraftTrackMaxPoints = 20000;

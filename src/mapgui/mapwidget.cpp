@@ -138,7 +138,7 @@ MapWidget::MapWidget(MainWindow *parent)
 
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
-  setSunShadingDimFactor(static_cast<double>(100 - OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
+  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
   // "Compass" id "compass"
   // "License" id "license"
@@ -259,7 +259,7 @@ void MapWidget::optionsChanged()
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
 
   // Updated sun shadow and force a tile refresh by changing the show status again
-  setSunShadingDimFactor(static_cast<double>(100 - OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
+  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
 
   // reloadMap();
