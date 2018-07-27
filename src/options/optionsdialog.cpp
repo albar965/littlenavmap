@@ -121,51 +121,56 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+  // Build tree settings to map tab =====================================================
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
-  QTreeWidgetItem *ap = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
-  addItem(ap, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
-  addItem(ap, tr("Tower Frequency"), QString(), opts::ITEM_AIRPORT_TOWER, true);
-  addItem(ap, tr("ATIS / ASOS / AWOS Frequency"), QString(), opts::ITEM_AIRPORT_ATIS, true);
-  addItem(ap, tr("Runway Information"),
-          tr("Show runway length, width and light inidcator text."), opts::ITEM_AIRPORT_RUNWAY, true);
-  // addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
 
-  QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"),
-                                   tr("Select text labels and other options for the user aircraft."));
-  addItem(ua, tr("Registration"), QString(), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
-  addItem(ua, tr("Type"),
-          tr("Show the aircraft type, like B738, B350 or M20T."),
-          opts::ITEM_USER_AIRCRAFT_TYPE);
-  addItem(ua, tr("Airline"), QString(), opts::ITEM_USER_AIRCRAFT_AIRLINE);
-  addItem(ua, tr("Flight Number"), QString(), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem(ua, tr("Indicated Airspeed"), QString(), opts::ITEM_USER_AIRCRAFT_IAS);
-  addItem(ua, tr("Ground Speed"), QString(), opts::ITEM_USER_AIRCRAFT_GS, true);
-  addItem(ua, tr("Climb- and Sinkrate"), QString(), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem(ua, tr("Heading"), QString(), opts::ITEM_USER_AIRCRAFT_HEADING);
-  addItem(ua, tr("Altitude"), QString(), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
-  addItem(ua, tr("Track Line"),
-          tr("Show the aircraft track as a black needle protruding from the aircraft nose."),
-          opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
-  addItem(ua, tr("Wind Direction and Speed"),
+  QTreeWidgetItem *topOfMap = addTopItem(root, tr("Top of Map"),
+                                         tr("Select information that is displayed on top of the map."));
+  addItem(topOfMap, tr("Wind Direction and Speed"),
           tr("Show wind direction and speed on the top center of the map."),
           opts::ITEM_USER_AIRCRAFT_WIND, true);
-  addItem(ua, tr("Wind Pointer"),
+  addItem(topOfMap, tr("Wind Pointer"),
           tr("Show wind direction pointer on the top center of the map."),
           opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
-  QTreeWidgetItem *ai =
+  QTreeWidgetItem *airport = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
+  addItem(airport, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
+  addItem(airport, tr("Tower Frequency"), QString(), opts::ITEM_AIRPORT_TOWER, true);
+  addItem(airport, tr("ATIS / ASOS / AWOS Frequency"), QString(), opts::ITEM_AIRPORT_ATIS, true);
+  addItem(airport, tr("Runway Information"),
+          tr("Show runway length, width and light inidcator text."), opts::ITEM_AIRPORT_RUNWAY, true);
+  // addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
+
+  QTreeWidgetItem *userAircraft = addTopItem(root, tr("User Aircraft"),
+                                             tr("Select text labels and other options for the user aircraft."));
+  addItem(userAircraft, tr("Registration"), QString(), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem(userAircraft, tr("Type"),
+          tr("Show the aircraft type, like B738, B350 or M20T."),
+          opts::ITEM_USER_AIRCRAFT_TYPE);
+  addItem(userAircraft, tr("Airline"), QString(), opts::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem(userAircraft, tr("Flight Number"), QString(), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem(userAircraft, tr("Indicated Airspeed"), QString(), opts::ITEM_USER_AIRCRAFT_IAS);
+  addItem(userAircraft, tr("Ground Speed"), QString(), opts::ITEM_USER_AIRCRAFT_GS, true);
+  addItem(userAircraft, tr("Climb- and Sinkrate"), QString(), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem(userAircraft, tr("Heading"), QString(), opts::ITEM_USER_AIRCRAFT_HEADING);
+  addItem(userAircraft, tr("Altitude"), QString(), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem(userAircraft, tr("Track Line"),
+          tr("Show the aircraft track as a black needle protruding from the aircraft nose."),
+          opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+
+  QTreeWidgetItem *aiAircraft =
     addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"),
                tr("Select text labels for the AI, multiplayer and online client aircraft."));
-  addItem(ai, tr("Registration, Number or Callsign"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
-  addItem(ai, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
-  addItem(ai, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem(ai, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
-  addItem(ai, tr("Indicated Airspeed"), QString(), opts::ITEM_AI_AIRCRAFT_IAS);
-  addItem(ai, tr("Ground Speed"), QString(), opts::ITEM_AI_AIRCRAFT_GS, true);
-  addItem(ai, tr("Climb- and Sinkrate"), QString(), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
-  addItem(ai, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
-  addItem(ai, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
-  addItem(ai, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
+  addItem(aiAircraft, tr("Registration, Number or Callsign"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem(aiAircraft, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem(aiAircraft, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem(aiAircraft, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem(aiAircraft, tr("Indicated Airspeed"), QString(), opts::ITEM_AI_AIRCRAFT_IAS);
+  addItem(aiAircraft, tr("Ground Speed"), QString(), opts::ITEM_AI_AIRCRAFT_GS, true);
+  addItem(aiAircraft, tr("Climb- and Sinkrate"), QString(), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem(aiAircraft, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
+  addItem(aiAircraft, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem(aiAircraft, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
 
   rangeRingValidator = new RangeRingValidator;
 
