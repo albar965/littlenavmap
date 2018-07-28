@@ -830,7 +830,7 @@ bool MapAirport::closedRunways() const
 
 bool MapAirport::emptyDraw() const
 {
-  if(NavApp::isNavdataOnly())
+  if(NavApp::isNavdataAll())
     return false;
 
   return emptyDraw(OptionData::instance());
@@ -838,7 +838,7 @@ bool MapAirport::emptyDraw() const
 
 bool MapAirport::emptyDraw(const OptionData& od) const
 {
-  if(NavApp::isNavdataOnly())
+  if(NavApp::isNavdataAll())
     return false;
 
   if(od.getFlags() & opts::MAP_EMPTY_AIRPORTS)

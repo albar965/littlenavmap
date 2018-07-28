@@ -624,7 +624,13 @@ struct MapAirspace
   int id;
   int minAltitude, maxAltitude;
   QString name, /* Airspace name or callsign for online ATC */
-          comName, comType, minAltitudeType, maxAltitudeType;
+          comName, comType, minAltitudeType, maxAltitudeType,
+          multipleCode /* A-Z if duplicates exist */,
+          timeCode;
+  /* timeCode: C active continuously, including holidays -  H active continuously, excluding holidays -
+   *  N active not continuously - time not known - NULL active times announced by Notams
+   *  U Unknown - do not display value */
+
   QVector<int> comFrequencies;
   map::MapAirspaceTypes type;
   bool online = false;

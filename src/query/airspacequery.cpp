@@ -98,7 +98,9 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
   airspaceByIdQuery->bindValue(":id", airspaceId);
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
+  {
     mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace, online);
+  }
   airspaceByIdQuery->finish();
 }
 
@@ -273,6 +275,12 @@ void AirspaceQuery::initQueries()
     airspaceQueryBase =
       "boundary_id, type, name, com_type, com_frequency, com_name, "
       "min_altitude_type, max_altitude_type, max_altitude, max_lonx, max_laty, min_altitude, min_lonx, min_laty ";
+
+    SqlRecord rec = db->record("boundary");
+    if(rec.contains("time_code"))
+      airspaceQueryBase += ", time_code ";
+    if(rec.contains("multiple_code"))
+      airspaceQueryBase += ", multiple_code ";
   }
 
   deInitQueries();

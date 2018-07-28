@@ -1620,15 +1620,15 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   html.img(icon, QString(), QString(), SYMBOL_SIZE);
   html.nbsp().nbsp();
 
-  QString network;
+  QString suffix;
   if(airspace.online)
   {
     if(!NavApp::getOnlineNetworkTranslated().isEmpty())
-      network = tr(" (%1)").arg(NavApp::getOnlineNetworkTranslated());
+      suffix = tr(" (%1)").arg(NavApp::getOnlineNetworkTranslated());
   }
 
   if(airspace.name.isEmpty())
-    navaidTitle(html, tr("Airspace") + network);
+    navaidTitle(html, tr("Airspace") + suffix);
   else
   {
     // Do not capitalize online network center names
@@ -1636,7 +1636,12 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     if(!info)
       name = atools::elideTextShort(name, 40);
 
-    navaidTitle(html, ((info && !airspace.online) ? tr("Airspace: ") : QString()) + name + network);
+    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && !airspace.multipleCode.trimmed().isEmpty() &&
+       !airspace.online)
+      // Add multiple code as suffix to indicate overlapping duplicates
+      suffix = tr(" (%1)").arg(airspace.multipleCode);
+
+    navaidTitle(html, ((info && !airspace.online) ? tr("Airspace: ") : QString()) + name + suffix);
   }
 
   if(info)
@@ -1650,8 +1655,34 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
            atools::util::html::LINK_NO_UL);
   }
 
+  QStringList header;
+
   if(info)
-    html.p(map::airspaceRemark(airspace.type));
+  {
+    const QString remark = map::airspaceRemark(airspace.type);
+    if(!remark.isEmpty())
+      header.append(remark);
+
+    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && airspace.timeCode != 'U' && !airspace.online)
+    {
+      // Add comment about active times if navdata airspace
+      QString msg;
+
+      // if(airspace.timeCode == "C")
+      // msg = tr("Active continuously, including holidays");
+      if(airspace.timeCode == "H")
+        msg = tr("Active continuously, excluding holidays");
+      else if(airspace.timeCode == "N")
+        msg = tr("Active not continuously");
+      else if(airspace.timeCode.trimmed().isEmpty())
+        msg = tr("Active times announced by NOTAM");
+      if(!msg.isEmpty())
+        header.append(msg);
+    }
+  }
+
+  if(!header.isEmpty())
+    html.p(header.join("\n"));
 
   html.table();
   html.row2(tr("Type:"), map::airspaceTypeToString(airspace.type));

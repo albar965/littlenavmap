@@ -147,7 +147,11 @@ public:
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
-  static bool isNavdataOnly();
+
+  /* Selected navdatabase in menu */
+  static bool isNavdataAll();
+  static bool isNavdataMixed();
+  static bool isNavdataOff();
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
    * etc. Returns the documents path if FS files cannot be found. */
