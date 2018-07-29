@@ -123,7 +123,7 @@ private:
   void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs);
 
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs);
+  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000" */

@@ -137,7 +137,8 @@ enum ProcedureLegType
   HEADING_TO_MANUAL_TERMINATION,
   HEADING_TO_RADIAL_TERMINATION,
 
-  DIRECT_TO_RUNWAY, /* Artifical last segment inserted if approach does not contain a runway end */
+  DIRECT_TO_RUNWAY, /* Artifical last segment inserted for first leg of departure (similar to IF) */
+  CIRCLE_TO_LAND, /* Artifical last segment inserted if approach does not contain a runway end and is a CTL */
   START_OF_PROCEDURE /* Artifical first point if procedures do not start with an initial fix
                       *  or with a track, heading or course to fix having length 0 */
 };
@@ -348,9 +349,9 @@ struct MapProcedureLeg
     return mapType & proc::PROCEDURE_MISSED;
   }
 
-  bool isDirectToRunway() const
+  bool isCircleToLand() const
   {
-    return type == proc::DIRECT_TO_RUNWAY;
+    return type == proc::CIRCLE_TO_LAND;
   }
 
   bool isHold() const;

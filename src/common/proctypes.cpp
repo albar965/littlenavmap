@@ -100,6 +100,7 @@ void initTranslateableTexts()
       {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")},
 
       {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
+      {CIRCLE_TO_LAND, QObject::tr("Circle to land")},
       {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
     });
 
@@ -130,6 +131,7 @@ void initTranslateableTexts()
       {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
 
       {DIRECT_TO_RUNWAY, QObject::tr("")},
+      {CIRCLE_TO_LAND, QObject::tr("")},
       {START_OF_PROCEDURE, QObject::tr("")}
     });
 }
@@ -161,6 +163,7 @@ const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
     {"VR", HEADING_TO_RADIAL_TERMINATION},
 
     {"RX", DIRECT_TO_RUNWAY},
+    {"CX", CIRCLE_TO_LAND},
     {"SX", START_OF_PROCEDURE}
   });
 
@@ -191,12 +194,26 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
     {HEADING_TO_RADIAL_TERMINATION, "VR"},
 
     {DIRECT_TO_RUNWAY, "RX"},
+    {CIRCLE_TO_LAND, "CX"},
     {START_OF_PROCEDURE, "SX"}
   });
 
 QString procedureFixType(const QString& type)
 {
   return approachFixTypeToStr.value(type, type);
+}
+
+QString procedureLegFixStr(const MapProcedureLeg& leg)
+{
+  QString fix(leg.fixIdent);
+
+  // TODO add -6, etc
+
+  QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
+  if(!specialType.isEmpty())
+    return QObject::tr("%1 (%2)").arg(fix).arg(specialType);
+  else
+    return fix;
 }
 
 QString procedureType(const QString& type)

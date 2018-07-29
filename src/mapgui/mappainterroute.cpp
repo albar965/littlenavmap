@@ -336,7 +336,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // Do not draw background for passed legs but calculate lastLine
     bool draw = (i >= passedProcLeg) || !activeValid || preview;
-    if(legs.at(i).isDirectToRunway())
+    if(legs.at(i).isCircleToLand())
       // Do not draw outline for circle-to-land approach legs
       draw = false;
 
@@ -380,7 +380,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
       // Remember for drawing the active one
       lastActiveLine = lastLine;
 
-    if(legs.at(i).isDirectToRunway())
+    if(legs.at(i).isCircleToLand())
     {
       // Use different pattern and smaller line for circle-to-land approaches
       QPen pen = painter->pen();
@@ -397,7 +397,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     QPen pen = legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen;
 
-    if(legs.at(activeProcLeg).isDirectToRunway())
+    if(legs.at(activeProcLeg).isCircleToLand())
     {
       // Use different pattern and smaller line if active is circle-to-land leg
       pen.setStyle(Qt::DotLine);
@@ -624,7 +624,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
         {
           if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
           {
-            if(!(prevLeg != nullptr && prevLeg->isDirectToRunway() && leg.isMissed()))
+            if(!(prevLeg != nullptr && prevLeg->isCircleToLand() && leg.isMissed()))
               // Close any gaps in the lines but not for circle-to-land legs
               drawLine(painter, lastLine.p2(), line.p1());
           }
@@ -646,7 +646,8 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::START_OF_PROCEDURE,
                               proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                               proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
-                              proc::DIRECT_TO_RUNWAY}))
+                              proc::DIRECT_TO_RUNWAY,
+                              proc::CIRCLE_TO_LAND}))
   {
     if(draw)
       drawLine(painter, line);
