@@ -171,32 +171,33 @@ proc::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const map::MapAirp
 void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg,
                                    const map::MapAirport& airport)
 {
-  leg.type = proc::procedureLegEnum(query->value("type").toString());
+  leg.type = proc::procedureLegEnum(query->valueStr("type"));
 
-  leg.turnDirection = query->value("turn_direction").toString();
+  leg.turnDirection = query->valueStr("turn_direction");
+  leg.arincDescrCode = query->valueStr("arinc_descr_code", QString()).toUpper();
 
-  leg.fixType = query->value("fix_type").toString();
-  leg.fixIdent = query->value("fix_ident").toString();
-  leg.fixRegion = query->value("fix_region").toString();
+  leg.fixType = query->valueStr("fix_type");
+  leg.fixIdent = query->valueStr("fix_ident");
+  leg.fixRegion = query->valueStr("fix_region");
   // query->value("fix_airport_ident");
-  leg.recFixType = query->value("recommended_fix_type").toString();
-  leg.recFixIdent = query->value("recommended_fix_ident").toString();
-  leg.recFixRegion = query->value("recommended_fix_region").toString();
-  leg.flyover = query->value("is_flyover").toBool();
-  leg.trueCourse = query->value("is_true_course").toBool();
-  leg.course = query->value("course").toFloat();
-  leg.distance = query->value("distance").toFloat();
-  leg.time = query->value("time").toFloat();
-  leg.theta = query->value("theta").toFloat();
-  leg.rho = query->value("rho").toFloat();
+  leg.recFixType = query->valueStr("recommended_fix_type");
+  leg.recFixIdent = query->valueStr("recommended_fix_ident");
+  leg.recFixRegion = query->valueStr("recommended_fix_region");
+  leg.flyover = query->valueBool("is_flyover");
+  leg.trueCourse = query->valueBool("is_true_course");
+  leg.course = query->valueFloat("course");
+  leg.distance = query->valueFloat("distance");
+  leg.time = query->valueFloat("time");
+  leg.theta = query->valueFloat("theta");
+  leg.rho = query->valueFloat("rho");
 
   leg.calculatedDistance = 0.f;
   leg.calculatedTrueCourse = 0.f;
   leg.disabled = false;
   leg.intercept = false;
 
-  float alt1 = query->value("altitude1").toFloat();
-  float alt2 = query->value("altitude2").toFloat();
+  float alt1 = query->valueFloat("altitude1");
+  float alt2 = query->valueFloat("altitude2");
 
   if(!query->isNull("alt_descriptor") && (alt1 > 0.f || alt2 > 0.f))
   {

@@ -111,7 +111,8 @@ private:
   void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
                          const proc::MapProcedureLeg& leg, bool draw);
 
-  void paintProcedureFlyover(const PaintContext *context, int x, int y, int size);
+  /* Waypoint Underlays */
+  void paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg, int x, int y, int size);
 
   void drawStartParking(const PaintContext *context);
 

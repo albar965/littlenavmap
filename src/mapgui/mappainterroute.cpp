@@ -918,8 +918,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       altRestriction.alt2 = 0.f;
 
       texts.append(proc::altRestrictionTextNarrow(altRestriction));
-      if(leg.flyover && drawTextDetail)
-        paintProcedureFlyover(context, x, y, defaultOverflySize);
+      if(drawTextDetail)
+        paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
       if(drawTextDetail)
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -954,8 +954,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
       texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
-      if(leg.flyover && drawTextDetail)
-        paintProcedureFlyover(context, x, y, defaultOverflySize);
+      if(drawTextDetail)
+        paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
       if(drawTextDetail)
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -973,8 +973,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       if(wToS(leg.line.getPos1(), x, y))
       {
-        if(leg.flyover && drawTextDetail)
-          paintProcedureFlyover(context, x, y, defaultOverflySize);
+        if(drawTextDetail)
+          paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
       }
     }
@@ -984,8 +984,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       {
         // Draw intercept comment - no altitude restriction there
         texts.append(leg.displayText);
-        if(leg.flyover && drawTextDetail)
-          paintProcedureFlyover(context, x, y, defaultOverflySize);
+        if(drawTextDetail)
+          paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
         paintProcedurePoint(context, x, y, false);
         if(drawTextDetail)
           paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -1033,28 +1033,28 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
   {
-    if(leg.flyover && drawTextDetail)
-      paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid,
-                                        context->mapLayerEffective->getWaypointSymbolSize()));
+    if(drawTextDetail)
+      paintProcedureUnderlay(context, leg, x, y,
+                             context->sz(context->symbolSizeNavaid,
+                                         context->mapLayerEffective->getWaypointSymbolSize()));
     paintWaypoint(context, QColor(), x, y, false);
     if(drawTextDetail)
       paintWaypointText(context, x, y, navaids.waypoints.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.vors.isEmpty() && wToS(navaids.vors.first().position, x, y))
   {
-    if(leg.flyover && drawTextDetail)
-      paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize()));
+    if(drawTextDetail)
+      paintProcedureUnderlay(context, leg, x, y,
+                             context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize()));
     paintVor(context, x, y, navaids.vors.first(), false);
     if(drawTextDetail)
       paintVorText(context, x, y, navaids.vors.first(), true /* draw as route */, &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToS(navaids.ndbs.first().position, x, y))
   {
-    if(leg.flyover && drawTextDetail)
-      paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize()));
+    if(drawTextDetail)
+      paintProcedureUnderlay(context, leg, x, y,
+                             context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize()));
     paintNdb(context, x, y, false);
     if(drawTextDetail)
       paintNdbText(context, x, y, navaids.ndbs.first(), true /* draw as route */, &texts);
@@ -1062,10 +1062,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   else if(!navaids.ils.isEmpty() && wToS(navaids.ils.first().position, x, y))
   {
     texts.append(leg.fixIdent);
-    if(leg.flyover && drawTextDetail)
-      paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid,
-                                        context->mapLayerEffective->getWaypointSymbolSize()));
+    if(drawTextDetail)
+      paintProcedureUnderlay(context, leg, x, y,
+                             context->sz(context->symbolSizeNavaid,
+                                         context->mapLayerEffective->getWaypointSymbolSize()));
     paintProcedurePoint(context, x, y, false);
     if(drawTextDetail)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -1073,10 +1073,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   else if(!navaids.runwayEnds.isEmpty() && wToS(navaids.runwayEnds.first().position, x, y))
   {
     texts.append(leg.fixIdent);
-    if(leg.flyover && drawTextDetail)
-      paintProcedureFlyover(context, x, y,
-                            context->sz(context->symbolSizeNavaid,
-                                        context->mapLayerEffective->getWaypointSymbolSize()));
+    if(drawTextDetail)
+      paintProcedureUnderlay(context, leg, x, y,
+                             context->sz(context->symbolSizeNavaid,
+                                         context->mapLayerEffective->getWaypointSymbolSize()));
     paintProcedurePoint(context, x, y, false);
     if(drawTextDetail)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
@@ -1215,9 +1215,16 @@ void MapPainterRoute::paintProcedurePoint(const PaintContext *context, int x, in
   symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, !preview, false);
 }
 
-void MapPainterRoute::paintProcedureFlyover(const PaintContext *context, int x, int y, int size)
+void MapPainterRoute::paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg,
+                                             int x, int y, int size)
 {
-  symbolPainter->drawProcedureFlyover(context->painter, x, y, size + 14);
+  if(leg.flyover)
+    // Ring to indicate fly over
+    symbolPainter->drawProcedureFlyover(context->painter, x, y, size + 14);
+
+  if(proc::specialType(leg.arincDescrCode) == proc::FAF)
+    /* Maltese cross to indicate FAF on the map */
+    symbolPainter->drawProcedureFaf(context->painter, x, y, size + 16);
 }
 
 /* Paint user defined waypoint */

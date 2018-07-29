@@ -35,8 +35,29 @@ static QHash<QString, QString> approachTypeToStr;
 static QHash<ProcedureLegType, QString> approachLegTypeToStr;
 static QHash<ProcedureLegType, QString> approachLegRemarkStr;
 
+static QHash<LegSpecialType, QString> specialTypeShortStr;
+static QHash<LegSpecialType, QString> specialTypeLongStr;
+
 void initTranslateableTexts()
 {
+  specialTypeShortStr = QHash<LegSpecialType, QString>(
+    {
+      {proc::IAF, QObject::tr("IAF")},
+      {proc::FAF, QObject::tr("FAF")},
+      {proc::FACF, QObject::tr("FACF")},
+      {proc::MAP, QObject::tr("MAP")},
+      {proc::NONE, QString()}
+    });
+
+  specialTypeLongStr = QHash<LegSpecialType, QString>(
+    {
+      {proc::IAF, QObject::tr("Initial Approach Fix")},
+      {proc::FAF, QObject::tr("Final Approach Fix")},
+      {proc::FACF, QObject::tr("Final Approach Course Fix")},
+      {proc::MAP, QObject::tr("Missed Approach Point")},
+      {proc::NONE, QString()}
+    });
+
   approachFixTypeToStr = QHash<QString, QString>(
     {
       {"NONE", QObject::tr("NONE")},
@@ -246,6 +267,16 @@ QString patternDirection(const QString& type)
 proc::ProcedureLegType procedureLegEnum(const QString& type)
 {
   return approachLegTypeToEnum.value(type);
+}
+
+QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type)
+{
+  return specialTypeShortStr.value(type);
+}
+
+QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
+{
+  return specialTypeLongStr.value(type);
 }
 
 QString procedureLegTypeStr(proc::ProcedureLegType type)
@@ -480,6 +511,7 @@ MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg)
   magvar = leg.magvar;
   fixType = leg.fixType;
   fixIdent = leg.fixIdent;
+  arincDescrCode = leg.arincDescrCode;
   recFixType = leg.recFixType;
   recFixIdent = leg.recFixIdent;
   turnDirection = leg.turnDirection;
@@ -537,6 +569,25 @@ bool MapProcedureLeg::noDistanceDisplay() const
                           {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE,
                            proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION,
                            proc::HEADING_TO_MANUAL_TERMINATION, });
+}
+
+proc::LegSpecialType specialType(const QString& arincDescrCode)
+{
+  QChar idx3(atools::strAt(arincDescrCode, 3));
+  if(idx3 == 'A' /* IAF */ || idx3 == 'C' /* IAF and hold */ || idx3 == 'D' /* IAF with final approach course fix */)
+    return proc::IAF;
+
+  if(idx3 == 'M')
+    // Missed approach point
+    return proc::MAP;
+
+  if(idx3 == 'F' /* FAF published or database */)
+    return proc::FAF;
+
+  if(idx3 == 'I' /* Final approach course fix */)
+    return proc::FACF;
+
+  return proc::NONE;
 }
 
 bool MapProcedureLeg::noCourseDisplay() const

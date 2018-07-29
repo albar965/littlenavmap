@@ -2591,7 +2591,14 @@ void RouteController::updateTableModel()
     const RouteLeg& leg = route.at(i);
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
 
-    QStandardItem *ident = new QStandardItem(iconForLeg(leg, iconSize), leg.getIdent());
+    QString identStr;
+    if(leg.isAnyProcedure())
+      // Get ident with IAF, FAF or other indication
+      identStr = proc::procedureLegFixStr(leg.getProcedureLeg());
+    else
+      identStr = leg.getIdent();
+
+    QStandardItem *ident = new QStandardItem(iconForLeg(leg, iconSize), identStr);
     QFont f = ident->font();
     f.setBold(true);
     ident->setFont(f);

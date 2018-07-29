@@ -1897,6 +1897,11 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
 
   html.table();
 
+  // Add IAF, MAP, ...
+  QString typeStr = proc::proceduresLegSecialTypeLongStr(proc::specialType(ap.arincDescrCode));
+  if(!typeStr.isEmpty())
+    html.row2(typeStr);
+
   html.row2(tr("Leg Type:"), proc::procedureLegTypeStr(ap.type));
   html.row2(tr("Fix:"), ap.fixIdent);
 

@@ -161,6 +161,9 @@ public:
   /* Flyover underlay */
   void drawProcedureFlyover(QPainter *painter, int x, int y, int size);
 
+  /* Maltese cross to indicate FAF on the map */
+  void drawProcedureFaf(QPainter *painter, int x, int y, int size);
+
   /* Simulator aircraft symbol. Only used for HTML display */
   void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
 

@@ -1154,7 +1154,9 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   QStringList texts;
   QIcon icon;
   int fontHeight = treeWidget->fontMetrics().height();
-  texts << proc::procedureLegTypeStr(leg.type) << leg.fixIdent;
+
+  texts << proc::procedureLegTypeStr(leg.type);
+  texts << proc::procedureLegFixStr(leg);
 
   QString restrictions;
   if(leg.altRestriction.isValid())

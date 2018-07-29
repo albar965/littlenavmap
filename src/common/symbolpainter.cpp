@@ -333,6 +333,50 @@ void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int si
   painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
+void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
+{
+  static QPolygonF polygon(
+  {
+    QPointF(2., 42.),
+    QPointF(29., 31.),
+    QPointF(18., 58.),
+    QPointF(30., 50.),
+    QPointF(42., 58.),
+    QPointF(31., 31.),
+    QPointF(58., 42.),
+    QPointF(50., 30.),
+    QPointF(58., 18.),
+    QPointF(31., 29.),
+    QPointF(42., 2.),
+    QPointF(30., 10.),
+    QPointF(18., 2.),
+    QPointF(29., 29.),
+    QPointF(2., 18.),
+    QPointF(10., 30.),
+    QPointF(2., 42.)
+  });
+
+  QPolygonF poly(polygon);
+  // Move top left to 0,0
+  poly.translate(-2., -2.);
+
+  // Scale for size
+  for(QPointF& pt : poly)
+    pt = pt * static_cast<double>(size) / 58.;
+
+  double tx = poly.boundingRect().width() / 2.;
+  double ty = poly.boundingRect().height() / 2.;
+  poly.translate(-tx + x, -ty + y);
+
+  atools::util::PainterContextSaver saver(painter);
+  Q_UNUSED(saver);
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->setBrush(Qt::black);
+  painter->setPen(Qt::black);
+
+  painter->drawPolygon(poly);
+}
+
 void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)
 {
   // Create a copy of the line vector

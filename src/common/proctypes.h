@@ -147,6 +147,18 @@ QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
 
 struct MapProcedureLeg;
 
+enum LegSpecialType
+{
+  NONE,
+  IAF, /* The Initial Approach Fix (IAF) is the point where the initial approach segment of an instrument approach begins.  */
+  FAF, /* Final approach fix. The final approach point on an instrument approach with vertical guidance is glide
+        *  slope or glide path intercept at the lowest published altitude (ICAO definition). */
+  FACF, /* Final approach course fix. */
+  MAP /* Miseed approach point.
+       * This is the point prescribed in each instrument approach at which a missed approach procedure shall
+       * be executed if the required visual reference does not exist.[ */
+};
+
 /* Reduced procedure leg type for map index, tooltips and similar */
 struct MapProcedurePoint
 {
@@ -154,7 +166,8 @@ struct MapProcedurePoint
 
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
 
-  QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+  QString fixType, fixIdent, recFixType, recFixIdent, turnDirection,
+          arincDescrCode /* 5.17 */;
 
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
@@ -245,7 +258,8 @@ struct MapProcedureLeg
 
   QString fixType, fixIdent, fixRegion,
           recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
-          turnDirection /* Turn to this fix*/;
+          turnDirection, /* Turn to this fix*/
+          arincDescrCode /* 5.17 */;
 
   QStringList displayText /* Fix label for map - filled in approach query */,
               remarks /* Additional remarks for tree - filled in approach query */;
@@ -263,8 +277,8 @@ struct MapProcedureLeg
   MapAltRestriction altRestriction;
   MapSpeedRestriction speedRestriction;
 
-  proc::ProcedureLegType type = INVALID_LEG_TYPE;
-  proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Any of the PROCEDURE_* types*/
+  proc::ProcedureLegType type = INVALID_LEG_TYPE; /* Type of this leg */
+  proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Type of the procedure this leg belongs to */
 
   int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
@@ -395,7 +409,9 @@ struct MapProcedureLegs
         transitionDistance = 0.f,
         missedDistance = 0.f;
 
-  bool gpsOverlay, hasError /* Unusable due to missing navaid */;
+  bool gpsOverlay,
+       hasError, /* Unusable due to missing navaid */
+       circleToLand /* Runway is not part of procedure and was added internally */;
 
   void clearApproach();
 
@@ -469,7 +485,13 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 
 QString procedureTypeText(proc::MapProcedureTypes mapType);
 QString procedureTypeText(const proc::MapProcedureLeg& leg);
+
+/* VOR, NDB, etc. */
 QString procedureFixType(const QString& type);
+
+/* Ident name and FAF, MAP, IAF */
+QString procedureLegFixStr(const proc::MapProcedureLeg& leg);
+
 QString procedureType(const QString& type);
 proc::ProcedureLegType procedureLegEnum(const QString& type);
 QString procedureLegTypeStr(ProcedureLegType type);
@@ -477,6 +499,13 @@ QString procedureLegTypeShortStr(ProcedureLegType type);
 QString procedureLegTypeFullStr(ProcedureLegType type);
 QString procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
+
+/* IAF, FAF, MAP */
+QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
+QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
+
+/* Get special leg type from ARINC description code */
+proc::LegSpecialType specialType(const QString& arincDescrCode);
 
 QString procedureLegRemark(const MapProcedureLeg& leg);
 QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance);

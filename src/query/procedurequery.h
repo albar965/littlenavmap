@@ -76,9 +76,9 @@ public:
   static QString getStarAndTransition(QHash<QString, QString>& properties);
 
   static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                 const proc::MapProcedureLegs& arrivalLegs,
-                                                 const proc::MapProcedureLegs& starLegs,
-                                                 const proc::MapProcedureLegs& departureLegs);
+                                                const proc::MapProcedureLegs& arrivalLegs,
+                                                const proc::MapProcedureLegs& starLegs,
+                                                const proc::MapProcedureLegs& departureLegs);
 
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureTypes& type);
