@@ -59,6 +59,7 @@ using atools::util::html::Flags;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::weather::Metar;
+using atools::geo::Pos;
 
 /* Airport, navaid and userpoint size */
 const QSize SYMBOL_SIZE(20, 20);
@@ -175,11 +176,28 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
 
   if(info)
+  {
     addCoordinates(rec, html);
+
+    // Sunrise and sunset ===========================
+    QDateTime datetime =
+      NavApp::isConnected() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+    QString timesource = NavApp::isConnected() ? tr("simulator date") : tr("real date");
+
+    Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"));
+
+    QTime sunrise = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNRISE_CIVIL);
+    QTime sunset = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNSET_CIVIL);
+
+    html.row2(tr("Sunrise and sunset:"), tr("%1, %2 UTC\n(civil twilight, %3)").
+              arg(locale.toString(sunrise, QLocale::ShortFormat)).
+              arg(locale.toString(sunset, QLocale::ShortFormat)).
+              arg(timesource));
+  }
 
   html.tableEnd();
 
-  // Create a list of facilities
+  // Create a list of facilities =============================
   if(info)
     head(html, tr("Facilities"));
   html.table();
@@ -553,7 +571,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
                   | atools::util::html::UNDERLINE);
           html.nbsp().nbsp();
 
-          atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
+          Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
           if(!print)
             html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
@@ -600,7 +618,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           else if(type == "W")
             startText = tr("Water %1").arg(name);
 
-          atools::geo::Pos pos(startRec.valueFloat("lonx"), startRec.valueFloat("laty"));
+          Pos pos(startRec.valueFloat("lonx"), startRec.valueFloat("laty"));
 
           if(i > 0)
             html.text(tr(", "));
@@ -2849,11 +2867,10 @@ QString HtmlInfoBuilder::filepathText(const QString& filepath) const
 void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const
 {
   if(rec != nullptr)
-    addCoordinates(atools::geo::Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)),
-                   html);
+    addCoordinates(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)), html);
 }
 
-void HtmlInfoBuilder::addCoordinates(const atools::geo::Pos& pos, HtmlBuilder& html) const
+void HtmlInfoBuilder::addCoordinates(const Pos& pos, HtmlBuilder& html) const
 {
   html.row2(tr("Coordinates:"), Unit::coords(pos));
 
