@@ -100,7 +100,11 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
-  connect(ui->tabWidgetAircraft, &QTabWidget::currentChanged, this, &InfoController::currentTabChanged);
+  connect(ui->tabWidgetAircraft, &QTabWidget::currentChanged, this, &InfoController::currentAircraftTabChanged);
+  connect(ui->tabWidgetInformation, &QTabWidget::currentChanged, this, &InfoController::currentInfoTabChanged);
+
+  connect(ui->dockWidgetAircraft, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedAircraft);
+  connect(ui->dockWidgetInformation, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedInfo);
 }
 
 InfoController::~InfoController()
@@ -108,7 +112,19 @@ InfoController::~InfoController()
   delete infoBuilder;
 }
 
-void InfoController::currentTabChanged(int index)
+void InfoController::visibilityChangedAircraft(bool visible)
+{
+  if(visible)
+    currentAircraftTabChanged(NavApp::getMainUi()->tabWidgetAircraft->currentIndex());
+}
+
+void InfoController::visibilityChangedInfo(bool visible)
+{
+  if(visible)
+    currentInfoTabChanged(NavApp::getMainUi()->tabWidgetInformation->currentIndex());
+}
+
+void InfoController::currentAircraftTabChanged(int index)
 {
   // Update new tab to avoid half a second delay or obsolete information
   switch(static_cast<ic::TabIndexAircraft>(index))
@@ -121,6 +137,28 @@ void InfoController::currentTabChanged(int index)
       break;
     case ic::AIRCRAFT_AI:
       updateAiAircraftText();
+      break;
+  }
+}
+
+void InfoController::currentInfoTabChanged(int index)
+{
+  // Update new tab to avoid delay or obsolete information
+  switch(static_cast<ic::TabIndex>(index))
+  {
+    case ic::INFO_AIRPORT:
+      updateAirportInternal(false /* new */, true /* bearing change*/);
+      break;
+    case ic::INFO_NAVAID:
+      updateNavaidInternal(currentSearchResult, true /* bearing changed */);
+      break;
+    case ic::INFO_RUNWAYS:
+    case ic::INFO_COM:
+    case ic::INFO_APPROACHES:
+    case ic::INFO_WEATHER:
+    case ic::INFO_AIRSPACE:
+    case ic::INFO_ONLINE_CLIENT:
+    case ic::INFO_ONLINE_CENTER:
       break;
   }
 }
@@ -315,7 +353,7 @@ void InfoController::restoreState()
 
 void InfoController::updateAirport()
 {
-  updateAirportInternal(false);
+  updateAirportInternal(false /* new */, false /* bearing change*/);
 }
 
 void InfoController::updateProgress()
@@ -332,12 +370,12 @@ void InfoController::updateProgress()
   }
 }
 
-void InfoController::updateAirportInternal(bool newAirport)
+void InfoController::updateAirportInternal(bool newAirport, bool bearingChange)
 {
   if(databaseLoadStatus)
     return;
 
-  if(!currentSearchResult.airports.isEmpty())
+  if(currentSearchResult.hasAirports())
   {
     map::WeatherContext currentWeatherContext;
     bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
@@ -346,7 +384,7 @@ void InfoController::updateAirportInternal(bool newAirport)
     // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
     // << "ident" << currentWeatherContext.ident;
 
-    if(newAirport || weatherChanged)
+    if(newAirport || weatherChanged || bearingChange)
     {
       HtmlBuilder html(true);
       map::MapAirport airport;
@@ -361,18 +399,21 @@ void InfoController::updateAirportInternal(bool newAirport)
         // scroll up for new airports
         ui->textBrowserAirportInfo->setText(html.getHtml());
       else
-        // Leave position for weather updates
+        // Leave position for weather or bearing updates
         atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
 
-      html.clear();
-      infoBuilder->weatherText(currentWeatherContext, airport, html);
+      if(newAirport || weatherChanged)
+      {
+        html.clear();
+        infoBuilder->weatherText(currentWeatherContext, airport, html);
 
-      if(newAirport)
-        // scroll up for new airports
-        ui->textBrowserWeatherInfo->setText(html.getHtml());
-      else
-        // Leave position for weather updates
-        atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml());
+        if(newAirport)
+          // scroll up for new airports
+          ui->textBrowserWeatherInfo->setText(html.getHtml());
+        else
+          // Leave position for weather updates
+          atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml());
+      }
     }
   }
 }
@@ -505,7 +546,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Remember one airport
     currentSearchResult.airports.append(airport);
 
-    updateAirportInternal(true);
+    updateAirportInternal(true /* new */, false /* bearing change*/);
 
     html.clear();
     infoBuilder->runwayText(airport, html);
@@ -589,64 +630,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // if any navaids are to be shown clear search result before
     currentSearchResult.clear(map::NAV_ALL | map::USERPOINT | map::ILS | map::AIRWAY | map::RUNWAYEND);
 
-  html.clear();
-  // Userpoints on top of the list
-  for(map::MapUserpoint userpoint: result.userpoints)
-  {
-    qDebug() << "Found waypoint" << userpoint.ident;
-
-    // Get updated object in case of changes in the database
-    mapQuery->updateUserdataPoint(userpoint);
-
-    currentSearchResult.userpoints.append(userpoint);
-    infoBuilder->userpointText(userpoint, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  for(const map::MapVor& vor : result.vors)
-  {
-    qDebug() << "Found vor" << vor.ident;
-
-    currentSearchResult.vors.append(vor);
-    infoBuilder->vorText(vor, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  for(const map::MapNdb& ndb : result.ndbs)
-  {
-    qDebug() << "Found ndb" << ndb.ident;
-
-    currentSearchResult.ndbs.append(ndb);
-    infoBuilder->ndbText(ndb, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  for(const map::MapWaypoint& waypoint : result.waypoints)
-  {
-    qDebug() << "Found waypoint" << waypoint.ident;
-
-    currentSearchResult.waypoints.append(waypoint);
-    infoBuilder->waypointText(waypoint, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  // Remove the worst airway duplicates as a workaround for buggy source data
-  for(const map::MapAirway& airway : result.airways)
-  {
-    qDebug() << "Found airway" << airway.name;
-
-    currentSearchResult.airways.append(airway);
-    infoBuilder->airwayText(airway, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  if(foundNavaid)
-    ui->textBrowserNavaidInfo->setText(html.getHtml());
+  foundNavaid = updateNavaidInternal(result, false /* bearing changed */);
 
   // Show dock windows if needed
   if(showWindows)
@@ -753,6 +737,82 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     if(!foundUserAircraft && foundAiAircraft)
       ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_AI);
   }
+}
+
+bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged)
+{
+  HtmlBuilder html(true);
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  bool foundNavaid = false;
+
+  // Userpoints on top of the list
+  for(map::MapUserpoint userpoint: result.userpoints)
+  {
+    qDebug() << "Found waypoint" << userpoint.ident;
+
+    // Get updated object in case of changes in the database
+    mapQuery->updateUserdataPoint(userpoint);
+
+    if(!bearingChanged)
+      currentSearchResult.userpoints.append(userpoint);
+    infoBuilder->userpointText(userpoint, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapVor& vor : result.vors)
+  {
+    qDebug() << "Found vor" << vor.ident;
+
+    if(!bearingChanged)
+      currentSearchResult.vors.append(vor);
+    infoBuilder->vorText(vor, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapNdb& ndb : result.ndbs)
+  {
+    qDebug() << "Found ndb" << ndb.ident;
+
+    if(!bearingChanged)
+      currentSearchResult.ndbs.append(ndb);
+    infoBuilder->ndbText(ndb, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapWaypoint& waypoint : result.waypoints)
+  {
+    qDebug() << "Found waypoint" << waypoint.ident;
+
+    if(!bearingChanged)
+      currentSearchResult.waypoints.append(waypoint);
+    infoBuilder->waypointText(waypoint, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapAirway& airway : result.airways)
+  {
+    qDebug() << "Found airway" << airway.name;
+
+    if(!bearingChanged)
+      currentSearchResult.airways.append(airway);
+    infoBuilder->airwayText(airway, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  if(foundNavaid)
+  {
+    if(bearingChanged)
+      atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml());
+    else
+      ui->textBrowserNavaidInfo->setText(html.getHtml());
+  }
+
+  return foundNavaid;
 }
 
 void InfoController::preDatabaseLoad()
@@ -872,10 +932,12 @@ void InfoController::updateAiAircraftText()
     ui->textBrowserAircraftAiInfo->clear();
 }
 
-void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
+void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
 {
   if(databaseLoadStatus)
     return;
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
 
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
@@ -883,10 +945,8 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
     // Last update was more than 500 ms ago
     updateAiAirports(data);
 
-    Ui::MainWindow *ui = NavApp::getMainUi();
-
     lastSimData = data;
-    if(data.getUserAircraftConst().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
+    if(data.getUserAircraftConst().isValid() && ui->dockWidgetAircraft->isVisible())
     {
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER)
         updateUserAircraftText();
@@ -898,6 +958,21 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
         updateAiAircraftText();
     }
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+  }
+
+  if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+                            lastSimBearingUpdate, static_cast<qint64>(MIN_SIM_UPDATE_BEARING_TIME_MS)))
+  {
+    // Last update was more than a second ago
+    if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
+    {
+      if(ui->tabWidgetInformation->currentIndex() == ic::INFO_AIRPORT)
+        updateAirportInternal(false /* new */, true /* bearing change*/);
+
+      if(ui->tabWidgetInformation->currentIndex() == ic::INFO_NAVAID)
+        updateNavaidInternal(currentSearchResult, true /* bearing changed */);
+    }
+    lastSimBearingUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
 }
 

@@ -88,6 +88,9 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
   }
 });
 
+/* Update rate on tooltip for bearing display */
+const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
+
 /* width/height / factor = inner rectangle which has to overlap */
 const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL = 4.f;
 const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR = 4.f;
@@ -1135,6 +1138,20 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     emit updateActionStates();
 
   // ================================================================================
+  // Update tooltip for bearing
+  qint64 now = QDateTime::currentMSecsSinceEpoch();
+  if(now - lastSimUpdateTooltipMs > MAX_SIM_UPDATE_TOOLTIP_MS)
+  {
+    lastSimUpdateTooltipMs = now;
+    if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
+        mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasUserpoints()) &&
+       NavApp::isConnectedAndAircraft())
+    {
+      updateTooltip();
+    }
+  }
+
+  // ================================================================================
   // Check if screen has to be updated/scrolled/zoomed
   if(paintLayer->getShownMapObjects() & map::AIRCRAFT ||
      paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
@@ -1147,7 +1164,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(od.getSimUpdateRate());
 
     // Limit number of updates per second =================================================
-    qint64 now = QDateTime::currentMSecsSinceEpoch();
     if(now - lastSimUpdateMs > deltas.timeDeltaMs)
     {
       lastSimUpdateMs = now;
@@ -3161,7 +3177,7 @@ void MapWidget::hideTooltip()
 
 void MapWidget::updateTooltip()
 {
-  showTooltip(true);
+  showTooltip(true /* update */);
 }
 
 void MapWidget::showTooltip(bool update)
@@ -3220,7 +3236,7 @@ bool MapWidget::event(QEvent *event)
     tooltipPos = helpEvent->globalPos();
 
     // Build HTML
-    showTooltip(false);
+    showTooltip(false /* update */);
     event->accept();
     return true;
   }
@@ -3371,8 +3387,8 @@ void MapWidget::setMapDetail(int factor)
 
 void MapWidget::jumpBackToAircraftStart()
 {
-  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
-     NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+  if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnectedAndAircraft() &&
+     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO;
@@ -3455,8 +3471,8 @@ void MapWidget::jumpBackToAircraftTimeout()
     qDebug() << Q_FUNC_INFO;
 #endif
 
-    if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnected() &&
-       NavApp::isUserAircraftValid() && OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+    if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnectedAndAircraft() &&
+       OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
     {
       hideTooltip();
       setDistance(jumpBackToAircraftDistance);

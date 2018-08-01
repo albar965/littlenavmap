@@ -258,11 +258,18 @@ public:
                           atools::util::HtmlBuilder& html);
 
 private:
+  void head(atools::util::HtmlBuilder& html, const QString& text) const;
+
+  /* Add scenery entries and links into table */
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+
+  /* Add coordinates into table */
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addCoordinates(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
-  void head(atools::util::HtmlBuilder& html, const QString& text) const;
+
+  /* Bearing to simulator aircraft if connected */
+  void bearingText(const atools::geo::Pos& pos, float magVar, atools::util::HtmlBuilder& html) const;
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
 

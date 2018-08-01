@@ -310,7 +310,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Check for user aircraft
   result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
-  if(shown & map::AIRCRAFT && NavApp::isConnected())
+  if(shown & map::AIRCRAFT && NavApp::isConnectedAndAircraft())
   {
     const atools::fs::sc::SimConnectUserAircraft& user = simData.getUserAircraftConst();
     int x, y;

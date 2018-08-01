@@ -118,6 +118,7 @@ public:
   static bool isFetchAiAircraft();
   static bool isFetchAiShip();
   static bool isConnected();
+  static bool isConnectedAndAircraft();
   static bool isUserAircraftValid();
 
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();

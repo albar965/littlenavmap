@@ -75,6 +75,9 @@ const float MIN_GROUND_SPEED = 30.f;
 // Print weather time in red if older than this
 const int WEATHER_MAX_AGE_HOURS = 6;
 
+// Maximum distance for bearing display
+const int MAX_DISTANCE_FOR_BEARING_METER = atools::geo::nmToMeter(500);
+
 HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
   : mainWindow(parentWindow), info(formatInfo),
@@ -157,6 +160,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       html.row2(tr("Flight Plan position:"), locale.toString(airport.routeIndex + 1));
   }
 
+  // Add bearing/distance to table
+  bearingText(airport.position, airport.magvar, html);
+
   // Administrative information
   if(!city.isEmpty())
     html.row2(tr("City:"), city);
@@ -181,18 +187,22 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
     // Sunrise and sunset ===========================
     QDateTime datetime =
-      NavApp::isConnected() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
-    QString timesource = NavApp::isConnected() ? tr("simulator date") : tr("real date");
+      NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 
-    Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"));
+    if(datetime.isValid())
+    {
+      QString timesource = NavApp::isConnectedAndAircraft() ? tr("simulator date") : tr("real date");
 
-    QTime sunrise = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNRISE_CIVIL);
-    QTime sunset = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNSET_CIVIL);
+      Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"));
 
-    html.row2(tr("Sunrise and sunset:"), tr("%1, %2 UTC\n(civil twilight, %3)").
-              arg(locale.toString(sunrise, QLocale::ShortFormat)).
-              arg(locale.toString(sunset, QLocale::ShortFormat)).
-              arg(timesource));
+      QTime sunrise = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNRISE_CIVIL);
+      QTime sunset = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNSET_CIVIL);
+
+      html.row2(tr("Sunrise and sunset:"), tr("%1, %2 UTC\n(civil twilight, %3)").
+                arg(locale.toString(sunrise, QLocale::ShortFormat)).
+                arg(locale.toString(sunset, QLocale::ShortFormat)).
+                arg(timesource));
+    }
   }
 
   html.tableEnd();
@@ -1393,6 +1403,9 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(vor.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
 
+  // Add bearing/distance to table
+  bearingText(vor.position, vor.magvar, html);
+
   if(vor.tacan)
   {
     if(vor.dmeOnly)
@@ -1456,6 +1469,10 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   html.table();
   if(ndb.routeIndex >= 0)
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
+
+  // Add bearing/distance to table
+  bearingText(ndb.position, ndb.magvar, html);
+
   if(!ndb.type.isEmpty())
     html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
   html.row2(tr("Region:"), ndb.region);
@@ -1500,6 +1517,9 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     }
 
     html.table();
+    // Add bearing/distance to table
+    bearingText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
+
     // Be cautious with user defined data and adapt it for HTML display
     html.row2If(tr("Type:"), adjustText(userpoint.type), atools::util::html::NO_ENTITIES);
     html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
@@ -1524,7 +1544,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
       if(!rec.isNull("visible_from"))
         html.row2If(tr("Visible from:"), Unit::distNm(rec.valueFloat("visible_from")));
 
-      html.row2(tr("Last Change:"), QLocale().toString(rec.value("last_edit_timestamp").toDateTime()));
+      html.row2(tr("Last Change:"), locale.toString(rec.value("last_edit_timestamp").toDateTime()));
       html.tableEnd();
     }
 
@@ -1570,6 +1590,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.table();
   if(waypoint.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));
+
+  // Add bearing/distance to table
+  bearingText(waypoint.position, waypoint.magvar, html);
+
   html.row2(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
   html.row2(tr("Region:"), waypoint.region);
   // html.row2(tr("Airport:"), waypoint.airportIdent);
@@ -1629,6 +1653,23 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 #ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).pEnd();
 #endif
+}
+
+void HtmlInfoBuilder::bearingText(const atools::geo::Pos& pos, float magVar, HtmlBuilder& html) const
+{
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
+
+  float distance = pos.distanceMeterTo(userAircraft.getPosition());
+  if(NavApp::isConnectedAndAircraft() && distance < MAX_DISTANCE_FOR_BEARING_METER)
+  {
+    QString txt, msg(tr("Bearing and distance:"));
+
+    float bearing = normalizeCourse(userAircraft.getPosition().angleDegToRhumb(pos));
+    bearing = normalizeCourse(bearing - magVar);
+    html.row2(msg, tr("%1°M, %2").
+              arg(locale.toString(bearing, 'f', 0)).
+              arg(Unit::distMeter(distance)));
+  }
 }
 
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
@@ -1938,9 +1979,9 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
   if(ap.calculatedDistance > 0.f)
     html.row2(tr("Distance:"), Unit::distNm(ap.calculatedDistance /*, true, 20, true*/));
   if(ap.time > 0.f)
-    html.row2(tr("Time:"), QLocale().toString(ap.time, 'f', 0) + tr(" min"));
+    html.row2(tr("Time:"), locale.toString(ap.time, 'f', 0) + tr(" min"));
   if(ap.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    html.row2(tr("Course:"), QLocale().toString(normalizeCourse(ap.calculatedTrueCourse - ap.magvar), 'f', 0) +
+    html.row2(tr("Course:"), locale.toString(normalizeCourse(ap.calculatedTrueCourse - ap.magvar), 'f', 0) +
               tr("°M"));
 
   if(!ap.turnDirection.isEmpty())
@@ -1959,7 +2000,7 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
       html.row2(tr("Related Navaid:"),
                 tr("%1 / %2 / %3").arg(ap.recFixIdent).
                 arg(Unit::distNm(ap.rho /*, true, 20, true*/)).
-                arg(QLocale().toString(ap.theta) + tr("°M")));
+                arg(locale.toString(ap.theta) + tr("°M")));
     else
       html.row2(tr("Related Navaid:"), tr("%1").arg(ap.recFixIdent));
   }
@@ -2411,7 +2452,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(leg.rho > 0.f)
             html.row2(tr("Related Navaid:"), tr("%1, %2, %3").arg(leg.recFixIdent).
                       arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                      arg(QLocale().toString(leg.theta, 'f', 0) + "°M"));
+                      arg(locale.toString(leg.theta, 'f', 0) + "°M"));
           else
             html.row2(tr("Related Navaid:"), tr("%1").arg(leg.recFixIdent));
         }

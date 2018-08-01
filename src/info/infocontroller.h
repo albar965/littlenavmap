@@ -83,7 +83,7 @@ public:
   void postDatabaseLoad();
 
   /* Update aircraft and aircraft progress tab */
-  void simulatorDataReceived(atools::fs::sc::SimConnectData data);
+  void simDataChanged(atools::fs::sc::SimConnectData data);
   void connectedToSimulator();
   void disconnectedFromSimulator();
 
@@ -109,6 +109,10 @@ signals:
 private:
   /* Do not update aircraft information more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
+  static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
+
+  void updateAirportInternal(bool newAirport, bool bearingChange);
+  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged);
 
   void updateTextEditFontSizes();
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
@@ -116,16 +120,23 @@ private:
   void clearInfoTextBrowsers();
   void showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
-  void updateAirportInternal(bool newAirport);
-  void currentTabChanged(int index);
   void updateUserAircraftText();
   void updateAircraftProgressText();
   void updateAiAircraftText();
   void updateAircraftInfo();
 
+  /* QTabWidget::currentChanged - update content when visible */
+  void currentAircraftTabChanged(int index);
+  void currentInfoTabChanged(int index);
+
+  /* QDockWidget::visibilityChanged - update when shown */
+  void visibilityChangedAircraft(bool visible);
+  void visibilityChangedInfo(bool visible);
+
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
   qint64 lastSimUpdate = 0;
+  qint64 lastSimBearingUpdate = 0;
 
   /* Airport and navaids that are currently shown in the tabs */
   map::MapSearchResult currentSearchResult;

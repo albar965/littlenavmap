@@ -489,7 +489,8 @@ private:
 
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;
-  qint64 lastSimUpdateMs = 0;
+  qint64 lastSimUpdateMs = 0L;
+  qint64 lastSimUpdateTooltipMs = 0L;
   bool active = false;
 
   /* Delay display of elevation display to avoid lagging mouse movements */

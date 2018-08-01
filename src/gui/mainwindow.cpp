@@ -1124,7 +1124,7 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::dataPacketReceived, mapWidget, &MapWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
-  connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simulatorDataReceived);
+  connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
           &RouteController::disconnectedFromSimulator);
@@ -1985,7 +1985,7 @@ void MainWindow::sunShadingTimeChanged()
     mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
   else if(ui->actionMapShowSunShadingSimulatorTime->isChecked())
   {
-    if(!NavApp::isConnected())
+    if(!NavApp::isConnectedAndAircraft())
       // Use current time if not connected
       mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
     // else  Updated by simDataChanged

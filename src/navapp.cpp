@@ -313,9 +313,14 @@ bool NavApp::isConnected()
   return NavApp::getConnectClient()->isConnected();
 }
 
+bool NavApp::isConnectedAndAircraft()
+{
+  return (isConnected() && isUserAircraftValid()) || getUserAircraft().isDebug();
+}
+
 bool NavApp::isUserAircraftValid()
 {
-  return mainWindow->getMapWidget()->getUserAircraft().getPosition().isValid();
+  return mainWindow->getMapWidget()->getUserAircraft().isValid();
 }
 
 const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
