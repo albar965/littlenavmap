@@ -2591,6 +2591,7 @@ void RouteController::updateTableModel()
     const RouteLeg& leg = route.at(i);
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
 
+    // Ident ===========================================
     QString identStr;
     if(leg.isAnyProcedure())
       // Get ident with IAF, FAF or other indication
@@ -2608,10 +2609,13 @@ void RouteController::updateTableModel()
       ident->setForeground(Qt::red);
 
     itemRow[rc::IDENT] = ident;
+
+    // Region, navaid name, procedure type ===========================================
     itemRow[rc::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rc::NAME] = new QStandardItem(leg.getName());
     itemRow[rc::PROCEDURE] = new QStandardItem(proc::procedureTypeText(leg.getProcedureLeg()));
 
+    // Airway or leg type and restriction ===========================================
     if(leg.isRoute())
     {
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(leg.getAirwayName());

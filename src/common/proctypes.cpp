@@ -228,7 +228,14 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
 {
   QString fix(leg.fixIdent);
 
-  // TODO add -6, etc
+  if(atools::contains(leg.type,
+                      {proc::TRACK_FROM_FIX_FROM_DISTANCE, proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                       proc::HEADING_TO_DME_DISTANCE_TERMINATION, proc::COURSE_TO_DME_DISTANCE}))
+  {
+    if(fix.isEmpty())
+      fix = leg.recFixIdent;
+    fix += "+" + QString::number(static_cast<int>(leg.distance));
+  }
 
   QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
   if(!specialType.isEmpty())
