@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>215</height>
+    <height>225</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -162,14 +162,14 @@
      <item>
       <widget class="QCheckBox" name="checkBoxReadInactive">
        <property name="toolTip">
-        <string>Will read also the inactive scenery entries when checked. 
+        <string>Will read also the inactive or disabled scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</string>
        </property>
        <property name="statusTip">
         <string>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</string>
        </property>
        <property name="text">
-        <string>Read &amp;inactive Scenery Entries</string>
+        <string>Read &amp;inactive or disabled Scenery Entries</string>
        </property>
       </widget>
      </item>

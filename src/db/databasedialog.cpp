@@ -208,7 +208,6 @@ void DatabaseDialog::updateWidgets()
   bool showXplane = currentFsType == atools::fs::FsPaths::XPLANE11 || currentFsType == atools::fs::FsPaths::UNKNOWN;
 
   ui->lineEditDatabaseSceneryFile->setDisabled(showXplane);
-  ui->checkBoxReadInactive->setDisabled(showXplane);
   ui->labelDatabaseSceneryFile->setDisabled(showXplane);
 
   ui->lineEditDatabaseSceneryFile->blockSignals(true);
