@@ -108,7 +108,7 @@ float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position,
     if(!globeHidesPointEnd)
     {
       QLineF line(x, y, xEnd, yEnd);
-      qDebug() << Q_FUNC_INFO << line.length();
+      // qDebug() << Q_FUNC_INFO << line.length();
 
       if(line.length() > 5.)
         angle = atools::geo::normalizeCourse(

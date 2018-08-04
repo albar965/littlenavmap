@@ -56,12 +56,12 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 {
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
-  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this);
-
   bool verbose = false;
 #ifdef DEBUG_INFORMATION
   verbose = true;
 #endif
+
+  xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
 
   noaaWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   QString noaaUrl(OptionData::instance().getWeatherNoaaUrl());
