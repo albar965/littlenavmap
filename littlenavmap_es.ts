@@ -573,7 +573,7 @@ Los valores más bajos darán como resultado un movimiento más fluido de la aer
     </message>
     <message>
         <source>Read &amp;inactive Scenery Entries</source>
-        <translation>Leer entradas de escenarios &amp;inactivos</translation>
+        <translation type="vanished">Leer entradas de escenarios &amp;inactivos</translation>
     </message>
     <message>
         <source>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</source>
@@ -610,8 +610,17 @@ Los valores más bajos darán como resultado un movimiento más fluido de la aer
     <message>
         <source>Will read also the inactive scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation>Leerá también las entradas de escenarios inactivos cuando esté marcada.
+        <translation type="vanished">Leerá también las entradas de escenarios inactivos cuando esté marcada.
 Útil si usa herramientas para desactivar y habilitar ciertos escenarios para cada vuelo.</translation>
+    </message>
+    <message>
+        <source>Will read also the inactive or disabled scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read &amp;inactive or disabled Scenery Entries</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -825,6 +834,10 @@ Exiting now.</source>
 Hay otro %3 ejecutándose?
 
 Saliendo ahora.</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Note that airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;/p&gt;&lt;p&gt;Additionally, smaller airports might be missing.&lt;/p&gt;&lt;p&gt;Runway layout might not match the runway layout in the simulator if you use stock or older airport scenery.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4167,6 +4180,71 @@ Online Network:
         <source>Show navaid type search options</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">Estilo</translation>
+    </message>
+    <message>
+        <source>Sun Shading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Map Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Raise and show the map window if undocked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+0</source>
+        <translation type="unfinished">Alt+0</translation>
+    </message>
+    <message>
+        <source>Show Sun &amp;Shading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the sun shadind on the globe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Real UTC Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw sun shading based on UTC real time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Simulator Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw sun shading based on simulator time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;User defined Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw sun shading based on user defined time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set User defined Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set user defined time for sun shading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight plan cruise altitude is zero.
+Simulator might not be able to load the flight plan.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapHtmlInfoBuilder</name>
@@ -5890,6 +5968,43 @@ Online Network:
         <source>Online Client (%1)</source>
         <translation>Cliente en Línea (%1)</translation>
     </message>
+    <message>
+        <source>simulator date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>real date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sunrise and sunset:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1, %2 UTC
+(civil twilight, %3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bearing and distance:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1°M, %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active continuously, excluding holidays</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active not continuously</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active times announced by NOTAM</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapPainter</name>
@@ -7073,7 +7188,7 @@ Tenga en cuenta que este valor no afecta el cálculo ni el guardado de planes de
     </message>
     <message>
         <source>A restart is recommended after changing the style.</source>
-        <translation>Se recomienda reiniciar luego de cambiar el estilo.</translation>
+        <translation type="vanished">Se recomienda reiniciar luego de cambiar el estilo.</translation>
     </message>
     <message>
         <source>Liter / Kilogram (l, kg)</source>
@@ -7247,7 +7362,7 @@ Sur / Norte: Igual que Norte / Sur pero invirtiendo impares a pares.</translatio
     </message>
     <message>
         <source>&amp;Style for graphical user interface (restart required after change):</source>
-        <translation>E&amp;stilo de la interfaz gráfica del usuario (requiere reiniciar luego del cambio):</translation>
+        <translation type="vanished">E&amp;stilo de la interfaz gráfica del usuario (requiere reiniciar luego del cambio):</translation>
     </message>
     <message>
         <source>How often to check for updates on startup.</source>
@@ -7775,7 +7890,7 @@ Aparecerá el cuadro de diálogo &quot;Guardar como&quot; en lugar de sobrescrib
     </message>
     <message>
         <source>Style</source>
-        <translation>Estilo</translation>
+        <translation type="vanished">Estilo</translation>
     </message>
     <message>
         <source>Information Clicks</source>
@@ -8125,6 +8240,14 @@ Use Datos de Elevación GLOBE fuera de línea. Puede bajarlos gratis.
 La resolución es menor que la fuente en línea pero actualiza muy rápido.
 Tiene un Arco de 30 segundos de grilla (Aproxim. 900 metros cerca del Ecuador).</translation>
     </message>
+    <message>
+        <source>&amp;Sun shading darkness:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sun shading level. Lower values result in a darker display.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OptionsDialog</name>
@@ -8370,6 +8493,14 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>Departure and Destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top of Map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select information that is displayed on top of the map.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10315,6 +10446,46 @@ hh:mm</translation>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>IAF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FAF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FACF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MAP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initial Approach Fix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Approach Fix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final Approach Course Fix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missed Approach Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circle to land</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Options Dialog / Flight Plan Elevation Profile&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RouteController</name>
@@ -11263,6 +11434,13 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
 </context>
 <context>
+    <name>StyleHandler</name>
+    <message>
+        <source>Switch user interface style to &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SymbolPainter</name>
     <message>
         <source>CL</source>
@@ -11294,6 +11472,17 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     <message>
         <source>◄ </source>
         <translation>◄ </translation>
+    </message>
+</context>
+<context>
+    <name>TimeDialog</name>
+    <message>
+        <source>Little Navmap - Set time for Sun Shading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HH:mm UTC</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
