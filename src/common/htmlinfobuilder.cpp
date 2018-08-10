@@ -195,13 +195,24 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
       Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"));
 
-      QTime sunrise = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNRISE_CIVIL);
-      QTime sunset = atools::geo::calculateSunriseSunset(pos, datetime.date(), atools::geo::SUNSET_CIVIL);
+      bool neverRises, neverSets;
+      QTime sunrise = atools::geo::calculateSunriseSunset(neverRises, neverSets, pos,
+                                                          datetime.date(), atools::geo::SUNRISE_CIVIL);
+      QTime sunset = atools::geo::calculateSunriseSunset(neverRises, neverSets, pos,
+                                                         datetime.date(), atools::geo::SUNSET_CIVIL);
+      QString txt;
 
-      html.row2(tr("Sunrise and sunset:"), tr("%1, %2 UTC\n(civil twilight, %3)").
-                arg(locale.toString(sunrise, QLocale::ShortFormat)).
-                arg(locale.toString(sunset, QLocale::ShortFormat)).
-                arg(timesource));
+      if(neverRises)
+        txt = tr("Sun never rises");
+      else if(neverSets)
+        txt = tr("Sun never sets");
+      else
+        txt = tr("%1, %2 UTC\n(civil twilight, %3)").
+              arg(locale.toString(sunrise, QLocale::ShortFormat)).
+              arg(locale.toString(sunset, QLocale::ShortFormat)).
+              arg(timesource);
+
+      html.row2(tr("Sunrise and sunset:"), txt);
     }
   }
 
