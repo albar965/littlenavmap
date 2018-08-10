@@ -329,6 +329,8 @@ MainWindow::~MainWindow()
   delete actionGroupMapTheme;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapSunShading";
   delete actionGroupMapSunShading;
+  qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherSource";
+  delete actionGroupMapWeatherSource;
 
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
@@ -521,34 +523,42 @@ void MainWindow::setupUi()
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingRealTime);
   actionGroupMapSunShading->addAction(ui->actionMapShowSunShadingUserTime);
 
+  // Weather source sub menu
+  actionGroupMapWeatherSource = new QActionGroup(ui->menuMapShowAirportWeatherSource);
+  actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherSimulator);
+  actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherActiveSky);
+  actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherNoaa);
+  actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherVatsim);
+  actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherIvao);
+
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenStreetMap->setData(MapWidget::OPENSTREETMAP);
+  ui->actionMapThemeOpenStreetMap->setData(map::OPENSTREETMAP);
 
   ui->actionMapThemeOpenStreetMapRoads->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenStreetMapRoads->setData(MapWidget::OPENSTREETMAPROADS);
+  ui->actionMapThemeOpenStreetMapRoads->setData(map::OPENSTREETMAPROADS);
 
   ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenTopoMap->setData(MapWidget::OPENTOPOMAP);
+  ui->actionMapThemeOpenTopoMap->setData(map::OPENTOPOMAP);
 
   ui->actionMapThemeStamenTerrain->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeStamenTerrain->setData(MapWidget::STAMENTERRAIN);
+  ui->actionMapThemeStamenTerrain->setData(map::STAMENTERRAIN);
 
   ui->actionMapThemeCartoLight->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeCartoLight->setData(MapWidget::CARTOLIGHT);
+  ui->actionMapThemeCartoLight->setData(map::CARTOLIGHT);
 
   ui->actionMapThemeCartoDark->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeCartoDark->setData(MapWidget::CARTODARK);
+  ui->actionMapThemeCartoDark->setData(map::CARTODARK);
 
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeSimple->setData(MapWidget::SIMPLE);
+  ui->actionMapThemeSimple->setData(map::SIMPLE);
 
   ui->actionMapThemePlain->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemePlain->setData(MapWidget::PLAIN);
+  ui->actionMapThemePlain->setData(map::PLAIN);
 
   ui->actionMapThemeAtlas->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeAtlas->setData(MapWidget::ATLAS);
+  ui->actionMapThemeAtlas->setData(map::ATLAS);
 
   // Add any custom map themes that were found besides the stock themes
   QFileInfoList customDgmlFiles;
@@ -569,7 +579,7 @@ void MainWindow::setupUi()
     action->setToolTip(helptext);
     action->setStatusTip(helptext);
     action->setActionGroup(actionGroupMapTheme);
-    action->setData(MapWidget::CUSTOM + i);
+    action->setData(map::CUSTOM + i);
 
     // Add to list for connect signal etc.
     customMapThemeMenuActions.append(action);
@@ -1036,6 +1046,7 @@ void MainWindow::connectAllSlots()
     connect(action, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
 
   // Map object/feature display
+  connect(ui->actionMapShowAirportWeather, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowHillshading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1063,6 +1074,13 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
+
+  // Weather source
+  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   // Sun shading
   connect(ui->actionMapShowSunShading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1149,6 +1167,7 @@ void MainWindow::connectAllSlots()
 
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirport);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirport);
@@ -1241,7 +1260,7 @@ void MainWindow::changeMapTheme()
     action->setChecked(action->data() == index);
 
   for(int i = 0; i < customMapThemeMenuActions.size(); i++)
-    customMapThemeMenuActions.at(i)->setChecked(index == MapWidget::CUSTOM + i);
+    customMapThemeMenuActions.at(i)->setChecked(index == map::CUSTOM + i);
 
   updateLegend();
 
@@ -1990,6 +2009,8 @@ void MainWindow::sunShadingTimeChanged()
       mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
     // else  Updated by simDataChanged
   }
+
+  mapWidget->updateSunShadingOption();
 }
 
 void MainWindow::sunShadingTimeSet()
@@ -2007,6 +2028,7 @@ void MainWindow::sunShadingTimeSet()
     mapWidget->setSunShadingDateTime(timeDialog.getDateTime());
     mapWidget->update();
   }
+  mapWidget->updateSunShadingOption();
 }
 
 /* Selection in flight plan table has changed */
@@ -2629,7 +2651,7 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionUserdataCreateLogbook,
-                       ui->actionMapShowSunShading});
+                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -2753,7 +2775,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading,
-                    ui->actionMapShowHillshading,
+                    ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,

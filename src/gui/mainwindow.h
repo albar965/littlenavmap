@@ -317,7 +317,8 @@ private:
   RouteExport *routeExport = nullptr;
 
   /* Action  groups for main menu */
-  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr;
+  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,
+               *actionGroupMapWeatherSource = nullptr;
 
   QTimer weatherUpdateTimer;
 

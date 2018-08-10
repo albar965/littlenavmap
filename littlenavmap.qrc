@@ -197,5 +197,6 @@
         <file>resources/icons/aircraft_online.svg</file>
         <file>resources/icons/aircraft_online_ground.svg</file>
         <file>resources/icons/mapshadow.svg</file>
+        <file>resources/icons/weather.svg</file>
     </qresource>
 </RCC>

@@ -24,6 +24,8 @@
 #include "common/unit.h"
 #include "geo/calculations.h"
 #include "util/paintercontextsaver.h"
+#include "fs/weather/metar.h"
+#include "fs/weather/metarparser.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -31,6 +33,7 @@
 
 using namespace Marble;
 using namespace map;
+using atools::geo::angleToQt;
 
 /* Simulator aircraft symbol */
 const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
@@ -55,6 +58,18 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
   prepareForIcon(painter);
 
   SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  SymbolPainter().drawAirportWeather(&painter, metar, size / 2, size / 2, size * 7 / 10,
+                                     false /*windPointer*/, false /*windBarbs*/, false /*fast*/);
   return QIcon(pixmap);
 }
 
@@ -252,6 +267,215 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int
   }
   else
     painter->drawPoint(x, y);
+}
+
+void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar, float x, float y,
+                                       float size, bool windPointer, bool windBarbs, bool fast)
+{
+  using namespace atools::fs::weather;
+
+  QColor color;
+
+  if(metar.isValid())
+  {
+    const atools::fs::weather::MetarParser& parsedMetar = metar.getParsedMetar();
+
+    // Determine correct color for flight rules (IFR, etc.) =============================================
+    atools::fs::weather::MetarParser::FlightRules flightRules = parsedMetar.getFlightRules();
+    switch(flightRules)
+    {
+      case atools::fs::weather::MetarParser::UNKNOWN:
+        break;
+      case atools::fs::weather::MetarParser::LIFR:
+        color = mapcolors::weatherLifrColor;
+        break;
+      case atools::fs::weather::MetarParser::IFR:
+        color = mapcolors::weatherIfrColor;
+        break;
+      case atools::fs::weather::MetarParser::MVFR:
+        color = mapcolors::weatherMvfrColor;
+        break;
+      case atools::fs::weather::MetarParser::VFR:
+        color = mapcolors::weatherVfrColor;
+        break;
+    }
+
+    atools::util::PainterContextSaver saver(painter);
+
+    painter->setBackgroundMode(Qt::OpaqueMode);
+    painter->setBackground(mapcolors::weatherBackgoundColor);
+    painter->setBrush(mapcolors::weatherBackgoundColor);
+
+    // Rectangle for all drawing centered around x and y
+    QRectF rect(x - size / 2.f, y - size / 2.f, size, size);
+
+    // Draw while outline / background circle ===================================
+    painter->setPen(mapcolors::weatherBackgoundColor);
+    float margin = size / 5.f;
+    painter->drawEllipse(rect.marginsAdded(QMarginsF(margin, margin, margin, margin)));
+
+    float wind = parsedMetar.getPrevailingWindSpeedKnots();
+    float lineWidth = size * 0.2f;
+    if(wind >= 2.f && wind < INVALID_METAR_VALUE / 2.f && windPointer && !fast)
+    {
+      QVector<int> barbs;
+      float lineLength = size;
+      float bgLineWidth = lineWidth * 2.f;
+      float barbStep = lineWidth * 1.5f;
+      float barbLength50 = size * 0.6f;
+      float barbLength10 = barbLength50;
+      float barbLength5 = barbLength10 * 0.6f;
+
+      // Calculate wind barb types and put then in order from outside towards circle  ===================================
+      if(windBarbs)
+      {
+        float tempWind = wind;
+        while(tempWind >= 5.f)
+        {
+          if(tempWind >= 50.f)
+          {
+            tempWind -= 50.f;
+            barbs.append(50);
+          }
+          else if(tempWind >= 10.f)
+          {
+            tempWind -= 10.f;
+            barbs.append(10);
+          }
+          else if(tempWind >= 5.f)
+          {
+            tempWind -= 5.f;
+            barbs.append(5);
+            break;
+          }
+        }
+
+        lineLength += barbs.size() * barbStep;
+      }
+
+      // Draw wind pointer background ============================================================
+      QLineF line(0., 0., 0., -lineLength);
+      if(windPointer && !fast)
+      {
+        painter->translate(QPointF(x, y));
+        painter->rotate(parsedMetar.getPrevailingWindDir());
+        // Line from 0 to 0 - length
+        painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth));
+        painter->drawLine(line);
+      }
+
+      if(!barbs.isEmpty())
+      {
+        // Draw wind barbs background ============================================================
+        painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth, Qt::SolidLine, Qt::RoundCap,
+                             Qt::RoundJoin));
+        painter->setBrush(mapcolors::weatherBackgoundColor);
+        // Lenghten the line for the rectangle
+        float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+        for(int barb : barbs)
+        {
+          if(barb == 50)
+            painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
+                                            QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
+                                            QPointF(0.f, barbPos - barbLength50 / 2.f)}));
+          else if(barb == 10)
+            painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
+          else if(barb == 5)
+            painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
+
+          barbPos += barbStep;
+        }
+      }
+
+      if(windPointer && !fast)
+      {
+        // Draw wind pointer  ============================================================
+        painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth));
+        painter->drawLine(line);
+      }
+
+      if(!barbs.isEmpty())
+      {
+        // Draw wind barbs ============================================================
+        painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth * 0.6f,
+                             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->setBrush(mapcolors::weatherWindColor);
+        // Lenghten the line for the rectangle
+        float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+        for(int barb : barbs)
+        {
+          if(barb == 50)
+            painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
+                                            QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
+                                            QPointF(0.f, barbPos - barbLength50 / 2.f)}));
+          else if(barb == 10)
+            painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
+          else if(barb == 5)
+            painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
+
+          barbPos += barbStep;
+        }
+        painter->setBrush(mapcolors::weatherBackgoundColor);
+      }
+      painter->resetTransform();
+    }
+
+    // Draw coverage indicating pies or circles =====================================================
+    painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    atools::fs::weather::MetarCloud::Coverage maxCoverage = parsedMetar.getMaxCoverage();
+    switch(maxCoverage)
+    {
+      case atools::fs::weather::MetarCloud::COVERAGE_NIL:
+        qDebug() << Q_FUNC_INFO << "COVERAGE_NIL";
+        painter->drawEllipse(rect);
+        if(!fast)
+        {
+          // Cross out for no information
+          painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
+          painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
+        }
+        break;
+
+      case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
+        painter->drawEllipse(rect);
+        break;
+
+      case atools::fs::weather::MetarCloud::COVERAGE_FEW:
+        painter->drawEllipse(rect);
+        if(!fast)
+        {
+          painter->setBrush(color);
+          painter->setPen(Qt::NoPen);
+          painter->drawPie(rect, -270 * 16, -90 * 16);
+        }
+        break;
+
+      case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
+        painter->drawEllipse(rect);
+        if(!fast)
+        {
+          painter->setBrush(color);
+          painter->setPen(Qt::NoPen);
+          painter->drawPie(rect, -270 * 16, -180 * 16);
+        }
+        break;
+
+      case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
+        painter->drawEllipse(rect);
+        if(!fast)
+        {
+          painter->setBrush(color);
+          painter->setPen(Qt::NoPen);
+          painter->drawPie(rect, -270 * 16, -270 * 16);
+        }
+        break;
+
+      case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
+        painter->setBrush(color);
+        painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
+        break;
+    }
+  }
 }
 
 void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int size, float dir)

@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_WEATHERREPORTER_H
 
 #include "fs/fspaths.h"
+#include "common/mapflags.h"
 
 #include <QHash>
 #include <QObject>
@@ -30,6 +31,8 @@ class Pos;
 namespace fs {
 namespace weather {
 struct MetarResult;
+
+class Metar;
 
 class WeatherNetSingle;
 class WeatherNetDownload;
@@ -89,6 +92,9 @@ public:
    * @return IVAO metar from downloaded file or empty if airport has not report.
    */
   atools::fs::weather::MetarResult getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos);
+
+  /* For display. Source depends on settings and parsed objects are cached. */
+  atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, map::MapWeatherSource source);
 
   /* Does nothing currently */
   void preDatabaseLoad();

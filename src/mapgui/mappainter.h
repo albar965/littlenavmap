@@ -72,6 +72,7 @@ struct PaintContext
   opts::DisplayOptions dispOpts;
   opts::Flags flags;
   opts::Flags2 flags2;
+  map::MapWeatherSource weatherSource;
 
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;

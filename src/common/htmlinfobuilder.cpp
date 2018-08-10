@@ -216,6 +216,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     }
   }
 
+  HtmlBuilder flightRulesHtml(true);
+  flightRulesText(airport, flightRulesHtml);
+  if(!flightRulesHtml.isEmpty())
+    html.row2(tr("Flight Rules:"), flightRulesHtml.getHtml(), atools::util::html::NO_ENTITIES);
+
   html.tableEnd();
 
   // Create a list of facilities =============================
@@ -428,6 +433,20 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 #ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: airport_id = %1").arg(airport.getId())).pEnd();
 #endif
+}
+
+void HtmlInfoBuilder::flightRulesText(const MapAirport& airport, HtmlBuilder& html) const
+{
+  atools::fs::weather::Metar airportWeather = NavApp::getAirportWeather(airport.ident);
+  if(airportWeather.isValid())
+  {
+    html.img(SymbolPainter().createAirportWeatherIcon(airportWeather, SYMBOL_SIZE.height()),
+             QString(), QString(), SYMBOL_SIZE);
+    html.nbsp();
+    html.text(tr("%1 (%2)").
+              arg(airportWeather.getParsedMetar().getFlightRulesString()).
+              arg(map::mapWeatherSourceString(NavApp::getAirportWeatherSource())));
+  }
 }
 
 void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) const
@@ -900,7 +919,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
               }
             }
 
-            if(backcourseEndIdent != 0)
+            if(!backcourseEndIdent.isEmpty())
             {
               const atools::sql::SqlRecordVector *ilsRec =
                 infoQuery->getIlsInformationSimByName(airport.ident, backcourseEndIdent);
@@ -1083,6 +1102,11 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1);
 
+    HtmlBuilder flightRulesHtml(true);
+    flightRulesText(airport, flightRulesHtml);
+    if(!flightRulesHtml.isEmpty())
+      html.br().text(flightRulesHtml.getHtml(), atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
+
     // Simconnect or X-Plane weather file metar ===========================
     if(context.fsMetar.isValid())
     {
@@ -1245,9 +1269,9 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     html.row2(tr("Report type: "), parsed.getReportTypeString());
 
   bool hasWind = false;
+  float windSpeedKts = parsed.getWindSpeedKts();
   // Wind =============================================================
-  if(parsed.getWindSpeedMeterPerSec() > 0.f &&
-     parsed.getWindSpeedMeterPerSec() < atools::fs::weather::INVALID_METAR_VALUE)
+  if(windSpeedKts > 0.f)
   {
     QString windDir, windVar;
 
@@ -1264,19 +1288,24 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     else if(parsed.getWindDir() == -1)
       windDir = tr("Variable, ");
 
-    float windMeterPerSec = parsed.getWindSpeedMeterPerSec();
-    QString windSpeedStr;
-    if(windMeterPerSec < INVALID_METAR_VALUE)
-      windSpeedStr = Unit::speedMeterPerSec(windMeterPerSec);
+    if(windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
+    {
+      QString windSpeedStr;
+      if(windSpeedKts < INVALID_METAR_VALUE)
+        windSpeedStr = Unit::speedKts(windSpeedKts);
 
-    html.row2(tr("Wind:"), windDir + windSpeedStr + windVar);
+      html.row2(tr("Wind:"), windDir + windSpeedStr + windVar);
+    }
+    else
+      html.row2(tr("Wind:"), windDir + tr("Speed not valid") + windVar);
+
     hasWind = true;
   }
 
-  if(parsed.getGustSpeedMeterPerSec() < INVALID_METAR_VALUE)
+  if(parsed.getGustSpeedKts() < INVALID_METAR_VALUE)
   {
     hasWind = true;
-    html.row2(tr("Wind gusts:"), Unit::speedMeterPerSec(parsed.getGustSpeedMeterPerSec()));
+    html.row2(tr("Wind gusts:"), Unit::speedKts(parsed.getGustSpeedKts()));
   }
 
   // Temperature  =============================================================

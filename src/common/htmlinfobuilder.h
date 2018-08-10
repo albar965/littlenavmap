@@ -316,6 +316,8 @@ private:
   QString filepathText(const QString& filepath) const;
   QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
 
+  void flightRulesText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+
   /* Escape entities and replace linefeeds with <br/> */
   QString adjustText(const QString& text) const;
 

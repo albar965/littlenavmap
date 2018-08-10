@@ -68,6 +68,13 @@ extern QColor compassRoseColor;
 extern QColor compassRoseTextColor;
 extern QColor distanceColor;
 
+extern QColor weatherBackgoundColor;
+extern QColor weatherWindColor;
+extern QColor weatherLifrColor;
+extern QColor weatherIfrColor;
+extern QColor weatherMvfrColor;
+extern QColor weatherVfrColor;
+
 /* Elevation profile colors and pens */
 extern QColor profileSkyColor;
 extern QColor profileSkyDarkColor;

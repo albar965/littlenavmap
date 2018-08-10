@@ -104,6 +104,26 @@ public:
     return overflow;
   }
 
+  map::MapWeatherSource getWeatherSource() const
+  {
+    return weatherSource;
+  }
+
+  void setWeatherSource(const map::MapWeatherSource& value)
+  {
+    weatherSource = value;
+  }
+
+  map::MapSunShading getSunShading() const
+  {
+    return sunShading;
+  }
+
+  void setSunShading(const map::MapSunShading& value)
+  {
+    sunShading = value;
+  }
+
 private:
   void initMapLayerSettings();
   void updateLayers();
@@ -121,6 +141,8 @@ private:
   /* Map objects currently shown */
   map::MapObjectTypes objectTypes = map::NONE;
   map::MapAirspaceFilter airspaceTypes;
+  map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;
+  map::MapSunShading sunShading = map::SUN_SHADING_SIMULATOR_TIME;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;

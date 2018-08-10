@@ -109,6 +109,10 @@ public:
 
   MapLayer& airportMaxTextLength(int size);
 
+  /* Show weather indicator */
+  MapLayer& airportWeather(bool value = true);
+  MapLayer& airportWeatherDetails(bool = true);
+
   /* Waypoint options */
   MapLayer& waypoint(bool value = true);
   MapLayer& waypointName(bool value = true);
@@ -509,6 +513,16 @@ public:
     return maximumTextLengthUserpoint;
   }
 
+  bool isAirportWeather() const
+  {
+    return layerAirportWeather;
+  }
+
+  bool isAirportWeatherDetails() const
+  {
+    return layerAirportWeatherDetails;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -521,6 +535,9 @@ private:
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false,
        layerUserpoint = false;
+
+  bool layerAirportWeather = false, layerAirportWeatherDetails = false;
+
   int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;
 
   bool layerWaypoint = false, layerWaypointName = false,

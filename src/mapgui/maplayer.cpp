@@ -419,6 +419,18 @@ MapLayer& MapLayer::airportMaxTextLength(int size)
   return *this;
 }
 
+MapLayer& MapLayer::airportWeather(bool value)
+{
+  layerAirportWeather = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportWeatherDetails(bool value)
+{
+  layerAirportWeatherDetails = value;
+  return *this;
+}
+
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;

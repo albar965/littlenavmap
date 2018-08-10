@@ -33,6 +33,14 @@ struct MapRunway;
 
 }
 
+namespace atools {
+namespace fs {
+namespace weather {
+class Metar;
+}
+}
+}
+
 class Route;
 
 /*
@@ -46,12 +54,14 @@ class MapPainterAirport :
 
 public:
   MapPainterAirport(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
-  virtual ~MapPainterAirport();
+  virtual ~MapPainterAirport() override;
 
   virtual void render(PaintContext *context) override;
 
 private:
   void drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y);
+  void drawAirportWeather(PaintContext *context, const atools::fs::weather::Metar& metar,
+                          float x, float y);
 
   // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
 

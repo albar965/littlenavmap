@@ -25,6 +25,14 @@
 #include <QApplication>
 #include <QCache>
 
+namespace atools {
+namespace fs {
+namespace weather {
+class Metar;
+}
+}
+}
+
 class QPainter;
 class QPen;
 
@@ -106,6 +114,7 @@ public:
 
   /* Create icons for tooltips, table views and more. Size is pixel. */
   QIcon createAirportIcon(const map::MapAirport& airport, int size);
+  QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
   QIcon createVorIcon(const map::MapVor& vor, int size);
   QIcon createNdbIcon(int size);
   QIcon createWaypointIcon(int size, const QColor& color = QColor());
@@ -122,6 +131,10 @@ public:
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
+
+  /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
+  void drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar,
+                          float x, float y, float size, bool windPointer, bool windBarbs, bool fast);
 
   /* Wind arrow */
   void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);

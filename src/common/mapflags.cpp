@@ -98,4 +98,26 @@ QDataStream& operator<<(QDataStream& dataStream, const MapAirspaceFilter& obj)
   return dataStream;
 }
 
+QString mapWeatherSourceString(MapWeatherSource source)
+{
+  switch(source)
+  {
+    case map::WEATHER_SOURCE_SIMULATOR:
+      return QObject::tr("Simulator");
+
+    case map::WEATHER_SOURCE_ACTIVE_SKY:
+      return QObject::tr("ActiveSky");
+
+    case map::WEATHER_SOURCE_NOAA:
+      return QObject::tr("NOAA");
+
+    case map::WEATHER_SOURCE_VATSIM:
+      return QObject::tr("VATSIM");
+
+    case map::WEATHER_SOURCE_IVAO:
+      return QObject::tr("IVAO");
+  }
+  return QString();
+}
+
 } // namespace types

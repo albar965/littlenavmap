@@ -75,6 +75,8 @@ enum MapObjectType
   AIRSPACE_ONLINE = 1 << 28, /* Online network center */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
 
+  AIRPORT_WEATHER = 1 << 30, /* Airport weather icons */
+
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
@@ -216,7 +218,45 @@ enum MapAirportFlag
 Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags);
 
-} // namespace types
+/* Index values of the map theme combo box */
+enum MapThemeComboIndex
+{
+  OPENSTREETMAP,
+  OPENSTREETMAPROADS,
+  OPENTOPOMAP,
+  STAMENTERRAIN,
+  CARTOLIGHT,
+  CARTODARK,
+  SIMPLE,
+  PLAIN,
+  ATLAS,
+  CUSTOM, /* Custom maps count from this index up */
+  INVALID_THEME = -1
+};
+
+/* Sun shading sub menu actions.
+ * Values are saved in settings do not change */
+enum MapSunShading
+{
+  SUN_SHADING_SIMULATOR_TIME,
+  SUN_SHADING_REAL_TIME,
+  SUN_SHADING_USER_TIME
+};
+
+/* Weather source for map icons menu actions.
+ * Values are saved in settings do not change */
+enum MapWeatherSource
+{
+  WEATHER_SOURCE_SIMULATOR,
+  WEATHER_SOURCE_ACTIVE_SKY,
+  WEATHER_SOURCE_NOAA,
+  WEATHER_SOURCE_VATSIM,
+  WEATHER_SOURCE_IVAO
+};
+
+QString mapWeatherSourceString(map::MapWeatherSource source);
+
+} // namespace map
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapAirspaceFilter);

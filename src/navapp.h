@@ -56,6 +56,9 @@ class Pos;
 
 namespace fs {
 
+namespace weather {
+class Metar;
+}
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;
@@ -179,6 +182,8 @@ public:
   static ElevationProvider *getElevationProvider();
 
   static WeatherReporter *getWeatherReporter();
+  static atools::fs::weather::Metar getAirportWeather(const QString& ident);
+  static map::MapWeatherSource getAirportWeatherSource();
 
   static void updateWindowTitle();
   static void setStatusMessage(const QString& message);

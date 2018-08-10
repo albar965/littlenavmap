@@ -141,6 +141,7 @@ const QLatin1Literal MAP_MARKLATY("Map/MarkLatY");
 const QLatin1Literal MAP_MARKLONX("Map/MarkLonX");
 const QLatin1Literal MAP_RANGEMARKERS("Map/RangeMarkers");
 const QLatin1Literal MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
+const QLatin1Literal MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1Literal MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1Literal MAP_SUN_SHADING_TIME("Map/SunShadingTime");
 

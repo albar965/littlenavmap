@@ -32,6 +32,8 @@
 #include "mapgui/aprongeometrycache.h"
 #include "atools.h"
 #include "navapp.h"
+#include "fs/weather/metar.h"
+#include "weather/weatherreporter.h"
 
 #include <QElapsedTimer>
 
@@ -178,17 +180,19 @@ void MapPainterAirport::render(PaintContext *context)
     const MapAirport *airport = visibleAirports.at(i).first;
     const QPointF& pt = visibleAirports.at(i).second;
     const MapLayer *layer = context->mapLayer;
+    float x = static_cast<float>(pt.x());
+    float y = static_cast<float>(pt.y());
 
     // Airport diagram is not influenced by detail level
     if(!context->mapLayerEffective->isAirportDiagram())
       // Draw simplified runway lines
-      drawAirportSymbolOverview(context, *airport, static_cast<float>(pt.x()), static_cast<float>(pt.y()));
+      drawAirportSymbolOverview(context, *airport, x, y);
 
     // More detailed symbol will be drawn by the route painter - so skip here
     if(!routeAirportIdMap.contains(airport->id))
     {
       // Symbol will be omitted for runway overview
-      drawAirportSymbol(context, *airport, static_cast<float>(pt.x()), static_cast<float>(pt.y()));
+      drawAirportSymbol(context, *airport, x, y);
 
       // Build and draw airport text
       textflags::TextFlags flags;
@@ -205,13 +209,17 @@ void MapPainterAirport::render(PaintContext *context)
         flags |= textflags::NO_BACKGROUND;
 
       context->szFont(context->textSizeAirport);
-      symbolPainter->drawAirportText(context->painter, *airport, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
+      symbolPainter->drawAirportText(context->painter, *airport, x, y,
                                      context->dispOpts, flags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
     }
+
+    if(context->objectTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather())
+      drawAirportWeather(context,
+                         NavApp::getWeatherReporter()->getAirportWeather(airport->ident, context->weatherSource), x, y);
   }
 }
 
@@ -1036,6 +1044,17 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
+void MapPainterAirport::drawAirportWeather(PaintContext *context,
+                                           const atools::fs::weather::Metar& metar, float x, float y)
+{
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+  bool windBarbs = context->mapLayer->isAirportWeatherDetails();
+
+  symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4 / 5, y - size * 4 / 5, size,
+                                    true /* Wind pointer*/, windBarbs, context->drawFast);
+}
+
+/* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
 void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y)
 {
   if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
@@ -1051,18 +1070,6 @@ void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapA
     symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast);
   }
 }
-
-// void MapPainterAirport::drawWindPointer(const PaintContext *context, const MapAirport& ap, int x, int y)
-// {
-// Q_UNUSED(ap);
-// const atools::fs::sc::SimConnectUserAircraft& aircraft = mapWidget->getUserAircraft();
-// if(aircraft.getPosition().isValid())
-// {
-// int size = context->sz(context->symbolSizeAirport,
-// context->mapLayerEffective->getAirportSymbolSize() * 2);
-// symbolPainter->drawWindPointer(context->painter, QColor(), x, y, size, true, context->drawFast);
-// }
-// }
 
 /*
  * Fill coordinate arrays for all runways of an airport.

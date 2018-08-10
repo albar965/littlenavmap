@@ -28,6 +28,7 @@
 #include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "fs/weather/weathernetsingle.h"
+#include "fs/weather/metar.h"
 
 #include <QDebug>
 #include <QDir>
@@ -49,6 +50,9 @@ static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|Destinat
 using atools::fs::FsPaths;
 using atools::fs::weather::WeatherNetDownload;
 using atools::fs::weather::WeatherNetSingle;
+using atools::fs::weather::MetarResult;
+using atools::fs::weather::MetarParser;
+using atools::fs::weather::Metar;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type),
@@ -499,6 +503,28 @@ QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   return ivaoWeather->getMetar(airportIcao, pos);
+}
+
+atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao, map::MapWeatherSource source)
+{
+  switch(source)
+  {
+    case map::WEATHER_SOURCE_SIMULATOR:
+      return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+
+    case map::WEATHER_SOURCE_ACTIVE_SKY:
+      return Metar(getActiveSkyMetar(airportIcao));
+
+    case map::WEATHER_SOURCE_NOAA:
+      return Metar(getNoaaMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+
+    case map::WEATHER_SOURCE_VATSIM:
+      return Metar(getVatsimMetar(airportIcao));
+
+    case map::WEATHER_SOURCE_IVAO:
+      return Metar(getIvaoMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+  }
+  return Metar();
 }
 
 void WeatherReporter::preDatabaseLoad()

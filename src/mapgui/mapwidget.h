@@ -293,29 +293,6 @@ public:
     qint64 timeDeltaMs;
   };
 
-  /* Index values of the map theme combo box */
-  enum MapThemeComboIndex
-  {
-    OPENSTREETMAP,
-    OPENSTREETMAPROADS,
-    OPENTOPOMAP,
-    STAMENTERRAIN,
-    CARTOLIGHT,
-    CARTODARK,
-    SIMPLE,
-    PLAIN,
-    ATLAS,
-    CUSTOM, /* Custom maps count from this index up */
-    INVALID = -1
-  };
-
-  enum MapSunShadingIndex
-  {
-    SUN_SHADING_SIMULATOR_TIME,
-    SUN_SHADING_REAL_TIME,
-    SUN_SHADING_USER_TIME
-  };
-
   void restoreHistoryState();
 
   void resetSettingsToDefault();
@@ -327,6 +304,13 @@ public:
 
   void onlineClientAndAtcUpdated();
   void onlineNetworkChanged();
+
+  void updateSunShadingOption();
+
+  void weatherUpdated();
+
+  /* Current weather source for icon display */
+  map::MapWeatherSource getMapWeatherSource() const;
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -420,6 +404,14 @@ private:
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();
 
+  /* Convert paint layer value to menu actions checked / not checked */
+  map::MapWeatherSource weatherSourceFromUi();
+  void weatherSourceToUi(map::MapWeatherSource weatherSource);
+
+  /* Convert paint layer value to menu actions checked / not checked */
+  map::MapSunShading sunShadingFromUi();
+  void sunShadingToUi(map::MapSunShading sunShading);
+
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
 
@@ -433,7 +425,7 @@ private:
 
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
-  MapThemeComboIndex currentComboIndex = INVALID;
+  map::MapThemeComboIndex currentComboIndex = map::INVALID_THEME;
 
   mw::MouseStates mouseState = mw::NONE;
   bool contextMenuActive = false;

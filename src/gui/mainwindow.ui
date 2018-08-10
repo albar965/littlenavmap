@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>943</height>
+    <height>965</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -257,9 +257,19 @@
      <addaction name="actionMapThemePlain"/>
      <addaction name="actionMapThemeAtlas"/>
     </widget>
+    <widget class="QMenu" name="menuViewAirport">
+     <property name="title">
+      <string>&amp;Airport</string>
+     </property>
+     <addaction name="actionMapShowAddonAirports"/>
+     <addaction name="actionMapShowAirports"/>
+     <addaction name="actionMapShowSoftAirports"/>
+     <addaction name="separator"/>
+     <addaction name="actionMapShowEmptyAirports"/>
+    </widget>
     <widget class="QMenu" name="menuViewUserpoints">
      <property name="title">
-      <string>Userpoints</string>
+      <string>&amp;Userpoints</string>
      </property>
      <addaction name="separator"/>
     </widget>
@@ -273,21 +283,33 @@
      <addaction name="separator"/>
      <addaction name="actionMapShowSunShadingSetTime"/>
     </widget>
+    <widget class="QMenu" name="menuViewNavaids">
+     <property name="title">
+      <string>&amp;Navaids</string>
+     </property>
+     <addaction name="actionMapShowVor"/>
+     <addaction name="actionMapShowNdb"/>
+     <addaction name="actionMapShowWp"/>
+     <addaction name="actionMapShowIls"/>
+     <addaction name="separator"/>
+     <addaction name="actionMapShowVictorAirways"/>
+     <addaction name="actionMapShowJetAirways"/>
+    </widget>
+    <widget class="QMenu" name="menuMapShowAirportWeatherSource">
+     <property name="title">
+      <string>Airport Weather &amp;Source</string>
+     </property>
+     <addaction name="actionMapShowWeatherSimulator"/>
+     <addaction name="actionMapShowWeatherActiveSky"/>
+     <addaction name="actionMapShowWeatherNoaa"/>
+     <addaction name="actionMapShowWeatherVatsim"/>
+     <addaction name="actionMapShowWeatherIvao"/>
+    </widget>
     <addaction name="actionMapResetSettings"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
-    <addaction name="actionMapShowAddonAirports"/>
-    <addaction name="actionMapShowAirports"/>
-    <addaction name="actionMapShowSoftAirports"/>
-    <addaction name="actionMapShowEmptyAirports"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowVor"/>
-    <addaction name="actionMapShowNdb"/>
-    <addaction name="actionMapShowWp"/>
-    <addaction name="actionMapShowIls"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapShowVictorAirways"/>
-    <addaction name="actionMapShowJetAirways"/>
+    <addaction name="menuViewAirport"/>
+    <addaction name="menuViewNavaids"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
     <addaction name="menuViewUserpoints"/>
@@ -304,6 +326,9 @@
     <addaction name="actionMapShowGrid"/>
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowHillshading"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowAirportWeather"/>
+    <addaction name="menuMapShowAirportWeatherSource"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowSunShading"/>
     <addaction name="menuSunShading"/>
@@ -4108,6 +4133,7 @@
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
    <addaction name="actionMapShowHillshading"/>
+   <addaction name="actionMapShowAirportWeather"/>
    <addaction name="actionMapShowSunShading"/>
   </widget>
   <widget class="QToolBar" name="toolBarRoute">
@@ -7937,6 +7963,100 @@
    </property>
    <property name="statusTip">
     <string>Set user defined time for sun shading</string>
+   </property>
+  </action>
+  <action name="actionMapShowAirportWeather">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/weather.svg</normaloff>:/littlenavmap/resources/icons/weather.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Airport &amp;Weather</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airport weather icons</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport weather icons</string>
+   </property>
+  </action>
+  <action name="actionMapShowWeatherActiveSky">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Active Sky</string>
+   </property>
+   <property name="toolTip">
+    <string>Use ActiveSky weather to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Use ActiveSky weather to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionMapShowWeatherSimulator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flight Simulator</string>
+   </property>
+   <property name="toolTip">
+    <string>Use Flight Simulator weather to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Use Flight Simulator weather to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionMapShowWeatherNoaa">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;NOAA</string>
+   </property>
+   <property name="toolTip">
+    <string>Use NOAA weather to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Use NOAA weather to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionMapShowWeatherVatsim">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;VATSIM</string>
+   </property>
+   <property name="toolTip">
+    <string>Use VATSIM weather to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Use VATSIM weather to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionMapShowWeatherIvao">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;IVAO</string>
+   </property>
+   <property name="toolTip">
+    <string>Use IVAO weather to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Use IVAO weather to display weather icons on the map</string>
    </property>
   </action>
  </widget>

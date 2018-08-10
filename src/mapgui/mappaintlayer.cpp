@@ -145,6 +145,8 @@ void MapPaintLayer::initMapLayerSettings()
   MapLayer defLayer = MapLayer(0).airport().approach().approachTextAndDetail().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
+                      airportWeather().airportWeatherDetails().
+
                       vor().ndb().waypoint().marker().ils().airway().
 
                       userpoint().userpointInfo().
@@ -284,7 +286,6 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 4000
   append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
@@ -296,6 +297,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(750.f).airportSymbolSize(10).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         airportWeatherDetails(false).
          approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -309,6 +311,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(1200.f).airportSymbolSize(10).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         airportWeather(false).airportWeatherDetails(false).
          approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -325,6 +328,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
          minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         airportWeather(false).airportWeatherDetails(false).
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -339,6 +343,7 @@ void MapPaintLayer::initMapLayerSettings()
   // Make sure that there is always an layer
   append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         airportWeather(false).airportWeatherDetails(false).
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -432,6 +437,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.dispOpts = od.getDisplayOptions();
       context.flags = od.getFlags();
       context.flags2 = od.getFlags2();
+
+      context.weatherSource = weatherSource;
 
       if(mapWidget->viewContext() == Marble::Still)
       {

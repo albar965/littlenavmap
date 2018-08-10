@@ -194,12 +194,12 @@ void MapWidget::setTheme(const QString& theme, int index)
   qDebug() << "setting map theme to " << theme;
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  currentComboIndex = MapWidget::MapThemeComboIndex(index);
+  currentComboIndex = map::MapThemeComboIndex(index);
 
   // Ignore any overlay state signals the widget sends while switching theme
   ignoreOverlayUpdates = true;
 
-  if(index >= MapWidget::CUSTOM)
+  if(index >= map::CUSTOM)
   {
     // Enable all buttons for custom maps
     ui->actionMapShowCities->setEnabled(true);
@@ -211,37 +211,37 @@ void MapWidget::setTheme(const QString& theme, int index)
     // Update theme specific options
     switch(index)
     {
-      case MapWidget::STAMENTERRAIN:
+      case map::STAMENTERRAIN:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
-      case MapWidget::OPENTOPOMAP:
+      case map::OPENTOPOMAP:
         setPropertyValue("ice", false);
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
-      case MapWidget::OPENSTREETMAPROADS:
-      case MapWidget::OPENSTREETMAP:
-      case MapWidget::CARTODARK:
-      case MapWidget::CARTOLIGHT:
+      case map::OPENSTREETMAPROADS:
+      case map::OPENSTREETMAP:
+      case map::CARTODARK:
+      case map::CARTOLIGHT:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(true);
         ui->actionMapShowSunShading->setEnabled(true);
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
-      case MapWidget::SIMPLE:
-      case MapWidget::PLAIN:
-      case MapWidget::ATLAS:
+      case map::SIMPLE:
+      case map::PLAIN:
+      case map::ATLAS:
         ui->actionMapShowCities->setEnabled(true);
         ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(false);
         break;
-      case MapWidget::INVALID:
+      case map::INVALID:
         qWarning() << "Invalid theme index" << index;
         break;
     }
@@ -296,21 +296,27 @@ void MapWidget::updateMapObjectsShown()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  // Sun shading ====================================================
   setShowMapSunShading(ui->actionMapShowSunShading->isChecked() &&
-                       currentComboIndex != MapWidget::SIMPLE && currentComboIndex != MapWidget::PLAIN
-                       && currentComboIndex != MapWidget::ATLAS);
+                       currentComboIndex != map::SIMPLE && currentComboIndex != map::PLAIN
+                       && currentComboIndex != map::ATLAS);
+  paintLayer->setSunShading(sunShadingFromUi());
 
+  // Weather source ====================================================
+  paintLayer->setWeatherSource(weatherSourceFromUi());
+
+  // Other map features ====================================================
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
-                 (currentComboIndex == MapWidget::SIMPLE || currentComboIndex == MapWidget::PLAIN
-                  || currentComboIndex == MapWidget::ATLAS));
+                 (currentComboIndex == map::SIMPLE || currentComboIndex == map::PLAIN
+                  || currentComboIndex == map::ATLAS));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
-                   (currentComboIndex == MapWidget::OPENSTREETMAP ||
-                    currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
-                    currentComboIndex == MapWidget::CARTODARK ||
-                    currentComboIndex == MapWidget::CARTOLIGHT ||
-                    currentComboIndex >= MapWidget::CUSTOM));
+                   (currentComboIndex == map::OPENSTREETMAP ||
+                    currentComboIndex == map::OPENSTREETMAPROADS ||
+                    currentComboIndex == map::CARTODARK ||
+                    currentComboIndex == map::CARTOLIGHT ||
+                    currentComboIndex >= map::CUSTOM));
 
   setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
@@ -331,6 +337,7 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
   setShowMapFeatures(map::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
+  setShowMapFeatures(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
 
   // Force addon airport independent of other settings or not
   setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
@@ -375,6 +382,22 @@ void MapWidget::updateMapObjectsShown()
 void MapWidget::setShowMapSunShading(bool show)
 {
   setShowSunShading(show);
+}
+
+void MapWidget::updateSunShadingOption()
+{
+  paintLayer->setSunShading(sunShadingFromUi());
+}
+
+void MapWidget::weatherUpdated()
+{
+  if(paintLayer->getShownMapObjects() | map::AIRPORT_WEATHER)
+    update();
+}
+
+map::MapWeatherSource MapWidget::getMapWeatherSource() const
+{
+  return paintLayer->getWeatherSource();
 }
 
 QDateTime MapWidget::getSunShadingDateTime() const
@@ -537,14 +560,11 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
   s.setValueVar(lnm::MAP_AIRSPACES, QVariant::fromValue(paintLayer->getShownAirspaces()));
 
-  // Sun shading settings
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->actionMapShowSunShadingSimulatorTime->isChecked())
-    s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, MapWidget::SUN_SHADING_SIMULATOR_TIME);
-  else if(ui->actionMapShowSunShadingRealTime->isChecked())
-    s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, MapWidget::SUN_SHADING_REAL_TIME);
-  else if(ui->actionMapShowSunShadingUserTime->isChecked())
-    s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, MapWidget::SUN_SHADING_USER_TIME);
+  // Sun shading settings =====================================
+  s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, paintLayer->getSunShading());
+
+  // Weather source settings =====================================
+  s.setValue(lnm::MAP_WEATHER_SOURCE, paintLayer->getWeatherSource());
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
@@ -554,6 +574,76 @@ void MapWidget::saveState()
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays.values())
     state.save(action);
+}
+
+void MapWidget::sunShadingToUi(map::MapSunShading sunShading)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  switch(sunShading)
+  {
+    case map::SUN_SHADING_SIMULATOR_TIME:
+      ui->actionMapShowSunShadingSimulatorTime->setChecked(true);
+      break;
+    case map::SUN_SHADING_REAL_TIME:
+      ui->actionMapShowSunShadingRealTime->setChecked(true);
+      break;
+    case map::SUN_SHADING_USER_TIME:
+      ui->actionMapShowSunShadingUserTime->setChecked(true);
+      break;
+  }
+}
+
+map::MapSunShading MapWidget::sunShadingFromUi()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->actionMapShowSunShadingSimulatorTime->isChecked())
+    return map::SUN_SHADING_SIMULATOR_TIME;
+  else if(ui->actionMapShowSunShadingRealTime->isChecked())
+    return map::SUN_SHADING_REAL_TIME;
+  else if(ui->actionMapShowSunShadingUserTime->isChecked())
+    return map::SUN_SHADING_USER_TIME;
+
+  return map::SUN_SHADING_SIMULATOR_TIME;
+}
+
+void MapWidget::weatherSourceToUi(map::MapWeatherSource weatherSource)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  switch(weatherSource)
+  {
+    case map::WEATHER_SOURCE_SIMULATOR:
+      ui->actionMapShowWeatherSimulator->setChecked(true);
+      break;
+    case map::WEATHER_SOURCE_ACTIVE_SKY:
+      ui->actionMapShowWeatherActiveSky->setChecked(true);
+      break;
+    case map::WEATHER_SOURCE_NOAA:
+      ui->actionMapShowWeatherNoaa->setChecked(true);
+      break;
+    case map::WEATHER_SOURCE_VATSIM:
+      ui->actionMapShowWeatherVatsim->setChecked(true);
+      break;
+    case map::WEATHER_SOURCE_IVAO:
+      ui->actionMapShowWeatherIvao->setChecked(true);
+      break;
+  }
+}
+
+map::MapWeatherSource MapWidget::weatherSourceFromUi()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->actionMapShowWeatherSimulator->isChecked())
+    return map::WEATHER_SOURCE_SIMULATOR;
+  else if(ui->actionMapShowWeatherActiveSky->isChecked())
+    return map::WEATHER_SOURCE_ACTIVE_SKY;
+  else if(ui->actionMapShowWeatherNoaa->isChecked())
+    return map::WEATHER_SOURCE_NOAA;
+  else if(ui->actionMapShowWeatherVatsim->isChecked())
+    return map::WEATHER_SOURCE_VATSIM;
+  else if(ui->actionMapShowWeatherIvao->isChecked())
+    return map::WEATHER_SOURCE_IVAO;
+
+  return map::WEATHER_SOURCE_SIMULATOR;
 }
 
 void MapWidget::resetSettingActionsToDefault()
@@ -642,22 +732,17 @@ void MapWidget::restoreState()
     mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
   setMapDetail(mapDetailLevel);
 
-  // Sun shading settings
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  MapSunShadingIndex sunShading =
-    static_cast<MapSunShadingIndex>(s.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, SUN_SHADING_SIMULATOR_TIME));
-  switch(sunShading)
-  {
-    case MapWidget::SUN_SHADING_SIMULATOR_TIME:
-      ui->actionMapShowSunShadingSimulatorTime->setChecked(true);
-      break;
-    case MapWidget::SUN_SHADING_REAL_TIME:
-      ui->actionMapShowSunShadingRealTime->setChecked(true);
-      break;
-    case MapWidget::SUN_SHADING_USER_TIME:
-      ui->actionMapShowSunShadingUserTime->setChecked(true);
-      break;
-  }
+  // Sun shading settings ========================================
+  map::MapSunShading sunShading =
+    static_cast<map::MapSunShading>(s.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, map::SUN_SHADING_SIMULATOR_TIME));
+  sunShadingToUi(sunShading);
+  paintLayer->setSunShading(sunShading);
+
+  // Weather source settings ========================================
+  map::MapWeatherSource weatherSource =
+    static_cast<map::MapWeatherSource>(s.valueInt(lnm::MAP_WEATHER_SOURCE, map::WEATHER_SOURCE_SIMULATOR));
+  weatherSourceToUi(weatherSource);
+  paintLayer->setWeatherSource(weatherSource);
 
   if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
     searchMarkPos = Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));

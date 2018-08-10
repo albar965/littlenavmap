@@ -37,6 +37,8 @@
 #include "common/vehicleicons.h"
 #include "mapgui/aprongeometrycache.h"
 #include "gui/stylehandler.h"
+#include "weather/weatherreporter.h"
+#include "fs/weather/metar.h"
 
 #include "ui_mainwindow.h"
 
@@ -521,6 +523,16 @@ ElevationProvider *NavApp::getElevationProvider()
 WeatherReporter *NavApp::getWeatherReporter()
 {
   return mainWindow->getWeatherReporter();
+}
+
+atools::fs::weather::Metar NavApp::getAirportWeather(const QString& ident)
+{
+  return mainWindow->getWeatherReporter()->getAirportWeather(ident, mainWindow->getMapWidget()->getMapWeatherSource());
+}
+
+map::MapWeatherSource  NavApp::getAirportWeatherSource()
+{
+  return mainWindow->getMapWidget()->getMapWeatherSource();
 }
 
 void NavApp::updateWindowTitle()

@@ -53,6 +53,14 @@ QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
 
+QColor weatherBackgoundColor(Qt::white);
+QColor weatherWindColor(Qt::black);
+
+QColor weatherLifrColor(QColor("#d000d0"));
+QColor weatherIfrColor(QColor("#d00000"));
+QColor weatherMvfrColor(QColor("#0000d0"));
+QColor weatherVfrColor(QColor("#00b000"));
+
 QColor compassRoseColor(Qt::darkRed);
 QColor compassRoseTextColor(Qt::black);
 
@@ -518,6 +526,15 @@ void syncColors()
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
   syncColor(colorSettings, "CompassRoseColor", compassRoseColor);
   syncColor(colorSettings, "CompassRoseTextColor", compassRoseTextColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Weather");
+  syncColor(colorSettings, "WeatherBackgoundColor", weatherBackgoundColor);
+  syncColor(colorSettings, "WeatherWindColor", weatherWindColor);
+  syncColor(colorSettings, "WeatherLifrColor", weatherLifrColor);
+  syncColor(colorSettings, "WeatherIfrColor", weatherIfrColor);
+  syncColor(colorSettings, "WeatherMvfrColor", weatherMvfrColor);
+  syncColor(colorSettings, "WeatherVfrColor", weatherVfrColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Profile");
