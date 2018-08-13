@@ -23,6 +23,7 @@
 #include "atools.h"
 #include "common/mapcolors.h"
 #include "gui/stylehandler.h"
+#include "fs/common/morareader.h"
 #include "gui/application.h"
 #include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -1046,6 +1047,7 @@ void MainWindow::connectAllSlots()
     connect(action, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
 
   // Map object/feature display
+  connect(ui->actionMapShowMinimumAltitude, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAirportWeather, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -2450,6 +2452,9 @@ void MainWindow::updateActionStates()
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
+  // Enable MORA button depending on available data
+  ui->actionMapShowMinimumAltitude->setEnabled(NavApp::getMoraReader()->isDataAvailable());
+
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
@@ -2651,7 +2656,7 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionUserdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather});
+                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -2776,6 +2781,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading,
                     ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
+                    ui->actionMapShowMinimumAltitude,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,

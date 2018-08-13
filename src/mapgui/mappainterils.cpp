@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainterils.h"
+#include "mapgui/mappainterils.h"
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"

@@ -337,7 +337,10 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
   setShowMapFeatures(map::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
-  setShowMapFeatures(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
+
+  // Display types which are not used in structs
+  setShowMapFeaturesDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
+  setShowMapFeaturesDisplay(map::MINIMUM_ALTITUDE, ui->actionMapShowMinimumAltitude->isChecked());
 
   // Force addon airport independent of other settings or not
   setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
@@ -433,6 +436,11 @@ void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 
   if(type & map::AIRSPACE || type & map::AIRSPACE_ONLINE)
     screenIndex->updateAirspaceScreenGeometry(currentViewBoundingBox);
+}
+
+void MapWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
+{
+  paintLayer->setShowMapObjectsDisplay(type, show);
 }
 
 void MapWidget::setShowMapAirspaces(map::MapAirspaceFilter types)

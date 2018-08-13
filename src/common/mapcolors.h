@@ -68,12 +68,17 @@ extern QColor compassRoseColor;
 extern QColor compassRoseTextColor;
 extern QColor distanceColor;
 
+/* Weather icon colors */
 extern QColor weatherBackgoundColor;
 extern QColor weatherWindColor;
 extern QColor weatherLifrColor;
 extern QColor weatherIfrColor;
 extern QColor weatherMvfrColor;
 extern QColor weatherVfrColor;
+
+/* Minimum off route altitude (MORA) */
+extern QColor minimumAltitudeGridColor;
+extern QColor minimumAltitudeNumberColor;
 
 /* Elevation profile colors and pens */
 extern QColor profileSkyColor;

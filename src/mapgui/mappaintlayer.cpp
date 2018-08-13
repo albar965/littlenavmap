@@ -30,6 +30,7 @@
 #include "mapgui/mappainternav.h"
 #include "mapgui/mappainterroute.h"
 #include "mapgui/mappainteruser.h"
+#include "mapgui/mappainteraltitude.h"
 #include "mapgui/mapscale.h"
 #include "userdata/userdatacontroller.h"
 #include "route/route.h"
@@ -61,9 +62,11 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale);
   mapPainterShip = new MapPainterShip(mapWidget, mapScale);
   mapPainterUser = new MapPainterUser(mapWidget, mapScale);
+  mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale);
 
   // Default for visible object types
   objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
+  objectDisplayTypes = map::DISPLAY_TYPE_NONE;
 }
 
 MapPaintLayer::~MapPaintLayer()
@@ -77,6 +80,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterAircraft;
   delete mapPainterShip;
   delete mapPainterUser;
+  delete mapPainterAltitude;
 
   delete layers;
   delete mapScale;
@@ -98,6 +102,14 @@ void MapPaintLayer::setShowMapObjects(map::MapObjectTypes type, bool show)
     objectTypes |= type;
   else
     objectTypes &= ~type;
+}
+
+void MapPaintLayer::setShowMapObjectsDisplay(map::MapObjectDisplayTypes type, bool show)
+{
+  if(show)
+    objectDisplayTypes |= type;
+  else
+    objectDisplayTypes &= ~type;
 }
 
 void MapPaintLayer::setShowAirspaces(map::MapAirspaceFilter types)
@@ -146,6 +158,8 @@ void MapPaintLayer::initMapLayerSettings()
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
                       airportWeather().airportWeatherDetails().
+
+                      minimumAltitude().
 
                       vor().ndb().waypoint().marker().ils().airway().
 
@@ -329,6 +343,7 @@ void MapPaintLayer::initMapLayerSettings()
          minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
+         minimumAltitude(false).
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -344,6 +359,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(100000.f).airportSymbolSize(5).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
+         minimumAltitude(false).
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -394,6 +410,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.painter = painter;
       context.viewport = viewport;
       context.objectTypes = objectTypes;
+      context.objectDisplayTypes = objectDisplayTypes;
       context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
       context.viewContext = mapWidget->viewContext();
       context.drawFast = (mapScrollDetail == opts::FULL || mapScrollDetail == opts::HIGHER) ?
@@ -453,6 +470,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
       }
 
+      // Altitude below all others
+      mapPainterAltitude->render(&context);
+
+      // Ship below other navaids and airports
       mapPainterShip->render(&context);
 
       if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT)

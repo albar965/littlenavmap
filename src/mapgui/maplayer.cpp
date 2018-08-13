@@ -413,6 +413,12 @@ MapLayer& MapLayer::onlineAircraftText(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::minimumAltitude(bool value)
+{
+  layerMinimumAltitude = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportMaxTextLength(int size)
 {
   maximumTextLengthAirport = size;

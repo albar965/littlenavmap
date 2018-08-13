@@ -326,6 +326,7 @@
     <addaction name="actionMapShowGrid"/>
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowHillshading"/>
+    <addaction name="actionMapShowMinimumAltitude"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAirportWeather"/>
     <addaction name="menuMapShowAirportWeatherSource"/>
@@ -4133,6 +4134,7 @@
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
    <addaction name="actionMapShowHillshading"/>
+   <addaction name="actionMapShowMinimumAltitude"/>
    <addaction name="actionMapShowAirportWeather"/>
    <addaction name="actionMapShowSunShading"/>
   </widget>
@@ -7903,10 +7905,10 @@
     <string>Show Sun &amp;Shading</string>
    </property>
    <property name="toolTip">
-    <string>Show the sun shadind on the globe</string>
+    <string>Show sun shading on the globe</string>
    </property>
    <property name="statusTip">
-    <string>Show the sun shadind on the globe</string>
+    <string>Show sun shading on the globe</string>
    </property>
   </action>
   <action name="actionMapShowSunShadingRealTime">
@@ -8057,6 +8059,27 @@
    </property>
    <property name="statusTip">
     <string>Use IVAO weather to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionMapShowMinimumAltitude">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/minaltitude.svg</normaloff>:/littlenavmap/resources/icons/minaltitude.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Minimum Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Minimum Altitude (MORA) on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Minimum Altitude (MORA) on the map</string>
    </property>
   </action>
  </widget>

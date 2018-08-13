@@ -30,6 +30,7 @@
 #include "route/routecontroller.h"
 #include "common/elevationprovider.h"
 #include "fs/common/magdecreader.h"
+#include "fs/common/morareader.h"
 #include "common/updatehandler.h"
 #include "userdata/userdatacontroller.h"
 #include "online/onlinedatacontroller.h"
@@ -65,6 +66,7 @@ atools::fs::db::DatabaseMeta *NavApp::databaseMetaNav = nullptr;
 QSplashScreen *NavApp::splashScreen = nullptr;
 
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
+atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
@@ -108,6 +110,9 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
+
+  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseNav());
+  moraReader->readFromTable();
 
   vehicleIcons = new VehicleIcons();
 
@@ -236,6 +241,10 @@ void NavApp::deInit()
   delete magDecReader;
   magDecReader = nullptr;
 
+  qDebug() << Q_FUNC_INFO << "delete moraReader";
+  delete moraReader;
+  moraReader = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete vehicleIcons";
   delete vehicleIcons;
   vehicleIcons = nullptr;
@@ -285,6 +294,8 @@ void NavApp::postDatabaseLoad()
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
   magDecReader->readFromTable(*getDatabaseSim());
+  moraReader->readFromTable(*getDatabaseNav());
+
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
@@ -505,6 +516,11 @@ StyleHandler *NavApp::getStyleHandler()
   return styleHandler;
 }
 
+atools::fs::common::MoraReader *NavApp::getMoraReader()
+{
+  return moraReader;
+}
+
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()
 {
   return databaseManager->getDatabaseUser();
@@ -530,7 +546,7 @@ atools::fs::weather::Metar NavApp::getAirportWeather(const QString& ident)
   return mainWindow->getWeatherReporter()->getAirportWeather(ident, mainWindow->getMapWidget()->getMapWeatherSource());
 }
 
-map::MapWeatherSource  NavApp::getAirportWeatherSource()
+map::MapWeatherSource NavApp::getAirportWeatherSource()
 {
   return mainWindow->getMapWidget()->getMapWeatherSource();
 }

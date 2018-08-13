@@ -201,6 +201,26 @@ QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const
   }
 }
 
+QPointF CoordinateConverter::wToSF(const GeoDataCoordinates& coords, const QSize& size, bool *visible,
+                                   bool *isHidden) const
+{
+  double xr, yr;
+  bool isVisible = wToS(coords, xr, yr, size, isHidden);
+
+  if(visible != nullptr)
+  {
+    *visible = isVisible;
+    return QPointF(xr, yr);
+  }
+  else
+  {
+    if(isVisible)
+      return QPointF(xr, yr);
+    else
+      return QPointF();
+  }
+}
+
 bool CoordinateConverter::sToW(int x, int y, Marble::GeoDataCoordinates& coords) const
 {
   qreal lon, lat;

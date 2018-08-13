@@ -70,6 +70,8 @@ public:
    */
   QPoint wToS(const Marble::GeoDataCoordinates& coords,
               const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
+  QPointF wToSF(const Marble::GeoDataCoordinates& coords,
+              const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr, bool *isHidden = nullptr) const;
 
   /*
    * Convert world to screen coordinates for GeoDataCoordinates

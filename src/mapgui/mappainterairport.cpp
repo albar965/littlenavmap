@@ -217,7 +217,7 @@ void MapPainterAirport::render(PaintContext *context)
                                      context->mapLayer->getMaxTextLengthAirport());
     }
 
-    if(context->objectTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather())
+    if(context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather())
       drawAirportWeather(context,
                          NavApp::getWeatherReporter()->getAirportWeather(airport->ident, context->weatherSource), x, y);
   }

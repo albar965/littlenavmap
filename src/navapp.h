@@ -70,6 +70,7 @@ class UserdataManager;
 
 namespace common {
 class MagDecReader;
+class MoraReader;
 }
 
 namespace db {
@@ -233,6 +234,8 @@ public:
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
+  static atools::fs::common::MoraReader *getMoraReader();
+
   static VehicleIcons *getVehicleIcons();
 
   static ApronGeometryCache *getApronGeometryCache();
@@ -259,6 +262,9 @@ private:
   static ConnectClient *connectClient;
   static DatabaseManager *databaseManager;
   static atools::fs::common::MagDecReader *magDecReader;
+
+  /* minimum off route altitude from nav database */
+  static atools::fs::common::MoraReader *moraReader;
   static UserdataController *userdataController;
   static OnlinedataController *onlinedataController;
 

@@ -180,6 +180,9 @@ public:
   MapLayer& onlineAircraft(bool value = true);
   MapLayer& onlineAircraftText(bool value = true);
 
+  /* minimum off route altitude */
+  MapLayer& minimumAltitude(bool value = true);
+
   bool operator<(const MapLayer& other) const;
 
   float getMaxRange() const
@@ -523,6 +526,12 @@ public:
     return layerAirportWeatherDetails;
   }
 
+  /* minimum off route altitude */
+  bool isMinimumAltitude() const
+  {
+    return layerMinimumAltitude;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -545,7 +554,8 @@ private:
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
        layerMarker = false, layerMarkerInfo = false, layerUserpointInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false,
-       layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false, layerAirwayInfo = false;
+       layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false, layerAirwayInfo = false,
+       layerMinimumAltitude = false;
 
   bool layerAirportRouteInfo = false;
   bool layerVorRouteIdent = false, layerVorRouteInfo = false;

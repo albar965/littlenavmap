@@ -241,6 +241,7 @@ public:
 
   /* Define which airport or navaid types are shown on the map */
   void setShowMapFeatures(map::MapObjectTypes type, bool show);
+  void setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
   map::MapObjectTypes getShownMapFeatures() const;

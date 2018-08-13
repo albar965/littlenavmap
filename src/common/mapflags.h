@@ -75,8 +75,6 @@ enum MapObjectType
   AIRSPACE_ONLINE = 1 << 28, /* Online network center */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
 
-  AIRPORT_WEATHER = 1 << 30, /* Airport weather icons */
-
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
@@ -95,6 +93,17 @@ Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectTypes);
 
 QDebug operator<<(QDebug out, const map::MapObjectTypes& type);
+
+/* Type that is used only for flags to determine what should be drawn. Not used in other contexts. */
+enum MapObjectDisplayType
+{
+  DISPLAY_TYPE_NONE = 0,
+  AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
+  MINIMUM_ALTITUDE = 1 << 1 /* MORA (minimum off route altitude) */
+};
+
+Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
 
 /* Covers all airspace types */
 enum MapAirspaceType

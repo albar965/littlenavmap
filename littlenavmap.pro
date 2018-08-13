@@ -238,7 +238,8 @@ SOURCES += src/main.cpp\
     src/route/routeexport.cpp \
     src/mapgui/aprongeometrycache.cpp \
     src/gui/timedialog.cpp \
-    src/gui/stylehandler.cpp
+    src/gui/stylehandler.cpp \
+    src/mapgui/mappainteraltitude.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -343,7 +344,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routeexport.h \
     src/mapgui/aprongeometrycache.h \
     src/gui/timedialog.h \
-    src/gui/stylehandler.h
+    src/gui/stylehandler.h \
+    src/mapgui/mappainteraltitude.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

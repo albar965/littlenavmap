@@ -44,6 +44,7 @@ class MapPainterRoute;
 class MapPainterAircraft;
 class MapPainterShip;
 class MapPainterUser;
+class MapPainterAltitude;
 
 /*
  * Implements the Marble layer interface that paints upon the Marble map. Contains all painter instances
@@ -74,6 +75,7 @@ public:
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
   void setShowMapObjects(map::MapObjectTypes type, bool show);
+  void setShowMapObjectsDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowAirspaces(map::MapAirspaceFilter types);
 
   /* Changes the detail factor (range 5-15 default is 10 */
@@ -140,6 +142,7 @@ private:
 
   /* Map objects currently shown */
   map::MapObjectTypes objectTypes = map::NONE;
+  map::MapObjectDisplayTypes objectDisplayTypes = map::DISPLAY_TYPE_NONE;
   map::MapAirspaceFilter airspaceTypes;
   map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;
   map::MapSunShading sunShading = map::SUN_SHADING_SIMULATOR_TIME;
@@ -159,6 +162,7 @@ private:
   MapPainterAircraft *mapPainterAircraft;
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;
+  MapPainterAltitude *mapPainterAltitude;
 
   /* Database source */
   MapQuery *mapQuery = nullptr;

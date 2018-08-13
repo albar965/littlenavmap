@@ -166,10 +166,20 @@
        y2="46.75"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
-       gradientTransform="matrix(0.73508968,0,0,0.73508968,-5.7411722,10.739166)"
+       gradientTransform="matrix(0.98777338,0,0,0.98777338,-11.105096,-4.7387281)"
        inkscape:collect="always"
        xlink:href="#linearGradient941"
        id="linearGradient863-9"
+       x1="29.517834"
+       y1="28.330355"
+       x2="48.0625"
+       y2="46.75"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       gradientTransform="matrix(0.83290273,0,0,0.83290273,-9.0478372,6.9360476)"
+       inkscape:collect="always"
+       xlink:href="#linearGradient941"
+       id="linearGradient863-9-3"
        x1="29.517834"
        y1="28.330355"
        x2="48.0625"
@@ -226,11 +236,17 @@
      cy="27.625"
      r="15.5" />
   <circle
-     style="opacity:1;fill:url(#linearGradient863-9);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.5417611;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:url(#linearGradient863-9);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.72798896;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="path853-7"
-     cx="21.434174"
-     cy="36.995651"
-     r="7.9711289" />
+     cx="25.411648"
+     cy="30.543303"
+     r="10.711167" />
+  <circle
+     style="opacity:1;fill:url(#linearGradient863-9-3);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.61384928;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path853-7-5"
+     cx="21.743534"
+     cy="36.686291"
+     r="9.0317888" />
   <circle
      style="opacity:1;fill:url(#linearGradient863);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.73699999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="path853"
