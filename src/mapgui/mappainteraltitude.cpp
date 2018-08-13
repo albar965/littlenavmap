@@ -59,7 +59,7 @@ void MapPainterAltitude::render(PaintContext *context)
     {
       atools::util::PainterContextSaver paintContextSaver(context->painter);
 
-      context->painter->setPen(QPen(mapcolors::minimumAltitudeGridColor, 1.f));
+      context->painter->setPen(mapcolors::minimumAltitudeGridPen);
 
       // Get covered one degree coordinate rectangles
       const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();

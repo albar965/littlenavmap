@@ -77,7 +77,7 @@ extern QColor weatherMvfrColor;
 extern QColor weatherVfrColor;
 
 /* Minimum off route altitude (MORA) */
-extern QColor minimumAltitudeGridColor;
+extern QPen minimumAltitudeGridPen;
 extern QColor minimumAltitudeNumberColor;
 
 /* Elevation profile colors and pens */
