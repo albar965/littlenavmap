@@ -75,7 +75,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   context->painter->setBrush(Qt::NoBrush);
 
-  if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
+  if(context->mapLayer->isRouteTextAndDetail())
     drawStartParking(context);
 
   // Collect line text and geometry from the route
@@ -197,7 +197,9 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   painter->setBackground(mapcolors::routeTextBackgroundColor);
   painter->setPen(mapcolors::routeTextColor);
-  textPlacement.drawTextAlongLines();
+
+  if(context->mapLayer->isRouteTextAndDetail())
+    textPlacement.drawTextAlongLines();
   painter->restore();
   painter->setBackgroundMode(Qt::OpaqueMode);
 
@@ -409,77 +411,83 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
                           true /* draw */);
   }
 
-  if(!context->drawFast)
+  // Draw text along lines only on low zoom factors ========
+  if(context->mapLayer->isApproachTextAndDetail())
   {
-    // Build text strings for drawing along the line ===========================
-    QStringList approachTexts;
-    QVector<Line> lines;
-    QVector<QColor> textColors;
-
-    for(int i = 0; i < legs.size(); i++)
+    if(!context->drawFast)
     {
-      const proc::MapProcedureLeg& leg = legs.at(i);
+      // Build text strings for drawing along the line ===========================
+      QStringList approachTexts;
+      QVector<Line> lines;
+      QVector<QColor> textColors;
 
-      if(i < passedProcLeg && activeValid && !preview)
+      for(int i = 0; i < legs.size(); i++)
       {
-        // No texts for passed legs
-        approachTexts.append(QString());
-        lines.append(leg.line);
-        textColors.append(Qt::transparent);
-      }
-      else
-      {
-        QString approachText;
-        if(drawTextLines.at(i).distance)
-          approachText.append(Unit::distNm(leg.calculatedDistance, true /*addUnit*/, 20, true /*narrow*/));
+        const proc::MapProcedureLeg& leg = legs.at(i);
 
-        if(drawTextLines.at(i).course)
+        if(i < passedProcLeg && activeValid && !preview)
         {
-          if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-          {
-            if(!approachText.isEmpty())
-              approachText.append(tr("/"));
-            approachText +=
-              (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
-               tr("°M"));
-          }
+          // No texts for passed legs
+          approachTexts.append(QString());
+          lines.append(leg.line);
+          textColors.append(Qt::transparent);
         }
+        else
+        {
+          QString approachText;
+          if(drawTextLines.at(i).distance)
+            approachText.append(Unit::distNm(leg.calculatedDistance, true /*addUnit*/, 20, true /*narrow*/));
 
-        approachTexts.append(approachText);
-        lines.append(leg.line);
-        textColors.append(leg.missed ? mapcolors::routeProcedureMissedTextColor : mapcolors::routeProcedureTextColor);
+          if(drawTextLines.at(i).course)
+          {
+            if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
+            {
+              if(!approachText.isEmpty())
+                approachText.append(tr("/"));
+              approachText +=
+                (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
+                 tr("°M"));
+            }
+          }
+
+          approachTexts.append(approachText);
+          lines.append(leg.line);
+          textColors.append(leg.missed ? mapcolors::routeProcedureMissedTextColor : mapcolors::routeProcedureTextColor);
+        }
       }
+
+      // Draw text along lines ====================================================
+      painter->setBackground(mapcolors::routeTextBackgroundColor);
+
+      QVector<Line> textLines;
+      LineString positions;
+
+      for(const DrawText& dt : drawTextLines)
+      {
+        textLines.append(dt.line);
+        positions.append(dt.line.getPos1());
+      }
+
+      TextPlacement textPlacement(painter, this);
+      textPlacement.setDrawFast(context->drawFast);
+      textPlacement.setTextOnTopOfLine(false);
+      textPlacement.setLineWidth(outerlinewidth);
+      textPlacement.setColors(textColors);
+      textPlacement.calculateTextPositions(positions);
+      textPlacement.calculateTextAlongLines(textLines, approachTexts);
+      textPlacement.drawTextAlongLines();
     }
 
-    // Draw text along lines ====================================================
-    painter->setBackground(mapcolors::routeTextBackgroundColor);
-
-    QVector<Line> textLines;
-    LineString positions;
-
-    for(const DrawText& dt : drawTextLines)
-    {
-      textLines.append(dt.line);
-      positions.append(dt.line.getPos1());
-    }
-
-    TextPlacement textPlacement(painter, this);
-    textPlacement.setDrawFast(context->drawFast);
-    textPlacement.setTextOnTopOfLine(false);
-    textPlacement.setLineWidth(outerlinewidth);
-    textPlacement.setColors(textColors);
-    textPlacement.calculateTextPositions(positions);
-    textPlacement.calculateTextAlongLines(textLines, approachTexts);
-    textPlacement.drawTextAlongLines();
+    context->szFont(context->textSizeFlightplan);
   }
-
-  context->szFont(context->textSizeFlightplan);
 
   // Texts and navaid icons ====================================================
   for(int i = 0; i < legs.size(); i++)
   {
     // No text labels for passed points
     bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
+    if(!context->mapLayer->isApproachTextAndDetail())
+      drawText = false;
     paintProcedurePoint(lastLegPoint, context, legs, i, preview, drawText);
   }
 }
@@ -502,8 +510,8 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
 
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
   QLineF line;
-  bool hiddenDummy;
-  wToS(leg.line, line, size, &hiddenDummy);
+  bool hidden;
+  wToS(leg.line, line, size, &hidden);
 
   if(leg.disabled)
     return;
@@ -524,9 +532,30 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
     return;
   }
 
-  QPointF intersectPoint = wToS(leg.interceptPos, size, &hiddenDummy);
-
   QPainter *painter = context->painter;
+  // ===========================================================
+  // Draw lines simplified if no point is hidden to avoid weird things at high zoom factors in spherical projection
+  if(!context->mapLayer->isApproachTextAndDetail())
+  {
+    bool visible1, visible2, hidden1, hidden2;
+    QPoint pt1 = wToS(leg.line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+    QPoint pt2 = wToS(leg.line.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+
+    if(!hidden1 && !hidden2)
+    {
+      QLine simpleLine(pt1, pt2);
+      if(draw)
+        drawLine(painter, simpleLine);
+      lastLine = simpleLine;
+
+      if(drawTextLines != nullptr)
+        // Disable all drawing
+        (*drawTextLines)[index] = {leg.line, false, false};
+    }
+    return;
+  }
+
+  QPointF intersectPoint = wToS(leg.interceptPos, size, &hidden);
 
   bool showDistance = !leg.noDistanceDisplay();
 
@@ -537,7 +566,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
     {
       if(draw)
       {
-        QPointF point = wToS(leg.recFixPos, size, &hiddenDummy);
+        QPointF point = wToS(leg.recFixPos, size, &hidden);
         paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
       }
     }
@@ -710,7 +739,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
         text = tr("◄ ") + text;
     }
 
-    QPointF pc = wToS(leg.procedureTurnPos, size, &hiddenDummy);
+    QPointF pc = wToS(leg.procedureTurnPos, size, &hidden);
 
     if(draw)
       paintProcedureTurnWithText(painter, static_cast<float>(pc.x()), static_cast<float>(pc.y()),

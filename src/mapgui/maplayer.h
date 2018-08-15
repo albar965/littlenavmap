@@ -75,6 +75,8 @@ public:
   MapLayer& approach(bool value = true);
   MapLayer& approachTextAndDetail(bool value = true);
 
+  MapLayer& routeTextAndDetail(bool value = true);
+
   /* Define source table for airports */
   MapLayer& airportSource(layer::AirportSource source);
 
@@ -532,6 +534,11 @@ public:
     return layerMinimumAltitude;
   }
 
+  bool isRouteTextAndDetail() const
+  {
+    return layerRouteTextAndDetail;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -543,7 +550,7 @@ private:
        layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false, layerAirportDiagramDetail3 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false,
-       layerUserpoint = false;
+       layerRouteTextAndDetail = false, layerUserpoint = false;
 
   bool layerAirportWeather = false, layerAirportWeatherDetails = false;
 

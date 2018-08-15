@@ -96,6 +96,12 @@ MapLayer& MapLayer::approachTextAndDetail(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::routeTextAndDetail(bool value)
+{
+  layerRouteTextAndDetail = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportSource(layer::AirportSource source)
 {
   src = source;

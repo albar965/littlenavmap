@@ -159,6 +159,8 @@ void MapPaintLayer::initMapLayerSettings()
 
                       airportWeather().airportWeatherDetails().
 
+                      routeTextAndDetail().
+
                       minimumAltitude().
 
                       vor().ndb().waypoint().marker().ils().airway().
@@ -360,6 +362,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
          minimumAltitude(false).
+         routeTextAndDetail(false).
          approach(false).approachTextAndDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
