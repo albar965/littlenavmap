@@ -70,7 +70,7 @@ void MapPainterAltitude::render(PaintContext *context)
 
       // Split at anit-meridian if needed
       QVector<std::pair<int, int> > ranges;
-      if(west < east)
+      if(west <= east)
         ranges.append(std::make_pair(west - 1, east));
       else
       {
@@ -89,6 +89,7 @@ void MapPainterAltitude::render(PaintContext *context)
       Marble::GeoDataLineString line(Marble::Tessellate | Marble::RespectLatitudeCircle);
       for(int laty = south; laty <= north + 1; laty++)
       {
+        // Iterate over anti-meridian split
         for(const std::pair<int, int>& range : ranges)
         {
           for(int lonx = range.first; lonx <= range.second; lonx++)
@@ -97,6 +98,7 @@ void MapPainterAltitude::render(PaintContext *context)
             if(moraFt100 > 10 && moraFt100 != MoraReader::OCEAN && moraFt100 != MoraReader::UNKNOWN &&
                moraFt100 != MoraReader::ERROR)
             {
+              // Build rectangle
               line.clear();
               line.append(GeoDataCoordinates(lonx, laty, 0, DEG));
               line.append(GeoDataCoordinates(lonx + 1, laty, 0, DEG));
@@ -125,7 +127,7 @@ void MapPainterAltitude::render(PaintContext *context)
 
       // Adjust minmum and maximum font height based on rectangle width
       minWidth = std::max(minWidth * 0.6f, 25.f);
-      minWidth = std::min(minWidth * 0.6f, 120.f);
+      minWidth = std::min(minWidth * 0.6f, 150.f);
 
       // Draw texts =================================================================
       if(!context->drawFast)
@@ -138,12 +140,18 @@ void MapPainterAltitude::render(PaintContext *context)
         QFontMetricsF fontmetrics = context->painter->fontMetrics();
 
         // Draw big thousands numbers ===============================
+        bool visible, hidden;
+        QVector<double> xpos;
         for(int i = 0; i < centers.size(); i++)
         {
           QString txt = QString::number(altitudes.at(i) / 10);
-          context->painter->drawText(centers.at(i), txt,
-                                     -fontmetrics.width(txt) * 0.9f,
-                                     -fontmetrics.height() / 2. + fontmetrics.descent());
+          QPointF pt = wToSF(centers.at(i), DEFAULT_WTOS_SIZE, &visible, &hidden);
+
+          qreal w = fontmetrics.width(txt);
+          pt += QPointF(-w * 0.7, fontmetrics.height() / 2. - fontmetrics.descent());
+          xpos.append(pt.x() + w);
+          if(!hidden)
+            context->painter->drawText(pt, txt);
         }
 
         // Draw smaller hundreds numbers ==============================
@@ -152,8 +160,17 @@ void MapPainterAltitude::render(PaintContext *context)
         fontmetrics = context->painter->fontMetrics();
 
         for(int i = 0; i < centers.size(); i++)
-          context->painter->drawText(centers.at(i), QString::number(altitudes.at(i) - (altitudes.at(i) / 10 * 10)),
-                                     0, -fontmetrics.height());
+        {
+          QString txt = QString::number(altitudes.at(i) / 10);
+          QPointF pt = wToSF(centers.at(i), DEFAULT_WTOS_SIZE, &visible, &hidden);
+
+          if(!hidden)
+          {
+            pt += QPointF(0., fontmetrics.height() - fontmetrics.descent());
+            pt.setX(xpos.at(i));
+            context->painter->drawText(pt, QString::number(altitudes.at(i) - (altitudes.at(i) / 10 * 10)));
+          }
+        }
       } // if(!context->drawFast)
     } // if(moraReader->isDataAvailable())
   } // if(context->mapLayer->isMinimumAltitude())
