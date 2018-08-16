@@ -626,6 +626,8 @@ struct MapAirspace
   QString name, /* Airspace name or callsign for online ATC */
           comName, comType, minAltitudeType, maxAltitudeType,
           multipleCode /* A-Z if duplicates exist */,
+          restrictiveDesignation /* Number or name to display together with type on the map only for restricted airspaces*/,
+          restrictiveType /* Type of restricted airspace */,
           timeCode;
   /* timeCode: C active continuously, including holidays -  H active continuously, excluding holidays -
    *  N active not continuously - time not known - NULL active times announced by Notams

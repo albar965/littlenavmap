@@ -1784,6 +1784,14 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.p(header.join("\n"));
 
   html.table();
+
+  if(!airspace.restrictiveDesignation.isEmpty())
+  {
+    QString restrictedName = airspace.restrictiveType + "-" + airspace.restrictiveDesignation;
+    if(restrictedName != airspace.name)
+      html.row2(tr("Designation:"), restrictedName);
+  }
+
   html.row2(tr("Type:"), map::airspaceTypeToString(airspace.type));
 
   if(!airspace.online)

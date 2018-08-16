@@ -508,6 +508,8 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   // Use default values for online network ATC centers
   airspace.comName = record.valueStr("com_name", QString());
   airspace.multipleCode = record.valueStr("multiple_code", QString());
+  airspace.restrictiveDesignation = record.valueStr("restrictive_designation", QString());
+  airspace.restrictiveType = record.valueStr("restrictive_type", QString());
   airspace.timeCode = record.valueStr("time_code", QString());
   airspace.minAltitudeType = record.valueStr("min_altitude_type", QString());
   airspace.maxAltitudeType = record.valueStr("max_altitude_type", QString());

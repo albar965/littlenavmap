@@ -281,6 +281,11 @@ void AirspaceQuery::initQueries()
       airspaceQueryBase += ", time_code ";
     if(rec.contains("multiple_code"))
       airspaceQueryBase += ", multiple_code ";
+
+    if(rec.contains("restrictive_type"))
+      airspaceQueryBase += ", restrictive_type ";
+    if(rec.contains("restrictive_designation"))
+      airspaceQueryBase += ", restrictive_designation ";
   }
 
   deInitQueries();
