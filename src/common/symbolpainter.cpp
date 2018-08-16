@@ -316,7 +316,8 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
 
     float wind = parsedMetar.getPrevailingWindSpeedKnots();
     float lineWidth = size * 0.2f;
-    if(wind >= 2.f && wind < INVALID_METAR_VALUE / 2.f && windPointer && !fast)
+    if(wind >= 2.f && wind < INVALID_METAR_VALUE / 2.f && windPointer && !fast &&
+       parsedMetar.getPrevailingWindDir() >= 0)
     {
       QVector<int> barbs;
       float lineLength = size;
