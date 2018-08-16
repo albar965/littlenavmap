@@ -318,9 +318,6 @@ private:
 
   void flightRulesText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
-  /* Escape entities and replace linefeeds with <br/> */
-  QString adjustText(const QString& text) const;
-
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
   AirportQuery *airportQuerySim, *airportQueryNav;

@@ -1561,15 +1561,15 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     bearingText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
 
     // Be cautious with user defined data and adapt it for HTML display
-    html.row2If(tr("Type:"), adjustText(userpoint.type), atools::util::html::NO_ENTITIES);
-    html.row2If(tr("Ident:"), adjustText(userpoint.ident), atools::util::html::NO_ENTITIES);
-    html.row2If(tr("Region:"), adjustText(userpoint.region), atools::util::html::NO_ENTITIES);
-    html.row2If(tr("Name:"), adjustText(userpoint.name), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Type:"), userpoint.type, atools::util::html::REPLACE_CRLF);
+    html.row2If(tr("Ident:"), userpoint.ident, atools::util::html::REPLACE_CRLF);
+    html.row2If(tr("Region:"), userpoint.region, atools::util::html::REPLACE_CRLF);
+    html.row2If(tr("Name:"), userpoint.name, atools::util::html::REPLACE_CRLF);
 
-    QString description = adjustText(atools::elideTextLinesShort(userpoint.description, info ? 40 : 4));
-    html.row2If(tr("Description:"), description, atools::util::html::NO_ENTITIES);
+    QString description = atools::elideTextLinesShort(userpoint.description, info ? 40 : 4);
+    html.row2If(tr("Description:"), description, (info ? atools::util::html::AUTOLINK : atools::util::html::NONE));
 
-    html.row2If(tr("Tags:"), adjustText(userpoint.tags), atools::util::html::NO_ENTITIES);
+    html.row2If(tr("Tags:"), userpoint.tags, atools::util::html::REPLACE_CRLF);
     if(!rec.isNull("altitude"))
       html.row2If(tr("Elevation:"), Unit::altFeet(rec.valueFloat("altitude")));
 
@@ -3054,10 +3054,4 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
     // Add METAR suffix for tooltip
     html.row2(heading + (info ? tr(":") : tr(" METAR:")), fsMetar ? m.getCleanMetar() : metar);
   }
-}
-
-QString HtmlInfoBuilder::adjustText(const QString& text) const
-{
-  static QRegularExpression LINEFEED_REGEXP("[\\n\\r\\f]");
-  return text.toHtmlEscaped().replace(LINEFEED_REGEXP, "<br/>");
 }

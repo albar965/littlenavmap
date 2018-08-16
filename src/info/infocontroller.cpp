@@ -36,6 +36,7 @@
 #include "options/optiondata.h"
 #include "sql/sqlrecord.h"
 #include "mapgui/mapwidget.h"
+#include "gui/helphandler.h"
 
 #include <QDebug>
 #include <QScrollBar>
@@ -168,8 +169,25 @@ void InfoController::anchorClicked(const QUrl& url)
 {
   qDebug() << Q_FUNC_INFO << url;
 
-  if(url.scheme() == "lnm")
+  if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp")
+    // Open a normal link from the userpoint description
+    atools::gui::HelpHandler::openUrl(mainWindow, url);
+  else if(url.scheme() == "file")
   {
+    if(url.isLocalFile())
+    {
+      QFileInfo info(url.toLocalFile());
+      if(info.exists())
+        // Open a file from the userpoint description
+        atools::gui::HelpHandler::openUrl(mainWindow, url);
+      else
+        atools::gui::Dialog::warning(mainWindow, tr("File or directory \"%1\" does not exist.").
+                                     arg(url.toDisplayString()));
+    }
+  }
+  else if(url.scheme() == "lnm")
+  {
+    // Internal link like "show on map"
     QUrlQuery query(url);
 
     if(url.host() == "show")
@@ -275,13 +293,10 @@ void InfoController::anchorClicked(const QUrl& url)
                                          tr("Error opening path \"%1\"").arg(url.toDisplayString()));
         }
 #else
-        // if(!QProcess::startDetached("nautilus", {query.queryItemValue("filepath")}, QDir::homePath()))
-        // {
         QUrl fileUrl = QUrl::fromLocalFile(QFileInfo(query.queryItemValue("filepath")).path());
 
         if(!QDesktopServices::openUrl(fileUrl))
           atools::gui::Dialog::warning(mainWindow, tr("Error opening path \"%1\"").arg(url.toDisplayString()));
-        // }
 #endif
       }
     }
