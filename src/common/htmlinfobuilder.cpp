@@ -1981,7 +1981,13 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
   if(parking.jetway)
     html.brText(tr("Has Jetway"));
   if(!parking.airlineCodes.isEmpty())
-    html.brText(tr("Airline Codes: ") + parking.airlineCodes);
+  {
+    // Turn text into blocks and strip number of lines and add ... if needed
+    QString txt = atools::elideTextLinesShort(atools::blockText(parking.airlineCodes.split(","), 10, ",", "\n"), 8);
+
+    // Do not allow tooltip to break line
+    html.br().text(tr("Airline Codes: ") + txt, atools::util::html::NOBR | atools::util::html::REPLACE_CRLF);
+  }
 }
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
