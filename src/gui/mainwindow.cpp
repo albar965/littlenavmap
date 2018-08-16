@@ -2498,8 +2498,8 @@ void MainWindow::updateActionStates()
       emptyAirportSeparator = ui->toolbarMapOptions->insertSeparator(ui->actionMapShowVor);
     }
 
-    if(!ui->menuMapView->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->menuMapView->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+    if(!ui->menuViewAirport->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuViewAirport->addAction(ui->actionMapShowEmptyAirports);
   }
   else
   {
@@ -2514,8 +2514,8 @@ void MainWindow::updateActionStates()
       emptyAirportSeparator = nullptr;
     }
 
-    if(ui->menuMapView->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->menuMapView->removeAction(ui->actionMapShowEmptyAirports);
+    if(ui->menuViewAirport->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuViewAirport->removeAction(ui->actionMapShowEmptyAirports);
   }
 
 #ifdef DEBUG_MOVING_AIRPLANE
