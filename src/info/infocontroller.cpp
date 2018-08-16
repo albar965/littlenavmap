@@ -148,10 +148,10 @@ void InfoController::currentInfoTabChanged(int index)
   switch(static_cast<ic::TabIndex>(index))
   {
     case ic::INFO_AIRPORT:
-      updateAirportInternal(false /* new */, true /* bearing change*/);
+      updateAirportInternal(false /* new */, true /* bearing changed */, false /* scroll to top */);
       break;
     case ic::INFO_NAVAID:
-      updateNavaidInternal(currentSearchResult, true /* bearing changed */);
+      updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
       break;
     case ic::INFO_RUNWAYS:
     case ic::INFO_COM:
@@ -358,7 +358,7 @@ void InfoController::restoreState()
                                  refsStrList.at(i).toInt(), false /* airport from nav database */);
 
     updateTextEditFontSizes();
-    showInformationInternal(res, map::NONE, false);
+    showInformationInternal(res, map::NONE, false /* show windows */, false /* scroll to top */);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
     atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
@@ -368,7 +368,7 @@ void InfoController::restoreState()
 
 void InfoController::updateAirport()
 {
-  updateAirportInternal(false /* new */, false /* bearing change*/);
+  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */);
 }
 
 void InfoController::updateProgress()
@@ -385,7 +385,7 @@ void InfoController::updateProgress()
   }
 }
 
-void InfoController::updateAirportInternal(bool newAirport, bool bearingChange)
+void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop)
 {
   if(databaseLoadStatus)
     return;
@@ -410,7 +410,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange)
       infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRouteConst());
 
       Ui::MainWindow *ui = NavApp::getMainUi();
-      if(newAirport)
+      if(scrollToTop)
         // scroll up for new airports
         ui->textBrowserAirportInfo->setText(html.getHtml());
       else
@@ -422,7 +422,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange)
         html.clear();
         infoBuilder->weatherText(currentWeatherContext, airport, html);
 
-        if(newAirport)
+        if(scrollToTop)
           // scroll up for new airports
           ui->textBrowserWeatherInfo->setText(html.getHtml());
         else
@@ -451,12 +451,12 @@ void InfoController::clearInfoTextBrowsers()
 
 void InfoController::showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType)
 {
-  showInformationInternal(result, preferredType, true /* Show windows */);
+  showInformationInternal(result, preferredType, true /* Show windows */, true /* scroll to top */);
 }
 
 void InfoController::updateAllInformation()
 {
-  showInformationInternal(currentSearchResult, map::NONE, false);
+  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */);
 }
 
 void InfoController::onlineNetworkChanged()
@@ -471,18 +471,18 @@ void InfoController::onlineNetworkChanged()
       airspaces.append(airspace);
   currentSearchResult.airspaces = airspaces;
 
-  showInformationInternal(currentSearchResult, map::NONE, false);
+  showInformationInternal(currentSearchResult, map::NONE, false /* show windows */, false /* scroll to top */);
 }
 
 void InfoController::onlineClientAndAtcUpdated()
 {
-  showInformationInternal(currentSearchResult, map::NONE, false);
+  showInformationInternal(currentSearchResult, map::NONE, false /* show windows */, false /* scroll to top */);
 }
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
 void InfoController::showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
-                                             bool showWindows)
+                                             bool showWindows, bool scrollToTop)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -561,7 +561,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Remember one airport
     currentSearchResult.airports.append(airport);
 
-    updateAirportInternal(true /* new */, false /* bearing change*/);
+    updateAirportInternal(true /* new */, false /* bearing change*/, scrollToTop);
 
     html.clear();
     infoBuilder->runwayText(airport, html);
@@ -574,12 +574,6 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     html.clear();
     infoBuilder->procedureText(airport, html);
     ui->textBrowserApproachInfo->setText(html.getHtml());
-
-    html.clear();
-    map::WeatherContext currentWeatherContext;
-    mainWindow->buildWeatherContextForInfo(currentWeatherContext, airport);
-    infoBuilder->weatherText(currentWeatherContext, airport, html);
-    ui->textBrowserWeatherInfo->setText(html.getHtml());
 
     foundAirport = true;
   }
@@ -645,7 +639,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // if any navaids are to be shown clear search result before
     currentSearchResult.clear(map::NAV_ALL | map::USERPOINT | map::ILS | map::AIRWAY | map::RUNWAYEND);
 
-  foundNavaid = updateNavaidInternal(result, false /* bearing changed */);
+  foundNavaid = updateNavaidInternal(result, false /* bearing changed */, scrollToTop);
 
   // Show dock windows if needed
   if(showWindows)
@@ -754,7 +748,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   }
 }
 
-bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged)
+bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop)
 {
   HtmlBuilder html(true);
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -821,10 +815,10 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
 
   if(foundNavaid)
   {
-    if(bearingChanged)
-      atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml());
-    else
+    if(scrollToTop)
       ui->textBrowserNavaidInfo->setText(html.getHtml());
+    else
+      atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml());
   }
 
   return foundNavaid;
@@ -982,10 +976,10 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
     {
       if(ui->tabWidgetInformation->currentIndex() == ic::INFO_AIRPORT)
-        updateAirportInternal(false /* new */, true /* bearing change*/);
+        updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */);
 
       if(ui->tabWidgetInformation->currentIndex() == ic::INFO_NAVAID)
-        updateNavaidInternal(currentSearchResult, true /* bearing changed */);
+        updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
     }
     lastSimBearingUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
@@ -1041,7 +1035,7 @@ void InfoController::updateAircraftInfo()
 void InfoController::optionsChanged()
 {
   updateTextEditFontSizes();
-  showInformationInternal(currentSearchResult, map::NONE, false);
+  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */);
 }
 
 /* Update font size in text browsers if options have changed */

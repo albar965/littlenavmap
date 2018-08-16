@@ -2137,7 +2137,6 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
       }
     }
   }
-  infoController->updateProgress();
 }
 
 /* Selection in approach view has changed */

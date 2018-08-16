@@ -67,16 +67,29 @@ public:
   virtual ~InfoController();
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
-   * but multiple navaids can be shown in the tab. */
+   * but multiple navaids can be shown in the tab.
+   *  Raises all related windows and tabs and scrolls to top. */
   void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType);
+
+  /* Update the currently shown airport information if weather data or connection status has changed.
+   * Does not raise windows and does not scroll to top. */
+  void updateAirport();
+
+  /* Updates aircraft progress only. */
+  void updateProgress();
+
+  /* Update all and do not raise or scroll windows */
+  void updateAllInformation();
+
+  /* Update all and do not raise or scroll windows */
+  void onlineClientAndAtcUpdated();
+
+  /* Updates all online related information and does not raise windows */
+  void onlineNetworkChanged();
 
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
   void saveState();
   void restoreState();
-
-  /* Update the currently shown airport information if weather data has changed */
-  void updateAirport();
-  void updateProgress();
 
   /* Clear all panels and result set */
   void preDatabaseLoad();
@@ -95,30 +108,27 @@ public:
     return infoBuilder;
   }
 
-  void updateAllInformation();
-
-  void onlineClientAndAtcUpdated();
-
-  void onlineNetworkChanged();
-
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
 private:
-  /* Do not update aircraft information more than every 0.5 seconds */
+  /* Do not update aircraft progress more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
+
+  /* Bearing update in information window time limit */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
-  void updateAirportInternal(bool newAirport, bool bearingChange);
-  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged);
+  void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop);
+  bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType, bool showWindows);
+  void showInformationInternal(map::MapSearchResult result, map::MapObjectTypes preferredType,
+                               bool showWindows, bool scrollToTop);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateUserAircraftText();
   void updateAircraftProgressText();
