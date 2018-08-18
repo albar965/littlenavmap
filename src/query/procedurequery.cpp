@@ -694,6 +694,15 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
     leg.line.setPos2(Pos());
   }
 
+  for(MapProcedureLeg& leg : legs.transitionLegs)
+  {
+    leg.displayText.clear();
+    leg.remarks.clear();
+    leg.geometry.clear();
+    leg.line.setPos1(Pos());
+    leg.line.setPos2(Pos());
+  }
+
   // Update the mapTypes
   assignType(legs);
 
@@ -1071,6 +1080,8 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
 
     if(leg.isMissed())
       legs.missedDistance += leg.calculatedDistance;
+
+    leg.geometry.removeDuplicates();
   }
 }
 
