@@ -315,6 +315,7 @@ private:
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
   QString filepathText(const QString& filepath) const;
   QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
+  void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
   void flightRulesText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 

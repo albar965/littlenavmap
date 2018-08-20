@@ -216,7 +216,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     }
   }
 
-  HtmlBuilder flightRulesHtml(true);
+  HtmlBuilder flightRulesHtml(html.hasBackgroundColor());
   flightRulesText(airport, flightRulesHtml);
   if(!flightRulesHtml.isEmpty())
     html.row2(tr("Flight Rules:"), flightRulesHtml.getHtml(), atools::util::html::NO_ENTITIES);
@@ -1102,7 +1102,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1);
 
-    HtmlBuilder flightRulesHtml(true);
+    HtmlBuilder flightRulesHtml(html.hasBackgroundColor());
     flightRulesText(airport, flightRulesHtml);
     if(!flightRulesHtml.isEmpty())
       html.br().text(flightRulesHtml.getHtml(), atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
@@ -1454,6 +1454,9 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   else
     html.row2(tr("Type:"), map::navTypeNameVorLong(vor.type));
 
+  if(rec != nullptr && !rec->isNull("airport_id"))
+    airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
+
   html.row2(tr("Region:"), vor.region);
 
   if(!vor.tacan)
@@ -1515,6 +1518,10 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
   if(!ndb.type.isEmpty())
     html.row2(tr("Type:"), map::navTypeNameNdb(ndb.type));
+
+  if(rec != nullptr && !rec->isNull("airport_id"))
+    airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
+
   html.row2(tr("Region:"), ndb.region);
   html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
   html.row2(tr("Magnetic declination:"), map::magvarText(ndb.magvar));
@@ -1605,6 +1612,20 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     qWarning() << Q_FUNC_INFO << "Empty record";
 }
 
+void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) const
+{
+  if(ap.isValid())
+  {
+    map::MapAirport apSim = mapQuery->getAirportSim(ap);
+    if(apSim.isValid())
+    {
+      HtmlBuilder apHtml(html.hasBackgroundColor());
+      apHtml.a(apSim.ident, QString("lnm://show?airport=%1").arg(apSim.ident), atools::util::html::LINK_NO_UL);
+      html.row2(tr("Airport:"), apHtml.getHtml(), atools::util::html::NO_ENTITIES);
+    }
+  }
+}
+
 void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html) const
 {
   const SqlRecord *rec = nullptr;
@@ -1635,8 +1656,9 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   bearingText(waypoint.position, waypoint.magvar, html);
 
   html.row2(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
+  if(rec != nullptr && !rec->isNull("airport_id"))
+    airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
   html.row2(tr("Region:"), waypoint.region);
-  // html.row2(tr("Airport:"), waypoint.airportIdent);
   html.row2(tr("Magnetic declination:"), map::magvarText(waypoint.magvar));
   addCoordinates(rec, html);
 
@@ -1885,7 +1907,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   map::MapWaypoint to = mapQuery->getWaypointById(airway.toWaypointId);
 
   // Show from/to waypoints if one-way and include links ==================================
-  HtmlBuilder tempHtml(true);
+  HtmlBuilder tempHtml(html.hasBackgroundColor());
 
   if(airway.direction == map::DIR_BACKWARD)
     // Reverse if one-way is backward
@@ -1922,7 +1944,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
     if(!waypoints.isEmpty())
     {
-      HtmlBuilder tempLinkHtml(true);
+      HtmlBuilder tempLinkHtml(html.hasBackgroundColor());
       for(const SqlRecord& wprec : waypoints)
       {
         if(!tempLinkHtml.isEmpty())
