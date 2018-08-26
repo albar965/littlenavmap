@@ -1029,17 +1029,6 @@ A range ring will be added for each radius value.</string>
           <property name="verticalSpacing">
            <number>2</number>
           </property>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelOptionsMapSizeNavaid">
-            <property name="text">
-             <string>&amp;VOR, NDB, waypoints and
-airways:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
-            </property>
-           </widget>
-          </item>
           <item row="10" column="2">
            <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanText">
             <property name="toolTip">
@@ -1775,6 +1764,20 @@ distance measurement:</string>
             </property>
             <property name="value">
              <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" rowspan="2">
+           <widget class="QLabel" name="labelOptionsMapSizeNavaid">
+            <property name="text">
+             <string>&amp;VOR, NDB, ILS,
+waypoints and airways:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
             </property>
            </widget>
           </item>
