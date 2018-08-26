@@ -754,6 +754,16 @@ public:
     return onlineReloadSecondsConfig;
   }
 
+  int getDisplayTextSizeRangeDistance() const
+  {
+    return displayTextSizeRangeDistance;
+  }
+
+  int getDisplayTextSizeCompassRose() const
+  {
+    return displayTextSizeCompassRose;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -937,6 +947,12 @@ private:
 
   // spinBoxSimDoNotFollowOnScrollTime
   int simNoFollowAircraftOnScroll = 10;
+
+  // spinBoxOptionsDisplayTextSizeRangeDistance
+  int displayTextSizeRangeDistance = 100;
+
+  // spinBoxOptionsDisplayTextSizeCompassRose
+  int displayTextSizeCompassRose = 100;
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 

@@ -263,6 +263,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->spinBoxOptionsDisplayThicknessCompassRose);
   widgets.append(ui->spinBoxOptionsDisplaySunShadeDarkness);
   widgets.append(ui->comboBoxOptionsDisplayTrailType);
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeCompassRose);
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeRangeDistance);
 
   widgets.append(ui->comboBoxOptionsStartupUpdateChannels);
   widgets.append(ui->comboBoxOptionsStartupUpdateRate);
@@ -1046,6 +1048,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displaySunShadingDimFactor = ui->spinBoxOptionsDisplaySunShadeDarkness->value();
   data.displayTrailType = static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
 
+  data.displayTextSizeRangeDistance = ui->spinBoxOptionsDisplayTextSizeRangeDistance->value();
+  data.displayTextSizeCompassRose = ui->spinBoxOptionsDisplayTextSizeCompassRose->value();
+
   data.updateRate = static_cast<opts::UpdateRate>(ui->comboBoxOptionsStartupUpdateRate->currentIndex());
   data.updateChannels = static_cast<opts::UpdateChannels>(ui->comboBoxOptionsStartupUpdateChannels->currentIndex());
 
@@ -1221,6 +1226,9 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsDisplayThicknessCompassRose->setValue(data.displayThicknessCompassRose);
   ui->spinBoxOptionsDisplaySunShadeDarkness->setValue(data.displaySunShadingDimFactor);
   ui->comboBoxOptionsDisplayTrailType->setCurrentIndex(data.displayTrailType);
+
+  ui->spinBoxOptionsDisplayTextSizeRangeDistance->setValue(data.displayTextSizeRangeDistance);
+  ui->spinBoxOptionsDisplayTextSizeCompassRose->setValue(data.displayTextSizeCompassRose);
 
   ui->comboBoxOptionsStartupUpdateRate->setCurrentIndex(data.updateRate);
   ui->comboBoxOptionsStartupUpdateChannels->setCurrentIndex(data.updateChannels);

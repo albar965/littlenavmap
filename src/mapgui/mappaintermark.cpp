@@ -321,6 +321,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
   GeoPainter *painter = context->painter;
 
   painter->setBrush(Qt::NoBrush);
+  context->szFont(context->textSizeRangeDistance);
 
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
 
@@ -401,7 +402,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     Q_UNUSED(saver);
 
     Marble::GeoPainter *painter = context->painter;
-    atools::geo::Pos pos = mapWidget->getUserAircraft().getPosition();
+    Pos pos = mapWidget->getUserAircraft().getPosition();
 
     // Use either aircraft position or viewport center
     QRect viewport = painter->viewport();
@@ -420,10 +421,10 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     float radiusMeter = std::min(h, v) / 2.f * 0.8f;
 
-    radiusMeter = std::min(radiusMeter, atools::geo::nmToMeter(MAX_COMPASS_ROSE_RADIUS_NM));
-    radiusMeter = std::max(radiusMeter, atools::geo::nmToMeter(MIN_COMPASS_ROSE_RADIUS_NM));
+    radiusMeter = std::min(radiusMeter, nmToMeter(MAX_COMPASS_ROSE_RADIUS_NM));
+    radiusMeter = std::max(radiusMeter, nmToMeter(MIN_COMPASS_ROSE_RADIUS_NM));
 
-    float radiusNm = atools::geo::meterToNm(radiusMeter);
+    float radiusNm = meterToNm(radiusMeter);
 
     painter->setBrush(Qt::NoBrush);
     float lineWidth = context->szF(context->thicknessCompassRose, 2);
@@ -435,7 +436,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     // Draw outer big circle
     int xt, yt;
-    paintCircle(context->painter, pos, atools::geo::meterToNm(radiusMeter), context->drawFast, xt, yt);
+    paintCircle(context->painter, pos, meterToNm(radiusMeter), context->drawFast, xt, yt);
 
     // Draw small center circle if no aircraft
     QPointF centerPoint = wToSF(pos);
@@ -505,7 +506,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     }
 
     // Draw labels for four directions ======================================================
-    context->szFont(1.4f);
+    context->szFont(context->textSizeCompassRose * 1.4f);
     painter->setPen(mapcolors::compassRoseTextColor);
 
     for(int i = 0; i < 360 / 5; i++)
@@ -537,7 +538,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     if(mapWidget->distance() < 1600 /* km */)
     {
       // Reduce font size
-      context->szFont(0.8f);
+      context->szFont(context->textSizeCompassRose * 0.8f);
       for(int i = 0; i < 360 / 5; i++)
       {
         if((i % (15 / 5)) == 0 && !((i % (90 / 5)) == 0))
@@ -569,7 +570,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
       if(!trueTrackTextPoint.isNull())
       {
-        context->szFont(1.f);
+        context->szFont(context->textSizeCompassRose);
         QString text =
           tr("%1°M").arg(QString::number(atools::roundToInt(mapWidget->getUserAircraft().getTrackDegMag())));
         symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), trueTrackTextPoint.x(),
@@ -583,6 +584,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
 {
   GeoPainter *painter = context->painter;
+  context->szFont(context->textSizeRangeDistance);
   QFontMetrics metrics = painter->fontMetrics();
 
   const QList<map::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
