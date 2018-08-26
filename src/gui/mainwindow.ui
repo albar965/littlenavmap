@@ -5422,13 +5422,13 @@
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove All Range Rings and Distance Measurements</string>
+    <string>Remove all Ranges, Measurements and Patterns from the map</string>
    </property>
    <property name="toolTip">
-    <string>Remove all range rings and distance measurements from map</string>
+    <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all range rings and distance measurements from map</string>
+    <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
    </property>
   </action>
   <action name="actionMapMeasureRhumbDistance">
@@ -8080,6 +8080,36 @@
    </property>
    <property name="statusTip">
     <string>Show Minimum Altitude (MORA) on the map</string>
+   </property>
+  </action>
+  <action name="actionMapTrafficPattern">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Display Airport Traffic Pattern at %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Airport traffic pattern for a runway at this airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Airport traffic pattern for a runway at this airport</string>
+   </property>
+  </action>
+  <action name="actionMapHideTrafficPattern">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove Airport Traffic Pattern Pattern</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove this airport traffic pattern pattern</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove this airport traffic pattern pattern</string>
    </property>
   </action>
  </widget>

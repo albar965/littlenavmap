@@ -433,7 +433,8 @@ void initTranslateableTexts()
       {map::GROUND, QString()},
       {map::DEPARTURE, QString()},
       {map::APPROACH, QString()},
-      {map::MOA, QObject::tr("Military operations area. Needs clearance for IFR if active. Check for traffic advisories.")},
+      {map::MOA,
+       QObject::tr("Military operations area. Needs clearance for IFR if active. Check for traffic advisories.")},
       {map::RESTRICTED, QObject::tr("Needs authorization.")},
       {map::PROHIBITED, QObject::tr("No flight allowed.")},
       {map::WARNING, QObject::tr("Contains activity that may be hazardous to aircraft.")},
@@ -901,6 +902,11 @@ bool MapAirport::water() const
   return flags.testFlag(AP_WATER);
 }
 
+bool MapAirport::lighted() const
+{
+  return flags.testFlag(AP_LIGHT);
+}
+
 bool MapAirport::helipad() const
 {
   return flags.testFlag(AP_HELIPAD);
@@ -1037,6 +1043,42 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
   bool dummyMagvar = true; // Value was removed
   dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.isRhumbLine << dummyMagvar;
+  return dataStream;
+}
+
+QDataStream& operator>>(QDataStream& dataStream, TrafficPattern& obj)
+{
+  dataStream >> obj.airportIcao
+  >> obj.runwayName
+  >> obj.color
+  >> obj.turnRight
+  >> obj.base45Degree
+  >> obj.showEntryExit
+  >> obj.runwayLength
+  >> obj.downwindDistance
+  >> obj.baseDistance
+  >> obj.heading
+  >> obj.magvar
+  >> obj.position;
+
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
+{
+  dataStream << obj.airportIcao
+             << obj.runwayName
+             << obj.color
+             << obj.turnRight
+             << obj.base45Degree
+             << obj.showEntryExit
+             << obj.runwayLength
+             << obj.downwindDistance
+             << obj.baseDistance
+             << obj.heading
+             << obj.magvar
+             << obj.position;
+
   return dataStream;
 }
 

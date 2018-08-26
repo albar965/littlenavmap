@@ -312,7 +312,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     float lineWidth = painter->pen().widthF();
     // Move to first text position
     painter->translate(0, pixel / 2);
-    painter->rotate(direction < 180.f ? 270 : 90);
+    painter->rotate(direction < 180.f ? 270. : 90.);
 
     painter->save();
     painter->setPen(textColor);
@@ -438,4 +438,20 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->setPen(pen);
   painter->drawPolygon(poly);
   painter->restore();
+}
+
+QPolygonF MapPainter::buildArrow(float size)
+{
+  return QPolygonF({QPointF(0., -size),
+                    QPointF(size, size),
+                    QPointF(0., size / 2.),
+                    QPointF(-size, size)});
+}
+
+void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos)
+{
+  painter->translate(line.pointAt(pos));
+  painter->rotate(atools::geo::angleFromQt(line.angle()));
+  painter->drawPolygon(arrow);
+  painter->resetTransform();
 }

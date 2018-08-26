@@ -109,11 +109,10 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   }
 }
 
-void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
-                                         const QPointF& textCoord,
-                                         bool bothVisible, int textLineLength)
+void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord,
+                                         int textLineLength, bool bothVisible, bool drawArrows)
 {
-  if(!text.isEmpty())
+  if(!text.isEmpty() || drawArrows)
   {
     QString newText(text);
     // Cut text right or left depending on direction
@@ -121,7 +120,7 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
     float rotate;
     if(bearing < 180.)
     {
-      if(!arrowRight.isEmpty())
+      if(!arrowRight.isEmpty() && drawArrows)
         newText += arrowRight;
       elide = Qt::ElideLeft;
       rotate = bearing - 90.f;
@@ -129,7 +128,7 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
     else
     {
       // Text is flipped upside down for readability
-      if(!arrowLeft.isEmpty())
+      if(!arrowLeft.isEmpty() && drawArrows)
         newText = arrowLeft + newText;
       elide = Qt::ElideRight;
       rotate = bearing + 90.f;
@@ -145,9 +144,9 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
     float yoffset;
     if(textOnTopOfLine || bearing >= 180.)
       // Keep all texts north
-      yoffset = -metrics.descent() - lineWidth / 2.f - 2.f;
+      yoffset = static_cast<float>(-metrics.descent()) - lineWidth / 2.f - 2.f;
     else
-      yoffset = metrics.ascent() + lineWidth / 2.f + 2.f;
+      yoffset = static_cast<float>(metrics.ascent()) + lineWidth / 2.f + 2.f;
 
     painter->translate(textCoord.x(), textCoord.y());
     painter->rotate(rotate);
@@ -169,9 +168,9 @@ void TextPlacement::drawTextAlongLines()
       if(!colors2.isEmpty() && colors2.at(i).isValid())
         painter->setPen(colors2.at(i));
 
-      drawTextAlongOneLine(texts.at(i), textBearing.at(i), textCoord,
+      drawTextAlongOneLine(texts.at(i), textBearing.at(i), textCoord, textLineLengths.at(i),
                            visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1),
-                           textLineLengths.at(i));
+                           true /* draw arrows */);
       i++;
     }
   }

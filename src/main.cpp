@@ -87,6 +87,9 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
 
+  qRegisterMetaTypeStreamOperators<map::TrafficPattern>();
+  qRegisterMetaTypeStreamOperators<QList<map::TrafficPattern> >();
+
   qRegisterMetaTypeStreamOperators<map::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
 

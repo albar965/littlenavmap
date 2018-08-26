@@ -49,6 +49,7 @@
 #include "gui/widgetstate.h"
 #include "gui/application.h"
 #include "sql/sqlrecord.h"
+#include "gui/trafficpatterndialog.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -1788,7 +1789,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionRouteAirportDest,
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
-                                          ui->actionMapUserdataMove});
+                                          ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
   Q_UNUSED(textSaver);
 
   // ===================================================================================
@@ -1801,6 +1802,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapMeasureDistance);
   menu.addAction(ui->actionMapMeasureRhumbDistance);
   menu.addAction(ui->actionMapHideDistanceMarker);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionMapTrafficPattern);
+  menu.addAction(ui->actionMapHideTrafficPattern);
   menu.addSeparator();
 
   menu.addAction(ui->actionMapRangeRings);
@@ -1832,6 +1837,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapSetHome);
 
   int distMarkerIndex = -1;
+  int trafficPatternIndex = -1;
   int rangeMarkerIndex = -1;
   bool visibleOnMap = false;
   Pos pos;
@@ -1847,6 +1853,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       pos = Pos(lon, lat);
       distMarkerIndex = screenIndex->getNearestDistanceMarkIndex(point.x(), point.y(), screenSearchDistance);
       rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
+      trafficPatternIndex = screenIndex->getNearestTrafficPatternIndex(point.x(), point.y(), screenSearchDistance);
     }
   }
 
@@ -1863,12 +1870,15 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapUserdataMove->setEnabled(false);
 
   ui->actionMapHideRangeRings->setEnabled(!screenIndex->getRangeMarks().isEmpty() ||
-                                          !screenIndex->getDistanceMarks().isEmpty());
+                                          !screenIndex->getDistanceMarks().isEmpty() ||
+                                          !screenIndex->getTrafficPatterns().isEmpty());
   ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
+  ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
 
   ui->actionMapShowInformation->setEnabled(false);
   ui->actionMapShowApproaches->setEnabled(false);
+  ui->actionMapTrafficPattern->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
   ui->actionRouteAddPos->setEnabled(visibleOnMap);
@@ -2235,9 +2245,20 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else
       ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport->ident));
+
   }
   else
+  {
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
+  }
+
+  if(airport != nullptr && !airport->noRunways())
+  {
+    ui->actionMapTrafficPattern->setEnabled(true);
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(informationText));
+  }
+  else
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(QString()));
 
   // Update "delete in route"
   if(routeIndex != -1 && NavApp::getRouteConst().canEditPoint(routeIndex))
@@ -2410,6 +2431,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     {
       screenIndex->getDistanceMarks().removeAt(distMarkerIndex);
       mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
+      update();
+    }
+    else if(action == ui->actionMapHideTrafficPattern)
+    {
+      screenIndex->getTrafficPatterns().removeAt(trafficPatternIndex);
+      mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
       update();
     }
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
@@ -2602,6 +2629,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         emit showInformation(result, type);
       }
     }
+    else if(action == ui->actionMapTrafficPattern)
+      showTrafficPattern(*airport);
     else if(action == ui->actionMapShowApproaches)
       emit showApproaches(*airport);
     else if(action == ui->actionMapUserdataAdd)
@@ -2627,6 +2656,22 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         setContextMenuPolicy(Qt::PreventContextMenu);
       }
     }
+  }
+}
+
+void MapWidget::showTrafficPattern(const map::MapAirport& airport)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  TrafficPatternDialog dialog(mainWindow, airport);
+  int retval = dialog.exec();
+  if(retval == QDialog::Accepted)
+  {
+    map::TrafficPattern pattern;
+    dialog.fillTrafficPattern(pattern);
+    screenIndex->getTrafficPatterns().append(pattern);
+    update();
+    mainWindow->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.ident));
   }
 }
 
@@ -2677,6 +2722,7 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
 
   screenIndex->getRangeMarks().clear();
   screenIndex->getDistanceMarks().clear();
+  screenIndex->getTrafficPatterns().clear();
   currentDistanceMarkerIndex = -1;
 
   update();
@@ -2952,6 +2998,14 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
                                                        screenSearchDistance) != -1)
         // Change cursor at the end of an marker
         cursorShape = Qt::CrossCursor;
+      else if(screenIndex->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
+                                                         screenSearchDistance) != -1)
+        // Change cursor at the end of an marker
+        cursorShape = Qt::PointingHandCursor;
+      else if(screenIndex->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
+                                                    screenSearchDistance) != -1)
+        // Change cursor at the end of an marker
+        cursorShape = Qt::PointingHandCursor;
 
       if(cursor().shape() != cursorShape)
         setCursor(cursorShape);
@@ -3260,6 +3314,11 @@ const QList<map::RangeMarker>& MapWidget::getRangeRings() const
 const QList<map::DistanceMarker>& MapWidget::getDistanceMarkers() const
 {
   return screenIndex->getDistanceMarks();
+}
+
+const QList<map::TrafficPattern>& MapWidget::getTrafficPatterns() const
+{
+  return screenIndex->getTrafficPatterns();
 }
 
 void MapWidget::hideTooltip()

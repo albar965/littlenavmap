@@ -173,6 +173,8 @@ public:
 
   const QList<map::DistanceMarker>& getDistanceMarkers() const;
 
+  const QList<map::TrafficPattern>& getTrafficPatterns() const;
+
   const AircraftTrack& getAircraftTrack() const
   {
     return aircraftTrack;
@@ -190,6 +192,8 @@ public:
 
   /* Add general (red) range ring */
   void addRangeRing(const atools::geo::Pos& pos);
+
+  void showTrafficPattern(const map::MapAirport& airport);
 
   /* Add radio navaid range ring */
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type, const QString& ident,

@@ -198,6 +198,7 @@ void MapScreenIndex::saveState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   s.setValueVar(lnm::MAP_DISTANCEMARKERS, QVariant::fromValue<QList<map::DistanceMarker> >(distanceMarks));
   s.setValueVar(lnm::MAP_RANGEMARKERS, QVariant::fromValue<QList<map::RangeMarker> >(rangeMarks));
+  s.setValueVar(lnm::MAP_TRAFFICPATTERNS, QVariant::fromValue<QList<map::TrafficPattern> >(trafficPatterns));
 }
 
 void MapScreenIndex::restoreState()
@@ -205,6 +206,7 @@ void MapScreenIndex::restoreState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   distanceMarks = s.valueVar(lnm::MAP_DISTANCEMARKERS).value<QList<map::DistanceMarker> >();
   rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
+  trafficPatterns = s.valueVar(lnm::MAP_TRAFFICPATTERNS).value<QList<map::TrafficPattern> >();
 }
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox)
@@ -452,14 +454,29 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
   }
 }
 
+int MapScreenIndex::getNearestTrafficPatternIndex(int xs, int ys, int maxDistance)
+{
+  return getNearestIndex(xs, ys, maxDistance, trafficPatterns);
+}
+int MapScreenIndex::getNearestRangeMarkIndex(int xs, int ys, int maxDistance)
+{
+  return getNearestIndex(xs, ys, maxDistance, rangeMarks);
+}
+
 int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance)
+{
+  return getNearestIndex(xs, ys, maxDistance, distanceMarks);
+}
+
+template<typename TYPE>
+int MapScreenIndex::getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList)
 {
   CoordinateConverter conv(mapWidget->viewport());
   int index = 0;
   int x, y;
-  for(const map::DistanceMarker& marker : distanceMarks)
+  for(const TYPE& type : typeList)
   {
-    if(conv.wToS(marker.to, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
+    if(conv.wToS(type.getPosition(), x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
       return index;
 
     index++;
@@ -567,20 +584,4 @@ int MapScreenIndex::getNearestRouteLegIndex(int xs, int ys, int maxDistance)
     }
   }
   return minIndex;
-}
-
-int MapScreenIndex::getNearestRangeMarkIndex(int xs, int ys, int maxDistance)
-{
-  CoordinateConverter conv(mapWidget->viewport());
-  int index = 0;
-  int x, y;
-  for(const map::RangeMarker& marker : rangeMarks)
-  {
-    if(conv.wToS(marker.center, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        return index;
-
-    index++;
-  }
-  return -1;
 }

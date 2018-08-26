@@ -239,7 +239,8 @@ SOURCES += src/main.cpp\
     src/mapgui/aprongeometrycache.cpp \
     src/gui/timedialog.cpp \
     src/gui/stylehandler.cpp \
-    src/mapgui/mappainteraltitude.cpp
+    src/mapgui/mappainteraltitude.cpp \
+    src/gui/trafficpatterndialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -345,7 +346,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/aprongeometrycache.h \
     src/gui/timedialog.h \
     src/gui/stylehandler.h \
-    src/mapgui/mappainteraltitude.h
+    src/mapgui/mappainteraltitude.h \
+    src/gui/trafficpatterndialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -359,7 +361,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/gui/updatedialog.ui \
     src/userdata/userdatadialog.ui \
     src/userdata/userdataexportdialog.ui \
-    src/gui/timedialog.ui
+    src/gui/timedialog.ui \
+    src/gui/trafficpatterndialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

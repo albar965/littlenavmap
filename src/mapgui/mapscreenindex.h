@@ -66,6 +66,8 @@ public:
    * or -1 if nothing was found near the cursor position. Index points into the list of getRangeMarks */
   int getNearestRangeMarkIndex(int xs, int ys, int maxDistance);
 
+  int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance);
+
   /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance);
 
@@ -141,6 +143,17 @@ public:
     return distanceMarks;
   }
 
+  /* Airfield traffic patterns. */
+  QList<map::TrafficPattern>& getTrafficPatterns()
+  {
+    return trafficPatterns;
+  }
+
+  const QList<map::TrafficPattern>& getTrafficPatterns() const
+  {
+    return trafficPatterns;
+  }
+
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft()
   {
     return simData.getUserAircraftConst();
@@ -190,6 +203,9 @@ private:
   void updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
                                     const Marble::GeoDataLatLonAltBox& curBox);
 
+  template<typename TYPE>
+  int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList);
+
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
@@ -204,8 +220,12 @@ private:
   proc::MapProcedureLegs approachHighlight;
 
   QList<int> routeHighlights;
+
+  /* Objects that will be saved */
   QList<map::RangeMarker> rangeMarks;
   QList<map::DistanceMarker> distanceMarks;
+  QList<map::TrafficPattern> trafficPatterns;
+
   QList<std::pair<int, QLine> > routeLines;
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QPolygon> > airspacePolygons;

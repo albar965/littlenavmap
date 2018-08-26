@@ -24,7 +24,9 @@
 #include "common/mapcolors.h"
 #include "query/airspacequery.h"
 #include "geo/calculations.h"
+#include "util/roundedpolygon.h"
 #include "common/symbolpainter.h"
+#include "geo/rect.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/unit.h"
@@ -64,6 +66,7 @@ void MapPainterMark::render(PaintContext *context)
   paintHighlights(context);
   paintMark(context);
   paintHome(context);
+  paintTrafficPatterns(context);
   paintRangeRings(context);
   paintDistanceMarkers(context);
   paintCompassRose(context);
@@ -635,8 +638,8 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       if(!m.text.isEmpty())
         texts.append(m.text);
 
-      double init = atools::geo::normalizeCourse(from.bearing(to, DEG, INITBRG));
-      double final = atools::geo::normalizeCourse(from.bearing(to, DEG, FINALBRG));
+      double init = normalizeCourse(from.bearing(to, DEG, INITBRG));
+      double final = normalizeCourse(from.bearing(to, DEG, FINALBRG));
 
       if(atools::almostEqual(init, final, 1.))
         texts.append(QString::number(init, 'f', 0) + tr("°T"));
@@ -667,8 +670,8 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       // Draw a rhumb line with constant course
       float bearing = m.from.angleDegToRhumb(m.to);
       float magBearing = bearing - m.magvar;
-      magBearing = atools::geo::normalizeCourse(magBearing);
-      bearing = atools::geo::normalizeCourse(bearing);
+      magBearing = normalizeCourse(magBearing);
+      bearing = normalizeCourse(bearing);
 
       float distanceMeter = m.from.distanceMeterToRhumb(m.to);
 
@@ -730,6 +733,172 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   }
 }
 
+void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
+{
+  if(!context->mapLayer->isApproach())
+    return;
+
+  atools::util::PainterContextSaver saver(context->painter);
+  GeoPainter *painter = context->painter;
+  const QList<TrafficPattern>& patterns = mapWidget->getTrafficPatterns();
+  float lineWidth = context->szF(context->thicknessRangeDistance, 3);
+  context->szFont(context->textSizeRangeDistance);
+
+  TextPlacement textPlacement(painter, this);
+  textPlacement.setLineWidth(lineWidth);
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->setBackground(Qt::white);
+
+  QPolygonF arrow = buildArrow(lineWidth * 2.3f);
+
+  for(const TrafficPattern& pattern : patterns)
+  {
+    float finalDistance = pattern.base45Degree ? pattern.downwindDistance : pattern.baseDistance;
+
+    // Turn point base to final
+    Pos baseFinal = pattern.position.endpoint(nmToMeter(finalDistance), opposedCourseDeg(pattern.heading)).normalize();
+
+    // Turn point downwind to base
+    Pos downwindBase = baseFinal.endpoint(nmToMeter(pattern.downwindDistance),
+                                          pattern.heading + (pattern.turnRight ? 90.f : -90.f)).normalize();
+
+    // Turn point upwind to crosswind
+    Pos upwindCrosswind = pattern.position.endpoint(nmToMeter(finalDistance) +
+                                                    feetToMeter(pattern.runwayLength), pattern.heading).normalize();
+
+    // Turn point crosswind to downwind
+    Pos crosswindDownwind = upwindCrosswind.endpoint(nmToMeter(pattern.downwindDistance),
+                                                     pattern.heading + (pattern.turnRight ? 90.f : -90.f)).normalize();
+
+    // Calculate bounding rectangle and check if it is at least partially visible
+    Rect rect(baseFinal);
+    rect.extend(downwindBase);
+    rect.extend(upwindCrosswind);
+    rect.extend(crosswindDownwind);
+
+    if(context->viewportRect.overlaps(rect))
+    {
+      // Entry at opposite runway threshold
+      Pos downwindEntry = downwindBase.endpoint(nmToMeter(finalDistance) +
+                                                feetToMeter(pattern.runwayLength), pattern.heading).normalize();
+
+      // Bail out if any points are hidden behind the globe
+      bool visible, hidden;
+      QPointF originPoint = wToS(pattern.getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        continue;
+      QPointF baseFinalPoint = wToS(baseFinal, DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        continue;
+      QPointF downwindBasePoint = wToS(downwindBase, DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        continue;
+      QPointF upwindCrosswindPoint = wToS(upwindCrosswind, DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        continue;
+      QPointF crosswindDownwindPoint = wToS(crosswindDownwind, DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        continue;
+      QPointF downwindEntryPoint = wToS(downwindEntry, DEFAULT_WTOS_SIZE, &visible, &hidden);
+      if(hidden)
+        continue;
+
+      // Calculate polygon rounding in pixels =======================
+      float pixelForNm = scale->getPixelForNm(pattern.downwindDistance, pattern.heading + 90.f);
+      atools::util::RoundedPolygon polygon(pixelForNm / 3.f,
+                                           {originPoint, upwindCrosswindPoint, crosswindDownwindPoint,
+                                            downwindBasePoint, baseFinalPoint});
+
+      QLineF downwind(crosswindDownwindPoint, downwindBasePoint);
+      QLineF upwind(originPoint, upwindCrosswindPoint);
+      float angle = static_cast<float>(angleFromQt(downwind.angle()));
+      float oppAngle = static_cast<float>(opposedCourseDeg(angleFromQt(downwind.angle())));
+
+      if(pattern.showEntryExit)
+      {
+        // Draw a line below to fill the gap because of round edges
+        painter->setBrush(Qt::white);
+        painter->setPen(QPen(pattern.color, context->szF(context->thicknessRangeDistance, 3), Qt::DashLine));
+        painter->drawLine(upwind);
+
+        // Straight out exit for pattern =======================
+        QPointF exitStraight =
+          wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle), DEFAULT_WTOS_SIZE, &visible, &hidden);
+        painter->drawLine(upwind.p2(), exitStraight);
+
+        // 45 degree exit for pattern =======================
+        QPointF exit45Deg =
+          wToS(upwindCrosswind.endpoint(
+                 nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)), DEFAULT_WTOS_SIZE, &visible, &hidden);
+        painter->drawLine(upwind.p2(), exit45Deg);
+
+        // Entry to downwind
+        QPointF entry =
+          wToS(downwindEntry.endpoint(
+                 nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)), DEFAULT_WTOS_SIZE, &visible, &hidden);
+        painter->drawLine(downwindEntryPoint, entry);
+
+        // Draw arrows to all the entry and exit indicators ========================
+        painter->setPen(QPen(pattern.color, context->szF(context->thicknessRangeDistance, 2), Qt::SolidLine));
+        paintArrowAlongLine(painter, QLineF(upwind.p2(), exitStraight), arrow, 0.95f);
+        paintArrowAlongLine(painter, QLineF(upwind.p2(), exit45Deg), arrow, 0.95f);
+        paintArrowAlongLine(painter, QLineF(entry, downwindEntryPoint), arrow, 0.05f);
+      }
+
+      if(context->mapLayer->isApproachTextAndDetail())
+      {
+        painter->setPen(QPen(pattern.color, lineWidth));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawPath(polygon.getPainterPath());
+
+        // Text for downwind leg =======================================
+        QLineF final (baseFinalPoint, originPoint);
+        QPointF center = downwind.center();
+        QString text = QString("%1/%2°M").
+                       arg(Unit::altFeet(pattern.position.getAltitude(), true, true)).
+                       arg(QLocale().toString(opposedCourseDeg(pattern.heading - pattern.magvar), 'f', 0));
+
+        painter->setBrush(Qt::white);
+        textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()),
+                                           true /* both visible */,
+                                           true /* draw arrows */);
+
+        // Text for final leg =======================================
+        text = QString("RW%1/%2°M").
+               arg(pattern.runwayName).
+               arg(QLocale().toString(pattern.heading - pattern.magvar, 'f', 0));
+        textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
+                                           true /* both visible */,
+                                           true /* draw arrows */);
+
+        // Draw arrows on legs =======================================
+        // Set a lighter fill color for arros
+        painter->setBrush(pattern.color.lighter(190));
+        painter->setPen(QPen(pattern.color, context->szF(context->thicknessRangeDistance, 2)));
+
+        // Two arrows on downwind leg
+        paintArrowAlongLine(painter, downwind, arrow, 0.75f);
+        paintArrowAlongLine(painter, downwind, arrow, 0.25f);
+
+        // Base leg
+        paintArrowAlongLine(painter, QLineF(downwindBasePoint, baseFinalPoint), arrow);
+
+        // Final leg
+        paintArrowAlongLine(painter, final, arrow, 0.30f);
+
+        // Upwind leg
+        paintArrowAlongLine(painter, upwind, arrow);
+
+        // Crosswind leg
+        paintArrowAlongLine(painter, QLineF(upwindCrosswindPoint, crosswindDownwindPoint), arrow);
+
+        // Draw ellipse at touchdown point
+        painter->drawEllipse(originPoint, lineWidth * 2.f, lineWidth * 2.f);
+      }
+    }
+  }
+}
+
 void MapPainterMark::paintUserpointDrag(const PaintContext *context)
 {
   // Get screen position an pixmap
@@ -744,7 +913,7 @@ void MapPainterMark::paintUserpointDrag(const PaintContext *context)
 /* Draw route dragging/moving lines */
 void MapPainterMark::paintRouteDrag(const PaintContext *context)
 {
-  atools::geo::Pos from, to;
+  Pos from, to;
   QPoint cur;
 
   // Flight plan editing use always three points except at the end

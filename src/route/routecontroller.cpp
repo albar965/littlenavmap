@@ -1398,7 +1398,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapEditUserWaypoint,
     ui->actionRouteCalcRadionavSelected, ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected,
     ui->actionRouteCalcSetAltSelected,
-    ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
+    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
     ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
     ui->actionRouteResetView, ui->actionRouteSetMark
   });
@@ -1417,7 +1417,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionRouteTableCopy->setEnabled(index.isValid());
 
   ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !NavApp::getMapWidget()->getRangeRings().isEmpty());
+                                          !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
+                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty());
 
   // Menu above a row
   if(routeLeg != nullptr)
@@ -1494,6 +1495,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowApproaches->setText(tr("Show procedures"));
   }
 
+  if(routeLeg != nullptr && routeLeg->getAirport().isValid() && !routeLeg->getAirport().noRunways())
+    ui->actionMapTrafficPattern->setEnabled(true);
+  else
+    ui->actionMapTrafficPattern->setEnabled(false);
+  ui->actionMapTrafficPattern->setText(tr("Display Airport Traffic Pattern"));
+
   // Get selected rows in ascending order
   QList<int> rows;
   selectedRows(rows, false);
@@ -1559,6 +1566,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
+  menu.addAction(ui->actionMapTrafficPattern);
   menu.addAction(ui->actionMapHideRangeRings);
   menu.addSeparator();
 
@@ -1594,6 +1602,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
       NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
+    else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
+      NavApp::getMapWidget()->showTrafficPattern(routeLeg->getAirport());
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids

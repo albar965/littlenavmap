@@ -130,6 +130,7 @@ const QLatin1Literal MAINWINDOW_WIDGET_STATE_MAXIMIZED("MainWindow/WidgetStateMa
 const QLatin1Literal MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1Literal MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1Literal MAP_DISTANCEMARKERS("Map/DistanceMarkers");
+const QLatin1Literal MAP_TRAFFICPATTERNS("Map/TrafficPatterns");
 const QLatin1Literal MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1Literal MAP_USERDATA("Map/Userdata");
 const QLatin1Literal MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");
@@ -155,6 +156,8 @@ const QLatin1Literal ROUTE_PRINT_DIALOG("Route/PrintWidget");
 const QLatin1Literal ROUTE_STRING_DIALOG_SIZE("Route/StringDialogSize");
 const QLatin1Literal ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter");
 const QLatin1Literal ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
+const QLatin1Literal TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");
+const QLatin1Literal TRAFFIC_PATTERN_DIALOG_COLOR("Route/TrafficPatternDialogColor");
 const QLatin1Literal SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
 const QLatin1Literal SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");
 const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView");

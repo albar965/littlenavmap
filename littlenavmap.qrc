@@ -199,5 +199,7 @@
         <file>resources/icons/mapshadow.svg</file>
         <file>resources/icons/weather.svg</file>
         <file>resources/icons/minaltitude.svg</file>
+        <file>resources/icons/trafficpattern.svg</file>
+        <file>resources/icons/trafficpatternoff.svg</file>
     </qresource>
 </RCC>

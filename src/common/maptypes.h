@@ -121,6 +121,7 @@ struct MapAirport
   bool hard() const;
   bool soft() const;
   bool water() const;
+  bool lighted() const;
   bool helipad() const;
   bool softOnly() const;
   bool waterOnly() const;
@@ -177,11 +178,11 @@ struct MapAirport
 struct MapRunway
 {
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
-  int length, primaryEndId, secondaryEndId;
+  int length /* ft */, primaryEndId, secondaryEndId;
   float heading;
   int width,
       primaryOffset, secondaryOffset, /* part of the runway length */
-      primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length */
+      primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos position, primaryPosition, secondaryPosition;
 
   /* Used by AirportQuery::getRunways */
@@ -207,6 +208,11 @@ struct MapRunway
   bool isSoft() const
   {
     return isSoftSurface(surface);
+  }
+
+  bool isLighted() const
+  {
+    return !edgeLight.isEmpty();
   }
 
   const atools::geo::Pos& getPosition() const
@@ -790,6 +796,37 @@ struct DistanceMarker
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
+/* All information for complete traffic pattern structure */
+struct TrafficPattern
+{
+  QString airportIcao, runwayName;
+  QColor color;
+  bool turnRight,
+       base45Degree /* calculate base turn from 45 deg after threshold */,
+       showEntryExit /* Entry and exit indicators */;
+  int runwayLength; /* ft Does not include displaced threshold */
+
+  float downwindDistance, baseDistance; /* NM */
+  float heading; /* degree true final course*/
+  float magvar;
+
+  atools::geo::Pos position; /* Threshold position (end of final) and runway altitude MSL */
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::TrafficPattern& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj);
+
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
@@ -911,5 +948,7 @@ Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker);
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker);
+Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::TrafficPattern);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

@@ -79,6 +79,8 @@ struct PaintContext
   float symbolSizeNavaid = 1.f;
   float thicknessFlightplan = 1.f;
   float textSizeNavaid = 1.f;
+  float textSizeCompassRose = 1.f;
+  float textSizeRangeDistance = 1.f;
   float symbolSizeAirport = 1.f;
   float symbolSizeAircraftAi = 1.f;
   float textSizeFlightplan = 1.f;
@@ -188,6 +190,12 @@ protected:
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground);
+
+  /* Arrow pointing upwards */
+  QPolygonF buildArrow(float size);
+
+  /* Draw arrow at line postion. pos = 0 is beginning and pos = 1 is end of line */
+  void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
