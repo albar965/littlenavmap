@@ -485,12 +485,15 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     float radiusUnit = Unit::distNmF(radiusNm);
     float stepsizeUnit = atools::calculateSteps(radiusUnit, 6.f);
     float stepsizeNm = Unit::rev(stepsizeUnit, Unit::distNmF);
+    painter->setPen(rosePenSmall);
+
+    // Draw distance circles =======================================================
+    for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+      paintCircle(context->painter, pos, i * stepsizeNm, context->drawFast, xt, yt);
+    painter->setPen(rosePen);
+
     if(hasAircraft)
     {
-      painter->setPen(rosePenSmall);
-      for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
-        paintCircle(context->painter, pos, i * stepsizeNm, context->drawFast, xt, yt);
-
       // Solid track line
       painter->setPen(rosePen);
       float trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
@@ -551,21 +554,23 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     }
 
     // Aircraft track line end text and distance labels along track line ======================================================
+    float trackTrue = 0.f;
+    if(hasAircraft)
+      // Solid track line
+      trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
+
+    // Distance labels along track line
+    context->szFont(context->textSizeCompassRose * 0.8f);
+    for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+    {
+      QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue));
+      if(!s.isNull())
+        symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
+                                s.x(), s.y(), textatt::CENTER);
+    }
+
     if(hasAircraft)
     {
-      // Solid track line
-      float trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
-
-      // Distance labels along track line
-      context->szFont(0.8f);
-      for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
-      {
-        QPointF s = wToSF(pos.endpoint(atools::geo::nmToMeter(i * stepsizeNm), trackTrue));
-        if(!s.isNull())
-          symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
-                                  s.x(), s.y(), textatt::CENTER);
-      }
-
       // Aircraft track label at end of track line ======================================================
       QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
       if(!trueTrackTextPoint.isNull())
