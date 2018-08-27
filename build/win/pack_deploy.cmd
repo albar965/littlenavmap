@@ -22,8 +22,8 @@ del \\darkon\public\Releases\LittleNavconnect-%FILEDATE%.zip
 copy /Y /Z /B LittleNavconnect.zip \\darkon\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\Releases\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\frida\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
+del \\frida\ssd\alex\Releases\LittleNavconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleNavconnect.zip \\frida\ssd\alex\Releases\LittleNavconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -40,8 +40,8 @@ del \\darkon\public\Releases\LittleXpconnect-%FILEDATE%.zip
 copy /Y /Z /B LittleXpconnect.zip \\darkon\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\Releases\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\frida\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
+del \\frida\ssd\alex\Releases\LittleXpconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleXpconnect.zip \\frida\ssd\alex\Releases\LittleXpconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -58,8 +58,8 @@ del \\darkon\public\Releases\LittleNavmap-%FILEDATE%.zip
 copy /Y /Z /B LittleNavmap.zip \\darkon\public\Releases\LittleNavmap-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
-del \\frida\public\Releases\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\frida\public\Releases\LittleNavmap-win-%FILEDATE%.zip
+del \\frida\ssd\alex\Releases\LittleNavmap-%FILEDATE%.zip
+copy /Y /Z /B LittleNavmap.zip \\frida\ssd\alex\Releases\LittleNavmap-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 popd
