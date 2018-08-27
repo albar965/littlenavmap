@@ -2281,6 +2281,8 @@ void MainWindow::mainWindowShown()
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
   {
+    NavApp::deleteSplashScreen();
+
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_INSTALL_REDIST, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
                                     "<p>The program will not be able to use encrypted network connections<br/>"
@@ -2300,6 +2302,8 @@ void MainWindow::mainWindowShown()
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
   {
+    NavApp::deleteSplashScreen();
+
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_INSTALL_GLOBE, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>The online elevation data which is used by default for the elevation profile "
                                     "is limited and has a lot of errors.<br/>"
@@ -2319,6 +2323,8 @@ void MainWindow::mainWindowShown()
     firstApplicationStart = false;
     if(!databaseManager->hasSimulatorDatabases())
     {
+      NavApp::deleteSplashScreen();
+
       // Show the scenery database dialog on first start
 #ifdef Q_OS_WIN32
       if(databaseManager->hasInstalledSimulators())
@@ -2327,8 +2333,6 @@ void MainWindow::mainWindowShown()
       else
       {
         // No databases and no simulators - show a message dialog
-        NavApp::deleteSplashScreen();
-
         QMessageBox msgBox(this);
         msgBox.setWindowTitle(QApplication::applicationName());
         msgBox.setTextFormat(Qt::RichText);
@@ -2356,7 +2360,6 @@ void MainWindow::mainWindowShown()
       }
 #else
       // Show always on non Windows systems
-      NavApp::deleteSplashScreen();
       databaseManager->run();
 #endif
     }
