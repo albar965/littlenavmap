@@ -381,7 +381,8 @@ void InfoController::updateProgress()
     // ok - scrollbars not pressed
     html.clear();
     infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
-    atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
+                                      false /* scroll to top*/, true /* keep selection */);
   }
 }
 
@@ -410,24 +411,18 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
       infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRouteConst());
 
       Ui::MainWindow *ui = NavApp::getMainUi();
-      if(scrollToTop)
-        // scroll up for new airports
-        ui->textBrowserAirportInfo->setText(html.getHtml());
-      else
-        // Leave position for weather or bearing updates
-        atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
+      // Leave position for weather or bearing updates
+      atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml(),
+                                        scrollToTop, !scrollToTop /* keep selection */);
 
       if(newAirport || weatherChanged)
       {
         html.clear();
         infoBuilder->weatherText(currentWeatherContext, airport, html);
 
-        if(scrollToTop)
-          // scroll up for new airports
-          ui->textBrowserWeatherInfo->setText(html.getHtml());
-        else
-          // Leave position for weather updates
-          atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml());
+        // Leave position for weather updates
+        atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml(),
+                                          scrollToTop, !scrollToTop /* keep selection */);
       }
     }
   }
@@ -543,7 +538,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
         currentSearchResult.onlineAircraft.append(ac);
       }
     }
-    atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml(),
+                                      false /* scroll to top*/, true /* keep selection */);
     foundOnlineClient = true;
   }
 
@@ -565,15 +561,18 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
 
     html.clear();
     infoBuilder->runwayText(airport, html);
-    ui->textBrowserRunwayInfo->setText(html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(),
+                                      scrollToTop, !scrollToTop /* keep selection */);
 
     html.clear();
     infoBuilder->comText(airport, html);
-    ui->textBrowserComInfo->setText(html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserComInfo, html.getHtml(),
+                                      scrollToTop, !scrollToTop /* keep selection */);
 
     html.clear();
     infoBuilder->procedureText(airport, html);
-    ui->textBrowserApproachInfo->setText(html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(),
+                                      scrollToTop, !scrollToTop /* keep selection */);
 
     foundAirport = true;
   }
@@ -598,7 +597,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     }
 
     // Update and keep scroll position
-    atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml(),
+                                      false /* scroll to top*/, true /* keep selection */);
 
     // Online Center ==================================
     html.clear();
@@ -630,7 +630,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     }
 
     // Update and keep scroll position
-    atools::gui::util::updateTextEdit(ui->textBrowserCenterInfo, html.getHtml());
+    atools::gui::util::updateTextEdit(ui->textBrowserCenterInfo, html.getHtml(),
+                                      false /* scroll to top*/, true /* keep selection */);
   }
 
   // Navaids ================================================================
@@ -814,12 +815,8 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
   }
 
   if(foundNavaid)
-  {
-    if(scrollToTop)
-      ui->textBrowserNavaidInfo->setText(html.getHtml());
-    else
-      atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml());
-  }
+    atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml(),
+                                      scrollToTop, !scrollToTop /* keep selection */);
 
   return foundNavaid;
 }
@@ -855,7 +852,8 @@ void InfoController::updateUserAircraftText()
         HtmlBuilder html(true /* has background color */);
         infoBuilder->aircraftText(lastSimData.getUserAircraftConst(), html);
         infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraftConst(), html);
-        atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+        atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml(),
+                                          false /* scroll to top*/, true /* keep selection */);
       }
     }
     else
@@ -881,7 +879,8 @@ void InfoController::updateAircraftProgressText()
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
         infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
-        atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+        atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
+                                          false /* scroll to top*/, true /* keep selection */);
       }
     }
     else
@@ -917,7 +916,8 @@ void InfoController::updateAiAircraftText()
             num++;
           }
 
-          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml(),
+                                            false /* scroll to top*/, true /* keep selection */);
         }
         else
         {
@@ -930,7 +930,8 @@ void InfoController::updateAiAircraftText()
           text += tr("No AI or multiplayer aircraft selected.<br/>"
                      "Found %1 AI or multiplayer aircraft.").
                   arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
-          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text);
+          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text,
+                                            false /* scroll to top*/, true /* keep selection */);
         }
       }
     }
