@@ -29,12 +29,12 @@
 #include "query/airportquery.h"
 #include "fs/weather/weathernetsingle.h"
 #include "fs/weather/metar.h"
+#include "util/filesystemwatcher.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QFileSystemWatcher>
 #include <QNetworkRequest>
 #include <QStandardPaths>
 #include <QNetworkReply>
@@ -53,6 +53,7 @@ using atools::fs::weather::WeatherNetSingle;
 using atools::fs::weather::MetarResult;
 using atools::fs::weather::MetarParser;
 using atools::fs::weather::Metar;
+using atools::util::FileSystemWatcher;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type),
@@ -151,31 +152,56 @@ void WeatherReporter::noaaIndexParser(QString& icao, QDateTime& lastUpdate, cons
 
 void WeatherReporter::deleteFsWatcher()
 {
-  if(fsWatcher != nullptr)
+  if(fsWatcherAsPath != nullptr)
   {
     // Remove watcher just in case the file changes
-    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
-                          &WeatherReporter::activeSkyWeatherFileChanged);
-    fsWatcher->deleteLater();
-    fsWatcher = nullptr;
+    fsWatcherAsPath->disconnect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
+                                &WeatherReporter::activeSkyWeatherFileChanged);
+    fsWatcherAsPath->deleteLater();
+    fsWatcherAsPath = nullptr;
+  }
+
+  if(fsWatcherAsFlightplanPath != nullptr)
+  {
+    // Remove watcher just in case the file changes
+    fsWatcherAsFlightplanPath->disconnect(fsWatcherAsFlightplanPath, &FileSystemWatcher::fileUpdated, this,
+                                          &WeatherReporter::activeSkyWeatherFileChanged);
+    fsWatcherAsFlightplanPath->deleteLater();
+    fsWatcherAsFlightplanPath = nullptr;
   }
 }
 
 void WeatherReporter::createFsWatcher()
 {
-  if(fsWatcher == nullptr)
+  if(fsWatcherAsPath == nullptr)
   {
+    bool verbose = false;
+#ifdef DEBUG_INFORMATION
+    verbose = true;
+#endif
+
     // Watch file for changes
-    fsWatcher = new QFileSystemWatcher(this);
-    fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
-                       &WeatherReporter::activeSkyWeatherFileChanged);
+    fsWatcherAsPath = new FileSystemWatcher(this, verbose);
+    fsWatcherAsPath->setMinFileSize(500000);
+    fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
+                             &WeatherReporter::activeSkyWeatherFileChanged);
   }
+  fsWatcherAsPath->setFilenameAndStart(asPath);
 
-  if(!fsWatcher->addPath(asPath))
-    qWarning() << "cannot watch" << asPath;
+  if(fsWatcherAsFlightplanPath == nullptr)
+  {
+    bool verbose = false;
+#ifdef DEBUG_INFORMATION
+    verbose = true;
+#endif
 
-  if(!fsWatcher->addPath(asFlightplanPath))
-    qWarning() << "cannot watch" << asFlightplanPath;
+    // Watch file for changes
+    fsWatcherAsFlightplanPath = new FileSystemWatcher(this, verbose);
+    fsWatcherAsFlightplanPath->setMinFileSize(50);
+    fsWatcherAsFlightplanPath->connect(fsWatcherAsFlightplanPath, &FileSystemWatcher::fileUpdated, this,
+                                       &WeatherReporter::activeSkyWeatherFileChanged);
+  }
+  fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
 }
 
 void WeatherReporter::initXplane()

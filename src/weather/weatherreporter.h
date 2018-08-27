@@ -25,6 +25,10 @@
 #include <QObject>
 
 namespace atools {
+
+namespace util {
+class FileSystemWatcher;
+}
 namespace geo {
 class Pos;
 }
@@ -41,7 +45,6 @@ class XpWeatherReader;
 }
 }
 
-class QFileSystemWatcher;
 class MainWindow;
 
 /*
@@ -181,7 +184,8 @@ private:
           activeSkyDepartureIdent, activeSkyDestinationIdent;
 
   QString activeSkySnapshotPath;
-  QFileSystemWatcher *fsWatcher = nullptr;
+  atools::util::FileSystemWatcher *fsWatcherAsPath = nullptr;
+  atools::util::FileSystemWatcher *fsWatcherAsFlightplanPath = nullptr;
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
 
   atools::fs::weather::XpWeatherReader *xpWeatherReader = nullptr;
