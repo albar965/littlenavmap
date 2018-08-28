@@ -3358,9 +3358,16 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
           <number>0</number>
          </property>
          <item alignment="Qt::AlignTop">
-          <widget class="QPushButton" name="pushButtonOptionsDatabaseAddExclude">
+          <widget class="QPushButton" name="pushButtonOptionsDatabaseAddExcludeDir">
            <property name="text">
-            <string>&amp;Add ...</string>
+            <string>&amp;Add Directory ...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonOptionsDatabaseAddExcludeFile">
+           <property name="text">
+            <string>&amp;Add Files ...</string>
            </property>
           </widget>
          </item>
@@ -3389,7 +3396,7 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
        <item row="1" column="2">
         <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
          <property name="toolTip">
-          <string>All directories including sub-directories in this list will be omitted when loading the scenery library into the Little Navmap database.
+          <string>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</string>
@@ -3398,7 +3405,10 @@ You have to reload the scenery library so that the changes take effect.</string>
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
-          <bool>false</bool>
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
         </widget>
        </item>
@@ -3413,6 +3423,12 @@ You have to reload the scenery library so that the changes take effect.</string>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
         </widget>
        </item>
@@ -3594,7 +3610,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>lineEditCacheOfflineDataPath</tabstop>
   <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
   <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
-  <tabstop>pushButtonOptionsDatabaseAddExclude</tabstop>
+  <tabstop>pushButtonOptionsDatabaseAddExcludeDir</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveExclude</tabstop>
   <tabstop>listWidgetOptionsDatabaseAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>

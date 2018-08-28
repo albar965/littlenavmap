@@ -329,8 +329,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::updateWeatherButtonState);
 
   // Database exclude path
-  connect(ui->pushButtonOptionsDatabaseAddExclude, &QPushButton::clicked,
-          this, &OptionsDialog::addDatabaseExcludePathClicked);
+  connect(ui->pushButtonOptionsDatabaseAddExcludeDir, &QPushButton::clicked,
+          this, &OptionsDialog::addDatabaseExcludeDirClicked);
+  connect(ui->pushButtonOptionsDatabaseAddExcludeFile, &QPushButton::clicked,
+          this, &OptionsDialog::addDatabaseExcludeFileClicked);
   connect(ui->pushButtonOptionsDatabaseRemoveExclude, &QPushButton::clicked,
           this, &OptionsDialog::removeDatabaseExcludePathClicked);
   connect(ui->listWidgetOptionsDatabaseExclude, &QListWidget::currentRowChanged,
@@ -823,13 +825,13 @@ void OptionsDialog::testWeatherUrl(const QString& url)
 }
 
 /* Show directory dialog to add exclude path */
-void OptionsDialog::addDatabaseExcludePathClicked()
+void OptionsDialog::addDatabaseExcludeDirClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Scenery Loading"),
-    lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+    lnm::OPTIONS_DIALOG_DB_DIR_DLG,
     atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
 
   if(!path.isEmpty())
@@ -839,12 +841,35 @@ void OptionsDialog::addDatabaseExcludePathClicked()
   }
 }
 
+/* Show directory dialog to add exclude path */
+void OptionsDialog::addDatabaseExcludeFileClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(
+    tr("Open Files to exclude from Scenery Loading"),
+    QString(), // filter
+    lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
+
+  if(!paths.isEmpty())
+  {
+    for(const QString& path : paths)
+      ui->listWidgetOptionsDatabaseExclude->addItem(QDir::toNativeSeparators(path));
+    updateDatabaseButtonState();
+  }
+}
+
 void OptionsDialog::removeDatabaseExcludePathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  // Item removes itself from the list when deleted
-  delete ui->listWidgetOptionsDatabaseExclude->currentItem();
+  // Create list in reverse order so that deleting can start at the bottom of the list
+  for(int idx : atools::gui::util::getSelectedIndexesInDeletionOrder(
+        ui->listWidgetOptionsDatabaseExclude->selectionModel()))
+    // Item removes itself from the list when deleted
+    delete ui->listWidgetOptionsDatabaseExclude->item(idx);
+
   updateDatabaseButtonState();
 }
 
@@ -855,7 +880,7 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
 
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Add-On Recognition"),
-    lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+    lnm::OPTIONS_DIALOG_DB_DIR_DLG,
     atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
 
   if(!path.isEmpty())
@@ -867,7 +892,12 @@ void OptionsDialog::removeDatabaseAddOnExcludePathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  delete ui->listWidgetOptionsDatabaseAddon->currentItem();
+  // Create list in reverse order so that deleting can start at the bottom of the list
+  for(int idx : atools::gui::util::getSelectedIndexesInDeletionOrder(
+        ui->listWidgetOptionsDatabaseAddon->selectionModel()))
+    // Item removes itself from the list when deleted
+    delete ui->listWidgetOptionsDatabaseAddon->item(idx);
+
   updateDatabaseButtonState();
 }
 

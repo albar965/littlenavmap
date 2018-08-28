@@ -1208,7 +1208,28 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   // Add exclude paths from option dialog
   const OptionData& optionData = OptionData::instance();
   navDatabaseOpts.addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
-  navDatabaseOpts.addToDirectoryExcludes(optionData.getDatabaseExclude());
+
+  for(const QString& fileOrPath : optionData.getDatabaseExclude())
+  {
+    QFileInfo fileInfo(fileOrPath);
+
+    if(fileInfo.exists())
+    {
+      if(QFileInfo(fileOrPath).isDir())
+      {
+        qInfo() << Q_FUNC_INFO << "Directory exclusion" << fileOrPath;
+        navDatabaseOpts.addToDirectoryExcludes({fileOrPath});
+      }
+      else
+      {
+        qInfo() << Q_FUNC_INFO << "File exclusion" << fileOrPath;
+        navDatabaseOpts.addToFilePathExcludes({fileOrPath});
+      }
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Exclusion does not exist" << fileOrPath;
+  }
+
   navDatabaseOpts.setSimulatorType(selectedFsType);
 
   delete progressDialog;

@@ -474,7 +474,7 @@ public:
     return databaseAddonExclude;
   }
 
-  /* List of directories that are excluded from scenery database loading */
+  /* List of directories and files that are excluded from scenery database loading */
   const QStringList& getDatabaseExclude() const
   {
     return databaseExclude;

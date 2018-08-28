@@ -83,7 +83,9 @@ private:
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
 
-  void addDatabaseExcludePathClicked();
+  void addDatabaseExcludeDirClicked();
+  void addDatabaseExcludeFileClicked();
+
   void removeDatabaseExcludePathClicked();
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
