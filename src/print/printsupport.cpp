@@ -262,13 +262,13 @@ void PrintSupport::createFlightplanDocuments()
       numCols = std::max(1, numCols);
 
       // Merge all fragments into a table
-      html.tr();
+      html.tr(QColor());
       if(!departureHtml.isEmpty() || !departureCom.isEmpty() || !departureWeather.isEmpty())
-        html.td(100 / numCols).append(departureHtml).append(departureCom).append(departureWeather).tdEnd();
+        html.tdW(100 / numCols).append(departureHtml).append(departureCom).append(departureWeather).tdEnd();
       if(!departureRunway.isEmpty())
-        html.td(100 / numCols).append(departureRunway).tdEnd();
+        html.tdW(100 / numCols).append(departureRunway).tdEnd();
       if(!departureAppr.isEmpty())
-        html.td(100 / numCols).append(departureAppr).tdEnd();
+        html.tdW(100 / numCols).append(departureAppr).tdEnd();
       html.trEnd();
       html.tableEnd();
 
@@ -321,14 +321,14 @@ void PrintSupport::createFlightplanDocuments()
       numCols = std::max(1, numCols);
 
       // Merge all fragments into a table
-      html.tr();
+      html.tr(QColor());
       if(!destinationHtml.isEmpty() || !destinationCom.isEmpty() || !destinationWeather.isEmpty())
-        html.td(100 / numCols).append(destinationHtml).append(destinationCom).
+        html.tdW(100 / numCols).append(destinationHtml).append(destinationCom).
         append(destinationWeather).tdEnd();
       if(!destinationRunway.isEmpty())
-        html.td(100 / numCols).append(destinationRunway).tdEnd();
+        html.tdW(100 / numCols).append(destinationRunway).tdEnd();
       if(!destinationAppr.isEmpty())
-        html.td(100 / numCols).append(destinationAppr).tdEnd();
+        html.tdW(100 / numCols).append(destinationAppr).tdEnd();
       html.trEnd();
       html.tableEnd();
 

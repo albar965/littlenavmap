@@ -159,7 +159,7 @@ private:
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
-
+  bool lessAircraftProgress = false;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

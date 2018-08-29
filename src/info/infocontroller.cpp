@@ -192,7 +192,14 @@ void InfoController::anchorClicked(const QUrl& url)
 
     if(url.host() == "show")
     {
-      if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
+      if(query.hasQueryItem("lessprogress"))
+      {
+        // Handle more/less switch =====================================
+        lessAircraftProgress = !lessAircraftProgress;
+        NavApp::getMainUi()->textBrowserAircraftProgressInfo->setTextCursor(QTextCursor());
+        updateAircraftProgressText();
+      }
+      else if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
       {
         float zoom = 0.f;
         if(query.hasQueryItem("zoom"))
@@ -341,12 +348,16 @@ void InfoController::saveState()
   for(const map::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
+  settings.setValue(lnm::INFOWINDOW_MORE_LESS_PROGRESS, lessAircraftProgress);
 }
 
 void InfoController::restoreState()
 {
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_INFO)
   {
+    lessAircraftProgress =
+      atools::settings::Settings::instance().valueBool(lnm::INFOWINDOW_MORE_LESS_PROGRESS, false);
+
     QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
     QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
 
@@ -361,7 +372,8 @@ void InfoController::restoreState()
     showInformationInternal(res, map::NONE, false /* show windows */, false /* scroll to top */);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
-    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
+    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation,
+                                                              ui->tabWidgetAircraft,
                                                               ui->tabWidgetLegend});
   }
 }
@@ -380,7 +392,8 @@ void InfoController::updateProgress()
   {
     // ok - scrollbars not pressed
     html.clear();
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst(),
+                                      true /* show more/less switch */, lessAircraftProgress);
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
                                       false /* scroll to top*/, true /* keep selection */);
   }
@@ -518,7 +531,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       SimConnectAircraft ac;
       odc->getShadowAircraft(ac, currentSearchResult.userAircraft);
       infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
-      infoBuilder->aircraftProgressText(ac, html, Route());
+      infoBuilder->aircraftProgressText(ac, html, Route(),
+                                        false /* show more/less switch */, false /* true if less info mode */);
       infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
     }
 
@@ -532,7 +546,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       for(const SimConnectAircraft& ac : result.onlineAircraft)
       {
         infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
-        infoBuilder->aircraftProgressText(ac, html, Route());
+        infoBuilder->aircraftProgressText(ac, html, Route(),
+                                          false /* show more/less switch */, false /* true if less info mode */);
         infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
 
         currentSearchResult.onlineAircraft.append(ac);
@@ -878,7 +893,8 @@ void InfoController::updateAircraftProgressText()
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
-        infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
+        infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst(),
+                                          true /* show more/less switch */, lessAircraftProgress);
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
                                           false /* scroll to top*/, true /* keep selection */);
       }
@@ -912,7 +928,8 @@ void InfoController::updateAiAircraftText()
           for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
           {
             infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraftConst().size());
-            infoBuilder->aircraftProgressText(aircraft, html, Route());
+            infoBuilder->aircraftProgressText(aircraft, html, Route(),
+                                              false /* show more/less switch */, false /* true if less info mode */);
             num++;
           }
 

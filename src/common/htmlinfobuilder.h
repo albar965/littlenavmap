@@ -249,7 +249,7 @@ public:
    */
   void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
                             atools::util::HtmlBuilder& html,
-                            const Route& route);
+                            const Route& route, bool moreLessSwitch, bool less);
 
   /*
    * Create HTML for online aircraft also showing position.
@@ -295,7 +295,7 @@ private:
                     const QString& colName, const QString& msg, const QString& val) const;
 
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
-                     atools::util::HtmlBuilder& html);
+                     atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
 
   void dateAndTime(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                    atools::util::HtmlBuilder& html) const;

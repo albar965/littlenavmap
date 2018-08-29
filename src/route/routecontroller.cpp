@@ -308,7 +308,7 @@ QString RouteController::flightplanTableAsHtml(int iconSizePixel) const
   for(int row = 0; row < model->rowCount(); row++)
   {
     // First column is icon
-    html.tr();
+    html.tr(QColor());
     const RouteLeg& routeLeg = route.at(row);
 
     html.td();

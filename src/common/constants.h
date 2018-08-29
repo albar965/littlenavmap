@@ -121,6 +121,7 @@ const QLatin1Literal DATABASE_LOAD_ADDONXML("Database/LoadAddOnXml");
 const QLatin1Literal EXPORT_FILEDIALOG("Export/FileDialog");
 const QLatin1Literal INFOWINDOW_CURRENTMAPOBJECTS("InfoWindow/CurrentMapObjects");
 const QLatin1Literal INFOWINDOW_WIDGET("InfoWindow/Widget");
+const QLatin1Literal INFOWINDOW_MORE_LESS_PROGRESS("InfoWindow/MoreLessProgress");
 const QLatin1Literal MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicationStart");
 const QLatin1Literal MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1Literal MAINWINDOW_WIDGET_STATE("MainWindow/WidgetState");
