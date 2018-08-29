@@ -2573,7 +2573,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         {
           // No course for arcs
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
-            html.row2(tr("Leg Course:"), locale.toString(routeLeg.getCourseToRhumbMag(), 'f', 0) + tr("°M"));
+          {
+            float legCourse = routeLeg.getCourseToRhumbMag();
+            html.row2(tr("Leg Course:"), locale.toString(legCourse, 'f', 0) + tr("°M"));
+
+            if(!simpleMode && userAircaft != nullptr)
+            {
+              // The angle between heading and track is known as the drift angle.
+              float driftAngle = normalizeCourse(userAircaft->getHeadingDegMag() - userAircaft->getTrackDegMag());
+
+              // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
+              float crabAngle = normalizeCourse(legCourse + driftAngle);
+
+              html.row2(tr("Crab angle:"), locale.toString(crabAngle, 'f', 0) + tr("°M"));
+            }
+          }
 
           if(!routeLeg.getProcedureLeg().isHold())
           {
