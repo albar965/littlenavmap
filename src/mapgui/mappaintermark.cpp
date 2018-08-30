@@ -405,7 +405,8 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     Q_UNUSED(saver);
 
     Marble::GeoPainter *painter = context->painter;
-    Pos pos = mapWidget->getUserAircraft().getPosition();
+    const atools::fs::sc::SimConnectUserAircraft& aircaft = mapWidget->getUserAircraft();
+    Pos pos = aircaft.getPosition();
 
     // Use either aircraft position or viewport center
     QRect viewport = painter->viewport();
@@ -432,7 +433,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     painter->setBrush(Qt::NoBrush);
     float lineWidth = context->szF(context->thicknessCompassRose, 2);
     QPen rosePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
-    QPen rosePenSmall(QBrush(mapcolors::compassRoseColor), lineWidth / 8.f, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+    QPen rosePenSmall(QBrush(mapcolors::compassRoseColor), lineWidth / 4.f, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
     QPen headingLinePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::DotLine, Qt::RoundCap,
                         Qt::MiterJoin);
     painter->setPen(rosePen);
@@ -447,7 +448,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       painter->drawEllipse(centerPoint, 5, 5);
 
     // Collect points for tick marks and labels
-    float magVar = hasAircraft ? mapWidget->getUserAircraft().getMagVarDeg() : NavApp::getMagVar(pos);
+    float magVar = hasAircraft ? aircaft.getMagVarDeg() : NavApp::getMagVar(pos);
     QVector<Pos> endpoints;
     QVector<QPointF> endpointsScreen;
     for(float angle = 0.f; angle < 360.f; angle += 5)
@@ -499,12 +500,12 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     {
       // Solid track line
       painter->setPen(rosePen);
-      float trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
+      float trackTrue = aircaft.getTrackDegTrue();
       Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue);
       drawLine(context, Line(pos, trueTrackPos));
 
       // Dotted heading line
-      float headingTrue = mapWidget->getUserAircraft().getHeadingDegTrue();
+      float headingTrue = aircaft.getHeadingDegTrue();
       Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue);
       painter->setPen(headingLinePen);
       drawLine(context, Line(pos, trueHeadingPos));
@@ -560,7 +561,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     float trackTrue = 0.f;
     if(hasAircraft)
       // Solid track line
-      trackTrue = mapWidget->getUserAircraft().getTrackDegTrue();
+      trackTrue = aircaft.getTrackDegTrue();
 
     // Distance labels along track line
     context->szFont(context->textSizeCompassRose * 0.8f);
@@ -574,13 +575,59 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     if(hasAircraft)
     {
+      const Route& route = NavApp::getRouteConst();
+
+      if(route.size() > 1 && aircaft.isFlying())
+      {
+        bool isCorrected = false;
+        int activeLegCorrected = route.getActiveLegIndexCorrected(&isCorrected);
+        if(activeLegCorrected != map::INVALID_INDEX_VALUE)
+        {
+          // Draw crab angle if flight plan is available ========================
+
+          // If approaching an initial fix use corrected version
+          int activeLeg = route.getActiveLegIndex();
+          const RouteLeg& routeLeg = activeLeg != map::INVALID_INDEX_VALUE && isCorrected ?
+                                     route.at(activeLeg) : route.at(activeLegCorrected);
+
+          // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
+          float crabAngle = windCorrectedHeading(aircaft.getWindSpeedKts(), aircaft.getWindDirectionDegT(),
+                                                 routeLeg.getCourseToRhumbTrue(), aircaft.getTrueAirspeedKts());
+
+          Pos crabPos = pos.endpoint(radiusMeter, crabAngle);
+          painter->setPen(rosePen);
+          painter->setBrush(OptionData::instance().getFlightplanActiveSegmentColor());
+
+          QPointF crabScreenPos = wToSF(crabPos);
+          painter->drawEllipse(crabScreenPos, lineWidth * 3, lineWidth * 3);
+
+          float crs = normalizeCourse(aircaft.getPosition().angleDegToRhumb(routeLeg.getPosition()));
+
+          // Draw small line to show course to next waypoint ========================
+          if(crs < INVALID_COURSE_VALUE)
+          {
+            Pos endPt = pos.endpoint(radiusMeter, crs);
+            Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
+            painter->setPen(QPen(mapcolors::routeOutlineColor, context->sz(context->thicknessFlightplan, 7),
+                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            drawLineStraight(context, crsLine);
+
+            painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(),
+                                 context->sz(context->thicknessFlightplan, 4),
+                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            drawLineStraight(context, crsLine);
+          }
+        }
+      }
+
       // Aircraft track label at end of track line ======================================================
       QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
       if(!trueTrackTextPoint.isNull())
       {
+        painter->setPen(mapcolors::compassRoseTextColor);
         context->szFont(context->textSizeCompassRose);
         QString text =
-          tr("%1°M").arg(QString::number(atools::roundToInt(mapWidget->getUserAircraft().getTrackDegMag())));
+          tr("%1°M").arg(QString::number(atools::roundToInt(aircaft.getTrackDegMag())));
         symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), trueTrackTextPoint.x(),
                                 trueTrackTextPoint.y(), textatt::CENTER | textatt::ROUTE_BG_COLOR);
       }

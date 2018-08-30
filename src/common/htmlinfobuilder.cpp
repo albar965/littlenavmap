@@ -2580,15 +2580,20 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             float legCourse = routeLeg.getCourseToRhumbMag();
             html.row2(tr("Leg Course:"), locale.toString(legCourse, 'f', 0) + tr("°M"));
 
-            if(!less && userAircaft != nullptr)
+            if(!less && userAircaft != nullptr && userAircaft->isFlying())
             {
-              // The angle between heading and track is known as the drift angle.
-              float driftAngle = normalizeCourse(userAircaft->getHeadingDegMag() - userAircaft->getTrackDegMag());
-
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
-              float crabAngle = normalizeCourse(legCourse + driftAngle);
-
-              html.row2(tr("Crab angle:"), locale.toString(crabAngle, 'f', 0) + tr("°M"));
+              float crabAngle = atools::geo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
+                                                                  userAircaft->getWindDirectionDegT(),
+                                                                  routeLeg.getCourseToRhumbTrue(),
+                                                                  userAircaft->getTrueAirspeedKts());
+              if(crabAngle < INVALID_COURSE_VALUE)
+              {
+                crabAngle = normalizeCourse(crabAngle - userAircaft->getMagVarDeg());
+                html.row2(tr("Crab angle:"), locale.toString(crabAngle, 'f', 0) + tr("°M"));
+              }
+              else
+                html.row2(tr("Crab angle:"));
             }
           }
 

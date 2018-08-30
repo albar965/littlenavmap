@@ -1054,7 +1054,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   // Draw the text
   QFontMetricsF metrics = painter->fontMetrics();
   float h = static_cast<float>(metrics.height()) - 1.f;
-  float yoffset = (texts.size() * h) / 2.f - static_cast<float>(metrics.descent());
+  float yoffset = (static_cast<float>(texts.size() * h)) / 2.f - static_cast<float>(metrics.descent());
   painter->setPen(textPen);
 
   // Draw text in reverse order to avoid undercut
