@@ -108,14 +108,24 @@ private:
 
   // Add items to the tree widget and to the  displayOptItemIndex
   QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
-  QTreeWidgetItem *addItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip, opts::DisplayOption type,
-                           bool checked = false);
+
+  template<typename TYPE>
+  QTreeWidgetItem *addItem(QTreeWidgetItem *root, QHash<TYPE, QTreeWidgetItem *>& index,
+                           const QString& text, const QString& tooltip, TYPE type, bool checked = false) const;
+
+  template<typename TYPE>
+  void restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>& index, const QString& optionPrefix) const;
+
+  template<typename TYPE>
+  void saveDisplayOptItemStates(const QHash<TYPE, QTreeWidgetItem *>& index, const QString& optionPrefix) const;
 
   // Copy tree widget states forth and back
-  void saveDisplayOptItemStates();
-  void restoreDisplayOptItemStates();
-  void displayOptWidgetToOptionData();
-  void displayOptDataToWidget();
+  template<typename TYPE>
+  void displayOptDataToWidget(const TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const;
+
+  template<typename TYPE>
+  void displayOptWidgetToOptionData(TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const;
+
   void updateButtonColors();
   void updateCacheElevationStates();
   void offlineDataSelectClicked();
@@ -139,6 +149,7 @@ private:
 
   // Maps options flags to items in the tree widget
   QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
+  QHash<opts::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
 
   QString doubleSpinBoxOptionsMapZoomShowMapSuffix, doubleSpinBoxOptionsMapZoomShowMapMenuSuffix,
           spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText,

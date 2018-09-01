@@ -122,55 +122,55 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->setupUi(this);
 
   // Build tree settings to map tab =====================================================
+  /* *INDENT-OFF* */
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
 
-  QTreeWidgetItem *topOfMap = addTopItem(root, tr("Top of Map"),
-                                         tr("Select information that is displayed on top of the map."));
-  addItem(topOfMap, tr("Wind Direction and Speed"),
-          tr("Show wind direction and speed on the top center of the map."),
-          opts::ITEM_USER_AIRCRAFT_WIND, true);
-  addItem(topOfMap, tr("Wind Pointer"),
-          tr("Show wind direction pointer on the top center of the map."),
-          opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
+  QTreeWidgetItem *topOfMap = addTopItem(root, tr("Top of Map"), tr("Select information that is displayed on top of the map."));
+  addItem<opts::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), opts::ITEM_USER_AIRCRAFT_WIND, true);
+  addItem<opts::DisplayOptions>(topOfMap, displayOptItemIndex, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   QTreeWidgetItem *airport = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
-  addItem(airport, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
-  addItem(airport, tr("Tower Frequency"), QString(), opts::ITEM_AIRPORT_TOWER, true);
-  addItem(airport, tr("ATIS / ASOS / AWOS Frequency"), QString(), opts::ITEM_AIRPORT_ATIS, true);
-  addItem(airport, tr("Runway Information"),
-          tr("Show runway length, width and light inidcator text."), opts::ITEM_AIRPORT_RUNWAY, true);
+  addItem<opts::DisplayOptions>(airport, displayOptItemIndex, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
+  addItem<opts::DisplayOptions>(airport, displayOptItemIndex, tr("Tower Frequency"), QString(), opts::ITEM_AIRPORT_TOWER, true);
+  addItem<opts::DisplayOptions>(airport, displayOptItemIndex, tr("ATIS / ASOS / AWOS Frequency"), QString(), opts::ITEM_AIRPORT_ATIS, true);
+  addItem<opts::DisplayOptions>(airport, displayOptItemIndex, tr("Runway Information"), tr("Show runway length, width and light inidcator text."), opts::ITEM_AIRPORT_RUNWAY, true);
   // addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
 
-  QTreeWidgetItem *userAircraft = addTopItem(root, tr("User Aircraft"),
-                                             tr("Select text labels and other options for the user aircraft."));
-  addItem(userAircraft, tr("Registration"), QString(), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
-  addItem(userAircraft, tr("Type"),
-          tr("Show the aircraft type, like B738, B350 or M20T."),
-          opts::ITEM_USER_AIRCRAFT_TYPE);
-  addItem(userAircraft, tr("Airline"), QString(), opts::ITEM_USER_AIRCRAFT_AIRLINE);
-  addItem(userAircraft, tr("Flight Number"), QString(), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem(userAircraft, tr("Indicated Airspeed"), QString(), opts::ITEM_USER_AIRCRAFT_IAS);
-  addItem(userAircraft, tr("Ground Speed"), QString(), opts::ITEM_USER_AIRCRAFT_GS, true);
-  addItem(userAircraft, tr("Climb- and Sinkrate"), QString(), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem(userAircraft, tr("Heading"), QString(), opts::ITEM_USER_AIRCRAFT_HEADING);
-  addItem(userAircraft, tr("Altitude"), QString(), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
-  addItem(userAircraft, tr("Track Line"),
-          tr("Show the aircraft track as a black needle protruding from the aircraft nose."),
-          opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  QTreeWidgetItem *userAircraft = addTopItem(root, tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Registration"), QString(), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), opts::ITEM_USER_AIRCRAFT_TYPE);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Airline"), QString(), opts::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Flight Number"), QString(), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Indicated Airspeed"), QString(), opts::ITEM_USER_AIRCRAFT_IAS);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Ground Speed"), QString(), opts::ITEM_USER_AIRCRAFT_GS, true);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Climb- and Sinkrate"), QString(), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Heading"), QString(), opts::ITEM_USER_AIRCRAFT_HEADING);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Altitude"), QString(), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem<opts::DisplayOptions>(userAircraft, displayOptItemIndex, tr("Track Line"), tr("Show the aircraft track as a black needle protruding from the aircraft nose."), opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
 
-  QTreeWidgetItem *aiAircraft =
-    addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"),
-               tr("Select text labels for the AI, multiplayer and online client aircraft."));
-  addItem(aiAircraft, tr("Registration, Number or Callsign"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
-  addItem(aiAircraft, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
-  addItem(aiAircraft, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem(aiAircraft, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
-  addItem(aiAircraft, tr("Indicated Airspeed"), QString(), opts::ITEM_AI_AIRCRAFT_IAS);
-  addItem(aiAircraft, tr("Ground Speed"), QString(), opts::ITEM_AI_AIRCRAFT_GS, true);
-  addItem(aiAircraft, tr("Climb- and Sinkrate"), QString(), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
-  addItem(aiAircraft, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
-  addItem(aiAircraft, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
-  addItem(aiAircraft, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
+  QTreeWidgetItem *aiAircraft = addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Registration, Number or Callsign"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Indicated Airspeed"), QString(), opts::ITEM_AI_AIRCRAFT_IAS);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Ground Speed"), QString(), opts::ITEM_AI_AIRCRAFT_GS, true);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Climb- and Sinkrate"), QString(), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
+
+  QTreeWidgetItem *compassRose = addTopItem(root, tr("Compass Rose"), tr("Select display options for the compass rose."));
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E abd W labels."), opts::ROSE_DIR_LABLES, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Marks"), tr("Show tick marks for degrees on ring."), opts::ROSE_DEGREE_MARKS, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Labels"), tr("Show degree labels on ring."), opts::ROSE_DEGREE_LABELS, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Range Rings"), tr("Show range rings and disance labels inside."), opts::ROSE_RANGE_RINGS, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show dashed heading line for user aircraft."), opts::ROSE_HEADING_LINE, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"), tr("Show the solid track line for user aircraft."), opts::ROSE_TRACK_LINE, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), opts::ROSE_TRACK_LABEL, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Crab Angle Circle"), tr("Show the crab angle for the user aircraft as a small magenta circle."), opts::ROSE_CRAB_ANGLE, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as a small magenta line."), opts::ROSE_NEXT_WAYPOINT, true);
+  /* *INDENT-ON* */
 
   rangeRingValidator = new RangeRingValidator;
 
@@ -578,7 +578,8 @@ void OptionsDialog::saveState()
   // Save widgets to settings
   atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
                            false /* save visibility */, true /* block signals */).save(widgets);
-  saveDisplayOptItemStates();
+  saveDisplayOptItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
+  saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
 
   Settings& settings = Settings::instance();
 
@@ -630,7 +631,8 @@ void OptionsDialog::restoreState()
 
   atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
                            false /*save visibility*/, true /*block signals*/).restore(widgets);
-  restoreDisplayOptItemStates();
+  restoreOptionItemStates(displayOptItemIndex, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS);
+  restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
 
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
     ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
@@ -665,50 +667,53 @@ void OptionsDialog::updateButtonColors()
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
 }
 
-void OptionsDialog::restoreDisplayOptItemStates()
+template<typename TYPE>
+void OptionsDialog::restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>& index,
+                                            const QString& optionPrefix) const
 {
   const Settings& settings = Settings::instance();
-  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  for(const TYPE& dispOpt : index.keys())
   {
-    QString optName = lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS + "_" + QString::number(dispOpt);
+    QString optName = optionPrefix + "_" + QString::number(dispOpt);
     if(settings.contains(optName))
-      displayOptItemIndex.value(dispOpt)->
+      index.value(dispOpt)->
       setCheckState(0, settings.valueBool(optName, false) ? Qt::Checked : Qt::Unchecked);
   }
 }
 
-void OptionsDialog::saveDisplayOptItemStates()
+template<typename TYPE>
+void OptionsDialog::saveDisplayOptItemStates(const QHash<TYPE, QTreeWidgetItem *>& index,
+                                             const QString& optionPrefix) const
 {
   Settings& settings = Settings::instance();
 
-  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  for(const TYPE& dispOpt : index.keys())
   {
-    QTreeWidgetItem *item = displayOptItemIndex.value(dispOpt);
+    QTreeWidgetItem *item = index.value(dispOpt);
 
-    QString optName = lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS + "_" + QString::number(dispOpt);
+    QString optName = optionPrefix + "_" + QString::number(dispOpt);
 
     settings.setValue(optName, item->checkState(0) == Qt::Checked);
   }
 }
 
-void OptionsDialog::displayOptWidgetToOptionData()
+template<typename TYPE>
+void OptionsDialog::displayOptWidgetToOptionData(TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const
 {
-  OptionData& od = OptionData::instanceInternal();
-  od.displayOptions = opts::ITEM_NONE;
-  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  for(const TYPE& dispOpt : index.keys())
   {
-    if(displayOptItemIndex.value(dispOpt)->checkState(0) == Qt::Checked)
-      od.displayOptions |= dispOpt;
+    if(index.value(dispOpt)->checkState(0) == Qt::Checked)
+      type |= dispOpt;
   }
 }
 
-void OptionsDialog::displayOptDataToWidget()
+template<typename TYPE>
+void OptionsDialog::displayOptDataToWidget(const TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const
 {
-  const OptionData& od = OptionData::instanceInternal();
-  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  for(const TYPE& dispOpt : index.keys())
   {
-    displayOptItemIndex.value(dispOpt)->setCheckState(
-      0, od.displayOptions & dispOpt ? Qt::Checked : Qt::Unchecked);
+    index.value(dispOpt)->setCheckState(
+      0, type & dispOpt ? Qt::Checked : Qt::Unchecked);
   }
 }
 
@@ -720,14 +725,15 @@ QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, const QString&
   return item;
 }
 
-QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip,
-                                        opts::DisplayOption type, bool checked)
+template<typename TYPE>
+QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, QHash<TYPE, QTreeWidgetItem *>& index,
+                                        const QString& text, const QString& tooltip, TYPE type, bool checked) const
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, type);
   item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
   item->setToolTip(0, tooltip);
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-  displayOptItemIndex.insert(type, item);
+  index.insert(type, item);
   return item;
 }
 
@@ -956,7 +962,10 @@ void OptionsDialog::widgetsToOptionData()
   data.flightplanActiveColor = flightplanActiveColor;
   data.flightplanPassedColor = flightplanPassedColor;
   data.trailColor = trailColor;
-  displayOptWidgetToOptionData();
+  data.displayOptions = opts::ITEM_NONE;
+  displayOptWidgetToOptionData(data.displayOptions, displayOptItemIndex);
+  data.displayOptionsRose = opts::ROSE_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsRose, displayOptItemIndexRose);
 
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
@@ -1122,7 +1131,8 @@ void OptionsDialog::optionDataToWidgets()
   flightplanActiveColor = data.flightplanActiveColor;
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
-  displayOptDataToWidget();
+  displayOptDataToWidget(data.displayOptions, displayOptItemIndex);
+  displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
 
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);

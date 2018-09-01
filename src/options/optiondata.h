@@ -238,6 +238,23 @@ enum DisplayOption
 Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptions);
 
+enum DisplayOptionRose
+{
+  ROSE_NONE = 0,
+  ROSE_RANGE_RINGS = 1 << 0,
+  ROSE_DEGREE_MARKS = 1 << 1,
+  ROSE_DEGREE_LABELS = 1 << 2,
+  ROSE_HEADING_LINE = 1 << 3,
+  ROSE_TRACK_LINE = 1 << 4,
+  ROSE_TRACK_LABEL = 1 << 5,
+  ROSE_CRAB_ANGLE = 1 << 6,
+  ROSE_NEXT_WAYPOINT = 1 << 7,
+  ROSE_DIR_LABLES = 1 << 8
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptionsRose);
+
 enum DisplayTooltipOption
 {
   TOOLTIP_NONE = 0,
@@ -664,6 +681,11 @@ public:
     return displayOptions;
   }
 
+  const opts::DisplayOptionsRose& getDisplayOptionsRose() const
+  {
+    return displayOptionsRose;
+  }
+
   opts::DisplayTooltipOptions getDisplayTooltipOptions() const
   {
     return displayTooltipOptions;
@@ -969,6 +991,10 @@ private:
     opts::ITEM_AI_AIRCRAFT_REGISTRATION | opts::ITEM_AI_AIRCRAFT_TYPE |
     opts::ITEM_AI_AIRCRAFT_AIRLINE | opts::ITEM_AI_AIRCRAFT_GS |
     opts::ITEM_AI_AIRCRAFT_ALTITUDE | opts::ITEM_AI_AIRCRAFT_DEP_DEST;
+
+  opts::DisplayOptionsRose displayOptionsRose =
+    opts::ROSE_RANGE_RINGS | opts::ROSE_DEGREE_MARKS | opts::ROSE_DEGREE_LABELS | opts::ROSE_HEADING_LINE |
+    opts::ROSE_TRACK_LINE | opts::ROSE_TRACK_LABEL | opts::ROSE_CRAB_ANGLE | opts::ROSE_NEXT_WAYPOINT;
 
   opts::DisplayTooltipOptions displayTooltipOptions = opts::TOOLTIP_AIRPORT | opts::TOOLTIP_AIRSPACE |
                                                       opts::TOOLTIP_NAVAID;

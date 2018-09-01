@@ -457,6 +457,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.thicknessCompassRose = od.getDisplayThicknessCompassRose() / 100.f;
 
       context.dispOpts = od.getDisplayOptions();
+      context.dispOptsRose = od.getDisplayOptionsRose();
       context.flags = od.getFlags();
       context.flags2 = od.getFlags2();
 

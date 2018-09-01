@@ -71,6 +71,7 @@ struct PaintContext
   bool userPointTypeUnknown; /* Show unknown types */
 
   opts::DisplayOptions dispOpts;
+  opts::DisplayOptionsRose dispOptsRose;
   opts::Flags flags;
   opts::Flags2 flags2;
   map::MapWeatherSource weatherSource;
@@ -110,6 +111,11 @@ struct PaintContext
   bool  dOpt(const opts::DisplayOptions& opts) const
   {
     return dispOpts & opts;
+  }
+
+  bool  dOptRose(const opts::DisplayOptionsRose& opts) const
+  {
+    return dispOptsRose & opts;
   }
 
   /* Calculate real symbol size */

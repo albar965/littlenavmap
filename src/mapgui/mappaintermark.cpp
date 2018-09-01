@@ -458,21 +458,24 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     }
 
     // Draw tick marks ======================================================
-    for(int i = 0; i < 360 / 5; i++)
+    if(context->dOptRose(opts::ROSE_DEGREE_MARKS))
     {
-      if((i % (90 / 5)) == 0) // 90 degree ticks
+      for(int i = 0; i < 360 / 5; i++)
       {
-        drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.8f), endpoints.at(i)));
+        if((i % (90 / 5)) == 0) // 90 degree ticks
+        {
+          drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.8f), endpoints.at(i)));
+        }
+        else if((i % (45 / 5)) == 0) // 45 degree ticks
+          drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.84f), endpoints.at(i)));
+        else if((i % (10 / 5)) == 0) // 10 degree ticks
+        {
+          if(mapWidget->distance() < 3200 /* km */)
+            drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.92f), endpoints.at(i)));
+        }
+        else if(mapWidget->distance() < 6400 /* km */) // 5 degree ticks
+          drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.95f), endpoints.at(i)));
       }
-      else if((i % (45 / 5)) == 0) // 45 degree ticks
-        drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.84f), endpoints.at(i)));
-      else if((i % (10 / 5)) == 0) // 10 degree ticks
-      {
-        if(mapWidget->distance() < 3200 /* km */)
-          drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.92f), endpoints.at(i)));
-      }
-      else if(mapWidget->distance() < 6400 /* km */) // 5 degree ticks
-        drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.95f), endpoints.at(i)));
     }
 
     painter->setBrush(QBrush(Qt::white));
@@ -492,23 +495,32 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     painter->setPen(rosePenSmall);
 
     // Draw distance circles =======================================================
-    for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
-      paintCircle(context->painter, pos, i * stepsizeNm, context->drawFast, xt, yt);
+    if(context->dOptRose(opts::ROSE_RANGE_RINGS))
+    {
+      for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+        paintCircle(context->painter, pos, i * stepsizeNm, context->drawFast, xt, yt);
+    }
     painter->setPen(rosePen);
 
     if(hasAircraft)
     {
       // Solid track line
       painter->setPen(rosePen);
-      float trackTrue = aircaft.getTrackDegTrue();
-      Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue);
-      drawLine(context, Line(pos, trueTrackPos));
+      if(context->dOptRose(opts::ROSE_TRACK_LINE))
+      {
+        float trackTrue = aircaft.getTrackDegTrue();
+        Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue);
+        drawLine(context, Line(pos, trueTrackPos));
+      }
 
       // Dotted heading line
-      float headingTrue = aircaft.getHeadingDegTrue();
-      Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue);
-      painter->setPen(headingLinePen);
-      drawLine(context, Line(pos, trueHeadingPos));
+      if(context->dOptRose(opts::ROSE_HEADING_LINE))
+      {
+        float headingTrue = aircaft.getHeadingDegTrue();
+        Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue);
+        painter->setPen(headingLinePen);
+        drawLine(context, Line(pos, trueHeadingPos));
+      }
       painter->setPen(rosePen);
     }
 
@@ -516,39 +528,42 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     context->szFont(context->textSizeCompassRose * 1.4f);
     painter->setPen(mapcolors::compassRoseTextColor);
 
-    for(int i = 0; i < 360 / 5; i++)
+    if(context->dOptRose(opts::ROSE_DIR_LABLES))
     {
-      if((i % (90 / 5)) == 0)
+      for(int i = 0; i < 360 / 5; i++)
       {
-        if(mapWidget->distance() < 6400 /* km */)
+        if((i % (90 / 5)) == 0)
         {
-          if(!endpointsScreen.at(i).isNull())
+          if(mapWidget->distance() < 6400 /* km */)
           {
-            QString text;
-            if(i == 0)
-              text = tr("N", "North");
-            else if(i == 90 / 5)
-              text = tr("E", "East");
-            else if(i == 180 / 5)
-              text = tr("S", "South");
-            else if(i == 270 / 5)
-              text = tr("W", "West");
+            if(!endpointsScreen.at(i).isNull())
+            {
+              QString text;
+              if(i == 0)
+                text = tr("N", "North");
+              else if(i == 90 / 5)
+                text = tr("E", "East");
+              else if(i == 180 / 5)
+                text = tr("S", "South");
+              else if(i == 270 / 5)
+                text = tr("W", "West");
 
-            symbolPainter->textBoxF(painter, {text}, painter->pen(),
-                                    endpointsScreen.at(i).x(), endpointsScreen.at(i).y(), textatt::CENTER);
+              symbolPainter->textBoxF(painter, {text}, painter->pen(),
+                                      endpointsScreen.at(i).x(), endpointsScreen.at(i).y(), textatt::CENTER);
+            }
           }
         }
       }
     }
 
     // Draw small 15 deg labels ======================================================
-    if(mapWidget->distance() < 1600 /* km */)
+    if(mapWidget->distance() < 1600 /* km */ && context->dOptRose(opts::ROSE_DEGREE_LABELS))
     {
       // Reduce font size
       context->szFont(context->textSizeCompassRose * 0.8f);
       for(int i = 0; i < 360 / 5; i++)
       {
-        if((i % (15 / 5)) == 0 && !((i % (90 / 5)) == 0))
+        if((i % (15 / 5)) == 0 && (!context->dOptRose(opts::ROSE_DIR_LABLES) || !((i % (90 / 5)) == 0)))
         {
           // All 15 deg but not at 90 deg boundaries
           symbolPainter->textBoxF(painter, {QString::number(i * 5)}, painter->pen(),
@@ -565,12 +580,15 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     // Distance labels along track line
     context->szFont(context->textSizeCompassRose * 0.8f);
-    for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+    if(context->dOptRose(opts::ROSE_RANGE_RINGS))
     {
-      QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue));
-      if(!s.isNull())
-        symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
-                                s.x(), s.y(), textatt::CENTER);
+      for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
+      {
+        QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue));
+        if(!s.isNull())
+          symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
+                                  s.x(), s.y(), textatt::CENTER);
+      }
     }
 
     if(hasAircraft)
@@ -590,46 +608,55 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
           const RouteLeg& routeLeg = activeLeg != map::INVALID_INDEX_VALUE && isCorrected ?
                                      route.at(activeLeg) : route.at(activeLegCorrected);
 
-          // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
-          float crabAngle = windCorrectedHeading(aircaft.getWindSpeedKts(), aircaft.getWindDirectionDegT(),
-                                                 routeLeg.getCourseToRhumbTrue(), aircaft.getTrueAirspeedKts());
-
-          Pos crabPos = pos.endpoint(radiusMeter, crabAngle);
-          painter->setPen(rosePen);
-          painter->setBrush(OptionData::instance().getFlightplanActiveSegmentColor());
-
-          QPointF crabScreenPos = wToSF(crabPos);
-          painter->drawEllipse(crabScreenPos, lineWidth * 3, lineWidth * 3);
-
-          float crs = normalizeCourse(aircaft.getPosition().angleDegToRhumb(routeLeg.getPosition()));
-
-          // Draw small line to show course to next waypoint ========================
-          if(crs < INVALID_COURSE_VALUE)
+          if(context->dOptRose(opts::ROSE_CRAB_ANGLE))
           {
-            Pos endPt = pos.endpoint(radiusMeter, crs);
-            Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
-            painter->setPen(QPen(mapcolors::routeOutlineColor, context->sz(context->thicknessFlightplan, 7),
-                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            drawLineStraight(context, crsLine);
+            // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
+            float crabAngle = windCorrectedHeading(aircaft.getWindSpeedKts(), aircaft.getWindDirectionDegT(),
+                                                   routeLeg.getCourseToRhumbTrue(), aircaft.getTrueAirspeedKts());
 
-            painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(),
-                                 context->sz(context->thicknessFlightplan, 4),
-                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            drawLineStraight(context, crsLine);
+            Pos crabPos = pos.endpoint(radiusMeter, crabAngle);
+            painter->setPen(rosePen);
+            painter->setBrush(OptionData::instance().getFlightplanActiveSegmentColor());
+
+            QPointF crabScreenPos = wToSF(crabPos);
+            painter->drawEllipse(crabScreenPos, lineWidth * 3, lineWidth * 3);
+          }
+
+          if(context->dOptRose(opts::ROSE_NEXT_WAYPOINT))
+          {
+            float crs = normalizeCourse(aircaft.getPosition().angleDegToRhumb(routeLeg.getPosition()));
+
+            // Draw small line to show course to next waypoint ========================
+            if(crs < INVALID_COURSE_VALUE)
+            {
+              Pos endPt = pos.endpoint(radiusMeter, crs);
+              Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
+              painter->setPen(QPen(mapcolors::routeOutlineColor, context->sz(context->thicknessFlightplan, 7),
+                                   Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+              drawLineStraight(context, crsLine);
+
+              painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(),
+                                   context->sz(context->thicknessFlightplan, 4),
+                                   Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+              drawLineStraight(context, crsLine);
+            }
           }
         }
       }
 
       // Aircraft track label at end of track line ======================================================
-      QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
-      if(!trueTrackTextPoint.isNull())
+      if(context->dOptRose(opts::ROSE_TRACK_LABEL))
       {
-        painter->setPen(mapcolors::compassRoseTextColor);
-        context->szFont(context->textSizeCompassRose);
-        QString text =
-          tr("%1°M").arg(QString::number(atools::roundToInt(aircaft.getTrackDegMag())));
-        symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), trueTrackTextPoint.x(),
-                                trueTrackTextPoint.y(), textatt::CENTER | textatt::ROUTE_BG_COLOR);
+        QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
+        if(!trueTrackTextPoint.isNull())
+        {
+          painter->setPen(mapcolors::compassRoseTextColor);
+          context->szFont(context->textSizeCompassRose);
+          QString text =
+            tr("%1°M").arg(QString::number(atools::roundToInt(aircaft.getTrackDegMag())));
+          symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), trueTrackTextPoint.x(),
+                                  trueTrackTextPoint.y(), textatt::CENTER | textatt::ROUTE_BG_COLOR);
+        }
       }
     }
   }
