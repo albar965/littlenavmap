@@ -217,9 +217,12 @@ void MapPainterAirport::render(PaintContext *context)
                                      context->mapLayer->getMaxTextLengthAirport());
     }
 
-    if(context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather())
+    if(context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather() &&
+       context->viewContext == Marble::Still)
+      // Do not draw while scrolling
       drawAirportWeather(context,
-                         NavApp::getWeatherReporter()->getAirportWeather(airport->ident, context->weatherSource), x, y);
+                         NavApp::getWeatherReporter()->getAirportWeather(airport->ident, airport->position,
+                                                                         context->weatherSource), x, y);
   }
 }
 

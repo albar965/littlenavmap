@@ -67,11 +67,18 @@ public:
   /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
 
+  /* Connected to Little Navconnect */
+  bool isConnectedNetwork() const;
+
   /* Just saves and restores the state of the dialog */
   void saveState();
   void restoreState();
 
-  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
+  /* Request weather. Return value will be empty and the request will be started in background.
+   * Signal weatherUpdated is sent if request was finished. Than call this method again.
+   * onlyStation: Do not return weather for interpolated or nearest only. Keeps an internal blacklist. */
+  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos,
+                                                  bool onlyStation);
 
   bool isFetchAiShip() const;
   bool isFetchAiAircraft() const;
@@ -98,9 +105,11 @@ private:
   const int SOCKET_RECONNECT_SEC = 5;
   /* Try to reconnect every 5 seconds when the SimConnect or X-Plane connection is lost */
   const int DIRECT_RECONNECT_SEC = 5;
+  const int FLUSH_QUEUE_MS = 50;
 
   /* Any metar fetched from the Simulator will time out in 15 seconds */
   const int WEATHER_TIMEOUT_FS_SECS = 15;
+  const int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError error);
@@ -141,8 +150,16 @@ private:
   MainWindow *mainWindow;
   bool verbose = false;
   atools::util::TimedCache<QString, atools::fs::weather::MetarResult> metarIdentCache;
+
+  /* Waiting for these replies for airport idents */
   QSet<QString> outstandingReplies;
+
+  /* Requests in queue */
   QVector<atools::fs::sc::WeatherRequest> queuedRequests;
+  QSet<QString> queuedRequestIdents;
+
+  /* Cache holding all weather stations that do not allow a direct report but rather interpolated or nearest */
+  atools::util::TimedCache<QString, QString> notAvailableStations;
 
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;

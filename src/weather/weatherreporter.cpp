@@ -30,6 +30,7 @@
 #include "fs/weather/weathernetsingle.h"
 #include "fs/weather/metar.h"
 #include "util/filesystemwatcher.h"
+#include "connect/connectclient.h"
 
 #include <QDebug>
 #include <QDir>
@@ -531,12 +532,26 @@ atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& ai
   return ivaoWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao, map::MapWeatherSource source)
+atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao,
+                                                              const atools::geo::Pos& airportPos,
+                                                              map::MapWeatherSource source)
 {
   switch(source)
   {
     case map::WEATHER_SOURCE_SIMULATOR:
-      return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+      if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+        // X-Plane weather file
+        return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+      else if(NavApp::getConnectClient()->isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
+      {
+        atools::fs::weather::MetarResult res =
+          NavApp::getConnectClient()->requestWeather(airportIcao, airportPos, true);
+
+        if(res.isValid() && !res.metarForStation.isEmpty())
+          // FSX/P3D - Flight simulator fetched weather or network connection
+          return Metar(res.metarForStation, res.requestIdent, res.timestamp, true);
+      }
+      return Metar();
 
     case map::WEATHER_SOURCE_ACTIVE_SKY:
       return Metar(getActiveSkyMetar(airportIcao));

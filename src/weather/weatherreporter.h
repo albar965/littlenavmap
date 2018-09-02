@@ -97,7 +97,7 @@ public:
   atools::fs::weather::MetarResult getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* For display. Source depends on settings and parsed objects are cached. */
-  atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, map::MapWeatherSource source);
+  atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos, map::MapWeatherSource source);
 
   /* Does nothing currently */
   void preDatabaseLoad();

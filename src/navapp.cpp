@@ -541,9 +541,10 @@ WeatherReporter *NavApp::getWeatherReporter()
   return mainWindow->getWeatherReporter();
 }
 
-atools::fs::weather::Metar NavApp::getAirportWeather(const QString& ident)
+atools::fs::weather::Metar NavApp::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos)
 {
-  return mainWindow->getWeatherReporter()->getAirportWeather(ident, mainWindow->getMapWidget()->getMapWeatherSource());
+  return mainWindow->getWeatherReporter()->getAirportWeather(airportIcao, airportPos,
+                                                             mainWindow->getMapWidget()->getMapWeatherSource());
 }
 
 map::MapWeatherSource NavApp::getAirportWeatherSource()

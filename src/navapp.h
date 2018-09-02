@@ -183,7 +183,7 @@ public:
   static ElevationProvider *getElevationProvider();
 
   static WeatherReporter *getWeatherReporter();
-  static atools::fs::weather::Metar getAirportWeather(const QString& ident);
+  static atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos);
   static map::MapWeatherSource getAirportWeatherSource();
 
   static void updateWindowTitle();

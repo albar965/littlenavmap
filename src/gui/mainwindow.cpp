@@ -1171,6 +1171,7 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirport);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
 
+  connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirport);
 
@@ -2909,8 +2910,8 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     else if(NavApp::isConnected())
     {
       // FSX/P3D - Flight simulator fetched weather
-      atools::fs::weather::MetarResult metar = NavApp::getConnectClient()->requestWeather(airport.ident,
-                                                                                          airport.position);
+      atools::fs::weather::MetarResult metar =
+        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
 
       if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
       {
@@ -2999,7 +3000,8 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
     else
-      weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+      weatherContext.fsMetar =
+        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
   if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11)
@@ -3031,7 +3033,8 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
     else
-      weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position);
+      weatherContext.fsMetar =
+        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
   if(flags & opts::WEATHER_TOOLTIP_ACTIVESKY)

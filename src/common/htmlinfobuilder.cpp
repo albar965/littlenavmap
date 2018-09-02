@@ -437,7 +437,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
 void HtmlInfoBuilder::flightRulesText(const MapAirport& airport, HtmlBuilder& html) const
 {
-  atools::fs::weather::Metar airportWeather = NavApp::getAirportWeather(airport.ident);
+  atools::fs::weather::Metar airportWeather = NavApp::getAirportWeather(airport.ident, airport.position);
   if(airportWeather.isValid())
   {
     html.img(SymbolPainter().createAirportWeatherIcon(airportWeather, SYMBOL_SIZE.height()),
@@ -2949,6 +2949,14 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
   if(!title3.isEmpty())
     title += " (" + title3 + ")";
+
+#ifdef DEBUG_INFORMATION
+  static bool heartbeat = false;
+
+  title += (heartbeat ? " X" : " 0");
+  heartbeat = !heartbeat;
+
+#endif
 
   html.text(title, atools::util::html::BOLD | atools::util::html::BIG);
 
