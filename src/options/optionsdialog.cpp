@@ -161,11 +161,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<opts::DisplayOptions>(aiAircraft, displayOptItemIndex, tr("Departure and Destination"), QString(), opts::ITEM_AI_AIRCRAFT_DEP_DEST, true);
 
   QTreeWidgetItem *compassRose = addTopItem(root, tr("Compass Rose"), tr("Select display options for the compass rose."));
-  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E abd W labels."), opts::ROSE_DIR_LABLES, true);
-  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Marks"), tr("Show tick marks for degrees on ring."), opts::ROSE_DEGREE_MARKS, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E and W labels."), opts::ROSE_DIR_LABLES, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Tick Marks"), tr("Show tick marks for degrees on ring."), opts::ROSE_DEGREE_MARKS, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Labels"), tr("Show degree labels on ring."), opts::ROSE_DEGREE_LABELS, true);
-  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Range Rings"), tr("Show range rings and disance labels inside."), opts::ROSE_RANGE_RINGS, true);
-  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show dashed heading line for user aircraft."), opts::ROSE_HEADING_LINE, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Range Rings"), tr("Show range rings and distance labels inside."), opts::ROSE_RANGE_RINGS, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show the dashed heading line for user aircraft."), opts::ROSE_HEADING_LINE, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"), tr("Show the solid track line for user aircraft."), opts::ROSE_TRACK_LINE, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), opts::ROSE_TRACK_LABEL, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Crab Angle Circle"), tr("Show the crab angle for the user aircraft as a small magenta circle."), opts::ROSE_CRAB_ANGLE, true);

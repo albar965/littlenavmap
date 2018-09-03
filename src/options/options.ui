@@ -1787,7 +1787,7 @@ waypoints and airways:</string>
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Display Options for Labels</string>
+          <string>Display Options</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="leftMargin">
