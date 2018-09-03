@@ -110,9 +110,9 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
 }
 
 void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord,
-                                         int textLineLength, bool bothVisible, bool drawArrows)
+                                         int textLineLength, bool bothVisible)
 {
-  if(!text.isEmpty() || drawArrows)
+  if(!text.isEmpty())
   {
     QString newText(text);
     // Cut text right or left depending on direction
@@ -120,7 +120,7 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, con
     float rotate;
     if(bearing < 180.)
     {
-      if(!arrowRight.isEmpty() && drawArrows)
+      if(!arrowRight.isEmpty())
         newText += arrowRight;
       elide = Qt::ElideLeft;
       rotate = bearing - 90.f;
@@ -128,7 +128,7 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, con
     else
     {
       // Text is flipped upside down for readability
-      if(!arrowLeft.isEmpty() && drawArrows)
+      if(!arrowLeft.isEmpty())
         newText = arrowLeft + newText;
       elide = Qt::ElideRight;
       rotate = bearing + 90.f;
@@ -169,8 +169,7 @@ void TextPlacement::drawTextAlongLines()
         painter->setPen(colors2.at(i));
 
       drawTextAlongOneLine(texts.at(i), textBearing.at(i), textCoord, textLineLengths.at(i),
-                           visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1),
-                           true /* draw arrows */);
+                           visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1));
       i++;
     }
   }

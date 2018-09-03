@@ -934,16 +934,14 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 
         painter->setBrush(Qt::white);
         textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()),
-                                           true /* both visible */,
-                                           true /* draw arrows */);
+                                           true /* both visible */);
 
         // Text for final leg =======================================
         text = QString("RW%1/%2°M").
                arg(pattern.runwayName).
                arg(QLocale().toString(pattern.heading - pattern.magvar, 'f', 0));
         textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
-                                           true /* both visible */,
-                                           true /* draw arrows */);
+                                           true /* both visible */);
 
         // Draw arrows on legs =======================================
         // Set a lighter fill color for arros
