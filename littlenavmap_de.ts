@@ -716,7 +716,7 @@ Wenn &quot;Automatisch verbinden&quot; ausgewählt ist, wird erneut versucht.</t
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="165"/>
-        <source>Will read also the inactive or disabled scenery entries when checked. 
+        <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
@@ -11733,7 +11733,7 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="989"/>
         <source> Above Ground Altitude </source>
-        <translation>Höhe über Grund</translation>
+        <translation> Höhe über Grund </translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="990"/>
@@ -15787,7 +15787,7 @@ p, li { white-space: pre-wrap; }
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -15796,7 +15796,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
         <oldsource>Recognized coordinate formats:
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E

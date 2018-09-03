@@ -1466,7 +1466,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                               "</ul>"
                                               "This information will be lost when reloading the file.<br/><br/>"
                                               "Really save as FMS file?<br/>"),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future."),
+                                 tr("Do not show this dialog again and save the Flight Plan in the future as FMS 3."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
   else if(fileFormat == atools::fs::pln::FMS11 /* && parking*/) // Always warn
@@ -1477,12 +1477,9 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS11_WARNING,
-                                 tr("<p><b><big>This new format can only be loaded from<br/>"
-                                    "X-Plane 11.10 and above.<br/><br/>"
-                                    "Do not use it with X-Plane 11.05 or lower.<br/>"
-                                    "It might crash the simulator.</big><br/><br/>"
-                                    "Use \"Export Flight Plan as X-Plane FMS 3...\" instead.</b></p>"
-                                    "The new X-Plane FMS format version 11 does not allow saving of:"
+                                 tr("This format can only be loaded from "
+                                    "X-Plane 11.10 and above.<br/>"
+                                    "It does not allow saving of:"
                                     "<ul>"
                                       "<li>Ground Speed</li>"
                                         "<li>Departure parking position</li>"
@@ -1490,7 +1487,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                           "</ul>"
                                           "This information will be lost when reloading the file.<br/><br/>"
                                           "Really save as FMS file?<br/>"),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future."),
+                                 tr("Do not show this dialog again and save the Flight Plan in the future as FMS 11."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
   else if(fileFormat == atools::fs::pln::FLP && (procedures || userWaypoints || parking))
@@ -1512,7 +1509,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                                 "</ul>"
                                                 "This information will be lost when reloading the file.<br/><br/>"
                                                 "Really save as FLP file?<br/>"),
-                                 tr("Do not show this dialog again and save the Flight Plan in the future."),
+                                 tr("Do not show this dialog again and save the Flight Plan in the future as FLP."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
 

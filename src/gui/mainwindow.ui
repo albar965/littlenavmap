@@ -8103,13 +8103,13 @@
      <normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove Airport Traffic Pattern Pattern</string>
+    <string>Remove Airport Traffic Pattern</string>
    </property>
    <property name="toolTip">
-    <string>Remove this airport traffic pattern pattern</string>
+    <string>Remove this airport traffic pattern</string>
    </property>
    <property name="statusTip">
-    <string>Remove this airport traffic pattern pattern</string>
+    <string>Remove this airport traffic pattern</string>
    </property>
   </action>
  </widget>
