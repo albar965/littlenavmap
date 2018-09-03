@@ -52,17 +52,19 @@ public:
   {
   }
 
-  virtual ~ViewEventFilter()
-  {
-
-  }
-
 private:
-  bool eventFilter(QObject *object, QEvent *event)
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
+
+  SearchBaseTable *searchBase;
+};
+
+bool ViewEventFilter::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::KeyPress)
   {
-    if(event->type() == QEvent::KeyPress)
+    QKeyEvent *pKeyEvent = dynamic_cast<QKeyEvent *>(event);
+    if(pKeyEvent != nullptr)
     {
-      QKeyEvent *pKeyEvent = static_cast<QKeyEvent *>(event);
       switch(pKeyEvent->key())
       {
         case Qt::Key_Return:
@@ -70,12 +72,10 @@ private:
           return true;
       }
     }
-
-    return QObject::eventFilter(object, event);
   }
 
-  SearchBaseTable *searchBase;
-};
+  return QObject::eventFilter(object, event);
+}
 
 class SearchWidgetEventFilter :
   public QObject
@@ -87,17 +87,19 @@ public:
   {
   }
 
-  virtual ~SearchWidgetEventFilter()
-  {
-
-  }
-
 private:
-  bool eventFilter(QObject *object, QEvent *event)
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
+
+  SearchBaseTable *searchBase;
+};
+
+bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::KeyPress)
   {
-    if(event->type() == QEvent::KeyPress)
+    QKeyEvent *pKeyEvent = dynamic_cast<QKeyEvent *>(event);
+    if(pKeyEvent != nullptr)
     {
-      QKeyEvent *pKeyEvent = static_cast<QKeyEvent *>(event);
       switch(pKeyEvent->key())
       {
         case Qt::Key_Down:
@@ -109,12 +111,10 @@ private:
           return true;
       }
     }
-
-    return QObject::eventFilter(object, event);
   }
 
-  SearchBaseTable *searchBase;
-};
+  return QObject::eventFilter(object, event);
+}
 
 SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
                                  si::SearchTabIndex tabWidgetIndex)

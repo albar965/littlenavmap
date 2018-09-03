@@ -177,7 +177,7 @@ struct MapProcedurePoint
 
   proc::ProcedureLegType type;
 
-  bool missed, flyover, transition;
+  bool missed, flyover;
 
   atools::geo::Pos position;
 

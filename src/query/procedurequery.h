@@ -165,7 +165,7 @@ private:
   /* Get first runway of an airport which matches an SID/STAR "ALL" or e.g. "RW10B" pattern. */
   QString anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways) const;
 
-  atools::sql::SqlDatabase *db, *dbNav;
+  atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
                         *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
                         *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr,

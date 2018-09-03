@@ -35,11 +35,6 @@ using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
 using map::MapAirport;
-using map::MapVor;
-using map::MapNdb;
-using map::MapWaypoint;
-using map::MapMarker;
-using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
 

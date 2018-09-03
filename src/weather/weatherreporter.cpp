@@ -52,7 +52,6 @@ using atools::fs::FsPaths;
 using atools::fs::weather::WeatherNetDownload;
 using atools::fs::weather::WeatherNetSingle;
 using atools::fs::weather::MetarResult;
-using atools::fs::weather::MetarParser;
 using atools::fs::weather::Metar;
 using atools::util::FileSystemWatcher;
 

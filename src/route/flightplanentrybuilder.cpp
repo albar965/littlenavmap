@@ -24,7 +24,6 @@
 #include "query/mapquery.h"
 #include "navapp.h"
 
-using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 
 FlightplanEntryBuilder::FlightplanEntryBuilder()

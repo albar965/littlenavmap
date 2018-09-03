@@ -30,7 +30,6 @@
 
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
-using atools::geo::Rect;
 using atools::geo::Line;
 using atools::geo::LineString;
 using atools::contains;

@@ -91,8 +91,6 @@ enum RouteColumns
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using namespace atools::geo;
-using Marble::GeoDataLatLonBox;
-using Marble::GeoDataCoordinates;
 
 namespace pln = atools::fs::pln;
 

@@ -81,31 +81,26 @@ public:
   {
   }
 
-  virtual ~TreeEventFilter();
-
 private:
-  bool eventFilter(QObject *object, QEvent *event)
-  {
-    if(event->type() == QEvent::MouseButtonPress)
-    {
-      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-      if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
-      {
-        QTreeWidgetItem *item = tree->itemAt(mouseEvent->pos());
-        if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch)
-          tree->clearSelection();
-      }
-
-    }
-    return QObject::eventFilter(object, event);
-  }
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
 
   QTreeWidget *tree;
 };
 
-TreeEventFilter::~TreeEventFilter()
+bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 {
+  if(event->type() == QEvent::MouseButtonPress)
+  {
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
+    {
+      QTreeWidgetItem *item = tree->itemAt(mouseEvent->pos());
+      if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch)
+        tree->clearSelection();
+    }
 
+  }
+  return QObject::eventFilter(object, event);
 }
 
 ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex)
