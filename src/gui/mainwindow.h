@@ -206,6 +206,7 @@ private:
   void routeNew();
   void routeOpen();
   void routeAppend();
+  void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
 
   /* Flight plan save functions */

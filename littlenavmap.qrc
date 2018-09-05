@@ -201,5 +201,6 @@
         <file>resources/icons/minaltitude.svg</file>
         <file>resources/icons/trafficpattern.svg</file>
         <file>resources/icons/trafficpatternoff.svg</file>
+        <file>resources/icons/fileinsert.svg</file>
     </qresource>
 </RCC>

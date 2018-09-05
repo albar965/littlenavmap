@@ -773,6 +773,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
+  connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
 
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
@@ -930,6 +931,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeNewFromString);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
+  connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsPln);
   connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
@@ -1688,7 +1690,7 @@ void MainWindow::routeOpen()
   saveFileHistoryStates();
 }
 
-/* Called from menu or toolbar by action */
+/* Called from menu or toolbar by action - append flight plan to current one */
 void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(
@@ -1699,12 +1701,34 @@ void MainWindow::routeAppend()
 
   if(!routeFile.isEmpty())
   {
-    if(routeController->appendFlightplan(routeFile))
+    if(routeController->insertFlightplan(routeFile, routeController->getRoute().size() /* append */))
     {
       routeFileHistory->addFile(routeFile);
       if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
         routeCenter();
       setStatusMessage(tr("Flight plan appended."));
+    }
+  }
+  saveFileHistoryStates();
+}
+
+/* Called by route controller - insert flight plan into current one */
+void MainWindow::routeInsert(int insertBefore)
+{
+  QString routeFile = dialog->openFileDialog(
+    tr("Insert info Flight Plan"),
+    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+    "Route/" + NavApp::getCurrentSimulatorShortName(),
+    NavApp::getCurrentSimulatorFilesPath());
+
+  if(!routeFile.isEmpty())
+  {
+    if(routeController->insertFlightplan(routeFile, insertBefore))
+    {
+      routeFileHistory->addFile(routeFile);
+      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+        routeCenter();
+      setStatusMessage(tr("Flight plan inserted."));
     }
   }
   saveFileHistoryStates();

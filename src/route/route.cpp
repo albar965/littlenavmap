@@ -847,7 +847,7 @@ void Route::removeRouteLegs()
   }
 }
 
-void Route::clearProcedureLegs(proc::MapProcedureTypes type)
+void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bool clearFlightplan)
 {
   QVector<int> indexes;
 
@@ -862,8 +862,10 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type)
   // Delete in route legs and flight plan from the end
   for(int i = 0; i < indexes.size(); i++)
   {
-    removeAt(indexes.at(i));
-    flightplan.getEntries().removeAt(indexes.at(i));
+    if(clearRoute)
+      removeAt(indexes.at(i));
+    if(clearFlightplan)
+      flightplan.getEntries().removeAt(indexes.at(i));
   }
 }
 

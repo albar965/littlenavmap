@@ -706,7 +706,6 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
     }
     return;
   }
-
 }
 
 bool RouteController::loadFlightplan(const QString& filename)
@@ -740,35 +739,113 @@ bool RouteController::loadFlightplan(const QString& filename)
   return true;
 }
 
-bool RouteController::appendFlightplan(const QString& filename)
+bool RouteController::insertFlightplan(const QString& filename, int insertBefore)
 {
+  qDebug() << Q_FUNC_INFO << filename << insertBefore;
+
   Flightplan flightplan;
   try
   {
-    qDebug() << "appendFlightplan" << filename;
-
     // Will throw an exception if something goes wrong
     flightplanIO->load(flightplan, filename);
+
     // Convert altitude to local unit
     flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(flightplan.getCruisingAltitude())));
 
-    RouteCommand *undoCommand = preChange(tr("Append"));
+    RouteCommand *undoCommand = preChange(insertBefore >= route.size() ? tr("Insert") : tr("Append"));
 
-    // Remove arrival from the save properites too
-    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
+    bool beforeDestInsert = false, beforeDepartPrepend = false, afterDestAppend = false, middleInsert = false;
+    int insertPosSelection = insertBefore;
 
-    // Remove all procedure legs from route
+    if(insertBefore >= route.size())
+    {
+      // Append ================================================================
+      afterDestAppend = true;
+
+      // Remove arrival legs and properties
+      route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
+
+      // Start of selection without arrival procedures
+      insertPosSelection = route.size();
+
+      // Append flight plan to current flightplan object - route is updated later
+      for(const FlightplanEntry& entry : flightplan.getEntries())
+        route.getFlightplan().getEntries().append(entry);
+
+      // Appended after destination airport
+      route.getFlightplan().setDestinationAiportName(flightplan.getDestinationAiportName());
+      route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
+      route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
+
+      // Copy any STAR and arrival procedure properties from the loaded plan
+      atools::fs::pln::copyArrivalProcedureProperties(route.getFlightplan().getProperties(),
+                                                      flightplan.getProperties());
+      atools::fs::pln::copyStarProcedureProperties(route.getFlightplan().getProperties(),
+                                                   flightplan.getProperties());
+    }
+    else
+    {
+      // Insert ================================================================
+      if(insertBefore == 0)
+      {
+        // Insert before departure ==============
+        beforeDepartPrepend = true;
+
+        // Remove departure legs and properties
+        route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+
+        // Added before departure airport
+        route.getFlightplan().setDepartureAiportName(flightplan.getDepartureAiportName());
+        route.getFlightplan().setDepartureIdent(flightplan.getDepartureIdent());
+        route.getFlightplan().setDeparturePosition(flightplan.getDeparturePosition());
+
+        // Copy SID properties from source
+        atools::fs::pln::copySidProcedureProperties(route.getFlightplan().getProperties(),
+                                                    flightplan.getProperties());
+      }
+      else if(insertBefore >= route.size() - 1)
+      {
+        // Insert before destination ==============
+        beforeDestInsert = true;
+
+        // Remove all arrival legs and properties
+        route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
+
+        // Correct insert position and start of selection for removed arrival legs
+        insertBefore = route.size() - 1;
+        insertPosSelection = insertBefore;
+
+        // No procedures taken from the loaded plan
+      }
+      else
+      {
+        // Insert in the middle ==============
+        middleInsert = true;
+
+        // No airway at start leg
+        eraseAirway(insertBefore);
+
+        // No procedures taken from the loaded plan
+      }
+
+      // Copy new legs to the flightplan object only - update route later
+      for(auto it = flightplan.getEntries().rbegin(); it != flightplan.getEntries().rend(); ++it)
+        route.getFlightplan().getEntries().insert(insertBefore, *it);
+    }
+
+    // Clear procedure legs from the flightplan object
+    route.getFlightplan().removeNoSaveEntries();
+
+    // Clear procedure structures
     route.clearProcedures(proc::PROCEDURE_ALL);
-    route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
-    for(const FlightplanEntry& entry : flightplan.getEntries())
-      route.getFlightplan().getEntries().append(entry);
+    // Clear procedure legs from route object only since indexes are not consistent now
+    route.clearProcedureLegs(proc::PROCEDURE_ALL, true /* clear route */, false /* clear flight plan */);
 
-    route.getFlightplan().setDestinationAiportName(flightplan.getDestinationAiportName());
-    route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
-    route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
-
+    // Rebuild all legs from flightplan object and properties
     route.createRouteLegsFromFlightplan();
+
+    // Load procedures and add legs
     loadProceduresFromFlightplan(false /* quiet */);
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
@@ -778,6 +855,17 @@ bool RouteController::appendFlightplan(const QString& filename)
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
+
+    // Select newly imported flight plan legs
+    if(afterDestAppend)
+      selectRange(insertPosSelection, route.size() - 1);
+    else if(beforeDepartPrepend)
+      selectRange(0, flightplan.getEntries().size() + route.getStartIndexAfterProcedure() - 1); // fix
+    else if(beforeDestInsert)
+      selectRange(insertPosSelection, route.size() - 2);
+    else if(middleInsert)
+      selectRange(insertPosSelection, insertPosSelection + flightplan.getEntries().size() - 1);
+
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -1385,7 +1473,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
-                                      ui->actionRouteShowApproaches, ui->actionRouteDeleteLeg});
+                                      ui->actionRouteShowApproaches, ui->actionRouteDeleteLeg,
+                                      ui->actionRouteInsert});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -1398,14 +1487,20 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteCalcSetAltSelected,
     ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
     ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
-    ui->actionRouteResetView, ui->actionRouteSetMark
+    ui->actionRouteResetView, ui->actionRouteSetMark, ui->actionRouteInsert, ui->actionRouteTableAppend
   });
   Q_UNUSED(stateSaver);
 
   QModelIndex index = view->indexAt(pos);
-  const RouteLeg *routeLeg = nullptr;
+  const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
+  int row = -1;
   if(index.isValid())
-    routeLeg = &route.at(index.row());
+  {
+    row = index.row();
+    routeLeg = &route.at(row);
+    if(index.row() > 0)
+      prevRouteLeg = &route.at(row - 1);
+  }
 
   QMenu calcMenu(tr("Calculate for &selected legs"));
   QMenu menu;
@@ -1418,6 +1513,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                           !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
                                           !NavApp::getMapWidget()->getTrafficPatterns().isEmpty());
 
+  bool insert = false;
+
   // Menu above a row
   if(routeLeg != nullptr)
   {
@@ -1425,6 +1522,23 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                                routeLeg->isRoute() &&
                                                routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
                                                routeLeg->getMapObjectType() != map::INVALID);
+
+    if(routeLeg->isValid())
+    {
+      if(prevRouteLeg == nullptr)
+        // allow to insert before first one
+        insert = true;
+      else if(prevRouteLeg->isRoute() && routeLeg->isAnyProcedure() &&
+              routeLeg->getProcedureType() & proc::PROCEDURE_ARRIVAL_ALL)
+        // Insert between enroute waypoint and approach or STAR
+        insert = true;
+      else if(routeLeg->isRoute() && prevRouteLeg->isAnyProcedure() &&
+              prevRouteLeg->getProcedureType() & proc::PROCEDURE_DEPARTURE)
+        // Insert between SID and waypoint
+        insert = true;
+      else
+        insert = routeLeg->isRoute();
+    }
 
     ui->actionRouteShowApproaches->setEnabled(false);
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
@@ -1485,12 +1599,23 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     ui->actionRouteShowInformation->setEnabled(false);
     ui->actionRouteShowApproaches->setEnabled(false);
+    ui->actionRouteShowApproaches->setText(tr("Show procedures"));
     ui->actionRouteActivateLeg->setEnabled(false);
     ui->actionRouteShowOnMap->setEnabled(false);
     ui->actionMapRangeRings->setEnabled(false);
     ui->actionRouteSetMark->setEnabled(false);
+  }
 
-    ui->actionRouteShowApproaches->setText(tr("Show procedures"));
+  ui->actionRouteTableAppend->setEnabled(!route.isEmpty());
+  if(insert)
+  {
+    ui->actionRouteInsert->setEnabled(true);
+    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(routeLeg->getIdent()));
+  }
+  else
+  {
+    ui->actionRouteInsert->setEnabled(false);
+    ui->actionRouteInsert->setText(tr("Insert Flight Plan before ..."));
   }
 
   if(routeLeg != nullptr && routeLeg->getAirport().isValid() && !routeLeg->getAirport().noRunways())
@@ -1553,6 +1678,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteLegDown);
   menu.addAction(ui->actionRouteDeleteLeg);
   menu.addAction(ui->actionMapEditUserWaypoint);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteInsert);
+  menu.addAction(ui->actionRouteTableAppend);
   menu.addSeparator();
 
   calcMenu.addAction(ui->actionRouteCalcRadionavSelected);
@@ -1628,6 +1757,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
       NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers();
     else if(action == ui->actionMapEditUserWaypoint)
       editUserWaypointName(index.row());
+    // else if(action == ui->actionRouteTableAppend) // Done by signal from action
+    // emit routeAppend();
+    else if(action == ui->actionRouteInsert)
+      emit routeInsert(row);
     else if(action == ui->actionRouteActivateLeg)
       activateLegManually(index.row());
     else if(action == ui->actionRouteCalcRadionavSelected)
@@ -1702,7 +1835,11 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
 #ifdef DEBUG_INFORMATION
   if(sm != nullptr && sm->hasSelection())
-    qDebug() << sm->currentIndex().row() << "#" << route.at(sm->currentIndex().row());
+  {
+    int r = sm->currentIndex().row();
+    if(r != -1)
+      qDebug() << r << "#" << route.at(r);
+  }
 #endif
 
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
@@ -1892,7 +2029,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Restore current position at new moved position
     view->setCurrentIndex(model->index(curIdx.row() + direction, curIdx.column()));
     // Restore previous selection at new moved position
-    select(rows, direction);
+    selectList(rows, direction);
 
     updateMoveAndDeleteActions();
 
@@ -1985,7 +2122,7 @@ void RouteController::selectedRows(QList<int>& rows, bool reverse)
 }
 
 /* Select all columns of the given rows adding offset to each row index */
-void RouteController::select(QList<int>& rows, int offset)
+void RouteController::selectList(const QList<int>& rows, int offset)
 {
   QItemSelection newSel;
 
@@ -1993,6 +2130,24 @@ void RouteController::select(QList<int>& rows, int offset)
     // Need to select all columns
     newSel.append(QItemSelectionRange(model->index(row + offset, rc::FIRST_COLUMN),
                                       model->index(row + offset, rc::LAST_COLUMN)));
+
+  view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
+}
+
+void RouteController::selectRange(int from, int to)
+{
+  QItemSelection newSel;
+
+  int maxRows = view->model()->rowCount();
+
+  if(from < 0 || to < 0 || from > maxRows - 1 || to > maxRows - 1)
+    qWarning() << Q_FUNC_INFO << "not in range from" << from << "to" << to << ", min 0 max" << maxRows;
+
+  from = std::min(std::max(from, 0), maxRows);
+  to = std::min(std::max(to, 0), maxRows);
+
+  newSel.append(QItemSelectionRange(model->index(from, rc::FIRST_COLUMN),
+                                    model->index(to, rc::LAST_COLUMN)));
 
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }

@@ -251,7 +251,7 @@ public:
   void clearProcedures(proc::MapProcedureTypes type);
 
   /* Removes legs that match the given procedures */
-  void clearProcedureLegs(proc::MapProcedureTypes type);
+  void clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute = true, bool clearFlightplan = true);
 
   /* Deletes flight plan properties too */
   void removeProcedureLegs();

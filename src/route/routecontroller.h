@@ -80,8 +80,9 @@ public:
                       const QString& filename, bool quiet, bool changed, bool adjustAltitude, float speedKts);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
+   * Use -1 for insertBefore to append.
    * Emits routeChanged. */
-  bool appendFlightplan(const QString& filename);
+  bool insertFlightplan(const QString& filename, int insertBefore);
 
   /* Saves flight plan using the given name and file format and uses file name as new current name */
   bool saveFlighplanAs(const QString& filename, atools::fs::pln::FileFormat targetFileFormat);
@@ -250,6 +251,9 @@ signals:
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();
 
+  /* Emitted by context menu */
+  void routeInsert(int beforeRow);
+
 private:
   friend class RouteCommand;
 
@@ -289,7 +293,8 @@ private:
   void deleteSelectedLegs();
   void selectedRows(QList<int>& rows, bool reverseRoute);
 
-  void select(QList<int>& rows, int offset);
+  void selectList(const QList<int>& rows, int offset);
+  void selectRange(int from, int to);
 
   void updateMoveAndDeleteActions();
 

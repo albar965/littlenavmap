@@ -8112,6 +8112,36 @@
     <string>Remove this airport traffic pattern</string>
    </property>
   </action>
+  <action name="actionRouteInsert">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/fileinsert.svg</normaloff>:/littlenavmap/resources/icons/fileinsert.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Insert Flight Plan before %1 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert flight plan before the current position</string>
+   </property>
+   <property name="statusTip">
+    <string>Insert flight plan before the current position</string>
+   </property>
+  </action>
+  <action name="actionRouteTableAppend">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/fileappend.svg</normaloff>:/littlenavmap/resources/icons/fileappend.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Append Flight Plan ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Append flight plan legs to current flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Append flight plan legs to current flight plan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
