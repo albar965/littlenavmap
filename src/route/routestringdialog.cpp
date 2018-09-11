@@ -41,6 +41,15 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   ui->setupUi(this);
 
+  // Make the splitter handle better visible
+  ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
+                                                 "background: %1;"
+                                                 "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); }").
+                                         arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+
+  // Disallow collapsing of the upper view
+  ui->splitterRouteString->setCollapsible(0, false);
+
   QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #if defined(Q_OS_MACOS)
   fixedFont.setPointSizeF(fixedFont.pointSizeF() * 1.2);

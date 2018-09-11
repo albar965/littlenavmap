@@ -29,7 +29,7 @@
       <enum>Qt::Vertical</enum>
      </property>
      <property name="handleWidth">
-      <number>10</number>
+      <number>16</number>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayoutRouteStringTop">
