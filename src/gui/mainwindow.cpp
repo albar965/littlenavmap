@@ -138,7 +138,16 @@ MainWindow::MainWindow()
     // atools::Application method can catch it
 
     ui->setupUi(this);
-    centralWidget()->hide();
+
+    // Setup central widget ==================================================
+    // Set one pixel fixed width
+    QWidget *centralWidget = new QWidget(this);
+    centralWidget->setWindowFlags(windowFlags() & ~(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus));
+    centralWidget->setMinimumSize(1, 1);
+    centralWidget->resize(1, 1);
+    centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    // cw->hide(); // Does not work and messes up docking windows (i.e. Profile dock cannot be shrinked).
+    setCentralWidget(centralWidget);
 
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
@@ -203,8 +212,9 @@ MainWindow::MainWindow()
 
     // Create elevation profile widget and replace dummy widget in window
     qDebug() << "MainWindow Creating ProfileWidget";
-    profileWidget = new ProfileWidget(this);
-    ui->verticalLayoutProfile->replaceWidget(ui->elevationWidgetDummy, profileWidget);
+    profileWidget = new ProfileWidget(ui->scrollAreaProfile->viewport());
+    ui->scrollAreaProfile->setWidget(profileWidget);
+    profileWidget->show();
 
     // Have to create searches in the same order as the tabs
     qDebug() << "MainWindow Creating SearchController";
@@ -607,12 +617,12 @@ void MainWindow::setupUi()
   ui->dockWidgetInformation->toggleViewAction()->setStatusTip(
     ui->dockWidgetInformation->toggleViewAction()->toolTip());
 
-  ui->dockWidgetElevation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
-  ui->dockWidgetElevation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
-  ui->dockWidgetElevation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                          arg(ui->dockWidgetElevation->windowTitle()));
-  ui->dockWidgetElevation->toggleViewAction()->setStatusTip(
-    ui->dockWidgetElevation->toggleViewAction()->toolTip());
+  ui->dockWidgetProfile->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
+  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
+  ui->dockWidgetProfile->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                        arg(ui->dockWidgetProfile->windowTitle()));
+  ui->dockWidgetProfile->toggleViewAction()->setStatusTip(
+    ui->dockWidgetProfile->toggleViewAction()->toolTip());
 
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
   ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
@@ -633,7 +643,7 @@ void MainWindow::setupUi()
                               {ui->dockWidgetSearch->toggleViewAction(),
                                ui->dockWidgetRoute->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
-                               ui->dockWidgetElevation->toggleViewAction(),
+                               ui->dockWidgetProfile->toggleViewAction(),
                                ui->dockWidgetAircraft->toggleViewAction(),
                                ui->dockWidgetLegend->toggleViewAction()});
 
@@ -653,7 +663,7 @@ void MainWindow::setupUi()
   ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
-  ui->toolBarView->addAction(ui->dockWidgetElevation->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetLegend->toggleViewAction());
 
@@ -750,6 +760,7 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapWidget::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
 
   // Route export signals =======================================================
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapWidget::showRect);
@@ -769,6 +780,7 @@ void MainWindow::connectAllSlots()
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
+  connect(profileWidget, &ProfileWidget::showPos, mapWidget, &MapWidget::showPos);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
@@ -2628,31 +2640,34 @@ void MainWindow::restoreStateMain()
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 
-  qDebug() << "MainWindow restoring state of kmlFileHistory";
+  qDebug() << "kmlFileHistory";
   kmlFileHistory->restoreState();
 
-  qDebug() << "MainWindow restoring state of searchController";
+  qDebug() << "searchController";
   routeFileHistory->restoreState();
 
-  qDebug() << "MainWindow restoring state of searchController";
+  qDebug() << "searchController";
   searchController->restoreState();
 
-  qDebug() << "MainWindow restoring state of mapWidget";
+  qDebug() << "mapWidget";
   mapWidget->restoreState();
 
-  qDebug() << "MainWindow restoring state of userdataControlle";
+  qDebug() << "userdataControlle";
   NavApp::getUserdataController()->restoreState();
 
-  qDebug() << "MainWindow restoring state of routeController";
+  qDebug() << "routeController";
   routeController->restoreState();
 
-  qDebug() << "MainWindow restoring state of connectClient";
+  qDebug() << "profileWidget";
+  profileWidget->restoreState();
+
+  qDebug() << "connectClient";
   NavApp::getConnectClient()->restoreState();
 
-  qDebug() << "MainWindow restoring state of infoController";
+  qDebug() << "infoController";
   infoController->restoreState();
 
-  qDebug() << "MainWindow restoring state of printSupport";
+  qDebug() << "printSupport";
   printSupport->restoreState();
 
   widgetState.setBlockSignals(true);
@@ -2723,6 +2738,10 @@ void MainWindow::saveStateMain()
   qDebug() << "routeController";
   if(routeController != nullptr)
     routeController->saveState();
+
+  qDebug() << "profileWidget";
+  if(profileWidget != nullptr)
+    profileWidget->saveState();
 
   qDebug() << "connectClient";
   if(NavApp::getConnectClient() != nullptr)

@@ -202,5 +202,15 @@
         <file>resources/icons/trafficpattern.svg</file>
         <file>resources/icons/trafficpatternoff.svg</file>
         <file>resources/icons/fileinsert.svg</file>
+        <file>resources/icons/arrowleft.svg</file>
+        <file>resources/icons/arrowright.svg</file>
+        <file>resources/icons/arrowdown.svg</file>
+        <file>resources/icons/arrowup.svg</file>
+        <file>resources/icons/viewreset.svg</file>
+        <file>resources/icons/splitterhandhoriz.png</file>
+        <file>resources/icons/splitterhandvert.png</file>
+        <file>resources/icons/viewvert.svg</file>
+        <file>resources/icons/viewhoriz.svg</file>
+        <file>resources/icons/viewexpand.svg</file>
     </qresource>
 </RCC>

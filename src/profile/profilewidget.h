@@ -30,10 +30,10 @@ class ElevationModel;
 class GeoDataLineString;
 }
 
-class QMainWindow;
 class RouteController;
 class QTimer;
 class QRubberBand;
+class ProfileScrollArea;
 
 /*
  * Loads and displays the flight plan elevation profile. The elevation data is
@@ -46,8 +46,8 @@ class ProfileWidget :
   Q_OBJECT
 
 public:
-  ProfileWidget(QMainWindow *parent);
-  virtual ~ProfileWidget();
+  ProfileWidget(QWidget *parent);
+  virtual ~ProfileWidget() override;
 
   /* If geometry has changed the elevation calculation is started after a short delay */
   void routeChanged(bool geometryChanged);
@@ -86,16 +86,50 @@ public:
   };
 
   void optionsChanged();
+  void styleChanged();
+
+  void saveState();
+  void restoreState();
 
   void preRouteCalc();
 
   void mainWindowShown();
+
+  /* Pair of screen y and altitude in feet to display and label the scale */
+  QVector<std::pair<int, int> > calcScaleValues();
+
+  float getMinSafeAltitudeFt() const
+  {
+    return minSafeAltitudeFt;
+  }
+
+  /* Widget coordinates for red line */
+  int getMinSafeAltitudeY() const;
+
+  float getFlightplanAltFt() const
+  {
+    return flightplanAltFt;
+  }
+
+  /* Widget coordinates for flight plan line */
+  int getFlightplanAltY() const;
+
+  float getMaxWindowAlt() const
+  {
+    return maxWindowAlt;
+  }
+
+  /* Call by this and profile label widget class. Point in screen coordinates. */
+  void showContextMenu(const QPoint& globalPoint);
 
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
    */
   void highlightProfilePoint(const atools::geo::Pos& pos);
+
+  /* Show flight plan waypoint or user position on map */
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
 private:
   /* Route leg storing all elevation points */
@@ -117,12 +151,18 @@ private:
     int totalNumPoints = 0; /* Number of elevation points in whole flight plan */
   };
 
+  /* Show position at x ordinate on profile on the map */
+  void showPosAlongFlightplan(int x, bool doubleClick);
+
   virtual void paintEvent(QPaintEvent *) override;
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
-  virtual void mouseMoveEvent(QMouseEvent *mouseEvent) override;
   virtual void resizeEvent(QResizeEvent *) override;
   virtual void leaveEvent(QEvent *) override;
+
+  /* Mouse events*/
+  virtual void mouseMoveEvent(QMouseEvent *mouseEvent) override;
+  virtual void contextMenuEvent(QContextMenuEvent *event) override;
 
   bool fetchRouteElevations(atools::geo::LineString& elevations, const atools::geo::LineString& geometry) const;
   ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
@@ -135,13 +175,21 @@ private:
   void updateLabel();
   bool aircraftTrackValid();
 
+  /* Calculate map position on flight plan for x screen/widget position on profile.
+   *  Additionally gives index into route, distances from/to and altitude at x. maxElev is minimum elevation for leg */
+  void calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& routeIndex, float& distance, float& distanceToGo,
+                                float& alt, float& maxElev);
+
+  /* Calculate map position on flight plan for x screen/widget position on profile. */
+  atools::geo::Pos calculatePos(int x);
+
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
   /* Scales should be at least this amount of pixels apart */
   static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
-  const int X0 = 65; /* Left margin inside widget */
-  const int Y0 = 14; /* Top margin inside widget */
+  const int X0 = 32; // 65; /* Left margin inside widget */
+  const int Y0 = 16; // 14; /* Top margin inside widget */
 
   /* Thread will start after this delay if route was changed */
   static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 1000;
@@ -166,7 +214,6 @@ private:
   ElevationLegList legList;
 
   RouteController *routeController = nullptr;
-  QMainWindow *mainWindow;
 
   /* Calls updateTimeout which will start the update thread in background */
   QTimer *updateTimer = nullptr;
@@ -186,10 +233,13 @@ private:
   bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
   QVector<int> waypointX; /* Flight plan waypoint screen coordinates */
   QPolygon landPolygon; /* Green landmass polygon */
-  float minSafeAltitudeFt = 0.f /* Red line */,
-        flightplanAltFt = 0.f /* Cruise altitude */,
-        maxWindowAlt = 1.f /* Maximum altitude at top of widget */,
-        verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
+  float minSafeAltitudeFt = 0.f, /* Red line */
+        flightplanAltFt = 0.f, /* Cruise altitude */
+        maxWindowAlt = 1.f; /* Maximum altitude at top of widget */
+
+  ProfileScrollArea *scrollArea = nullptr;
+
+  float verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
         horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
 
 };

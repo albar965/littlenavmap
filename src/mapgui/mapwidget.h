@@ -101,7 +101,9 @@ public:
   void saveState();
   void restoreState();
 
-  /* Jump to position on the map using the given zoom distance (if not equal -1) */
+  /* Jump to position on the map using the given zoom distance.
+   *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
+   *  Use predefined zoom if distanceNm is 0 */
   void showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick);
 
   /* Show the bounding rectangle on the map */

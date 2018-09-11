@@ -21,6 +21,8 @@
 #include "navapp.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
+#include "profile/profilescrollarea.h"
+#include "profile/profilelabelwidget.h"
 #include "ui_mainwindow.h"
 #include "common/symbolpainter.h"
 #include "route/routecontroller.h"
@@ -59,11 +61,17 @@ using Marble::GeoDataLineString;
 using atools::geo::Pos;
 using atools::geo::LineString;
 
-ProfileWidget::ProfileWidget(QMainWindow *parent)
-  : QWidget(parent), mainWindow(parent)
+ProfileWidget::ProfileWidget(QWidget *parent)
+  : QWidget(parent)
 {
-  setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-  setMinimumSize(QSize(50, 40));
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+  setContextMenuPolicy(Qt::DefaultContextMenu);
+  setFocusPolicy(Qt::WheelFocus);
+
+  scrollArea = new ProfileScrollArea(this, ui->scrollAreaProfile);
+  connect(scrollArea, &ProfileScrollArea::showPosAlongFlightplan, this, &ProfileWidget::showPosAlongFlightplan);
 
   routeController = NavApp::getRouteController();
 
@@ -87,6 +95,7 @@ ProfileWidget::~ProfileWidget()
 {
   updateTimer->stop();
   terminateThread();
+  delete scrollArea;
 }
 
 void ProfileWidget::aircraftTrackPruned()
@@ -142,6 +151,10 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
                                               simData.getUserAircraftConst().getPosition().getAltitude());
               else
                 maxTrackAltitudeFt = 0.f;
+
+              // Center aircraft on scroll area
+              if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked())
+                scrollArea->centerAircraft(currentPoint.x(), currentPoint.y());
 
               updateWidget = true;
             }
@@ -319,72 +332,98 @@ void ProfileWidget::updateScreenCoords()
   }
 }
 
+QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
+{
+  int h = rect().height() - Y0;
+  // Create a temporary scale based on current units
+  float tempScale = Unit::rev(verticalScale, Unit::altFeetF);
+
+  // Find best scale for elevation lines
+  float step = 10000.f;
+  for(int stp : SCALE_STEPS)
+  {
+    // Loop through all scale steps and check which one fits best
+    if(stp * tempScale > MIN_SCALE_SCREEN_DISTANCE)
+    {
+      step = stp;
+      break;
+    }
+  }
+
+  // Now collect all scale positions by iterating step-wise from bottom to top
+  QVector<std::pair<int, int> > steps;
+  for(float y = Y0 + h, alt = 0; y > Y0; y -= step * tempScale, alt += step)
+    steps.append(std::make_pair(y, alt));
+
+  return steps;
+}
+
+int ProfileWidget::getMinSafeAltitudeY() const
+{
+  return static_cast<int>(rect().height() - minSafeAltitudeFt * verticalScale);
+}
+
+int ProfileWidget::getFlightplanAltY() const
+{
+  return static_cast<int>(rect().height() - flightplanAltFt * verticalScale);
+}
+
+void ProfileWidget::showPosAlongFlightplan(int x, bool doubleClick)
+{
+  // Check range before
+  if(x > X0 && x < width() - X0)
+    emit showPos(calculatePos(x), 0.f, doubleClick);
+}
+
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
+  // Keep margin to left, right and top
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  bool darkStyle = NavApp::isCurrentGuiStyleNight();
+  bool dark = NavApp::isCurrentGuiStyleNight();
 
+  // Fill background sky blue ====================================================
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
-  painter.fillRect(rect(), darkStyle ? mapcolors::profileBackgroundDarkColor : mapcolors::profileBackgroundColor);
-  painter.fillRect(X0, 0, w, h + Y0, darkStyle ? mapcolors::profileSkyDarkColor : mapcolors::profileSkyColor);
+  painter.fillRect(0, 0, rect().width(), rect().height(),
+                   dark ? mapcolors::profileSkyDarkColor : mapcolors::profileSkyColor);
 
   SymbolPainter symPainter;
 
   if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
   {
+    // Nothing to show label =========================
     symPainter.textBox(&painter, {tr("No Flight Plan")}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
     return;
   }
 
-  // Draw the mountains
-  painter.setBrush(darkStyle ? mapcolors::profileLandDarkColor : mapcolors::profileLandColor);
-  painter.setPen(darkStyle ? mapcolors::profileLandOutlineDarkPen : mapcolors::profileLandOutlinePen);
+  // Draw the mountains ======================================================
+  painter.setBrush(dark ? mapcolors::profileLandDarkColor : mapcolors::profileLandColor);
+  painter.setPen(dark ? mapcolors::profileLandOutlineDarkPen : mapcolors::profileLandOutlinePen);
   painter.drawPolygon(landPolygon);
 
   // Draw grey vertical lines for waypoints
-  int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * verticalScale);
+  int flightplanY = getFlightplanAltY();
+  int safeAltY = getMinSafeAltitudeY();
   int flightplanTextY = flightplanY + 14;
-  painter.setPen(darkStyle ? mapcolors::profileWaypointLineDarkPen : mapcolors::profileWaypointLinePen);
+  painter.setPen(dark ? mapcolors::profileWaypointLineDarkPen : mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
 
-  // Create a temporary scale based on current units
-  float tempScale = Unit::rev(verticalScale, Unit::altFeetF);
+  // Draw elevation scale lines ======================================================
+  painter.setPen(dark ? mapcolors::profileElevationScaleDarkPen : mapcolors::profileElevationScalePen);
+  for(const std::pair<int, int>& scale : calcScaleValues())
+    painter.drawLine(0, scale.first, X0 + static_cast<int>(w), scale.first);
 
-  // Find best scale for elevation lines
-  int step = 10000;
-  for(int s : SCALE_STEPS)
-  {
-    // Loop through all scale steps and check which one fits best
-    if(s * tempScale > MIN_SCALE_SCREEN_DISTANCE)
-    {
-      step = s;
-      break;
-    }
-  }
-
-  // Draw elevation scale line and texts
-  QPen scalePen = darkStyle ? mapcolors::profileElevationScaleDarkPen : mapcolors::profileElevationScalePen;
-  painter.setPen(scalePen);
-  for(int y = Y0 + h, alt = 0; y > Y0; y -= step * tempScale, alt += step)
-  {
-    painter.drawLine(X0, y, X0 + static_cast<int>(w), y);
-
-    int altTextY = std::min(y, Y0 + h - painter.fontMetrics().height() / 2);
-    symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       scalePen, X0 - 8, altTextY, textatt::BOLD | textatt::RIGHT, 0);
-
-    symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
-                       scalePen, X0 + w + 4, altTextY, textatt::BOLD | textatt::LEFT, 0);
-  }
+  // Draw one line for the label to the left
+  painter.drawLine(0, flightplanY, X0 + static_cast<int>(w), flightplanY);
+  painter.drawLine(0, safeAltY, X0, safeAltY);
 
   const Route& route = routeController->getRoute();
 
-  // Draw orange minimum safe altitude lines for each segment
-  painter.setPen(darkStyle ? mapcolors::profileSafeAltLegLineDarkPen : mapcolors::profileSafeAltLegLinePen);
+  // Draw orange minimum safe altitude lines for each segment ======================================================
+  painter.setPen(dark ? mapcolors::profileSafeAltLegLineDarkPen : mapcolors::profileSafeAltLegLinePen);
   for(int i = 0; i < legList.elevationLegs.size(); i++)
   {
     if(waypointX.at(i) == waypointX.at(i + 1))
@@ -396,11 +435,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     painter.drawLine(waypointX.at(i), lineY, waypointX.at(i + 1), lineY);
   }
 
-  // Draw the red minimum safe altitude line
-  painter.setPen(darkStyle ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen);
-  int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
-  painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
+  // Draw the red minimum safe altitude line ======================================================
+  painter.setPen(dark ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen);
+  painter.drawLine(X0, safeAltY, X0 + static_cast<int>(w), safeAltY);
 
+  // Draw flight plan line ======================================================
   int todX = 0;
   QPolygon line;
   line << QPoint(X0, flightplanY);
@@ -412,13 +451,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     else
       todX = X0;
 
-    // Draw the flightplan line
     if(todX < X0 + w)
     {
+      // Draw the flightplan line and ToD
       line << QPoint(todX, flightplanY);
       line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
     }
     else
+      // Draw the flightplan line
       line << QPoint(X0 + w, flightplanY);
   }
   else
@@ -430,7 +470,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setPen(QPen(OptionData::instance().getFlightplanColor(), 2, Qt::SolidLine));
   painter.drawPolyline(line);
 
-  // Draw flightplan symbols
+  // Draw flightplan symbols ======================================================
   // Set default font to bold and reduce size
   QFont font = painter.font();
   float defaultFontSize = static_cast<float>(font.pointSizeF());
@@ -515,7 +555,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int symx = waypointX.at(--waypointIndex);
 
     // Draw all airport except destination and departure
-    if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < legList.route.size())
+    if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < legList.route.size() - 1)
     {
       symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanTextY,
@@ -529,8 +569,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteLeg& departureLeg = legList.route.first();
     if(departureLeg.getMapObjectType() == map::AIRPORT)
     {
+      int textW = painter.fontMetrics().width(departureLeg.getIdent());
       symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), X0, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, departureLeg.getAirport(), X0 - 5, flightplanTextY,
+      symPainter.drawAirportText(&painter, departureLeg.getAirport(), X0 - textW / 2, flightplanTextY,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
     }
 
@@ -538,44 +579,18 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteLeg& destinationLeg = legList.route.last();
     if(destinationLeg.getMapObjectType() == map::AIRPORT)
     {
+      int textW = painter.fontMetrics().width(destinationLeg.getIdent());
       symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), X0 + w, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, destinationLeg.getAirport(), X0 + w - 5, flightplanTextY,
+      symPainter.drawAirportText(&painter, destinationLeg.getAirport(), X0 + w - textW / 2, flightplanTextY,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
     }
   }
-
-  // Draw text labels ========================================================
-  // Safe altitude label
-  symPainter.textBox(&painter, {Unit::altFeet(minSafeAltitudeFt)},
-                     darkStyle ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen,
-                     X0 - 8, maxAltY, textatt::BOLD | textatt::RIGHT, 255);
-
-  // Departure altitude label
-  QColor labelColor = darkStyle ? mapcolors::profileLabelDarkColor : mapcolors::profileLabelColor;
-  float departureAlt = legList.route.first().getPosition().getAltitude();
-  int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
-  departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
-  QString startAltStr = Unit::altFeet(departureAlt);
-  symPainter.textBox(&painter, {startAltStr}, labelColor, X0 - 8, departureAltTextY,
-                     textatt::BOLD | textatt::RIGHT, 255);
-
-  // Destination altitude label
-  int destinationAltTextY = Y0 + static_cast<int>(h - destAlt * verticalScale);
-  destinationAltTextY = std::min(destinationAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
-  QString destAltStr = Unit::altFeet(destAlt);
-  symPainter.textBox(&painter, {destAltStr}, labelColor, X0 + w + 4, destinationAltTextY,
-                     textatt::BOLD | textatt::LEFT, 255);
-
-  // Route cruise altitude
-  float routeAlt = route.getFlightplan().getCruisingAltitude();
-  symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
-                     labelColor, X0 - 8, flightplanY, textatt::BOLD | textatt::RIGHT, 255);
 
   if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
     if(todX < X0 + w && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
     {
-      // Draw the top of descent point and text
+      // Draw the top of descent point and text =========================================================
       painter.setBackgroundMode(Qt::TransparentMode);
       painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
       painter.setBrush(Qt::NoBrush);
@@ -590,7 +605,23 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                          textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
     }
 
-    // Draw user aircraft track
+    // Departure altitude label =========================================================
+    QColor labelColor = dark ? mapcolors::profileLabelDarkColor : mapcolors::profileLabelColor;
+    float departureAlt = legList.route.first().getPosition().getAltitude();
+    int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
+    departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
+    QString startAltStr = Unit::altFeet(departureAlt);
+    symPainter.textBox(&painter, {startAltStr}, labelColor, X0, departureAltTextY,
+                       textatt::BOLD | textatt::CENTER, 255);
+
+    // Destination altitude label =========================================================
+    int destinationAltTextY = Y0 + static_cast<int>(h - destAlt * verticalScale);
+    destinationAltTextY = std::min(destinationAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
+    QString destAltStr = Unit::altFeet(destAlt);
+    symPainter.textBox(&painter, {destAltStr}, labelColor, X0 + w, destinationAltTextY,
+                       textatt::BOLD | textatt::CENTER, 255);
+
+    // Draw user aircraft track =========================================================
     if(!aircraftTrackPoints.isEmpty() && showAircraftTrack &&
        aircraftTrackPoints.boundingRect().width() > MIN_AIRCRAFT_TRACK_WIDTH)
     {
@@ -598,7 +629,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.drawPolyline(aircraftTrackPoints);
     }
 
-    // Draw user aircraft
+    // Draw user aircraft =========================================================
     if(simData.getUserAircraftConst().getPosition().isValid() && showAircraft)
     {
       float acx = X0 + aircraftDistanceFromStart * horizontalScale;
@@ -627,9 +658,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(vspeed > 10.f || vspeed < -10.f)
         texts.append(Unit::speedVertFpm(vspeed) + upDown);
 
-      // texts.append(Unit::distNm(aircraftDistanceFromStart) + tr(" ► ") +
-      // Unit::distNm(aircraftDistanceToDest));
-
       textatt::TextAttributes att = textatt::BOLD;
       float textx = acx, texty = acy + 20.f;
 
@@ -650,12 +678,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Dim the whole map
   if(NavApp::isCurrentGuiStyleNight())
-  {
-    int dim = OptionData::instance().getGuiStyleMapDimming();
-    QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
-    painter.fillRect(QRect(0, 0, width(), height()), col);
-  }
+    painter.fillRect(QRect(0, 0, width(), height()),
+                     QColor::fromRgb(0, 0, 0, 255 - (255 * OptionData::instance().getGuiStyleMapDimming() / 100)));
 
+  scrollArea->updateLabelWidget();
 }
 
 /* Update signal from Marble elevation model */
@@ -688,20 +714,14 @@ void ProfileWidget::routeChanged(bool geometryChanged)
   if(!widgetVisible || databaseLoadStatus)
     return;
 
+  scrollArea->routeChanged(geometryChanged);
+
   if(geometryChanged)
   {
     // Start thread after short delay to calculate new data
     updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
                        ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
-  // else
-  // {
-  //// Only update screen
-  // updateScreenCoords();
-  // update();
-  // }
-
-  // updateLabel();
 }
 
 /* Called by updateTimer after any route or elevation updates and starts the thread */
@@ -787,7 +807,6 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
     // Add start or end point if heightProfile omitted these - check only lat lon not alt
     if(!elevations.first().almostEqual(geometry.first()))
       elevations.prepend(Pos(geometry.first().getLonX(), geometry.first().getLatY(), elevations.first().getAltitude()));
-
 
     if(!elevations.last().almostEqual(geometry.last()))
       elevations.append(Pos(geometry.last().getLonX(), geometry.last().getLatY(), elevations.last().getAltitude()));
@@ -891,6 +910,11 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
 
 void ProfileWidget::showEvent(QShowEvent *)
 {
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(size().isNull())
+    resize(ui->scrollAreaProfile->viewport()->size());
+
   widgetVisible = true;
   // Start update immediately
   updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
@@ -904,40 +928,35 @@ void ProfileWidget::hideEvent(QHideEvent *)
   terminateThread();
 }
 
-void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
+atools::geo::Pos ProfileWidget::calculatePos(int x)
 {
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
-    return;
+  atools::geo::Pos pos;
+  int index;
+  float distance, distanceToGo, alt, maxElev;
+  calculateDistancesAndPos(x, pos, index, distance, distanceToGo, alt, maxElev);
+  return pos;
+}
 
-  if(rubberBand == nullptr)
-    // Create rubber band line
-    rubberBand = new QRubberBand(QRubberBand::Line, this);
-
-  // Limit x to drawing region
-  int x = mouseEvent->pos().x();
-  x = std::max(x, X0);
-  x = std::min(x, rect().width() - X0);
-
-  rubberBand->setGeometry(x - 1, 0, 2, rect().height());
-  rubberBand->show();
-
+void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& routeIndex, float& distance,
+                                             float& distanceToGo, float& alt, float& maxElev)
+{
   // Get index for leg
-  int index = 0;
+  routeIndex = 0;
   QVector<int>::iterator it = std::lower_bound(waypointX.begin(), waypointX.end(), x);
   if(it != waypointX.end())
   {
-    index = static_cast<int>(std::distance(waypointX.begin(), it)) - 1;
-    if(index < 0)
-      index = 0;
+    routeIndex = static_cast<int>(std::distance(waypointX.begin(), it)) - 1;
+    if(routeIndex < 0)
+      routeIndex = 0;
   }
-  const ElevationLeg& leg = legList.elevationLegs.at(index);
+  const ElevationLeg& leg = legList.elevationLegs.at(routeIndex);
 
   // Calculate distance from screen coordinates
-  float distance = (x - X0) / horizontalScale;
+  distance = (x - X0) / horizontalScale;
   if(distance < 0.f)
     distance = 0.f;
 
-  float distanceToGo = legList.totalDistance - distance;
+  distanceToGo = legList.totalDistance - distance;
   if(distanceToGo < 0.f)
     distanceToGo = 0.f;
 
@@ -964,23 +983,46 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   // Get altitude values before and after cursor and interpolate
   float alt1 = leg.elevation.at(indexLowDist).getAltitude();
   float alt2 = leg.elevation.at(indexUpperDist).getAltitude();
-  float alt = (alt1 + alt2) / 2.f;
+  alt = (alt1 + alt2) / 2.f;
+
+  // Calculate min altitude for this leg
+  maxElev = calcGroundBuffer(leg.maxElevation);
 
   // Get Position for highlight on map
   float legdistpart = distance - leg.distances.first();
   float legdist = leg.distances.last() - leg.distances.first();
 
   // Calculate position along the flight plan
-  const atools::geo::Pos& pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
+  pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
+}
 
-  // Calculate min altitude for this leg
-  float maxElev = calcGroundBuffer(leg.maxElevation);
+void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
+{
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
+    return;
+
+  if(rubberBand == nullptr)
+    // Create rubber band line
+    rubberBand = new QRubberBand(QRubberBand::Line, this);
+
+  // Limit x to drawing region
+  int x = mouseEvent->pos().x();
+  x = std::max(x, X0);
+  x = std::min(x, rect().width() - X0);
+
+  rubberBand->setGeometry(x - 1, 0, 2, rect().height());
+  rubberBand->show();
+
+  atools::geo::Pos pos;
+  int index;
+  float distance, distanceToGo, alt, maxElev;
+  calculateDistancesAndPos(x, pos, index, distance, distanceToGo, alt, maxElev);
 
   // Get from/to text
   QString from = atools::elideTextShort(legList.route.at(index).getIdent(), 20);
   QString to = atools::elideTextShort(legList.route.at(index + 1).getIdent(), 20);
 
-  // Add text to upper dock window label
+  // Add text to upper dock window label ==========================
   variableLabelText =
     from + tr(" ► ") + to + tr(", ") +
     Unit::distNm(distance) + tr(" ► ") +
@@ -989,11 +1031,87 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
     tr(" Above Ground Altitude ") + Unit::altFeet(flightplanAltFt - alt) + tr(", ") +
     tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev);
 
-  mouseEvent->accept();
+  // Allow event to propagate to scroll widget
+  mouseEvent->ignore();
   updateLabel();
+
+  // Follow cursor on map if enabled ==========================
+  if(NavApp::getMainUi()->actionProfileFollow->isChecked())
+    emit showPos(calculatePos(x), map::INVALID_DISTANCE_VALUE, false);
 
   // Tell map widget to create a rubberband rectangle on the map
   emit highlightProfilePoint(pos);
+}
+
+void ProfileWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+  QPoint globalpoint;
+  if(event->reason() == QContextMenuEvent::Keyboard)
+    // Event does not contain position is triggered by keyboard
+    globalpoint = QCursor::pos();
+  else
+    globalpoint = event->globalPos();
+
+  showContextMenu(globalpoint);
+}
+
+void ProfileWidget::showContextMenu(const QPoint& globalPoint)
+{
+  qDebug() << Q_FUNC_INFO << globalPoint;
+
+  bool routeEmpty = NavApp::getRoute().isEmpty();
+
+  // Position on the whole map widget
+  QPoint mapPoint = mapFromGlobal(globalPoint);
+
+  // Local visible widget position
+  QPoint pointArea = scrollArea->getScrollArea()->mapFromGlobal(globalPoint);
+  QRect rectArea = scrollArea->getScrollArea()->rect();
+
+  // Local visible widget position
+  QPoint pointLabel = scrollArea->getLabelWidget()->mapFromGlobal(globalPoint);
+  QRect rectLabel = scrollArea->getLabelWidget()->rect();
+
+  bool hasPosition = mapPoint.x() > X0 && mapPoint.x() < width() - X0 && rectArea.contains(pointArea);
+
+  // Do not show context menu if point is neither on the visible widget and not on the label
+  QPoint menuPos = globalPoint;
+  if(!rectArea.contains(pointArea) && !rectLabel.contains(pointLabel))
+    menuPos = scrollArea->getScrollArea()->mapToGlobal(rectArea.center());
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionProfileShowOnMap->setEnabled(hasPosition && !routeEmpty);
+  ui->actionProfileFit->setDisabled(routeEmpty);
+  ui->actionProfileExpand->setDisabled(routeEmpty || ui->actionProfileFit->isChecked());
+
+  QMenu menu;
+  menu.addAction(ui->actionProfileShowOnMap);
+  menu.addSeparator();
+  menu.addAction(ui->actionProfileFit);
+  menu.addAction(ui->actionProfileExpand);
+  menu.addSeparator();
+  menu.addAction(ui->actionProfileCenterAircraft);
+  menu.addSeparator();
+  menu.addAction(ui->actionProfileFollow);
+  menu.addSeparator();
+  menu.addAction(ui->actionProfileShowLabels);
+  menu.addAction(ui->actionProfileShowScrollbars);
+  QAction *action = menu.exec(menuPos);
+
+  if(action == ui->actionProfileShowOnMap)
+  {
+    atools::geo::Pos pos = calculatePos(mapPoint.x());
+    if(pos.isValid())
+      emit showPos(pos, 0.f, false);
+  }
+  else if(action == ui->actionProfileCenterAircraft || action == ui->actionProfileFollow)
+    scrollArea->update();
+
+  // Other actions are connected to methods or used during updates
+  // else if(action == ui->actionProfileFit)
+  // else if(action == ui->actionProfileExpand)
+  // else if(action == ui->actionProfileShowLabels)
+  // else if(action == ui->actionProfileShowScrollbars)
 }
 
 void ProfileWidget::updateLabel()
@@ -1022,7 +1140,7 @@ void ProfileWidget::updateLabel()
   else
     fixedLabelText.clear();
 
-  NavApp::getMainUi()->labelElevationInfo->setText(fixedLabelText + " " + variableLabelText);
+  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText + " " + variableLabelText);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
@@ -1044,6 +1162,12 @@ void ProfileWidget::leaveEvent(QEvent *)
 /* Resizing needs an update of the screen coordinates */
 void ProfileWidget::resizeEvent(QResizeEvent *)
 {
+  // Ui::MainWindow *ui = NavApp::getMainUi();
+  // qDebug() << Q_FUNC_INFO << size();
+  // qDebug() << Q_FUNC_INFO << "sizeHint()" << sizeHint();
+  // qDebug() << Q_FUNC_INFO << "viewport()->size()" << ui->scrollAreaProfile->viewport()->size();
+  // qDebug() << Q_FUNC_INFO << "viewport()->sizeHint()" << ui->scrollAreaProfile->viewport()->sizeHint();
+
   updateScreenCoords();
 }
 
@@ -1076,6 +1200,21 @@ void ProfileWidget::optionsChanged()
 {
   updateScreenCoords();
   update();
+}
+
+void ProfileWidget::styleChanged()
+{
+  scrollArea->styleChanged();
+}
+
+void ProfileWidget::saveState()
+{
+  scrollArea->saveState();
+}
+
+void ProfileWidget::restoreState()
+{
+  scrollArea->restoreState();
 }
 
 void ProfileWidget::preRouteCalc()

@@ -240,7 +240,9 @@ SOURCES += src/main.cpp\
     src/gui/timedialog.cpp \
     src/gui/stylehandler.cpp \
     src/mapgui/mappainteraltitude.cpp \
-    src/gui/trafficpatterndialog.cpp
+    src/gui/trafficpatterndialog.cpp \
+    src/profile/profilescrollarea.cpp \
+    src/profile/profilelabelwidget.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -347,7 +349,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/gui/timedialog.h \
     src/gui/stylehandler.h \
     src/mapgui/mappainteraltitude.h \
-    src/gui/trafficpatterndialog.h
+    src/gui/trafficpatterndialog.h \
+    src/profile/profilescrollarea.h \
+    src/profile/profilelabelwidget.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
