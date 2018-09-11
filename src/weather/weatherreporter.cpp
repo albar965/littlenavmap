@@ -62,7 +62,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
   bool verbose = false;
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WEATHER
   verbose = true;
 #endif
 
@@ -176,7 +176,7 @@ void WeatherReporter::createFsWatcher()
   if(fsWatcherAsPath == nullptr)
   {
     bool verbose = false;
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WEATHER
     verbose = true;
 #endif
 
@@ -191,7 +191,7 @@ void WeatherReporter::createFsWatcher()
   if(fsWatcherAsFlightplanPath == nullptr)
   {
     bool verbose = false;
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WEATHER
     verbose = true;
 #endif
 

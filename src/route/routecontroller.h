@@ -51,7 +51,6 @@ class RouteNetwork;
 class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
-class RouteViewEventFilter;
 class AirportQuery;
 
 /*
@@ -362,6 +361,8 @@ private:
 
   void activateLegTriggered();
   void fontChanged();
+
+  void contextMenu(const QPoint& pos);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

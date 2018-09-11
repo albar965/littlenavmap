@@ -2915,7 +2915,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
   bool changed = false;
   bool newAirport = currentWeatherContext->ident != airport.ident;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WEATHER
   qDebug() << Q_FUNC_INFO;
 #endif
 
@@ -3000,7 +3000,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   weatherContext = *currentWeatherContext;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WEATHER
   if(changed)
     qDebug() << Q_FUNC_INFO << "changed" << changed << weatherContext;
 #endif
