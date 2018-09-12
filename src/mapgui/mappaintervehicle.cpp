@@ -160,26 +160,29 @@ void MapPainterVehicle::paintTrack(const PaintContext *context)
 
     float size = context->sz(context->thicknessTrail, 2);
     painter->setPen(mapcolors::aircraftTrailPen(size));
-    bool lastVisible = false;
+    bool visible1 = false;
 
     int x1, y1;
     int x2 = -1, y2 = -1;
+    bool hidden1, hidden2;
     QRect vpRect(painter->viewport());
-    wToS(aircraftTrack.first().pos, x1, y1);
+    wToS(aircraftTrack.first().pos, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
 
     for(int i = 1; i < aircraftTrack.size(); i++)
     {
       const at::AircraftTrackPos& trackPos = aircraftTrack.at(i);
-      wToS(trackPos.pos, x2, y2);
+      wToS(trackPos.pos, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 
       QRect rect(QPoint(x1, y1), QPoint(x2, y2));
       rect = rect.normalized();
       rect.adjust(-1, -1, 1, 1);
 
-      // Current line is visible (most likely)
-      bool nowVisible = rect.intersects(vpRect);
+      // Current line is visible (most likely) - not if one of the points is hidden behind the globe
+      bool visible2 = false;
+      if(!hidden1 && !hidden2)
+        visible2 = rect.intersects(vpRect);
 
-      if(lastVisible || nowVisible)
+      if(visible1 || visible2)
       {
         if(!polyline.isEmpty())
         {
@@ -193,16 +196,17 @@ void MapPainterVehicle::paintTrack(const PaintContext *context)
           polyline.append(QPoint(x1, y1));
       }
 
-      if(lastVisible && !nowVisible)
+      if(visible1 && !visible2)
       {
         // Not visible anymore draw previous line segment
         painter->drawPolyline(polyline);
         polyline.clear();
       }
 
-      lastVisible = nowVisible;
+      visible1 = visible2;
       x1 = x2;
       y1 = y2;
+      hidden1 = hidden2;
     }
 
     // Draw rest

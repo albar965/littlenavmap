@@ -61,7 +61,8 @@ void MapPainterRoute::render(PaintContext *context)
     paintProcedure(lastLegPoint, context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
                    true /* preview */);
 
-  if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+  if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
+     context->mapLayer->isRouteTextAndDetail())
     paintTopOfDescent(context);
 }
 
@@ -176,7 +177,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       drawLine(context, lines.at(activeRouteLeg - 1));
     }
   }
-
   context->szFont(context->textSizeFlightplan * 1.1f);
 
   // Collect coordinates for text placement and lines first
