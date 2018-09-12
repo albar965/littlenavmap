@@ -3099,12 +3099,8 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         emit addUserpointFromMap(result, pos);
       }
     }
-    else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
-    {
-    }
-    else if(event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
-    {
-    }
+    // else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
+    // else if(event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
   }
   return false;
 }
