@@ -88,6 +88,21 @@ QPen profileSafeAltLineDarkPen(Qt::darkRed, 4, Qt::SolidLine);
 QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
 QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine);
 
+/* Objects highlighted because of selection in search */
+QColor highlightBackColor(Qt::black);
+QColor highlightColor(Qt::yellow);
+QColor highlightColorFast(Qt::darkYellow);
+
+/* Objects highlighted because of selection in route table */
+QColor routeHighlightBackColor(Qt::black);
+QColor routeHighlightColor(Qt::green);
+QColor routeHighlightColorFast(Qt::darkGreen);
+
+/* Objects highlighted because of selection in route profile */
+QColor profileHighlightBackColor(Qt::black);
+QColor profileHighlightColor(Qt::cyan);
+QColor profileHighlightColorFast(Qt::darkCyan);
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -529,6 +544,18 @@ void syncColors()
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
   syncColor(colorSettings, "CompassRoseColor", compassRoseColor);
   syncColor(colorSettings, "CompassRoseTextColor", compassRoseTextColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Highlight");
+  syncColor(colorSettings, "HighlightBackColor", highlightBackColor);
+  syncColor(colorSettings, "HighlightColor", highlightColor);
+  syncColor(colorSettings, "HighlightColorFast", highlightColorFast);
+  syncColor(colorSettings, "RouteHighlightBackColor", routeHighlightBackColor);
+  syncColor(colorSettings, "RouteHighlightColor", routeHighlightColor);
+  syncColor(colorSettings, "RouteHighlightColorFast", routeHighlightColorFast);
+  syncColor(colorSettings, "ProfileHighlightBackColor", profileHighlightBackColor);
+  syncColor(colorSettings, "ProfileHighlightColor", profileHighlightColor);
+  syncColor(colorSettings, "ProfileHighlightColorFast", profileHighlightColorFast);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Weather");

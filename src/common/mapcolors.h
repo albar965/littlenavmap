@@ -100,6 +100,21 @@ extern QPen profileSafeAltLineDarkPen;
 extern QPen profileSafeAltLegLinePen;
 extern QPen profileSafeAltLegLineDarkPen;
 
+/* Objects highlighted because of selection in search */
+extern QColor highlightBackColor;
+extern QColor highlightColor;
+extern QColor highlightColorFast;
+
+/* Objects highlighted because of selection in route table */
+extern QColor routeHighlightBackColor;
+extern QColor routeHighlightColor;
+extern QColor routeHighlightColorFast;
+
+/* Objects highlighted because of selection in route profile */
+extern QColor profileHighlightBackColor;
+extern QColor profileHighlightColor;
+extern QColor profileHighlightColorFast;
+
 // ==========================================================================
 /* General text pens */
 const QPen textBackgroundPen = QPen(QBrush(QColor(Qt::lightGray)), 1, Qt::SolidLine, Qt::FlatCap);
@@ -153,11 +168,6 @@ const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::Solid
 const QPen homeBackPen = QPen(QBrush(QColor(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QColor homeFillColor = QColor(Qt::yellow);
 
-/* Objects highlighted because of selection in search */
-const QColor highlightBackColor = QColor(Qt::black);
-const QColor highlightColor = QColor(Qt::yellow);
-const QColor highlightColorFast = QColor(Qt::darkYellow);
-
 const QColor highlightApproachColor = QColor(150, 150, 255);
 const QColor highlightApproachColorFast = QColor(0, 0, 150);
 
@@ -171,10 +181,6 @@ const QColor routeProcedureOutlineColor = QColor(Qt::black);
 
 const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
-
-const QColor routeHighlightBackColor = QColor(Qt::black);
-const QColor routeHighlightColor = QColor(Qt::green);
-const QColor routeHighlightColorFast = QColor(Qt::darkGreen);
 
 /* Text along route and approach segments */
 const QColor routeTextColor = QColor(0, 0, 0);

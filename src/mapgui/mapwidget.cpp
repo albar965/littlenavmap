@@ -53,7 +53,6 @@
 
 #include <QContextMenuEvent>
 #include <QToolTip>
-#include <QRubberBand>
 #include <QMessageBox>
 #include <QPainter>
 
@@ -1471,30 +1470,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
 void MapWidget::highlightProfilePoint(const atools::geo::Pos& pos)
 {
-  if(pos.isValid())
-  {
-    CoordinateConverter conv(viewport());
-    int x, y;
-    if(conv.wToS(pos, x, y))
-    {
-      if(profileRubberRect == nullptr)
-        profileRubberRect = new QRubberBand(QRubberBand::Rectangle, this);
-
-      const QRect& rubberRect = profileRubberRect->geometry();
-
-      if(rubberRect.x() != x - 6 || rubberRect.y() != y - 6)
-      {
-        // Update only if position has changed
-        profileRubberRect->setGeometry(x - 6, y - 6, 12, 12);
-        profileRubberRect->show();
-      }
-
-      return;
-    }
-  }
-
-  delete profileRubberRect;
-  profileRubberRect = nullptr;
+  changeProfileHighlight(pos);
 }
 
 void MapWidget::connectedToSimulator()
@@ -1535,6 +1511,11 @@ void MapWidget::clearKmlFiles()
   kmlFilePaths.clear();
 }
 
+const atools::geo::Pos& MapWidget::getProfileHighlight() const
+{
+  return screenIndex->getProfileHighlight();
+}
+
 const map::MapSearchResult& MapWidget::getSearchHighlights() const
 {
   return screenIndex->getSearchHighlights();
@@ -1572,6 +1553,15 @@ void MapWidget::changeProcedureLegHighlights(const proc::MapProcedureLeg *leg)
 {
   screenIndex->setApproachLegHighlights(leg);
   update();
+}
+
+void MapWidget::changeProfileHighlight(const atools::geo::Pos& pos)
+{
+  if(pos != screenIndex->getProfileHighlight())
+  {
+    screenIndex->setProfileHighlight(pos);
+    update();
+  }
 }
 
 /* Update the flight plan from a drag and drop result. Show a menu if multiple objects are

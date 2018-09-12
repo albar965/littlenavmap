@@ -315,6 +315,27 @@ void MapPainterMark::paintHighlights(PaintContext *context)
       painter->drawEllipse(QPoint(x, y), size, size);
     }
   }
+
+  // Draw hightlight from the elevation profile view ------------------------------------------
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QBrush(mapcolors::profileHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  const Pos& pos = mapWidget->getProfileHighlight();
+  if(pos.isValid())
+  {
+    int x, y;
+    if(wToS(pos, x, y))
+    {
+      if(!context->drawFast)
+      {
+        painter->setPen(QPen(QBrush(mapcolors::profileHighlightBackColor), size / 3 + 2, Qt::SolidLine,
+                             Qt::FlatCap));
+        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->setPen(QPen(QBrush(mapcolors::profileHighlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+      }
+      painter->drawEllipse(QPoint(x, y), size, size);
+    }
+  }
+
 }
 
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */

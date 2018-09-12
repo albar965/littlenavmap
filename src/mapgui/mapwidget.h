@@ -50,7 +50,6 @@ class MapQuery;
 class AirportQuery;
 class RouteController;
 class MapTooltip;
-class QRubberBand;
 class MapScreenIndex;
 class Route;
 class MapVisible;
@@ -128,6 +127,7 @@ public:
   void changeSearchHighlights(const map::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
+  void changeProfileHighlight(const atools::geo::Pos& pos);
 
   void changeApproachHighlight(const proc::MapProcedureLegs& approach);
 
@@ -176,6 +176,8 @@ public:
   const QList<map::DistanceMarker>& getDistanceMarkers() const;
 
   const QList<map::TrafficPattern>& getTrafficPatterns() const;
+
+  const atools::geo::Pos& getProfileHighlight() const;
 
   const AircraftTrack& getAircraftTrack() const
   {
@@ -464,9 +466,6 @@ private:
 
   atools::geo::Pos searchMarkPos, homePos;
   double homeDistance = 0.;
-
-  /* Highlight when mousing over the elevation profile */
-  QRubberBand *profileRubberRect = nullptr;
 
   /* Distance marker that is changed using drag and drop */
   int currentDistanceMarkerIndex = -1;

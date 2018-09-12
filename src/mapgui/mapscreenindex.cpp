@@ -458,6 +458,7 @@ int MapScreenIndex::getNearestTrafficPatternIndex(int xs, int ys, int maxDistanc
 {
   return getNearestIndex(xs, ys, maxDistance, trafficPatterns);
 }
+
 int MapScreenIndex::getNearestRangeMarkIndex(int xs, int ys, int maxDistance)
 {
   return getNearestIndex(xs, ys, maxDistance, rangeMarks);

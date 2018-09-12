@@ -194,6 +194,16 @@ public:
     return approachHighlight;
   }
 
+  void setProfileHighlight(const atools::geo::Pos& value)
+  {
+    profileHighlight = value;
+  }
+
+  const atools::geo::Pos& getProfileHighlight() const
+  {
+    return profileHighlight;
+  }
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result);
@@ -216,8 +226,8 @@ private:
 
   map::MapSearchResult highlights;
   proc::MapProcedureLeg approachLegHighlights;
-
   proc::MapProcedureLegs approachHighlight;
+  atools::geo::Pos profileHighlight;
 
   QList<int> routeHighlights;
 
