@@ -146,7 +146,7 @@ MainWindow::MainWindow()
     centralWidget->setMinimumSize(1, 1);
     centralWidget->resize(1, 1);
     centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    // cw->hide(); // Does not work and messes up docking windows (i.e. Profile dock cannot be shrinked).
+    centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
     setCentralWidget(centralWidget);
 
     dialog = new atools::gui::Dialog(this);
