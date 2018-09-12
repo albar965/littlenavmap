@@ -1121,7 +1121,7 @@ A range ring will be added for each radius value.</string>
           <item row="21" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
             <property name="toolTip">
-             <string>Thickness of the range ring, pattern and distance measurment lines</string>
+             <string>Thickness of the range ring, pattern and distance measurement lines</string>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1446,7 +1446,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
           <item row="21" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeRangeDistance">
             <property name="toolTip">
-             <string>Text size of the range ring, pattern and distance measurment line labels</string>
+             <string>Text size of the range ring, pattern and distance measurement line labels</string>
             </property>
             <property name="suffix">
              <string> %</string>

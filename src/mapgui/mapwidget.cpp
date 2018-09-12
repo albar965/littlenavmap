@@ -2412,76 +2412,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapSetMark)
       changeSearchMark(pos);
     else if(action == ui->actionMapHideOneRangeRing)
-    {
-      screenIndex->getRangeMarks().removeAt(rangeMarkerIndex);
-      mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
-      update();
-    }
+      removeRangeRing(rangeMarkerIndex);
     else if(action == ui->actionMapHideDistanceMarker)
-    {
-      screenIndex->getDistanceMarks().removeAt(distMarkerIndex);
-      mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
-      update();
-    }
+      removeDistanceMarker(distMarkerIndex);
     else if(action == ui->actionMapHideTrafficPattern)
-    {
-      screenIndex->getTrafficPatterns().removeAt(trafficPatternIndex);
-      mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
-      update();
-    }
+      removeTrafficPatterm(trafficPatternIndex);
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
-    {
-      // Distance line
-      map::DistanceMarker dm;
-      dm.isRhumbLine = action == ui->actionMapMeasureRhumbDistance;
-      dm.to = pos;
-
-      // Build distance line depending on selected airport or navaid (color, magvar, etc.)
-      if(airport != nullptr)
-      {
-        dm.text = airport->name + " (" + airport->ident + ")";
-        dm.from = airport->position;
-        dm.magvar = airport->magvar;
-        dm.color = mapcolors::colorForAirport(*airport);
-      }
-      else if(vor != nullptr)
-      {
-        if(vor->tacan)
-          dm.text = vor->ident + " " + vor->channel;
-        else
-          dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
-        dm.from = vor->position;
-        dm.magvar = vor->magvar;
-        dm.color = mapcolors::vorSymbolColor;
-      }
-      else if(ndb != nullptr)
-      {
-        dm.text = ndb->ident + " " + QLocale().toString(ndb->frequency / 100., 'f', 2);
-        dm.from = ndb->position;
-        dm.magvar = ndb->magvar;
-        dm.color = mapcolors::ndbSymbolColor;
-      }
-      else if(waypoint != nullptr)
-      {
-        dm.text = waypoint->ident;
-        dm.from = waypoint->position;
-        dm.magvar = waypoint->magvar;
-        dm.color = mapcolors::waypointSymbolColor;
-      }
-      else
-      {
-        dm.magvar = NavApp::getMagVar(pos, 0.f);
-        dm.from = pos;
-        dm.color = dm.isRhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
-      }
-
-      screenIndex->getDistanceMarks().append(dm);
-
-      // Start mouse dragging and disable context menu so we can catch the right button click as cancel
-      mouseState = mw::DRAG_DISTANCE;
-      setContextMenuPolicy(Qt::PreventContextMenu);
-      currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
-    }
+      addMeasurement(pos, action == ui->actionMapMeasureRhumbDistance, airport, vor, ndb, waypoint);
     else if(action == ui->actionRouteDeleteWaypoint)
       NavApp::getRouteController()->routeDelete(routeIndex);
     else if(action == ui->actionMapEditUserWaypoint)
@@ -2620,7 +2557,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
     }
     else if(action == ui->actionMapTrafficPattern)
-      showTrafficPattern(*airport);
+      addTrafficPattern(*airport);
     else if(action == ui->actionMapShowApproaches)
       emit showApproaches(*airport);
     else if(action == ui->actionMapUserdataAdd)
@@ -2649,7 +2586,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 }
 
-void MapWidget::showTrafficPattern(const map::MapAirport& airport)
+void MapWidget::addTrafficPattern(const map::MapAirport& airport)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -2663,6 +2600,13 @@ void MapWidget::showTrafficPattern(const map::MapAirport& airport)
     update();
     mainWindow->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.ident));
   }
+}
+
+void MapWidget::removeTrafficPatterm(int index)
+{
+  screenIndex->getTrafficPatterns().removeAt(index);
+  mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
+  update();
 }
 
 void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type,
@@ -2704,6 +2648,70 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   qDebug() << "range rings" << rings.center;
   update();
   mainWindow->setStatusMessage(tr("Added range rings for position."));
+}
+
+void MapWidget::addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapSearchResult& result)
+{
+  addMeasurement(pos, rhumb,
+                 atools::firstOrNull(result.airports),
+                 atools::firstOrNull(result.vors),
+                 atools::firstOrNull(result.ndbs),
+                 atools::firstOrNull(result.waypoints));
+}
+
+void MapWidget::addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapAirport *airport,
+                               const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint)
+{
+  // Distance line
+  map::DistanceMarker dm;
+  dm.isRhumbLine = rhumb;
+  dm.to = pos;
+
+  // Build distance line depending on selected airport or navaid (color, magvar, etc.)
+  if(airport != nullptr)
+  {
+    dm.text = airport->name + " (" + airport->ident + ")";
+    dm.from = airport->position;
+    dm.magvar = airport->magvar;
+    dm.color = mapcolors::colorForAirport(*airport);
+  }
+  else if(vor != nullptr)
+  {
+    if(vor->tacan)
+      dm.text = vor->ident + " " + vor->channel;
+    else
+      dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
+    dm.from = vor->position;
+    dm.magvar = vor->magvar;
+    dm.color = mapcolors::vorSymbolColor;
+  }
+  else if(ndb != nullptr)
+  {
+    dm.text = ndb->ident + " " + QLocale().toString(ndb->frequency / 100., 'f', 2);
+    dm.from = ndb->position;
+    dm.magvar = ndb->magvar;
+    dm.color = mapcolors::ndbSymbolColor;
+  }
+  else if(waypoint != nullptr)
+  {
+    dm.text = waypoint->ident;
+    dm.from = waypoint->position;
+    dm.magvar = waypoint->magvar;
+    dm.color = mapcolors::waypointSymbolColor;
+  }
+  else
+  {
+    dm.magvar = NavApp::getMagVar(pos, 0.f);
+    dm.from = pos;
+    dm.color = dm.isRhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
+  }
+
+  screenIndex->getDistanceMarks().append(dm);
+
+  // Start mouse dragging and disable context menu so we can catch the right button click as cancel
+  mouseState = mw::DRAG_DISTANCE;
+  setContextMenuPolicy(Qt::PreventContextMenu);
+  currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
 }
 
 void MapWidget::clearRangeRingsAndDistanceMarkers()
@@ -3012,6 +3020,95 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
 }
 
+void MapWidget::removeRangeRing(int index)
+{
+  screenIndex->getRangeMarks().removeAt(index);
+  mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
+  update();
+}
+
+void MapWidget::removeDistanceMarker(int index)
+{
+  screenIndex->getDistanceMarks().removeAt(index);
+  mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
+  update();
+}
+
+bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
+{
+  if(mouseState != mw::NONE || event->type() != QEvent::MouseButtonRelease)
+    // Not if dragging or for button release
+    return false;
+
+  qreal lon, lat;
+  // Cursor can be outside or map region
+  if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat))
+  {
+    Pos pos(lon, lat);
+
+    // Look for navaids or airports nearby click
+    map::MapSearchResult result;
+    QList<proc::MapProcedurePoint> procPoints;
+    screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result, procPoints);
+
+    if(event->modifiers() == Qt::ShiftModifier)
+    {
+      int index = screenIndex->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
+                                                        screenSearchDistance);
+      if(index != -1)
+        // Remove any ring for Shift+Click into center
+        removeRangeRing(index);
+      else
+      {
+        // Add rings for Shift+Click
+        if(result.hasVor())
+          // Add VOR range
+          addNavRangeRing(pos, map::VOR, result.vors.first().ident, result.vors.first().getFrequencyOrChannel(),
+                          result.vors.first().range);
+        else if(result.hasNdb())
+          // Add NDB range
+          addNavRangeRing(pos, map::NDB, result.ndbs.first().ident, QString::number(result.ndbs.first().frequency),
+                          result.ndbs.first().range);
+        else
+          // Add range rings per configuration
+          addRangeRing(pos);
+      }
+      return true;
+    }
+    else if(event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::AltModifier)
+    {
+      int index = screenIndex->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
+                                                           screenSearchDistance);
+      if(index != -1)
+        // Remove any measurement line for Ctrl+Click or Alt+Click into center
+        removeDistanceMarker(index);
+      else
+        // Add measurement line for Ctrl+Click or Alt+Click into center
+        addMeasurement(pos, event->modifiers() == Qt::ControlModifier, result);
+      return true;
+    }
+    else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+    {
+      // Add or edit userpoint
+      if(result.hasUserpoints())
+        emit editUserpointFromMap(result);
+      else
+      {
+        if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
+          pos.setAltitude(atools::geo::meterToFeet(NavApp::getElevationProvider()->getElevationMeter(pos)));
+        emit addUserpointFromMap(result, pos);
+      }
+    }
+    else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
+    {
+    }
+    else if(event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
+    {
+    }
+  }
+  return false;
+}
+
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
 #ifdef DEBUG_MOVING_AIRPLANE
@@ -3049,6 +3146,11 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+  // Take actions (add/remove range rings, measurement)
+  if(mousePressCheckModifierActions(event))
+    // Event was consumed - do not proceed here
+    return;
+
   hideTooltip();
 
   jumpBackToAircraftStart();
@@ -3082,7 +3184,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         if(visible)
-          // Update distance measurment line
+          // Update distance measurement line
           screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
       }
       else if(mouseState & mw::DRAG_POST_CANCEL)

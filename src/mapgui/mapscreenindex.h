@@ -132,7 +132,7 @@ public:
     return rangeMarks;
   }
 
-  /* Get distance measurment lines */
+  /* Get distance measurement lines */
   QList<map::DistanceMarker>& getDistanceMarks()
   {
     return distanceMarks;

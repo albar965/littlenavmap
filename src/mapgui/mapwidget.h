@@ -197,7 +197,7 @@ public:
   /* Add general (red) range ring */
   void addRangeRing(const atools::geo::Pos& pos);
 
-  void showTrafficPattern(const map::MapAirport& airport);
+  void addTrafficPattern(const map::MapAirport& airport);
 
   /* Add radio navaid range ring */
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type, const QString& ident,
@@ -388,6 +388,10 @@ private:
   virtual void mouseReleaseEvent(QMouseEvent *event) override;
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
   virtual void mouseMoveEvent(QMouseEvent *event) override;
+
+  /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
+  bool mousePressCheckModifierActions(QMouseEvent *event);
+
   virtual bool event(QEvent *event) override;
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void paintEvent(QPaintEvent *paintEvent) override;
@@ -409,6 +413,20 @@ private:
   void jumpBackToAircraftTimeout();
   void jumpBackToAircraftStart();
   bool isCenterLegAndAircraftActive();
+
+  /* Remove range rings on index, print message and update map */
+  void removeRangeRing(int index);
+
+  /* Remove measurement line on index, print message and update map */
+  void removeDistanceMarker(int index);
+
+  /* Start a line measurement after context menu selection or click+modifier */
+  void addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapSearchResult& result);
+  void addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapAirport *airport, const map::MapVor *vor,
+                     const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
+
+  /* Remove pattern at index and update the map */
+  void removeTrafficPatterm(int index);
 
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();

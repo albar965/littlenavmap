@@ -1045,7 +1045,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionMapRangeRings)
       NavApp::getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapTrafficPattern)
-      NavApp::getMapWidget()->showTrafficPattern(airport);
+      NavApp::getMapWidget()->addTrafficPattern(airport);
     else if(action == ui->actionMapNavaidRange)
     {
       QString freqChaStr;

@@ -1730,7 +1730,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
       NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
-      NavApp::getMapWidget()->showTrafficPattern(routeLeg->getAirport());
+      NavApp::getMapWidget()->addTrafficPattern(routeLeg->getAirport());
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids

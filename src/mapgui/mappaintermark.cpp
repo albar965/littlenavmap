@@ -683,7 +683,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
   }
 }
 
-/* Draw great circle and rhumb line distance measurment lines */
+/* Draw great circle and rhumb line distance measurement lines */
 void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
 {
   GeoPainter *painter = context->painter;
