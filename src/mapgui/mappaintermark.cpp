@@ -103,17 +103,10 @@ void MapPainterMark::paintHome(const PaintContext *context)
   int x, y;
   if(wToS(mapWidget->getHomePos(), x, y))
   {
-    painter->setPen(mapcolors::homeBackPen);
-    painter->setBrush(mapcolors::homeFillColor);
+    int size = atools::roundToInt(context->szF(context->textSizeRangeDistance , 24));
 
-    int size = context->sz(context->symbolSizeNavaid, 10);
-
-    painter->drawRect(x - (size / 2), y - (size / 2), size, size);
-
-    QPolygon roof;
-    roof << QPoint(x, y - size) << QPoint(x + size - 3, y - 3) << QPoint(x - size + 3, y - 3);
-    painter->drawConvexPolygon(roof);
-    painter->drawPoint(x, y);
+    QPixmap pixmap = QIcon(":/littlenavmap/resources/icons/homemap.svg").pixmap(QSize(size, size));
+    painter->drawPixmap(QPoint(x - size / 2, y - size / 2), pixmap);
   }
 }
 

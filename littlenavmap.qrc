@@ -212,5 +212,6 @@
         <file>resources/icons/viewvert.svg</file>
         <file>resources/icons/viewhoriz.svg</file>
         <file>resources/icons/viewexpand.svg</file>
+        <file>resources/icons/homemap.svg</file>
     </qresource>
 </RCC>
