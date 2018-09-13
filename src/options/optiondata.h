@@ -192,7 +192,10 @@ enum Flag2
 
   /* Show IVAO weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipIvao*/
-  WEATHER_TOOLTIP_IVAO = 1 << 12
+  WEATHER_TOOLTIP_IVAO = 1 << 12,
+
+  /* checkBoxOptionsMapZoomAvoidBlurred */
+  MAP_AVOID_BLURRED_MAP = 1 << 13
 
 };
 

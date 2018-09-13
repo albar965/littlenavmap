@@ -1354,6 +1354,11 @@ void MainWindow::resultTruncated(int truncatedTo)
 
 void MainWindow::distanceChanged()
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "minimumZoom" << mapWidget->minimumZoom() << "maximumZoom" << mapWidget->maximumZoom()
+           << "step" << mapWidget->zoomStep() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
+#endif
+
   mapDistanceLabel->setText(Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f)));
 }
 

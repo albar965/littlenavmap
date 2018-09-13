@@ -91,9 +91,8 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
 /* Update rate on tooltip for bearing display */
 const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
 
-/* width/height / factor = inner rectangle which has to overlap */
-const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL = 4.f;
-const float MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR = 4.f;
+/* Center next waypoint and aircraft only every 15 seconds */
+const int MAX_SIM_CENTER_AC_AND_WP_MS = 15000;
 
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
@@ -513,8 +512,9 @@ void MapWidget::historyNext()
   {
     jumpBackToAircraftStart();
 
-    setDistance(entry.getDistance());
-    centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
+    // Do not fix zoom - display as is
+    setDistanceToMap(entry.getDistance(), false /* Allow adjust zoom */);
+    centerPosOnMap(entry.getPos());
     noStoreInHistory = true;
     mainWindow->setStatusMessage(tr("Map position history next."));
     showAircraft(false);
@@ -528,8 +528,9 @@ void MapWidget::historyBack()
   {
     jumpBackToAircraftStart();
 
-    setDistance(entry.getDistance());
-    centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
+    // Do not fix zoom - display as is
+    setDistanceToMap(entry.getDistance(), false /* Allow adjust zoom */);
+    centerPosOnMap(entry.getPos());
     noStoreInHistory = true;
     mainWindow->setStatusMessage(tr("Map position history back."));
     showAircraft(false);
@@ -934,17 +935,42 @@ void MapWidget::showSavedPosOnStartup()
     if(currentPos.isValid())
     {
       qDebug() << "Show Last" << currentPos;
-      centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
-      setDistance(currentPos.getDistance());
+      centerPosOnMap(currentPos.getPos());
+      // Do not fix zoom - display as is
+      setDistanceToMap(currentPos.getDistance(), false /* Allow adjust zoom */);
     }
     else
     {
       qDebug() << "Show 0,0" << currentPos;
-      centerOn(0.f, 0.f, false);
-      setDistance(DEFAULT_MAP_DISTANCE);
+      centerPosOnMap(Pos(0.f, 0.f));
+      setDistanceToMap(DEFAULT_MAP_DISTANCE);
     }
   }
   history.activate();
+}
+
+void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
+{
+  centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                            GeoDataCoordinates::Degree), false);
+
+  if(allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP)
+    // Zoom out to next step to get a sharper map display
+    zoomOut();
+}
+
+void MapWidget::centerPosOnMap(const atools::geo::Pos& pos)
+{
+  centerOn(pos.getLonX(), pos.getLatY(), false /* animated */);
+}
+
+void MapWidget::setDistanceToMap(double distance, bool allowAdjust)
+{
+  setDistance(distance);
+
+  if(allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP)
+    // Zoom out to next step to get a sharper map display
+    zoomOut();
 }
 
 void MapWidget::showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick)
@@ -969,9 +995,9 @@ void MapWidget::showPos(const atools::geo::Pos& pos, float distanceNm, bool doub
                                         OptionData::instance().getMapZoomShowClick() :
                                         OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
+  centerPosOnMap(pos);
   if(dst < map::INVALID_DISTANCE_VALUE)
-    setDistance(dst);
-  centerOn(pos.getLonX(), pos.getLatY(), false);
+    setDistanceToMap(dst);
 }
 
 void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
@@ -987,9 +1013,6 @@ void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   float w = rect.getWidthDegree();
   float h = rect.getHeightDegree();
 
-  qDebug() << "rect w" << QString::number(w, 'f')
-           << "h" << QString::number(h, 'f');
-
   if(!rect.isValid())
   {
     qWarning() << Q_FUNC_INFO << "invalid rectangle";
@@ -1001,32 +1024,22 @@ void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   else
   {
     if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
-    {
       // Workaround for marble not being able to center certain lines
       // Turn rect into a square
-      centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(),
-                                rect.getEast() + h / 2,
-                                rect.getWest() - h / 2,
-                                GeoDataCoordinates::Degree), false);
-    }
+      centerRectOnMap(Rect(rect.getWest() - h / 2, rect.getNorth(), rect.getEast() + h / 2, rect.getSouth()));
     else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
-    {
-      centerOn(GeoDataLatLonBox(rect.getNorth() + w / 2,
-                                rect.getSouth() - w / 2,
-                                rect.getEast(),
-                                rect.getWest(),
-                                GeoDataCoordinates::Degree), false);
-    }
+      // Turn rect into a square
+      centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
-      centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                                GeoDataCoordinates::Degree), false);
+      // Center on rectangle
+      centerRectOnMap(Rect(rect.getWest(), rect.getNorth(), rect.getEast(), rect.getSouth()));
 
     float dist = atools::geo::nmToKm(Unit::rev(doubleClick ?
                                                OptionData::instance().getMapZoomShowClick() :
                                                OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
     if(distance() < dist)
-      setDistance(dist);
+      setDistanceToMap(dist);
   }
 }
 
@@ -1040,8 +1053,8 @@ void MapWidget::showSearchMark()
   if(searchMarkPos.isValid())
   {
     jumpBackToAircraftStart();
-    setDistance(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF)));
-    centerOn(searchMarkPos.getLonX(), searchMarkPos.getLatY(), false);
+    centerPosOnMap(searchMarkPos);
+    setDistanceToMap(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF)));
     mainWindow->setStatusMessage(tr("Showing distance search center."));
   }
 }
@@ -1065,8 +1078,7 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
     }
 
     if(centerAircraftChecked && screenIndex->getUserAircraft().isValid())
-      centerOn(screenIndex->getUserAircraft().getPosition().getLonX(),
-               screenIndex->getUserAircraft().getPosition().getLatY(), false);
+      centerPosOnMap(screenIndex->getUserAircraft().getPosition());
   }
 }
 
@@ -1078,13 +1090,13 @@ void MapWidget::showHome()
   jumpBackToAircraftStart();
   showAircraft(false);
   if(!atools::almostEqual(homeDistance, 0.))
-    // Only center position is valid
-    setDistance(homeDistance);
+    // Only center position is valid - Do not fix zoom - display as is
+    setDistanceToMap(homeDistance, false /* Allow adjust zoom */);
 
   if(homePos.isValid())
   {
     jumpBackToAircraftStart();
-    centerOn(homePos.getLonX(), homePos.getLatY(), false);
+    centerPosOnMap(homePos);
     mainWindow->setStatusMessage(tr("Showing home position."));
   }
 }
@@ -1323,9 +1335,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
             if(centerAircraftAndLeg)
             {
               QRect aircraftWpRect = QRect(curPoint, nextWpPoint).normalized();
-              float factor = projection() ==
-                             Mercator ? MAX_SQUARE_FACTOR_FOR_CENTER_LEG_MERCATOR :
-                             MAX_SQUARE_FACTOR_FOR_CENTER_LEG_SPHERICAL;
 
               // Check if the rectangle from aircraft and waypoint overlaps with a shrinked screen rectangle
               // to check if it is still centered
@@ -1346,16 +1355,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               else if(alt < 20500.f)
                 minZoom = atools::geo::nmToKm(14.7f);
 
-              // Check if zoom in is needed
-              bool rectTooSmall = aircraftWpRect.width() < width() / factor &&
-                                  aircraftWpRect.height() < height() / factor;
+              // Zoom to rectangle every 15 seconds
+              bool zoomToRect = now - lastCenterAcAndWp > MAX_SIM_CENTER_AC_AND_WP_MS;
 
               if(distance() < minZoom * 1.2f)
                 // Already close enough - do not zoom in
-                rectTooSmall = false;
+                zoomToRect = false;
 
-              if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
+              if(!curPosVisible || !nextWpPosVisible || updateAlways || zoomToRect || !centered)
               {
+                // Wait 15 seconds after every update
+                lastCenterAcAndWp = now;
+
                 // Postpone scren updates
                 setUpdatesEnabled(false);
 
@@ -1368,7 +1379,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 qDebug() << "nextWpPosVisible" << nextWpPosVisible;
                 qDebug() << "nextWpPoint" << nextWpPoint;
                 qDebug() << "updateAlways" << updateAlways;
-                qDebug() << "rectTooSmall" << rectTooSmall;
+                qDebug() << "rectTooSmall" << zoomToRect;
                 qDebug() << "centered" << centered;
 
                 qDebug() << "innerRect" << innerRect;
@@ -1399,27 +1410,27 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 #endif
                   }
 
-                  GeoDataLatLonBox box(rect.getNorth() + nsCorrection, rect.getSouth() - nsCorrection,
-                                       rect.getEast(), rect.getWest(),
-                                       GeoDataCoordinates::Degree);
+                  Rect box(rect.getWest(), rect.getNorth() + nsCorrection,
+                           rect.getEast(), rect.getSouth() - nsCorrection);
 
-                  if(!box.isNull() &&
+                  if(!box.isPoint() &&
                      // Keep the stupid Marble widget from crashing
-                     box.width(GeoDataCoordinates::Degree) < 180. &&
-                     box.height(GeoDataCoordinates::Degree) < 180. &&
-                     box.width(GeoDataCoordinates::Degree) > 0.000001 &&
-                     box.height(GeoDataCoordinates::Degree) > 0.000001)
+                     box.getWidthDegree() < 180. &&
+                     box.getHeightDegree() < 180. &&
+                     box.getWidthDegree() > 0.000001 &&
+                     box.getHeightDegree() > 0.000001)
                   {
-                    centerOn(box, false);
+                    centerRectOnMap(box);
                     if(distance() < minZoom)
                       // Correct zoom for minimum distance
-                      setDistance(minZoom);
+                      setDistanceToMap(minZoom);
                   }
                   else
-                    centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
+                    // Rectangle is invalid center on position
+                    centerPosOnMap(aircraft.getPosition());
                 }
                 else if(rect.isValid())
-                  centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
+                  centerPosOnMap(aircraft.getPosition());
               } // if(!curPosVisible || !nextWpPosVisible || updateAlways || rectTooSmall || !centered)
             } // if(centerAircraftAndLeg)
             else
@@ -1439,8 +1450,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 // Center aircraft only
                 // Save distance value to avoid "zoom creep"
                 double savedDistance = distance();
-                centerOn(aircraft.getPosition().getLonX(), aircraft.getPosition().getLatY());
-                setDistance(savedDistance);
+                centerPosOnMap(aircraft.getPosition());
+                setDistanceToMap(savedDistance, false /* Allow adjust zoom */);
               }
             }
           }
@@ -3715,8 +3726,9 @@ void MapWidget::jumpBackToAircraftTimeout()
        OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
     {
       hideTooltip();
-      setDistance(jumpBackToAircraftDistance);
-      centerOn(jumpBackToAircraftPos.getLonX(), jumpBackToAircraftPos.getLatY(), false);
+      centerPosOnMap(jumpBackToAircraftPos);
+      // Do not fix zoom - display as is
+      setDistanceToMap(jumpBackToAircraftDistance, false /* Allow adjust zoom */);
       mainWindow->setStatusMessage(tr("Jumped back to aircraft."));
     }
   }

@@ -423,13 +423,18 @@ private:
   /* Start a line measurement after context menu selection or click+modifier */
   void addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapSearchResult& result);
   void addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapAirport *airport, const map::MapVor *vor,
-                     const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
+                      const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
 
   /* Remove pattern at index and update the map */
   void removeTrafficPatterm(int index);
 
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();
+
+  /* Internal zooming and centering. Zooms one step out to get a sharper map display if allowAdjust is true */
+  void setDistanceToMap(double distance, bool allowAdjust = true);
+  void centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust = true);
+  void centerPosOnMap(const atools::geo::Pos& pos);
 
   /* Convert paint layer value to menu actions checked / not checked */
   map::MapWeatherSource weatherSourceFromUi();
@@ -505,7 +510,10 @@ private:
 
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;
+
+  /* Used to check for simulator aircraft updates */
   qint64 lastSimUpdateMs = 0L;
+  qint64 lastCenterAcAndWp = 0L;
   qint64 lastSimUpdateTooltipMs = 0L;
   bool active = false;
 
