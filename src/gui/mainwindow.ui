@@ -8411,7 +8411,7 @@
      <normaloff>:/littlenavmap/resources/icons/viewexpand.svg</normaloff>:/littlenavmap/resources/icons/viewexpand.svg</iconset>
    </property>
    <property name="text">
-    <string>Fit to Window</string>
+    <string>Fit to &amp;Window</string>
    </property>
    <property name="toolTip">
     <string>Adjust elevation profile to window size and disable scrolling and zooming</string>
@@ -8426,7 +8426,7 @@
      <normaloff>:/littlenavmap/resources/icons/viewreset.svg</normaloff>:/littlenavmap/resources/icons/viewreset.svg</iconset>
    </property>
    <property name="text">
-    <string>Expand to Window</string>
+    <string>&amp;Expand to Window</string>
    </property>
    <property name="toolTip">
     <string>Expand elevation profile to window size</string>
@@ -8440,7 +8440,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Follow on Map</string>
+    <string>&amp;Follow on Map</string>
    </property>
    <property name="toolTip">
     <string>Follow the cursor position above the elevation profile on the map</string>
@@ -8458,7 +8458,7 @@
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Center Aircraft</string>
+    <string>Center &amp;Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Center the user aircraft on the elevation profile</string>
@@ -8475,7 +8475,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Labels</string>
+    <string>Show &amp;Labels</string>
    </property>
    <property name="toolTip">
     <string>Show or hide the labels at the left side of the elevation profile</string>
@@ -8492,7 +8492,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Scrollbars</string>
+    <string>Show Scroll&amp;bars</string>
    </property>
    <property name="toolTip">
     <string>Show or hide scrollbars around the elevation profile</string>
@@ -8507,7 +8507,7 @@
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Position on Map</string>
+    <string>&amp;Show Position on Map</string>
    </property>
    <property name="toolTip">
     <string>Show this position on the map</string>

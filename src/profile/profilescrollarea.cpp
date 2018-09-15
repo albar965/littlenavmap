@@ -392,18 +392,9 @@ void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
   }
   else if(scrollBar->orientation() == Qt::Horizontal)
   {
-    if(oldValue == oldMin)
-      // Stay on left when old pos was on left or 100%
-      scrollBar->setValue(scrollBar->minimum());
-    else if(oldValue == oldMax)
-      // Stay on the right if old position was on the right
-      scrollBar->setValue(scrollBar->maximum());
-    else
-    {
-      // Keep scroll bar position
-      double oldFactor = static_cast<double>(oldValue) / (oldMax - oldMin);
-      scrollBar->setValue(atools::roundToInt(oldFactor * (max - min)));
-    }
+    // Keep scroll bar position
+    double oldFactor = static_cast<double>(oldValue) / (oldMax - oldMin);
+    scrollBar->setValue(atools::roundToInt(oldFactor * (max - min)));
   }
 }
 
@@ -482,10 +473,11 @@ void ProfileScrollArea::centerAircraft(int x, int y)
   int ymarginBottom = viewport->height() / 4;
 
   if(x - xmarginLeft < hScrollBar->value() || x > hScrollBar->value() + viewport->width() - xmarginRight)
-    hScrollBar->setValue(std::min(std::max(0, x - xmarginLeft), hScrollBar->maximum()));
+    hScrollBar->setValue(std::min(std::max(hScrollBar->minimum(), x - xmarginLeft), hScrollBar->maximum()));
 
   if(y - ymarginTop < vScrollBar->value() || y > vScrollBar->value() + viewport->height() - ymarginBottom)
-    vScrollBar->setValue(std::min(std::max(0, y), vScrollBar->maximum()));
+    vScrollBar->setValue(std::min(std::max(vScrollBar->minimum(), y - viewport->height() / 2),
+                                  vScrollBar->maximum() - viewport->height() / 2));
 }
 
 void ProfileScrollArea::styleChanged()
