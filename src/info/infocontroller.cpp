@@ -65,11 +65,12 @@ InfoController::InfoController(MainWindow *parent)
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
+  // Set search path to silence text browser warnings
   Ui::MainWindow *ui = NavApp::getMainUi();
+  // Get base font size for widgets
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
   simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
 
-  // Set search path to silence text browser warnings
   QStringList paths({QApplication::applicationDirPath()});
   ui->textBrowserAirportInfo->setSearchPaths(paths);
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
@@ -368,7 +369,6 @@ void InfoController::restoreState()
                                  map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
                                  refsStrList.at(i).toInt(), false /* airport from nav database */);
 
-    updateTextEditFontSizes();
     showInformationInternal(res, map::NONE, false /* show windows */, false /* scroll to top */);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
@@ -376,6 +376,7 @@ void InfoController::restoreState()
                                                               ui->tabWidgetAircraft,
                                                               ui->tabWidgetLegend});
   }
+  updateTextEditFontSizes();
 }
 
 void InfoController::updateAirport()
@@ -561,7 +562,9 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   // Airport ================================================================
   if(!result.airports.isEmpty())
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "Found airport" << result.airports.first().ident;
+#endif
 
     // Only one airport shown - have to make a copy here since currentSearchResult might be equal to result
     // when updating
@@ -773,8 +776,9 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
   // Userpoints on top of the list
   for(map::MapUserpoint userpoint: result.userpoints)
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "Found waypoint" << userpoint.ident;
-
+#endif
     // Get updated object in case of changes in the database
     mapQuery->updateUserdataPoint(userpoint);
 
@@ -787,7 +791,9 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
 
   for(const map::MapVor& vor : result.vors)
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "Found vor" << vor.ident;
+#endif
 
     if(!bearingChanged)
       currentSearchResult.vors.append(vor);
@@ -798,7 +804,9 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
 
   for(const map::MapNdb& ndb : result.ndbs)
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "Found ndb" << ndb.ident;
+#endif
 
     if(!bearingChanged)
       currentSearchResult.ndbs.append(ndb);
@@ -809,7 +817,9 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
 
   for(const map::MapWaypoint& waypoint : result.waypoints)
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "Found waypoint" << waypoint.ident;
+#endif
 
     if(!bearingChanged)
       currentSearchResult.waypoints.append(waypoint);
@@ -820,7 +830,9 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
 
   for(const map::MapAirway& airway : result.airways)
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "Found airway" << airway.name;
+#endif
 
     if(!bearingChanged)
       currentSearchResult.airways.append(airway);
@@ -1053,7 +1065,8 @@ void InfoController::updateAircraftInfo()
 void InfoController::optionsChanged()
 {
   updateTextEditFontSizes();
-  showInformationInternal(currentSearchResult, map::NONE, false /* Show windows */, false /* scroll to top */);
+  updateAllInformation();
+  updateAircraftInfo();
 }
 
 /* Update font size in text browsers if options have changed */
@@ -1077,6 +1090,14 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserAircraftInfo, simInfoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAircraftProgressInfo, simInfoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAircraftAiInfo, simInfoFontPtSize, sizePercent);
+
+  // Adjust symbol sizes
+  int infoFontPixelSize = ui->textBrowserAirportInfo->fontMetrics().height();
+  infoBuilder->setSymbolSize(QSize(infoFontPixelSize, infoFontPixelSize));
+  infoBuilder->setSymbolSizeTitle(QSize(infoFontPixelSize, infoFontPixelSize) * 3 / 2);
+
+  int simInfoFontPixelSize = ui->textBrowserAircraftInfo->fontMetrics().height();
+  infoBuilder->setSymbolSizeVehicle(QSize(simInfoFontPixelSize, simInfoFontPixelSize) * 3 / 2);
 }
 
 /* Set font size in text edit based on percent of original size */

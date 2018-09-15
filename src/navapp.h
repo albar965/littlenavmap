@@ -248,6 +248,8 @@ public:
 
   static StyleHandler *getStyleHandler();
 
+  static map::MapWeatherSource getMapWeatherSource();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;

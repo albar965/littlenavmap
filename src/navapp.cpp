@@ -582,6 +582,11 @@ MapWidget *NavApp::getMapWidget()
   return mainWindow->getMapWidget();
 }
 
+map::MapWeatherSource NavApp::getMapWeatherSource()
+{
+  return mainWindow->getMapWidget()->getMapWeatherSource();
+}
+
 RouteController *NavApp::getRouteController()
 {
   return mainWindow->getRouteController();

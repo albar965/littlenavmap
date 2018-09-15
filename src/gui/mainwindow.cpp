@@ -1098,6 +1098,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
+  // Update map weather source hightlights
+  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirport);
+  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirport);
+  connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, infoController, &InfoController::updateAirport);
+  connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, infoController, &InfoController::updateAirport);
+  connect(ui->actionMapShowWeatherIvao, &QAction::toggled, infoController, &InfoController::updateAirport);
+
   // Sun shading
   connect(ui->actionMapShowSunShading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowSunShadingSimulatorTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
@@ -1354,10 +1361,10 @@ void MainWindow::resultTruncated(int truncatedTo)
 
 void MainWindow::distanceChanged()
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "minimumZoom" << mapWidget->minimumZoom() << "maximumZoom" << mapWidget->maximumZoom()
-           << "step" << mapWidget->zoomStep() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
-#endif
+  // #ifdef DEBUG_INFORMATION
+  // qDebug() << Q_FUNC_INFO << "minimumZoom" << mapWidget->minimumZoom() << "maximumZoom" << mapWidget->maximumZoom()
+  // << "step" << mapWidget->zoomStep() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
+  // #endif
 
   mapDistanceLabel->setText(Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f)));
 }

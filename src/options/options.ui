@@ -407,7 +407,7 @@ A restart is required for the settings to take effect.</string>
              <number>70</number>
             </property>
             <property name="maximum">
-             <number>150</number>
+             <number>200</number>
             </property>
             <property name="singleStep">
              <number>10</number>
@@ -429,7 +429,7 @@ A restart is required for the settings to take effect.</string>
              <number>50</number>
             </property>
             <property name="maximum">
-             <number>150</number>
+             <number>200</number>
             </property>
             <property name="singleStep">
              <number>10</number>
@@ -457,7 +457,7 @@ A restart is required for the settings to take effect.</string>
              <number>70</number>
             </property>
             <property name="maximum">
-             <number>150</number>
+             <number>200</number>
             </property>
             <property name="singleStep">
              <number>10</number>
@@ -499,7 +499,7 @@ A restart is required for the settings to take effect.</string>
              <number>50</number>
             </property>
             <property name="maximum">
-             <number>150</number>
+             <number>200</number>
             </property>
             <property name="singleStep">
              <number>10</number>

@@ -257,6 +257,21 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
+  void setSymbolSize(const QSize& value)
+  {
+    symbolSize = value;
+  }
+
+  void setSymbolSizeVehicle(const QSize& value)
+  {
+    symbolSizeVehicle = value;
+  }
+
+  void setSymbolSizeTitle(const QSize& value)
+  {
+    symbolSizeTitle = value;
+  }
+
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
@@ -300,14 +315,14 @@ private:
   void dateAndTime(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                    atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
-                    const QString& station = QString(),
-                    const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
+                    const QString& station,
+                    const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
                     const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar,
-                    bool isInterpolated, bool isFsxP3d) const;
+                    bool isInterpolated, bool isFsxP3d, bool mapDisplay) const;
   void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
-                     const map::MapAirport& airport, const QString& name) const;
+                     const map::MapAirport& airport, const QString& name, bool mapDisplay) const;
 
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
@@ -317,7 +332,17 @@ private:
   QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
-  void flightRulesText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
+                            bool mapDisplay) const;
+
+  /* Airport, navaid and userpoint icon size */
+  QSize symbolSize = QSize(18, 18);
+
+  /* Airport, navaid and userpoint icon title size */
+  QSize symbolSizeTitle = QSize(24, 24);
+
+  /* Aircraft size */
+  QSize symbolSizeVehicle = QSize(28, 28);
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
