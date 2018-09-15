@@ -844,15 +844,16 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
     float finalDistance = pattern.base45Degree ? pattern.downwindDistance : pattern.baseDistance;
 
     // Turn point base to final
-    Pos baseFinal = pattern.position.endpoint(nmToMeter(finalDistance), opposedCourseDeg(pattern.heading)).normalize();
+    Pos baseFinal = pattern.position.endpoint(nmToMeter(finalDistance),
+                                              opposedCourseDeg(pattern.heading)).normalize();
 
     // Turn point downwind to base
     Pos downwindBase = baseFinal.endpoint(nmToMeter(pattern.downwindDistance),
                                           pattern.heading + (pattern.turnRight ? 90.f : -90.f)).normalize();
 
     // Turn point upwind to crosswind
-    Pos upwindCrosswind = pattern.position.endpoint(nmToMeter(finalDistance) +
-                                                    feetToMeter(pattern.runwayLength), pattern.heading).normalize();
+    Pos upwindCrosswind = pattern.position.endpoint(nmToMeter(finalDistance) + feetToMeter(pattern.runwayLength),
+                                                    pattern.heading).normalize();
 
     // Turn point crosswind to downwind
     Pos crosswindDownwind = upwindCrosswind.endpoint(nmToMeter(pattern.downwindDistance),
@@ -867,8 +868,8 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
     if(context->viewportRect.overlaps(rect))
     {
       // Entry at opposite runway threshold
-      Pos downwindEntry = downwindBase.endpoint(nmToMeter(finalDistance) +
-                                                feetToMeter(pattern.runwayLength), pattern.heading).normalize();
+      Pos downwindEntry = downwindBase.endpoint(nmToMeter(finalDistance) + feetToMeter(
+                                                  pattern.runwayLength), pattern.heading).normalize();
 
       // Bail out if any points are hidden behind the globe
       bool visible, hidden;
@@ -907,24 +908,25 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         // Draw a line below to fill the gap because of round edges
         painter->setBrush(Qt::white);
         painter->setPen(QPen(pattern.color, context->szF(context->thicknessRangeDistance, 3), Qt::DashLine));
-        painter->drawLine(upwind);
+        drawLine(painter, upwind);
 
         // Straight out exit for pattern =======================
         QPointF exitStraight =
-          wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle), DEFAULT_WTOS_SIZE, &visible, &hidden);
-        painter->drawLine(upwind.p2(), exitStraight);
+          wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle).normalize(),
+               DEFAULT_WTOS_SIZE, &visible, &hidden);
+        drawLine(painter, upwind.p2(), exitStraight);
 
         // 45 degree exit for pattern =======================
         QPointF exit45Deg =
-          wToS(upwindCrosswind.endpoint(
-                 nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)), DEFAULT_WTOS_SIZE, &visible, &hidden);
-        painter->drawLine(upwind.p2(), exit45Deg);
+          wToS(upwindCrosswind.endpoint(nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)).normalize(),
+               DEFAULT_WTOS_SIZE, &visible, &hidden);
+        drawLine(painter, upwind.p2(), exit45Deg);
 
         // Entry to downwind
         QPointF entry =
-          wToS(downwindEntry.endpoint(
-                 nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)), DEFAULT_WTOS_SIZE, &visible, &hidden);
-        painter->drawLine(downwindEntryPoint, entry);
+          wToS(downwindEntry.endpoint(nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)).normalize(),
+               DEFAULT_WTOS_SIZE, &visible, &hidden);
+        drawLine(painter, downwindEntryPoint, entry);
 
         // Draw arrows to all the entry and exit indicators ========================
         painter->setPen(QPen(pattern.color, context->szF(context->thicknessRangeDistance, 2), Qt::SolidLine));

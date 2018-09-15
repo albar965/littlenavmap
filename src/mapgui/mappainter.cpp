@@ -189,31 +189,22 @@ void MapPainter::drawLineStraight(const PaintContext *context, const atools::geo
   bool visible2 = wToS(line.getPos2(), x2, y2);
 
   if(visible1 || visible2)
-    context->painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
-}
-
-void MapPainter::drawLine(QPainter *painter, const QLine& line)
-{
-  if(atools::geo::lineValid(line))
-    painter->drawLine(line);
+    drawLine(context->painter, QPointF(x1, y1), QPointF(x2, y2));
 }
 
 void MapPainter::drawLine(QPainter *painter, const QLineF& line)
 {
-  if(atools::geo::lineValid(line))
+  QRectF rect(line.p1(), line.p2());
+  rect = rect.normalized();
+
+  if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(rect))
+  {
+    // if(line.intersect(QLineF(rect.topLeft(), rect.topRight()), nullptr) == QLineF::BoundedIntersection ||
+    // line.intersect(QLineF(rect.topRight(), rect.bottomRight()), nullptr) == QLineF::BoundedIntersection ||
+    // line.intersect(QLineF(rect.bottomRight(), rect.bottomLeft()), nullptr) == QLineF::BoundedIntersection ||
+    // line.intersect(QLineF(rect.bottomLeft(), rect.topLeft()), nullptr) == QLineF::BoundedIntersection)
     painter->drawLine(line);
-}
-
-void MapPainter::drawLine(QPainter *painter, const QPoint& p1, const QPoint& p2)
-{
-  if(atools::geo::pointValid(p1) && atools::geo::pointValid(p2))
-    painter->drawLine(p1, p2);
-}
-
-void MapPainter::drawLine(QPainter *painter, const QPointF& p1, const QPointF& p2)
-{
-  if(atools::geo::pointValid(p1) && atools::geo::pointValid(p2))
-    painter->drawLine(p1, p2);
+  }
 }
 
 void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
