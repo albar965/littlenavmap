@@ -103,7 +103,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
   int x, y;
   if(wToS(mapWidget->getHomePos(), x, y))
   {
-    int size = atools::roundToInt(context->szF(context->textSizeRangeDistance , 24));
+    int size = atools::roundToInt(context->szF(context->textSizeRangeDistance, 24));
 
     QPixmap pixmap = QIcon(":/littlenavmap/resources/icons/homemap.svg").pixmap(QSize(size, size));
     painter->drawPixmap(QPoint(x - size / 2, y - size / 2), pixmap);
@@ -467,7 +467,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     QVector<QPointF> endpointsScreen;
     for(float angle = 0.f; angle < 360.f; angle += 5)
     {
-      endpoints.append(pos.endpoint(radiusMeter, magVar + angle));
+      endpoints.append(pos.endpoint(radiusMeter, magVar + angle).normalize());
       endpointsScreen.append(wToSF(endpoints.last()));
     }
 
@@ -494,7 +494,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
 
     painter->setBrush(QBrush(Qt::white));
     // Calculate and draw triangle for true north ======================================================
-    Pos trueNorth = pos.endpoint(radiusMeter, 0);
+    Pos trueNorth = pos.endpoint(radiusMeter, 0).normalize();
     QPointF trueNorthPoint = wToSF(trueNorth);
 
     if(!trueNorthPoint.isNull())
@@ -523,7 +523,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       if(context->dOptRose(opts::ROSE_TRACK_LINE))
       {
         float trackTrue = aircaft.getTrackDegTrue();
-        Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue);
+        Pos trueTrackPos = pos.endpoint(radiusMeter, trackTrue).normalize();
         drawLine(context, Line(pos, trueTrackPos));
       }
 
@@ -531,7 +531,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       if(context->dOptRose(opts::ROSE_HEADING_LINE))
       {
         float headingTrue = aircaft.getHeadingDegTrue();
-        Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue);
+        Pos trueHeadingPos = pos.endpoint(radiusMeter, headingTrue).normalize();
         painter->setPen(headingLinePen);
         drawLine(context, Line(pos, trueHeadingPos));
       }
@@ -598,7 +598,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     {
       for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
       {
-        QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue));
+        QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue).normalize());
         if(!s.isNull())
           symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
                                   s.x(), s.y(), textatt::CENTER);
@@ -628,7 +628,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
             float crabAngle = windCorrectedHeading(aircaft.getWindSpeedKts(), aircaft.getWindDirectionDegT(),
                                                    routeLeg.getCourseToRhumbTrue(), aircaft.getTrueAirspeedKts());
 
-            Pos crabPos = pos.endpoint(radiusMeter, crabAngle);
+            Pos crabPos = pos.endpoint(radiusMeter, crabAngle).normalize();
             painter->setPen(rosePen);
             painter->setBrush(OptionData::instance().getFlightplanActiveSegmentColor());
 
@@ -643,7 +643,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
             // Draw small line to show course to next waypoint ========================
             if(crs < INVALID_COURSE_VALUE)
             {
-              Pos endPt = pos.endpoint(radiusMeter, crs);
+              Pos endPt = pos.endpoint(radiusMeter, crs).normalize();
               Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
               painter->setPen(QPen(mapcolors::routeOutlineColor, context->sz(context->thicknessFlightplan, 7),
                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -661,7 +661,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       // Aircraft track label at end of track line ======================================================
       if(context->dOptRose(opts::ROSE_TRACK_LABEL))
       {
-        QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue));
+        QPointF trueTrackTextPoint = wToSF(pos.endpoint(radiusMeter * 1.1f, trackTrue).normalize());
         if(!trueTrackTextPoint.isNull())
         {
           painter->setPen(mapcolors::compassRoseTextColor);
