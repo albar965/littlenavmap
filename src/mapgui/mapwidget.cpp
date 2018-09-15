@@ -91,9 +91,6 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
 /* Update rate on tooltip for bearing display */
 const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
 
-/* Center next waypoint and aircraft only every 15 seconds */
-const int MAX_SIM_CENTER_AC_AND_WP_MS = 15000;
-
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
@@ -951,8 +948,9 @@ void MapWidget::showSavedPosOnStartup()
 
 void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 {
-  centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                            GeoDataCoordinates::Degree), false);
+  GeoDataLatLonBox box(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                       GeoDataCoordinates::Degree);
+  centerOn(box, false);
 
   if(allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP)
     // Zoom out to next step to get a sharper map display
@@ -1334,60 +1332,39 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
           {
             if(centerAircraftAndLeg)
             {
-              QRect aircraftWpRect = QRect(curPoint, nextWpPoint).normalized();
-
-              // Check if the rectangle from aircraft and waypoint overlaps with a shrinked screen rectangle
-              // to check if it is still centered
-              QRect innerRect = widgetRect.adjusted(width() / 4, height() / 4, -width() / 4, -height() / 4);
-              bool centered = innerRect.intersects(atools::geo::rectToSquare(aircraftWpRect));
-
-              // Minimum zoom depends on flight altitude
-              float minZoom = atools::geo::nmToKm(14.7f);
-              float alt = aircraft.getAltitudeAboveGroundFt();
-              if(alt < 500.f)
-                minZoom = atools::geo::nmToKm(0.5f);
-              else if(alt < 1200.f)
-                minZoom = atools::geo::nmToKm(0.9f);
-              else if(alt < 2200.f)
-                minZoom = atools::geo::nmToKm(1.8f);
-              else if(alt < 10500.f)
-                minZoom = atools::geo::nmToKm(7.4f);
-              else if(alt < 20500.f)
-                minZoom = atools::geo::nmToKm(14.7f);
+              // Update two times based on flying time to next waypoint - this is recursive
+              // and will update more often close to the wp
+              int timeToWpUpdateMs =
+                std::max(static_cast<int>(atools::geo::meterToNm(aircraft.getPosition().distanceMeterTo(nextWpPos)) /
+                                          (aircraft.getGroundSpeedKts() + 1.f) * 3600.f / 2.f), 2) * 1000;
 
               // Zoom to rectangle every 15 seconds
-              bool zoomToRect = now - lastCenterAcAndWp > MAX_SIM_CENTER_AC_AND_WP_MS;
+              bool zoomToRect = now - lastCenterAcAndWp > timeToWpUpdateMs;
 
-              if(distance() < minZoom * 1.2f)
-                // Already close enough - do not zoom in
-                zoomToRect = false;
-
-              if(!curPosVisible || !nextWpPosVisible || updateAlways || zoomToRect || !centered)
+#ifdef DEBUG_INFORMATION
+              qDebug() << Q_FUNC_INFO;
+              qDebug() << "curPosVisible" << curPosVisible;
+              qDebug() << "nextWpPosVisible" << nextWpPosVisible;
+              qDebug() << "updateAlways" << updateAlways;
+              qDebug() << "zoomToRect" << zoomToRect;
+#endif
+              if(!curPosVisible || !nextWpPosVisible || updateAlways || zoomToRect)
               {
                 // Wait 15 seconds after every update
                 lastCenterAcAndWp = now;
 
-                // Postpone scren updates
+                // Postpone screen updates
                 setUpdatesEnabled(false);
 
                 Rect rect(nextWpPos);
                 rect.extend(aircraft.getPosition());
 #ifdef DEBUG_INFORMATION
                 qDebug() << Q_FUNC_INFO;
-                qDebug() << "curPosVisible" << curPosVisible;
                 qDebug() << "curPoint" << curPoint;
-                qDebug() << "nextWpPosVisible" << nextWpPosVisible;
                 qDebug() << "nextWpPoint" << nextWpPoint;
-                qDebug() << "updateAlways" << updateAlways;
-                qDebug() << "rectTooSmall" << zoomToRect;
-                qDebug() << "centered" << centered;
-
-                qDebug() << "innerRect" << innerRect;
                 qDebug() << "widgetRect" << widgetRect;
-                qDebug() << "aircraftWpRect" << aircraftWpRect;
                 qDebug() << "ac.getPosition()" << aircraft.getPosition();
                 qDebug() << "rect" << rect;
-                qDebug() << "minZoom" << minZoom;
 #endif
 
                 if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
@@ -1417,13 +1394,29 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                      // Keep the stupid Marble widget from crashing
                      box.getWidthDegree() < 180. &&
                      box.getHeightDegree() < 180. &&
-                     box.getWidthDegree() > 0.000001 &&
-                     box.getHeightDegree() > 0.000001)
+                     box.getWidthDegree() > 0.00001 &&
+                     box.getHeightDegree() > 0.00001)
                   {
+#ifdef DEBUG_INFORMATION
+                    qDebug() << Q_FUNC_INFO << "box" << box;
+#endif
                     centerRectOnMap(box);
+
+                    // Minimum zoom depends on flight altitude
+                    float minZoom =
+                      atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / 1400.f, 0.4f), 28.f));
+
                     if(distance() < minZoom)
+                    {
+#ifdef DEBUG_INFORMATION
+                      qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoom;
+#endif
                       // Correct zoom for minimum distance
                       setDistanceToMap(minZoom);
+#ifdef DEBUG_INFORMATION
+                      qDebug() << Q_FUNC_INFO << "zoom()" << zoom();
+#endif
+                    }
                   }
                   else
                     // Rectangle is invalid center on position
@@ -2926,7 +2919,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-      Pos pos(lon, lat, 5000);
+      Pos pos(lon, lat, NavApp::getMainUi()->spinBoxRouteAlt->value());
 
       atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
       data.setPacketId(packetId++);
@@ -3397,6 +3390,9 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
     // First menu key press after dragging - enable context menu again
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
+#ifdef DEBUG_MOVING_AIRPLANE
+  if(!(event->modifiers() & (Qt::ShiftModifier | Qt::ControlModifier)))
+#endif
   jumpBackToAircraftStart();
 }
 
