@@ -95,6 +95,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabels);
   connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbars);
+  connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoom);
 
   // Install event filter to area and viewport widgets avoid subclassing
   scrollArea->installEventFilter(this);
@@ -423,6 +424,16 @@ QPoint ProfileScrollArea::getOffset() const
   return scrollArea->widget()->pos() * -1;
 }
 
+void ProfileScrollArea::showZoom(bool show)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(show)
+    // Use arbitrary large value for the drawing part - the widget will redistribute it
+    ui->splitterProfile->setSizes({10000, ui->gridLayoutProfileButtons->minimumSize().width()});
+  else
+    ui->splitterProfile->setSizes({10000, 0});
+}
+
 void ProfileScrollArea::showScrollbars(bool show)
 {
   scrollArea->setVerticalScrollBarPolicy(show ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
@@ -444,7 +455,8 @@ void ProfileScrollArea::saveState()
     ui->actionProfileCenterAircraft,
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
-    ui->actionProfileShowScrollbars
+    ui->actionProfileShowScrollbars,
+    ui->actionProfileShowZoom
   });
 
 }
@@ -459,7 +471,8 @@ void ProfileScrollArea::restoreState()
     ui->actionProfileCenterAircraft,
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
-    ui->actionProfileShowScrollbars
+    ui->actionProfileShowScrollbars,
+    ui->actionProfileShowZoom
   });
   fillToggled(ui->actionProfileFit->isChecked());
 }

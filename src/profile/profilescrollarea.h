@@ -96,6 +96,9 @@ private:
   /* Show label widget on the left side */
   void showLabels(bool show);
 
+  /* Show right side of split window from action in menu */
+  void showZoom(bool show);
+
   /* Viewport rectangle inside the widget with offset added */
   QRect getViewPortRect() const;
 

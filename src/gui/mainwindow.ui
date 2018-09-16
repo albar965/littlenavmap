@@ -8516,6 +8516,23 @@
     <string>Show this position on the map</string>
    </property>
   </action>
+  <action name="actionProfileShowZoom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;Zoom Sliders</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide the zoom sliders in the split window on the right</string>
+   </property>
+   <property name="statusTip">
+    <string>Show or hide the zoom sliders in the split window on the right</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
