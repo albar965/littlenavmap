@@ -171,6 +171,9 @@ public:
   /* Circle for approach points which are not navaids */
   void drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
+  /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
+  void drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf);
+
   /* Flyover underlay */
   void drawProcedureFlyover(QPainter *painter, int x, int y, int size);
 

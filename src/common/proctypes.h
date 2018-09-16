@@ -368,6 +368,8 @@ struct MapProcedureLeg
     return type == proc::CIRCLE_TO_LAND;
   }
 
+  bool isFinalApproachFix() const;
+
   bool isHold() const;
   bool isCircular() const;
 

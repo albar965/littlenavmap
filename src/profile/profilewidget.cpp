@@ -360,12 +360,17 @@ QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
 
 int ProfileWidget::getMinSafeAltitudeY() const
 {
-  return static_cast<int>(rect().height() - minSafeAltitudeFt * verticalScale);
+  return altitudeY(minSafeAltitudeFt);
 }
 
 int ProfileWidget::getFlightplanAltY() const
 {
-  return static_cast<int>(rect().height() - flightplanAltFt * verticalScale);
+  return altitudeY(flightplanAltFt);
+}
+
+int ProfileWidget::altitudeY(float altitudeFt) const
+{
+  return static_cast<int>(rect().height() - altitudeFt * verticalScale);
 }
 
 void ProfileWidget::showPosAlongFlightplan(int x, bool doubleClick)
@@ -375,8 +380,27 @@ void ProfileWidget::showPosAlongFlightplan(int x, bool doubleClick)
     emit showPos(calculatePos(x), 0.f, doubleClick);
 }
 
+void ProfileWidget::drawLine(QPainter *painter, int x1, int y1, int x2, int y2, int x)
+{
+  if(x1 < x && x2 > x)
+  {
+    // Draw line with bend at x
+    painter->drawLine(x1, y1, x, y1);
+    painter->drawLine(x, y1, x2, y2);
+  }
+  else
+    painter->drawLine(x1, y1, x2, y2);
+}
+
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
+  // Saved route that was used to create the geometry
+  const Route& route = legList.route;
+
+  if(NavApp::getRoute().size() != route.size())
+    // Do not draw if route is updated to avoid invalid indexes
+    return;
+
   // Keep margin to left, right and top
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
@@ -390,13 +414,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   SymbolPainter symPainter;
 
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || route.isEmpty())
   {
     // Nothing to show label =========================
     symPainter.textBox(&painter, {tr("No Flight Plan")}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
     return;
   }
+
+  // Get a copy of the active route
+  Route activeRoute = NavApp::getRoute();
 
   // Draw the mountains ======================================================
   painter.setBrush(dark ? mapcolors::profileLandDarkColor : mapcolors::profileLandColor);
@@ -420,8 +447,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.drawLine(0, flightplanY, X0 + static_cast<int>(w), flightplanY);
   painter.drawLine(0, safeAltY, X0, safeAltY);
 
-  const Route& route = routeController->getRoute();
-
   // Draw orange minimum safe altitude lines for each segment ======================================================
   painter.setPen(dark ? mapcolors::profileSafeAltLegLineDarkPen : mapcolors::profileSafeAltLegLinePen);
   for(int i = 0; i < legList.elevationLegs.size(); i++)
@@ -439,36 +464,98 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setPen(dark ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen);
   painter.drawLine(X0, safeAltY, X0 + static_cast<int>(w), safeAltY);
 
-  // Draw flight plan line ======================================================
+  // Get TOD position from active route  ======================================================
   int todX = 0;
-  QPolygon line;
-  line << QPoint(X0, flightplanY);
-  float destAlt = legList.route.last().getPosition().getAltitude();
+  // QPolygon line;
+  // line << QPoint(X0, flightplanY);
+  float destAlt = activeRoute.last().getPosition().getAltitude();
   if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
   {
-    if(route.getTopOfDescentFromStart() > 0.f)
-      todX = X0 + atools::roundToInt(route.getTopOfDescentFromStart() * horizontalScale);
+    if(activeRoute.getTopOfDescentFromStart() > 0.f)
+      todX = X0 + atools::roundToInt(activeRoute.getTopOfDescentFromStart() * horizontalScale);
     else
       todX = X0;
-
-    if(todX < X0 + w)
-    {
-      // Draw the flightplan line and ToD
-      line << QPoint(todX, flightplanY);
-      line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
-    }
-    else
-      // Draw the flightplan line
-      line << QPoint(X0 + w, flightplanY);
   }
-  else
-    line << QPoint(X0 + w, flightplanY);
 
-  painter.setPen(QPen(mapcolors::routeOutlineColor, 4, Qt::SolidLine));
-  painter.drawPolyline(line);
+  // Calculate line y positions ======================================================
+  QVector<int> waypointY; /* Flight plan waypoint screen coordinates */
+  QLineF todLine(todX, flightplanY, w + X0, altitudeY(destAlt));
+  waypointY.append(flightplanY);
+  for(int i = 1; i < waypointX.size(); i++)
+  {
+    if(i == waypointX.size() - 1)
+      // Destination
+      waypointY.append(altitudeY(destAlt));
+    else if(waypointX.at(i) < todX)
+      // Before TOD
+      waypointY.append(flightplanY);
+    else
+      // After TOD - interpolate y
+      waypointY.append(atools::roundToInt(todLine.pointAt((waypointX.at(i) - todX) / todLine.dx()).y()));
+  }
 
-  painter.setPen(QPen(OptionData::instance().getFlightplanColor(), 2, Qt::SolidLine));
-  painter.drawPolyline(line);
+  // Get active route leg
+  bool activeValid = activeRoute.isActiveValid();
+  // Active normally start at 1 - this will consider all legs as not passed
+  int activeRouteLeg = activeValid ? activeRoute.getActiveLegIndex() : 0;
+  int passedRouteLeg = OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+
+  // Draw background line ======================================================
+  painter.setPen(QPen(mapcolors::routeOutlineColor, 7, Qt::SolidLine));
+  for(int i = passedRouteLeg; i < waypointX.size(); i++)
+  {
+    if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand())
+      drawLine(&painter, waypointX.at(i - 1), waypointY.at(i - 1), waypointX.at(i), waypointY.at(i), todX);
+  }
+
+  // Draw passed ======================================================
+  painter.setPen(QPen(OptionData::instance().getFlightplanPassedSegmentColor(), 4, Qt::SolidLine));
+  for(int i = 1; i < passedRouteLeg; i++)
+    drawLine(&painter, waypointX.at(i - 1), waypointY.at(i - 1), waypointX.at(i), waypointY.at(i), todX);
+
+  // Draw ahead ======================================================
+  QPen flightplanPen(OptionData::instance().getFlightplanColor(), 4, Qt::SolidLine);
+  QPen procedurePen(OptionData::instance().getFlightplanProcedureColor(), 4, Qt::SolidLine);
+
+  painter.setBackgroundMode(Qt::OpaqueMode);
+  painter.setBackground(Qt::white);
+  painter.setBrush(Qt::NoBrush);
+
+  for(int i = passedRouteLeg + 1; i < waypointX.size(); i++)
+  {
+    painter.setPen(route.at(i - 1).isAnyProcedure() ? procedurePen : flightplanPen);
+
+    if(route.at(i).getProcedureLeg().isCircleToLand())
+    {
+      // Draw CTL legs as dotted lines
+      QPen pen = painter.pen();
+      pen.setStyle(Qt::DotLine);
+      pen.setWidthF(pen.widthF() * 3.f / 4.f);
+      painter.setPen(pen);
+    }
+
+    drawLine(&painter, waypointX.at(i - 1), waypointY.at(i - 1), waypointX.at(i), waypointY.at(i), todX);
+  }
+
+  qDebug() << Q_FUNC_INFO << "activeRouteLeg" << activeRouteLeg;
+
+  if(activeRouteLeg > 0)
+  {
+    // Draw active  ======================================================
+    painter.setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), 4, Qt::SolidLine));
+
+    if(route.at(activeRouteLeg).getProcedureLeg().isCircleToLand())
+    {
+      // Draw CTL legs as dotted lines
+      QPen pen = painter.pen();
+      pen.setStyle(Qt::DotLine);
+      pen.setWidthF(pen.widthF() * 3.f / 4.f);
+      painter.setPen(pen);
+    }
+
+    drawLine(&painter, waypointX.at(activeRouteLeg - 1), waypointY.at(activeRouteLeg - 1),
+             waypointX.at(activeRouteLeg), waypointY.at(activeRouteLeg), todX);
+  }
 
   // Draw flightplan symbols ======================================================
   // Set default font to bold and reduce size
@@ -480,13 +567,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   painter.setBackgroundMode(Qt::TransparentMode);
 
+  // Show only ident in labels
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
   // Collect indexes in reverse (painting) order without missed
   QVector<int> indexes;
-  for(int i = 0; i < legList.route.size(); i++)
+  for(int i = 0; i < route.size(); i++)
   {
-    if(legList.route.at(i).getProcedureLeg().isMissed())
+    if(route.at(i).getProcedureLeg().isMissed())
       break;
     else
       indexes.prepend(i);
@@ -496,51 +584,78 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   int waypointIndex = waypointX.size();
   for(int routeIndex : indexes)
   {
-    const RouteLeg& leg = legList.route.at(routeIndex);
-    int symx = waypointX.at(--waypointIndex);
+    const RouteLeg& leg = route.at(routeIndex);
+    waypointIndex--;
+    int symx = waypointX.at(waypointIndex);
+    int symy = waypointY.at(waypointIndex);
 
     map::MapObjectTypes type = leg.getMapObjectType();
 
+    // Symbols ========================================================
     if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-    {
-      symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
-      symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 14, flags, 10, true);
-    }
+      symPainter.drawWaypointSymbol(&painter, QColor(), symx, symy, 9, true, false);
     else if(type == map::USERPOINTROUTE)
-    {
-      symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
-      symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
-                         symx - 5, flightplanTextY, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
-    }
+      symPainter.drawUserpointSymbol(&painter, symx, symy, 9, true, false);
     else if(type == map::INVALID)
-    {
-      symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
-      symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
-                         symx - 5, flightplanTextY, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
-    }
+      symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, symy, 9, true, false);
     else if(type == map::PROCEDURE)
       // Missed is not included
-      symPainter.drawProcedureSymbol(&painter, symx, flightplanY, 9, true, false);
+      symPainter.drawProcedureSymbol(&painter, symx, symy, 9, true, false);
+    else
+      continue;
+
+    if(routeIndex >= activeRouteLeg - 1)
+    {
+      // Procedure symbols ========================================================
+      if(leg.isAnyProcedure())
+        symPainter.drawProcedureUnderlay(&painter, symx, symy, 6, leg.getProcedureLeg().flyover,
+                                         leg.getProcedureLeg().isFinalApproachFix());
+
+      // Labels ========================================================
+      int symytxt = std::min(waypointY.at(waypointIndex) + 14, h);
+      if(type == map::WAYPOINT || leg.getWaypoint().isValid())
+        symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, symytxt, flags, 10, true);
+      else if(type == map::USERPOINTROUTE)
+        symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeUserPointColor,
+                           symx - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+      else if(type == map::INVALID)
+        symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
+                           symx - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+    }
   }
 
   // Draw the more important radio navaids
   waypointIndex = waypointX.size();
   for(int routeIndex : indexes)
   {
-    const RouteLeg& leg = legList.route.at(routeIndex);
-    int symx = waypointX.at(--waypointIndex);
+    const RouteLeg& leg = route.at(routeIndex);
+    waypointIndex--;
+    int symx = waypointX.at(waypointIndex);
+    int symy = waypointY.at(waypointIndex);
 
     map::MapObjectTypes type = leg.getMapObjectType();
 
+    // Symbols ========================================================
     if(type == map::NDB || leg.getNdb().isValid())
-    {
-      symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
-      symPainter.drawNdbText(&painter, leg.getNdb(), symx - 5, flightplanTextY, flags, 10, true);
-    }
+      symPainter.drawNdbSymbol(&painter, symx, symy, 12, true, false);
     else if(type == map::VOR || leg.getVor().isValid())
+      symPainter.drawVorSymbol(&painter, leg.getVor(), symx, symy, 12, true, false, false);
+    else
+      continue;
+
+    if(routeIndex >= activeRouteLeg - 1)
     {
-      symPainter.drawVorSymbol(&painter, leg.getVor(), symx, flightplanY, 12, true, false, false);
-      symPainter.drawVorText(&painter, leg.getVor(), symx - 5, flightplanTextY, flags, 10, true);
+      // Procedure symbols ========================================================
+      if(leg.isAnyProcedure())
+        symPainter.drawProcedureUnderlay(&painter, symx, symy, 6, leg.getProcedureLeg().flyover,
+                                         leg.getProcedureLeg().isFinalApproachFix());
+
+      // Labels ========================================================
+      int symytxt = std::min(waypointY.at(waypointIndex) + 14, h);
+      if(type == map::NDB || leg.getNdb().isValid())
+        symPainter.drawNdbText(&painter, leg.getNdb(), symx - 5, symytxt, flags, 10, true);
+      else if(type == map::VOR || leg.getVor().isValid())
+        symPainter.drawVorText(&painter, leg.getVor(), symx - 5, symytxt, flags, 10, true);
     }
   }
 
@@ -551,22 +666,29 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   waypointIndex = waypointX.size();
   for(int routeIndex : indexes)
   {
-    const RouteLeg& leg = legList.route.at(routeIndex);
-    int symx = waypointX.at(--waypointIndex);
+    const RouteLeg& leg = route.at(routeIndex);
+    waypointIndex--;
+    int symx = waypointX.at(waypointIndex);
+    int symy = waypointY.at(waypointIndex);
 
     // Draw all airport except destination and departure
-    if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < legList.route.size() - 1)
+    if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.size() - 1)
     {
-      symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanTextY,
-                                 OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
+      symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, symy, 10, false, false);
+
+      if(routeIndex >= activeRouteLeg - 1)
+      {
+        int symytxt = std::min(waypointY.at(waypointIndex) + 14, h);
+        symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, symytxt,
+                                   OptionData::instance().getDisplayOptions(), flags, 10, false, 16);
+      }
     }
   }
 
-  if(!legList.route.isEmpty())
+  if(!route.isEmpty())
   {
     // Draw departure always on the left also if there are departure procedures
-    const RouteLeg& departureLeg = legList.route.first();
+    const RouteLeg& departureLeg = route.first();
     if(departureLeg.getMapObjectType() == map::AIRPORT)
     {
       int textW = painter.fontMetrics().width(departureLeg.getIdent());
@@ -576,7 +698,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
 
     // Draw destination always on the right also if there are approach procedures
-    const RouteLeg& destinationLeg = legList.route.last();
+    const RouteLeg& destinationLeg = route.last();
     if(destinationLeg.getMapObjectType() == map::AIRPORT)
     {
       int textW = painter.fontMetrics().width(destinationLeg.getIdent());
@@ -1094,6 +1216,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
   menu.addSeparator();
+  menu.addAction(ui->actionProfileShowZoom);
   menu.addAction(ui->actionProfileShowLabels);
   menu.addAction(ui->actionProfileShowScrollbars);
   QAction *action = menu.exec(menuPos);
@@ -1110,6 +1233,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   // Other actions are connected to methods or used during updates
   // else if(action == ui->actionProfileFit)
   // else if(action == ui->actionProfileExpand)
+  // menu.addAction(ui->actionProfileShowZoom);
   // else if(action == ui->actionProfileShowLabels)
   // else if(action == ui->actionProfileShowScrollbars)
 }

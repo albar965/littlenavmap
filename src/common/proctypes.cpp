@@ -559,6 +559,11 @@ float MapProcedureLeg::legTrueCourse() const
   return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
 }
 
+bool MapProcedureLeg::isFinalApproachFix() const
+{
+  return proc::specialType(arincDescrCode) == proc::FAF;
+}
+
 bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type,

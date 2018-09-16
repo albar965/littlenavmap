@@ -545,6 +545,17 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
     painter->drawPoint(x, y);
 }
 
+void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf)
+{
+  if(flyover)
+    // Ring to indicate fly over
+    drawProcedureFlyover(painter, x, y, size + 14);
+
+  if(faf)
+    /* Maltese cross to indicate FAF on the map */
+    drawProcedureFaf(painter, x, y, size + 16);
+}
+
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
 {
   atools::util::PainterContextSaver saver(painter);

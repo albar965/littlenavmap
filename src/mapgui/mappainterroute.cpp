@@ -131,6 +131,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   painter->setBackground(mapcolors::routeOutlineColor);
   painter->setBrush(Qt::NoBrush);
 
+  // Draw route lines ==========================================================================
   if(!lines.isEmpty()) // Do not draw a line from airport to runway end
   {
     if(route->hasAnyArrivalProcedure())
@@ -167,7 +168,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
     if(activeValid)
     {
-      // Draw active leg on top of all others to keep it visible
+      // Draw active leg on top of all others to keep it visible ===========================
       painter->setPen(routeOutlinePen);
       drawLine(context, lines.at(activeRouteLeg - 1));
 
@@ -179,7 +180,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
   context->szFont(context->textSizeFlightplan * 1.1f);
 
-  // Collect coordinates for text placement and lines first
+  // Collect coordinates for text placement and lines first ============================
   LineString positions;
   for(int i = 0; i < route->size(); i++)
     positions.append(route->at(i).getPosition());
@@ -230,6 +231,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Remember last point across procedures to avoid overlaying text
   proc::MapProcedureLeg lastLegPoint;
 
+  // Draw procedures ==========================================================================
   if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
   {
     // Draw arrival and departure procedures ============================
@@ -1247,13 +1249,9 @@ void MapPainterRoute::paintProcedurePoint(const PaintContext *context, int x, in
 void MapPainterRoute::paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg,
                                              int x, int y, int size)
 {
-  if(leg.flyover)
-    // Ring to indicate fly over
-    symbolPainter->drawProcedureFlyover(context->painter, x, y, size + 14);
-
-  if(proc::specialType(leg.arincDescrCode) == proc::FAF)
-    /* Maltese cross to indicate FAF on the map */
-    symbolPainter->drawProcedureFaf(context->painter, x, y, size + 16);
+  // Ring to indicate fly over
+  // Maltese cross to indicate FAF on the map
+  symbolPainter->drawProcedureUnderlay(context->painter, x, y, size, leg.flyover, leg.isFinalApproachFix());
 }
 
 /* Paint user defined waypoint */

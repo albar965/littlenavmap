@@ -183,6 +183,12 @@ private:
   /* Calculate map position on flight plan for x screen/widget position on profile. */
   atools::geo::Pos calculatePos(int x);
 
+  /* Calulate screen y position on map */
+  int altitudeY(float altitudeFt) const;
+
+  /* Draw a line that is bended at x if x1 < x < x2 */
+  void drawLine(QPainter *painter, int x1, int y1, int x2, int y2, int x);
+
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
