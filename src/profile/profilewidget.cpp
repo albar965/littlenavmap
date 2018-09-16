@@ -154,7 +154,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
               // Center aircraft on scroll area
               if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked())
-                scrollArea->centerAircraft(currentPoint.x(), currentPoint.y());
+                scrollArea->centerAircraft(currentPoint);
 
               updateWidget = true;
             }

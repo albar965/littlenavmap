@@ -62,7 +62,7 @@ public:
   void restoreState();
 
   /* Check if position is outside margins and position it into left third of the profile if yes */
-  void  centerAircraft(int x, int y);
+  void  centerAircraft(const QPoint& screenPoint);
 
   /* Update split on style change */
   void styleChanged();
@@ -80,7 +80,7 @@ public:
     return scrollArea;
   }
 
-  ProfileLabelWidget* getLabelWidget() const
+  ProfileLabelWidget *getLabelWidget() const
   {
     return labelWidget;
   }

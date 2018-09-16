@@ -464,20 +464,30 @@ void ProfileScrollArea::restoreState()
   fillToggled(ui->actionProfileFit->isChecked());
 }
 
-void ProfileScrollArea::centerAircraft(int x, int y)
+void ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
 {
   // Use rectangle on the left side of the view
   int xmarginLeft = viewport->width() / 10;
   int ymarginTop = viewport->height() / 4;
   int xmarginRight = viewport->width() * 2 / 3;
   int ymarginBottom = viewport->height() / 4;
+  int x = screenPoint.x();
+  int y = screenPoint.y();
+
+  // qDebug() << Q_FUNC_INFO
+  // << "screenPoint" << screenPoint
+  // << "value" << vScrollBar->value()
+  // << "minimum" << vScrollBar->minimum()
+  // << "maximum" << vScrollBar->maximum()
+  // << "height" << viewport->height()
+  // << "width" << viewport->width()
+  // ;
 
   if(x - xmarginLeft < hScrollBar->value() || x > hScrollBar->value() + viewport->width() - xmarginRight)
     hScrollBar->setValue(std::min(std::max(hScrollBar->minimum(), x - xmarginLeft), hScrollBar->maximum()));
 
   if(y - ymarginTop < vScrollBar->value() || y > vScrollBar->value() + viewport->height() - ymarginBottom)
-    vScrollBar->setValue(std::min(std::max(vScrollBar->minimum(), y - viewport->height() / 2),
-                                  vScrollBar->maximum() - viewport->height() / 2));
+    vScrollBar->setValue(std::min(std::max(vScrollBar->minimum(), y - viewport->height() / 2), vScrollBar->maximum()));
 }
 
 void ProfileScrollArea::styleChanged()
