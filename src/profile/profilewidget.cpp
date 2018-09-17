@@ -276,6 +276,8 @@ void ProfileWidget::updateScreenCoords()
   if(showAircraftTrack)
     maxWindowAlt = std::max(maxWindowAlt, maxTrackAltitudeFt);
 
+  scrollArea->setMaxWindowAlt(maxWindowAlt);
+
   verticalScale = h / maxWindowAlt;
 
   // Calculate the landmass polygon
@@ -536,8 +538,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     drawLine(&painter, waypointX.at(i - 1), waypointY.at(i - 1), waypointX.at(i), waypointY.at(i), todX);
   }
-
-  qDebug() << Q_FUNC_INFO << "activeRouteLeg" << activeRouteLeg;
 
   if(activeRouteLeg > 0)
   {
@@ -1350,6 +1350,7 @@ void ProfileWidget::preRouteCalc()
 void ProfileWidget::mainWindowShown()
 {
   updateScreenCoords();
+  scrollArea->routeChanged(true);
   update();
 }
 

@@ -85,11 +85,17 @@ public:
     return labelWidget;
   }
 
+  void setMaxWindowAlt(float value);
+
 signals:
   /* Show flight plan waypoint or user position on map. x is widget position. */
   void showPosAlongFlightplan(int x, bool doubleClick);
 
 private:
+  /* Horizontal or vertical scroll bar of view has changed value or range */
+  void vertScrollBarsChanged();
+  void horizScrollBarsChanged();
+
   /* Show scrollbars on scroll area */
   void showScrollbars(bool show);
 
@@ -109,6 +115,9 @@ private:
   /* Expand button clicked */
   void expandClicked();
 
+  /* Update menu item from splitter position */
+  void splitterMoved(int pos, int index);
+
   /* Event filter on scroll area and viewport -passes events to methods below */
   virtual bool eventFilter(QObject *object, QEvent *event) override;
 
@@ -123,12 +132,14 @@ private:
 
   /* Scroll bar changed - resize widget and adapt scroll bar position */
   void scaleView(QScrollBar *scrollBar);
-  void horizontalSliderValueChanged(int value);
-  void verticalSliderValueChanged(int value);
+  void horizontalZoomSliderValueChanged(int value);
+  void verticalZoomSliderValueChanged(int value);
+  void updateWidgets();
 
   /* Scaling factor for widget */
-  float scaleFactorHoriz = 1.f;
-  float scaleFactorVert = 1.f;
+  double scaleFactorHoriz = 1.;
+  double scaleFactorVert = 1.;
+  float maxWindowAlt = 1.f;
 
   ProfileWidget *profileWidget;
   QScrollBar *hScrollBar, *vScrollBar;
@@ -139,6 +150,12 @@ private:
   /* Mouse draggin position on button down */
   QPoint startDragPos;
 
+  /* Remember old values so, that the scroll bar can be adjusted to remain in position */
+  double lastVertScrollPos = 1.; /* Default left */
+  double lastHorizScrollPos = 0.; /* Default top */
+
+  /* Disable changing the last scroll bar position above when resizing the widget */
+  bool changingScrollBars = false;
 };
 
 #endif // LNM_PROFILESCROLLAREA_H

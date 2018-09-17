@@ -32,28 +32,6 @@
 #include <QWidget>
 #include "ui_mainwindow.h"
 
-#ifdef DEBUG_INFORMATION
-void printCoords(QScrollArea *scrollArea)
-{
-  qDebug() << scrollArea->pos();
-  qDebug() << scrollArea->size();
-  qDebug() << "sizeHint()" << scrollArea->sizeHint();
-  qDebug() << "minimumSize()" << scrollArea->minimumSize();
-  qDebug() << "minimumSizeHint()" << scrollArea->minimumSizeHint();
-  qDebug() << "viewport()->pos()" << scrollArea->viewport()->pos();
-  qDebug() << "viewport()->size()" << scrollArea->viewport()->size();
-  qDebug() << "viewport()->sizeHint()" << scrollArea->viewport()->sizeHint();
-  qDebug() << "viewport()->minimumSize()" << scrollArea->viewport()->minimumSize();
-  qDebug() << "viewport()->minimumSizeHint()" << scrollArea->viewport()->minimumSizeHint();
-  qDebug() << "widget()->pos()" << scrollArea->widget()->pos();
-  qDebug() << "widget()->size()" << scrollArea->widget()->size();
-  qDebug() << "widget()->sizeHint()" << scrollArea->widget()->sizeHint();
-  qDebug() << "widget()->minimumSize()" << scrollArea->widget()->minimumSize();
-  qDebug() << "widget()->minimumSizeHint()" << scrollArea->widget()->minimumSizeHint();
-}
-
-#endif
-
 ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollAreaParam)
   : QObject(parent), profileWidget(parent),
   hScrollBar(scrollAreaParam->horizontalScrollBar()), vScrollBar(scrollAreaParam->verticalScrollBar()),
@@ -76,16 +54,16 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   ui->splitterProfile->setCollapsible(0, false);
 
   // Connect zoom sliders
-  connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged, this,
-          &ProfileScrollArea::horizontalSliderValueChanged);
-  connect(ui->verticalSliderProfileZoom, &QSlider::valueChanged, this, &ProfileScrollArea::verticalSliderValueChanged);
+  connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged,
+          this, &ProfileScrollArea::horizontalZoomSliderValueChanged);
+  connect(ui->verticalSliderProfileZoom, &QSlider::valueChanged,
+          this, &ProfileScrollArea::verticalZoomSliderValueChanged);
 
-  // Update label on scroll bar changes
-  connect(hScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::updateLabelWidget);
-  connect(vScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::updateLabelWidget);
-
-  connect(hScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::updateLabelWidget);
-  connect(vScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::updateLabelWidget);
+  // Update label on scroll bar changes and remember position
+  connect(hScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::horizScrollBarsChanged);
+  connect(vScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::vertScrollBarsChanged);
+  connect(hScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::horizScrollBarsChanged);
+  connect(vScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::vertScrollBarsChanged);
 
   connect(ui->pushButtonProfileExpand, &QPushButton::clicked, this, &ProfileScrollArea::expandClicked);
   connect(ui->actionProfileExpand, &QAction::triggered, this, &ProfileScrollArea::expandClicked);
@@ -96,6 +74,8 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabels);
   connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbars);
   connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoom);
+
+  connect(ui->splitterProfile, &QSplitter::splitterMoved, this, &ProfileScrollArea::splitterMoved);
 
   // Install event filter to area and viewport widgets avoid subclassing
   scrollArea->installEventFilter(this);
@@ -117,7 +97,7 @@ QRect ProfileScrollArea::getViewPortRect() const
 void ProfileScrollArea::expandClicked()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  scaleFactorVert = scaleFactorHoriz = 1.0f;
+  scaleFactorVert = scaleFactorHoriz = 1.0;
 
   // Resize widget temporarily and the switch it off again
   scrollArea->setWidgetResizable(true);
@@ -126,27 +106,74 @@ void ProfileScrollArea::expandClicked()
   scrollArea->setWidgetResizable(false);
 }
 
-void ProfileScrollArea::updateLabelWidget()
+void ProfileScrollArea::vertScrollBarsChanged()
 {
+  if(!changingScrollBars && vScrollBar->maximum() > 0)
+    lastVertScrollPos = static_cast<double>(vScrollBar->value()) / (vScrollBar->maximum() - vScrollBar->minimum());
+
   labelWidget->update();
+}
+
+void ProfileScrollArea::splitterMoved(int pos, int index)
+{
+  Q_UNUSED(pos);
+  Q_UNUSED(index);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionProfileShowZoom->blockSignals(true);
+  ui->actionProfileShowZoom->setChecked(ui->splitterProfile->sizes().at(1) > 0);
+  ui->actionProfileShowZoom->blockSignals(false);
+}
+
+void ProfileScrollArea::horizScrollBarsChanged()
+{
+  if(!changingScrollBars && hScrollBar->maximum() > 0)
+    lastHorizScrollPos = static_cast<double>(hScrollBar->value()) / (hScrollBar->maximum() - hScrollBar->minimum());
 }
 
 void ProfileScrollArea::update()
 {
   scrollArea->update();
+  updateLabelWidget();
+}
+
+void ProfileScrollArea::updateLabelWidget()
+{
   labelWidget->update();
 }
 
 void ProfileScrollArea::routeChanged(bool geometryChanged)
 {
   Q_UNUSED(geometryChanged);
-  fillToggled(NavApp::getMainUi()->actionProfileFit->isChecked());
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  // Max horizontal scale for window width 3 NM
+  ui->horizontalSliderProfileZoom->setMaximum(std::max(atools::roundToInt(NavApp::getRoute().getTotalDistance() / 3.f),
+                                                       3));
+
+  // Max vertical scale for window height 500 ft
+  ui->verticalSliderProfileZoom->setMaximum(std::max(atools::roundToInt(maxWindowAlt / 500.f), 500));
+
+  updateWidgets();
+}
+
+void ProfileScrollArea::setMaxWindowAlt(float value)
+{
+  if(atools::almostNotEqual(maxWindowAlt, value, 10.f) && value >= 500.f && NavApp::getRoute().size() > 1)
+  {
+    maxWindowAlt = value;
+
+    // Max vertical scale for window height 500 ft
+    NavApp::getMainUi()->verticalSliderProfileZoom->setMaximum(atools::roundToInt(maxWindowAlt / 500.f));
+
+    updateWidgets();
+  }
 }
 
 void ProfileScrollArea::fillToggled(bool checked)
 {
+  Q_UNUSED(checked);
   Ui::MainWindow *ui = NavApp::getMainUi();
-  bool routeEmpty = NavApp::getRoute().isEmpty();
 
   // Adjust action and push button each other
   if(sender() == ui->actionProfileFit)
@@ -154,8 +181,18 @@ void ProfileScrollArea::fillToggled(bool checked)
   else if(sender() == ui->pushButtonProfileFit)
     ui->actionProfileFit->setChecked(ui->pushButtonProfileFit->isChecked());
 
+  scaleFactorVert = scaleFactorHoriz = 1.0;
+
+  updateWidgets();
+}
+
+void ProfileScrollArea::updateWidgets()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  bool routeEmpty = NavApp::getRoute().size() < 2;
+  bool checked = ui->actionProfileFit->isChecked();
+
   scrollArea->setWidgetResizable(checked);
-  scaleFactorVert = scaleFactorHoriz = 1.0f;
 
   ui->pushButtonProfileFit->setDisabled(routeEmpty);
   ui->actionProfileFit->setDisabled(routeEmpty);
@@ -165,6 +202,8 @@ void ProfileScrollArea::fillToggled(bool checked)
     // Reset zoom sliders
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
     ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+    lastVertScrollPos = 1.;
+    lastHorizScrollPos = 0.;
   }
 
   // Disable scrolling and zooming
@@ -214,7 +253,7 @@ bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
 
 bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 {
-  if(isFill() || NavApp::getRoute().isEmpty())
+  if(isFill() || NavApp::getRoute().size() < 2)
     return false;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -283,7 +322,7 @@ bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 {
-  if(isFill() || NavApp::getRoute().isEmpty())
+  if(isFill() || NavApp::getRoute().size() < 2)
     return false;
 
   if(!startDragPos.isNull())
@@ -303,7 +342,7 @@ bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
 {
-  if(isFill() || NavApp::getRoute().isEmpty() || event->button() != Qt::LeftButton)
+  if(isFill() || NavApp::getRoute().size() < 2 || event->button() != Qt::LeftButton)
     return false;
 
   // Initiate mouse dragging
@@ -313,7 +352,7 @@ bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mouseReleaseEvent(QMouseEvent *event)
 {
-  if(isFill() || NavApp::getRoute().isEmpty() || event->button() != Qt::LeftButton)
+  if(isFill() || NavApp::getRoute().size() < 2 || event->button() != Qt::LeftButton)
     return false;
 
   // End mouse dragging
@@ -323,7 +362,7 @@ bool ProfileScrollArea::mouseReleaseEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 {
-  if(!isFill() && !NavApp::getRoute().isEmpty())
+  if(!isFill() && NavApp::getRoute().size() > 1)
   {
     Ui::MainWindow *ui = NavApp::getMainUi();
     QPoint numPixels = event->pixelDelta();
@@ -355,7 +394,8 @@ bool ProfileScrollArea::resizeEvent(QResizeEvent *event)
 {
   Q_UNUSED(event);
 
-  updateLabelWidget();
+  horizScrollBarsChanged();
+  vertScrollBarsChanged();
 
   // Event not consumed
   return false;
@@ -366,51 +406,31 @@ void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
   QSize size(atools::roundToInt(scaleFactorHoriz *scrollArea->viewport()->width()),
              atools::roundToInt(scaleFactorVert *scrollArea->viewport()->height()));
 
-  // Remember old values so, that the scroll bar can be adjusted to remain in position
-  int oldValue = scrollBar->value();
-  int oldMin = scrollBar->minimum();
-  int oldMax = scrollBar->maximum();
-
+  changingScrollBars = true;
   profileWidget->resize(size);
+  changingScrollBars = false;
 
   int min = scrollBar->minimum();
   int max = scrollBar->maximum();
 
+  // Keep scroll bar positions
   if(scrollBar->orientation() == Qt::Vertical)
-  {
-    if(oldValue == oldMax)
-      // Stay on top when old pos was on top or 100%
-      scrollBar->setValue(scrollBar->maximum());
-    else if(oldValue == oldMin)
-      // Stay on bottom when old pos was on bottom
-      scrollBar->setValue(scrollBar->minimum());
-    else
-    {
-      // Keep scroll bar position
-      double oldFactor = static_cast<double>(oldValue) / (oldMax - oldMin);
-      scrollBar->setValue(atools::roundToInt(oldFactor * (max - min)));
-    }
-  }
+    scrollBar->setValue(atools::roundToInt(lastVertScrollPos * (max - min)));
   else if(scrollBar->orientation() == Qt::Horizontal)
-  {
-    // Keep scroll bar position
-    double oldFactor = static_cast<double>(oldValue) / (oldMax - oldMin);
-    scrollBar->setValue(atools::roundToInt(oldFactor * (max - min)));
-  }
+    scrollBar->setValue(atools::roundToInt(lastHorizScrollPos * (max - min)));
 }
 
-void ProfileScrollArea::horizontalSliderValueChanged(int value)
+void ProfileScrollArea::horizontalZoomSliderValueChanged(int value)
 {
   // 1 = out, 40 = in
   scaleFactorHoriz = value;
   scaleView(hScrollBar);
 }
 
-void ProfileScrollArea::verticalSliderValueChanged(int value)
+void ProfileScrollArea::verticalZoomSliderValueChanged(int value)
 {
   // 1 = out, 40 = in
-  // Flatten the zoom factor to avoid first 200% zooming
-  scaleFactorVert = (value - 1.f) * 0.25f + 1.f;
+  scaleFactorVert = value;
   scaleView(vScrollBar);
 }
 
@@ -486,15 +506,6 @@ void ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
   int ymarginBottom = viewport->height() / 4;
   int x = screenPoint.x();
   int y = screenPoint.y();
-
-  // qDebug() << Q_FUNC_INFO
-  // << "screenPoint" << screenPoint
-  // << "value" << vScrollBar->value()
-  // << "minimum" << vScrollBar->minimum()
-  // << "maximum" << vScrollBar->maximum()
-  // << "height" << viewport->height()
-  // << "width" << viewport->width()
-  // ;
 
   if(x - xmarginLeft < hScrollBar->value() || x > hScrollBar->value() + viewport->width() - xmarginRight)
     hScrollBar->setValue(std::min(std::max(hScrollBar->minimum(), x - xmarginLeft), hScrollBar->maximum()));

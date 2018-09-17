@@ -4353,7 +4353,7 @@
             <bool>false</bool>
            </property>
            <property name="tickPosition">
-            <enum>QSlider::TicksBothSides</enum>
+            <enum>QSlider::NoTicks</enum>
            </property>
            <property name="tickInterval">
             <number>4</number>
@@ -4400,7 +4400,7 @@
             <enum>Qt::Vertical</enum>
            </property>
            <property name="tickPosition">
-            <enum>QSlider::TicksBothSides</enum>
+            <enum>QSlider::NoTicks</enum>
            </property>
            <property name="tickInterval">
             <number>4</number>
