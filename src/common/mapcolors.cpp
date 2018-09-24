@@ -79,14 +79,14 @@ QColor profileLabelDarkColor(QColor(0, 0, 0));
 
 QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
 QPen profileLandOutlineDarkPen(Qt::black, 1, Qt::SolidLine);
-QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
-QPen profileWaypointLineDarkPen(Qt::darkGray, 1, Qt::SolidLine);
-QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine);
-QPen profileElevationScaleDarkPen(Qt::darkGray, 1, Qt::SolidLine);
-QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
-QPen profileSafeAltLineDarkPen(Qt::darkRed, 4, Qt::SolidLine);
-QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
-QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine);
+QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
+QPen profileWaypointLineDarkPen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
+QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
+QPen profileElevationScaleDarkPen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
+QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine, Qt::FlatCap);
+QPen profileSafeAltLineDarkPen(Qt::darkRed, 4, Qt::SolidLine, Qt::FlatCap);
+QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap);
+QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine, Qt::FlatCap);
 
 /* Objects highlighted because of selection in search */
 QColor highlightBackColor(Qt::black);

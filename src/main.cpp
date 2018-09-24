@@ -107,8 +107,10 @@ int main(int argc, char *argv[])
   int retval = 0;
   NavApp app(argc, argv);
 
+#ifndef DEBUG_DISABLE_SPLASH
   // Start splash screen
   NavApp::initSplashScreen();
+#endif
 
   DatabaseManager *dbManager = nullptr;
 

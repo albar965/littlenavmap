@@ -77,7 +77,7 @@ struct MapAltRestriction
     AT,
     AT_OR_ABOVE,
     AT_OR_BELOW,
-    BETWEEN
+    BETWEEN /* At or above alt2 and at or below alt1 */
   };
 
   Descriptor descriptor = NONE;
