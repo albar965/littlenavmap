@@ -71,7 +71,11 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   setFocusPolicy(Qt::WheelFocus);
 
   scrollArea = new ProfileScrollArea(this, ui->scrollAreaProfile);
+  scrollArea->setProfileLeftOffset(X0);
+  scrollArea->setProfileTopOffset(Y0);
+
   connect(scrollArea, &ProfileScrollArea::showPosAlongFlightplan, this, &ProfileWidget::showPosAlongFlightplan);
+  connect(scrollArea, &ProfileScrollArea::hideRubberBand, this, &ProfileWidget::hideRubberBand);
 
   routeController = NavApp::getRouteController();
 
@@ -276,7 +280,7 @@ void ProfileWidget::updateScreenCoords()
   if(showAircraftTrack)
     maxWindowAlt = std::max(maxWindowAlt, maxTrackAltitudeFt);
 
-  scrollArea->setMaxWindowAlt(maxWindowAlt);
+  scrollArea->routeAltitudeChanged();
 
   verticalScale = h / maxWindowAlt;
 
@@ -305,8 +309,10 @@ void ProfileWidget::updateScreenCoords()
       }
     }
   }
+
   // Destination point
   waypointX.append(X0 + w);
+
   // Last point closing polygon
   landPolygon.append(QPoint(X0 + w, h + Y0));
 
@@ -1203,13 +1209,10 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->actionProfileShowOnMap->setEnabled(hasPosition && !routeEmpty);
-  ui->actionProfileFit->setDisabled(routeEmpty);
-  ui->actionProfileExpand->setDisabled(routeEmpty || ui->actionProfileFit->isChecked());
 
   QMenu menu;
   menu.addAction(ui->actionProfileShowOnMap);
   menu.addSeparator();
-  menu.addAction(ui->actionProfileFit);
   menu.addAction(ui->actionProfileExpand);
   menu.addSeparator();
   menu.addAction(ui->actionProfileCenterAircraft);
@@ -1270,6 +1273,11 @@ void ProfileWidget::updateLabel()
 /* Cursor leaves widget. Stop displaying the rubberband */
 void ProfileWidget::leaveEvent(QEvent *)
 {
+  hideRubberBand();
+}
+
+void ProfileWidget::hideRubberBand()
+{
   if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.route.isEmpty())
     return;
 
@@ -1279,7 +1287,7 @@ void ProfileWidget::leaveEvent(QEvent *)
   variableLabelText.clear();
   updateLabel();
 
-  // Tell map widget to erase rubberband
+  // Tell map widget to erase highlight
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }
 
@@ -1351,6 +1359,7 @@ void ProfileWidget::mainWindowShown()
 {
   updateScreenCoords();
   scrollArea->routeChanged(true);
+  scrollArea->expandWidget();
   update();
 }
 

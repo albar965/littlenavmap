@@ -4300,30 +4300,7 @@
          <property name="verticalSpacing">
           <number>4</number>
          </property>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="pushButtonProfileExpand">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Expand elevation profile to window size</string>
-           </property>
-           <property name="statusTip">
-            <string>Expand elevation profile to window size</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../littlenavmap.qrc">
-             <normaloff>:/littlenavmap/resources/icons/viewreset.svg</normaloff>:/littlenavmap/resources/icons/viewreset.svg</iconset>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" alignment="Qt::AlignHCenter">
+         <item row="4" column="0" alignment="Qt::AlignHCenter">
           <widget class="QSlider" name="verticalSliderProfileZoom">
            <property name="toolTip">
             <string>Zoom horizontally into the elevation profile</string>
@@ -4360,7 +4337,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1" alignment="Qt::AlignHCenter">
+         <item row="3" column="1" alignment="Qt::AlignHCenter">
           <widget class="QLabel" name="labelProfileHorizontalSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -4376,7 +4353,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1" alignment="Qt::AlignHCenter">
+         <item row="4" column="1" alignment="Qt::AlignHCenter">
           <widget class="QSlider" name="horizontalSliderProfileZoom">
            <property name="toolTip">
             <string>Zoom vertically into the elevation profile</string>
@@ -4407,36 +4384,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="pushButtonProfileFit">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Adjust elevation profile to window size and disable scrolling and zooming</string>
-           </property>
-           <property name="statusTip">
-            <string>Adjust elevation profile to window size and disable scrolling and zooming</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../littlenavmap.qrc">
-             <normaloff>:/littlenavmap/resources/icons/viewexpand.svg</normaloff>:/littlenavmap/resources/icons/viewexpand.svg</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" alignment="Qt::AlignHCenter">
+         <item row="3" column="0" alignment="Qt::AlignHCenter">
           <widget class="QLabel" name="labelProfileVerticalSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -4462,6 +4410,52 @@
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="pushButtonProfileExpand">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Expand elevation profile to window size</string>
+           </property>
+           <property name="statusTip">
+            <string>Expand elevation profile to window size</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../littlenavmap.qrc">
+             <normaloff>:/littlenavmap/resources/icons/viewreset.svg</normaloff>:/littlenavmap/resources/icons/viewreset.svg</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="pushButtonProfileHelp">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Show help for the elevation profile window</string>
+           </property>
+           <property name="statusTip">
+            <string>Show help for the elevation profile window</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../littlenavmap.qrc">
+             <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
            </property>
           </widget>
          </item>
@@ -8397,27 +8391,6 @@
    </property>
    <property name="statusTip">
     <string>Append flight plan legs to current flight plan</string>
-   </property>
-  </action>
-  <action name="actionProfileFit">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/viewexpand.svg</normaloff>:/littlenavmap/resources/icons/viewexpand.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Fit to &amp;Window</string>
-   </property>
-   <property name="toolTip">
-    <string>Adjust elevation profile to window size and disable scrolling and zooming</string>
-   </property>
-   <property name="statusTip">
-    <string>Adjust elevation profile to window size and disable scrolling and zooming</string>
    </property>
   </action>
   <action name="actionProfileExpand">

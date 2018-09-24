@@ -38,7 +38,7 @@ class Pos;
 
 /*
  * Takes care of all scrolling operations for the elevation profile. Handles scroll bars, zoom sliders and
- * installs event handlers to catch key and mouse events.
+ * installs event handlers to catch key and mouse events for scrolling, dragging and zoomin using key, mouse and wheel.
  */
 class ProfileScrollArea :
   public QObject
@@ -85,16 +85,33 @@ public:
     return labelWidget;
   }
 
-  void setMaxWindowAlt(float value);
+  /* Update zoom slider and labels */
+  void routeAltitudeChanged();
+
+  /* Expand button clicked */
+  void expandWidget();
+
+  /* Profile widget not scaled left area */
+  void setProfileLeftOffset(int value)
+  {
+    profileLeftOffset = value;
+  }
+
+  /* Profile widget not scaled top area */
+  void setProfileTopOffset(int value)
+  {
+    profileTopOffset = value;
+  }
 
 signals:
   /* Show flight plan waypoint or user position on map. x is widget position. */
   void showPosAlongFlightplan(int x, bool doubleClick);
+  void hideRubberBand();
 
 private:
   /* Horizontal or vertical scroll bar of view has changed value or range */
-  void vertScrollBarsChanged();
-  void horizScrollBarsChanged();
+  void vertScrollBarChanged();
+  void horizScrollBarChanged();
 
   /* Show scrollbars on scroll area */
   void showScrollbars(bool show);
@@ -105,15 +122,8 @@ private:
   /* Show right side of split window from action in menu */
   void showZoom(bool show);
 
-  /* Viewport rectangle inside the widget with offset added */
-  QRect getViewPortRect() const;
-
-  /* Is fill mode enabled where zooming and scrolling is disabled */
-  bool isFill() const;
-  void fillToggled(bool checked);
-
-  /* Expand button clicked */
-  void expandClicked();
+  /* Help push button clicked */
+  void helpClicked();
 
   /* Update menu item from splitter position */
   void splitterMoved(int pos, int index);
@@ -128,34 +138,53 @@ private:
   bool keyEvent(QKeyEvent *event);
   bool mouseMoveEvent(QMouseEvent *event);
   bool mouseDoubleClickEvent(QMouseEvent *event);
-  bool resizeEvent(QResizeEvent *event);
+  bool resizeEvent();
 
   /* Scroll bar changed - resize widget and adapt scroll bar position */
   void scaleView(QScrollBar *scrollBar);
-  void horizontalZoomSliderValueChanged(int value);
-  void verticalZoomSliderValueChanged(int value);
+
+  /* Enable and disable actions */
   void updateWidgets();
 
-  /* Scaling factor for widget */
-  double scaleFactorHoriz = 1.;
-  double scaleFactorVert = 1.;
+  /* Scale view after zooming */
+  void horizontalZoomSliderValueChanged(int value);
+  void verticalZoomSliderValueChanged(int value);
+
+  /* Calculate scroll position center (0.0 to 1.0) value to scroll bar value */
+  int toScrollBarValue(const QScrollBar *scrollBar, double scrollPos) const;
+
+  /* Calculate scroll position center (0.0 to 1.0) value from scroll bar */
+  double toScrollPos(const QScrollBar *scrollBar);
+
+  /* Scaling factor for widget - default is minimum as set in ui file */
+  int horizScaleFactor = 1;
+  int vertScaleFactor = 1;
   float maxWindowAlt = 1.f;
 
   ProfileWidget *profileWidget;
-  QScrollBar *hScrollBar, *vScrollBar;
+  QScrollBar *horizScrollBar, *vertScrollBar;
   QScrollArea *scrollArea;
   QWidget *viewport;
   ProfileLabelWidget *labelWidget = nullptr;
 
-  /* Mouse draggin position on button down */
+  /* Mouse dragging position on button down */
   QPoint startDragPos;
 
-  /* Remember old values so, that the scroll bar can be adjusted to remain in position */
-  double lastVertScrollPos = 1.; /* Default left */
-  double lastHorizScrollPos = 0.; /* Default top */
+  /* Remember old values so, that the scroll bar can be adjusted to remain in position.
+   *  These are the center positions of the scroll bar  */
+  double lastVertScrollPos = 0.5; /* Default left */
+  double lastHorizScrollPos = 0.5; /* Default top */
 
   /* Disable changing the last scroll bar position above when resizing the widget */
-  bool changingScrollBars = false;
+  bool noLastScrollPosUpdate = false;
+
+  /* Not scaled areas of the profile to allow correction when zooming */
+  int profileLeftOffset = 0, profileTopOffset = 0;
+
+  /* Remember calculated scroll position to compare to resulting scroll bar value.
+   * Needed to correct if scrolling is limited at the boundaries. */
+  int calculatedHorizScrollPos = 0;
+  int calculatedVertScrollPos = 0;
 };
 
 #endif // LNM_PROFILESCROLLAREA_H
