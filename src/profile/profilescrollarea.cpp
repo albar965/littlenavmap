@@ -56,9 +56,9 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   ui->splitterProfile->setCollapsible(0, false);
 
   // Connect zoom sliders
-  connect(ui->horizSliderProfileZoom, &QSlider::valueChanged,
+  connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged,
           this, &ProfileScrollArea::horizontalZoomSliderValueChanged);
-  connect(ui->vertSliderProfileZoom, &QSlider::valueChanged,
+  connect(ui->verticalSliderProfileZoom, &QSlider::valueChanged,
           this, &ProfileScrollArea::verticalZoomSliderValueChanged);
 
   // Update label on scroll bar changes and remember position
@@ -108,8 +108,8 @@ void ProfileScrollArea::expandWidget()
 
   // Resize widget temporarily and then switch it off again
   scrollArea->setWidgetResizable(true);
-  ui->horizSliderProfileZoom->setValue(ui->horizSliderProfileZoom->minimum());
-  ui->vertSliderProfileZoom->setValue(ui->vertSliderProfileZoom->minimum());
+  ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
+  ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
   scrollArea->setWidgetResizable(false);
 }
 
@@ -179,7 +179,7 @@ void ProfileScrollArea::routeChanged(bool geometryChanged)
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   // Max horizontal scale for window width 3 NM
-  ui->horizSliderProfileZoom->setMaximum(
+  ui->horizontalSliderProfileZoom->setMaximum(
     atools::roundToInt(std::max(NavApp::getRoute().getTotalDistance() / 4.f, 4.f)));
 
   routeAltitudeChanged();
@@ -194,7 +194,7 @@ void ProfileScrollArea::routeAltitudeChanged()
     maxWindowAlt = newAltitude;
 
     // Max vertical scale for window height 500 ft
-    NavApp::getMainUi()->vertSliderProfileZoom->setMaximum(atools::roundToInt(maxWindowAlt / 500.f));
+    NavApp::getMainUi()->verticalSliderProfileZoom->setMaximum(atools::roundToInt(maxWindowAlt / 500.f));
 
     updateWidgets();
   }
@@ -208,8 +208,8 @@ void ProfileScrollArea::updateWidgets()
   if(routeEmpty)
   {
     // Reset zoom sliders
-    ui->horizSliderProfileZoom->setValue(ui->horizSliderProfileZoom->minimum());
-    ui->vertSliderProfileZoom->setValue(ui->vertSliderProfileZoom->minimum());
+    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
+    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
     lastVertScrollPos = 0.5;
     lastHorizScrollPos = 0.5;
   }
@@ -219,8 +219,8 @@ void ProfileScrollArea::updateWidgets()
   ui->labelProfileVerticalSlider->setDisabled(routeEmpty);
   ui->pushButtonProfileExpand->setDisabled(routeEmpty);
   ui->actionProfileExpand->setDisabled(routeEmpty);
-  ui->horizSliderProfileZoom->setDisabled(routeEmpty);
-  ui->vertSliderProfileZoom->setDisabled(routeEmpty);
+  ui->horizontalSliderProfileZoom->setDisabled(routeEmpty);
+  ui->verticalSliderProfileZoom->setDisabled(routeEmpty);
 }
 
 bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
@@ -290,32 +290,32 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
   else if(event->key() == Qt::Key_Plus)
   {
     // Zoom in vertically
-    ui->horizSliderProfileZoom->setValue(ui->horizSliderProfileZoom->value() + 1);
+    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() + 1);
     return true;
   }
   else if(event->key() == Qt::Key_Minus)
   {
     // Zoom out vertically
-    ui->horizSliderProfileZoom->setValue(ui->horizSliderProfileZoom->value() - 1);
+    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() - 1);
     return true;
   }
   else if(event->key() == Qt::Key_Asterisk)
   {
     // Zoom in horizontally
-    ui->vertSliderProfileZoom->setValue(ui->vertSliderProfileZoom->value() + 1);
+    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() + 1);
     return true;
   }
   else if(event->key() == Qt::Key_Slash)
   {
     // Zoom out horizontally
-    ui->vertSliderProfileZoom->setValue(ui->vertSliderProfileZoom->value() - 1);
+    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() - 1);
     return true;
   }
   else if(event->key() == Qt::Key_0 || event->key() == Qt::Key_Insert)
   {
     // Reset using 0 or 0/Ins on numpad
-    ui->horizSliderProfileZoom->setValue(ui->horizSliderProfileZoom->minimum());
-    ui->vertSliderProfileZoom->setValue(ui->vertSliderProfileZoom->minimum());
+    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
+    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
     return true;
   }
   return false;
@@ -354,8 +354,8 @@ bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
     return false;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->vertSliderProfileZoom->value() == ui->vertSliderProfileZoom->minimum() &&
-     ui->horizSliderProfileZoom->value() == ui->horizSliderProfileZoom->minimum())
+  if(ui->verticalSliderProfileZoom->value() == ui->verticalSliderProfileZoom->minimum() &&
+     ui->horizontalSliderProfileZoom->value() == ui->horizontalSliderProfileZoom->minimum())
     return false;
 
   // Initiate mouse dragging
@@ -410,7 +410,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
       double oldZoomVal = static_cast<double>(viewport->width()) / profileWidget->width();
 
       // Set to zoom slider
-      ui->horizSliderProfileZoom->setValue(ui->horizSliderProfileZoom->value() + zoom);
+      ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() + zoom);
 
       // Calculate the correction for the fixed, not scaled offset in the profile widget
       double correction = profileLeftOffset * oldZoomVal * -mouseToCenter.x() / (viewport->width() / 2.);
@@ -433,7 +433,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
       double oldZoomVal = static_cast<double>(viewport->height()) / profileWidget->height();
 
       // Set to zoom slider
-      ui->vertSliderProfileZoom->setValue(ui->vertSliderProfileZoom->value() + zoom);
+      ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() + zoom);
 
       // Calculate the correction for the fixed, not scaled offset in the profile widget
       double correction = profileTopOffset * oldZoomVal * -mouseToCenter.y() / (viewport->height() / 2.);
