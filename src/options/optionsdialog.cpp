@@ -1392,13 +1392,13 @@ void OptionsDialog::updateCacheElevationStates()
       QFileInfo fileinfo(path);
       if(!fileinfo.exists())
         ui->labelCacheGlobePathState->setText(
-          tr("<span style=\"font-weight: bold; color: red;\">Directory does not exist.</span>"));
+          tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Directory does not exist.</span>"));
       else if(!fileinfo.isDir())
         ui->labelCacheGlobePathState->setText(
-          tr("<span style=\"font-weight: bold; color: red;\">Is not a directory.</span>"));
+          tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not a directory.</span>"));
       else if(!NavApp::getElevationProvider()->isGlobeDirectoryValid(path))
         ui->labelCacheGlobePathState->setText(
-          tr("<span style=\"font-weight: bold; color: red;\">No valid GLOBE data found.</span>"));
+          tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">No valid GLOBE data found.</span>"));
       else
         ui->labelCacheGlobePathState->setText(
           tr("Directory and files are valid."));
@@ -1433,14 +1433,14 @@ void OptionsDialog::updateActiveSkyPathStatus()
     QFileInfo fileinfo(path);
     if(!fileinfo.exists())
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"font-weight: bold; color: red;\">File does not exist.</span>"));
+        tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">File does not exist.</span>"));
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"font-weight: bold; color: red;\">Is not a file.</span>"));
+        tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not a file.</span>"));
     else if(!WeatherReporter::validateActiveSkyFile(path))
       ui->labelOptionsWeatherAsnPathState->setText(
         tr(
-          "<span style=\"font-weight: bold; color: red;\">Is not an Active Sky weather snapshot file.</span>"));
+          "<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not an Active Sky weather snapshot file.</span>"));
     else
       ui->labelOptionsWeatherAsnPathState->setText(
         tr("Weather snapshot file is valid. Using this one for all simulators"));

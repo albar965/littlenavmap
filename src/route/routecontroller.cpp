@@ -3269,7 +3269,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
       if(!approachRunway.isEmpty() && !starRunway.isEmpty() && approachRunway != starRunway)
       {
         boldTextFlag << true;
-        procedureText.append(tr("<br/><span style=\"color: #ff0000; font-weight:bold\">"
+        procedureText.append(tr("<br/><span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold\">"
                                   "Runway mismatch: %1 &ne; %2.</span>").arg(starRunway).arg(approachRunway));
       }
 

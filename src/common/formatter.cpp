@@ -161,7 +161,7 @@ bool checkCoordinates(QString& message, const QString& text)
   }
   else
     // Show red warning
-    message = QObject::tr("<span style=\"font-weight: bold; color: red;\">"
+    message = QObject::tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
                             "Coordinates are not valid.</span>");
   return false;
 }
