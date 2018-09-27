@@ -773,7 +773,7 @@ Smaller values will zoom in closer to an airport or navaid. </string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="2" column="0" colspan="3">
            <widget class="QCheckBox" name="checkBoxOptionsMapZoomAvoidBlurred">
             <property name="toolTip">
              <string>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
@@ -781,7 +781,10 @@ This works best with the Mercator projection and online maps.
 Map views might be shown with a larger zoom distance than expected if this option is selected.</string>
             </property>
             <property name="text">
-             <string>&amp;Avoid blurred map display</string>
+             <string>&amp;Avoid blurred map display by zooming out to next best step</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
