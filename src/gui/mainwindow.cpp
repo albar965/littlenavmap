@@ -66,6 +66,7 @@
 #include "route/routeexport.h"
 #include "query/airspacequery.h"
 #include "gui/timedialog.h"
+#include "util/version.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -1594,6 +1595,13 @@ void MainWindow::updateWindowTitle()
   QString newTitle = mainWindowTitle;
   dm::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
 
+  atools::util::Version version(NavApp::applicationVersion());
+
+  if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
+    newTitle += QString(" %1").arg(version.getVersionString());
+  else
+    newTitle += QString(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
+
   if(navDbStatus == dm::NAVDATABASE_ALL)
     newTitle += " - (" + NavApp::getCurrentSimulatorShortName() + ")";
   else
@@ -1609,10 +1617,6 @@ void MainWindow::updateWindowTitle()
                 (routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
-
-#ifdef DEBUG_INFORMATION
-  newTitle += QString(" / %1 (%2)").arg(NavApp::applicationVersion()).arg(GIT_REVISION);
-#endif
 
   setWindowTitle(newTitle);
 }
