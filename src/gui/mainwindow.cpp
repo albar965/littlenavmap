@@ -2067,16 +2067,7 @@ void MainWindow::sunShadingTimeSet()
 
   // Initalize dialog with current time
   TimeDialog timeDialog(this, mapWidget->getSunShadingDateTime());
-  if(timeDialog.exec() == QDialog::Accepted)
-  {
-    qDebug() << Q_FUNC_INFO << timeDialog.getDateTime();
-
-    // Select user option and update
-    ui->actionMapShowSunShadingUserTime->setChecked(true);
-    mapWidget->setSunShadingDateTime(timeDialog.getDateTime());
-    mapWidget->update();
-  }
-  mapWidget->updateSunShadingOption();
+  timeDialog.exec();
 }
 
 /* Selection in flight plan table has changed */

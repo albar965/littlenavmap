@@ -24,8 +24,12 @@ namespace Ui {
 class TimeDialog;
 }
 
+class QAbstractButton;
+
 /*
  * Dialog that allows to enter a UTC time and date. Used to define the user defined sun shading time.
+ *
+ * Sets time and shading in map widget.
  */
 class TimeDialog :
   public QDialog
@@ -40,6 +44,8 @@ public:
 
 private:
   Ui::TimeDialog *ui;
+  void buttonBoxClicked(QAbstractButton *button);
+
 };
 
 #endif // LNM_TIMEDIALOG_H

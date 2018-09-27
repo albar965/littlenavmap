@@ -17,6 +17,15 @@
 
 #include "gui/timedialog.h"
 #include "ui_timedialog.h"
+#include "ui_mainwindow.h"
+
+#include "common/constants.h"
+#include "gui/helphandler.h"
+#include "mapgui/mapwidget.h"
+
+#include <QAbstractButton>
+#include <QPushButton>
+#include <navapp.h>
 
 TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
   QDialog(parent), ui(new Ui::TimeDialog)
@@ -27,6 +36,8 @@ TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
 
   ui->calendarWidget->setSelectedDate(datetime.date());
   ui->timeEdit->setTime(datetime.time());
+
+  connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TimeDialog::buttonBoxClicked);
 }
 
 TimeDialog::~TimeDialog()
@@ -37,4 +48,28 @@ TimeDialog::~TimeDialog()
 QDateTime TimeDialog::getDateTime() const
 {
   return QDateTime(ui->calendarWidget->selectedDate(), ui->timeEdit->time());
+}
+
+/* A button box button was clicked */
+void TimeDialog::buttonBoxClicked(QAbstractButton *button)
+{
+  if(button == ui->buttonBox->button(QDialogButtonBox::Ok) || button == ui->buttonBox->button(QDialogButtonBox::Apply))
+  {
+    qDebug() << Q_FUNC_INFO << getDateTime();
+
+    // Select user option and update
+    NavApp::getMainUi()->actionMapShowSunShadingUserTime->setChecked(true);
+    MapWidget *mapWidget = NavApp::getMapWidget();
+    mapWidget->setSunShadingDateTime(getDateTime());
+    mapWidget->update();
+    mapWidget->updateSunShadingOption();
+
+    if(button == ui->buttonBox->button(QDialogButtonBox::Ok))
+      QDialog::accept();
+  }
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
+    atools::gui::HelpHandler::openHelpUrlWeb(
+      parentWidget(), lnm::HELP_ONLINE_URL + "SUNSHADOW.html", lnm::helpLanguageOnline());
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
+    QDialog::reject();
 }
