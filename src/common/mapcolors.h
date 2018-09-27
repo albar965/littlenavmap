@@ -228,6 +228,9 @@ const QPen aircraftTrailPen(float size);
 const QPen& penForAirspace(const map::MapAirspace& airspace);
 const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 
+/* Convert current pen into dotted pen leaving style and color as is */
+void adjustPenForCircleToLand(QPainter *painter);
+
 } // namespace mapcolors
 
 #endif // LITTLENAVMAP_MAPCOLORS_H

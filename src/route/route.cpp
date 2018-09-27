@@ -26,6 +26,7 @@
 #include "query/airportquery.h"
 #include "navapp.h"
 #include "fs/util/fsutil.h"
+#include "route/routealtitude.h"
 
 #include <QRegularExpression>
 
@@ -44,6 +45,7 @@ using atools::fs::pln::Flightplan;
 Route::Route()
 {
   resetActive();
+  altitude = new RouteAltitude(this);
 }
 
 Route::Route(const Route& other)
@@ -54,7 +56,7 @@ Route::Route(const Route& other)
 
 Route::~Route()
 {
-
+  delete altitude;
 }
 
 Route& Route::operator=(const Route& other)
@@ -101,6 +103,8 @@ void Route::copy(const Route& other)
   for(RouteLeg& routeLeg : *this)
     routeLeg.setFlightplan(&flightplan);
 
+  altitude = new RouteAltitude(this);
+  *altitude = *other.altitude;
 }
 
 int Route::getNextUserWaypointNumber() const
@@ -485,23 +489,7 @@ float Route::getDistanceFromStart(const atools::geo::Pos& pos) const
 
 float Route::getTopOfDescentFromStart() const
 {
-  if(!isEmpty())
-    return getTotalDistance() - getTopOfDescentFromDestination();
-
-  return 0.f;
-}
-
-float Route::getDescentVerticalAltitude(float currentDistToDest) const
-{
-  if(hasValidDestination())
-  {
-    float destAlt = last().getAirport().position.getAltitude();
-    return (getCruisingAltitudeFeet() - destAlt) *
-           currentDistToDest /
-           (getTopOfDescentFromDestination()) + destAlt;
-  }
-
-  return map::INVALID_ALTITUDE_VALUE;
+  return altitude->getTopOfDescentDistance();
 }
 
 float Route::getCruisingAltitudeFeet() const
@@ -509,32 +497,32 @@ float Route::getCruisingAltitudeFeet() const
   return Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
 }
 
+float Route::getAltitudeForDistance(float currentDistToDest) const
+{
+  return altitude->getAltitudeForDistance(currentDistToDest);
+}
+
 float Route::getTopOfDescentFromDestination() const
 {
-  if(!isEmpty())
-  {
-    float cruisingAltitude = getCruisingAltitudeFeet();
+  return altitude->getTopOfDescentFromDestination();
+}
 
-    float diff = (cruisingAltitude - last().getPosition().getAltitude());
-
-    // Either nm per 1000 something alt or km per 1000 something alt
-    float distNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
-    float altFt = Unit::rev(1000.f, Unit::altFeetF);
-
-    return std::min(diff / altFt * distNm, totalDistance);
-  }
-  return 0.f;
+float Route::getTopOfClimbFromStart() const
+{
+  return altitude->getTopOfClimbDistance();
 }
 
 atools::geo::Pos Route::getTopOfDescent() const
 {
-  if(!isEmpty())
-    return positionAtDistance(getTopOfDescentFromStart());
-
-  return atools::geo::EMPTY_POS;
+  return altitude->getTopOfDescentPos();
 }
 
-atools::geo::Pos Route::positionAtDistance(float distFromStartNm) const
+atools::geo::Pos Route::getTopOfClimb() const
+{
+  return altitude->getTopOfClimbPos();
+}
+
+atools::geo::Pos Route::getPositionAtDistance(float distFromStartNm) const
 {
   if(distFromStartNm < 0.f || distFromStartNm > totalDistance)
     return atools::geo::EMPTY_POS;
@@ -574,6 +562,35 @@ atools::geo::Pos Route::positionAtDistance(float distFromStartNm) const
   }
 
   return retval;
+}
+
+int Route::getDestinationLegIndex() const
+{
+  if(isEmpty())
+    return -1;
+
+  if(hasAnyArrivalProcedure())
+  {
+    // Last leg before missed approach is destination runway
+    for(int i = arrivalLegsOffset; i < size(); i++)
+    {
+      if(at(i).isAnyProcedure() && at(i).getProcedureType() & proc::PROCEDURE_MISSED)
+        return i - 1;
+    }
+  }
+  // Simple destination airport without approach
+  return size() - 1;
+}
+
+int Route::getDepartureLegIndex() const
+{
+  if(isEmpty())
+    return -1;
+
+  if(hasAnyDepartureProcedure())
+    return 1;
+
+  return 0;
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
@@ -875,6 +892,7 @@ void Route::updateAll()
   updateMagvar();
   updateDistancesAndCourse();
   updateBoundingRect();
+  updateLegAltitudes();
 }
 
 void Route::updateAirportRegions()
@@ -1009,12 +1027,16 @@ void Route::updateDistancesAndCourse()
   for(int i = 0; i < size(); i++)
   {
     if(isAirportAfterArrival(i))
+      // Airport after arrival legs does not contain a valid distance - loop ends here anyway
       break;
 
     RouteLeg& leg = (*this)[i];
     leg.updateDistanceAndCourse(i, last);
+
     if(!leg.getProcedureLeg().isMissed())
+      // Do not sum up missed legs
       totalDistance += leg.getDistanceTo();
+
     last = &leg;
   }
 }
@@ -1024,6 +1046,15 @@ void Route::updateMagvar()
   // get magvar from internal database objects (waypoints, VOR and others)
   for(int i = 0; i < size(); i++)
     (*this)[i].updateMagvar();
+}
+
+void Route::updateLegAltitudes()
+{
+  altitude->setSimplify(true);
+  altitude->setAltitudePerNmClimb(calculateAltPerDistanceFactor());
+  altitude->setAltitudePerNmDescent(calculateAltPerDistanceFactor());
+  altitude->setCruiseAltitide(getCruisingAltitudeFeet());
+  altitude->calculate();
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
@@ -1225,8 +1256,6 @@ void Route::removeDuplicateRouteLegs()
 void Route::createRouteLegsFromFlightplan()
 {
   clear();
-
-  Flightplan& flightplan = getFlightplan();
 
   const RouteLeg *lastLeg = nullptr;
 
@@ -1488,6 +1517,14 @@ int Route::adjustAltitude(int minAltitude) const
     }
   }
   return minAltitude;
+}
+
+float Route::calculateAltPerDistanceFactor()
+{
+  // Either nm per 1000 something alt or km per 1000 something alt
+  float distRuleNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
+  float altRuleFt = Unit::rev(1000.f, Unit::altFeetF);
+  return altRuleFt / distRuleNm;
 }
 
 QDebug operator<<(QDebug out, const Route& route)

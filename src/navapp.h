@@ -29,6 +29,7 @@ class AirspaceQuery;
 class InfoQuery;
 class ProcedureQuery;
 class Route;
+class RouteAltitude;
 class MainWindow;
 class ConnectClient;
 class DatabaseManager;
@@ -146,6 +147,8 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+  static const RouteAltitude& getRouteAltitudeLegs();
+
   static float getSpeedKts();
 
   /* Currently selected simulator database */

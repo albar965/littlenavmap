@@ -391,6 +391,8 @@ void RouteController::routeAltChanged()
 
 void RouteController::routeAltChangedDelayed()
 {
+  route.updateLegAltitudes();
+
   // Delay change to avoid hanging spin box when profile updates
   emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
 }
@@ -1907,6 +1909,7 @@ void RouteController::styleChanged()
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  route.updateLegAltitudes(); // Potential change of descent rule
   updateIcons();
   updateTableHeaders();
   updateTableModel();
@@ -2790,8 +2793,8 @@ void RouteController::updateTableModel()
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
 
       QString restrictions;
-      if(leg.getProcedureLeg().altRestriction.isValid())
-        restrictions.append(proc::altRestrictionTextShort(leg.getProcedureLeg().altRestriction));
+      if(leg.getProcedureLegAltRestr().isValid())
+        restrictions.append(proc::altRestrictionTextShort(leg.getProcedureLegAltRestr()));
       if(leg.getProcedureLeg().speedRestriction.isValid())
         restrictions.append("/" + proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
 

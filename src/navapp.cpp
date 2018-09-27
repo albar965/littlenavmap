@@ -391,6 +391,11 @@ Route& NavApp::getRoute()
   return mainWindow->getRouteController()->getRoute();
 }
 
+const RouteAltitude& NavApp::getRouteAltitudeLegs()
+{
+  return mainWindow->getRouteController()->getRoute().getAltitudeLegs();
+}
+
 float NavApp::getSpeedKts()
 {
   return mainWindow->getRouteController()->getSpinBoxSpeedKts();

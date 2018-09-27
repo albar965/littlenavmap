@@ -24,12 +24,15 @@
 
 class CoordinateConverter;
 class FlightplanEntryBuilder;
+class RouteAltitude;
 
 /*
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
  * about the active route leg and current aircraft position.
  *
  * The flight plan is kept in sync and contains dummy entries for all procedure legs.
+ *
+ * Procedure information is kept in FlightPlan properties and will be reloaded on demand.
  */
 class Route :
   private QList<RouteLeg>
@@ -86,9 +89,13 @@ public:
     return activeLeg > 0 && activeLeg < size();
   }
 
+  /* Either destination airport or last leg of approach procedure (usually runway) before missed */
+  int getDestinationLegIndex() const;
+  int getDepartureLegIndex() const;
+
   /* true if flight plan is not empty and airport is departure or destination */
-  bool isAirportDeparture(const QString& airportId) const;
-  bool isAirportDestination(const QString& airportId) const;
+  bool isAirportDeparture(const QString& ident) const;
+  bool isAirportDestination(const QString& ident) const;
 
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;
@@ -106,15 +113,19 @@ public:
   /* At the end of the route and beyond */
   bool isPassedLastLeg() const;
 
-  /* Get top of descent position based on the option setting (default is 3 nm per 1000 ft) */
+  /* Get top of descent or climb position based on the option setting (default is 3 nm per 1000 ft) */
   atools::geo::Pos getTopOfDescent() const;
+  atools::geo::Pos getTopOfClimb() const;
 
   /* Distance from TOD to destination in nm */
   float getTopOfDescentFromDestination() const;
   float getTopOfDescentFromStart() const;
 
+  /* Distance from TOC to destination in nm */
+  float getTopOfClimbFromStart() const;
+
   /* Above or below planned descent */
-  float getDescentVerticalAltitude(float currentDistToDest) const;
+  float getAltitudeForDistance(float currentDistToDest) const;
 
   /* Total route distance in nautical miles */
   float getTotalDistance() const
@@ -363,6 +374,17 @@ public:
   void updateAirwaysAndAltitude(bool adjustRouteAltitude, bool adjustRouteType);
   int adjustAltitude(int minAltitude) const;
 
+  /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
+  atools::geo::Pos getPositionAtDistance(float distFromStartNm) const;
+
+  const RouteAltitude& getAltitudeLegs() const
+  {
+    return *altitude;
+  }
+
+  /* Calculate route leg altitudes that are needed for the elevation profile */
+  void updateLegAltitudes();
+
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
@@ -373,17 +395,19 @@ private:
   /* Update and calculate magnetic variation for all route map objects */
   void updateMagvar();
 
+  /* Update leg altitudes, TOC and TOC */
+
   /* Assign index and pointer to flight plan for all objects */
   void updateIndicesAndOffsets();
-
-  /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
-  atools::geo::Pos positionAtDistance(float distFromStartNm) const;
 
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
   void copy(const Route& other);
   void nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
   int adjustedActiveLeg() const;
+
+  /* Calculate descent or climb in ft per NM */
+  float calculateAltPerDistanceFactor();
 
   atools::geo::Rect boundingRect;
   /* Nautical miles not including missed approach */
@@ -397,6 +421,8 @@ private:
   map::PosCourse activePos;
   int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
       arrivalLegsOffset = map::INVALID_INDEX_VALUE;
+
+  RouteAltitude *altitude;
 };
 
 QDebug operator<<(QDebug out, const Route& route);

@@ -63,7 +63,7 @@ void MapPainterRoute::render(PaintContext *context)
 
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
      context->mapLayer->isRouteTextAndDetail())
-    paintTopOfDescent(context);
+    paintTopOfDescentAndClimb(context);
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -275,21 +275,26 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
 }
 
-void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
+void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
 {
   if(route->size() >= 2)
   {
     atools::util::PainterContextSaver saver(context->painter);
     Q_UNUSED(saver);
 
-    // Draw the top of descent circle and text
+    float width = context->sz(context->thicknessFlightplan, 3);
+    int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
+
+    context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
+
+    int transparency = 255;
+    if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+      transparency = 0;
+
+    // Draw the top of descent circle and text ======================
     QPoint pt = wToS(route->getTopOfDescent());
     if(!pt.isNull())
     {
-      float width = context->sz(context->thicknessFlightplan, 3);
-      int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
-
-      context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
       context->painter->drawEllipse(pt, radius, radius);
 
       QStringList tod;
@@ -297,11 +302,23 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
       if(context->mapLayer->isAirportRouteInfo())
         tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
-      int transparency = 255;
-      if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
-        transparency = 0;
-
       symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
+                             pt.x() + radius, pt.y() + radius,
+                             textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+    }
+
+    // Draw the top of climb circle and text ======================
+    pt = wToS(route->getTopOfClimb());
+    if(!pt.isNull())
+    {
+      context->painter->drawEllipse(pt, radius, radius);
+
+      QStringList toc;
+      toc.append(tr("TOC"));
+      if(context->mapLayer->isAirportRouteInfo())
+        toc.append(Unit::distNm(route->getTopOfClimbFromStart()));
+
+      symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
                              pt.x() + radius, pt.y() + radius,
                              textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
     }
@@ -385,13 +402,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
       lastActiveLine = lastLine;
 
     if(legs.at(i).isCircleToLand())
-    {
-      // Use different pattern and smaller line for circle-to-land approaches
-      QPen pen = painter->pen();
-      pen.setStyle(Qt::DotLine);
-      pen.setWidthF(pen.widthF() * 3.f / 4.f);
-      painter->setPen(pen);
-    }
+      mapcolors::adjustPenForCircleToLand(painter);
 
     paintProcedureSegment(context, legs, i, lastLine, &drawTextLines, noText, preview, true /* draw */);
   }
@@ -400,14 +411,10 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   if(!preview && activeValid && activeProcLeg >= 0 && activeProcLeg < legs.size())
   {
     QPen pen = legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen;
+    painter->setPen(pen);
 
     if(legs.at(activeProcLeg).isCircleToLand())
-    {
-      // Use different pattern and smaller line if active is circle-to-land leg
-      pen.setStyle(Qt::DotLine);
-      pen.setWidthF(pen.widthF() * 3.f / 4.f);
-    }
-    painter->setPen(pen);
+      mapcolors::adjustPenForCircleToLand(painter);
 
     paintProcedureSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
                           true /* draw */);

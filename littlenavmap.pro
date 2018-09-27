@@ -242,7 +242,9 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainteraltitude.cpp \
     src/gui/trafficpatterndialog.cpp \
     src/profile/profilescrollarea.cpp \
-    src/profile/profilelabelwidget.cpp
+    src/profile/profilelabelwidget.cpp \
+    src/route/routealtitude.cpp \
+    src/route/routealtitudeleg.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -351,7 +353,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainteraltitude.h \
     src/gui/trafficpatterndialog.h \
     src/profile/profilescrollarea.h \
-    src/profile/profilelabelwidget.h
+    src/profile/profilelabelwidget.h \
+    src/route/routealtitude.h \
+    src/route/routealtitudeleg.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

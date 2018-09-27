@@ -2738,7 +2738,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(!less && toTod <= 0 && userAircaft != nullptr)
   {
     // Display vertical path deviation when after TOD
-    float vertAlt = route.getDescentVerticalAltitude(distToDestNm);
+    float vertAlt = route.getAltitudeForDistance(distToDestNm);
 
     if(vertAlt < map::INVALID_ALTITUDE_VALUE)
     {

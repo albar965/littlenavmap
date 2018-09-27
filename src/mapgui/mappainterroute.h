@@ -104,7 +104,7 @@ private:
                              int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview,
                              bool draw);
 
-  void paintTopOfDescent(const PaintContext *context);
+  void paintTopOfDescentAndClimb(const PaintContext *context);
 
   QLineF paintProcedureTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
                             QPointF intersectPoint, bool draw);

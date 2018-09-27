@@ -172,29 +172,35 @@ private:
   void updateScreenCoords();
   void terminateThread();
   float calcGroundBuffer(float maxElevation);
-  void updateLabel();
   bool aircraftTrackValid();
+
+  void updateLabel();
+  void updateErrorMessages();
 
   /* Calculate map position on flight plan for x screen/widget position on profile.
    *  Additionally gives index into route, distances from/to and altitude at x. maxElev is minimum elevation for leg */
   void calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& routeIndex, float& distance, float& distanceToGo,
-                                float& alt, float& maxElev);
+                                float& groundElevation, float& maxElev);
 
   /* Calculate map position on flight plan for x screen/widget position on profile. */
   atools::geo::Pos calculatePos(int x);
 
-  /* Calulate screen y position on map */
+  /* Calulate screen x and y position on map */
+  int distanceX(float distanceNm) const;
   int altitudeY(float altitudeFt) const;
 
-  /* Draw a line that is bended at x if x1 < x < x2 */
-  void drawLine(QPainter *painter, int x1, int y1, int x2, int y2, int x);
+  /* Convert points (x = distance and y = altitude) to screen coordinates x/y */
+  QPoint toScreen(const QPointF& pt) const;
+  QPolygon toScreen(const QPolygonF& leg) const;
+
+  void hideRubberBand();
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
   /* Scales should be at least this amount of pixels apart */
   static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
-  const int X0 = 32; // 65; /* Left margin inside widget */
+  const int X0 = 52; // 65; /* Left margin inside widget */
   const int Y0 = 16; // 14; /* Top margin inside widget */
 
   /* Thread will start after this delay if route was changed */
@@ -237,7 +243,8 @@ private:
   QString fixedLabelText, variableLabelText;
 
   bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
-  QVector<int> waypointX; /* Flight plan waypoint screen coordinates */
+  QVector<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy
+                           * from airport to runway but not missed legs */
   QPolygon landPolygon; /* Green landmass polygon */
   float minSafeAltitudeFt = 0.f, /* Red line */
         flightplanAltFt = 0.f, /* Cruise altitude */
@@ -248,6 +255,8 @@ private:
   float verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
         horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
 
+  /* Error messages from profile altitude calculation */
+  QStringList messages;
 };
 
 Q_DECLARE_TYPEINFO(ProfileWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

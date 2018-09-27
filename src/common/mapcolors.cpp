@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QPalette>
 #include <QSettings>
+#include <QPainter>
 
 namespace mapcolors {
 
@@ -604,6 +605,15 @@ void syncColors()
   colorSettings.endGroup();
 
   colorSettings.sync();
+}
+
+void adjustPenForCircleToLand(QPainter *painter)
+{
+  // Use different pattern and smaller line for circle-to-land approaches
+  QPen pen = painter->pen();
+  pen.setStyle(Qt::DotLine);
+  // pen.setWidthF(pen.widthF() * 3.f / 4.f);
+  painter->setPen(pen);
 }
 
 } // namespace mapcolors

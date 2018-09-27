@@ -251,6 +251,16 @@ public:
     return procedureLeg;
   }
 
+  const proc::MapAltRestriction& getProcedureLegAltRestr() const
+  {
+    return procedureLeg.altRestriction;
+  }
+
+  const proc::MapSpeedRestriction& getProcedureLegSpeedRestr() const
+  {
+    return procedureLeg.speedRestriction;
+  }
+
   /* invalid type if not an approach */
   proc::ProcedureLegType getProcedureLegType() const
   {

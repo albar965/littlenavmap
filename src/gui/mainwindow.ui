@@ -4285,6 +4285,9 @@
            <property name="wordWrap">
             <bool>true</bool>
            </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
           </widget>
          </item>
         </layout>
@@ -4666,7 +4669,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetLegend">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabLegendNav">
         <attribute name="title">
