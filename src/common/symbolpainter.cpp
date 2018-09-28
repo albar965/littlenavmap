@@ -249,12 +249,12 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int
   else
     painter->setBrush(Qt::NoBrush);
 
-  float penSize = fast ? 6.f : 1.5f;
+  float lineWidth = std::max(size / 6.f, 1.5f);
 
   if(col.isValid())
-    painter->setPen(QPen(col, penSize, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(col, lineWidth, Qt::SolidLine, Qt::SquareCap));
   else
-    painter->setPen(QPen(mapcolors::waypointSymbolColor, penSize, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(mapcolors::waypointSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast && size > 5)
   {
@@ -510,9 +510,8 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
   else
     painter->setBrush(Qt::NoBrush);
 
-  float penSize = fast ? 6.f : 2.f;
-
-  painter->setPen(QPen(mapcolors::routeUserPointColor, penSize, Qt::SolidLine, Qt::SquareCap));
+  float lineWidth = std::max(size / 5.f, 1.5f);
+  painter->setPen(QPen(mapcolors::routeUserPointColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -532,9 +531,8 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int siz
   else
     painter->setBrush(Qt::NoBrush);
 
-  float penSize = fast ? 6.f : 3.f;
-
-  painter->setPen(QPen(mapcolors::routeProcedurePointColor, penSize, Qt::SolidLine, Qt::SquareCap));
+  float lineWidth = std::max(size / 5.f, 2.0f);
+  painter->setPen(QPen(mapcolors::routeProcedurePointColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -553,7 +551,7 @@ void SymbolPainter::drawProcedureUnderlay(QPainter *painter, int x, int y, int s
 
   if(faf)
     /* Maltese cross to indicate FAF on the map */
-    drawProcedureFaf(painter, x, y, size + 16);
+    drawProcedureFaf(painter, x, y, size + 18);
 }
 
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
@@ -562,7 +560,8 @@ void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int si
   Q_UNUSED(saver);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  painter->setPen(mapcolors::routeProcedurePointFlyoverPen);
+  float lineWidth = std::max(size / 10.f, 1.5f);
+  painter->setPen(QPen(mapcolors::routeProcedurePointFlyoverColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
   painter->setBrush(Qt::NoBrush);
 
   int radius = size / 2;
@@ -625,9 +624,9 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
   else
     painter->setBrush(Qt::NoBrush);
 
-  float penSize = fast ? 6.f : 1.5f;
-
-  painter->setPen(QPen(mapcolors::vorSymbolColor, penSize, Qt::SolidLine, Qt::SquareCap));
+  float lineWidth = std::max(size / 16.f, 1.5f);
+  float roseLineWidth = std::max(size / 36.f, 1.f);
+  painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -643,7 +642,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
     if(vor.tacan || vor.vortac)
     {
       // Draw TACAN symbol or VORTAC outline
-      // Coordinates take from SVG graphics
+      // Coordinates taken from SVG graphics
       sizeF += 2.f;
 
       QPolygonF polygon;
@@ -670,7 +669,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
       {
         // Draw the filled VORTAC blocks
         painter->setBrush(mapcolors::vorSymbolColor);
-        painter->setPen(QPen(mapcolors::vorSymbolColor, 1, Qt::SolidLine, Qt::SquareCap));
+        painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
         polygon.clear();
         polygon
@@ -726,7 +725,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
-      painter->setPen(QPen(mapcolors::vorSymbolColor, 1.f, Qt::SolidLine, Qt::SquareCap));
+      painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
       painter->drawEllipse(QPointF(0.f, 0.f), radius * 5.f, radius * 5.f);
 
       for(int i = 0; i < 360; i += 10)
@@ -743,6 +742,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int
     painter->resetTransform();
   }
 
+  // Draw dot in center
   if(!fast)
   {
     if(size > 14)
@@ -764,10 +764,10 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, boo
   else
     painter->setBrush(Qt::NoBrush);
 
-  float penSize = fast ? 6.f : 1.5f;
+  float lineWidth = std::max(size / 16.f, 1.5f);
 
   // Use dotted or solid line depending on size
-  painter->setPen(QPen(mapcolors::ndbSymbolColor, penSize,
+  painter->setPen(QPen(mapcolors::ndbSymbolColor, lineWidth,
                        sizeF > 12.f ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
   float radius = sizeF / 2.f;

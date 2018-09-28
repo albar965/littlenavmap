@@ -282,10 +282,11 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
     atools::util::PainterContextSaver saver(context->painter);
     Q_UNUSED(saver);
 
-    float width = context->sz(context->thicknessFlightplan, 3);
-    int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
+    float width = context->sz(context->symbolSizeNavaid, 3);
+    int radius = atools::roundToInt(context->sz(context->symbolSizeNavaid, 6));
 
     context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
+    context->szFont(context->textSizeFlightplan);
 
     int transparency = 255;
     if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
