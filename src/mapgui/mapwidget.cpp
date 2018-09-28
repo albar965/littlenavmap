@@ -215,6 +215,7 @@ void MapWidget::setTheme(const QString& theme, int index)
 
       case map::OPENTOPOMAP:
         setPropertyValue("ice", false);
+        setShowIceLayer(false);
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(true);
