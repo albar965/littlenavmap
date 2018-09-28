@@ -760,7 +760,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(), 0.f,
                                                   rs::DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
-                                                  rs::RUNWAY | rs::APPROACH | rs::FLIGHTLEVEL);
+                                                  rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
   const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
 
