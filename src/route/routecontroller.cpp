@@ -544,7 +544,7 @@ void RouteController::newFlightplan()
 
   updateTableModel();
   NavApp::updateWindowTitle();
-  emit routeChanged(true);
+  emit routeChanged(true/* geometry changed */, true /* new flight plan */);
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, const QString& filename,
@@ -675,7 +675,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 
   // qDebug() << route;
 
-  emit routeChanged(true);
+  emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
 /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */

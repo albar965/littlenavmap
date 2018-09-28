@@ -50,7 +50,7 @@ public:
   virtual ~ProfileWidget() override;
 
   /* If geometry has changed the elevation calculation is started after a short delay */
-  void routeChanged(bool geometryChanged);
+  void routeChanged(bool geometryChanged, bool newFlightPlan);
   void routeAltitudeChanged(int altitudeFeet);
 
   /* Update user aircraft on profile display */

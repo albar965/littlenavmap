@@ -941,12 +941,15 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
   updateLabel();
 }
 
-void ProfileWidget::routeChanged(bool geometryChanged)
+void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
 {
   if(!widgetVisible || databaseLoadStatus)
     return;
 
   scrollArea->routeChanged(geometryChanged);
+
+  if(newFlightPlan)
+    scrollArea->expandWidget();
 
   if(geometryChanged)
   {
@@ -1462,7 +1465,7 @@ void ProfileWidget::preDatabaseLoad()
 void ProfileWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
-  routeChanged(true);
+  routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
 void ProfileWidget::optionsChanged()

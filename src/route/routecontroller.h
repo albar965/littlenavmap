@@ -237,7 +237,7 @@ signals:
   void routeSelectionChanged(int selected, int total);
 
   /* Route has changed */
-  void routeChanged(bool geometryChanged);
+  void routeChanged(bool geometryChanged, bool newFlightplan = false);
 
   void routeAltitudeChanged(float altitudeFeet);
 
