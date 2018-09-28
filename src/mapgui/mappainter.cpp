@@ -178,7 +178,8 @@ void MapPainter::drawLineStraight(const PaintContext *context, const atools::geo
 void MapPainter::drawLine(QPainter *painter, const QLineF& line)
 {
   QRectF rect(line.p1(), line.p2());
-  rect = rect.normalized();
+  // Add margins to avoid null width and height which will not intersect with viewport
+  rect = rect.normalized().marginsAdded(QMarginsF(1., 1., 1., 1.));
 
   if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(rect))
   {
