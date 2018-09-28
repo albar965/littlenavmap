@@ -22,6 +22,7 @@
 #include "common/symbolpainter.h"
 #include "geo/calculations.h"
 #include "mapgui/mapwidget.h"
+#include "common/mapcolors.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -31,25 +32,7 @@ using namespace atools::geo;
 
 void PaintContext::szFont(float scale) const
 {
-  QFont font = painter->font();
-  if(font.pixelSize() == -1)
-  {
-    double size = szF(scale, defaultFont.pointSizeF());
-    if(atools::almostNotEqual(size, font.pointSizeF()))
-    {
-      font.setPointSizeF(size);
-      painter->setFont(font);
-    }
-  }
-  else
-  {
-    int size = static_cast<int>(std::round(sz(scale, defaultFont.pixelSize())));
-    if(size != defaultFont.pixelSize())
-    {
-      font.setPixelSize(size);
-      painter->setFont(font);
-    }
-  }
+  return mapcolors::scaleFont(painter, scale, &defaultFont);
 }
 
 // =================================================

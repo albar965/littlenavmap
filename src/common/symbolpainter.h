@@ -180,9 +180,6 @@ public:
   /* Maltese cross to indicate FAF on the map */
   void drawProcedureFaf(QPainter *painter, int x, int y, int size);
 
-  /* Simulator aircraft symbol. Only used for HTML display */
-  void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
-
   /* Draw a custom text box */
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE, int transparency = 255);

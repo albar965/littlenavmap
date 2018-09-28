@@ -190,7 +190,7 @@ const QColor routeProcedureMissedTextColor = QColor(90, 90, 90);
 const QColor routeProcedureTextColor = QColor(0, 0, 0);
 
 const QColor routeProcedurePointColor = QColor(90, 90, 90);
-const QPen routeProcedurePointFlyoverPen = QPen(QColor(0, 0, 0), 2.5);
+const QColor routeProcedurePointFlyoverColor = QColor(Qt::black);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
@@ -230,6 +230,9 @@ const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);
+
+/* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
+void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);
 
 } // namespace mapcolors
 

@@ -20,6 +20,7 @@
 #include "query/mapquery.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
+#include "atools.h"
 
 #include <QPen>
 #include <QString>
@@ -614,6 +615,31 @@ void adjustPenForCircleToLand(QPainter *painter)
   pen.setStyle(Qt::DotLine);
   // pen.setWidthF(pen.widthF() * 3.f / 4.f);
   painter->setPen(pen);
+}
+
+void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
+{
+  QFont font = painter->font();
+  const QFont *defFont = defaultFont == nullptr ? &font : defaultFont;
+  if(font.pixelSize() == -1)
+  {
+    // Use point size if pixel is not available
+    double size = scale * defFont->pointSizeF();
+    if(atools::almostNotEqual(size, font.pointSizeF()))
+    {
+      font.setPointSizeF(size);
+      painter->setFont(font);
+    }
+  }
+  else
+  {
+    int size = atools::roundToInt(scale * defFont->pixelSize());
+    if(size != defFont->pixelSize())
+    {
+      font.setPixelSize(size);
+      painter->setFont(font);
+    }
+  }
 }
 
 } // namespace mapcolors

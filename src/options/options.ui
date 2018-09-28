@@ -1026,7 +1026,7 @@ A range ring will be added for each radius value.</string>
        <item>
         <widget class="QGroupBox" name="groupBoxOptionsDisplay">
          <property name="title">
-          <string>Symbol and Text Sizes (do not affect airport diagrams)</string>
+          <string>Symbol and Text Sizes for Map and Elevation Profile</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_10">
           <property name="leftMargin">
@@ -1785,8 +1785,8 @@ distance measurement:</string>
           <item row="3" column="0" rowspan="2">
            <widget class="QLabel" name="labelOptionsMapSizeNavaid">
             <property name="text">
-             <string>&amp;VOR, NDB, ILS,
-waypoints and airways:</string>
+             <string>&amp;VOR, NDB, ILS,waypoints, airways,
+TOC and TOD (also for flight plan):</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

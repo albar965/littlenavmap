@@ -613,30 +613,6 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, int x, int y, int size)
   painter->drawPolygon(poly);
 }
 
-void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)
-{
-  // Create a copy of the line vector
-  QVector<QLine> lines(AIRCRAFTLINES);
-  for(QLine& l : lines)
-  {
-    if(size != 40)
-    {
-      // Scale points of the copy to new size
-      l.setP1(QPoint(l.x1() * size / 40, l.y1() * size / 40));
-      l.setP2(QPoint(l.x2() * size / 40, l.y2() * size / 40));
-    }
-
-    if(x != 0 && y != 0)
-      l.translate(x, y);
-  }
-
-  painter->setPen(onGround ? mapcolors::aircraftGroundBackPen : mapcolors::aircraftBackPen);
-  painter->drawLines(lines);
-
-  painter->setPen(onGround ? mapcolors::aircraftGroundFillPen : mapcolors::aircraftFillPen);
-  painter->drawLines(lines);
-}
-
 void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int x, int y, int size,
                                   bool routeFill, bool fast, int largeSize)
 {
