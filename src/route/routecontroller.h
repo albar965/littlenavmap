@@ -364,6 +364,8 @@ private:
 
   void contextMenu(const QPoint& pos);
 
+  QString procedureLegText(const RouteLeg& leg);
+
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
 
