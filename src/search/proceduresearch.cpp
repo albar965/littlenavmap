@@ -583,7 +583,7 @@ void ProcedureSearch::restoreState()
   {
     // Restoring state will emit above signal
     if(currentAirportNav.isValid() && currentAirportNav.procedure())
-      restoreTreeViewState(state, false /* block signals */);
+      restoreTreeViewState(state, true /* block signals */);
   }
 
   updateHeaderLabel();
