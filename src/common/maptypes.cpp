@@ -1618,4 +1618,18 @@ QDebug operator<<(QDebug out, const WeatherContext& record)
   return out;
 }
 
+QString ilsText(const MapIls& ils)
+{
+  QString text = ils.ident + " / " +
+                 QString::number(ils.frequency / 1000., 'f', 2) + " / " +
+                 QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + QObject::tr("°M");
+
+  if(ils.slope > 0)
+    text += QObject::tr(" / GS ") + QString::number(ils.slope, 'f', 1) + QObject::tr("°");
+  if(ils.hasDme)
+    text += QObject::tr(" / DME");
+
+  return text;
+}
+
 } // namespace types

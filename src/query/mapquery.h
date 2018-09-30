@@ -92,6 +92,12 @@ public:
   map::MapIls getIlsById(int id);
 
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
+
+  /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
+   * position if no runway ends were found */
+  void getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
+                               const map::MapAirport& airport, bool navData);
+
   map::MapWaypoint getWaypointById(int id);
   map::MapUserpoint getUserdataPointById(int id);
   void updateUserdataPoint(map::MapUserpoint& userpoint);
@@ -192,7 +198,7 @@ private:
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
   MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *db, *dbNav, *dbUser;
+  atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
   SimpleRectCache<map::MapAirport> airportCache;

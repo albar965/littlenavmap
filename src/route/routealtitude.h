@@ -25,6 +25,8 @@ class Route;
 /*
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
+ *
+ * Uses the route object for calculation and caches all values.
  */
 class RouteAltitude
   : private QVector<RouteAltitudeLeg>
@@ -59,6 +61,12 @@ public:
   {
     return distanceTopOfDescent;
   }
+
+  /* Destination altitude. Either airport or runway if approach used. */
+  float getDestinationAltitude() const;
+
+  /* Distance to destination leg either airport or runway end in NM */
+  float getDestinationDistance() const;
 
   /* value in feet. Require to set before compilation. */
   void setCruiseAltitide(float value)
@@ -114,6 +122,16 @@ public:
   using QVector<RouteAltitudeLeg>::size;
   using QVector<RouteAltitudeLeg>::isEmpty;
 
+  const QVector<map::MapIls>& getDestRunwayIls() const
+  {
+    return destRunwayIls;
+  }
+
+  const map::MapRunwayEnd& getDestRunwayEnd() const
+  {
+    return destRunwayEnd;
+  }
+
 private:
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
@@ -130,9 +148,6 @@ private:
   /* Departure altitude. Either airport or runway. */
   float departureAltitude() const;
 
-  /* Destination altitude. Either airport or runway if a . */
-  float destinationAltitude() const;
-
   /* interpolate distance where the given leg intersects the given altitude */
   float distanceForAltitude(const RouteAltitudeLeg& leg, float altitude);
   float distanceForAltitude(const QPointF& leg1, const QPointF& leg2, float altitude);
@@ -148,6 +163,9 @@ private:
 
   /* Calculate altitude and TOC for SID  or no procedures */
   void calculateDeparture();
+
+  /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
+  void calculateApproachIlsAndSlopes();
 
   /* Flatten altitude legs to avoid bends and flats when climbing/descending */
   void simplyfyRouteAltitudes();
@@ -175,6 +193,9 @@ private:
   float altitudePerNmDescent = 333.f;
 
   float cruiseAltitide = 1000.f;
+
+  QVector<map::MapIls> destRunwayIls;
+  map::MapRunwayEnd destRunwayEnd;
 };
 
 #endif // LNM_ROUTEALTITUDE_H

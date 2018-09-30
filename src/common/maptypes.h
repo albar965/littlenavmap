@@ -230,8 +230,9 @@ struct MapRunway
 /* Airport runway end. All dimensions are feet */
 struct MapRunwayEnd
 {
-  QString name;
-  float heading;
+  int id;
+  QString name, leftVasiType, rightVasiType;
+  float heading, leftVasiPitch, rightVasiPitch;
   atools::geo::Pos position;
   bool secondary;
   bool navdata; /* true if source is third party nav database, false if source is simulator data */
@@ -248,7 +249,7 @@ struct MapRunwayEnd
 
   int getId() const
   {
-    return -1;
+    return id;
   }
 
 };
@@ -850,6 +851,8 @@ const QString& navTypeNameVor(const QString& type);
 const QString& navTypeNameVorLong(const QString& type);
 const QString& navTypeNameNdb(const QString& type);
 const QString& navTypeNameWaypoint(const QString& type);
+
+QString ilsText(const map::MapIls& ils);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);

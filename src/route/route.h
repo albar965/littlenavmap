@@ -114,15 +114,15 @@ public:
   bool isPassedLastLeg() const;
 
   /* Get top of descent or climb position based on the option setting (default is 3 nm per 1000 ft) */
-  atools::geo::Pos getTopOfDescent() const;
-  atools::geo::Pos getTopOfClimb() const;
+  atools::geo::Pos getTopOfDescentPos() const;
+  atools::geo::Pos getTopOfClimbPos() const;
 
   /* Distance from TOD to destination in nm */
   float getTopOfDescentFromDestination() const;
-  float getTopOfDescentFromStart() const;
+  float getTopOfDescentDistance() const;
 
   /* Distance from TOC to destination in nm */
-  float getTopOfClimbFromStart() const;
+  float getTopOfClimbDistance() const;
 
   /* Above or below planned descent */
   float getAltitudeForDistance(float currentDistToDest) const;
@@ -384,6 +384,9 @@ public:
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
   void updateLegAltitudes();
+
+  /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
+  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd& runwayEnd) const;
 
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);

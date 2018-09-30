@@ -41,6 +41,10 @@ QColor ndbSymbolColor(Qt::darkRed);
 QColor markerSymbolColor(Qt::darkMagenta);
 QColor ilsSymbolColor(Qt::darkGreen);
 
+QPen ilsCenterPen(ilsSymbolColor, 1.5, Qt::DashLine);
+
+QColor ilsFillColor("#40008000");
+
 QColor ilsTextColor(0, 30, 0);
 
 QColor waypointSymbolColor(200, 0, 200);
@@ -79,6 +83,10 @@ QColor profileLandDarkColor(QColor(0, 60, 0));
 QColor profileLabelColor(QColor(0, 0, 0));
 QColor profileLabelDarkColor(QColor(0, 0, 0));
 
+QColor profileVasiAboveColor(QColor("#70ffffff"));
+QColor profileVasiBelowColor(QColor("#70ff0000"));
+
+QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
 QPen profileLandOutlineDarkPen(Qt::black, 1, Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
@@ -528,7 +536,9 @@ void syncColors()
   syncColor(colorSettings, "NdbColor", ndbSymbolColor);
   syncColor(colorSettings, "MarkerColor", markerSymbolColor);
   syncColor(colorSettings, "IlsColor", ilsSymbolColor);
+  syncColorArgb(colorSettings, "IlsFillColor", ilsFillColor);
   syncColor(colorSettings, "IlsTextColor", ilsTextColor);
+  syncPen(colorSettings, "IlsCenterPen", ilsCenterPen);
   syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
   colorSettings.endGroup();
 
@@ -583,6 +593,8 @@ void syncColors()
   syncColor(colorSettings, "LandDarkColor", profileLandDarkColor);
   syncColor(colorSettings, "LabelColor", profileLabelColor);
   syncColor(colorSettings, "LabelDarkColor", profileLabelDarkColor);
+  syncColorArgb(colorSettings, "VasiAboveColor", profileVasiAboveColor);
+  syncColorArgb(colorSettings, "VasiBelowColor", profileVasiBelowColor);
   syncPen(colorSettings, "LandOutlinePen", profileLandOutlinePen);
   syncPen(colorSettings, "LandOutlineDarkPen", profileLandOutlineDarkPen);
   syncPen(colorSettings, "WaypointLinePen", profileWaypointLinePen);
@@ -593,6 +605,7 @@ void syncColors()
   syncPen(colorSettings, "SafeAltLineDarkPen", profileSafeAltLineDarkPen);
   syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
   syncPen(colorSettings, "SafeAltLegLineDarkPen", profileSafeAltLegLineDarkPen);
+  syncPen(colorSettings, "VasiCenterPen", profileVasiCenterPen);
   colorSettings.endGroup();
 
   // Sync airspace colors ============================================

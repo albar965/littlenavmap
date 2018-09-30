@@ -8509,6 +8509,27 @@
     <string>Show or hide the zoom sliders in the split window on the right</string>
    </property>
   </action>
+  <action name="actionProfileShowApproachGuide">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachguide.svg</normaloff>:/littlenavmap/resources/icons/approachguide.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Approach Guidance</string>
+   </property>
+   <property name="toolTip">
+    <string>Show ILS or VASI slope at destination if a procedure is selected</string>
+   </property>
+   <property name="statusTip">
+    <string>Show ILS or VASI slope at destination if a procedure is selected</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

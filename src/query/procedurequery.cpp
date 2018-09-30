@@ -442,33 +442,7 @@ void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString
 {
   Q_ASSERT(airport.navdata);
 
-  QString bestRunway = map::runwayBestFit(name, airportQueryNav->getRunwayNames(airport.id));
-
-  if(!bestRunway.isEmpty())
-    mapQuery->getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
-                                  true /* airport or runway from nav database */);
-
-  if(result.runwayEnds.isEmpty())
-  {
-    // Get heading of runway by name
-    int rwnum = 0;
-    map::runwayNameSplit(name, &rwnum);
-
-    // Create a dummy with the airport position as the last resort
-    map::MapRunwayEnd end;
-    end.navdata = true;
-    end.name = name.startsWith("RW") ? name.mid(2) : name;
-    end.heading = rwnum * 10.f;
-    end.position = airport.position;
-    end.secondary = false;
-    result.runwayEnds.append(end);
-
-    qWarning() << "Created runway dummy" << name << "for airport" << airport.ident;
-  }
-  else if(result.runwayEnds.first().name != name)
-    qWarning() << "Found runway" << result.runwayEnds.first().name
-               << "as replacement for" << name << "airport" << airport.ident;
-
+  mapQuery->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, true /* navdata */);
 }
 
 void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,

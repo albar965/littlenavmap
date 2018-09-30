@@ -213,5 +213,6 @@
         <file>resources/icons/viewhoriz.svg</file>
         <file>resources/icons/viewexpand.svg</file>
         <file>resources/icons/homemap.svg</file>
+        <file>resources/icons/approachguide.svg</file>
     </qresource>
 </RCC>

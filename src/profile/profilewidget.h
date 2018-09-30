@@ -119,6 +119,8 @@ public:
     return maxWindowAlt;
   }
 
+  bool hasValidRouteForDisplay(const Route& route) const;
+
   /* Call by this and profile label widget class. Point in screen coordinates. */
   void showContextMenu(const QPoint& globalPoint);
 
@@ -194,6 +196,10 @@ private:
   QPolygon toScreen(const QPolygonF& leg) const;
 
   void hideRubberBand();
+
+  /* Paint slopes at destination if an approach is selected. */
+  void paintIls(QPainter& painter, const Route& route);
+  void paintVasi(QPainter& painter, const Route& route);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;

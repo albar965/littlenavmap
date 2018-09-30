@@ -57,6 +57,7 @@ void ProfileLabelWidget::contextMenuEvent(QContextMenuEvent *event)
 void ProfileLabelWidget::paintEvent(QPaintEvent *event)
 {
   Q_UNUSED(event);
+
   // qDebug() << Q_FUNC_INFO;
   int w = rect().width(), h = rect().height();
 
@@ -66,6 +67,9 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *event)
   // Fill background white
   bool dark = NavApp::isCurrentGuiStyleNight();
   painter.fillRect(rect(), dark ? mapcolors::profileBackgroundDarkColor : mapcolors::profileBackgroundColor);
+
+  if(!profileWidget->hasValidRouteForDisplay(NavApp::getRoute()))
+    return;
 
   QPen scalePen = dark ? mapcolors::profileElevationScaleDarkPen : mapcolors::profileElevationScalePen;
 

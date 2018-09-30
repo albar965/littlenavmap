@@ -487,7 +487,7 @@ float Route::getDistanceFromStart(const atools::geo::Pos& pos) const
   return meterToNm(distFromStart);
 }
 
-float Route::getTopOfDescentFromStart() const
+float Route::getTopOfDescentDistance() const
 {
   return altitude->getTopOfDescentDistance();
 }
@@ -507,17 +507,17 @@ float Route::getTopOfDescentFromDestination() const
   return altitude->getTopOfDescentFromDestination();
 }
 
-float Route::getTopOfClimbFromStart() const
+float Route::getTopOfClimbDistance() const
 {
   return altitude->getTopOfClimbDistance();
 }
 
-atools::geo::Pos Route::getTopOfDescent() const
+atools::geo::Pos Route::getTopOfDescentPos() const
 {
   return altitude->getTopOfDescentPos();
 }
 
-atools::geo::Pos Route::getTopOfClimb() const
+atools::geo::Pos Route::getTopOfClimbPos() const
 {
   return altitude->getTopOfClimbPos();
 }
@@ -1525,6 +1525,28 @@ float Route::calculateAltPerDistanceFactor()
   float distRuleNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
   float altRuleFt = Unit::rev(1000.f, Unit::altFeetF);
   return altRuleFt / distRuleNm;
+}
+
+void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd& runwayEnd) const
+{
+  int destinationLegIdx = getDestinationLegIndex();
+  if(destinationLegIdx < map::INVALID_INDEX_VALUE)
+  {
+    const RouteLeg& leg = at(destinationLegIdx);
+
+    ils.clear();
+    if((getArrivalLegs().isTypeIls()) &&
+       leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
+      // Get all ils if this is an ILS approach (not LOC)
+      ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, leg.getRunwayEnd().name);
+
+    // Get the runway end for arrival
+    QList<map::MapRunwayEnd> runwayEnds;
+    if(leg.getRunwayEnd().isValid())
+      NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, arrivalLegs.runwayEnd.name, last().getAirport(),
+                                                     false /* sim data */);
+    runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
+  }
 }
 
 QDebug operator<<(QDebug out, const Route& route)

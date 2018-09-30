@@ -52,7 +52,7 @@ static double queryRectInflationIncrement = 0.1;
 int MapQuery::queryMaxRows = 5000;
 
 MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
-  : QObject(parent), db(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
+  : QObject(parent), dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -987,6 +987,43 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
   }
 }
 
+/* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
+ * position if no runway ends were found */
+void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
+                                       const map::MapAirport& airport, bool navData)
+{
+  AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
+
+  QString bestRunway = map::runwayBestFit(name, aquery->getRunwayNames(airport.id));
+
+  map::MapSearchResult result;
+  if(!bestRunway.isEmpty())
+    getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
+                        navData /* airport or runway from nav database */);
+
+  if(result.runwayEnds.isEmpty())
+  {
+    // Get heading of runway by name
+    int rwnum = 0;
+    map::runwayNameSplit(name, &rwnum);
+
+    // Create a dummy with the airport position as the last resort
+    map::MapRunwayEnd end;
+    end.navdata = true;
+    end.name = name.startsWith("RW") ? name.mid(2) : name;
+    end.heading = rwnum * 10.f;
+    end.position = airport.position;
+    end.secondary = false;
+    result.runwayEnds.append(end);
+
+    qWarning() << "Created runway dummy" << name << "for airport" << airport.ident;
+  }
+  else if(result.runwayEnds.first().name != name)
+    qWarning() << "Found runway" << result.runwayEnds.first().name
+               << "as replacement for" << name << "airport" << airport.ident;
+  runwayEnds = result.runwayEnds;
+}
+
 void MapQuery::initQueries()
 {
   // Common where clauses
@@ -995,8 +1032,8 @@ void MapQuery::initQueries()
   static const QString whereLimit("limit " + QString::number(queryMaxRows));
 
   // Common select statements
-  QStringList const airportQueryBase = AirportQuery::airportColumns(db);
-  QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(db);
+  QStringList const airportQueryBase = AirportQuery::airportColumns(dbSim);
+  QStringList const airportQueryBaseOverview = AirportQuery::airportOverviewColumns(dbSim);
 
   static const QString airwayQueryBase(
     "airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
@@ -1030,7 +1067,7 @@ void MapQuery::initQueries()
   waypointByIdentQuery = new SqlQuery(dbNav);
   waypointByIdentQuery->prepare("select " + waypointQueryBase + " from waypoint where " + whereIdentRegion);
 
-  ilsByIdentQuery = new SqlQuery(db);
+  ilsByIdentQuery = new SqlQuery(dbSim);
   ilsByIdentQuery->prepare("select " + ilsQueryBase +
                            " from ils where ident = :ident and loc_airport_ident = :airport");
 
@@ -1068,29 +1105,29 @@ void MapQuery::initQueries()
   userdataPointByIdQuery = new SqlQuery(dbUser);
   userdataPointByIdQuery->prepare("select * from userdata where userdata_id = :id");
 
-  ilsByIdQuery = new SqlQuery(db);
+  ilsByIdQuery = new SqlQuery(dbSim);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
-  ilsQuerySimByName = new SqlQuery(db);
+  ilsQuerySimByName = new SqlQuery(dbSim);
   ilsQuerySimByName->prepare("select " + ilsQueryBase + " from ils "
                                                         "where loc_airport_ident = :apt and loc_runway_name = :rwy");
 
-  airportByRectQuery = new SqlQuery(db);
+  airportByRectQuery = new SqlQuery(dbSim);
   airportByRectQuery->prepare(
     "select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
     " and longest_runway_length >= :minlength "
     + whereLimit);
 
-  airportMediumByRectQuery = new SqlQuery(db);
+  airportMediumByRectQuery = new SqlQuery(dbSim);
   airportMediumByRectQuery->prepare(
     "select " + airportQueryBaseOverview.join(", ") + " from airport_medium where " + whereRect + " " + whereLimit);
 
-  airportLargeByRectQuery = new SqlQuery(db);
+  airportLargeByRectQuery = new SqlQuery(dbSim);
   airportLargeByRectQuery->prepare(
     "select " + airportQueryBaseOverview.join(", ") + " from airport_large where " + whereRect + " " + whereLimit);
 
   // Runways > 4000 feet for simplyfied runway overview
-  runwayOverviewQuery = new SqlQuery(db);
+  runwayOverviewQuery = new SqlQuery(dbSim);
   runwayOverviewQuery->prepare(
     "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
     "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
@@ -1116,7 +1153,7 @@ void MapQuery::initQueries()
     "from marker "
     "where " + whereRect + " " + whereLimit);
 
-  ilsByRectQuery = new SqlQuery(db);
+  ilsByRectQuery = new SqlQuery(dbSim);
   ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
 
   // Get all that are crossing the anti meridian too and filter them out from the query result

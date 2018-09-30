@@ -415,6 +415,16 @@ struct MapProcedureLegs
        hasError, /* Unusable due to missing navaid */
        circleToLand /* Runway is not part of procedure and was added internally */;
 
+  bool isTypeIls() const
+  {
+    return approachType == "ILS";
+  }
+
+  bool isTypeLoc() const
+  {
+    return approachType == "LOC";
+  }
+
   void clearApproach();
 
   void clearTransition();

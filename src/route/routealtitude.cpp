@@ -108,6 +108,8 @@ void RouteAltitude::clearAll()
   distanceTopOfClimb = map::INVALID_DISTANCE_VALUE;
   distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
   violatesRestrictions = false;
+  destRunwayIls.clear();
+  destRunwayEnd = map::MapRunwayEnd();
 }
 
 void RouteAltitude::adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const
@@ -412,6 +414,16 @@ float RouteAltitude::destinationAltitude() const
   return cruiseAltitide;
 }
 
+float RouteAltitude::getDestinationDistance() const
+{
+  int idx = route->getDestinationLegIndex();
+
+  if(idx < map::INVALID_INDEX_VALUE)
+    return at(idx).getDistanceFromStart();
+  else
+    return map::INVALID_DISTANCE_VALUE;
+}
+
 float RouteAltitude::departureAltitude() const
 {
   const RouteLeg& startLeg = route->at(route->getDepartureLegIndex());
@@ -626,4 +638,9 @@ void RouteAltitude::calculateDistances()
     else
       (*this)[i].procedure = true;
   }
+}
+
+void RouteAltitude::calculateApproachIlsAndSlopes()
+{
+  route->getApproachRunwayEndAndIls(destRunwayIls, destRunwayEnd);
 }

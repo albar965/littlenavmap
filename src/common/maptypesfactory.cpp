@@ -125,6 +125,11 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
   end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   end.secondary = record.valueStr("end_type") == "S";
   end.heading = record.valueFloat("heading");
+  end.id = record.valueInt("runway_end_id");
+  end.leftVasiPitch = record.valueFloat("left_vasi_pitch");
+  end.rightVasiPitch = record.valueFloat("right_vasi_pitch");
+  end.leftVasiType = record.valueStr("left_vasi_type");
+  end.rightVasiType = record.valueStr("right_vasi_type");
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)

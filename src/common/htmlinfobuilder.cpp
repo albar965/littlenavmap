@@ -2421,7 +2421,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       {
         // Top of descent  ===============================================================
         if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
-          toTod = route.getTopOfDescentFromStart() - distFromStartNm;
+          toTod = route.getTopOfDescentDistance() - distFromStartNm;
 
         if(!less || (toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE))
           // Avoid printing the head only in less information mode

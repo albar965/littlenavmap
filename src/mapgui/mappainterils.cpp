@@ -84,8 +84,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
   atools::util::PainterContextSaver saver(context->painter);
 
   context->painter->setBackgroundMode(Qt::TransparentMode);
-
-  context->painter->setBrush(Qt::NoBrush);
+  context->painter->setBrush(mapcolors::ilsFillColor);
   context->painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
@@ -97,30 +96,23 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
 
-  context->painter->drawLine(origin, p1);
-  context->painter->drawLine(p1, pmid);
-  context->painter->drawLine(pmid, p2);
-  context->painter->drawLine(p2, origin);
+  if(ils.slope > 0.f)
+  {
+    context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+    context->painter->drawPolyline(QPolygonF({p1, pmid, p2}));
+  }
+  else
+    context->painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
 
-  if(ils.slope > 0)
-    // Close the end to for a triangle to indicate GS
-    context->painter->drawLine(p1, p2);
+  context->painter->setPen(QPen(mapcolors::ilsCenterPen));
+  context->painter->drawLine(origin, pmid);
 
   if(!context->drawFast)
   {
     // Draw ILS text -----------------------------------
     QString text;
     if(context->mapLayer->isIlsInfo())
-    {
-      text = ils.ident + " / " +
-             QString::number(ils.frequency / 1000., 'f', 2) + " / " +
-             QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + tr("°M");
-
-      if(ils.slope > 0)
-        text += tr(" / GS ") + QString::number(ils.slope, 'f', 1) + tr("°");
-      if(ils.hasDme)
-        text += tr(" / DME");
-    }
+      text = map::ilsText(ils);
     else if(context->mapLayer->isIlsIdent())
       text = ils.ident;
 
