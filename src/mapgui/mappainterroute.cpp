@@ -293,7 +293,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
       transparency = 0;
 
     // Draw the top of descent circle and text ======================
-    QPoint pt = wToS(route->getTopOfDescent());
+    QPoint pt = wToS(route->getTopOfDescentPos());
     if(!pt.isNull())
     {
       context->painter->drawEllipse(pt, radius, radius);
@@ -309,7 +309,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
     }
 
     // Draw the top of climb circle and text ======================
-    pt = wToS(route->getTopOfClimb());
+    pt = wToS(route->getTopOfClimbPos());
     if(!pt.isNull())
     {
       context->painter->drawEllipse(pt, radius, radius);
@@ -317,7 +317,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
       QStringList toc;
       toc.append(tr("TOC"));
       if(context->mapLayer->isAirportRouteInfo())
-        toc.append(Unit::distNm(route->getTopOfClimbFromStart()));
+        toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
       symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
                              pt.x() + radius, pt.y() + radius,
@@ -548,15 +548,20 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
   if(!context->mapLayer->isApproachTextAndDetail())
   {
     bool visible1, visible2, hidden1, hidden2;
-    QPoint pt1 = wToS(leg.line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
-    QPoint pt2 = wToS(leg.line.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+    wToS(leg.line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+    wToS(leg.line.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
 
     if(!hidden1 && !hidden2)
     {
-      QLine simpleLine(pt1, pt2);
+      // QLineF simpleLine(lastLine.p2(), line.p1());
       if(draw)
-        drawLine(painter, simpleLine);
-      lastLine = simpleLine;
+      {
+        if(!lastLine.p2().isNull() && !line.p1().isNull())
+          drawLine(painter, lastLine.p2(), line.p1());
+        if(!line.isNull())
+          drawLine(painter, line);
+      }
+      lastLine = line;
 
       if(drawTextLines != nullptr)
         // Disable all drawing
