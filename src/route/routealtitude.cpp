@@ -182,17 +182,20 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
     // Avoid crashes
     index = fixRange(index);
 
-    // Check backwards from index for a arrival/STAR leg that limits the maximum altitude
-    for(int i = index - 1; i >= 0; i--)
+    if(index < map::INVALID_INDEX_VALUE)
     {
-      const RouteLeg& leg = route->at(i);
-
-      if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
+      // Check backwards from index for a arrival/STAR leg that limits the maximum altitude
+      for(int i = index - 1; i >= 0; i--)
       {
-        const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
-        if(r.descriptor == proc::MapAltRestriction::AT || r.descriptor == proc::MapAltRestriction::AT_OR_BELOW ||
-           r.descriptor == proc::MapAltRestriction::BETWEEN)
-          return r.alt1;
+        const RouteLeg& leg = route->at(i);
+
+        if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
+        {
+          const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
+          if(r.descriptor == proc::MapAltRestriction::AT || r.descriptor == proc::MapAltRestriction::AT_OR_BELOW ||
+             r.descriptor == proc::MapAltRestriction::BETWEEN)
+            return r.alt1;
+        }
       }
     }
   }
@@ -238,11 +241,14 @@ int RouteAltitude::findApproachFirstRestricion() const
       // No STAR - use arrival
       start = route->getArrivalLegsOffset();
 
-    for(int i = start; i < route->size(); i++)
+    if(start < map::INVALID_INDEX_VALUE)
     {
-      const RouteLeg& leg = route->at(i);
-      if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
-        return i;
+      for(int i = start; i < route->size(); i++)
+      {
+        const RouteLeg& leg = route->at(i);
+        if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
+          return i;
+      }
     }
   }
   return map::INVALID_INDEX_VALUE;
@@ -345,10 +351,6 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
         (*this)[index + 1].setY1(midAlt.y2());
 
       rightAlt->setY1(midAlt.y2());
-
-#ifdef DEBUG_INFORMATION
-      qDebug() << "t" << t << "line" << line << "mid" << mid << "midAlt.geometry" << midAlt.geometry;
-#endif
     }
   }
 }
@@ -359,6 +361,9 @@ void RouteAltitude::calculate()
 
   if(route->size() > 1)
   {
+    if(route->getTotalDistance() < 0.5f)
+      return;
+
     // Prefill all legs with distance and cruise altitude
     calculateDistances();
 
@@ -385,6 +390,8 @@ void RouteAltitude::calculate()
       // Check for violations because of too low cruise
       for(RouteAltitudeLeg& leg : *this)
         violatesRestrictions |= violatesAltitudeRestriction(leg);
+
+      calculateApproachIlsAndSlopes();
     }
 
 #ifdef DEBUG_INFORMATION
@@ -400,7 +407,7 @@ void RouteAltitude::calculate()
   }
 }
 
-float RouteAltitude::destinationAltitude() const
+float RouteAltitude::getDestinationAltitude() const
 {
   const RouteLeg& destLeg = route->at(route->getDestinationLegIndex());
   if(destLeg.isAnyProcedure() && destLeg.getProcedureLegAltRestr().isValid())
@@ -461,7 +468,7 @@ void RouteAltitude::calculateDeparture()
 {
   int departureLegIdx = route->getDepartureLegIndex();
 
-  if(departureLegIdx > 0)
+  if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
     first().setAlt(departureAltitude());
 
   // Start from departure forward until hitting cruise altitude (TOC)
@@ -526,7 +533,7 @@ void RouteAltitude::calculateArrival()
 {
   int destinationLegIdx = route->getDestinationLegIndex();
   int departureLegIndex = route->getDepartureLegIndex();
-  float lastAlt = destinationAltitude();
+  float lastAlt = getDestinationAltitude();
 
   // Calculate from last leg down until we hit the cruise altitude (TOD)
   for(int i = route->size() - 1; i >= 0; i--)

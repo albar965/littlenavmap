@@ -83,23 +83,25 @@ private:
   /* Waypoint of last leg */
   float y1() const
   {
-    return static_cast<float>(geometry.first().y());
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.first().y());
   }
 
   void setY1(float y)
   {
-    geometry.first().setY(y);
+    if(!geometry.isEmpty())
+      geometry.first().setY(y);
   }
 
   /* Waypoint of this  leg */
   float y2() const
   {
-    return static_cast<float>(geometry.last().y());
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.last().y());
   }
 
   void setY2(float y)
   {
-    geometry.last().setY(y);
+    if(!geometry.isEmpty())
+      geometry.last().setY(y);
   }
 
   QPolygonF geometry;
