@@ -446,29 +446,29 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
       float ydiff1 = std::tan(atools::geo::toRadians(ils.slope)) * featherLen;
 
       // Calculate screen points for end of feather
-      int yUpper = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
-      int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 9.f);
+      int y2 = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
+      int x2 = distanceX(altitudeLegs.getDestinationDistance() - 9.f);
 
       // Screen difference for +/- 0.35°
       float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 0.35f)) * featherLen - ydiff1;
 
       // Construct geometry
-      QLineF centerLine(x, y, xUpper, yUpper);
-      QLineF upperLine(x, y, xUpper, yUpper + (ydiffUpper *verticalScale));
-      QLineF lowerLine(x, y, xUpper, yUpper - (ydiffUpper *verticalScale));
+      QLineF centerLine(x, y, x2, y2);
+      QLineF lowerLine(x, y, x2, y2 + (ydiffUpper *verticalScale));
+      QLineF upperLine(x, y, x2, y2 - (ydiffUpper *verticalScale));
 
       // Make all the same length
-      upperLine.setLength(centerLine.length());
       lowerLine.setLength(centerLine.length());
+      upperLine.setLength(centerLine.length());
 
       // Shorten the center line
-      centerLine.setLength(centerLine.length() - QLineF(upperLine.p2(), lowerLine.p2()).length() / 2.);
+      centerLine.setLength(centerLine.length() - QLineF(lowerLine.p2(), upperLine.p2()).length() / 2.);
 
       // Draw feather
-      painter.drawPolygon(QPolygonF({upperLine.p1(), upperLine.p2(), lowerLine.p2(), lowerLine.p1()}));
+      painter.drawPolygon(QPolygonF({lowerLine.p1(), lowerLine.p2(), upperLine.p2(), upperLine.p1()}));
 
       // Draw small indicator for ILS
-      painter.drawPolyline(QPolygonF({upperLine.p2(), centerLine.p2(), lowerLine.p2()}));
+      painter.drawPolyline(QPolygonF({lowerLine.p2(), centerLine.p2(), upperLine.p2()}));
 
       // Dashed center line
       painter.setPen(mapcolors::ilsCenterPen);
@@ -485,10 +485,10 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
         painter.setBackgroundMode(Qt::TransparentMode);
 
       // Place near p2 at end of feather
-      double angle = atools::geo::angleFromQt(centerLine.angle());
-      painter.translate(centerLine.p2());
+      double angle = atools::geo::angleFromQt(upperLine.angle());
+      painter.translate(upperLine.p2());
       painter.rotate(angle + 90.);
-      painter.drawText(0, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" ►"));
+      painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" ►"));
       painter.resetTransform();
     }
   }
@@ -515,6 +515,9 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
     if(runwayEnd.leftVasiPitch > 0.f)
       vasiList.append(std::make_pair(runwayEnd.leftVasiPitch,
                                      runwayEnd.leftVasiType == "UNKN" ? QString() : runwayEnd.leftVasiType));
+
+    if(vasiList.isEmpty())
+      return;
 
     if(vasiList.size() == 2)
     {
@@ -545,7 +548,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
       int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 6.f);
 
       // Screen difference for +/- one degree
-      float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.f)) * featherLen - ydiff1;
+      float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 0.5f)) * featherLen - ydiff1;
 
       // Build geometry
       QLineF center(x, y, xUpper, yUpper);
@@ -578,11 +581,16 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
         painter.setBackgroundMode(Qt::TransparentMode);
 
       // Draw VASI text ========================
-      double angle = atools::geo::angleFromQt(center.angle());
-      painter.translate(center.p2());
+      double angle = atools::geo::angleFromQt(upper.angle());
+      painter.translate(upper.p2());
       painter.rotate(angle + 90.);
-      QString txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
-      painter.drawText(10, -painter.fontMetrics().descent() - 5, txt);
+
+      QString txt;
+      if(vasi.second.isEmpty())
+        txt = tr("%1° ►").arg(QLocale().toString(vasi.first, 'f', 1));
+      else
+        txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
+      painter.drawText(10, -painter.fontMetrics().descent(), txt);
       painter.resetTransform();
     }
   }

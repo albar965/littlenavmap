@@ -232,7 +232,7 @@ struct MapRunwayEnd
 {
   int id;
   QString name, leftVasiType, rightVasiType;
-  float heading, leftVasiPitch, rightVasiPitch;
+  float heading, leftVasiPitch = 0.f, rightVasiPitch = 0.f;
   atools::geo::Pos position;
   bool secondary;
   bool navdata; /* true if source is third party nav database, false if source is simulator data */
