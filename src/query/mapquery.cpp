@@ -859,7 +859,7 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
   return &markerCache.list;
 }
 
-const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy)
 {
   ilsCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -869,10 +869,18 @@ const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const M
 
   if(ilsCache.list.isEmpty() && !lazy)
   {
+    // ILS length is 9 NM * 1' per degree
+    double increase = atools::geo::toRadians(9. / 60.);
+
+    // Increase bounding rect since ILS has no bounding to query
+    rect.setBoundaries(rect.north() + increase, rect.south() - increase,
+                       rect.east() + increase, rect.west() - increase);
+
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindCoordinatePointInRect(r, ilsByRectQuery);
+
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
       {

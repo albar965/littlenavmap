@@ -166,7 +166,7 @@ public:
   const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<map::MapIls> *getIls(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapIls> *getIls(Marble::GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
   const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
