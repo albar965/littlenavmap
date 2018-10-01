@@ -984,13 +984,14 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
 }
 
 void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-                            textatt::TextAttributes atts, int transparency)
+                            textatt::TextAttributes atts, int transparency, const QColor& backgroundColor)
 {
-  textBoxF(painter, texts, textPen, x, y, atts, transparency);
+  textBoxF(painter, texts, textPen, x, y, atts, transparency, backgroundColor);
 }
 
 void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen,
-                             float x, float y, textatt::TextAttributes atts, int transparency)
+                             float x, float y, textatt::TextAttributes atts, int transparency,
+                             const QColor& backgroundColor)
 {
   if(texts.isEmpty())
     return;
@@ -998,11 +999,14 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   atools::util::PainterContextSaver saver(painter);
   Q_UNUSED(saver);
 
-  QColor backColor;
-  if(atts.testFlag(textatt::ROUTE_BG_COLOR))
-    backColor = mapcolors::routeTextBoxColor;
-  else
-    backColor = mapcolors::textBoxColor;
+  QColor backColor(backgroundColor);
+  if(!backColor.isValid())
+  {
+    if(atts.testFlag(textatt::ROUTE_BG_COLOR))
+      backColor = mapcolors::routeTextBoxColor;
+    else
+      backColor = mapcolors::textBoxColor;
+  }
 
   if(transparency != 255)
   {

@@ -19,6 +19,7 @@
 
 #include "navapp.h"
 #include "connect/connectclient.h"
+#include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mappainteraircraft.h"
@@ -531,13 +532,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     }
 
     // Dim the map by drawing a semi-transparent black rectangle
-    if(NavApp::isCurrentGuiStyleNight())
-    {
-      int dim = OptionData::instance().getGuiStyleMapDimming();
-      QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
-      painter->fillRect(QRect(0, 0, painter->device()->width(), painter->device()->height()), col);
-    }
-
+    mapcolors::darkenPainterRect(*painter);
   }
   return true;
 }

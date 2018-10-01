@@ -605,14 +605,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Keep margin to left, right and top
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  bool dark = NavApp::isCurrentGuiStyleNight();
-
   // Fill background sky blue ====================================================
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
   painter.setRenderHint(QPainter::SmoothPixmapTransform);
-  painter.fillRect(X0, 0, rect().width() - X0 * 2, rect().height(),
-                   dark ? mapcolors::profileSkyDarkColor : mapcolors::profileSkyColor);
+  painter.fillRect(X0, 0, rect().width() - X0 * 2, rect().height(), mapcolors::profileSkyColor);
 
   SymbolPainter symPainter;
 
@@ -629,20 +626,20 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     return;
 
   // Draw the ground ======================================================
-  painter.setBrush(dark ? mapcolors::profileLandDarkColor : mapcolors::profileLandColor);
-  painter.setPen(dark ? mapcolors::profileLandOutlineDarkPen : mapcolors::profileLandOutlinePen);
+  painter.setBrush(mapcolors::profileLandColor);
+  painter.setPen(mapcolors::profileLandOutlinePen);
   painter.drawPolygon(landPolygon);
 
   // Draw grey vertical lines for waypoints
   int flightplanY = getFlightplanAltY();
   int safeAltY = getMinSafeAltitudeY();
   int flightplanTextY = flightplanY + 14;
-  painter.setPen(dark ? mapcolors::profileWaypointLineDarkPen : mapcolors::profileWaypointLinePen);
+  painter.setPen(mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
 
   // Draw elevation scale lines ======================================================
-  painter.setPen(dark ? mapcolors::profileElevationScaleDarkPen : mapcolors::profileElevationScalePen);
+  painter.setPen(mapcolors::profileElevationScalePen);
   for(const std::pair<int, int>& scale : calcScaleValues())
     painter.drawLine(0, scale.first, X0 + static_cast<int>(w), scale.first);
 
@@ -651,7 +648,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.drawLine(0, safeAltY, X0, safeAltY);
 
   // Draw orange minimum safe altitude lines for each segment ======================================================
-  painter.setPen(dark ? mapcolors::profileSafeAltLegLineDarkPen : mapcolors::profileSafeAltLegLinePen);
+  painter.setPen(mapcolors::profileSafeAltLegLinePen);
   for(int i = 0; i < legList.elevationLegs.size(); i++)
   {
     if(waypointX.at(i) == waypointX.at(i + 1))
@@ -664,7 +661,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw the red minimum safe altitude line ======================================================
-  painter.setPen(dark ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen);
+  painter.setPen(mapcolors::profileSafeAltLinePen);
   painter.drawLine(X0, safeAltY, X0 + static_cast<int>(w), safeAltY);
 
   // Get TOD position from active route  ======================================================
@@ -1024,7 +1021,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     } // if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
 
     // Departure altitude label =========================================================
-    QColor labelColor = dark ? mapcolors::profileLabelDarkColor : mapcolors::profileLabelColor;
+    QColor labelColor = mapcolors::profileLabelColor;
     float departureAlt = legList.route.first().getPosition().getAltitude();
     int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
@@ -1098,10 +1095,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
   }
 
-  // Dim the whole map
-  if(NavApp::isCurrentGuiStyleNight())
-    painter.fillRect(QRect(0, 0, width(), height()),
-                     QColor::fromRgb(0, 0, 0, 255 - (255 * optData.getGuiStyleMapDimming() / 100)));
+  // Dim the map by drawing a semi-transparent black rectangle
+  mapcolors::darkenPainterRect(painter);
 
   scrollArea->updateLabelWidget();
 }

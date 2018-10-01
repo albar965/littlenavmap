@@ -182,9 +182,11 @@ public:
 
   /* Draw a custom text box */
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+               textatt::TextAttributes atts = textatt::NONE,
+               int transparency = 255, const QColor& backgroundColor = QColor());
   void textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen, float x, float y,
-                textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+                textatt::TextAttributes atts = textatt::NONE,
+                int transparency = 255, const QColor& backgroundColor = QColor());
 
   /* Get dimensions of a custom text box */
   QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);

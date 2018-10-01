@@ -83,27 +83,17 @@ extern QColor minimumAltitudeNumberColor;
 
 /* Elevation profile colors and pens */
 extern QColor profileSkyColor;
-extern QColor profileSkyDarkColor;
-extern QColor profileBackgroundColor;
-extern QColor profileBackgroundDarkColor;
 extern QColor profileLandColor;
-extern QColor profileLandDarkColor;
 extern QColor profileLabelColor;
-extern QColor profileLabelDarkColor;
 extern QColor profileVasiAboveColor;
 extern QColor profileVasiBelowColor;
 extern QPen profileVasiCenterPen;
 extern QPen ilsCenterPen;
 extern QPen profileLandOutlinePen;
-extern QPen profileLandOutlineDarkPen;
 extern QPen profileWaypointLinePen;
-extern QPen profileWaypointLineDarkPen;
 extern QPen profileElevationScalePen;
-extern QPen profileElevationScaleDarkPen;
 extern QPen profileSafeAltLinePen;
-extern QPen profileSafeAltLineDarkPen;
 extern QPen profileSafeAltLegLinePen;
-extern QPen profileSafeAltLegLineDarkPen;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;
@@ -238,6 +228,8 @@ void adjustPenForCircleToLand(QPainter *painter);
 
 /* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);
+
+void darkenPainterRect(QPainter& painter);
 
 } // namespace mapcolors
 

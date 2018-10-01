@@ -28,6 +28,7 @@
 #include <QPalette>
 #include <QSettings>
 #include <QPainter>
+#include <navapp.h>
 
 namespace mapcolors {
 
@@ -75,28 +76,18 @@ QColor compassRoseTextColor(Qt::black);
 
 /* Elevation profile colors and pens */
 QColor profileSkyColor(QColor(204, 204, 255));
-QColor profileSkyDarkColor(QColor(100, 100, 160));
-QColor profileBackgroundColor(QColor(255, 255, 255));
-QColor profileBackgroundDarkColor(QColor(20, 20, 20));
 QColor profileLandColor(QColor(0, 128, 0));
-QColor profileLandDarkColor(QColor(0, 60, 0));
 QColor profileLabelColor(QColor(0, 0, 0));
-QColor profileLabelDarkColor(QColor(0, 0, 0));
 
 QColor profileVasiAboveColor(QColor("#70ffffff"));
 QColor profileVasiBelowColor(QColor("#70ff0000"));
 
 QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
-QPen profileLandOutlineDarkPen(Qt::black, 1, Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
-QPen profileWaypointLineDarkPen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
 QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
-QPen profileElevationScaleDarkPen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine, Qt::FlatCap);
-QPen profileSafeAltLineDarkPen(Qt::darkRed, 4, Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap);
-QPen profileSafeAltLegLineDarkPen(QColor(200, 80, 0), 3, Qt::SolidLine, Qt::FlatCap);
 
 /* Objects highlighted because of selection in search */
 QColor highlightBackColor(Qt::black);
@@ -586,25 +577,15 @@ void syncColors()
 
   colorSettings.beginGroup("Profile");
   syncColor(colorSettings, "SkyColor", profileSkyColor);
-  syncColor(colorSettings, "SkyDarkColor", profileSkyDarkColor);
-  syncColor(colorSettings, "BackgroundColor", profileBackgroundColor);
-  syncColor(colorSettings, "BackgroundDarkColor", profileBackgroundDarkColor);
   syncColor(colorSettings, "LandColor", profileLandColor);
-  syncColor(colorSettings, "LandDarkColor", profileLandDarkColor);
   syncColor(colorSettings, "LabelColor", profileLabelColor);
-  syncColor(colorSettings, "LabelDarkColor", profileLabelDarkColor);
   syncColorArgb(colorSettings, "VasiAboveColor", profileVasiAboveColor);
   syncColorArgb(colorSettings, "VasiBelowColor", profileVasiBelowColor);
   syncPen(colorSettings, "LandOutlinePen", profileLandOutlinePen);
-  syncPen(colorSettings, "LandOutlineDarkPen", profileLandOutlineDarkPen);
   syncPen(colorSettings, "WaypointLinePen", profileWaypointLinePen);
-  syncPen(colorSettings, "WaypointLineDarkPen", profileWaypointLineDarkPen);
   syncPen(colorSettings, "ElevationScalePen", profileElevationScalePen);
-  syncPen(colorSettings, "ElevationScaleDarkPen", profileElevationScaleDarkPen);
   syncPen(colorSettings, "SafeAltLinePen", profileSafeAltLinePen);
-  syncPen(colorSettings, "SafeAltLineDarkPen", profileSafeAltLineDarkPen);
   syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
-  syncPen(colorSettings, "SafeAltLegLineDarkPen", profileSafeAltLegLineDarkPen);
   syncPen(colorSettings, "VasiCenterPen", profileVasiCenterPen);
   colorSettings.endGroup();
 
@@ -652,6 +633,17 @@ void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
       font.setPixelSize(size);
       painter->setFont(font);
     }
+  }
+}
+
+void darkenPainterRect(QPainter& painter)
+{
+  // Dim the map by drawing a semi-transparent black rectangle
+  if(NavApp::isCurrentGuiStyleNight())
+  {
+    int dim = OptionData::instance().getGuiStyleMapDimming();
+    QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
+    painter.fillRect(QRect(0, 0, painter.device()->width(), painter.device()->height()), col);
   }
 }
 

@@ -65,55 +65,47 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *event)
   painter.setRenderHint(QPainter::Antialiasing);
 
   // Fill background white
-  bool dark = NavApp::isCurrentGuiStyleNight();
-  painter.fillRect(rect(), dark ? mapcolors::profileBackgroundDarkColor : mapcolors::profileBackgroundColor);
+  painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
 
-  if(!profileWidget->hasValidRouteForDisplay(NavApp::getRoute()))
-    return;
-
-  QPen scalePen = dark ? mapcolors::profileElevationScaleDarkPen : mapcolors::profileElevationScalePen;
-
-  // Calculate coordinates for local system from scroll widget
-  QPoint offset = scrollArea->getOffset();
-  int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
-  int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
-
-  // Draw labels on left side widget ========================================================
-
-  // qDebug() << Q_FUNC_INFO << "offset" << offset;
-  // qDebug() << Q_FUNC_INFO << "safeAltY" << safeAltY;
-  // qDebug() << Q_FUNC_INFO << "flightplanY" << flightplanY;
-  // qDebug() << Q_FUNC_INFO << "getMinSafeAltitudeFt" << profileWidget->getMinSafeAltitudeFt();
-  // qDebug() << Q_FUNC_INFO << "getFlightplanAltFt" << profileWidget->getFlightplanAltFt();
-
-  // Draw altitude labels ================================
-  SymbolPainter symPainter;
-  for(const std::pair<int, int>& scale : profileWidget->calcScaleValues())
+  if(profileWidget->hasValidRouteForDisplay(NavApp::getRoute()))
   {
-    int y = scale.first - offset.y();
-    if(y > -5 && y < h + 5)
-      symPainter.textBox(&painter, {QString::number(scale.second, 'f', 0)}, scalePen,
-                         w - 2, y, textatt::BOLD | textatt::RIGHT, 0);
-  }
+    // Calculate coordinates for local system from scroll widget
+    QPoint offset = scrollArea->getOffset();
+    int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
+    int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
 
-  // Draw text labels ========================================================
-  // Safe altitude label
-  if(safeAltY > -5 && safeAltY < h + 5)
-    symPainter.textBox(&painter, {Unit::altFeet(profileWidget->getMinSafeAltitudeFt())},
-                       dark ? mapcolors::profileSafeAltLineDarkPen : mapcolors::profileSafeAltLinePen,
-                       w - 2, safeAltY, textatt::BOLD | textatt::RIGHT, 255);
+    // Draw labels on left side widget ========================================================
 
-  if(flightplanY > -5 && flightplanY < h + 5)
-  {
-    // Route cruise altitude
-    float routeAlt = NavApp::getRoute().getFlightplan().getCruisingAltitude();
-    symPainter.textBox(&painter, {Unit::altFeet(routeAlt)},
-                       dark ? mapcolors::profileLabelDarkColor : mapcolors::profileLabelColor,
-                       w - 2, flightplanY, textatt::BOLD | textatt::RIGHT, 255);
+    // Draw altitude labels ================================
+    SymbolPainter symPainter;
+    for(const std::pair<int, int>& scale : profileWidget->calcScaleValues())
+    {
+      int y = scale.first - offset.y();
+      if(y > -5 && y < h + 5)
+        symPainter.textBox(&painter, {QString::number(scale.second, 'f', 0)},
+                           mapcolors::profileElevationScalePen,
+                           w - 2, y, textatt::BOLD | textatt::RIGHT, 0);
+    }
+
+    // Draw text labels ========================================================
+    // Safe altitude label
+    if(safeAltY > -5 && safeAltY < h + 5)
+      symPainter.textBox(&painter, {Unit::altFeet(profileWidget->getMinSafeAltitudeFt())},
+                         mapcolors::profileSafeAltLinePen,
+                         w - 2, safeAltY, textatt::BOLD | textatt::RIGHT, 255,
+                         QApplication::palette().color(QPalette::Base));
+
+    if(flightplanY > -5 && flightplanY < h + 5)
+    {
+      // Route cruise altitude
+      float routeAlt = NavApp::getRoute().getFlightplan().getCruisingAltitude();
+      symPainter.textBox(&painter, {Unit::altFeet(routeAlt)},
+                         QApplication::palette().color(QPalette::Text),
+                         w - 2, flightplanY, textatt::BOLD | textatt::RIGHT, 255,
+                         QApplication::palette().color(QPalette::Base));
+    }
   }
 
   // Dim the whole map for night mode by drawing a half transparent black rectangle
-  if(NavApp::isCurrentGuiStyleNight())
-    painter.fillRect(QRect(0, 0, width(), height()),
-                     QColor::fromRgb(0, 0, 0, 255 - (255 * OptionData::instance().getGuiStyleMapDimming() / 100)));
+  mapcolors::darkenPainterRect(painter);
 }
