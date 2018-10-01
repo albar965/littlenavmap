@@ -299,6 +299,12 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox
   }
 }
 
+void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result)
+{
+  QList<proc::MapProcedurePoint> procPointsDummy;
+  getAllNearest(xs, ys, maxDistance, result, procPointsDummy);
+}
+
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                    QList<proc::MapProcedurePoint>& procPoints)
 {

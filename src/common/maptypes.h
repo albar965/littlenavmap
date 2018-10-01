@@ -702,7 +702,17 @@ struct MapSearchResult
   QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
+  /* true if none of the types exists in this result */
   bool isEmpty(const map::MapObjectTypes& types = map::ALL) const;
+
+  /* Number of map objects for the given types */
+  int getTotalSize(const map::MapObjectTypes& types = map::ALL) const;
+
+  /* Get id and type from the result. Vector of types defines priority. true if something was found.
+   * id is set to -1 if nothing was found. */
+  bool getIdAndType(int& id, MapObjectTypes& type, const QVector<MapObjectTypes>& types) const;
+
+  /* Remove the given types only */
   void clear(const MapObjectTypes& types = map::ALL);
 
   bool hasAirports() const

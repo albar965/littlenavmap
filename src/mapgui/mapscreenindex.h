@@ -55,6 +55,7 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                      QList<proc::MapProcedurePoint>& procPoints);
 

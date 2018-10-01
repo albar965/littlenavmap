@@ -1571,174 +1571,162 @@ void MapWidget::changeProfileHighlight(const atools::geo::Pos& pos)
 
 /* Update the flight plan from a drag and drop result. Show a menu if multiple objects are
  * found at the button release position. */
-void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point)
+void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend)
 {
-  qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
+  qDebug() << "End route drag" << newPoint << "leg" << leg << "point" << point;
 
   // Get all objects where the mouse button was released
   map::MapSearchResult result;
-  QList<proc::MapProcedurePoint> procPoints;
-  screenIndex->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result, procPoints);
+  screenIndex->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result);
 
-  CoordinateConverter conv(viewport());
-
-  // Get objects from cache - already present objects will be skipped
-  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), false,
-                              paintLayer->getShownMapObjects() &
-                              (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
-                              newPoint.x(), newPoint.y(), screenSearchDistance, result);
-
-  int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size() +
-                  result.userpoints.size();
+  // Count number of all objects
+  int totalSize = result.getTotalSize(map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
 
   int id = -1;
   map::MapObjectTypes type = map::NONE;
-  Pos pos = atools::geo::EMPTY_POS;
   if(totalSize == 0)
   {
     // Nothing at the position - add userpoint
-    qDebug() << "add userpoint";
+    qDebug() << Q_FUNC_INFO << "userpoint";
     type = map::USERPOINTROUTE;
   }
   else if(totalSize == 1)
   {
     // Only one entry at the position - add single navaid without menu
-    qDebug() << "add navaid";
-
-    if(!result.airports.isEmpty())
-    {
-      id = result.airports.first().id;
-      type = map::AIRPORT;
-    }
-    else if(!result.vors.isEmpty())
-    {
-      id = result.vors.first().id;
-      type = map::VOR;
-    }
-    else if(!result.ndbs.isEmpty())
-    {
-      id = result.ndbs.first().id;
-      type = map::NDB;
-    }
-    else if(!result.waypoints.isEmpty())
-    {
-      id = result.waypoints.first().id;
-      type = map::WAYPOINT;
-    }
-    else if(!result.userpoints.isEmpty())
-    {
-      id = result.userpoints.first().id;
-      type = map::USERPOINT;
-    }
+    qDebug() << Q_FUNC_INFO << "navaid";
+    result.getIdAndType(id, type, {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::USERPOINT});
   }
   else
   {
+    qDebug() << Q_FUNC_INFO << "menu";
+
     // Avoid drag cancel when loosing focus
     mouseState |= mw::DRAG_POST_MENU;
 
+    QString menuText = tr("Add %1 to Flight Plan");
+    if(fromClickAdd)
+      menuText = tr("Insert %1 to Flight Plan");
+    else if(fromClickAppend)
+      menuText = tr("Append %1 to Flight Plan");
+
     // Multiple entries - build a menu with icons
-    // Add id and type to actions
-    const int ICON_SIZE = 20;
-    qDebug() << "add navaids" << totalSize;
-    QMenu menu;
-    QString menuPrefix(tr("Add ")), menuSuffix(tr(" to Flight Plan"));
-    SymbolPainter symbolPainter;
-
-    for(const map::MapAirport& obj : result.airports)
-    {
-      QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
-                                    menuPrefix + map::airportText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, map::AIRPORT}));
-      menu.addAction(action);
-    }
-
-    if(!result.airports.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty() ||
-       !result.waypoints.isEmpty() || !result.userpoints.isEmpty())
-      // There will be more entries - add a separator
-      menu.addSeparator();
-
-    for(const map::MapVor& obj : result.vors)
-    {
-      QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE),
-                                    menuPrefix + map::vorText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, map::VOR}));
-      menu.addAction(action);
-    }
-    for(const map::MapNdb& obj : result.ndbs)
-    {
-      QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE),
-                                    menuPrefix + map::ndbText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, map::NDB}));
-      menu.addAction(action);
-    }
-    for(const map::MapWaypoint& obj : result.waypoints)
-    {
-      QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE),
-                                    menuPrefix + map::waypointText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, map::WAYPOINT}));
-      menu.addAction(action);
-    }
-
-    int numUserpoints = 0;
-    for(const map::MapUserpoint& obj : result.userpoints)
-    {
-      QAction *action = nullptr;
-      if(numUserpoints > 5)
-      {
-        action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), tr("More ..."), this);
-        action->setDisabled(true);
-        menu.addAction(action);
-        break;
-      }
-      else
-      {
-        action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                             menuPrefix + map::userpointText(obj) + menuSuffix, this);
-        action->setData(QVariantList({obj.id, map::USERPOINT}));
-        menu.addAction(action);
-      }
-      numUserpoints++;
-    }
-
-    // Always present - userpoint
-    menu.addSeparator();
-    {
-      QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                                    menuPrefix + tr("Position") + menuSuffix, this);
-      action->setData(QVariantList({-1, map::USERPOINTROUTE}));
-      menu.addAction(action);
-    }
-
-    // Always present - userpoint
-    menu.addSeparator();
-    menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"),
-                               tr("Cancel"), this));
-
-    // Execute the menu
-    QAction *action = menu.exec(QCursor::pos());
-
-    if(action != nullptr && !action->data().isNull())
-    {
-      // Get id and type from selected action
-      QVariantList data = action->data().toList();
-      id = data.first().toInt();
-      type = map::MapObjectTypes(data.at(1).toInt());
-    }
+    showFeatureSelectionMenu(id, type, result, menuText);
 
     mouseState &= ~mw::DRAG_POST_MENU;
   }
 
+  Pos pos = atools::geo::EMPTY_POS;
   if(type == map::USERPOINTROUTE)
     // Get position for new user point from from screen
-    pos = conv.sToW(newPoint.x(), newPoint.y());
+    pos = CoordinateConverter(viewport()).sToW(newPoint.x(), newPoint.y());
 
   if((id != -1 && type != map::NONE) || type == map::USERPOINTROUTE)
   {
-    if(leg != -1)
-      emit routeAdd(id, pos, type, leg);
-    else if(point != -1)
-      emit routeReplace(id, pos, type, point);
+    if(fromClickAdd)
+      emit routeAdd(id, pos, type, -1 /* leg index */);
+    else if(fromClickAppend)
+      emit routeAdd(id, pos, type, map::INVALID_INDEX_VALUE);
+    else
+    {
+      // From drag
+      if(leg != -1)
+        emit routeAdd(id, pos, type, leg);
+      else if(point != -1)
+        emit routeReplace(id, pos, type, point);
+    }
   }
+}
+
+bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result,
+                                         const QString& menuText)
+{
+  // Add id and type to actions
+  const int ICON_SIZE = 20;
+  QMenu menu;
+  SymbolPainter symbolPainter;
+
+  for(const map::MapAirport& obj : result.airports)
+  {
+    QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
+                                  menuText.arg(map::airportText(obj)), this);
+    action->setData(QVariantList({obj.id, map::AIRPORT}));
+    menu.addAction(action);
+  }
+
+  if(!result.airports.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty() ||
+     !result.waypoints.isEmpty() || !result.userpoints.isEmpty())
+    // There will be more entries - add a separator
+    menu.addSeparator();
+
+  for(const map::MapVor& obj : result.vors)
+  {
+    QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE),
+                                  menuText.arg(map::vorText(obj)), this);
+    action->setData(QVariantList({obj.id, map::VOR}));
+    menu.addAction(action);
+  }
+  for(const map::MapNdb& obj : result.ndbs)
+  {
+    QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE),
+                                  menuText.arg(map::ndbText(obj)), this);
+    action->setData(QVariantList({obj.id, map::NDB}));
+    menu.addAction(action);
+  }
+  for(const map::MapWaypoint& obj : result.waypoints)
+  {
+    QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE),
+                                  menuText.arg(map::waypointText(obj)), this);
+    action->setData(QVariantList({obj.id, map::WAYPOINT}));
+    menu.addAction(action);
+  }
+
+  int numUserpoints = 0;
+  for(const map::MapUserpoint& obj : result.userpoints)
+  {
+    QAction *action = nullptr;
+    if(numUserpoints > 5)
+    {
+      action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), tr("More ..."), this);
+      action->setDisabled(true);
+      menu.addAction(action);
+      break;
+    }
+    else
+    {
+      action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
+                           menuText.arg(map::userpointText(obj)), this);
+      action->setData(QVariantList({obj.id, map::USERPOINT}));
+      menu.addAction(action);
+    }
+    numUserpoints++;
+  }
+
+  // Always present - userpoint
+  menu.addSeparator();
+  {
+    QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
+                                  menuText.arg(tr("Position")), this);
+    action->setData(QVariantList({-1, map::USERPOINTROUTE}));
+    menu.addAction(action);
+  }
+
+  // Always present - cancel
+  menu.addSeparator();
+  menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"),
+                             tr("Cancel"), this));
+
+  // Execute the menu
+  QAction *action = menu.exec(QCursor::pos());
+
+  if(action != nullptr && !action->data().isNull())
+  {
+    // Get id and type from selected action
+    QVariantList data = action->data().toList();
+    id = data.first().toInt();
+    type = map::MapObjectTypes(data.at(1).toInt());
+    return true;
+  }
+  return false;
 }
 
 void MapWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -1886,8 +1874,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // Get objects near position =============================================================
   map::MapSearchResult result;
-  QList<proc::MapProcedurePoint> procPoints;
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result, procPoints);
+  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result);
 
   map::MapAirport *airport = nullptr;
   SimConnectAircraft *aiAircraft = nullptr;
@@ -3053,8 +3040,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
     // Look for navaids or airports nearby click
     map::MapSearchResult result;
-    QList<proc::MapProcedurePoint> procPoints;
-    screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result, procPoints);
+    screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result);
 
     if(event->modifiers() == Qt::ShiftModifier)
     {
@@ -3080,17 +3066,30 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       }
       return true;
     }
-    else if(event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::AltModifier)
+    else if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) ||
+            event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
     {
-      int index = screenIndex->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
-                                                           screenSearchDistance);
-      if(index != -1)
-        // Remove any measurement line for Ctrl+Click or Alt+Click into center
-        removeDistanceMarker(index);
-      else
-        // Add measurement line for Ctrl+Click or Alt+Click into center
-        addMeasurement(pos, event->modifiers() == Qt::ControlModifier, result);
-      return true;
+      int routeIndex = screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
+
+      if(routeIndex != -1)
+      {
+        // Position is editable - remove
+        NavApp::getRouteController()->routeDelete(routeIndex);
+        return true;
+      }
+
+      if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier))
+      {
+        // Add to nearest leg of flight plan
+        updateRoute(event->pos(), -1, -1, true /* click add */, false /* click append */);
+        return true;
+      }
+      else if(event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
+      {
+        // Append to flight plan
+        updateRoute(event->pos(), -1, -1, false /* click add */, true /* click append */);
+        return true;
+      }
     }
     else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
     {
@@ -3104,8 +3103,18 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         emit addUserpointFromMap(result, pos);
       }
     }
-    // else if(event->modifiers() == (Qt::ControlModifier | Qt::AltModifier))
-    // else if(event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
+    else if(event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::AltModifier)
+    {
+      int index = screenIndex->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
+                                                           screenSearchDistance);
+      if(index != -1)
+        // Remove any measurement line for Ctrl+Click or Alt+Click into center
+        removeDistanceMarker(index);
+      else
+        // Add measurement line for Ctrl+Click or Alt+Click into center
+        addMeasurement(pos, event->modifiers() == Qt::ControlModifier, result);
+      return true;
+    }
   }
   return false;
 }
@@ -3165,7 +3174,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
       qreal lon, lat;
       bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
       if(visible)
-        updateRouteFromDrag(routeDragCur, mouseState, routeDragLeg, routeDragPoint);
+        updateRoute(routeDragCur, routeDragLeg, routeDragPoint, false /* click add */, false /* click append */);
     }
 
     // End all dragging
@@ -3321,8 +3330,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     return;
 
   map::MapSearchResult mapSearchResult;
-  QList<proc::MapProcedurePoint> procPoints;
-  screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult, procPoints);
+  screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -3542,8 +3550,7 @@ void MapWidget::handleInfoClick(QPoint pos)
   qDebug() << Q_FUNC_INFO;
 
   map::MapSearchResult result;
-  QList<proc::MapProcedurePoint> procPoints;
-  screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result, procPoints);
+  screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);
 
   // Remove all undesired features
   opts::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();

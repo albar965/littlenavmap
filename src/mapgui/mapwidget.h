@@ -399,7 +399,8 @@ private:
   virtual void keyPressEvent(QKeyEvent *event) override;
   virtual void leaveEvent(QEvent *) override;
 
-  void updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point);
+  void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
+  bool showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result, const QString& menuText);
 
   void handleInfoClick(QPoint pos);
   bool loadKml(const QString& filename, bool center);

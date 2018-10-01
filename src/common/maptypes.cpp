@@ -1337,13 +1337,108 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & map::AIRWAY && !airways.isEmpty();
   filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
   filled |= types & map::ILS && !ils.isEmpty();
-
   filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
   filled |= types & map::USERPOINT && !userpoints.isEmpty();
-
   filled |= types & map::AIRCRAFT_AI && !aiAircraft.isEmpty();
   filled |= types & map::AIRCRAFT_ONLINE && !onlineAircraft.isEmpty();
   return !filled;
+}
+
+bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type, const QVector<MapObjectTypes>& types) const
+{
+  id = -1;
+  type = NONE;
+
+  for(const MapObjectTypes& t : types)
+  {
+    if(!isEmpty(t))
+    {
+      if(t == map::AIRPORT)
+      {
+        id = airports.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::WAYPOINT)
+      {
+        id = waypoints.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::VOR)
+      {
+        id = vors.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::NDB)
+      {
+        id = ndbs.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::AIRWAY)
+      {
+        id = airways.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::RUNWAYEND)
+      {
+        id = runwayEnds.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::ILS)
+      {
+        id = ils.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::USERPOINTROUTE)
+      {
+        id = userPointsRoute.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::USERPOINT)
+      {
+        id = userpoints.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::AIRCRAFT_AI)
+      {
+        id = aiAircraft.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::AIRCRAFT_ONLINE)
+      {
+        id = onlineAircraft.first().getId();
+        type = t;
+        break;
+      }
+    }
+  }
+  return id != -1;
+}
+
+int MapSearchResult::getTotalSize(const MapObjectTypes& types) const
+{
+  int totalSize = 0;
+  totalSize += types & map::AIRPORT ? airports.size() : 0;
+  totalSize += types & map::WAYPOINT ? waypoints.size() : 0;
+  totalSize += types & map::VOR ? vors.size() : 0;
+  totalSize += types & map::NDB ? ndbs.size() : 0;
+  totalSize += types & map::AIRWAY ? airways.size() : 0;
+  totalSize += types & map::RUNWAYEND ? runwayEnds.size() : 0;
+  totalSize += types & map::ILS ? ils.size() : 0;
+  totalSize += types & map::USERPOINTROUTE ? userPointsRoute.size() : 0;
+  totalSize += types & map::USERPOINT ? userpoints.size() : 0;
+  totalSize += types & map::AIRCRAFT_AI ? aiAircraft.size() : 0;
+  totalSize += types & map::AIRCRAFT_ONLINE ? onlineAircraft.size() : 0;
+  return totalSize;
 }
 
 QString edgeLights(const QString& type)
