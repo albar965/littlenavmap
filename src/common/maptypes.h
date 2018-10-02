@@ -755,6 +755,21 @@ struct MapSearchResult
     return !waypoints.isEmpty();
   }
 
+  bool hasAirspaces() const
+  {
+    return !airspaces.isEmpty();
+  }
+
+  /* Special methods for the online and navdata airspaces which are stored mixed */
+  bool hasNavdataAirspaces() const;
+  bool hasOnlineAirspaces() const;
+  void clearNavdataAirspaces();
+  void clearOnlineAirspaces();
+
+  QList<MapAirspace> getNavdataAirspaces() const;
+
+  QList<MapAirspace> getOnlineAirspaces() const;
+
 };
 
 QDebug operator<<(QDebug out, const map::MapSearchResult& record);

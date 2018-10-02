@@ -83,6 +83,9 @@ public:
   virtual void updateTableSelection() = 0;
   virtual void tabDeactivated() = 0;
 
+  virtual void clearSelection() = 0;
+  virtual bool hasSelection() const = 0;
+
   si::SearchTabIndex getTabIndex() const
   {
     return tabIndex;

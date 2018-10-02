@@ -548,6 +548,16 @@ void SearchBaseTable::updateUnits()
   controller->updateHeaderData();
 }
 
+void SearchBaseTable::clearSelection()
+{
+  view->clearSelection();
+}
+
+bool SearchBaseTable::hasSelection() const
+{
+  return view->selectionModel()->hasSelection();
+}
+
 /* Connect selection model again after a SQL model reset */
 void SearchBaseTable::reconnectSelectionModel()
 {
@@ -805,7 +815,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
     ui->actionSearchResetSearch, ui->actionSearchShowAll,
     ui->actionMapTrafficPattern,
-    ui->actionMapRangeRings, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
+    ui->actionMapRangeRings, ui->actionMapNavaidRange,
     ui->actionRouteAirportStart, ui->actionRouteAirportDest, ui->actionRouteAddPos, ui->actionRouteAppendPos,
     ui->actionSearchTableCopy, ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing,
     ui->actionSearchResetView, ui->actionSearchSetMark
@@ -903,10 +913,6 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionSearchShowApproaches->setText(tr("Show procedures"));
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
-  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
-                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty());
-
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
@@ -971,27 +977,19 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(getTabIndex(),
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
-    menu.addAction(ui->actionMapRangeRings);
-
-  if(atools::contains(getTabIndex(), {si::SEARCH_NAV}))
-    menu.addAction(ui->actionMapNavaidRange);
-
-  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT}))
-    menu.addAction(ui->actionMapTrafficPattern);
-
-  if(atools::contains(getTabIndex(),
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
+                                      si::SEARCH_ONLINE_CLIENT}))
   {
-    menu.addAction(ui->actionMapHideRangeRings);
+    menu.addAction(ui->actionMapRangeRings);
+    if(atools::contains(getTabIndex(), {si::SEARCH_NAV}))
+      menu.addAction(ui->actionMapNavaidRange);
     menu.addSeparator();
   }
 
   if(atools::contains(getTabIndex(), {si::SEARCH_AIRPORT}))
   {
+    menu.addAction(ui->actionMapTrafficPattern);
+    menu.addSeparator();
     menu.addAction(ui->actionRouteAirportStart);
     menu.addAction(ui->actionRouteAirportDest);
     menu.addSeparator();
@@ -1070,24 +1068,16 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                               freqChaStr,
                                               controller->getRawData(index.row(), "range").toInt());
     }
-    else if(action == ui->actionMapHideRangeRings)
-      NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers();
+    // else if(action == ui->actionMapHideRangeRings)
+    // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
     else if(action == ui->actionRouteAddPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, -1);
     else if(action == ui->actionRouteAppendPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, map::INVALID_INDEX_VALUE);
     else if(action == ui->actionRouteAirportStart)
-    {
-      map::MapAirport ap;
-      airportQuery->getAirportById(ap, controller->getIdForRow(index));
-      emit routeSetDeparture(ap);
-    }
+      emit routeSetDeparture(airportQuery->getAirportById(controller->getIdForRow(index)));
     else if(action == ui->actionRouteAirportDest)
-    {
-      map::MapAirport ap;
-      airportQuery->getAirportById(ap, controller->getIdForRow(index));
-      emit routeSetDestination(ap);
-    }
+      emit routeSetDestination(airportQuery->getAirportById(controller->getIdForRow(index)));
   }
 }
 

@@ -101,6 +101,9 @@ public:
 
   virtual void updateUnits() override;
 
+  virtual void clearSelection() override;
+  virtual bool hasSelection() const override;
+
   void showFirstEntry();
 
   void showSelectedEntry();

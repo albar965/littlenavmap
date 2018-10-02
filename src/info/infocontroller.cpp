@@ -20,8 +20,10 @@
 #include "atools.h"
 #include "navapp.h"
 #include "common/constants.h"
+#include "common/maptools.h"
 #include "common/htmlinfobuilder.h"
 #include "online/onlinedatacontroller.h"
+#include "gui/tools.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
@@ -38,18 +40,7 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 
-#include <QDebug>
-#include <QScrollBar>
 #include <QUrlQuery>
-#include <QDesktopServices>
-#include <QProcess>
-#include <QMessageBox>
-#include <QDir>
-#include <QTabWidget>
-
-#ifdef Q_OS_WIN32
-#include <windows.h>
-#endif
 
 using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
@@ -190,18 +181,36 @@ void InfoController::anchorClicked(const QUrl& url)
   {
     // Internal link like "show on map"
     QUrlQuery query(url);
-
-    if(url.host() == "show")
+    MapWidget *mapWidget = NavApp::getMapWidget();
+    if(url.host() == "do")
     {
-      if(query.hasQueryItem("lessprogress"))
+      if(query.hasQueryItem("hideairspaces"))
+      {
+        // Hide normal airspace highlights from information window =========================================
+        mapWidget->clearAirspaceHighlights();
+        mainWindow->updateHighlightActionStates();
+      }
+      else if(query.hasQueryItem("hideonlineairspaces"))
+      {
+        // Hide online airspaces from search or information window =========================================
+        map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
+        searchHighlights.airspaces.clear();
+        mapWidget->changeSearchHighlights(searchHighlights);
+        mainWindow->updateHighlightActionStates();
+      }
+      else if(query.hasQueryItem("lessprogress"))
       {
         // Handle more/less switch =====================================
         lessAircraftProgress = !lessAircraftProgress;
         NavApp::getMainUi()->textBrowserAircraftProgressInfo->setTextCursor(QTextCursor());
         updateAircraftProgressText();
       }
-      else if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
+    }
+    else if(url.host() == "show")
+    {
+      if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
       {
+        // Zoom to position =========================================
         float zoom = 0.f;
         if(query.hasQueryItem("zoom"))
           zoom = query.queryItemValue("zoom").toFloat();
@@ -211,33 +220,36 @@ void InfoController::anchorClicked(const QUrl& url)
       }
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
+        // Zoom to an map object =========================================
         map::MapObjectTypes type(query.queryItemValue("type").toInt());
         int id = query.queryItemValue("id").toInt();
 
-        if(type & map::AIRPORT)
+        if(type == map::AIRPORT)
           emit showRect(airportQuery->getAirportById(id).bounding, false);
-        if(type & map::AIRSPACE)
+        else if(type == map::AIRSPACE)
         {
+          // Append airspace to current highlight list if not already present
           map::MapAirspace airspace = airspaceQuery->getAirspaceById(id);
-#ifdef DEBUG_INFORMATION
-          map::MapSearchResult searchHighlights = NavApp::getMapWidget()->getSearchHighlights();
-          searchHighlights.airspaces.clear();
-          searchHighlights.airspaces.append(airspace);
-          NavApp::getMapWidget()->changeSearchHighlights(searchHighlights);
-#endif
+          QList<map::MapAirspace> airspaceHighlights = mapWidget->getAirspaceHighlights();
+          if(!maptools::containsId(airspaceHighlights, airspace.id))
+            airspaceHighlights.append(airspace);
+          mapWidget->changeAirspaceHighlights(airspaceHighlights);
+          mainWindow->updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
         }
-        if(type & map::AIRSPACE_ONLINE)
+        else if(type == map::AIRSPACE_ONLINE)
         {
+          // Append online center to current highlight list if not already present
           map::MapAirspace airspace = airspaceQueryOnline->getAirspaceById(id);
-#ifdef DEBUG_INFORMATION
-          map::MapSearchResult searchHighlights = NavApp::getMapWidget()->getSearchHighlights();
-          searchHighlights.airspaces.clear();
-          searchHighlights.airspaces.append(airspace);
-          NavApp::getMapWidget()->changeSearchHighlights(searchHighlights);
-#endif
+          map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
+          if(!maptools::containsId(searchHighlights.airspaces, airspace.id))
+            searchHighlights.airspaces.append(airspace);
+          mapWidget->changeSearchHighlights(searchHighlights);
+          mainWindow->updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
         }
+        else
+          qWarning() << Q_FUNC_INFO << "Unknwown type" << url << type;
       }
       else if(query.hasQueryItem("airport"))
       {
@@ -247,66 +259,10 @@ void InfoController::anchorClicked(const QUrl& url)
         emit showRect(airport.bounding, false);
       }
       else if(query.hasQueryItem("filepath"))
-      {
-#ifdef Q_OS_WIN32
-        QFileInfo fp(query.queryItemValue("filepath"));
-        fp.makeAbsolute();
-
-        // if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
-        // QDir::homePath()))
-        // QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
-        // tr("Error starting explorer.exe with path \"%1\"")).
-        // arg(query.queryItemValue("filepath")));
-
-        if(fp.exists())
-        {
-          // Syntax is: explorer /select, "C:\Folder1\Folder2\file_to_select"
-          // Dir separators MUST be win-style slashes
-
-          // QProcess::startDetached() has an obscure bug. If the path has
-          // no spaces and a comma(and maybe other special characters) it doesn't
-          // get wrapped in quotes. So explorer.exe can't find the correct path and
-          // displays the default one. If we wrap the path in quotes and pass it to
-          // QProcess::startDetached() explorer.exe still shows the default path. In
-          // this case QProcess::startDetached() probably puts its own quotes around ours.
-
-          STARTUPINFO startupInfo;
-          ::ZeroMemory(&startupInfo, sizeof(startupInfo));
-          startupInfo.cb = sizeof(startupInfo);
-
-          PROCESS_INFORMATION processInfo;
-          ::ZeroMemory(&processInfo, sizeof(processInfo));
-
-          QString cmd = QString("explorer.exe /select,\"%1\"").arg(QDir::toNativeSeparators(fp.filePath()));
-          LPWSTR lpCmd = new WCHAR[cmd.size() + 1];
-          cmd.toWCharArray(lpCmd);
-          lpCmd[cmd.size()] = 0;
-
-          bool ret = ::CreateProcessW(NULL, lpCmd, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo,
-                                      &processInfo);
-          delete[] lpCmd;
-
-          if(ret)
-          {
-            ::CloseHandle(processInfo.hProcess);
-            ::CloseHandle(processInfo.hThread);
-          }
-        }
-        else
-        {
-          // If the item to select doesn't exist, try to open its parent
-          QUrl fileUrl = QUrl::fromLocalFile(fp.path());
-          if(!QDesktopServices::openUrl(fileUrl))
-            atools::gui::Dialog::warning(mainWindow,
-                                         tr("Error opening path \"%1\"").arg(url.toDisplayString()));
-        }
-#else
-        QUrl fileUrl = QUrl::fromLocalFile(QFileInfo(query.queryItemValue("filepath")).path());
-
-        if(!QDesktopServices::openUrl(fileUrl))
-          atools::gui::Dialog::warning(mainWindow, tr("Error opening path \"%1\"").arg(url.toDisplayString()));
-#endif
-      }
+        // Show path in any OS dependent file manager. Selects the file in Windows Explorer.
+        atools::gui::showInFileManager(query.queryItemValue("filepath"), mainWindow);
+      else
+        qWarning() << Q_FUNC_INFO << "Unknwown URL" << url;
     }
   }
 }
@@ -599,13 +555,24 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   if(!result.airspaces.isEmpty())
   {
     atools::sql::SqlRecord onlineRec;
-    currentSearchResult.airspaces.clear();
+
+    if(result.hasNavdataAirspaces())
+      currentSearchResult.clearNavdataAirspaces();
 
     html.clear();
-    for(const map::MapAirspace& airspace : result.airspaces)
+
+    // Remove header link ==============================
+    html.tableAtts({
+      {"width", "100%"}
+    }).tr();
+    html.tdAtts({
+      {"align", "right"}, {"valign", "top"}
+    });
+    html.b().a(tr("Remove Highlights from Map"), QString("lnm://do?hideairspaces"),
+               atools::util::html::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+
+    for(const map::MapAirspace& airspace : result.getNavdataAirspaces())
     {
-      if(airspace.online)
-        continue;
       qDebug() << "Found airspace" << airspace.id;
 
       currentSearchResult.airspaces.append(airspace);
@@ -614,26 +581,38 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       foundAirspace = true;
     }
 
-    // Update and keep scroll position
-    atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml(),
-                                      false /* scroll to top*/, true /* keep selection */);
+    if(foundAirspace)
+      // Update and keep scroll position
+      atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml(),
+                                        false /* scroll to top*/, true /* keep selection */);
 
     // Online Center ==================================
+    if(result.hasOnlineAirspaces())
+      currentSearchResult.clearOnlineAirspaces();
+
     html.clear();
 
     // Delete all airspaces that were removed from the database inbetween
-    QList<map::MapAirspace>::iterator it = std::remove_if(result.airspaces.begin(), result.airspaces.end(),
+    QList<map::MapAirspace> onlineAirspaces = result.getOnlineAirspaces();
+    QList<map::MapAirspace>::iterator it = std::remove_if(onlineAirspaces.begin(), onlineAirspaces.end(),
                                                           [](const map::MapAirspace& airspace) -> bool
     {
       return !NavApp::getAirspaceQueryOnline()->hasAirspaceById(airspace.id);
     });
-    if(it != result.airspaces.end())
-      result.airspaces.erase(it, result.airspaces.end());
+    if(it != onlineAirspaces.end())
+      onlineAirspaces.erase(it, onlineAirspaces.end());
 
-    for(const map::MapAirspace& airspace : result.airspaces)
+    html.tableAtts({
+      {"width", "100%"}
+    }).tr();
+    html.tdAtts({
+      {"align", "right"}, {"valign", "top"}
+    });
+    html.b().a(tr("Remove Highlights from Map"), QString("lnm://do?hideonlineairspaces"),
+               atools::util::html::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+
+    for(const map::MapAirspace& airspace : onlineAirspaces)
     {
-      if(!airspace.online)
-        continue;
       qDebug() << "Found airspace" << airspace.id;
 
       currentSearchResult.airspaces.append(airspace);
@@ -647,9 +626,10 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       foundOnlineCenter = true;
     }
 
-    // Update and keep scroll position
-    atools::gui::util::updateTextEdit(ui->textBrowserCenterInfo, html.getHtml(),
-                                      false /* scroll to top*/, true /* keep selection */);
+    if(foundOnlineCenter)
+      // Update and keep scroll position
+      atools::gui::util::updateTextEdit(ui->textBrowserCenterInfo, html.getHtml(),
+                                        false /* scroll to top*/, true /* keep selection */);
   }
 
   // Navaids ================================================================

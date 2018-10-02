@@ -22,6 +22,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
+#include "common/formatter.h"
 #include "query/airspacequery.h"
 #include "geo/calculations.h"
 #include "util/roundedpolygon.h"
@@ -114,30 +115,33 @@ void MapPainterMark::paintHome(const PaintContext *context)
 void MapPainterMark::paintHighlights(PaintContext *context)
 {
   // Draw hightlights from the search result view ------------------------------------------
-  const MapSearchResult& highlightResults = mapWidget->getSearchHighlights();
+  const MapSearchResult& highlightResultsSearch = mapWidget->getSearchHighlights();
   int size = context->sz(context->symbolSizeAirport, 6);
 
   QList<Pos> positions;
 
-  for(const MapAirport& ap : highlightResults.airports)
+  for(const MapAirport& ap : highlightResultsSearch.airports)
     positions.append(ap.position);
 
-  for(const MapWaypoint& wp : highlightResults.waypoints)
+  for(const MapWaypoint& wp : highlightResultsSearch.waypoints)
     positions.append(wp.position);
 
-  for(const MapVor& vor : highlightResults.vors)
+  for(const MapVor& vor : highlightResultsSearch.vors)
     positions.append(vor.position);
 
-  for(const MapNdb& ndb : highlightResults.ndbs)
+  for(const MapNdb& ndb : highlightResultsSearch.ndbs)
     positions.append(ndb.position);
 
-  for(const MapUserpoint& user : highlightResults.userpoints)
+  for(const MapUserpoint& user : highlightResultsSearch.userpoints)
     positions.append(user.position);
 
-  for(const MapAirspace& airspace: highlightResults.airspaces)
-    positions.append(airspace.bounding.getCenter());
+  // for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
+  // positions.append(airspace.bounding.getCenter());
 
-  for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResults.onlineAircraft)
+  // for(const MapAirspace& airspace: mapWidget->getAirspaceHighlights())
+  // positions.append(airspace.bounding.getCenter());
+
+  for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResultsSearch.onlineAircraft)
     positions.append(aircraft.getPosition());
 
   GeoPainter *painter = context->painter;
@@ -145,8 +149,8 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     size = context->sz(context->symbolSizeAirport,
                        std::max(size, context->mapLayerEffective->getAirportSymbolSize()));
 
-  QPen outerPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap);
-  QPen innerPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap);
+  QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
+  QPen innerPen(mapcolors::highlightColor, size / 3., Qt::SolidLine, Qt::FlatCap);
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -167,42 +171,12 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 
   // Draw boundary for selected online network airspaces ------------------------------------------
-  for(const MapAirspace& airspace: highlightResults.airspaces)
-  {
-    const LineString *airspaceGeometry = nullptr;
-    if(airspace.online)
-      airspaceGeometry = airspaceQueryOnline->getAirspaceGeometry(airspace.id);
-#ifdef DEBUG_INFORMATION
-    else
-      airspaceGeometry = airspaceQuery->getAirspaceGeometry(airspace.id);
-#endif
+  for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
+    paintAirspace(context, airspace, size);
 
-    if(airspaceGeometry != nullptr)
-    {
-      if(context->viewportRect.overlaps(airspace.bounding))
-      {
-        if(context->objCount())
-          return;
-
-        // qDebug() << airspace.getId() << airspace.name;
-
-        Marble::GeoDataLinearRing linearRing;
-        linearRing.setTessellate(true);
-
-        for(const Pos& pos : *airspaceGeometry)
-          linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
-
-        if(!context->drawFast)
-        {
-          // Draw black background for outline
-          painter->setPen(outerPen);
-          painter->drawPolygon(linearRing);
-          painter->setPen(innerPen);
-        }
-        painter->drawPolygon(linearRing);
-      }
-    }
-  }
+  // Draw boundary for airspaces higlighted in the information window ------------------------------------------
+  for(const MapAirspace& airspace: mapWidget->getAirspaceHighlights())
+    paintAirspace(context, airspace, size);
 
   // Draw hightlights from the approach selection ------------------------------------------
   const proc::MapProcedureLeg& leg = mapWidget->getProcedureLegHighlights();
@@ -329,6 +303,62 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     }
   }
 
+}
+
+void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size)
+{
+  const LineString *airspaceGeometry = nullptr;
+  if(airspace.online)
+    airspaceGeometry = airspaceQueryOnline->getAirspaceGeometry(airspace.id);
+  else
+    airspaceGeometry = airspaceQuery->getAirspaceGeometry(airspace.id);
+  Marble::GeoPainter *painter = context->painter;
+
+  QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
+  QPen innerPen = mapcolors::penForAirspace(airspace);
+  innerPen.setWidthF(size / 3.);
+  QColor c = innerPen.color();
+  c.setAlpha(255);
+  innerPen.setColor(c);
+
+  painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
+
+  if(airspaceGeometry != nullptr)
+  {
+    if(context->viewportRect.overlaps(airspace.bounding))
+    {
+      if(context->objCount())
+        return;
+
+      Marble::GeoDataLinearRing linearRing;
+      linearRing.setTessellate(true);
+
+      for(const Pos& pos : *airspaceGeometry)
+        linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+      GeoDataCoordinates center = linearRing.latLonAltBox().center();
+
+      if(!context->drawFast)
+      {
+        // Draw black background for outline
+        painter->setPen(outerPen);
+        painter->drawPolygon(linearRing);
+        painter->setPen(innerPen);
+      }
+      painter->drawPolygon(linearRing);
+
+      int x, y;
+      if(wToS(center, x, y))
+      {
+        QStringList texts;
+        texts << (airspace.online ? airspace.name : formatter::capNavString(airspace.name))
+              << map::airspaceTypeToString(airspace.type);
+        if(!airspace.restrictiveDesignation.isEmpty())
+          texts << (airspace.restrictiveType + "-" + airspace.restrictiveDesignation);
+
+        symbolPainter->textBoxF(painter, {texts}, innerPen, x, y, textatt::CENTER);
+      }
+    }
+  }
 }
 
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */

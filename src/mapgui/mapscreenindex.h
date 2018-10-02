@@ -101,12 +101,12 @@ public:
   /* Get objects that are highlighted because of selected rows in a search result table */
   map::MapSearchResult& getSearchHighlights()
   {
-    return highlights;
+    return searchHighlights;
   }
 
   const map::MapSearchResult& getSearchHighlights() const
   {
-    return highlights;
+    return searchHighlights;
   }
 
   void setApproachLegHighlights(const proc::MapProcedureLeg *leg)
@@ -205,6 +205,21 @@ public:
     return profileHighlight;
   }
 
+  const QList<map::MapAirspace>& getAirspaceHighlights() const
+  {
+    return airspaceHighlights;
+  }
+
+  QList<map::MapAirspace>& getAirspaceHighlights()
+  {
+    return airspaceHighlights;
+  }
+
+  void setAirspaceHighlights(const QList<map::MapAirspace>& value)
+  {
+    airspaceHighlights = value;
+  }
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result);
@@ -225,11 +240,18 @@ private:
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 
-  map::MapSearchResult highlights;
+  /* All highlights from search windows - also online airspaces */
+  map::MapSearchResult searchHighlights;
   proc::MapProcedureLeg approachLegHighlights;
   proc::MapProcedureLegs approachHighlight;
+
+  /* All airspace highlights from information window */
+  QList<map::MapAirspace> airspaceHighlights;
+
+  /* Circle from elevation profile */
   atools::geo::Pos profileHighlight;
 
+  /* Circles from route table */
   QList<int> routeHighlights;
 
   /* Objects that will be saved */
@@ -237,6 +259,7 @@ private:
   QList<map::DistanceMarker> distanceMarks;
   QList<map::TrafficPattern> trafficPatterns;
 
+  /* Geometry objects that are cached in screen coordinate system for faster access */
   QList<std::pair<int, QLine> > routeLines;
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QPolygon> > airspacePolygons;

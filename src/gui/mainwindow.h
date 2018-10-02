@@ -163,6 +163,9 @@ public:
     return searchController;
   }
 
+  void updateMarkActionStates();
+  void updateHighlightActionStates();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

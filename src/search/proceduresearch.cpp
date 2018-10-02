@@ -1384,6 +1384,16 @@ void ProcedureSearch::updateTableSelection()
     itemSelectionChanged();
 }
 
+void ProcedureSearch::clearSelection()
+{
+  treeWidget->clearSelection();
+}
+
+bool ProcedureSearch::hasSelection() const
+{
+  return treeWidget->selectionModel()->hasSelection();
+}
+
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
 void ProcedureSearch::dockVisibilityChanged(bool visible)
 {

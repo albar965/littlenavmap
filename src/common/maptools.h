@@ -186,6 +186,38 @@ void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<TYPE>& l
   list.insert(it, type);
 }
 
+template<typename TYPE>
+bool containsId(const QList<TYPE>& list, int id)
+{
+  for(const TYPE& t : list)
+    if(t.getId() == id)
+      return true;
+
+  return false;
+}
+
+template<typename TYPE>
+TYPE byId(const QList<TYPE>& list, int id)
+{
+  for(const TYPE& t : list)
+    if(t.getId() == id)
+      return t;
+
+  return TYPE();
+}
+
+template<typename TYPE>
+void removeById(QList<TYPE>& list, int id)
+{
+  auto it = std::remove_if(list.begin(), list.end(), [id](const TYPE& p) -> bool
+    {
+      return p.getId() == id;
+    });
+
+  if(it != list.end())
+    list.erase(it, list.end());
+}
+
 } // namespace maptools
 
 #endif // LITTLENAVMAP_MAPTOOLS_H

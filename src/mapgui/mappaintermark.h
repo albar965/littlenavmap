@@ -24,6 +24,11 @@ namespace Marble {
 class GeoDataLineString;
 }
 
+namespace map {
+struct MapAirspace;
+
+}
+
 class MapWidget;
 
 /*
@@ -51,6 +56,7 @@ private:
   void paintRouteDrag(const PaintContext *context);
   void paintCompassRose(const PaintContext *context);
   void paintUserpointDrag(const PaintContext *context);
+  void paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size);
 
 };
 

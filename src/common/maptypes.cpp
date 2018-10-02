@@ -1305,6 +1305,9 @@ void MapSearchResult::clear(const MapObjectTypes& types)
   if(types & map::ILS)
     ils.clear();
 
+  if(types & map::AIRSPACE)
+    airspaces.clear();
+
   if(types & map::USERPOINTROUTE)
     userPointsRoute.clear();
 
@@ -1327,6 +1330,70 @@ void MapSearchResult::clear(const MapObjectTypes& types)
   }
 }
 
+bool MapSearchResult::hasNavdataAirspaces() const
+{
+  for(const map::MapAirspace& airspace : airspaces)
+  {
+    if(!airspace.online)
+      return true;
+  }
+  return false;
+}
+
+bool MapSearchResult::hasOnlineAirspaces() const
+{
+  for(const map::MapAirspace& airspace : airspaces)
+  {
+    if(airspace.online)
+      return true;
+  }
+  return false;
+}
+
+QList<map::MapAirspace> MapSearchResult::getNavdataAirspaces() const
+{
+  QList<map::MapAirspace> retval;
+  for(const map::MapAirspace& airspace : airspaces)
+  {
+    if(!airspace.online)
+      retval.append(airspace);
+  }
+  return retval;
+}
+
+QList<map::MapAirspace> MapSearchResult::getOnlineAirspaces() const
+{
+  QList<map::MapAirspace> retval;
+  for(const map::MapAirspace& airspace : airspaces)
+  {
+    if(airspace.online)
+      retval.append(airspace);
+  }
+  return retval;
+}
+
+void MapSearchResult::clearNavdataAirspaces()
+{
+  QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
+                                                        [](const map::MapAirspace& airspace) -> bool
+    {
+      return !airspace.online;
+    });
+  if(it != airspaces.end())
+    airspaces.erase(it, airspaces.end());
+}
+
+void MapSearchResult::clearOnlineAirspaces()
+{
+  QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
+                                                        [](const map::MapAirspace& airspace) -> bool
+    {
+      return airspace.online;
+    });
+  if(it != airspaces.end())
+    airspaces.erase(it, airspaces.end());
+}
+
 bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
 {
   bool filled = false;
@@ -1337,6 +1404,7 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & map::AIRWAY && !airways.isEmpty();
   filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
   filled |= types & map::ILS && !ils.isEmpty();
+  filled |= types & map::AIRSPACE && !airspaces.isEmpty();
   filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
   filled |= types & map::USERPOINT && !userpoints.isEmpty();
   filled |= types & map::AIRCRAFT_AI && !aiAircraft.isEmpty();
@@ -1395,6 +1463,12 @@ bool MapSearchResult::getIdAndType(int& id, MapObjectTypes& type, const QVector<
         type = t;
         break;
       }
+      else if(t == map::AIRSPACE)
+      {
+        id = airspaces.first().getId();
+        type = t;
+        break;
+      }
       else if(t == map::USERPOINTROUTE)
       {
         id = userPointsRoute.first().getId();
@@ -1434,6 +1508,7 @@ int MapSearchResult::getTotalSize(const MapObjectTypes& types) const
   totalSize += types & map::AIRWAY ? airways.size() : 0;
   totalSize += types & map::RUNWAYEND ? runwayEnds.size() : 0;
   totalSize += types & map::ILS ? ils.size() : 0;
+  totalSize += types & map::AIRSPACE ? airspaces.size() : 0;
   totalSize += types & map::USERPOINTROUTE ? userPointsRoute.size() : 0;
   totalSize += types & map::USERPOINT ? userpoints.size() : 0;
   totalSize += types & map::AIRCRAFT_AI ? aiAircraft.size() : 0;

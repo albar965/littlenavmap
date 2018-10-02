@@ -251,6 +251,8 @@ MainWindow::MainWindow()
     restoreStateMain();
 
     updateActionStates();
+    updateMarkActionStates();
+    updateHighlightActionStates();
 
     airspaceHandler->updateButtonsAndActions();
     updateOnlineActionStates();
@@ -1078,6 +1080,15 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapHideRangeRings, &QAction::triggered, mapWidget, &MapWidget::clearRangeRingsAndDistanceMarkers);
+
+  // Clear selection and highlights
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearSelection);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, searchController, &SearchController::clearSelection);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapWidget::clearSearchHighlights);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapWidget::clearAirspaceHighlights);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, this, &MainWindow::updateHighlightActionStates);
+
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowCompassRose, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -2082,6 +2093,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
   QList<int> result;
   routeController->getSelectedRouteLegs(result);
   mapWidget->changeRouteHighlights(result);
+  updateHighlightActionStates();
 }
 
 /* Selection in one of the search result tables has changed */
@@ -2129,6 +2141,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   map::MapSearchResult result;
   searchController->getSelectedMapObjects(result);
   mapWidget->changeSearchHighlights(result);
+  updateHighlightActionStates();
 }
 
 /* Selection in approach view has changed */
@@ -2178,6 +2191,7 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
       }
     }
   }
+  updateHighlightActionStates();
 }
 
 /* Selection in approach view has changed */
@@ -2206,6 +2220,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
   }
   else
     mapWidget->changeProcedureLegHighlights(nullptr);
+  updateHighlightActionStates();
 }
 
 void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter types)
@@ -2481,6 +2496,21 @@ void MainWindow::updateOnlineActionStates()
     ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CENTER);
     ui->tabWidgetInformation->removeTab(ic::INFO_ONLINE_CLIENT);
   }
+}
+
+/* Enable or disable actions */
+void MainWindow::updateMarkActionStates()
+{
+  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
+                                          !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
+                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty());
+}
+
+/* Enable or disable actions */
+void MainWindow::updateHighlightActionStates()
+{
+  ui->actionMapClearAllHighlights->setEnabled(
+    mapWidget->hasHighlights() || searchController->hasSelection() || routeController->hasSelection());
 }
 
 /* Enable or disable actions */

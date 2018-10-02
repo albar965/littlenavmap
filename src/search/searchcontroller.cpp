@@ -221,6 +221,20 @@ void SearchController::refreshUserdata()
   userdataSearch->refreshData(false /* load all */, true /* keep selection */);
 }
 
+void SearchController::clearSelection()
+{
+  for(AbstractSearch *search : allSearchTabs)
+    search->clearSelection();
+}
+
+bool SearchController::hasSelection()
+{
+  bool selection = false;
+  for(AbstractSearch *search : allSearchTabs)
+    selection |= search->hasSelection();
+  return selection;
+}
+
 void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record)
 {
   qDebug() << Q_FUNC_INFO << record;

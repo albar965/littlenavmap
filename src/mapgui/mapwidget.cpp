@@ -1521,9 +1521,31 @@ const atools::geo::Pos& MapWidget::getProfileHighlight() const
   return screenIndex->getProfileHighlight();
 }
 
+void MapWidget::clearSearchHighlights()
+{
+  screenIndex->getSearchHighlights() = map::MapSearchResult();
+  update();
+}
+
+void MapWidget::clearAirspaceHighlights()
+{
+  screenIndex->getAirspaceHighlights().clear();
+  update();
+}
+
+bool MapWidget::hasHighlights() const
+{
+  return !screenIndex->getSearchHighlights().isEmpty() || !screenIndex->getAirspaceHighlights().isEmpty();
+}
+
 const map::MapSearchResult& MapWidget::getSearchHighlights() const
 {
   return screenIndex->getSearchHighlights();
+}
+
+const QList<map::MapAirspace>& MapWidget::getAirspaceHighlights() const
+{
+  return screenIndex->getAirspaceHighlights();
 }
 
 const proc::MapProcedureLeg& MapWidget::getProcedureLegHighlights() const
@@ -1548,9 +1570,16 @@ void MapWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
   update();
 }
 
-void MapWidget::changeSearchHighlights(const map::MapSearchResult& positions)
+/* Also clicked airspaces in the info window */
+void MapWidget::changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces)
 {
-  screenIndex->getSearchHighlights() = positions;
+  screenIndex->getAirspaceHighlights() = airspaces;
+  update();
+}
+
+void MapWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights)
+{
+  screenIndex->getSearchHighlights() = newHighlights;
   update();
 }
 
@@ -1794,7 +1823,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideOneRangeRing);
-  menu.addAction(ui->actionMapHideRangeRings);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteAirportStart);
@@ -1852,9 +1880,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapUserdataDelete->setEnabled(false);
   ui->actionMapUserdataMove->setEnabled(false);
 
-  ui->actionMapHideRangeRings->setEnabled(!screenIndex->getRangeMarks().isEmpty() ||
-                                          !screenIndex->getDistanceMarks().isEmpty() ||
-                                          !screenIndex->getTrafficPatterns().isEmpty());
   ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
   ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
@@ -2309,11 +2334,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     qDebug() << Q_FUNC_INFO << "no action selected";
 
-  if(action == ui->actionMapHideRangeRings)
-  {
-    clearRangeRingsAndDistanceMarkers();
-    update();
-  }
+  // if(action == ui->actionMapHideRangeRings)
+  // Connected to method
 
   if(visibleOnMap)
   {
@@ -2589,6 +2611,7 @@ void MapWidget::addTrafficPattern(const map::MapAirport& airport)
     map::TrafficPattern pattern;
     dialog.fillTrafficPattern(pattern);
     screenIndex->getTrafficPatterns().append(pattern);
+    mainWindow->updateMarkActionStates();
     update();
     mainWindow->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.ident));
   }
@@ -2597,8 +2620,9 @@ void MapWidget::addTrafficPattern(const map::MapAirport& airport)
 void MapWidget::removeTrafficPatterm(int index)
 {
   screenIndex->getTrafficPatterns().removeAt(index);
-  mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
+  mainWindow->updateMarkActionStates();
   update();
+  mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
 }
 
 void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type,
@@ -2622,6 +2646,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes
   screenIndex->getRangeMarks().append(ring);
   qDebug() << "navaid range" << ring.center;
   update();
+  mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
 }
 
@@ -2639,6 +2664,7 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 
   qDebug() << "range rings" << rings.center;
   update();
+  mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for position."));
 }
 
@@ -2716,6 +2742,7 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
   currentDistanceMarkerIndex = -1;
 
   update();
+  mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("All range rings and measurement lines removed from map."));
 }
 
@@ -3015,15 +3042,17 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 void MapWidget::removeRangeRing(int index)
 {
   screenIndex->getRangeMarks().removeAt(index);
-  mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
+  mainWindow->updateMarkActionStates();
   update();
+  mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
 }
 
 void MapWidget::removeDistanceMarker(int index)
 {
   screenIndex->getDistanceMarks().removeAt(index);
-  mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
+  mainWindow->updateMarkActionStates();
   update();
+  mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
 }
 
 bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
@@ -3318,6 +3347,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   }
 
   mouseMoved = QPoint();
+  mainWindow->updateMarkActionStates();
 }
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)

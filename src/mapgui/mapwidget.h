@@ -124,7 +124,7 @@ public:
   void showAircraft(bool centerAircraftChecked);
 
   /* Update hightlighted objects */
-  void changeSearchHighlights(const map::MapSearchResult& positions);
+  void changeSearchHighlights(const map::MapSearchResult& newHighlights);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
   void changeProfileHighlight(const atools::geo::Pos& pos);
@@ -178,6 +178,9 @@ public:
   const QList<map::TrafficPattern>& getTrafficPatterns() const;
 
   const atools::geo::Pos& getProfileHighlight() const;
+
+  void clearSearchHighlights();
+  bool hasHighlights() const;
 
   const AircraftTrack& getAircraftTrack() const
   {
@@ -321,6 +324,12 @@ public:
   /* Current weather source for icon display */
   map::MapWeatherSource getMapWeatherSource() const;
 
+  /* Airspaces from the information window are kept in a separate list */
+  void changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces);
+
+  const QList<map::MapAirspace>& getAirspaceHighlights() const;
+  void clearAirspaceHighlights();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);
@@ -400,7 +409,8 @@ private:
   virtual void leaveEvent(QEvent *) override;
 
   void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
-  bool showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result, const QString& menuText);
+  bool showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result,
+                                const QString& menuText);
 
   void handleInfoClick(QPoint pos);
   bool loadKml(const QString& filename, bool center);

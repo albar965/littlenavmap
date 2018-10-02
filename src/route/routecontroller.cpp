@@ -218,9 +218,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
-  connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::nothingSelectedTriggered);
+  connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearSelection);
   connect(ui->actionRouteTableSelectAll, &QAction::triggered, this, &RouteController::selectAllTriggered);
-  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::nothingSelectedTriggered);
+  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearSelection);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
 
@@ -1452,11 +1452,6 @@ void RouteController::helpClicked()
                                            lnm::helpLanguageOnline());
 }
 
-void RouteController::nothingSelectedTriggered()
-{
-  view->clearSelection();
-}
-
 void RouteController::selectAllTriggered()
 {
   view->selectAll();
@@ -1487,7 +1482,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapEditUserWaypoint,
     ui->actionRouteCalcRadionavSelected, ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected,
     ui->actionRouteCalcSetAltSelected,
-    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange, ui->actionMapHideRangeRings,
+    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange,
     ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
     ui->actionRouteResetView, ui->actionRouteSetMark, ui->actionRouteInsert, ui->actionRouteTableAppend
   });
@@ -1510,10 +1505,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
   updateMoveAndDeleteActions();
 
   ui->actionRouteTableCopy->setEnabled(index.isValid());
-
-  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
-                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty());
 
   bool insert = false;
 
@@ -1696,7 +1687,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapTrafficPattern);
-  menu.addAction(ui->actionMapHideRangeRings);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteTableCopy);
@@ -1755,8 +1745,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
         }
       }
     }
-    else if(action == ui->actionMapHideRangeRings)
-      NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers();
+    // else if(action == ui->actionMapHideRangeRings)
+    // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
     else if(action == ui->actionMapEditUserWaypoint)
       editUserWaypointName(index.row());
     // else if(action == ui->actionRouteTableAppend) // Done by signal from action
@@ -1784,6 +1774,16 @@ void RouteController::activateLegManually(int index)
   highlightNextWaypoint(route.getActiveLegIndex());
   // Use geometry changed flag to force redraw
   emit routeChanged(true);
+}
+
+void RouteController::clearSelection()
+{
+  view->clearSelection();
+}
+
+bool RouteController::hasSelection()
+{
+  return view->selectionModel()->hasSelection();
 }
 
 void RouteController::editUserWaypointName(int index)

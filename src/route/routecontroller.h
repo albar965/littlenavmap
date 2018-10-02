@@ -223,6 +223,10 @@ public:
 
   QString procedureTypeText(const RouteLeg& leg);
 
+  void clearSelection();
+
+  bool hasSelection();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -356,7 +360,6 @@ private:
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
   proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
 
-  void nothingSelectedTriggered();
   void selectAllTriggered();
 
   void activateLegTriggered();

@@ -164,6 +164,9 @@
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
     <addaction name="separator"/>
+    <addaction name="actionMapClearAllHighlights"/>
+    <addaction name="actionMapHideRangeRings"/>
+    <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
     <addaction name="separator"/>
@@ -4210,7 +4213,7 @@
        <property name="handleWidth">
         <number>6</number>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetProfileDrawing">
         <layout class="QGridLayout" name="gridLayoutProfileDrawing">
          <property name="spacing">
           <number>0</number>
@@ -4292,7 +4295,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetProfileButtons">
         <layout class="QGridLayout" name="gridLayoutProfileButtons">
          <property name="rightMargin">
           <number>0</number>
@@ -5175,6 +5178,9 @@
    <property name="statusTip">
     <string>Show the online help in a browser</string>
    </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="actionHelpAbout">
    <property name="icon">
@@ -5676,7 +5682,7 @@
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove all Ranges, Measurements and Patterns from the map</string>
+    <string>&amp;Remove all Ranges, Measurements and Patterns</string>
    </property>
    <property name="toolTip">
     <string>Remove all range rings, distance measurement lines and airport traffic patterns from map</string>
@@ -5849,6 +5855,9 @@
    <property name="statusTip">
     <string>Show Victor airways on map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionMapShowJetAirways">
    <property name="checkable">
@@ -5866,6 +5875,9 @@
    </property>
    <property name="statusTip">
     <string>Show Jet airways on map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
    </property>
   </action>
   <action name="actionMapShowRoute">
@@ -6379,6 +6391,9 @@
    <property name="statusTip">
     <string>Show the navigation map legend online in a browser</string>
    </property>
+   <property name="shortcut">
+    <string>Shift+F1</string>
+   </property>
   </action>
   <action name="actionResetMessages">
    <property name="text">
@@ -6870,6 +6885,9 @@
    </property>
    <property name="statusTip">
     <string>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+J</string>
    </property>
   </action>
   <action name="actionMapOverlayCompass">
@@ -7612,7 +7630,7 @@
     <string>Show compass rose around user aircraft</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+C</string>
+    <string>Ctrl+Alt+D</string>
    </property>
   </action>
   <action name="actionRouteFollowSelection">
@@ -7711,6 +7729,9 @@
    </property>
    <property name="statusTip">
     <string>Show Userpoint Search Tab</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
    </property>
   </action>
   <action name="actionUserdataImportCSV">
@@ -8528,6 +8549,24 @@
    </property>
    <property name="statusTip">
     <string>Show ILS or VASI slope at destination if a procedure is selected</string>
+   </property>
+  </action>
+  <action name="actionMapClearAllHighlights">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Remove all &amp;Highlights and Selections</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear all highlights on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Clear all highlights on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
  </widget>

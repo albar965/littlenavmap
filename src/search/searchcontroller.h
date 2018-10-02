@@ -137,6 +137,12 @@ public:
   /* Refresh after import or changes */
   void refreshUserdata();
 
+  /* Clear selection in all search windows  */
+  void clearSelection();
+
+  /* True if any of the search windows has a selection */
+  bool hasSelection();
+
 private:
   void tabChanged(int index);
   void postCreateSearch(AbstractSearch *search);

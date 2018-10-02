@@ -418,17 +418,19 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result)
 {
   CoordinateConverter conv(mapWidget->viewport());
-  maptools::insertSorted(conv, xs, ys, highlights.airports, result.airports, &result.airportIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.vors, result.vors, &result.vorIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.userpoints, result.userpoints, &result.userpointIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.airspaces, result.airspaces, nullptr, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.ils, result.ils, nullptr, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
+  maptools::insertSorted(conv, xs, ys, searchHighlights.airports, result.airports, &result.airportIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.vors, result.vors, &result.vorIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.userpoints, result.userpoints, &result.userpointIds,
                          maxDistance);
-  maptools::insertSorted(conv, xs, ys, highlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.airspaces, result.airspaces, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.ils, result.ils, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.onlineAircraft, result.onlineAircraft,
+                         &result.onlineAircraftIds,
+                         maxDistance);
+  maptools::insertSorted(conv, xs, ys, searchHighlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,

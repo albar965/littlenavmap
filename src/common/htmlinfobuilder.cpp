@@ -2953,7 +2953,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
   html.text(title, atools::util::html::BOLD | atools::util::html::BIG);
 
-  if(info)
+  if(info && !print)
   {
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
@@ -2969,7 +2969,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
       });
 
       atools::util::HtmlBuilder linkHtml(html.cleared());
-      linkHtml.a(less ? tr("More") : tr("Less"), QString("lnm://show?lessprogress"),
+      linkHtml.a(less ? tr("More") : tr("Less"), QString("lnm://do?lessprogress"),
                  atools::util::html::LINK_NO_UL);
 
       atools::util::HtmlBuilder disabledLinkHtml(html.cleared());

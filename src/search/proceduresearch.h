@@ -83,6 +83,8 @@ public:
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
   virtual void updateTableSelection() override;
+  virtual void clearSelection() override;
+  virtual bool hasSelection() const override;
 
 signals:
   /* Show approaches and highlight circles on the map */
