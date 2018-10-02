@@ -312,14 +312,18 @@ void RouteAltitude::simplyfyRouteAltitudes()
 
 void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 {
+  if(index <= 0 || index >= size() - 1)
+    return;
+
   RouteAltitudeLeg& midAlt = (*this)[index];
   bool rightAdjusted = false;
   const RouteAltitudeLeg *leftAlt = &at(index - 1);
-  if(atools::almostEqual(midAlt.getDistanceFromStart(), leftAlt->getDistanceFromStart()) && index > size() + 1)
+  RouteAltitudeLeg *rightAlt = &(*this)[index + 1];
+
+  if(atools::almostEqual(midAlt.getDistanceFromStart(), leftAlt->getDistanceFromStart()) && index >= 2)
     // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
     leftAlt = &at(index - 2);
 
-  RouteAltitudeLeg *rightAlt = &(*this)[index + 1];
   if(atools::almostEqual(midAlt.getDistanceFromStart(), rightAlt->getDistanceFromStart()) && index < size() - 2)
   {
     // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
@@ -373,9 +377,11 @@ void RouteAltitude::calculate()
     if(calcTopOfDescent)
       calculateArrival();
 
-    if(distanceTopOfClimb > distanceTopOfDescent)
+    if(distanceTopOfClimb > distanceTopOfDescent ||
+       (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
+       (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
     {
-      // TOD and TOC overlap - cruise altitude is too high
+      // TOD and TOC overlap or are invalid - cruise altitude is too high
       clearAll();
 
       // Reset all to cruise level - profile will print a message
@@ -567,7 +573,7 @@ void RouteAltitude::calculateArrival()
       // Never lower than right leg
       newAltitude = std::max(newAltitude, lastAlt);
 
-      if(!(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) && newAltitude > cruiseAltitide)
+      if(!(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) && newAltitude > cruiseAltitide && i + 1 < size())
       {
         // Reached TOD - calculate distance
         distanceTopOfDescent = distanceForAltitude(at(i + 1).getGeometry().last(),
