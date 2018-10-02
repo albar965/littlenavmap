@@ -280,6 +280,7 @@ void RouteController::tableCopyClipboard()
 
 QString RouteController::flightplanTableAsHtml(int iconSizePixel) const
 {
+  qDebug() << Q_FUNC_INFO;
   using atools::util::HtmlBuilder;
 
   HtmlBuilder html(true);
@@ -422,7 +423,7 @@ void RouteController::routeTypeChanged()
 
 bool RouteController::selectDepartureParking()
 {
-  qDebug() << Q_FUNC_INFO << "selectDepartureParking";
+  qDebug() << Q_FUNC_INFO;
 
   const map::MapAirport& airport = route.first().getAirport();
   ParkingDialog dialog(mainWindow, airport);
@@ -544,7 +545,7 @@ void RouteController::newFlightplan()
 
   updateTableModel();
   NavApp::updateWindowTitle();
-  emit routeChanged(true/* geometry changed */, true /* new flight plan */);
+  emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, const QString& filename,
@@ -715,7 +716,7 @@ bool RouteController::loadFlightplan(const QString& filename)
   Flightplan newFlightplan;
   try
   {
-    qDebug() << "loadFlightplan" << filename;
+    qDebug() << Q_FUNC_INFO << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     flightplanIO->load(newFlightplan, filename);
     // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
@@ -983,7 +984,7 @@ bool RouteController::exportFlighplanAsClean(const QString& filename)
 
 void RouteController::calculateDirect()
 {
-  qDebug() << "calculateDirect";
+  qDebug() << Q_FUNC_INFO;
 
   // Stop any background tasks
   beforeRouteCalc();
@@ -1011,7 +1012,7 @@ void RouteController::beforeRouteCalc()
 
 void RouteController::calculateRadionav(int fromIndex, int toIndex)
 {
-  qDebug() << "calculateRadionav";
+  qDebug() << Q_FUNC_INFO;
   // Changing mode might need a clear
   routeNetworkRadio->setMode(nw::ROUTE_RADIONAV);
 
@@ -1032,7 +1033,7 @@ void RouteController::calculateRadionav()
 
 void RouteController::calculateHighAlt(int fromIndex, int toIndex)
 {
-  qDebug() << "calculateHighAlt";
+  qDebug() << Q_FUNC_INFO;
   routeNetworkAirway->setMode(nw::ROUTE_JET);
 
   RouteFinder routeFinder(routeNetworkAirway);
@@ -1053,7 +1054,7 @@ void RouteController::calculateHighAlt()
 
 void RouteController::calculateLowAlt(int fromIndex, int toIndex)
 {
-  qDebug() << "calculateLowAlt";
+  qDebug() << Q_FUNC_INFO;
   routeNetworkAirway->setMode(nw::ROUTE_VICTOR);
 
   RouteFinder routeFinder(routeNetworkAirway);
@@ -1074,7 +1075,7 @@ void RouteController::calculateLowAlt()
 
 void RouteController::calculateSetAlt(int fromIndex, int toIndex)
 {
-  qDebug() << "calculateSetAlt";
+  qDebug() << Q_FUNC_INFO;
   routeNetworkAirway->setMode(nw::ROUTE_VICTOR | nw::ROUTE_JET);
 
   RouteFinder routeFinder(routeNetworkAirway);
@@ -1233,7 +1234,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
 void RouteController::adjustFlightplanAltitude()
 {
-  qDebug() << "Adjust altitude";
+  qDebug() << Q_FUNC_INFO;
 
   if(route.isEmpty())
     return;
@@ -1770,6 +1771,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 /* Activate leg manually from menu */
 void RouteController::activateLegManually(int index)
 {
+  qDebug() << Q_FUNC_INFO << index;
   route.setActiveLeg(index);
   highlightNextWaypoint(route.getActiveLegIndex());
   // Use geometry changed flag to force redraw
@@ -1788,6 +1790,8 @@ bool RouteController::hasSelection()
 
 void RouteController::editUserWaypointName(int index)
 {
+  qDebug() << Q_FUNC_INFO;
+
   UserWaypointDialog dialog(mainWindow, route.at(index).getIdent(), route.at(index).getPosition());
   if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
   {
@@ -2157,7 +2161,7 @@ void RouteController::selectRange(int from, int to)
 
 void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
 {
-  qDebug() << Q_FUNC_INFO << "route set helipad id" << helipad.id;
+  qDebug() << Q_FUNC_INFO << helipad.id;
 
   map::MapStart start;
   airportQuery->getStartById(start, helipad.startId);
@@ -2167,7 +2171,7 @@ void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
 
 void RouteController::routeSetParking(const map::MapParking& parking)
 {
-  qDebug() << Q_FUNC_INFO << "route set parking id" << parking.id;
+  qDebug() << Q_FUNC_INFO << parking.id;
 
   RouteCommand *undoCommand = nullptr;
 
@@ -2245,7 +2249,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
 
 void RouteController::routeSetDeparture(map::MapAirport airport)
 {
-  qDebug() << "route set start id" << airport.id;
+  qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
   RouteCommand *undoCommand = preChange(tr("Set Departure"));
 
@@ -2297,7 +2301,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
 
 void RouteController::routeSetDestination(map::MapAirport airport)
 {
-  qDebug() << "route set dest id" << airport.id;
+  qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
 
@@ -2355,7 +2359,9 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
 
 void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)
 {
-  qDebug() << Q_FUNC_INFO /* << legs*/;
+  qDebug() << Q_FUNC_INFO
+           << legs.approachType << legs.approachFixIdent << legs.approachSuffix << legs.approachArincName
+           << legs.transitionType << legs.transitionFixIdent;
 
   RouteCommand *undoCommand = nullptr;
 
@@ -2425,7 +2431,7 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
 
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex)
 {
-  qDebug() << Q_FUNC_INFO << "route add" << "user pos" << userPos << "id" << id
+  qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
 
   FlightplanEntry entry;
@@ -2536,7 +2542,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type,
                                    int legIndex)
 {
-  qDebug() << "route replace" << "user pos" << userPos << "id" << id
+  qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
 
   RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
