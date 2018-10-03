@@ -47,6 +47,8 @@
 #include <marble/GeoDataLineString.h>
 
 /* Maximum delta values depending on update rate in options */
+// int manhattanLengthDelta;
+// float altitudeDelta;
 static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 {
   {
@@ -56,7 +58,7 @@ static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELT
     opts::MEDIUM, {2, 10.f}
   },
   {
-    opts::LOW, {4, 100.f}
+    opts::LOW, {4, 20.f}
   }
 });
 
@@ -129,6 +131,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     return;
 
   bool updateWidget = false;
+  bool updateLabelWidget = false;
 
   if(!NavApp::getRouteConst().isFlightplanEmpty())
   {
@@ -139,38 +142,32 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
       if(!route.isPassedLastLeg() && !route.isActiveMissed())
       {
         simData = simulatorData;
+
+        Pos lastPos = lastSimData.getUserAircraftConst().getPosition();
+        Pos simPos = simData.getUserAircraftConst().getPosition();
+
         if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
         {
           // Get screen point from last update
           QPoint lastPoint;
-          if(lastSimData.getUserAircraftConst().getPosition().isValid())
-            lastPoint = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
-                               Y0 + static_cast<int>(rect().height() - Y0 -
-                                                     lastSimData.getUserAircraftConst().getPosition().getAltitude()
-                                                     * verticalScale));
+          if(lastPos.isValid())
+            lastPoint = toScreen(QPointF(lastAircraftDistanceFromStart, lastPos.getAltitude()));
 
           // Get screen point for current update
-          QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart *horizontalScale),
-                              Y0 + static_cast<int>(rect().height() - Y0 -
-                                                    simData.getUserAircraftConst().getPosition().getAltitude() *
-                                                    verticalScale));
+          QPoint currentPoint = toScreen(QPointF(aircraftDistanceFromStart, simPos.getAltitude()));
 
           if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - currentPoint).manhattanLength() > 3)
           {
             // Add track point and update widget if delta value between last and current update is large enough
-            if(simData.getUserAircraftConst().getPosition().isValid())
+            if(simPos.isValid())
             {
               aircraftTrackPoints.append(currentPoint);
 
               if(aircraftTrackPoints.boundingRect().width() > MIN_AIRCRAFT_TRACK_WIDTH)
                 maxTrackAltitudeFt = std::max(maxTrackAltitudeFt,
-                                              simData.getUserAircraftConst().getPosition().getAltitude());
+                                              simPos.getAltitude());
               else
                 maxTrackAltitudeFt = 0.f;
-
-              // Center aircraft on scroll area
-              if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked())
-                scrollArea->centerAircraft(currentPoint);
 
               updateWidget = true;
             }
@@ -179,21 +176,33 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
           using atools::almostNotEqual;
-          if(!lastSimData.getUserAircraftConst().getPosition().isValid() ||
-             (lastPoint - currentPoint).manhattanLength() > deltas.manhattanLengthDelta ||
-             almostNotEqual(lastSimData.getUserAircraftConst().getPosition().getAltitude(),
-                            simData.getUserAircraftConst().getPosition().getAltitude(), deltas.altitudeDelta))
+
+          if(!lastPos.isValid() || // No last position
+             (lastPoint - currentPoint).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
+             almostNotEqual(lastPos.getAltitude(), simPos.getAltitude(),
+                            deltas.altitudeDelta) // Altitude change
+             )
           {
             // Aircraft position has changed enough
             lastSimData = simData;
-            if(simData.getUserAircraftConst().getPosition().getAltitude() > maxWindowAlt)
+            lastAircraftDistanceFromStart = aircraftDistanceFromStart;
+
+            if(simPos.getAltitude() > maxWindowAlt)
+            {
               // Scale up to keep the aircraft visible
               updateScreenCoords();
+              updateLabelWidget = true;
+            }
+
+            // Probably center aircraft on scroll area
+            if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
+              scrollArea->centerAircraft(currentPoint);
+
             updateWidget = true;
           }
-        }
-      }
-    }
+        } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
+      } // if(!route.isPassedLastLeg() && !route.isActiveMissed())
+    } // if((showAircraft || showAircraftTrack))
     else
     {
       // Neither aircraft nor track shown - update simulator data only
@@ -206,7 +215,8 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   if(updateWidget)
     update();
 
-  updateLabel();
+  if(updateLabelWidget)
+    updateLabel();
 }
 
 void ProfileWidget::connectedToSimulator()
@@ -1066,7 +1076,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw user aircraft =========================================================
-  if(simData.getUserAircraftConst().getPosition().isValid() && showAircraft)
+  if(!route.isPassedLastLeg() && simData.getUserAircraftConst().getPosition().isValid() && showAircraft)
   {
     float acx = X0 + aircraftDistanceFromStart * horizontalScale;
     float acy = Y0 + (h - simData.getUserAircraftConst().getPosition().getAltitude() * verticalScale);

@@ -233,6 +233,7 @@ private:
   float maxTrackAltitudeFt = 0.f;
 
   float aircraftDistanceFromStart, aircraftDistanceToDest;
+  float lastAircraftDistanceFromStart;
   ElevationLegList legList;
 
   RouteController *routeController = nullptr;
