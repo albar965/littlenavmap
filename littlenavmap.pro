@@ -244,7 +244,8 @@ SOURCES += src/main.cpp\
     src/profile/profilescrollarea.cpp \
     src/profile/profilelabelwidget.cpp \
     src/route/routealtitude.cpp \
-    src/route/routealtitudeleg.cpp
+    src/route/routealtitudeleg.cpp \
+    src/common/jumpback.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -355,7 +356,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/profile/profilescrollarea.h \
     src/profile/profilelabelwidget.h \
     src/route/routealtitude.h \
-    src/route/routealtitudeleg.h
+    src/route/routealtitudeleg.h \
+    src/common/jumpback.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

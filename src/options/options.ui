@@ -2089,7 +2089,8 @@ TOC and TOD (also for flight plan):</string>
           <item row="2" column="1">
            <widget class="QSpinBox" name="spinBoxSimDoNotFollowOnScrollTime">
             <property name="toolTip">
-             <string>Time until aircraft following is activated again after any map interaction like scrolling or zooming</string>
+             <string>Time until aircraft following is activated again after any map interaction like scrolling or zooming.
+This setting is also used in the elevation profile.</string>
             </property>
             <property name="suffix">
              <string> seconds</string>
@@ -2118,7 +2119,8 @@ TOC and TOD (also for flight plan):</string>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowOnScroll">
             <property name="toolTip">
-             <string>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming</string>
+             <string>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming.
+This setting is also used in the elevation profile.</string>
             </property>
             <property name="text">
              <string>&amp;Allow scrolling and zooming in the map</string>

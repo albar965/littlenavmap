@@ -53,6 +53,7 @@ class MapTooltip;
 class MapScreenIndex;
 class Route;
 class MapVisible;
+class JumpBack;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
@@ -311,9 +312,6 @@ public:
 
   void resetSettingActionsToDefault();
 
-  /* Stop timer and cancel any jumping back */
-  void jumpBackToAircraftCancel();
-
   void onlineClientAndAtcUpdated();
   void onlineNetworkChanged();
 
@@ -329,6 +327,9 @@ public:
 
   const QList<map::MapAirspace>& getAirspaceHighlights() const;
   void clearAirspaceHighlights();
+
+  /* From center button */
+  void jumpBackToAircraftCancel();
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -421,8 +422,6 @@ private:
   void elevationDisplayTimerTimeout();
   void cancelDragUserpoint();
 
-  void jumpBackToAircraftTimeout();
-  void jumpBackToAircraftStart();
   bool isCenterLegAndAircraftActive();
 
   /* Remove range rings on index, print message and update map */
@@ -454,6 +453,9 @@ private:
   /* Convert paint layer value to menu actions checked / not checked */
   map::MapSunShading sunShadingFromUi();
   void sunShadingToUi(map::MapSunShading sunShading);
+
+  void jumpBackToAircraftTimeout(const QVariantList& values);
+  void jumpBackToAircraftStart();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
@@ -549,13 +551,10 @@ private:
   /* Used for distance calculation */
   atools::fs::sc::SimConnectUserAircraft takeoffLandingLastAircraft;
 
-  QTimer jumpBackToAircraftTimer;
-  double jumpBackToAircraftDistance = 0.;
-  atools::geo::Pos jumpBackToAircraftPos;
-  bool jumpBackToAircraftActive = false;
-
   /* The the overlays from updating */
   bool ignoreOverlayUpdates = false;
+
+  JumpBack *jumpBack;
 
 #ifdef DEBUG_MOVING_AIRPLANE
   void debugMovingPlane(QMouseEvent *event);

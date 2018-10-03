@@ -61,7 +61,7 @@ public:
    * @param nextRouteLegIndex Index of next leg
    * @return false if no current/next leg was found
    */
-  bool getRouteDistances(float *distFromStart, float *distToDest,
+  bool getRouteDistances(float *distFromStart, float *distToDest = nullptr,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 

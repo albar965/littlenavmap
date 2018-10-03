@@ -107,6 +107,7 @@ signals:
   /* Show flight plan waypoint or user position on map. x is widget position. */
   void showPosAlongFlightplan(int x, bool doubleClick);
   void hideRubberBand();
+  void jumpBackToAircraftStart();
 
 private:
   /* Horizontal or vertical scroll bar of view has changed value or range */

@@ -34,6 +34,7 @@ class RouteController;
 class QTimer;
 class QRubberBand;
 class ProfileScrollArea;
+class JumpBack;
 
 /*
  * Loads and displays the flight plan elevation profile. The elevation data is
@@ -123,6 +124,9 @@ public:
 
   /* Call by this and profile label widget class. Point in screen coordinates. */
   void showContextMenu(const QPoint& globalPoint);
+
+  /* From center button */
+  void jumpBackToAircraftCancel();
 
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
@@ -232,6 +236,8 @@ private:
   ElevationLegList legList;
 
   RouteController *routeController = nullptr;
+  JumpBack *jumpBack = nullptr;
+  bool contextMenuActive = false;
 
   /* Calls updateTimeout which will start the update thread in background */
   QTimer *updateTimer = nullptr;
@@ -263,6 +269,9 @@ private:
 
   /* Error messages from profile altitude calculation */
   QStringList messages;
+  void jumpBackToAircraftStart();
+  void jumpBackToAircraftTimeout();
+
 };
 
 Q_DECLARE_TYPEINFO(ProfileWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

@@ -142,6 +142,8 @@ void ProfileScrollArea::vertScrollBarChanged()
       lastVertScrollPos = toScrollPos(vertScrollBar);
   }
 
+  emit jumpBackToAircraftStart();
+
   // Update y scale
   labelWidget->update();
 }
@@ -160,6 +162,8 @@ void ProfileScrollArea::horizScrollBarChanged()
       // Remember position
       lastHorizScrollPos = toScrollPos(horizScrollBar);
   }
+
+  emit jumpBackToAircraftStart();
 }
 
 void ProfileScrollArea::update()
@@ -264,61 +268,66 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
   if(NavApp::getRoute().size() < 2)
     return false;
 
+  bool consumed = false;
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(event->key() == Qt::Key_Home)
   {
     // Scroll to left beginning
     horizScrollBar->setValue(horizScrollBar->minimum());
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_End)
   {
     // Scroll to right end
     horizScrollBar->setValue(horizScrollBar->maximum());
-    return true;
+    consumed = true;
   }
   if(event->key() == Qt::Key_PageUp)
   {
     horizScrollBar->setValue(horizScrollBar->value() - horizScrollBar->pageStep());
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_PageDown)
   {
     horizScrollBar->setValue(horizScrollBar->value() + horizScrollBar->pageStep());
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_Plus)
   {
     // Zoom in vertically
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() + 1);
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_Minus)
   {
     // Zoom out vertically
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() - 1);
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_Asterisk)
   {
     // Zoom in horizontally
     ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() + 1);
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_Slash)
   {
     // Zoom out horizontally
     ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() - 1);
-    return true;
+    consumed = true;
   }
   else if(event->key() == Qt::Key_0 || event->key() == Qt::Key_Insert)
   {
     // Reset using 0 or 0/Ins on numpad
     ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
     ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
-    return true;
+    consumed = true;
   }
-  return false;
+
+  if(consumed)
+    emit jumpBackToAircraftStart();
+
+  return consumed;
 }
 
 bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
@@ -343,6 +352,7 @@ bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
     startDragPos = event->pos();
 
     // Event consumed - do not propagate
+    emit jumpBackToAircraftStart();
     return true;
   }
   return false;
@@ -445,6 +455,8 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
       vertScrollBar->setValue(static_cast<int>(vertScrollBar->value() - (diffPos + mouseToCenter.y() + correction)));
     }
   }
+
+  emit jumpBackToAircraftStart();
 
   // Consume all events
   return true;

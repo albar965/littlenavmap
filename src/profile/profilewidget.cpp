@@ -34,6 +34,7 @@
 #include "common/elevationprovider.h"
 #include "common/vehicleicons.h"
 #include "util/paintercontextsaver.h"
+#include "common/jumpback.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -77,8 +78,13 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   scrollArea->setProfileLeftOffset(X0);
   scrollArea->setProfileTopOffset(Y0);
 
+  jumpBack = new JumpBack(this);
+  connect(jumpBack, &JumpBack::jumpBack, this, &ProfileWidget::jumpBackToAircraftTimeout);
+
   connect(scrollArea, &ProfileScrollArea::showPosAlongFlightplan, this, &ProfileWidget::showPosAlongFlightplan);
   connect(scrollArea, &ProfileScrollArea::hideRubberBand, this, &ProfileWidget::hideRubberBand);
+  connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftStart, this, &ProfileWidget::jumpBackToAircraftStart);
+  connect(ui->actionProfileCenterAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
 
   routeController = NavApp::getRouteController();
 
@@ -100,6 +106,9 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 
 ProfileWidget::~ProfileWidget()
 {
+  qDebug() << Q_FUNC_INFO << "delete jumpBack";
+  delete jumpBack;
+
   updateTimer->stop();
   terminateThread();
   delete scrollArea;
@@ -203,6 +212,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 void ProfileWidget::connectedToSimulator()
 {
   qDebug() << Q_FUNC_INFO;
+  jumpBack->cancel();
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
   update();
@@ -212,6 +222,7 @@ void ProfileWidget::connectedToSimulator()
 void ProfileWidget::disconnectedFromSimulator()
 {
   qDebug() << Q_FUNC_INFO;
+  jumpBack->cancel();
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
   update();
@@ -1495,6 +1506,7 @@ void ProfileWidget::contextMenuEvent(QContextMenuEvent *event)
 void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 {
   qDebug() << Q_FUNC_INFO << globalPoint;
+  contextMenuActive = true;
 
   bool routeEmpty = NavApp::getRoute().isEmpty();
 
@@ -1551,6 +1563,8 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   // menu.addAction(ui->actionProfileShowZoom);
   // else if(action == ui->actionProfileShowLabels)
   // else if(action == ui->actionProfileShowScrollbars)
+
+  contextMenuActive = false;
 }
 
 void ProfileWidget::updateErrorMessages()
@@ -1653,6 +1667,7 @@ void ProfileWidget::deleteAircraftTrack()
 /* Stop thread */
 void ProfileWidget::preDatabaseLoad()
 {
+  jumpBack->cancel();
   updateTimer->stop();
   terminateThread();
   databaseLoadStatus = true;
@@ -1727,4 +1742,38 @@ void ProfileWidget::terminateThread()
     terminateThreadSignal = true;
     future.waitForFinished();
   }
+}
+
+void ProfileWidget::jumpBackToAircraftStart()
+{
+  if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked())
+    jumpBack->start();
+}
+
+void ProfileWidget::jumpBackToAircraftCancel()
+{
+  jumpBack->cancel();
+}
+
+void ProfileWidget::jumpBackToAircraftTimeout()
+{
+  if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
+     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+  {
+
+    if(QApplication::mouseButtons() & Qt::LeftButton || contextMenuActive)
+      // Restart as long as menu is active or user is dragging around
+      jumpBack->restart();
+    else
+    {
+      jumpBack->cancel();
+      if(simData.getUserAircraft().getPosition().isValid())
+        scrollArea->centerAircraft(toScreen(QPointF(aircraftDistanceFromStart,
+                                                    simData.getUserAircraft().getPosition().getAltitude())));
+
+      NavApp::setStatusMessage(tr("Jumped back to aircraft."));
+    }
+  }
+  else
+    jumpBack->cancel();
 }
