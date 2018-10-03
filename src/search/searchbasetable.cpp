@@ -555,7 +555,7 @@ void SearchBaseTable::clearSelection()
 
 bool SearchBaseTable::hasSelection() const
 {
-  return view->selectionModel()->hasSelection();
+  return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
 }
 
 /* Connect selection model again after a SQL model reset */
@@ -925,7 +925,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
   ui->actionSearchTableSelectNothing->setEnabled(
-    controller->getTotalRowCount() > 0 && view->selectionModel()->hasSelection());
+    controller->getTotalRowCount() > 0 &&
+    (view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection()));
 
   // Build the menu depending on tab =========================================================================
   QMenu menu;

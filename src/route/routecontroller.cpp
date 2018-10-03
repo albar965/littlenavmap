@@ -205,7 +205,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
-  connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+
+  if(view->selectionModel() != nullptr)
+    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
   // Connect actions - actions without shortcut key are used in the context menu method directly
   connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
@@ -523,11 +525,14 @@ void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 {
   if(NavApp::getMainUi()->dockWidgetRoute->isVisible())
   {
-    QItemSelection sm = view->selectionModel()->selection();
-    for(const QItemSelectionRange& rng : sm)
+    if(view->selectionModel() != nullptr)
     {
-      for(int row = rng.top(); row <= rng.bottom(); ++row)
-        selLegIndexes.append(row);
+      QItemSelection sm = view->selectionModel()->selection();
+      for(const QItemSelectionRange& rng : sm)
+      {
+        for(int row = rng.top(); row <= rng.bottom(); ++row)
+          selLegIndexes.append(row);
+      }
     }
   }
 }
@@ -1355,6 +1360,10 @@ void RouteController::doubleClick(const QModelIndex& index)
 void RouteController::updateMoveAndDeleteActions()
 {
   QItemSelectionModel *sm = view->selectionModel();
+
+  if(view->selectionModel() == nullptr)
+    return;
+
   if(sm->hasSelection() && model->rowCount() > 0)
   {
     bool containsProc = false, moveDownTouchesProc = false, moveUpTouchesProc = false;
@@ -1637,7 +1646,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionMapNavaidRange->setEnabled(false);
 
-  ui->actionRouteTableSelectNothing->setEnabled(view->selectionModel()->hasSelection());
+  ui->actionRouteTableSelectNothing->setEnabled(
+    view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
@@ -1785,7 +1795,7 @@ void RouteController::clearSelection()
 
 bool RouteController::hasSelection()
 {
-  return view->selectionModel()->hasSelection();
+  return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
 }
 
 void RouteController::editUserWaypointName(int index)
@@ -1978,7 +1988,8 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     QModelIndex curIdx = view->currentIndex();
     // Remove selection
-    view->selectionModel()->clear();
+    if(view->selectionModel() != nullptr)
+      view->selectionModel()->clear();
     for(int row : rows)
     {
       // Change flight plan
@@ -2072,7 +2083,9 @@ void RouteController::deleteSelectedLegs()
       procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
 
     int firstRow = rows.last();
-    view->selectionModel()->clear();
+
+    if(view->selectionModel() != nullptr)
+      view->selectionModel()->clear();
     for(int row : rows)
     {
       route.getFlightplan().getEntries().removeAt(row);
@@ -2112,11 +2125,14 @@ void RouteController::deleteSelectedLegs()
 /* Get selected row numbers from the table model */
 void RouteController::selectedRows(QList<int>& rows, bool reverse)
 {
-  QItemSelection sm = view->selectionModel()->selection();
-  for(const QItemSelectionRange& rng : sm)
+  if(view->selectionModel() != nullptr)
   {
-    for(int row = rng.top(); row <= rng.bottom(); row++)
-      rows.append(row);
+    QItemSelection sm = view->selectionModel()->selection();
+    for(const QItemSelectionRange& rng : sm)
+    {
+      for(int row = rng.top(); row <= rng.bottom(); row++)
+        rows.append(row);
+    }
   }
 
   if(!rows.isEmpty())
