@@ -464,6 +464,7 @@ unix:!macx {
   deploy.commands += cp -vfa $${QT_HOME}/translations/qt_??_??.qm  $${DEPLOY_DIR}/translations &&
   deploy.commands += cp -vfa $${QT_HOME}/translations/qtbase*.qm  $${DEPLOY_DIR}/translations &&
   deploy.commands += cp -Rvf $${PWD}/../little_navmap_db $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${PWD}/../little_navmap_help/* $${DEPLOY_DIR}/help &&
   deploy.commands += cp -vf $$PWD/desktop/qt.conf $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
   deploy.commands += cp -vf $${PWD}/README.txt $${DEPLOY_DIR} &&
@@ -517,6 +518,7 @@ macx {
   deploy.commands = rm -Rfv $${DEPLOY_APP} &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
   deploy.commands += cp -Rvf $$PWD/../little_navmap_db $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
+  deploy.commands += cp -Rvf $$PWD/../little_navmap_help/* $$OUT_PWD/littlenavmap.app/Contents/MacOS/help &&
   deploy.commands += cp -Rvf \
     $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
     $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
@@ -595,6 +597,7 @@ win32 {
   deploy.commands += xcopy $${WINPWD}\\*.qm $${DEPLOY_DIR_WIN}\\translations &&
   deploy.commands += xcopy $${WINPWD}\\..\\atools\\*.qm $${DEPLOY_DIR_WIN}\\translations &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\..\\little_navmap_db $${DEPLOY_DIR_WIN}\\little_navmap_db &&
+  deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\..\\little_navmap_help $${DEPLOY_DIR_WIN}\\help &&
   deploy.commands += xcopy $${WINPWD}\\littlenavmap.exe.simconnect $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\help $${DEPLOY_DIR_WIN}\\help &&
   deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\customize $${DEPLOY_DIR_WIN}\\customize &&
