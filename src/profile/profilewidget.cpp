@@ -1078,8 +1078,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw user aircraft =========================================================
   if(!route.isPassedLastLeg() && simData.getUserAircraftConst().getPosition().isValid() && showAircraft)
   {
-    float acx = X0 + aircraftDistanceFromStart * horizontalScale;
-    float acy = Y0 + (h - simData.getUserAircraftConst().getPosition().getAltitude() * verticalScale);
+    float acx = distanceX(aircraftDistanceFromStart);
+    float acy = altitudeY(simData.getUserAircraftConst().getPosition().getAltitude());
 
     // Draw aircraft symbol
     int acsize = atools::roundToInt(optData.getDisplaySymbolSizeAircraftUser() / 100. * 32.);
@@ -1169,6 +1169,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
   if(geometryChanged)
   {
     // Start thread after short delay to calculate new data
+    // Calls ProfileWidget::updateTimeout
     updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
                        ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }

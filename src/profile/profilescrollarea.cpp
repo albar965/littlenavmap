@@ -179,29 +179,28 @@ void ProfileScrollArea::updateLabelWidget()
 
 void ProfileScrollArea::routeChanged(bool geometryChanged)
 {
-  Q_UNUSED(geometryChanged);
+  maxWindowAlt = profileWidget->getMaxWindowAlt();
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  // Max horizontal scale for window width 3 NM
-  ui->horizontalSliderProfileZoom->setMaximum(
-    atools::roundToInt(std::max(NavApp::getRoute().getTotalDistance() / 4.f, 4.f)));
-
+  if(geometryChanged)
+    scaleViewAll();
   routeAltitudeChanged();
   updateWidgets();
+
+  // Graphic update will be triggered later
+  // profileWidget->update();
+  // update();
 }
 
 void ProfileScrollArea::routeAltitudeChanged()
 {
-  float newAltitude = NavApp::getRoute().getCruisingAltitudeFeet();
-  if(atools::almostNotEqual(maxWindowAlt, newAltitude, 10.f) && newAltitude >= 500.f && NavApp::getRoute().size() > 1)
-  {
-    maxWindowAlt = newAltitude;
+  maxWindowAlt = profileWidget->getMaxWindowAlt();
 
-    // Max vertical scale for window height 500 ft
-    NavApp::getMainUi()->verticalSliderProfileZoom->setMaximum(atools::roundToInt(maxWindowAlt / 500.f));
+  setMaxVertZoom();
+  updateWidgets();
 
-    updateWidgets();
-  }
+  // Graphic update will be triggered later
+  // profileWidget->update();
+  // update();
 }
 
 void ProfileScrollArea::updateWidgets()
@@ -464,14 +463,19 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 
 bool ProfileScrollArea::resizeEvent()
 {
-  qDebug() << Q_FUNC_INFO;
   // Event on scroll area only
 
-  scaleView(horizScrollBar);
-  scaleView(vertScrollBar);
+  // Let event finishe the resizing first and then scale the view
+  QTimer::singleShot(0, this, &ProfileScrollArea::scaleViewAll);
 
   // Event not consumed
   return false;
+}
+
+void ProfileScrollArea::scaleViewAll()
+{
+  scaleView(horizScrollBar);
+  scaleView(vertScrollBar);
 }
 
 void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
@@ -607,4 +611,18 @@ void ProfileScrollArea::styleChanged()
             "background: %1;"
             "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png); }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+}
+
+void ProfileScrollArea::setMaxVertZoom()
+{
+  // Max vertical scale for window height 500 ft
+  NavApp::getMainUi()->verticalSliderProfileZoom->setMaximum(std::min(atools::roundToInt(maxWindowAlt / 500.f), 500));
+}
+
+void ProfileScrollArea::setMaxHorizZoom()
+{
+  // Max horizontal scale for window width 4 NM
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->horizontalSliderProfileZoom->setMaximum(
+    atools::roundToInt(std::max(NavApp::getRoute().getTotalDistance() / 4.f, 4.f)));
 }

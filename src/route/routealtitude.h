@@ -69,7 +69,7 @@ public:
   float getDestinationDistance() const;
 
   /* value in feet. Require to set before compilation. */
-  void setCruiseAltitide(float value)
+  void setCruiseAltitude(float value)
   {
     cruiseAltitide = value;
   }
@@ -192,7 +192,7 @@ private:
   float altitudePerNmClimb = 333.f;
   float altitudePerNmDescent = 333.f;
 
-  float cruiseAltitide = 1000.f;
+  float cruiseAltitide = 0.f;
 
   QVector<map::MapIls> destRunwayIls;
   map::MapRunwayEnd destRunwayEnd;

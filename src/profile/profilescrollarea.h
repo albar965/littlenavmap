@@ -143,6 +143,7 @@ private:
 
   /* Scroll bar changed - resize widget and adapt scroll bar position */
   void scaleView(QScrollBar *scrollBar);
+  void scaleViewAll();
 
   /* Enable and disable actions */
   void updateWidgets();
@@ -156,6 +157,9 @@ private:
 
   /* Calculate scroll position center (0.0 to 1.0) value from scroll bar */
   double toScrollPos(const QScrollBar *scrollBar);
+
+  void setMaxHorizZoom();
+  void setMaxVertZoom();
 
   /* Scaling factor for widget - default is minimum as set in ui file */
   int horizScaleFactor = 1;

@@ -386,10 +386,8 @@ void RouteController::routeAltChanged()
 
   NavApp::updateWindowTitle();
 
+  // Calls ProfileWidget::routeAltChangedDelayed
   routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
-
-  if(!route.isEmpty())
-    emit routeChanged(false);
 }
 
 void RouteController::routeAltChangedDelayed()
@@ -647,6 +645,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   loadProceduresFromFlightplan(false /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(adjustAltitude, adjustRouteType);
+
+  // Need to update again after updateAll and altitude change
+  route.updateLegAltitudes();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -1211,6 +1212,10 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       route.updateAirwaysAndAltitude(!useSetAltitude /* adjustRouteAltitude */, adjustRouteType);
 
       route.updateActiveLegAndPos(true /* force update */);
+
+      // Need to update again after updateAll and altitude change
+      route.updateLegAltitudes();
+
       updateTableModel();
 
       postChange(undoCommand);
@@ -1257,12 +1262,15 @@ void RouteController::adjustFlightplanAltitude()
 
     updateTableModel();
 
+    // Need to update again after updateAll and altitude change
+    route.updateLegAltitudes();
+
     postChange(undoCommand);
 
     NavApp::updateWindowTitle();
 
     if(!route.isEmpty())
-      emit routeChanged(false);
+      emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
 
     NavApp::setStatusMessage(tr("Adjusted flight plan altitude."));
   }

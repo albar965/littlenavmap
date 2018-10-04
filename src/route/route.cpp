@@ -1053,7 +1053,7 @@ void Route::updateLegAltitudes()
   altitude->setSimplify(true);
   altitude->setAltitudePerNmClimb(calculateAltPerDistanceFactor());
   altitude->setAltitudePerNmDescent(calculateAltPerDistanceFactor());
-  altitude->setCruiseAltitide(getCruisingAltitudeFeet());
+  altitude->setCruiseAltitude(getCruisingAltitudeFeet());
   altitude->calculate();
 }
 
