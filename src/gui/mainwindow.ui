@@ -8530,7 +8530,7 @@
     <string>Show or hide the zoom sliders in the split window on the right</string>
    </property>
   </action>
-  <action name="actionProfileShowApproachGuide">
+  <action name="actionProfileShowVasi">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -8542,13 +8542,13 @@
      <normaloff>:/littlenavmap/resources/icons/approachguide.svg</normaloff>:/littlenavmap/resources/icons/approachguide.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Approach Guidance</string>
+    <string>Show &amp;VASI</string>
    </property>
    <property name="toolTip">
-    <string>Show ILS or VASI slope at destination if a procedure is selected</string>
+    <string>Show VASI slope at destination if a procedure is selected</string>
    </property>
    <property name="statusTip">
-    <string>Show ILS or VASI slope at destination if a procedure is selected</string>
+    <string>Show VASI slope at destination if a procedure is selected</string>
    </property>
   </action>
   <action name="actionMapClearAllHighlights">
@@ -8567,6 +8567,27 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionProfileShowIls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/ils.svg</normaloff>:/littlenavmap/resources/icons/ils.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;ILS</string>
+   </property>
+   <property name="toolTip">
+    <string>Show ILS slope at destination if a procedure is selected</string>
+   </property>
+   <property name="statusTip">
+    <string>Show ILS slope at destination if a procedure is selected</string>
    </property>
   </action>
  </widget>

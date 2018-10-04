@@ -567,7 +567,9 @@ void ProfileScrollArea::saveState()
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
     ui->actionProfileShowScrollbars,
-    ui->actionProfileShowZoom
+    ui->actionProfileShowZoom,
+    ui->actionProfileShowIls,
+    ui->actionProfileShowVasi
   });
 }
 
@@ -581,7 +583,9 @@ void ProfileScrollArea::restoreState()
     ui->actionProfileFollow,
     ui->actionProfileShowLabels,
     ui->actionProfileShowScrollbars,
-    ui->actionProfileShowZoom
+    ui->actionProfileShowZoom,
+    ui->actionProfileShowIls,
+    ui->actionProfileShowVasi
   });
 }
 

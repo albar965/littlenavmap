@@ -19,6 +19,7 @@
 
 #include "route/route.h"
 #include "atools.h"
+#include "geo/calculations.h"
 
 #include <QLineF>
 
@@ -575,6 +576,10 @@ void RouteAltitude::calculateArrival()
 
       if(!(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) && newAltitude > cruiseAltitide && i + 1 < size())
       {
+        if(at(i + 1).isEmpty())
+          // Stepped into the dummies after arrival runway - bail out
+          break;
+
         // Reached TOD - calculate distance
         distanceTopOfDescent = distanceForAltitude(at(i + 1).getGeometry().last(),
                                                    QPointF(alt.getDistanceFromStart(), newAltitude), cruiseAltitide);
@@ -656,4 +661,16 @@ void RouteAltitude::calculateDistances()
 void RouteAltitude::calculateApproachIlsAndSlopes()
 {
   route->getApproachRunwayEndAndIls(destRunwayIls, destRunwayEnd);
+
+  // Filter out unusable ILS
+  auto it = std::remove_if(destRunwayIls.begin(), destRunwayIls.end(),
+                           [ = ](const map::MapIls& ils) -> bool
+  {
+    // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
+    return ils.slope < 0.1f || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
+    atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
+  });
+
+  if(it != destRunwayIls.end())
+    destRunwayIls.erase(it, destRunwayIls.end());
 }

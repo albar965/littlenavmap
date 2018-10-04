@@ -471,7 +471,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
       int x2 = distanceX(altitudeLegs.getDestinationDistance() - 9.f);
 
       // Screen difference for +/- 0.35°
-      float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 0.35f)) * featherLen - ydiff1;
+      float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 1.f)) * featherLen - ydiff1;
 
       // Construct geometry
       QLineF centerLine(x, y, x2, y2);
@@ -569,7 +569,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
       int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 6.f);
 
       // Screen difference for +/- one degree
-      float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 0.5f)) * featherLen - ydiff1;
+      float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
 
       // Build geometry
       QLineF center(x, y, xUpper, yUpper);
@@ -783,13 +783,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw ILS or VASI guidane ============================
-  if(NavApp::getMainUi()->actionProfileShowApproachGuide->isChecked())
-  {
-    if(route.hasAnyArrivalProcedure() && route.getArrivalLegs().isTypeIls())
-      paintIls(painter, route);
-    else
-      paintVasi(painter, route);
-  }
+  if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
+    paintIls(painter, route);
+
+  if(NavApp::getMainUi()->actionProfileShowVasi->isChecked())
+    paintVasi(painter, route);
 
   mapcolors::scaleFont(&painter, 0.9f);
   defaultFont = painter.font();
@@ -1548,7 +1546,8 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addAction(ui->actionProfileExpand);
   menu.addSeparator();
   menu.addAction(ui->actionProfileCenterAircraft);
-  menu.addAction(ui->actionProfileShowApproachGuide);
+  menu.addAction(ui->actionProfileShowVasi);
+  menu.addAction(ui->actionProfileShowIls);
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
   menu.addSeparator();
@@ -1565,7 +1564,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   }
   else if(action == ui->actionProfileCenterAircraft || action == ui->actionProfileFollow)
     scrollArea->update();
-  else if(action == ui->actionProfileShowApproachGuide)
+  else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi)
     update();
 
   // Other actions are connected to methods or used during updates

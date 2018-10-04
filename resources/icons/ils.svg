@@ -13,7 +13,7 @@
    width="149.92134"
    height="140.26547"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="ils.svg">
   <metadata
      id="metadata17">
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,14 +65,14 @@
      id="g3338"
      transform="translate(1.303346,-144.62452)">
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#008000;stroke-width:7.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="m 4.7744991,275.08759 95.0000049,-115 29.682196,30.55085 -124.6822009,84.44915"
+       style="fill:none;fill-rule:evenodd;stroke:#008000;stroke-width:7.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 132.37292,275.08759 -95.000003,-115 -29.682196,30.55085 124.682199,84.44915"
        id="path21925"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#008000;stroke-width:7.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="m 99.759767,160.1019 0,30.89862 30.029973,0"
+       style="fill:none;fill-rule:evenodd;stroke:#008000;stroke-width:7.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 37.387654,160.1019 v 30.89862 H 7.357681"
        id="path21927"
        inkscape:connector-curvature="0" />
   </g>

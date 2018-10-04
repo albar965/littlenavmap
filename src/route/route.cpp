@@ -1535,8 +1535,7 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
     const RouteLeg& leg = at(destinationLegIdx);
 
     ils.clear();
-    if((getArrivalLegs().isTypeIls()) &&
-       leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
+    if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
       // Get all ils if this is an ILS approach (not LOC)
       ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, leg.getRunwayEnd().name);
 
