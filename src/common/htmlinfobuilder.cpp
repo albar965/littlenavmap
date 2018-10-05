@@ -2255,11 +2255,24 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Visual Range"), Unit::distNm(range));
     html.row2If(tr("Flight Rules:"), onlineRec.valueStr("flightplan_flight_rules"));
     html.row2If(tr("Type of Flight:"), onlineRec.valueStr("flightplan_type_of_flight"));
-    html.row2If(tr("Departure Time:"), onlineRec.valueStr("flightplan_departure_time"));
-    html.row2If(tr("Actual Departure Time:"), onlineRec.valueStr("flightplan_actual_departure_time"));
 
-    // Display times
+    // Display times =============================================================
+    QString departureTime = onlineRec.valueStr("flightplan_departure_time");
+    QTime depTime = atools::timeFromHourMinStr(departureTime);
+    html.row2If(tr("Departure Time:"),
+                depTime.isValid() ? depTime.toString("hh:mm UTC") : departureTime);
+
+    QString actualDepartureTime = onlineRec.valueStr("flightplan_actual_departure_time");
+    QTime actDepTime = atools::timeFromHourMinStr(actualDepartureTime);
+    html.row2If(tr("Actual Departure Time:"),
+                actDepTime.isValid() ? actDepTime.toString("hh:mm UTC") : actualDepartureTime);
+
+    QTime estArrTime = atools::timeFromHourMinStr(onlineRec.valueStr("flightplan_estimated_arrival_time"));
+    if(estArrTime.isValid())
+      html.row2If(tr("Estimated Arrival Time:"), estArrTime.toString("hh:mm UTC"));
+
     double enrouteMin = onlineRec.valueDouble("flightplan_enroute_minutes");
+
     if(enrouteMin > 0.)
       html.row2(tr("Enroute hh:mm"), formatter::formatMinutesHours(enrouteMin / 60.));
     double enduranceMin = onlineRec.valueDouble("flightplan_endurance_minutes");

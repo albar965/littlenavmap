@@ -55,6 +55,7 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("flightplan_aircraft", tr("Aircraft"))).
   append(Column("flightplan_departure_time", tr("Planned\nDeparture"))).
   append(Column("flightplan_actual_departure_time", tr("Actual\nDeparture"))).
+  append(Column("flightplan_estimated_arrival_time", tr("Estimated\nArrival"))).
   append(Column("flightplan_cruising_speed", tr("Planned\nCruising Speed")).hidden()).
   append(Column("flightplan_cruising_level", tr("Planned\nCruising Level")).hidden()).
   append(Column("transponder_code", tr("Transponder\nCode")).hidden()).
@@ -219,6 +220,10 @@ QString OnlineClientSearch::formatModelData(const Column *col, const QVariant& d
     else if(col->getColumnName() == "flightplan_endurance_minutes" ||
             col->getColumnName() == "flightplan_enroute_minutes")
       return formatter::formatMinutesHours(displayRoleValue.toDouble() / 60.);
+    else if(col->getColumnName() == "flightplan_departure_time" ||
+            col->getColumnName() == "flightplan_actual_departure_time" ||
+            col->getColumnName() == "flightplan_estimated_arrival_time")
+      return atools::timeFromHourMinStr(displayRoleValue.toString()).toString("hh:mm");
 
     return SearchBaseTable::formatModelData(col, displayRoleValue);
   }
