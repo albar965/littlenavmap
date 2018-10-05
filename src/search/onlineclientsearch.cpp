@@ -181,6 +181,7 @@ QVariant OnlineClientSearch::modelDataHandler(int colIndex, int rowIndex, const 
          col->getColumnName() == "altitude" ||
          col->getColumnName() == "flightplan_departure_time" ||
          col->getColumnName() == "flightplan_actual_departure_time" ||
+         col->getColumnName() == "flightplan_estimated_arrival_time" ||
          col->getColumnName() == "flightplan_cruising_speed" ||
          col->getColumnName() == "flightplan_cruising_level" ||
          col->getColumnName() == "transponder_code" ||
