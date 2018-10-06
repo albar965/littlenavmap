@@ -199,6 +199,8 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
         }
       }
     }
+    else
+      qWarning() << Q_FUNC_INFO;
   }
   return map::INVALID_ALTITUDE_VALUE;
 }
@@ -216,18 +218,23 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
       // Search through the whole route
       end = route->size() - 1;
 
-    for(int i = index; i < end; i++)
+    if(index < map::INVALID_INDEX_VALUE && end < map::INVALID_INDEX_VALUE)
     {
-      const RouteLeg& leg = route->at(i);
-
-      if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
+      for(int i = index; i < end; i++)
       {
-        const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
-        if(r.descriptor == proc::MapAltRestriction::AT || r.descriptor == proc::MapAltRestriction::AT_OR_BELOW ||
-           r.descriptor == proc::MapAltRestriction::BETWEEN)
-          return r.alt1;
+        const RouteLeg& leg = route->at(i);
+
+        if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
+        {
+          const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
+          if(r.descriptor == proc::MapAltRestriction::AT || r.descriptor == proc::MapAltRestriction::AT_OR_BELOW ||
+             r.descriptor == proc::MapAltRestriction::BETWEEN)
+            return r.alt1;
+        }
       }
     }
+    else
+      qWarning() << Q_FUNC_INFO;
   }
   return map::INVALID_ALTITUDE_VALUE;
 }
@@ -251,6 +258,8 @@ int RouteAltitude::findApproachFirstRestricion() const
           return i;
       }
     }
+    else
+      qWarning() << Q_FUNC_INFO;
   }
   return map::INVALID_INDEX_VALUE;
 }
@@ -272,6 +281,8 @@ int RouteAltitude::findDepartureLastRestricion() const
           return i;
       }
     }
+    else
+      qWarning() << Q_FUNC_INFO;
   }
   return map::INVALID_INDEX_VALUE;
 }
@@ -297,6 +308,8 @@ void RouteAltitude::simplyfyRouteAltitudes()
         simplifyRouteAltitude(j, false /* departure */);
     }
   }
+  else
+    qWarning() << Q_FUNC_INFO;
 
   // Flatten climb legs starting from the departure to the last restriction
   int lastRestriction = findDepartureLastRestricion();
@@ -309,12 +322,17 @@ void RouteAltitude::simplyfyRouteAltitudes()
         simplifyRouteAltitude(j, true /* departure */);
     }
   }
+  else
+    qWarning() << Q_FUNC_INFO;
 }
 
 void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 {
   if(index <= 0 || index >= size() - 1)
+  {
+    qWarning() << Q_FUNC_INFO;
     return;
+  }
 
   RouteAltitudeLeg& midAlt = (*this)[index];
   bool rightAdjusted = false;
@@ -474,6 +492,11 @@ float RouteAltitude::distanceForAltitude(const RouteAltitudeLeg& leg, float alti
 void RouteAltitude::calculateDeparture()
 {
   int departureLegIdx = route->getDepartureLegIndex();
+  if(departureLegIdx == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
 
   if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
     first().setAlt(departureAltitude());
@@ -541,6 +564,12 @@ void RouteAltitude::calculateArrival()
   int destinationLegIdx = route->getDestinationLegIndex();
   int departureLegIndex = route->getDepartureLegIndex();
   float lastAlt = getDestinationAltitude();
+
+  if(departureLegIndex == map::INVALID_INDEX_VALUE || destinationLegIdx == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
 
   // Calculate from last leg down until we hit the cruise altitude (TOD)
   for(int i = route->size() - 1; i >= 0; i--)
@@ -622,6 +651,12 @@ void RouteAltitude::calculateDistances()
 {
   float distanceToLeg = 0.f;
   int destinationLegIdx = route->getDestinationLegIndex();
+
+  if(destinationLegIdx == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
 
   // Fill all legs with distance and cruise altitude and add them to the vector
   for(int i = 0; i < route->size(); i++)

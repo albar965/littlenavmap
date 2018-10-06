@@ -293,35 +293,43 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
       transparency = 0;
 
     // Draw the top of descent circle and text ======================
-    QPoint pt = wToS(route->getTopOfDescentPos());
-    if(!pt.isNull())
+    Pos pos = route->getTopOfDescentPos();
+    if(pos.isValid())
     {
-      context->painter->drawEllipse(pt, radius, radius);
+      QPoint pt = wToS(pos);
+      if(!pt.isNull())
+      {
+        context->painter->drawEllipse(pt, radius, radius);
 
-      QStringList tod;
-      tod.append(tr("TOD"));
-      if(context->mapLayer->isAirportRouteInfo())
-        tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
+        QStringList tod;
+        tod.append(tr("TOD"));
+        if(context->mapLayer->isAirportRouteInfo())
+          tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
-      symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
-                             pt.x() + radius, pt.y() + radius,
-                             textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+        symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
+                               pt.x() + radius, pt.y() + radius,
+                               textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+      }
     }
 
     // Draw the top of climb circle and text ======================
-    pt = wToS(route->getTopOfClimbPos());
-    if(!pt.isNull())
+    pos = route->getTopOfClimbPos();
+    if(pos.isValid())
     {
-      context->painter->drawEllipse(pt, radius, radius);
+      QPoint pt = wToS(pos);
+      if(!pt.isNull())
+      {
+        context->painter->drawEllipse(pt, radius, radius);
 
-      QStringList toc;
-      toc.append(tr("TOC"));
-      if(context->mapLayer->isAirportRouteInfo())
-        toc.append(Unit::distNm(route->getTopOfClimbDistance()));
+        QStringList toc;
+        toc.append(tr("TOC"));
+        if(context->mapLayer->isAirportRouteInfo())
+          toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
-      symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
-                             pt.x() + radius, pt.y() + radius,
-                             textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+        symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
+                               pt.x() + radius, pt.y() + radius,
+                               textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+      }
     }
   }
 }

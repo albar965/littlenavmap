@@ -451,66 +451,69 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
     int x = distanceX(altitudeLegs.getDestinationDistance());
     int y = altitudeY(altitudeLegs.getDestinationAltitude());
 
-    // Draw all ILS
-    for(const map::MapIls& ils : ilsVector)
+    if(x < map::INVALID_INDEX_VALUE && y < map::INVALID_INDEX_VALUE)
     {
-      painter.setBrush(mapcolors::ilsFillColor);
-      painter.setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
-      painter.setBackgroundMode(Qt::OpaqueMode);
-      painter.setBackground(Qt::transparent);
-
-      // ILS feather length is 9 NM
-      float featherLen = atools::geo::nmToFeet(9.f);
-
-      // Calculate altitude at end of feather
-      // tan a = GK / AK; // tan a * AK = GK;
-      float ydiff1 = std::tan(atools::geo::toRadians(ils.slope)) * featherLen;
-
-      // Calculate screen points for end of feather
-      int y2 = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
-      int x2 = distanceX(altitudeLegs.getDestinationDistance() - 9.f);
-
-      // Screen difference for +/- 0.35°
-      float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 1.f)) * featherLen - ydiff1;
-
-      // Construct geometry
-      QLineF centerLine(x, y, x2, y2);
-      QLineF lowerLine(x, y, x2, y2 + (ydiffUpper *verticalScale));
-      QLineF upperLine(x, y, x2, y2 - (ydiffUpper *verticalScale));
-
-      // Make all the same length
-      lowerLine.setLength(centerLine.length());
-      upperLine.setLength(centerLine.length());
-
-      // Shorten the center line
-      centerLine.setLength(centerLine.length() - QLineF(lowerLine.p2(), upperLine.p2()).length() / 2.);
-
-      // Draw feather
-      painter.drawPolygon(QPolygonF({lowerLine.p1(), lowerLine.p2(), upperLine.p2(), upperLine.p1()}));
-
-      // Draw small indicator for ILS
-      painter.drawPolyline(QPolygonF({lowerLine.p2(), centerLine.p2(), upperLine.p2()}));
-
-      // Dashed center line
-      painter.setPen(mapcolors::ilsCenterPen);
-      painter.drawLine(centerLine);
-
-      // Calculate text ==================
-      painter.setPen(mapcolors::ilsTextColor);
-      if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+      // Draw all ILS
+      for(const map::MapIls& ils : ilsVector)
       {
-        painter.setBackground(Qt::white);
+        painter.setBrush(mapcolors::ilsFillColor);
+        painter.setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
         painter.setBackgroundMode(Qt::OpaqueMode);
-      }
-      else
-        painter.setBackgroundMode(Qt::TransparentMode);
+        painter.setBackground(Qt::transparent);
 
-      // Place near p2 at end of feather
-      double angle = atools::geo::angleFromQt(upperLine.angle());
-      painter.translate(upperLine.p2());
-      painter.rotate(angle + 90.);
-      painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" ►"));
-      painter.resetTransform();
+        // ILS feather length is 9 NM
+        float featherLen = atools::geo::nmToFeet(9.f);
+
+        // Calculate altitude at end of feather
+        // tan a = GK / AK; // tan a * AK = GK;
+        float ydiff1 = std::tan(atools::geo::toRadians(ils.slope)) * featherLen;
+
+        // Calculate screen points for end of feather
+        int y2 = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
+        int x2 = distanceX(altitudeLegs.getDestinationDistance() - 9.f);
+
+        // Screen difference for +/- 0.35°
+        float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 1.f)) * featherLen - ydiff1;
+
+        // Construct geometry
+        QLineF centerLine(x, y, x2, y2);
+        QLineF lowerLine(x, y, x2, y2 + (ydiffUpper *verticalScale));
+        QLineF upperLine(x, y, x2, y2 - (ydiffUpper *verticalScale));
+
+        // Make all the same length
+        lowerLine.setLength(centerLine.length());
+        upperLine.setLength(centerLine.length());
+
+        // Shorten the center line
+        centerLine.setLength(centerLine.length() - QLineF(lowerLine.p2(), upperLine.p2()).length() / 2.);
+
+        // Draw feather
+        painter.drawPolygon(QPolygonF({lowerLine.p1(), lowerLine.p2(), upperLine.p2(), upperLine.p1()}));
+
+        // Draw small indicator for ILS
+        painter.drawPolyline(QPolygonF({lowerLine.p2(), centerLine.p2(), upperLine.p2()}));
+
+        // Dashed center line
+        painter.setPen(mapcolors::ilsCenterPen);
+        painter.drawLine(centerLine);
+
+        // Calculate text ==================
+        painter.setPen(mapcolors::ilsTextColor);
+        if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        {
+          painter.setBackground(Qt::white);
+          painter.setBackgroundMode(Qt::OpaqueMode);
+        }
+        else
+          painter.setBackgroundMode(Qt::TransparentMode);
+
+        // Place near p2 at end of feather
+        double angle = atools::geo::angleFromQt(upperLine.angle());
+        painter.translate(upperLine.p2());
+        painter.rotate(angle + 90.);
+        painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" ►"));
+        painter.resetTransform();
+      }
     }
   }
 }
@@ -568,51 +571,54 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
       int yUpper = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
       int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 6.f);
 
-      // Screen difference for +/- one degree
-      float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
-
-      // Build geometry
-      QLineF center(x, y, xUpper, yUpper);
-      QLineF lower(x, y, xUpper, yUpper + (ydiffUpper *verticalScale));
-      QLineF upper(x, y, xUpper, yUpper - (ydiffUpper *verticalScale));
-
-      lower.setLength(center.length());
-      upper.setLength(center.length());
-
-      // Draw lower red guide
-      painter.setPen(Qt::NoPen);
-      painter.setBrush(mapcolors::profileVasiBelowColor);
-      painter.drawPolygon(QPolygonF({lower.p1(), lower.p2(), center.p2(), center.p1()}));
-
-      // Draw above white guide
-      painter.setBrush(mapcolors::profileVasiAboveColor);
-      painter.drawPolygon(QPolygonF({upper.p1(), upper.p2(), center.p2(), center.p1()}));
-
-      // Draw dashed center line
-      painter.setPen(mapcolors::profileVasiCenterPen);
-      painter.drawLine(center);
-
-      painter.setPen(Qt::black);
-      if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+      if(xUpper < map::INVALID_INDEX_VALUE && yUpper < map::INVALID_INDEX_VALUE)
       {
-        painter.setBackground(Qt::white);
-        painter.setBackgroundMode(Qt::OpaqueMode);
+        // Screen difference for +/- one degree
+        float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
+
+        // Build geometry
+        QLineF center(x, y, xUpper, yUpper);
+        QLineF lower(x, y, xUpper, yUpper + (ydiffUpper *verticalScale));
+        QLineF upper(x, y, xUpper, yUpper - (ydiffUpper *verticalScale));
+
+        lower.setLength(center.length());
+        upper.setLength(center.length());
+
+        // Draw lower red guide
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(mapcolors::profileVasiBelowColor);
+        painter.drawPolygon(QPolygonF({lower.p1(), lower.p2(), center.p2(), center.p1()}));
+
+        // Draw above white guide
+        painter.setBrush(mapcolors::profileVasiAboveColor);
+        painter.drawPolygon(QPolygonF({upper.p1(), upper.p2(), center.p2(), center.p1()}));
+
+        // Draw dashed center line
+        painter.setPen(mapcolors::profileVasiCenterPen);
+        painter.drawLine(center);
+
+        painter.setPen(Qt::black);
+        if(OptionData::instance().getFlags2() & opts::MAP_NAVAID_TEXT_BACKGROUND)
+        {
+          painter.setBackground(Qt::white);
+          painter.setBackgroundMode(Qt::OpaqueMode);
+        }
+        else
+          painter.setBackgroundMode(Qt::TransparentMode);
+
+        // Draw VASI text ========================
+        double angle = atools::geo::angleFromQt(upper.angle());
+        painter.translate(upper.p2());
+        painter.rotate(angle + 90.);
+
+        QString txt;
+        if(vasi.second.isEmpty())
+          txt = tr("%1° ►").arg(QLocale().toString(vasi.first, 'f', 1));
+        else
+          txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
+        painter.drawText(10, -painter.fontMetrics().descent(), txt);
+        painter.resetTransform();
       }
-      else
-        painter.setBackgroundMode(Qt::TransparentMode);
-
-      // Draw VASI text ========================
-      double angle = atools::geo::angleFromQt(upper.angle());
-      painter.translate(upper.p2());
-      painter.rotate(angle + 90.);
-
-      QString txt;
-      if(vasi.second.isEmpty())
-        txt = tr("%1° ►").arg(QLocale().toString(vasi.first, 'f', 1));
-      else
-        txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
-      painter.drawText(10, -painter.fontMetrics().descent(), txt);
-      painter.resetTransform();
     }
   }
 }
@@ -662,6 +668,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw grey vertical lines for waypoints
   int flightplanY = getFlightplanAltY();
   int safeAltY = getMinSafeAltitudeY();
+  if(flightplanY == map::INVALID_INDEX_VALUE || safeAltY == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
+
   int flightplanTextY = flightplanY + 14;
   painter.setPen(mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
@@ -816,8 +828,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     // Draw passed ======================================================
     painter.setPen(QPen(optData.getFlightplanPassedSegmentColor(), flightplanWidth,
                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    for(int i = 1; i < passedRouteLeg; i++)
-      painter.drawPolyline(altLegs.at(i));
+    if(passedRouteLeg < map::INVALID_INDEX_VALUE)
+    {
+      for(int i = 1; i < passedRouteLeg; i++)
+        painter.drawPolyline(altLegs.at(i));
+    }
+    else
+      qWarning() << Q_FUNC_INFO;
 
     // Draw ahead ======================================================
     QPen flightplanPen(optData.getFlightplanColor(), flightplanWidth,
@@ -829,17 +846,22 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     painter.setBackground(Qt::white);
     painter.setBrush(Qt::NoBrush);
 
-    for(int i = passedRouteLeg + 1; i < waypointX.size(); i++)
+    if(passedRouteLeg < map::INVALID_INDEX_VALUE)
     {
-      painter.setPen(altitudeLegs.at(i).isAnyProcedure() ? procedurePen : flightplanPen);
+      for(int i = passedRouteLeg + 1; i < waypointX.size(); i++)
+      {
+        painter.setPen(altitudeLegs.at(i).isAnyProcedure() ? procedurePen : flightplanPen);
 
-      if(route.at(i).getProcedureLeg().isCircleToLand())
-        mapcolors::adjustPenForCircleToLand(&painter);
+        if(route.at(i).getProcedureLeg().isCircleToLand())
+          mapcolors::adjustPenForCircleToLand(&painter);
 
-      painter.drawPolyline(altLegs.at(i));
+        painter.drawPolyline(altLegs.at(i));
+      }
     }
+    else
+      qWarning() << Q_FUNC_INFO;
 
-    if(activeRouteLeg > 0)
+    if(activeRouteLeg > 0 && activeRouteLeg < map::INVALID_INDEX_VALUE)
     {
       // Draw active  ======================================================
       painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
@@ -850,6 +872,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       painter.drawPolyline(altLegs.at(activeRouteLeg));
     }
+
     // Draw flightplan symbols ======================================================
 
     // Calculate symbol sizes
