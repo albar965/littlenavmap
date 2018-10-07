@@ -505,6 +505,9 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << "altDescriptor" << leg.altRestriction.descriptor
       << "alt1" << leg.altRestriction.alt1
       << "alt2" << leg.altRestriction.alt2 << endl;
+
+  out << "speedDescriptor" << leg.speedRestriction.descriptor
+      << "speed" << leg.speedRestriction.speed << endl;
   return out;
 }
 
@@ -858,6 +861,16 @@ QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)
 
   return out;
 
+}
+
+void mergeRestrictions(MapAltRestriction& curAltRestr, MapSpeedRestriction& curSpeedRestr,
+                       const MapProcedureLeg& lastLeg)
+{
+  if(!curAltRestr.isValid())
+    curAltRestr = lastLeg.altRestriction;
+
+  if(!curSpeedRestr.isValid())
+    curSpeedRestr = lastLeg.speedRestriction;
 }
 
 } // namespace types

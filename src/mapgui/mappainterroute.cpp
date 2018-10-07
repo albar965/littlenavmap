@@ -292,43 +292,53 @@ void MapPainterRoute::paintTopOfDescentAndClimb(const PaintContext *context)
     if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
       transparency = 0;
 
-    // Draw the top of descent circle and text ======================
-    Pos pos = route->getTopOfDescentPos();
-    if(pos.isValid())
+    int activeLegIndex = route->getActiveLegIndex();
+
+    // Draw the top of climb circle and text ======================
+    if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+       activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfClimbLegIndex() > activeLegIndex - 1)
     {
-      QPoint pt = wToS(pos);
-      if(!pt.isNull())
+      Pos pos = route->getTopOfClimbPos();
+      if(pos.isValid())
       {
-        context->painter->drawEllipse(pt, radius, radius);
+        QPoint pt = wToS(pos);
+        if(!pt.isNull())
+        {
+          context->painter->drawEllipse(pt, radius, radius);
 
-        QStringList tod;
-        tod.append(tr("TOD"));
-        if(context->mapLayer->isAirportRouteInfo())
-          tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
+          QStringList toc;
+          toc.append(tr("TOC"));
+          if(context->mapLayer->isAirportRouteInfo())
+            toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
-        symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
-                               pt.x() + radius, pt.y() + radius,
-                               textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+          symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
+                                 pt.x() + radius, pt.y() + radius,
+                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+        }
       }
     }
 
-    // Draw the top of climb circle and text ======================
-    pos = route->getTopOfClimbPos();
-    if(pos.isValid())
+    // Draw the top of descent circle and text ======================
+    if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+       activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfDescentLegIndex() > activeLegIndex - 1)
     {
-      QPoint pt = wToS(pos);
-      if(!pt.isNull())
+      Pos pos = route->getTopOfDescentPos();
+      if(pos.isValid())
       {
-        context->painter->drawEllipse(pt, radius, radius);
+        QPoint pt = wToS(pos);
+        if(!pt.isNull())
+        {
+          context->painter->drawEllipse(pt, radius, radius);
 
-        QStringList toc;
-        toc.append(tr("TOC"));
-        if(context->mapLayer->isAirportRouteInfo())
-          toc.append(Unit::distNm(route->getTopOfClimbDistance()));
+          QStringList tod;
+          tod.append(tr("TOD"));
+          if(context->mapLayer->isAirportRouteInfo())
+            tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
-        symbolPainter->textBox(context->painter, toc, QPen(mapcolors::routeTextColor),
-                               pt.x() + radius, pt.y() + radius,
-                               textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+          symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
+                                 pt.x() + radius, pt.y() + radius,
+                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, transparency);
+        }
       }
     }
   }
@@ -938,15 +948,28 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   int defaultOverflySize = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
 
+  proc::MapAltRestriction altRestr(leg.altRestriction);
+  proc::MapSpeedRestriction speedRestr(leg.speedRestriction);
   bool lastInTransition = false;
+
   if(index < legs.size() - 1 &&
      leg.type != proc::HEADING_TO_INTERCEPT && leg.type != proc::COURSE_TO_INTERCEPT &&
      leg.type != proc::HOLD_TO_ALTITUDE && leg.type != proc::HOLD_TO_FIX &&
      leg.type != proc::HOLD_TO_MANUAL_TERMINATION)
     // Do not paint the last point in the transition since it overlaps with the approach
     // But draw the intercept and hold text
-    lastInTransition = legs.at(index).isTransition() &&
-                       legs.at(index + 1).isApproach() && context->objectTypes & proc::PROCEDURE_APPROACH;
+    lastInTransition = leg.isTransition() && legs.at(index + 1).isApproach();
+
+  if(index > 0 && legs.at(index - 1).isTransition() && leg.isApproach())
+    // Merge restrictions from last transition and this approach leg
+    mergeRestrictions(altRestr, speedRestr, legs.at(index - 1));
+
+  if(index < legs.size() - 1 && leg.isTransition() && legs.at(index + 1).isApproach())
+  {
+    // Do not draw transtitions from this last transition leg - merge and draw them for the first approach leg
+    altRestr = proc::MapAltRestriction();
+    speedRestr = proc::MapSpeedRestriction();
+  }
 
   QStringList texts;
   // if(index > 0 && legs.isApproach(index) &&
@@ -1004,8 +1027,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(wToS(leg.line.getPos2(), x, y))
     {
       texts.append(leg.displayText);
-      texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
-      texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
+      texts.append(proc::altRestrictionTextNarrow(altRestr));
+      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
       if(drawTextDetail)
         paintProcedureUnderlay(context, leg, x, y, defaultOverflySize);
       paintProcedurePoint(context, x, y, false);
@@ -1045,8 +1068,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
       // Clear text from "intercept" and add restrictions
       texts.clear();
-      texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
-      texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
+      texts.append(proc::altRestrictionTextNarrow(altRestr));
+      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
     }
     else
     {
@@ -1054,8 +1077,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
         return;
 
       texts.append(leg.displayText);
-      texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
-      texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
+      texts.append(proc::altRestrictionTextNarrow(altRestr));
+      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
     }
   }
   else
@@ -1064,8 +1087,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       return;
 
     texts.append(leg.displayText);
-    texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
-    texts.append(proc::speedRestrictionTextNarrow(leg.speedRestriction));
+    texts.append(proc::altRestrictionTextNarrow(altRestr));
+    texts.append(proc::speedRestrictionTextNarrow(speedRestr));
   }
 
   // Merge restricions between overlapping fixes across procedures

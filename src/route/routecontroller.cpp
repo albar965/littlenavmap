@@ -680,7 +680,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   updateTableModel();
   NavApp::updateWindowTitle();
 
-  // qDebug() << route;
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << route;
+#endif
 
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
@@ -1238,6 +1240,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
                                                    tr("Cannot find a route.\n"
                                                       "Try another routing type or create the flight plan manually."),
                                                    tr("Do not &show this dialog again."));
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << route;
+#endif
 
   return found;
 }

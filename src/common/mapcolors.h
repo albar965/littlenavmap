@@ -87,6 +87,8 @@ extern QColor profileLandColor;
 extern QColor profileLabelColor;
 extern QColor profileVasiAboveColor;
 extern QColor profileVasiBelowColor;
+extern QColor profileAltRestrictionFill;
+extern QColor profileAltRestrictionOutline;
 extern QPen profileVasiCenterPen;
 extern QPen ilsCenterPen;
 extern QPen profileLandOutlinePen;

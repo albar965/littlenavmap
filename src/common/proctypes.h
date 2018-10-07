@@ -534,6 +534,10 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
 QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction);
 
+/* Merge restrictions for legs where cur is an approach leg and last is a transition leg */
+void mergeRestrictions(proc::MapAltRestriction& curAltRestr, proc::MapSpeedRestriction& curSpeedRestr,
+                       const proc::MapProcedureLeg& lastLeg);
+
 } // namespace types
 
 Q_DECLARE_TYPEINFO(proc::MapProcedureRef, Q_PRIMITIVE_TYPE);

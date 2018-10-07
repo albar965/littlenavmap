@@ -492,6 +492,11 @@ float Route::getTopOfDescentDistance() const
   return altitude->getTopOfDescentDistance();
 }
 
+int Route::getTopOfDescentLegIndex() const
+{
+  return altitude->getTopOfDescentLegIndex();
+}
+
 float Route::getCruisingAltitudeFeet() const
 {
   return Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
@@ -510,6 +515,11 @@ float Route::getTopOfDescentFromDestination() const
 float Route::getTopOfClimbDistance() const
 {
   return altitude->getTopOfClimbDistance();
+}
+
+int Route::getTopOfClimbLegIndex() const
+{
+  return altitude->getTopOfClimbLegIndex();
 }
 
 atools::geo::Pos Route::getTopOfDescentPos() const

@@ -82,6 +82,9 @@ QColor profileLabelColor(QColor(0, 0, 0));
 QColor profileVasiAboveColor(QColor("#70ffffff"));
 QColor profileVasiBelowColor(QColor("#70ff0000"));
 
+QColor profileAltRestrictionFill(QColor(255, 255, 90));
+QColor profileAltRestrictionOutline(Qt::black);
+
 QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
@@ -581,6 +584,8 @@ void syncColors()
   syncColor(colorSettings, "LabelColor", profileLabelColor);
   syncColorArgb(colorSettings, "VasiAboveColor", profileVasiAboveColor);
   syncColorArgb(colorSettings, "VasiBelowColor", profileVasiBelowColor);
+  syncColor(colorSettings, "AltRestrictionFill", profileAltRestrictionFill);
+  syncColor(colorSettings, "AltRestrictionOutline", profileAltRestrictionOutline);
   syncPen(colorSettings, "LandOutlinePen", profileLandOutlinePen);
   syncPen(colorSettings, "WaypointLinePen", profileWaypointLinePen);
   syncPen(colorSettings, "ElevationScalePen", profileElevationScalePen);

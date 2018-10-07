@@ -108,6 +108,8 @@ void RouteAltitude::clearAll()
   clear();
   distanceTopOfClimb = map::INVALID_DISTANCE_VALUE;
   distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
+  legIndexTopOfClimb = map::INVALID_INDEX_VALUE;
+  legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
   violatesRestrictions = false;
   destRunwayIls.clear();
   destRunwayEnd = map::MapRunwayEnd();
@@ -422,6 +424,8 @@ void RouteAltitude::calculate()
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "distanceTopOfDescent" << distanceTopOfDescent
              << "distanceTopOfClimb" << distanceTopOfClimb;
+    qDebug() << Q_FUNC_INFO << "legIndexTopOfDescent" << legIndexTopOfDescent
+             << "legIndexTopOfClimb" << legIndexTopOfClimb;
     for(int i = 0; i < size(); i++)
       qDebug() << Q_FUNC_INFO << i << route->at(i).getIdent()
                << "geometry" << at(i).geometry << "NM/ft"
@@ -539,6 +543,7 @@ void RouteAltitude::calculateDeparture()
       {
         // Reached TOC - calculate distance
         distanceTopOfClimb = distanceForAltitude(alt, cruiseAltitide);
+        legIndexTopOfClimb = i;
 
         // Adjust this leg
         alt.setY2(std::min(alt.y2(), cruiseAltitide));
@@ -612,6 +617,7 @@ void RouteAltitude::calculateArrival()
         // Reached TOD - calculate distance
         distanceTopOfDescent = distanceForAltitude(at(i + 1).getGeometry().last(),
                                                    QPointF(alt.getDistanceFromStart(), newAltitude), cruiseAltitide);
+        legIndexTopOfDescent = i + 1;
 
         if(!lastAltLeg->topOfClimb)
           // Adjust only if not modified by TOC calculation

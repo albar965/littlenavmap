@@ -730,19 +730,24 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
   {
     // Draw altitude restriction bars ============================
-    painter.setBackground(Qt::white);
+    painter.setBackground(mapcolors::profileAltRestrictionFill);
     painter.setBackgroundMode(Qt::OpaqueMode);
-    QBrush diagPatternBrush(Qt::darkGray, Qt::BDiagPattern);
-    QPen thinLinePen(Qt::black, 1., Qt::SolidLine, Qt::FlatCap);
-    QPen thickLinePen(Qt::black, 4., Qt::SolidLine, Qt::FlatCap);
+    QBrush diagPatternBrush(mapcolors::profileAltRestrictionOutline, Qt::BDiagPattern);
+    QPen thinLinePen(mapcolors::profileAltRestrictionOutline, 1., Qt::SolidLine, Qt::FlatCap);
+    QPen thickLinePen(mapcolors::profileAltRestrictionOutline, 4., Qt::SolidLine, Qt::FlatCap);
 
     for(int routeIndex : indexes)
     {
+      if(route.at(routeIndex).isAnyProcedure() && route.at(routeIndex).getRunwayEnd().isValid())
+        continue;
+
       const proc::MapAltRestriction& restriction = altitudeLegs.at(routeIndex).getRestriction();
 
       if(restriction.isValid())
       {
-        int rectWidth = 30, rectHeight = 14;
+        // Use 5 NM width and minimum of 10 pix and maximum of 40 pix
+        int rectWidth = atools::roundToInt(std::min(std::max(5.f * horizontalScale, 10.f), 40.f));
+        int rectHeight = 16;
 
         // Start and end of line
         int wpx = waypointX.at(routeIndex);
@@ -750,19 +755,25 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         int x12 = wpx + rectWidth / 2;
         int y1 = altitudeY(restriction.alt1);
 
-        if(restriction.descriptor)
+        if(restriction.isValid())
         {
+          proc::MapAltRestriction::Descriptor descr = restriction.descriptor;
+
           // Connect waypoint with restriction with a thin vertical line
           painter.setPen(thinLinePen);
           painter.drawLine(QPoint(wpx, y1), altLegs.at(routeIndex).last());
 
-          if(restriction.descriptor == proc::MapAltRestriction::AT_OR_ABOVE)
+          if(descr == proc::MapAltRestriction::AT_OR_ABOVE ||
+             descr == proc::MapAltRestriction::AT)
             // Draw diagonal pattern rectancle
             painter.fillRect(x11, y1, rectWidth, rectHeight, diagPatternBrush);
-          else if(restriction.descriptor == proc::MapAltRestriction::AT_OR_BELOW)
+
+          if(descr == proc::MapAltRestriction::AT_OR_BELOW ||
+             descr == proc::MapAltRestriction::AT)
             // Draw diagonal pattern rectancle
             painter.fillRect(x11, y1 - rectHeight, rectWidth, rectHeight, diagPatternBrush);
-          else if(restriction.descriptor == proc::MapAltRestriction::BETWEEN)
+
+          if(descr == proc::MapAltRestriction::BETWEEN)
           {
             // At or above alt2 and at or below alt1
 
@@ -783,7 +794,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
             painter.drawLine(x21, y2, x22, y2);
           }
 
-          if(restriction.descriptor != proc::MapAltRestriction::NONE)
+          if(descr != proc::MapAltRestriction::NONE)
           {
             // Draw line for alt1 if any restriction
             painter.setPen(thickLinePen);
@@ -1032,39 +1043,49 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         painter.setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
         painter.setBrush(Qt::NoBrush);
 
-        if(tocDist > 0.2f)
+        int activeLegIndex = route.getActiveLegIndex();
+
+        if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+           activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeLegIndex - 1)
         {
-          int tocX = distanceX(altitudeLegs.getTopOfClimbDistance());
-          if(tocX < map::INVALID_INDEX_VALUE)
+          if(tocDist > 0.2f)
           {
-            // Draw the top of climb point and text =========================================================
-            painter.drawEllipse(QPoint(tocX, flightplanY), radius, radius);
+            int tocX = distanceX(altitudeLegs.getTopOfClimbDistance());
+            if(tocX < map::INVALID_INDEX_VALUE)
+            {
+              // Draw the top of climb point and text =========================================================
+              painter.drawEllipse(QPoint(tocX, flightplanY), radius, radius);
 
-            QStringList txt;
-            txt.append(tr("TOC"));
-            txt.append(Unit::distNm(route.getTopOfClimbDistance()));
+              QStringList txt;
+              txt.append(tr("TOC"));
+              txt.append(Unit::distNm(route.getTopOfClimbDistance()));
 
-            symPainter.textBox(&painter, txt, QPen(Qt::black),
-                               tocX + 8, flightplanY + 8,
-                               textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+              symPainter.textBox(&painter, txt, QPen(Qt::black),
+                                 tocX + 8, flightplanY + 8,
+                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+            }
           }
         }
 
-        if(todDist < route.getTotalDistance() - 0.2f)
+        if(!(OptionData::instance().getFlags2() & opts::MAP_ROUTE_DIM_PASSED) ||
+           activeLegIndex == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeLegIndex - 1)
         {
-          int todX = distanceX(altitudeLegs.getTopOfDescentDistance());
-          if(todX < map::INVALID_INDEX_VALUE)
+          if(todDist < route.getTotalDistance() - 0.2f)
           {
-            // Draw the top of descent point and text =========================================================
-            painter.drawEllipse(QPoint(todX, flightplanY), radius, radius);
+            int todX = distanceX(altitudeLegs.getTopOfDescentDistance());
+            if(todX < map::INVALID_INDEX_VALUE)
+            {
+              // Draw the top of descent point and text =========================================================
+              painter.drawEllipse(QPoint(todX, flightplanY), radius, radius);
 
-            QStringList txt;
-            txt.append(tr("TOD"));
-            txt.append(Unit::distNm(route.getTopOfDescentFromDestination()));
+              QStringList txt;
+              txt.append(tr("TOD"));
+              txt.append(Unit::distNm(route.getTopOfDescentFromDestination()));
 
-            symPainter.textBox(&painter, txt, QPen(Qt::black),
-                               todX + 8, flightplanY + 8,
-                               textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+              symPainter.textBox(&painter, txt, QPen(Qt::black),
+                                 todX + 8, flightplanY + 8,
+                                 textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+            }
           }
         }
       }

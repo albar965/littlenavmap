@@ -132,6 +132,18 @@ public:
     return destRunwayEnd;
   }
 
+  /* Leg index containing the TOC */
+  int getTopOfClimbLegIndex() const
+  {
+    return legIndexTopOfClimb;
+  }
+
+  /* Leg index containing the TOD */
+  int getTopOfDescentLegIndex() const
+  {
+    return legIndexTopOfDescent;
+  }
+
 private:
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
@@ -177,6 +189,9 @@ private:
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
         distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
+  /* index in altitude legs */
+  int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
+      legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
 
   const Route *route;
 

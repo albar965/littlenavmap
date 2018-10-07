@@ -489,7 +489,7 @@ void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to,
 
 void MapWidget::preDatabaseLoad()
 {
-  jumpBack->cancel();
+  jumpBackToAircraftCancel();
   cancelDragAll();
   databaseLoadStatus = true;
   paintLayer->preDatabaseLoad();
@@ -1093,7 +1093,7 @@ void MapWidget::showHome()
   showAircraft(false);
   if(!atools::almostEqual(homeDistance, 0.))
     // Only center position is valid - Do not fix zoom - display as is
-    setDistanceToMap(homeDistance, false /* Allow adjust zoom */);
+    setDistanceToMap(homeDistance, true /* Allow adjust zoom */);
 
   if(homePos.isValid())
   {
@@ -1332,6 +1332,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
            posHasChanged) // Significant change in position might require zooming or re-centering
         {
           // Do not update if user is using drag and drop or scrolling around
+          // No updates while jump back is active and user is moving around
           if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
           {
             if(centerAircraftAndLeg)
@@ -1484,7 +1485,7 @@ void MapWidget::highlightProfilePoint(const atools::geo::Pos& pos)
 void MapWidget::connectedToSimulator()
 {
   qDebug() << Q_FUNC_INFO;
-  jumpBack->cancel();
+  jumpBackToAircraftCancel();
   update();
 }
 
@@ -1494,7 +1495,7 @@ void MapWidget::disconnectedFromSimulator()
   // Clear all data on disconnect
   screenIndex->updateSimData(atools::fs::sc::SimConnectData());
   mapVisible->updateVisibleObjectsStatusBar();
-  jumpBack->cancel();
+  jumpBackToAircraftCancel();
   update();
 }
 
@@ -2784,7 +2785,12 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     if(keyEvent != nullptr)
     {
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()),
-                          {Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down, Qt::Key_Plus, Qt::Key_Minus}))
+                          {Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down}))
+        // Movement starts delay every time
+        jumpBackToAircraftStart();
+
+      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
+         (jumpBack->isActive() || isCenterLegAndAircraftActive()))
         // Movement starts delay every time
         jumpBackToAircraftStart();
 
@@ -3714,7 +3720,12 @@ void MapWidget::takeoffLandingTimeout()
 void MapWidget::jumpBackToAircraftStart()
 {
   if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked())
-    jumpBack->start({centerLongitude(), centerLatitude(), distance()});
+  {
+    if(jumpBack->isActive())
+      jumpBack->restart();
+    else
+      jumpBack->start({centerLongitude(), centerLatitude(), distance()});
+  }
 }
 
 void MapWidget::jumpBackToAircraftCancel()
@@ -3737,8 +3748,7 @@ void MapWidget::jumpBackToAircraftTimeout(const QVariantList& values)
 
       hideTooltip();
       centerPosOnMap(Pos(values.at(0).toFloat(), values.at(1).toFloat()));
-      // Do not fix zoom - display as is
-      setDistanceToMap(values.at(2).toFloat(), false /* Allow adjust zoom */);
+      setDistanceToMap(values.at(2).toFloat(), true /* Allow adjust zoom */);
       mainWindow->setStatusMessage(tr("Jumped back to aircraft."));
     }
   }

@@ -120,9 +120,11 @@ public:
   /* Distance from TOD to destination in nm */
   float getTopOfDescentFromDestination() const;
   float getTopOfDescentDistance() const;
+  int getTopOfDescentLegIndex() const;
 
   /* Distance from TOC to destination in nm */
   float getTopOfClimbDistance() const;
+  int getTopOfClimbLegIndex() const;
 
   /* Above or below planned descent */
   float getAltitudeForDistance(float currentDistToDest) const;

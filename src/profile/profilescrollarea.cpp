@@ -182,7 +182,8 @@ void ProfileScrollArea::routeChanged(bool geometryChanged)
   maxWindowAlt = profileWidget->getMaxWindowAlt();
 
   if(geometryChanged)
-    scaleViewAll();
+    setMaxHorizZoom();
+
   routeAltitudeChanged();
   updateWidgets();
 
@@ -621,6 +622,11 @@ void ProfileScrollArea::setMaxVertZoom()
 {
   // Max vertical scale for window height 500 ft
   NavApp::getMainUi()->verticalSliderProfileZoom->setMaximum(std::min(atools::roundToInt(maxWindowAlt / 500.f), 500));
+
+#ifdef DEBUG_INFORMATION
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  qDebug() << Q_FUNC_INFO << ui->verticalSliderProfileZoom->minimum() << ui->verticalSliderProfileZoom->maximum();
+#endif
 }
 
 void ProfileScrollArea::setMaxHorizZoom()
@@ -629,4 +635,8 @@ void ProfileScrollArea::setMaxHorizZoom()
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->horizontalSliderProfileZoom->setMaximum(
     atools::roundToInt(std::max(NavApp::getRoute().getTotalDistance() / 4.f, 4.f)));
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << ui->horizontalSliderProfileZoom->minimum() << ui->horizontalSliderProfileZoom->maximum();
+#endif
 }
