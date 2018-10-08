@@ -2376,7 +2376,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(activeLegCorrected != map::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
-      if(distToDestNm > 0.01f && userAircaft->getFuelFlowPPH() > 0.01f &&
+      if(distToDestNm > 0.01f && distToDestNm < map::INVALID_DISTANCE_VALUE && userAircaft->getFuelFlowPPH() > 0.01f &&
          userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
       {
         neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
@@ -2584,14 +2584,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
           {
             float legCourse = routeLeg.getCourseToRhumbMag();
-            html.row2(tr("Leg Course:"), locale.toString(legCourse, 'f', 0) + tr("°M"));
+            if(legCourse < INVALID_COURSE_VALUE)
+              html.row2(tr("Leg Course:"), locale.toString(legCourse, 'f', 0) + tr("°M"));
 
-            if(!less && userAircaft != nullptr && userAircaft->isFlying())
+            float courseToTrue = routeLeg.getCourseToRhumbTrue();
+            if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToTrue < INVALID_COURSE_VALUE)
             {
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
               float crabAngle = atools::geo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
                                                                   userAircaft->getWindDirectionDegT(),
-                                                                  routeLeg.getCourseToRhumbTrue(),
+                                                                  courseToTrue,
                                                                   userAircaft->getTrueAirspeedKts());
               if(crabAngle < INVALID_COURSE_VALUE)
               {

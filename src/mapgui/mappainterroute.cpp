@@ -93,6 +93,12 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   bool activeValid = route->isActiveValid();
   // Active normally start at 1 - this will consider all legs as not passed
   int activeRouteLeg = activeValid ? route->getActiveLegIndex() : 0;
+  if(activeRouteLeg == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
+
   int passedRouteLeg = context->flags2 & opts::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
 
   // Collect route only coordinates and texts ===============================
@@ -151,20 +157,23 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     QPen routePassedPen(od.getFlightplanPassedSegmentColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap,
                         Qt::RoundJoin);
 
-    // Draw gray line for passed legs
-    painter->setPen(routePassedPen);
-    for(int i = 0; i < passedRouteLeg; i++)
-      drawLine(context, lines.at(i));
+    if(passedRouteLeg < map::INVALID_INDEX_VALUE)
+    {
+      // Draw gray line for passed legs
+      painter->setPen(routePassedPen);
+      for(int i = 0; i < passedRouteLeg; i++)
+        drawLine(context, lines.at(i));
 
-    // Draw background for legs ahead
-    painter->setPen(routeOutlinePen);
-    for(int i = passedRouteLeg; i < lines.size(); i++)
-      drawLine(context, lines.at(i));
+      // Draw background for legs ahead
+      painter->setPen(routeOutlinePen);
+      for(int i = passedRouteLeg; i < lines.size(); i++)
+        drawLine(context, lines.at(i));
 
-    // Draw center line for legs ahead
-    painter->setPen(routePen);
-    for(int i = passedRouteLeg; i < lines.size(); i++)
-      drawLine(context, lines.at(i));
+      // Draw center line for legs ahead
+      painter->setPen(routePen);
+      for(int i = passedRouteLeg; i < lines.size(); i++)
+        drawLine(context, lines.at(i));
+    }
 
     if(activeValid)
     {
