@@ -1627,17 +1627,18 @@ void ProfileWidget::updateErrorMessages()
   const RouteAltitude& altitudeLegs = NavApp::getRoute().getAltitudeLegs();
   if(!altitudeLegs.isEmpty())
   {
-    messages.clear();
-    if(!altitudeLegs.isEmpty() &&
-       !(altitudeLegs.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-         altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
-      messages << tr("Cannot calculate top of climb or top of descent.");
+    if(!altitudeLegs.isEmpty())
+    {
+      messages.clear();
+      if(altitudeLegs.altRestrictionsViolated())
+        messages << tr("Cannot comply with altitude restrictions.");
+      else if(!(altitudeLegs.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+                altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
+        messages << tr("Cannot calculate top of climb or top of descent.");
 
-    if(altitudeLegs.altRestrictionsViolated())
-      messages << tr("Cannot comply with altitude restrictions.");
-
-    if(!messages.isEmpty())
-      messages.prepend(tr("Flight Plan is not valid."));
+      if(!messages.isEmpty())
+        messages.prepend(tr("Flight Plan is not valid."));
+    }
   }
 }
 
