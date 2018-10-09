@@ -473,12 +473,12 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
         int x2 = distanceX(altitudeLegs.getDestinationDistance() - 9.f);
 
         // Screen difference for +/- 0.35°
-        float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 1.f)) * featherLen - ydiff1;
+        // float ydiffUpper = std::tan(atools::geo::toRadians(ils.slope + 1.f)) * featherLen - ydiff1;
 
         // Construct geometry
         QLineF centerLine(x, y, x2, y2);
-        QLineF lowerLine(x, y, x2, y2 + (ydiffUpper *verticalScale));
-        QLineF upperLine(x, y, x2, y2 - (ydiffUpper *verticalScale));
+        QLineF lowerLine(x, y, x2, y2 + 25 /*(ydiffUpper *verticalScale)*/);
+        QLineF upperLine(x, y, x2, y2 - 25 /*(ydiffUpper *verticalScale)*/);
 
         // Make all the same length
         lowerLine.setLength(centerLine.length());
@@ -574,12 +574,12 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
       if(xUpper < map::INVALID_INDEX_VALUE && yUpper < map::INVALID_INDEX_VALUE)
       {
         // Screen difference for +/- one degree
-        float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
+        // float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
 
         // Build geometry
         QLineF center(x, y, xUpper, yUpper);
-        QLineF lower(x, y, xUpper, yUpper + (ydiffUpper *verticalScale));
-        QLineF upper(x, y, xUpper, yUpper - (ydiffUpper *verticalScale));
+        QLineF lower(x, y, xUpper, yUpper + 40 /*(ydiffUpper *verticalScale)*/);
+        QLineF upper(x, y, xUpper, yUpper - 40 /*(ydiffUpper *verticalScale)*/);
 
         lower.setLength(center.length());
         upper.setLength(center.length());
