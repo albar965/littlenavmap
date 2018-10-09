@@ -171,6 +171,14 @@ signals:
   void windowShown();
 
 private:
+  /* Work on the close event that also catches clicking the close button
+   * in the window frame */
+  virtual void closeEvent(QCloseEvent *event) override;
+
+  /* Drag and drop support for loading flight plans from file manager */
+  virtual void dragEnterEvent(QDragEnterEvent *event) override;
+  virtual void dropEvent(QDropEvent *event) override;
+
   void connectAllSlots();
   void mainWindowShown();
 
@@ -208,6 +216,7 @@ private:
   void routeNewFromString();
   void routeNew();
   void routeOpen();
+  void routeOpenFile(QString filepath);
   void routeAppend();
   void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
@@ -249,10 +258,6 @@ private:
   void showNavmapLegend();
   void loadNavmapLegend();
   bool openInSkyVector();
-
-  /* Work on the close event that also catches clicking the close button
-   * in the window frame */
-  virtual void closeEvent(QCloseEvent *event) override;
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;

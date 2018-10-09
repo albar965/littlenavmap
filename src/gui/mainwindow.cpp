@@ -55,6 +55,7 @@
 #include "exception.h"
 #include "route/routestringdialog.h"
 #include "common/unit.h"
+#include "fs/pln/flightplanio.h"
 #include "query/procedurequery.h"
 #include "search/proceduresearch.h"
 #include "gui/airspacetoolbarhandler.h"
@@ -82,6 +83,8 @@
 #include <QDir>
 #include <QFileInfoList>
 #include <QSslSocket>
+#include <QEvent>
+#include <QMimeData>
 
 #include "ui_mainwindow.h"
 
@@ -139,6 +142,7 @@ MainWindow::MainWindow()
     // atools::Application method can catch it
 
     ui->setupUi(this);
+    setAcceptDrops(true);
 
     // Setup central widget ==================================================
     // Set one pixel fixed width
@@ -1709,19 +1713,25 @@ void MainWindow::routeNew()
 /* Called from menu or toolbar by action */
 void MainWindow::routeOpen()
 {
+  routeOpenFile(QString());
+}
+
+void MainWindow::routeOpenFile(QString filepath)
+{
   if(routeCheckForChanges())
   {
-    QString routeFile = dialog->openFileDialog(
-      tr("Open Flight Plan"),
-      tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-      "Route/" + NavApp::getCurrentSimulatorShortName(),
-      NavApp::getCurrentSimulatorFilesPath());
+    if(filepath.isEmpty())
+      filepath = dialog->openFileDialog(
+        tr("Open Flight Plan"),
+        tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+        "Route/" + NavApp::getCurrentSimulatorShortName(),
+        NavApp::getCurrentSimulatorFilesPath());
 
-    if(!routeFile.isEmpty())
+    if(!filepath.isEmpty())
     {
-      if(routeController->loadFlightplan(routeFile))
+      if(routeController->loadFlightplan(filepath))
       {
-        routeFileHistory->addFile(routeFile);
+        routeFileHistory->addFile(filepath);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
         setStatusMessage(tr("Flight plan opened."));
@@ -3152,4 +3162,39 @@ void MainWindow::clearWeatherContext()
 
   // Clear all weather and fetch new
   *currentWeatherContext = map::WeatherContext();
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+  qDebug() << Q_FUNC_INFO;
+  // Accept only one flight plan
+  if(event->mimeData()->urls().size() == 1)
+  {
+    // Has to be a file
+    QUrl url = event->mimeData()->urls().first();
+    if(url.isLocalFile())
+    {
+      // accept if file exists, is readable and matches the supported extensions
+      QFileInfo file(url.toLocalFile());
+      if(file.exists() && file.isReadable() && file.isFile() &&
+         atools::fs::pln::FlightplanIO::getAcceptedFlightPlanExtensions().contains(file.suffix().toLower()))
+      {
+        qDebug() << Q_FUNC_INFO << "accepting" << url;
+        event->acceptProposedAction();
+        return;
+      }
+    }
+    qDebug() << Q_FUNC_INFO << "not accepting" << url;
+  }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+  if(event->mimeData()->urls().size() == 1)
+  {
+    QString fileName = event->mimeData()->urls().first().toLocalFile();
+    qDebug() << Q_FUNC_INFO << "Dropped file:" << fileName;
+
+    routeOpenFile(fileName);
+  }
 }
