@@ -110,7 +110,6 @@ void RouteAltitude::clearAll()
   distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
   legIndexTopOfClimb = map::INVALID_INDEX_VALUE;
   legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
-  violatesRestrictions = false;
   destRunwayIls.clear();
   destRunwayEnd = map::MapRunwayEnd();
 }
@@ -299,28 +298,32 @@ int RouteAltitude::fixRange(int index) const
 
 void RouteAltitude::simplyfyRouteAltitudes()
 {
-  // Flatten descent legs starting from the first restriction to destination
-  int firstRestr = findApproachFirstRestricion();
-  if(firstRestr < map::INVALID_INDEX_VALUE && firstRestr >= 0)
+  // Flatten descent legs starting from TOD to destination
+  if(legIndexTopOfDescent < map::INVALID_INDEX_VALUE && legIndexTopOfDescent >= 0)
   {
     // Use eight iterations
     for(int i = 0; i < 8; i++)
     {
-      for(int j = firstRestr + 1; j < size() - 1; j++)
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "=================================================";
+#endif
+      for(int j = legIndexTopOfDescent; j < size() - 1; j++)
         simplifyRouteAltitude(j, false /* departure */);
     }
   }
   else
     qWarning() << Q_FUNC_INFO;
 
-  // Flatten climb legs starting from the departure to the last restriction
-  int lastRestriction = findDepartureLastRestricion();
-  if(lastRestriction < map::INVALID_INDEX_VALUE && lastRestriction >= 0)
+  // Flatten departute legs starting from departure to TOC
+  if(legIndexTopOfClimb < map::INVALID_INDEX_VALUE && legIndexTopOfClimb >= 0)
   {
     // Use eight iterations
     for(int i = 0; i < 8; i++)
     {
-      for(int j = 1; j <= lastRestriction; j++)
+   #ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "=================================================";
+   #endif
+      for(int j = 1; j < legIndexTopOfClimb; j++)
         simplifyRouteAltitude(j, true /* departure */);
     }
   }
@@ -330,53 +333,109 @@ void RouteAltitude::simplyfyRouteAltitudes()
 
 void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   if(index <= 0 || index >= size() - 1)
   {
-    qWarning() << Q_FUNC_INFO;
+    qWarning() << Q_FUNC_INFO << "index <= 0 || index >= size() - 1";
     return;
   }
 
-  RouteAltitudeLeg& midAlt = (*this)[index];
-  bool rightAdjusted = false;
-  const RouteAltitudeLeg *leftAlt = &at(index - 1);
+  RouteAltitudeLeg *midAlt = &(*this)[index];
+
+  RouteAltitudeLeg *leftAlt = &(*this)[index - 1];
   RouteAltitudeLeg *rightAlt = &(*this)[index + 1];
+  RouteAltitudeLeg *rightSkippedAlt = nullptr, *leftSkippedAlt = nullptr;
+  proc::MapAltRestriction restriction = midAlt->restriction;
 
-  if(atools::almostEqual(midAlt.getDistanceFromStart(), leftAlt->getDistanceFromStart()) && index >= 2)
-    // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
-    leftAlt = &at(index - 2);
-
-  if(atools::almostEqual(midAlt.getDistanceFromStart(), rightAlt->getDistanceFromStart()) && index < size() - 2)
+  if(atools::almostEqual(midAlt->getDistanceFromStart(), leftAlt->getDistanceFromStart()) && index >= 2)
   {
-    // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
-    rightAlt = &(*this)[index + 2];
-    rightAdjusted = true;
+    if(leftAlt->geometry.size() <= 2)
+    {
+      if(!restriction.isValid() && leftAlt->restriction.isValid())
+        // Take the altitude restriction from one of the duplicate points
+        restriction = leftAlt->restriction;
+
+      // This duplicate leg with the same postion (IAF, etc.) will be skipped
+      leftSkippedAlt = &(*this)[index - 1];
+
+      // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
+      leftAlt = &(*this)[index - 2];
+    }
   }
 
-  // Avoid dummy legs (e.g. missed)
-  if(!leftAlt->isEmpty() && !rightAlt->isEmpty() && !midAlt.isEmpty())
+  if(atools::almostEqual(midAlt->getDistanceFromStart(), rightAlt->getDistanceFromStart()) && index < size() - 2)
   {
-    // Check if the center is inside range for departure or destination
-    if((departure && midAlt.getDistanceFromStart() < distanceTopOfClimb) ||
-       (!departure && midAlt.getDistanceFromStart() > distanceTopOfDescent))
+    if(rightAlt->geometry.size() <= 2)
     {
-      // Create a direct line from left ot right ignoring middle leg
-      QLineF line(leftAlt->asPoint(), rightAlt->asPoint());
+      if(!restriction.isValid() && rightAlt->restriction.isValid())
+        // Take the altitude restriction from one of the duplicate points
+        restriction = rightAlt->restriction;
 
-      // Calculate altitude for the middle leg using the direct line
-      float t = (midAlt.getDistanceFromStart() - leftAlt->getDistanceFromStart()) / static_cast<float>(line.dx());
-      // 0 = left, 1 = right
-      QPointF mid = line.pointAt(t);
+      // This duplicate leg with the same postion (IAF, etc.) will be skipped
+      rightSkippedAlt = &(*this)[index + 1];
 
-      // Change middle leg and adjust altitude
-      midAlt.setY2(static_cast<float>(mid.y()));
-      adjustAltitudeForRestriction(midAlt);
-
-      // Also change neighbors
-      if(rightAdjusted)
-        (*this)[index + 1].setY1(midAlt.y2());
-
-      rightAlt->setY1(midAlt.y2());
+      // Adjust leg if two equal legs (IAF) are after each other - otherwise no change will be done
+      rightAlt = &(*this)[index + 2];
     }
+  }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << leftAlt->ident << midAlt->ident << rightAlt->ident << "departure" << departure;
+#endif
+
+  // Avoid dummy legs (e.g. missed approach)
+  if(!leftAlt->isEmpty() && !rightAlt->isEmpty() && !midAlt->isEmpty())
+  {
+    QPointF leftPt = leftAlt->asPoint();
+    QPointF rightPt = rightAlt->asPoint();
+
+    if(midAlt->geometry.size() >= 3)
+    {
+      // This leg contains a TOD or/and TOC
+      if(departure)
+        // Use TOD/TOC position from this instead of the one from the right leg
+        rightPt = midAlt->geometry.at(1);
+      else
+        // Arrival
+        // Use TOD/TOC position from this instead of the one from the left leg
+        leftPt = midAlt->geometry.at(midAlt->geometry.size() - 2);
+    }
+
+    if(departure && rightAlt->geometry.size() >= 3)
+      // Right one is a TOD or TOC take the geometry at the bend
+      rightPt = rightAlt->geometry.at(1);
+
+    // Create a direct line from left to right ignoring middle leg
+    QLineF line(leftPt, rightPt);
+
+    // Calculate altitude for the middle leg using the direct line
+    QPointF midPt = midAlt->asPoint();
+    double t = (midPt.x() - leftPt.x()) / line.dx();
+
+    // 0 = left, 1 = right
+    QPointF mid = line.pointAt(t);
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "old" << midAlt->y2() << "new" << mid.y();
+#endif
+
+    // Change middle leg and adjust altitude
+    midAlt->setY2(static_cast<float>(mid.y()));
+    if(!midAlt->isEmpty())
+      midAlt->setY2(adjustAltitudeForRestriction(midAlt->y2(), restriction));
+
+    // Also change skipped right neighbor
+    if(rightSkippedAlt != nullptr)
+      rightSkippedAlt->setAlt(midAlt->y2());
+
+    rightAlt->setY1(midAlt->y2());
+
+    // Also change skipped left neighbor
+    if(leftSkippedAlt != nullptr)
+      leftSkippedAlt->setY2(midAlt->y2());
   }
 }
 
@@ -398,11 +457,16 @@ void RouteAltitude::calculate()
     if(calcTopOfDescent)
       calculateArrival();
 
-    if(distanceTopOfClimb > distanceTopOfDescent ||
+    // Check for violations because of too low cruise
+    violatesRestrictions = false;
+    for(RouteAltitudeLeg& leg : *this)
+      violatesRestrictions |= violatesAltitudeRestriction(leg);
+
+    if(violatesRestrictions || distanceTopOfClimb > distanceTopOfDescent ||
        (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
        (calcTopOfDescent && !(distanceTopOfDescent < map::INVALID_INDEX_VALUE)))
     {
-      // TOD and TOC overlap or are invalid - cruise altitude is too high
+      // TOD and TOC overlap or are invalid or restrictions violated  - cruise altitude is too high
       clearAll();
 
       // Reset all to cruise level - profile will print a message
@@ -414,26 +478,252 @@ void RouteAltitude::calculate()
       if(simplify && (calcTopOfClimb || calcTopOfDescent))
         simplyfyRouteAltitudes();
 
-      // Check for violations because of too low cruise
-      for(RouteAltitudeLeg& leg : *this)
-        violatesRestrictions |= violatesAltitudeRestriction(leg);
-
+      // Fetch ILS and VASI at destination
       calculateApproachIlsAndSlopes();
     }
 
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "distanceTopOfDescent" << distanceTopOfDescent
-             << "distanceTopOfClimb" << distanceTopOfClimb;
-    qDebug() << Q_FUNC_INFO << "legIndexTopOfDescent" << legIndexTopOfDescent
-             << "legIndexTopOfClimb" << legIndexTopOfClimb;
-    for(int i = 0; i < size(); i++)
-      qDebug() << Q_FUNC_INFO << i << route->at(i).getIdent()
-               << "geometry" << at(i).geometry << "NM/ft"
-               << "topOfClimb" << at(i).topOfClimb
-               << "topOfDescent" << at(i).topOfDescent
-               << "valid" << at(i).isEmpty();
+    qDebug() << Q_FUNC_INFO << *this;
 #endif
   }
+}
+
+void RouteAltitude::calculateDistances()
+{
+  float distanceToLeg = 0.f;
+  int destinationLegIdx = route->getDestinationLegIndex();
+
+  if(destinationLegIdx == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
+
+  // Fill all legs with distance and cruise altitude and add them to the vector
+  for(int i = 0; i < route->size(); i++)
+  {
+    const RouteLeg& leg = route->at(i);
+
+    RouteAltitudeLeg alt;
+    alt.ident = leg.getIdent();
+
+    if(i <= destinationLegIdx)
+    {
+      // Not a dummy (missed)
+      alt.restriction = leg.getProcedureLegAltRestr();
+      alt.geometry.append(QPointF(distanceToLeg, cruiseAltitide));
+      distanceToLeg += leg.getDistanceTo();
+      alt.geometry.append(QPointF(distanceToLeg, cruiseAltitide));
+    }
+    // else ignore missed approach dummy legs after destination runway
+
+    append(alt);
+  }
+
+  // Set the procedure flag which is needed for drawing
+  for(int i = 1; i < route->size(); i++)
+  {
+    const RouteLeg& leg = route->at(i);
+    const RouteLeg& last = route->at(i - 1);
+
+    if(last.isRoute() || leg.isRoute() || // Any is route - also covers STAR to airport
+       (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) || // empty space from SID to STAR, transition or approach
+       (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival())) // empty space from STAR to transition or approach
+      (*this)[i].procedure = false;
+    else
+      (*this)[i].procedure = true;
+  }
+}
+
+void RouteAltitude::calculateDeparture()
+{
+  int departureLegIdx = route->getDepartureLegIndex();
+  if(departureLegIdx == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
+
+  if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
+    first().setAlt(departureAltitude());
+
+  // Start from departure forward until hitting cruise altitude (TOC)
+  for(int i = departureLegIdx; i < route->size(); i++)
+  {
+    // Calculate altitude for this leg based on altitude of the leg to the right
+    RouteAltitudeLeg& alt = (*this)[i];
+    if(alt.isEmpty())
+      // Dummy leg
+      continue;
+
+    // Altitude of last leg
+    float lastLegAlt = i > departureLegIdx ? at(i - 1).y2() : 0.;
+
+    if(i <= departureLegIdx)
+      // Departure leg - assign altitude to airport and RW too if available
+      alt.setAlt(departureAltitude());
+    else
+    {
+      // Set geometry for climbing
+      alt.setY1(lastLegAlt);
+      alt.setY2(lastLegAlt + alt.getDistanceTo() * altitudePerNmClimb);
+    }
+
+    if(!alt.isEmpty())
+    {
+      // Remember geometry which is not changed by altitude restrictions for calculation of cruise intersection
+      float uncorrectedAlt = alt.y2();
+
+      adjustAltitudeForRestriction(alt);
+
+      // Avoid climbing above any below/at/between restrictions
+      float maxAlt = findDepartureMaxAltitude(i);
+      if(maxAlt < map::INVALID_ALTITUDE_VALUE)
+        alt.setY2(std::min(alt.y2(), maxAlt));
+
+      // Never lower than last leg
+      alt.setY2(std::max(alt.y2(), lastLegAlt));
+
+      if(i > 0 && uncorrectedAlt > cruiseAltitide && !(distanceTopOfClimb < map::INVALID_ALTITUDE_VALUE))
+      {
+        // Reached TOC - calculate distance
+        distanceTopOfClimb = distanceForAltitude(alt.geometry.first(), QPointF(alt.geometry.last().x(), uncorrectedAlt),
+                                                 cruiseAltitide);
+        legIndexTopOfClimb = i;
+
+        // Adjust this leg
+        alt.setY2(std::min(alt.y2(), cruiseAltitide));
+        alt.setY2(std::max(alt.y2(), lastLegAlt));
+
+        // Add point to allow drawing the bend at TOC
+        alt.geometry.insert(1, QPointF(distanceTopOfClimb, cruiseAltitide));
+
+        // Done here
+        alt.topOfClimb = true;
+        break;
+      }
+    }
+
+    // Adjust altitude to be above last and below cruise
+    alt.setY2(std::min(alt.y2(), cruiseAltitide));
+    alt.setY2(std::max(alt.y2(), lastLegAlt));
+  }
+}
+
+void RouteAltitude::calculateArrival()
+{
+  int destinationLegIdx = route->getDestinationLegIndex();
+  int departureLegIndex = route->getDepartureLegIndex();
+  float lastAlt = getDestinationAltitude();
+
+  if(departureLegIndex == map::INVALID_INDEX_VALUE || destinationLegIdx == map::INVALID_INDEX_VALUE)
+  {
+    qWarning() << Q_FUNC_INFO;
+    return;
+  }
+
+  // Calculate from last leg down until we hit the cruise altitude (TOD)
+  for(int i = route->size() - 1; i >= 0; i--)
+  {
+    RouteAltitudeLeg& alt = (*this)[i];
+    RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
+    float lastLegAlt = lastAltLeg != nullptr ? at(i + 1).y2() : 0.;
+
+    // Start with altitude of the right leg (close to dest)
+    float newAltitude = lastLegAlt;
+
+    if(i <= destinationLegIdx)
+    {
+      // Leg leading to this point (right to this)
+      float distFromRight = lastAltLeg != nullptr ? lastAltLeg->getDistanceTo() : 0.f;
+
+      // Point of this leg
+      newAltitude = lastAlt + distFromRight * altitudePerNmDescent;
+    }
+
+    if(!alt.isEmpty())
+    {
+      // Remember geometry which is not changed by altitude restrictions for calculation of cruise intersection
+      float uncorrectedAltitude = newAltitude;
+
+      // Not a dummy leg
+      newAltitude = adjustAltitudeForRestriction(newAltitude, alt.restriction);
+
+      // Avoid climbing (up the descent slope) above any below/at/between restrictions
+      float maxAlt = findApproachMaxAltitude(i + 1);
+      if(maxAlt < map::INVALID_ALTITUDE_VALUE)
+        newAltitude = std::min(newAltitude, maxAlt);
+
+      // Never lower than right leg
+      newAltitude = std::max(newAltitude, lastAlt);
+
+      // Check the limits to the left - either cruise or an altitude restriction
+      // Set to true if an altitude restriction is limiting and postone calculation of the TOD
+      bool noTod = maxAlt < map::INVALID_ALTITUDE_VALUE && maxAlt < cruiseAltitide;
+
+      if(!noTod && !(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) && uncorrectedAltitude > cruiseAltitide &&
+         i + 1 < size())
+      {
+        if(at(i + 1).isEmpty())
+          // Stepped into the dummies after arrival runway - bail out
+          break;
+
+        // Reached TOD - calculate distance
+        distanceTopOfDescent = distanceForAltitude(at(i + 1).getGeometry().last(),
+                                                   QPointF(
+                                                     alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitide);
+        legIndexTopOfDescent = i + 1;
+
+        if(!lastAltLeg->topOfClimb)
+          // Adjust only if not modified by TOC calculation
+          alt.setY2(std::min(newAltitude, cruiseAltitide));
+
+        if(lastAltLeg != nullptr)
+          // Adjust neighbor too
+          lastAltLeg->setY1(alt.y2());
+
+        // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
+        lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1,
+                                    QPointF(distanceTopOfDescent, cruiseAltitide));
+
+        // Done here
+        if(legIndexTopOfDescent < size())
+          (*this)[legIndexTopOfDescent].topOfDescent = true;
+        break;
+      }
+
+      // Adjust altitude to be above last and below cruise
+      alt.setY2(newAltitude);
+      alt.setY2(std::min(alt.y2(), cruiseAltitide));
+
+      if(lastAltLeg != nullptr)
+        alt.setY2(std::max(alt.y2(), lastLegAlt));
+      if(i == destinationLegIdx && i != departureLegIndex && !alt.topOfClimb)
+        alt.setY1(alt.y2());
+
+      if(lastAltLeg != nullptr)
+        lastAltLeg->setY1(alt.y2());
+
+      lastAlt = alt.y2();
+    }
+  }
+}
+
+void RouteAltitude::calculateApproachIlsAndSlopes()
+{
+  route->getApproachRunwayEndAndIls(destRunwayIls, destRunwayEnd);
+
+  // Filter out unusable ILS
+  auto it = std::remove_if(destRunwayIls.begin(), destRunwayIls.end(),
+                           [ = ](const map::MapIls& ils) -> bool
+  {
+    // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
+    return ils.slope < 0.1f || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
+    atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
+  });
+
+  if(it != destRunwayIls.end())
+    destRunwayIls.erase(it, destRunwayIls.end());
 }
 
 float RouteAltitude::getDestinationAltitude() const
@@ -493,225 +783,14 @@ float RouteAltitude::distanceForAltitude(const RouteAltitudeLeg& leg, float alti
   return distanceForAltitude(leg.geometry.first(), leg.geometry.last(), altitude);
 }
 
-void RouteAltitude::calculateDeparture()
+QDebug operator<<(QDebug out, const RouteAltitude& obj)
 {
-  int departureLegIdx = route->getDepartureLegIndex();
-  if(departureLegIdx == map::INVALID_INDEX_VALUE)
-  {
-    qWarning() << Q_FUNC_INFO;
-    return;
-  }
+  out << "TOD dist" << obj.getTopOfDescentDistance()
+      << "TOC dist" << obj.getTopOfClimbDistance()
+      << "TOD index" << obj.getTopOfDescentLegIndex()
+      << "TOC index" << obj.getTopOfDescentLegIndex() << endl;
 
-  if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
-    first().setAlt(departureAltitude());
-
-  // Start from departure forward until hitting cruise altitude (TOC)
-  for(int i = departureLegIdx; i < route->size(); i++)
-  {
-    // Calculate altitude for this leg based on altitude of the leg to the right
-    RouteAltitudeLeg& alt = (*this)[i];
-    if(alt.isEmpty())
-      // Dummy leg
-      continue;
-
-    // Altitude of last leg
-    float lastLegAlt = i > departureLegIdx ? at(i - 1).y2() : 0.;
-
-    if(i <= departureLegIdx)
-      // Departure leg - assign altitude to airport and RW too if available
-      alt.setAlt(departureAltitude());
-    else
-    {
-      // Set geometry for climbing
-      alt.setY1(lastLegAlt);
-      alt.setY2(lastLegAlt + alt.getDistanceTo() * altitudePerNmClimb);
-    }
-
-    if(!alt.isEmpty())
-    {
-      adjustAltitudeForRestriction(alt);
-
-      // Avoid climbing above any below/at/between restrictions
-      float maxAlt = findDepartureMaxAltitude(i);
-      if(maxAlt < map::INVALID_ALTITUDE_VALUE)
-        alt.setY2(std::min(alt.y2(), maxAlt));
-
-      // Never lower than last leg
-      alt.setY2(std::max(alt.y2(), lastLegAlt));
-
-      if(i > 0 && alt.y2() > cruiseAltitide && !(distanceTopOfClimb < map::INVALID_ALTITUDE_VALUE))
-      {
-        // Reached TOC - calculate distance
-        distanceTopOfClimb = distanceForAltitude(alt, cruiseAltitide);
-        legIndexTopOfClimb = i;
-
-        // Adjust this leg
-        alt.setY2(std::min(alt.y2(), cruiseAltitide));
-        alt.setY2(std::max(alt.y2(), lastLegAlt));
-
-        // Add point to allow drawing the bend at TOC
-        alt.geometry.insert(1, QPointF(distanceTopOfClimb, cruiseAltitide));
-
-        // Done here
-        alt.topOfClimb = true;
-        break;
-      }
-    }
-
-    // Adjust altitude to be above last and below cruise
-    alt.setY2(std::min(alt.y2(), cruiseAltitide));
-    alt.setY2(std::max(alt.y2(), lastLegAlt));
-  }
-}
-
-void RouteAltitude::calculateArrival()
-{
-  int destinationLegIdx = route->getDestinationLegIndex();
-  int departureLegIndex = route->getDepartureLegIndex();
-  float lastAlt = getDestinationAltitude();
-
-  if(departureLegIndex == map::INVALID_INDEX_VALUE || destinationLegIdx == map::INVALID_INDEX_VALUE)
-  {
-    qWarning() << Q_FUNC_INFO;
-    return;
-  }
-
-  // Calculate from last leg down until we hit the cruise altitude (TOD)
-  for(int i = route->size() - 1; i >= 0; i--)
-  {
-    RouteAltitudeLeg& alt = (*this)[i];
-    RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
-    float lastLegAlt = lastAltLeg != nullptr ? at(i + 1).y2() : 0.;
-
-    // Start with altitude of the right leg (close to dest)
-    float newAltitude = lastLegAlt;
-
-    if(i <= destinationLegIdx)
-    {
-      // Leg leading to this point (right to this)
-      float distFromRight = lastAltLeg != nullptr ? lastAltLeg->getDistanceTo() : 0.f;
-
-      // Point of this leg
-      newAltitude = lastAlt + distFromRight * altitudePerNmDescent;
-    }
-
-    if(!alt.isEmpty())
-    {
-      // Not a dummy leg
-      newAltitude = adjustAltitudeForRestriction(newAltitude, alt.restriction);
-
-      // Avoid climbing (up the descent slope) above any below/at/between restrictions
-      float maxAlt = findApproachMaxAltitude(i);
-      if(maxAlt < map::INVALID_ALTITUDE_VALUE)
-        newAltitude = std::min(newAltitude, maxAlt);
-
-      // Never lower than right leg
-      newAltitude = std::max(newAltitude, lastAlt);
-
-      if(!(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) && newAltitude > cruiseAltitide && i + 1 < size())
-      {
-        if(at(i + 1).isEmpty())
-          // Stepped into the dummies after arrival runway - bail out
-          break;
-
-        // Reached TOD - calculate distance
-        distanceTopOfDescent = distanceForAltitude(at(i + 1).getGeometry().last(),
-                                                   QPointF(alt.getDistanceFromStart(), newAltitude), cruiseAltitide);
-        legIndexTopOfDescent = i + 1;
-
-        if(!lastAltLeg->topOfClimb)
-          // Adjust only if not modified by TOC calculation
-          alt.setY2(std::min(newAltitude, cruiseAltitide));
-
-        if(lastAltLeg != nullptr)
-          // Adjust neighbor too
-          lastAltLeg->setY1(alt.y2());
-
-        // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
-        lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1,
-                                    QPointF(distanceTopOfDescent, cruiseAltitide));
-
-        // Done here
-        alt.topOfDescent = true;
-        break;
-      }
-
-      // Adjust altitude to be above last and below cruise
-      alt.setY2(newAltitude);
-      alt.setY2(std::min(alt.y2(), cruiseAltitide));
-
-      if(lastAltLeg != nullptr)
-        alt.setY2(std::max(alt.y2(), lastLegAlt));
-      if(i == destinationLegIdx && i != departureLegIndex && !alt.topOfClimb)
-        alt.setY1(alt.y2());
-
-      if(lastAltLeg != nullptr)
-        lastAltLeg->setY1(alt.y2());
-
-      lastAlt = alt.y2();
-    }
-  }
-}
-
-void RouteAltitude::calculateDistances()
-{
-  float distanceToLeg = 0.f;
-  int destinationLegIdx = route->getDestinationLegIndex();
-
-  if(destinationLegIdx == map::INVALID_INDEX_VALUE)
-  {
-    qWarning() << Q_FUNC_INFO;
-    return;
-  }
-
-  // Fill all legs with distance and cruise altitude and add them to the vector
-  for(int i = 0; i < route->size(); i++)
-  {
-    const RouteLeg& leg = route->at(i);
-
-    RouteAltitudeLeg alt;
-
-    if(i <= destinationLegIdx)
-    {
-      // Not a dummy (missed)
-      alt.restriction = leg.getProcedureLegAltRestr();
-      alt.geometry.append(QPointF(distanceToLeg, cruiseAltitide));
-      distanceToLeg += leg.getDistanceTo();
-      alt.geometry.append(QPointF(distanceToLeg, cruiseAltitide));
-    }
-    // else ignore missed approach dummy legs after destination runway
-
-    append(alt);
-  }
-
-  // Set the procedure flag which is needed for drawing
-  for(int i = 1; i < route->size(); i++)
-  {
-    const RouteLeg& leg = route->at(i);
-    const RouteLeg& last = route->at(i - 1);
-
-    if(last.isRoute() || leg.isRoute() || // Any is route - also covers STAR to airport
-       (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) || // empty space from SID to STAR, transition or approach
-       (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival())) // empty space from STAR to transition or approach
-      (*this)[i].procedure = false;
-    else
-      (*this)[i].procedure = true;
-  }
-}
-
-void RouteAltitude::calculateApproachIlsAndSlopes()
-{
-  route->getApproachRunwayEndAndIls(destRunwayIls, destRunwayEnd);
-
-  // Filter out unusable ILS
-  auto it = std::remove_if(destRunwayIls.begin(), destRunwayIls.end(),
-                           [ = ](const map::MapIls& ils) -> bool
-  {
-    // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
-    return ils.slope < 0.1f || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
-    atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
-  });
-
-  if(it != destRunwayIls.end())
-    destRunwayIls.erase(it, destRunwayIls.end());
+  for(int i = 0; i < obj.size(); i++)
+    out << i << obj.at(i) << endl;
+  return out;
 }

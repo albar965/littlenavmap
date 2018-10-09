@@ -74,6 +74,22 @@ public:
     return geometry;
   }
 
+  bool isTopOfClimb() const
+  {
+    return topOfClimb;
+  }
+
+  bool isTopOfDescent() const
+  {
+    return topOfDescent;
+  }
+
+  /* Mostly for  debugging purposes */
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
 private:
   friend class RouteAltitude;
 
@@ -104,10 +120,13 @@ private:
       geometry.last().setY(y);
   }
 
+  QString ident;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
   bool procedure = false, topOfClimb = false, topOfDescent = false;
 
 };
+
+QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj);
 
 #endif // LNM_ROUTEALTITUDELEG_H

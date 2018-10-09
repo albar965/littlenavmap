@@ -48,3 +48,13 @@ void RouteAltitudeLeg::setAlt(float alt)
   for(QPointF& pt : geometry)
     pt.setY(alt);
 }
+
+QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
+{
+  out << obj.getIdent()
+      << "TOC" << obj.isTopOfClimb()
+      << "TOD" << obj.isTopOfDescent()
+      << "valid" << obj.isEmpty()
+      << "geometry" << obj.getGeometry() << "NM/ft";
+  return out;
+}

@@ -122,11 +122,13 @@ public:
   using QVector<RouteAltitudeLeg>::size;
   using QVector<RouteAltitudeLeg>::isEmpty;
 
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
   const QVector<map::MapIls>& getDestRunwayIls() const
   {
     return destRunwayIls;
   }
 
+  /* Get runway end at destination if any. Used to get the VASI information */
   const map::MapRunwayEnd& getDestRunwayEnd() const
   {
     return destRunwayEnd;
@@ -212,5 +214,7 @@ private:
   QVector<map::MapIls> destRunwayIls;
   map::MapRunwayEnd destRunwayEnd;
 };
+
+QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
 #endif // LNM_ROUTEALTITUDE_H
