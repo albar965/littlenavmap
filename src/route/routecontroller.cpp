@@ -2852,7 +2852,7 @@ void RouteController::updateTableModel()
             leg.getRunwayEnd().isValid())
     {
       // Build string for ILS type
-      QStringList texts;
+      QSet<QString> texts;
       for(const map::MapIls& ils : ilsByAirportAndRunway)
       {
         QStringList txt(tr("ILS"));
@@ -2860,10 +2860,10 @@ void RouteController::updateTableModel()
           txt.append("GS");
         if(ils.hasDme)
           txt.append("DME");
-        texts.append(txt.join("/"));
+        texts.insert(txt.join("/"));
       }
 
-      itemRow[rc::TYPE] = new QStandardItem(texts.join(","));
+      itemRow[rc::TYPE] = new QStandardItem(texts.toList().join(","));
     }
 
     // VOR/NDB frequency =====================
@@ -2880,11 +2880,11 @@ void RouteController::updateTableModel()
             leg.getRunwayEnd().isValid())
     {
       // Add ILS frequencies
-      QStringList texts;
+      QSet<QString> texts;
       for(const map::MapIls& ils : ilsByAirportAndRunway)
-        texts.append(QLocale().toString(ils.frequency / 1000.f, 'f', 2));
+        texts.insert(QLocale().toString(ils.frequency / 1000.f, 'f', 2));
 
-      itemRow[rc::FREQ] = new QStandardItem(texts.join(","));
+      itemRow[rc::FREQ] = new QStandardItem(texts.toList().join(","));
     }
 
     // VOR/NDB range =====================
