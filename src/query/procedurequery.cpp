@@ -1762,7 +1762,8 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   if(properties.contains(pln::APPROACH_ARINC) && approachIdByArincNameQuery != nullptr)
   {
     // Use ARINC name which is more specific - potential source is new X-Plane FMS file
-    approachIdByArincNameQuery->bindValue(":arincname", properties.value(pln::APPROACH_ARINC));
+    QString arincName = properties.value(pln::APPROACH_ARINC);
+    approachIdByArincNameQuery->bindValue(":arincname", arincName);
     approachIdByArincNameQuery->bindValue(":apident", destination.ident);
 
     approachId = findApproachId(destination, approachIdByArincNameQuery,
@@ -1770,6 +1771,30 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                                 properties.value(pln::APPROACHRW),
                                 properties.value(pln::APPROACHDISTANCE).toFloat(),
                                 properties.value(pln::APPROACHSIZE).toInt());
+
+    if(approachId == -1)
+    {
+      // Try again with variants of the ARINC approach name in case the runway was renamed
+      QStringList variants = map::arincNameNameVariants(arincName);
+      if(!variants.isEmpty())
+        variants.removeFirst();
+
+      qDebug() << Q_FUNC_INFO << "Nothing found for ARINC" << arincName << "trying" << variants;
+
+      for(const QString& variant : variants)
+      {
+        approachIdByArincNameQuery->bindValue(":arincname", variant);
+
+        approachId = findApproachId(destination, approachIdByArincNameQuery,
+                                    QString(),
+                                    properties.value(pln::APPROACHRW),
+                                    properties.value(pln::APPROACHDISTANCE).toFloat(),
+                                    properties.value(pln::APPROACHSIZE).toInt());
+        if(approachId != -1)
+          break;
+      }
+    }
+
     if(approachId == -1)
     {
       qWarning() << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
@@ -1951,7 +1976,25 @@ int ProcedureQuery::findTransitionId(const map::MapAirport& airport, atools::sql
 int ProcedureQuery::findApproachId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                                    const QString& suffix, const QString& runway, float distance, int size)
 {
-  return findProcedureLegId(airport, query, suffix, runway, distance, size, false);
+  int id = findProcedureLegId(airport, query, suffix, runway, distance, size, false);
+  if(id == -1 && !runway.isEmpty())
+  {
+    // Try again with runway variants in case runway was renamed and runway is required
+    QStringList variants = map::runwayNameVariants(runway);
+
+    if(!variants.isEmpty())
+      // Remove original since this was already queried
+      variants.removeFirst();
+
+    qDebug() << Q_FUNC_INFO << "Nothing found for runway" << runway << "trying" << variants;
+
+    for(const QString& rw : variants)
+    {
+      if((id = findProcedureLegId(airport, query, suffix, rw, distance, size, false)) != -1)
+        return id;
+    }
+  }
+  return id;
 }
 
 bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwayFromQuery,

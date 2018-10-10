@@ -1613,19 +1613,51 @@ QString runwayNameJoin(int number, const QString& designator)
 }
 
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
-QStringList runwayNameVariants(const QString& name)
+QStringList runwayNameVariants(QString name)
 {
+  QString prefix;
+  if(name.startsWith("RW"))
+  {
+    prefix = "RW";
+    name = name.mid(2);
+  }
+
   QStringList retval({name});
   QString designator;
   int number;
   map::runwayNameSplit(name, &number, &designator);
 
   // Try next higher runway number
-  retval.append(map::runwayNameJoin(number < 36 ? number + 1 : 1, designator));
+  retval.append(prefix + map::runwayNameJoin(number < 36 ? number + 1 : 1, designator));
 
   // Try next lower runway number
-  retval.append(map::runwayNameJoin(number > 1 ? number - 1 : 36, designator));
+  retval.append(prefix + map::runwayNameJoin(number > 1 ? number - 1 : 36, designator));
 
+  return retval;
+}
+
+/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list for an
+ * ARINC name like N32 or I19-Y */
+QStringList arincNameNameVariants(const QString& name)
+{
+  QStringList retval({name});
+  QString prefix, suffix, rw;
+  if(name.size() >= 3 && name.at(1).isDigit() && name.at(2).isDigit())
+  {
+    prefix = name.left(1);
+    rw = name.mid(1, 2);
+    suffix = name.mid(3);
+
+    QString designator;
+    int number;
+    map::runwayNameSplit(rw, &number, &designator);
+
+    // Try next higher runway number
+    retval.append(prefix + map::runwayNameJoin(number < 36 ? number + 1 : 1, designator) + suffix);
+
+    // Try next lower runway number
+    retval.append(prefix + map::runwayNameJoin(number > 1 ? number - 1 : 36, designator) + suffix);
+  }
   return retval;
 }
 

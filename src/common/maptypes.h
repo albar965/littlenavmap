@@ -898,6 +898,13 @@ bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *de
 /* Get the closes matching runway name from the list of airport runways or empty if none */
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
 
+/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
+QStringList runwayNameVariants(QString name);
+
+/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list for an
+ * ARINC name like N32 or I19-Y */
+QStringList arincNameNameVariants(const QString& name);
+
 /* Compare runway numbers fuzzy */
 bool runwayAlmostEqual(const QString& name1, const QString& name2);
 

@@ -929,7 +929,7 @@ void MapWidget::showSavedPosOnStartup()
   {
     qDebug() << "Show Route" << NavApp::getRouteConst().getBoundingRect();
     if(!NavApp::getRouteConst().isFlightplanEmpty())
-      showRect(NavApp::getRouteConst().getBoundingRect(), false);
+      showRect(NavApp::getRouteConst().getBoundingRect(), false /* double click */);
     else
       showHome();
   }
