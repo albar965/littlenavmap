@@ -630,8 +630,8 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       {
         QPointF s = wToSF(pos.endpoint(nmToMeter(i * stepsizeNm), trackTrue).normalize());
         if(!s.isNull())
-          symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, true)}, painter->pen(),
-                                  s.x(), s.y(), textatt::CENTER);
+          symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, 20, true)}, painter->pen(),
+                                  static_cast<float>(s.x()), static_cast<float>(s.y()), textatt::CENTER);
       }
     }
 
