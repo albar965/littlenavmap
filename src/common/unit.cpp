@@ -62,15 +62,15 @@ Unit::~Unit()
 
 }
 
-QString Unit::replacePlaceholders(const QString& text, QString& origtext)
+QString Unit::replacePlaceholders(const QString& text, QString& origtext, bool fuelAsVolume)
 {
   if(origtext.isEmpty())
     origtext = text;
 
-  return replacePlaceholders(origtext);
+  return replacePlaceholders(origtext, fuelAsVolume);
 }
 
-QString Unit::replacePlaceholders(const QString& text)
+QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume)
 {
   QString retval(text);
   retval.replace("%distshort%", unitShortDistStr);
@@ -78,6 +78,9 @@ QString Unit::replacePlaceholders(const QString& text)
   retval.replace("%alt%", unitAltStr);
   retval.replace("%speed%", unitSpeedStr);
   retval.replace("%vspeed%", unitVertSpeedStr);
+  retval.replace("%fuel%", fuelAsVolume ? unitVolStr : unitWeightStr);
+  retval.replace("%weight%", unitWeightStr);
+  retval.replace("%volume%", unitVolStr);
   return retval;
 }
 
@@ -308,6 +311,24 @@ float Unit::volGallonF(float value)
   return 0.f;
 }
 
+QString Unit::volLiter(float value, bool addUnit)
+{
+  return u(volLiterF(value), unitVolStr, addUnit);
+}
+
+float Unit::volLiterF(float value)
+{
+  switch(unitFuelWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      return value / 3.785411784f;
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      return value;
+  }
+  return 0.f;
+}
+
 float Unit::weightLbsF(float value)
 {
   switch(unitFuelWeight)
@@ -317,6 +338,24 @@ float Unit::weightLbsF(float value)
 
     case opts::FUEL_WEIGHT_LITER_KG:
       return value / 2.204622f;
+  }
+  return 0.f;
+}
+
+QString Unit::weightKg(float value, bool addUnit)
+{
+  return u(weightKgF(value), unitWeightStr, addUnit);
+}
+
+float Unit::weightKgF(float value)
+{
+  switch(unitFuelWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      return value * 2.204622f;
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      return value;
   }
   return 0.f;
 }
@@ -339,6 +378,26 @@ QString Unit::ffLbs(float value, bool addUnit)
 float Unit::ffLbsF(float value)
 {
   return weightLbsF(value);
+}
+
+QString Unit::fuelLbsGallon(float value, bool addUnit, bool fuelAsVolume)
+{
+  return fuelAsVolume ? volGallon(value, addUnit) : weightLbs(value, addUnit);
+}
+
+float Unit::fuelLbsGallonF(float value, bool fuelAsVolume)
+{
+  return fuelAsVolume ? volGallonF(value) : weightLbsF(value);
+}
+
+QString Unit::fuelKgLiter(float value, bool addUnit, bool fuelAsVolume)
+{
+  return fuelAsVolume ? volLiter(value, addUnit) : weightKg(value, addUnit);
+}
+
+float Unit::fuelKgLiterF(float value, bool fuelAsVolume)
+{
+  return fuelAsVolume ? volLiterF(value) : weightKgF(value);
 }
 
 QString Unit::coords(const atools::geo::Pos& pos)

@@ -26,6 +26,8 @@
  * Contains all calculated altitude information for a route leg. This includes distance from start and
  * altitudes for leg start and end.
  *
+ * Contains fuel and time information calculated from aircraft performance too.
+ *
  * Geometry might contain more than two points for TOC and/or TOD legs.
  */
 class RouteAltitudeLeg
@@ -65,6 +67,22 @@ public:
     return procedure;
   }
 
+  bool isMissed() const
+  {
+    return missed;
+  }
+
+  float getTravelTimeHours() const
+  {
+    return travelTimeHours;
+  }
+
+  /* TAS */
+  float getAverageSpeedKts() const
+  {
+    return averageSpeedKts;
+  }
+
   /* First point is equal to last point of previous leg. Last point is position of the waypoint for this leg.
    * Can contain more than two points for TOC and/or TOD legs.
    * x = distance from start and y = altitude
@@ -88,6 +106,12 @@ public:
   const QString& getIdent() const
   {
     return ident;
+  }
+
+  /* Fuel consumption for this leg. Volume or weight (gal/lbs) depending on performance */
+  float getFuel() const
+  {
+    return fuel;
   }
 
 private:
@@ -123,7 +147,10 @@ private:
   QString ident;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
-  bool procedure = false, topOfClimb = false, topOfDescent = false;
+  bool procedure = false, missed = false, topOfClimb = false, topOfDescent = false;
+  float travelTimeHours = 0.f;
+  float fuel = 0.f;
+  float averageSpeedKts = 0.f;
 
 };
 

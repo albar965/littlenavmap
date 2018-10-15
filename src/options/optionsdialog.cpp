@@ -31,6 +31,7 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 #include "util/updatecheck.h"
+#include "common/unitstringtool.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -120,6 +121,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
+
+  units = new UnitStringTool();
+  units->init({
+    ui->doubleSpinBoxOptionsMapZoomShowMap,
+    ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
+    ui->spinBoxOptionsRouteGroundBuffer,
+    ui->labelOptionsMapRangeRings
+  });
 
   // Build tree settings to map tab =====================================================
   /* *INDENT-OFF* */
@@ -236,6 +245,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->lineEditCacheOfflineDataPath);
 
   widgets.append(ui->spinBoxOptionsGuiInfoText);
+  widgets.append(ui->spinBoxOptionsGuiAircraftPerf);
   widgets.append(ui->spinBoxOptionsGuiRouteText);
   widgets.append(ui->spinBoxOptionsGuiSearchText);
   widgets.append(ui->spinBoxOptionsGuiSimInfoText);
@@ -246,7 +256,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMapMenu);
   widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
-  widgets.append(ui->doubleSpinBoxOptionsRouteTodRule);
 
   widgets.append(ui->spinBoxOptionsDisplayTextSizeAircraftAi);
   widgets.append(ui->spinBoxOptionsDisplaySymbolSizeNavaid);
@@ -301,13 +310,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->lineEditOptionsOnlineWhazzupUrl);
   widgets.append(ui->spinBoxOptionsOnlineUpdate);
   widgets.append(ui->comboBoxOptionsOnlineFormat);
-
-  doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
-  doubleSpinBoxOptionsMapZoomShowMapMenuSuffix = ui->doubleSpinBoxOptionsMapZoomShowMapMenu->suffix();
-
-  spinBoxOptionsRouteGroundBufferSuffix = ui->spinBoxOptionsRouteGroundBuffer->suffix();
-  doubleSpinBoxOptionsRouteTodRuleSuffix = ui->doubleSpinBoxOptionsRouteTodRule->suffix();
-  labelOptionsMapRangeRingsText = ui->labelOptionsMapRangeRings->text();
 
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
@@ -421,6 +423,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 OptionsDialog::~OptionsDialog()
 {
   delete rangeRingValidator;
+  delete units;
   delete ui;
 }
 
@@ -494,18 +497,7 @@ void OptionsDialog::updateOnlineWidgetStatus()
 
 void OptionsDialog::updateWidgetUnits()
 {
-  ui->doubleSpinBoxOptionsMapZoomShowMap->setSuffix(
-    Unit::replacePlaceholders(doubleSpinBoxOptionsMapZoomShowMapSuffix));
-  ui->doubleSpinBoxOptionsMapZoomShowMapMenu->setSuffix(
-    Unit::replacePlaceholders(doubleSpinBoxOptionsMapZoomShowMapMenuSuffix));
-  ui->spinBoxOptionsRouteGroundBuffer->setSuffix(
-    Unit::replacePlaceholders(spinBoxOptionsRouteGroundBufferSuffix));
-
-  ui->doubleSpinBoxOptionsRouteTodRule->setSuffix(
-    Unit::replacePlaceholders(doubleSpinBoxOptionsRouteTodRuleSuffix));
-
-  ui->labelOptionsMapRangeRings->setText(
-    Unit::replacePlaceholders(labelOptionsMapRangeRingsText));
+  units->update();
 }
 
 bool OptionsDialog::isOverrideLanguage()
@@ -1058,6 +1050,7 @@ void OptionsDialog::widgetsToOptionData()
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
   data.cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
   data.guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
+  data.guiPerfReportTextSize = ui->spinBoxOptionsGuiAircraftPerf->value();
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
   data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
@@ -1071,7 +1064,6 @@ void OptionsDialog::widgetsToOptionData()
   data.mapZoomShowMenu = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMapMenu->value());
 
   data.routeGroundBuffer = ui->spinBoxOptionsRouteGroundBuffer->value();
-  data.routeTodRule = ui->doubleSpinBoxOptionsRouteTodRule->value();
 
   data.displayTextSizeAircraftAi = ui->spinBoxOptionsDisplayTextSizeAircraftAi->value();
   data.displaySymbolSizeNavaid = ui->spinBoxOptionsDisplaySymbolSizeNavaid->value();
@@ -1241,6 +1233,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
+  ui->spinBoxOptionsGuiAircraftPerf->setValue(data.guiPerfReportTextSize);
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
   ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
@@ -1252,7 +1245,6 @@ void OptionsDialog::optionDataToWidgets()
   ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShowClick);
   ui->doubleSpinBoxOptionsMapZoomShowMapMenu->setValue(data.mapZoomShowMenu);
   ui->spinBoxOptionsRouteGroundBuffer->setValue(data.routeGroundBuffer);
-  ui->doubleSpinBoxOptionsRouteTodRule->setValue(data.routeTodRule);
 
   ui->spinBoxOptionsDisplayTextSizeAircraftAi->setValue(data.displayTextSizeAircraftAi);
   ui->spinBoxOptionsDisplaySymbolSizeNavaid->setValue(data.displaySymbolSizeNavaid);
@@ -1392,13 +1384,15 @@ void OptionsDialog::updateCacheElevationStates()
       QFileInfo fileinfo(path);
       if(!fileinfo.exists())
         ui->labelCacheGlobePathState->setText(
-          tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Directory does not exist.</span>"));
+          tr(
+            "<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Directory does not exist.</span>"));
       else if(!fileinfo.isDir())
         ui->labelCacheGlobePathState->setText(
           tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not a directory.</span>"));
       else if(!NavApp::getElevationProvider()->isGlobeDirectoryValid(path))
         ui->labelCacheGlobePathState->setText(
-          tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">No valid GLOBE data found.</span>"));
+          tr(
+            "<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">No valid GLOBE data found.</span>"));
       else
         ui->labelCacheGlobePathState->setText(
           tr("Directory and files are valid."));

@@ -98,7 +98,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *event)
     if(flightplanY > -5 && flightplanY < h + 5)
     {
       // Route cruise altitude
-      float routeAlt = NavApp::getRoute().getFlightplan().getCruisingAltitude();
+      float routeAlt = NavApp::getRoute().getCruisingAltitudeFeet();
       symPainter.textBox(&painter, {Unit::altFeet(routeAlt)},
                          QApplication::palette().color(QPalette::Text),
                          w - 2, flightplanY, textatt::BOLD | textatt::RIGHT, 255,

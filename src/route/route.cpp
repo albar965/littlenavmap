@@ -27,6 +27,7 @@
 #include "navapp.h"
 #include "fs/util/fsutil.h"
 #include "route/routealtitude.h"
+#include "perf/aircraftperfcontroller.h"
 
 #include <QRegularExpression>
 
@@ -1060,11 +1061,11 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
-  altitude->setSimplify(true);
-  altitude->setAltitudePerNmClimb(calculateAltPerDistanceFactor());
-  altitude->setAltitudePerNmDescent(calculateAltPerDistanceFactor());
   altitude->setCruiseAltitude(getCruisingAltitudeFeet());
-  altitude->calculate();
+  altitude->calculate(NavApp::getAircraftPerformance());
+  altitude->calculateTrip(NavApp::getAircraftPerformance(),
+                          NavApp::getAircraftPerfController()->getWindDir(),
+                          NavApp::getAircraftPerfController()->getWindSpeed());
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
@@ -1527,14 +1528,6 @@ int Route::adjustAltitude(int minAltitude) const
     }
   }
   return minAltitude;
-}
-
-float Route::calculateAltPerDistanceFactor()
-{
-  // Either nm per 1000 something alt or km per 1000 something alt
-  float distRuleNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
-  float altRuleFt = Unit::rev(1000.f, Unit::altFeetF);
-  return altRuleFt / distRuleNm;
 }
 
 void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd& runwayEnd) const

@@ -161,22 +161,9 @@ void InfoController::anchorClicked(const QUrl& url)
 {
   qDebug() << Q_FUNC_INFO << url;
 
-  if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp")
-    // Open a normal link from the userpoint description
-    atools::gui::HelpHandler::openUrl(mainWindow, url);
-  else if(url.scheme() == "file")
-  {
-    if(url.isLocalFile())
-    {
-      QFileInfo info(url.toLocalFile());
-      if(info.exists())
-        // Open a file from the userpoint description
-        atools::gui::HelpHandler::openUrl(mainWindow, url);
-      else
-        atools::gui::Dialog::warning(mainWindow, tr("File or directory \"%1\" does not exist.").
-                                     arg(url.toDisplayString()));
-    }
-  }
+  if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp" || url.scheme() == "file")
+    // Open a normal link or file from the userpoint description
+    atools::gui::anchorClicked(mainWindow, url);
   else if(url.scheme() == "lnm")
   {
     // Internal link like "show on map"

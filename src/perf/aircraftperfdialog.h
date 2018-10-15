@@ -15,50 +15,64 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_TRAFFICPATTERN_H
-#define LNM_TRAFFICPATTERN_H
-
-#include "common/maptypes.h"
+#ifndef LNM_AIRCRAFTPERFDIALOG_H
+#define LNM_AIRCRAFTPERFDIALOG_H
 
 #include <QDialog>
 
 namespace Ui {
-class TrafficPatternDialog;
+class AircraftPerfDialog;
+}
+
+namespace atools {
+namespace fs {
+namespace perf {
+class AircraftPerf;
+}
+}
 }
 
 class QAbstractButton;
 class UnitStringTool;
 
-class TrafficPatternDialog :
+/*
+ * Edit dialog for aircraft performance.
+ */
+class AircraftPerfDialog :
   public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport);
-  virtual ~TrafficPatternDialog();
+  /* Will create a copy of AircraftPerf for editing */
+  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance);
+  virtual ~AircraftPerfDialog();
 
+  /* Get edited performance data */
+  atools::fs::perf::AircraftPerf getAircraftPerf() const;
+
+private:
+  /* Restore and save dialog state and size */
   void restoreState();
   void saveState();
 
-  void fillTrafficPattern(map::TrafficPattern& pattern);
+  /* Copy from AircraftPerf to dialog */
+  void toDialog(const atools::fs::perf::AircraftPerf *aircraftPerf);
 
-private:
-  Ui::TrafficPatternDialog *ui;
-  void updateWidgets();
-  void updateRunwayLabel(int index);
-  void fillRunwayComboBox();
-  void fillAirportLabel();
+  /* Copy from dialog to AircraftPerf */
+  void fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf) const;
+
+  /* Change volume/weight units */
+  void updateUnits();
   void buttonBoxClicked(QAbstractButton *button);
 
-  QList<map::MapRunway> runways;
-  map::MapAirport airport;
-  QColor color;
+  /* Update vertical speed descent rule */
+  void vertSpeedChanged();
 
+  Ui::AircraftPerfDialog *ui;
   UnitStringTool *units = nullptr;
+  atools::fs::perf::AircraftPerf *perf = nullptr, *perfBackup = nullptr;
 
-  void colorButtonClicked();
-  void updateButtonColor();
 };
 
-#endif // LNM_TRAFFICPATTERN_H
+#endif // LNM_AIRCRAFTPERFDIALOG_H

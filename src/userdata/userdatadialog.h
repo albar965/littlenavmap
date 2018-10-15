@@ -47,6 +47,7 @@ enum UserdataDialogMode
 }
 
 class UserdataIcons;
+class UnitStringTool;
 
 /*
  * Dialog allows to edit one or more userdata records or add one.
@@ -95,6 +96,7 @@ private:
   ud::UserdataDialogMode editMode;
   Ui::UserdataDialog *ui;
   UserdataIcons *icons;
+  UnitStringTool *units = nullptr;
 
 };
 

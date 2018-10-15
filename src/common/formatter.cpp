@@ -33,25 +33,25 @@ namespace formatter {
 
 QString formatMinutesHours(double time)
 {
-  int hours = (int)time;
-  int minutes = (int)((time - hours) * 60);
+  int hours = static_cast<int>(time);
+  int minutes = atools::roundToInt((time - hours) * 60.);
   return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)).
          arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursLong(double time)
 {
-  int hours = (int)time;
-  int minutes = (int)((time - hours) * 60);
+  int hours = static_cast<int>(time);
+  int minutes = atools::roundToInt((time - hours) * 60);
   return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)).
          arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursDays(double time)
 {
-  int days = (int)time / 24;
-  int hours = (int)time - (days * 24);
-  int minutes = (int)((time - std::floor(time)) * 60.);
+  int days = static_cast<int>(time) / 24;
+  int hours = static_cast<int>(time) - (days * 24);
+  int minutes = atools::roundToInt((time - std::floor(time)) * 60.);
   return QString(QObject::tr("%1:%2:%3")).
          arg(QLocale().toString(days)).
          arg(hours, 2, 10, QChar('0')).
@@ -60,9 +60,9 @@ QString formatMinutesHoursDays(double time)
 
 QString formatMinutesHoursDaysLong(double time)
 {
-  int days = (int)time / 24;
-  int hours = (int)time - (days * 24);
-  int minutes = (int)((time - std::floor(time)) * 60.);
+  int days = static_cast<int>(time) / 24;
+  int hours = static_cast<int>(time) - (days * 24);
+  int minutes = atools::roundToInt((time - std::floor(time)) * 60.);
   QString retval;
   if(days > 0)
     retval += QString(QObject::tr("%1 d")).arg(QLocale().toString(days));
@@ -103,7 +103,7 @@ QString formatDate(int timeT)
 {
   QDateTime dateTime;
   dateTime.setTimeSpec(Qt::UTC);
-  dateTime.setTime_t((uint)timeT);
+  dateTime.setTime_t(static_cast<uint>(timeT));
   if(timeT > 0 && dateTime.isValid() && !dateTime.isNull())
     return dateTime.toString(Qt::DefaultLocaleShortDate);
   else
@@ -114,7 +114,7 @@ QString formatDateLong(int timeT)
 {
   QDateTime dateTime;
   dateTime.setTimeSpec(Qt::UTC);
-  dateTime.setTime_t((uint)timeT);
+  dateTime.setTime_t(static_cast<uint>(timeT));
   if(timeT > 0 && dateTime.isValid() && !dateTime.isNull())
     // Workaround to remove the UTC label since FSX stores local time without timezone spec
     return dateTime.toString(Qt::DefaultLocaleLongDate).replace(QObject::tr("UTC"), "");

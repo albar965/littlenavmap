@@ -73,7 +73,6 @@ bool RouteCommand::mergeWith(const QUndoCommand *other)
     case rctype::DELETE:
     case rctype::MOVE:
     case rctype::ALTITUDE:
-    case rctype::SPEED:
       // Merge - overwrite the flight plan after the change
       planAfterChange = newCmd->planAfterChange;
       // Let controller know about the merge so the undo index can be adapted

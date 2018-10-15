@@ -214,5 +214,11 @@
         <file>resources/icons/viewexpand.svg</file>
         <file>resources/icons/homemap.svg</file>
         <file>resources/icons/approachguide.svg</file>
+        <file>resources/icons/aircraftperfload.svg</file>
+        <file>resources/icons/aircraftperfnew.svg</file>
+        <file>resources/icons/aircraftperfedit.svg</file>
+        <file>resources/icons/aircraftperfsaveas.svg</file>
+        <file>resources/icons/aircraftperfsave.svg</file>
+        <file>resources/icons/aircraftperf.svg</file>
     </qresource>
 </RCC>

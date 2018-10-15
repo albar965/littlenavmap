@@ -48,6 +48,7 @@ class UserdataSearch;
 class VehicleIcons;
 class ApronGeometryCache;
 class StyleHandler;
+class AircraftPerfController;
 
 namespace atools {
 
@@ -57,6 +58,9 @@ class Pos;
 
 namespace fs {
 
+namespace perf {
+class AircraftPerf;
+}
 namespace weather {
 class Metar;
 }
@@ -147,9 +151,9 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
-  static const RouteAltitude& getRouteAltitudeLegs();
+  static const RouteAltitude& getAltitudeLegs();
 
-  static float getSpeedKts();
+  static float getRouteCruiseSpeedKts();
 
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
@@ -234,6 +238,8 @@ public:
 
   static UserdataController *getUserdataController();
   static OnlinedataController *getOnlinedataController();
+  static AircraftPerfController *getAircraftPerfController();
+  static const atools::fs::perf::AircraftPerf *getAircraftPerformance();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
@@ -272,6 +278,7 @@ private:
   static atools::fs::common::MoraReader *moraReader;
   static UserdataController *userdataController;
   static OnlinedataController *onlinedataController;
+  static AircraftPerfController *aircraftPerfController;
 
   /* Main window is not aggregated */
   static MainWindow *mainWindow;

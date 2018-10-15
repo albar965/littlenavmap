@@ -411,9 +411,6 @@ private:
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
   int adjustedActiveLeg() const;
 
-  /* Calculate descent or climb in ft per NM */
-  float calculateAltPerDistanceFactor();
-
   atools::geo::Rect boundingRect;
   /* Nautical miles not including missed approach */
   float totalDistance = 0.f;

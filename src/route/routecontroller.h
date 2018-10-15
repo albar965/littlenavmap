@@ -52,6 +52,7 @@ class RouteFinder;
 class FlightplanEntryBuilder;
 class SymbolPainter;
 class AirportQuery;
+class UnitStringTool;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -76,7 +77,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(atools::fs::pln::Flightplan flightplan,
-                      const QString& filename, bool quiet, bool changed, bool adjustAltitude, float speedKts);
+                      const QString& filename, bool quiet, bool changed, bool adjustAltitude);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Use -1 for insertBefore to append.
@@ -105,8 +106,6 @@ public:
   {
     return route;
   }
-
-  float getSpinBoxSpeedKts() const;
 
   /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
   void getSelectedRouteLegs(QList<int>& selLegIndexes) const;
@@ -227,6 +226,8 @@ public:
 
   bool hasSelection();
 
+  void aircraftPerformanceChanged();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -310,7 +311,6 @@ private:
 
   void routeAltChanged();
   void routeAltChangedDelayed();
-  void routeSpeedChanged();
 
   void routeTypeChanged();
 
@@ -320,7 +320,7 @@ private:
                               const QString& commandName,
                               bool fetchAirways, bool useSetAltitude, int fromIndex, int toIndex);
 
-  void updateModelRouteTime();
+  void updateModelRouteTimeFuel();
 
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
@@ -346,8 +346,6 @@ private:
   QString buildFlightplanLabel2() const;
 
   void updateTableHeaders();
-  void updateSpinboxSuffices();
-  float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
   void highlightProcedureItems();
   void loadProceduresFromFlightplan(bool quiet);
@@ -368,6 +366,8 @@ private:
   void contextMenu(const QPoint& pos);
 
   QString procedureLegText(const RouteLeg& leg);
+
+  void updateUnits();
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -416,6 +416,7 @@ private:
 
   // Route table colum headings
   QList<QString> routeColumns;
+  UnitStringTool *units = nullptr;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

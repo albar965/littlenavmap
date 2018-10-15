@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>904</width>
-    <height>623</height>
+    <width>1009</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -375,27 +375,39 @@ A restart is required for the settings to take effect.</string>
           <property name="verticalSpacing">
            <number>2</number>
           </property>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelOptionsGuiInfoText">
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelOptionsGuiSimInfoText">
             <property name="text">
-             <string>Text size for &amp;information dock window:</string>
+             <string>Text size for &amp;simulator aircraft information dock window:</string>
             </property>
             <property name="buddy">
-             <cstring>spinBoxOptionsGuiInfoText</cstring>
+             <cstring>spinBoxOptionsGuiSimInfoText</cstring>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelOptionsGuiSearchText">
-            <property name="text">
-             <string>Text size for &amp;search result tables and procedure view:</string>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
+            <property name="readOnly">
+             <bool>false</bool>
             </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsGuiSearchText</cstring>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
             <property name="readOnly">
              <bool>false</bool>
@@ -417,7 +429,7 @@ A restart is required for the settings to take effect.</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
             <property name="readOnly">
              <bool>false</bool>
@@ -438,6 +450,49 @@ A restart is required for the settings to take effect.</string>
              <number>100</number>
             </property>
            </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelOptionsGuiSearchText">
+            <property name="text">
+             <string>Text size for &amp;search result tables and procedure view:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsGuiSearchText</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelOptionsGuiRouteText">
+            <property name="text">
+             <string>Text size for &amp;flight plan table:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsGuiRouteText</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelOptionsGuiInfoText">
+            <property name="text">
+             <string>Text size for &amp;information dock window:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsGuiInfoText</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsGuiRouteText">
@@ -467,28 +522,18 @@ A restart is required for the settings to take effect.</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelOptionsGuiRouteText">
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
             <property name="text">
-             <string>Text size for &amp;flight plan table:</string>
+             <string>Text size for &amp;aircraft performance report:</string>
             </property>
             <property name="buddy">
-             <cstring>spinBoxOptionsGuiRouteText</cstring>
+             <cstring>spinBoxOptionsGuiInfoText</cstring>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelOptionsGuiSimInfoText">
-            <property name="text">
-             <string>Text size for &amp;simulator aircraft information dock window:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsGuiSimInfoText</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
             <property name="readOnly">
              <bool>false</bool>
             </property>
@@ -508,19 +553,6 @@ A restart is required for the settings to take effect.</string>
              <number>100</number>
             </property>
            </widget>
-          </item>
-          <item row="2" column="2">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>
@@ -1796,6 +1828,20 @@ TOC and TOD (also for flight plan):</string>
             </property>
            </widget>
           </item>
+          <item row="13" column="2">
+           <widget class="QCheckBox" name="checkBoxOptionsShowTod">
+            <property name="toolTip">
+             <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
+            </property>
+            <property name="text">
+             <string>Draw &amp;top of descent
+and top of climb</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1848,6 +1894,16 @@ TOC and TOD (also for flight plan):</string>
        <string>Units</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_11">
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelOptionsUnitFuel">
+         <property name="text">
+          <string>&amp;Fuel and Weight:</string>
+         </property>
+         <property name="buddy">
+          <cstring>comboBoxOptionsUnitFuelWeight</cstring>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="labelOptionsUnitSpeed">
          <property name="text">
@@ -1855,6 +1911,44 @@ TOC and TOD (also for flight plan):</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitSpeed</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
+         <item>
+          <property name="text">
+           <string>Feet (ft)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Meter (m)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
+         <item>
+          <property name="text">
+           <string>Feet per Minute (fpm)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Meter per Second (m/s)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="labelOptionsUnitCoords">
+         <property name="text">
+          <string>&amp;Coordinates:</string>
+         </property>
+         <property name="buddy">
+          <cstring>comboBoxOptionsUnitCoords</cstring>
          </property>
         </widget>
        </item>
@@ -1868,6 +1962,39 @@ TOC and TOD (also for flight plan):</string>
          </property>
         </widget>
        </item>
+       <item row="9" column="1">
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelOptionsUnitAlt">
+         <property name="text">
+          <string>&amp;Altitude and elevation:</string>
+         </property>
+         <property name="buddy">
+          <cstring>comboBoxOptionsUnitAlt</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelOptionsUnitDistance">
+         <property name="text">
+          <string>&amp;Distance:</string>
+         </property>
+         <property name="buddy">
+          <cstring>comboBoxOptionsUnitDistance</cstring>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="0">
         <widget class="QLabel" name="labelOptionsUnitVertSpeed">
          <property name="text">
@@ -1876,6 +2003,20 @@ TOC and TOD (also for flight plan):</string>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitVertSpeed</cstring>
          </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
+         <item>
+          <property name="text">
+           <string>US Gallon / Pound (gal / lbs)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Liter / Kilogram (l, kg)</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item row="2" column="1">
@@ -1911,35 +2052,6 @@ TOC and TOD (also for flight plan):</string>
          </item>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
-         <item>
-          <property name="text">
-           <string>Nautical Miles (nm)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Kilometers (km)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Statue Miles (mi)</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="labelOptionsUnitCoords">
-         <property name="text">
-          <string>&amp;Coordinates:</string>
-         </property>
-         <property name="buddy">
-          <cstring>comboBoxOptionsUnitCoords</cstring>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1">
         <widget class="QComboBox" name="comboBoxOptionsUnitSpeed">
          <item>
@@ -1959,52 +2071,36 @@ TOC and TOD (also for flight plan):</string>
          </item>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelOptionsUnitDistance">
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
+         <item>
+          <property name="text">
+           <string>Nautical Miles (nm)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Kilometers (km)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Statue Miles (mi)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>&amp;Distance:</string>
+          <string>A restart is recommended after changing units.</string>
          </property>
-         <property name="buddy">
-          <cstring>comboBoxOptionsUnitDistance</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="labelOptionsUnitAlt">
-         <property name="text">
-          <string>&amp;Altitude and elevation:</string>
-         </property>
-         <property name="buddy">
-          <cstring>comboBoxOptionsUnitAlt</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
-         <item>
-          <property name="text">
-           <string>Feet (ft)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Meter (m)</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
-         <item>
-          <property name="text">
-           <string>Feet per Minute (fpm)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Meter per Second (m/s)</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="2" column="2">
@@ -2020,42 +2116,12 @@ TOC and TOD (also for flight plan):</string>
          </property>
         </spacer>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="labelOptionsUnitFuel">
-         <property name="text">
-          <string>&amp;Fuel and Weight:</string>
-         </property>
-         <property name="buddy">
-          <cstring>comboBoxOptionsUnitFuelWeight</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
-         <item>
-          <property name="text">
-           <string>US Gallon / Pound (gal / lbs)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Liter / Kilogram (l, kg)</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <spacer name="verticalSpacer_8">
+       <item row="7" column="0" colspan="2">
+        <widget class="Line" name="line_8">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -2381,47 +2447,43 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
           <property name="verticalSpacing">
            <number>2</number>
           </property>
-          <item row="5" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBoxOptionsShowTod">
+          <item row="5" column="2">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
             <property name="toolTip">
-             <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
+             <string>The red line value is always rounded up to the next 500 ft.
+Note that this value does not affect flight plan calculation or saving of flight plans.</string>
             </property>
-            <property name="text">
-             <string>Draw top of descent and top of climb points on map and in elevation profile</string>
-            </property>
-            <property name="checked">
+            <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
-            <property name="toolTip">
-             <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
-when transitioning from airport to airway.</string>
+            <property name="suffix">
+             <string> %alt%</string>
             </property>
-            <property name="text">
-             <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
+            <property name="maximum">
+             <number>10000</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>1000</number>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
-            <property name="toolTip">
-             <string>Rounds up flight plan cruise altitude according to selected rule.</string>
-            </property>
-            <property name="text">
-             <string>&amp;Use simplified rule to determine cruise altitude</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QComboBox" name="comboBoxOptionsRouteAltitudeRuleType">
             <property name="toolTip">
              <string>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
@@ -2445,6 +2507,20 @@ South / North: Same as North / South but reverses odd and even.</string>
             </item>
            </widget>
           </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
+            <property name="toolTip">
+             <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
+when transitioning from airport to airway.</string>
+            </property>
+            <property name="text">
+             <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
             <property name="toolTip">
@@ -2460,6 +2536,19 @@ when transitioning from airport to airway.</string>
            </widget>
           </item>
           <item row="3" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
+            <property name="toolTip">
+             <string>Rounds up flight plan cruise altitude according to selected rule.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Use simplified rule to determine cruise altitude</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
             <property name="text">
              <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
@@ -2469,82 +2558,15 @@ when transitioning from airport to airway.</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
-            <property name="toolTip">
-             <string>The red line value is always rounded up to the next 500 ft.
-Note that this value does not affect flight plan calculation or saving of flight plans.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %alt%</string>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-            <property name="value">
-             <number>1000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="labelOptionsRouteTodRule">
-            <property name="text">
-             <string>&amp;Rule of thumb to calculate top of descent:</string>
-            </property>
-            <property name="buddy">
-             <cstring>doubleSpinBoxOptionsRouteTodRule</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsRouteTodRule">
-            <property name="toolTip">
-             <string/>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %dist% per 1000 %alt%</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="minimum">
-             <double>0.200000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>10.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>0.100000000000000</double>
-            </property>
-            <property name="value">
-             <double>3.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <spacer name="horizontalSpacer_6">
+          <item row="4" column="0" colspan="2">
+           <widget class="Line" name="line_7">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+           </widget>
           </item>
-          <item row="4" column="0" colspan="3">
-           <widget class="Line" name="line_7">
+          <item row="2" column="0" colspan="2">
+           <widget class="Line" name="line_9">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -3591,8 +3613,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
-  <tabstop>checkBoxOptionsShowTod</tabstop>
-  <tabstop>doubleSpinBoxOptionsRouteTodRule</tabstop>
   <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
   <tabstop>checkBoxOptionsRouteShortName</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>

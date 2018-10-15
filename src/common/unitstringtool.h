@@ -15,50 +15,46 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_TRAFFICPATTERN_H
-#define LNM_TRAFFICPATTERN_H
+#ifndef LNM_UNITSTRINGTOOL_H
+#define LNM_UNITSTRINGTOOL_H
 
-#include "common/maptypes.h"
+#include <QHash>
 
-#include <QDialog>
+class QWidget;
+class QString;
 
-namespace Ui {
-class TrafficPatternDialog;
-}
-
-class QAbstractButton;
-class UnitStringTool;
-
-class TrafficPatternDialog :
-  public QDialog
+/*
+ * Changes units (%speed%, %dist%) in widget prefix, suffix and texts
+ */
+class UnitStringTool
 {
-  Q_OBJECT
-
 public:
-  explicit TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport);
-  virtual ~TrafficPatternDialog();
+  UnitStringTool();
 
-  void restoreState();
-  void saveState();
+  /* Collect widgets, create text backups and replace unit placeholders */
+  void init(const QList<QWidget *>& widgets, bool fuelAsVolume = false);
 
-  void fillTrafficPattern(map::TrafficPattern& pattern);
+  /* Replace unit placeholders from backup texts. */
+  void update(bool fuelAsVolume = false);
 
 private:
-  Ui::TrafficPatternDialog *ui;
-  void updateWidgets();
-  void updateRunwayLabel(int index);
-  void fillRunwayComboBox();
-  void fillAirportLabel();
-  void buttonBoxClicked(QAbstractButton *button);
+  struct WidgetData
+  {
+    WidgetData(QWidget *w) : widget(w)
+    {
+    }
 
-  QList<map::MapRunway> runways;
-  map::MapAirport airport;
-  QColor color;
+    /* List of backup texts */
+    QStringList texts;
+    QWidget *widget;
+  };
 
-  UnitStringTool *units = nullptr;
+  QList<WidgetData> widgetDataList;
+  void update(WidgetData& widgetData, bool save, bool fuelAsVolume);
 
-  void colorButtonClicked();
-  void updateButtonColor();
+  /* Replace tooltip and status texts */
+  void updateBase(WidgetData& widgetData, bool save, bool fuelAsVolume);
+
 };
 
-#endif // LNM_TRAFFICPATTERN_H
+#endif // LNM_UNITSTRINGTOOL_H

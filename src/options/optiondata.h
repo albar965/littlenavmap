@@ -528,6 +528,12 @@ public:
     return guiInfoTextSize;
   }
 
+  /* Aircraft performance report in flight plan dock */
+  int getGuiPerfReportTextSize() const
+  {
+    return guiPerfReportTextSize;
+  }
+
   /* User aircraft panel text size in percent */
   int getGuiInfoSimSize() const
   {
@@ -714,11 +720,6 @@ public:
     return displaySunShadingDimFactor;
   }
 
-  float getRouteTodRule() const
-  {
-    return routeTodRule;
-  }
-
   int getGuiStyleMapDimming() const
   {
     return guiStyleMapDimming;
@@ -865,6 +866,9 @@ private:
   // ui->spinBoxOptionsGuiInfoText
   int guiInfoTextSize = 100;
 
+  // ui->spinBoxOptionsGuiAircraftPerf
+  int guiPerfReportTextSize = 100;
+
   // ui->spinBoxOptionsGuiSimInfoText
   int guiInfoSimSize = 100;
 
@@ -897,9 +901,6 @@ private:
 
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
-
-  // ui->doubleSpinBoxOptionsRouteTodRuleSuffix
-  float routeTodRule = 3.f;
 
   // comboBoxOptionsUnitDistance
   opts::UnitDist unitDist = opts::DIST_NM;

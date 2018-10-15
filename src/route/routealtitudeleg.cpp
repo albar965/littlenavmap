@@ -54,7 +54,11 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
   out << obj.getIdent()
       << "TOC" << obj.isTopOfClimb()
       << "TOD" << obj.isTopOfDescent()
-      << "valid" << obj.isEmpty()
+      << "speed" << obj.getAverageSpeedKts()
+      << "travel" << obj.getTravelTimeHours()
+      << "fuel" << obj.getFuel()
+      << "missed" << obj.isMissed()
+      << "procedure" << obj.isAnyProcedure()
       << "geometry" << obj.getGeometry() << "NM/ft";
   return out;
 }

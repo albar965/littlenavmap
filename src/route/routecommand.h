@@ -32,7 +32,6 @@ enum RouteCmdType
   DELETE = 0, /* Waypoint(s) deleted in table */
   MOVE = 1, /* Waypoint(s) moved in table */
   ALTITUDE = 2, /* Altitude changed in spin box */
-  SPEED = 3, /* Speed changed in spin box */
   REVERSE = 4 /* Route reverse action */
 };
 

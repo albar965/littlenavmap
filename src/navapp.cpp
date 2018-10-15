@@ -40,6 +40,7 @@
 #include "gui/stylehandler.h"
 #include "weather/weatherreporter.h"
 #include "fs/weather/metar.h"
+#include "perf/aircraftperfcontroller.h"
 
 #include "ui_mainwindow.h"
 
@@ -70,6 +71,7 @@ atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
+AircraftPerfController *NavApp::aircraftPerfController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
 StyleHandler *NavApp::styleHandler = nullptr;
 
@@ -127,6 +129,8 @@ void NavApp::init(MainWindow *mainWindowParam)
   onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
   onlinedataController->initQueries();
 
+  aircraftPerfController = new AircraftPerfController(mainWindow);
+
   mapQuery = new MapQuery(mainWindow, databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
                           databaseManager->getDatabaseUser());
   mapQuery->initQueries();
@@ -180,6 +184,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete onlinedataController";
   delete onlinedataController;
   onlinedataController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete aircraftPerfController";
+  delete aircraftPerfController;
+  aircraftPerfController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete updateHandler";
   delete updateHandler;
@@ -391,14 +399,14 @@ Route& NavApp::getRoute()
   return mainWindow->getRouteController()->getRoute();
 }
 
-const RouteAltitude& NavApp::getRouteAltitudeLegs()
+const RouteAltitude& NavApp::getAltitudeLegs()
 {
   return mainWindow->getRouteController()->getRoute().getAltitudeLegs();
 }
 
-float NavApp::getSpeedKts()
+float NavApp::getRouteCruiseSpeedKts()
 {
-  return mainWindow->getRouteController()->getSpinBoxSpeedKts();
+  return aircraftPerfController->getRouteCruiseSpeedKts();
 }
 
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
@@ -484,6 +492,16 @@ UserdataController *NavApp::getUserdataController()
 OnlinedataController *NavApp::getOnlinedataController()
 {
   return onlinedataController;
+}
+
+AircraftPerfController *NavApp::getAircraftPerfController()
+{
+  return aircraftPerfController;
+}
+
+const atools::fs::perf::AircraftPerf *NavApp::getAircraftPerformance()
+{
+  return aircraftPerfController->getAircraftPerformance();
 }
 
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()

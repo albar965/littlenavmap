@@ -2831,9 +2831,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     else
       html.row2(tr("Wind Direction and Speed:"), tr("None"));
 
-    float diffRad = atools::geo::toRadians(windDir - userAircaft->getHeadingDegMag());
-    float headWind = windSpeed * std::cos(diffRad);
-    float crossWind = windSpeed * std::sin(diffRad);
+    // Head/tail and crosswind =================================================
+    float headWind = 0.f, crossWind = 0.f;
+    atools::geo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircaft->getHeadingDegMag());
 
     if(!less)
     {

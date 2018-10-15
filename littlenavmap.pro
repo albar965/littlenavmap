@@ -245,7 +245,10 @@ SOURCES += src/main.cpp\
     src/profile/profilelabelwidget.cpp \
     src/route/routealtitude.cpp \
     src/route/routealtitudeleg.cpp \
-    src/common/jumpback.cpp
+    src/common/jumpback.cpp \
+    src/perf/aircraftperfdialog.cpp \
+    src/perf/aircraftperfcontroller.cpp \
+    src/common/unitstringtool.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -357,7 +360,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/profile/profilelabelwidget.h \
     src/route/routealtitude.h \
     src/route/routealtitudeleg.h \
-    src/common/jumpback.h
+    src/common/jumpback.h \
+    src/perf/aircraftperfdialog.h \
+    src/perf/aircraftperfcontroller.h \
+    src/common/unitstringtool.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -372,7 +378,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/userdata/userdatadialog.ui \
     src/userdata/userdataexportdialog.ui \
     src/gui/timedialog.ui \
-    src/gui/trafficpatterndialog.ui
+    src/gui/trafficpatterndialog.ui \
+    src/perf/aircraftperfdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

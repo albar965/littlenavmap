@@ -173,6 +173,12 @@ const QLatin1Literal SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient
 const QLatin1Literal SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET("SearchPaneOnlineCenter/WidgetView");
 const QLatin1Literal SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET("SearchPaneOnlineServer/WidgetView");
 
+const QLatin1Literal AIRCRAFT_PERF_FILENAME("AircraftPerformance/Filename");
+const QLatin1Literal AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
+const QLatin1Literal AIRCRAFT_PERF_FILENAMESRECENT("AircraftPerformance/FilenamesRecent");
+const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG("AircraftPerformance/EditDialog");
+const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG_SIZE("AircraftPerformance/EditDialogSize");
+
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");
 const QLatin1Literal SETTINGS_MAPQUERY("Settings/MapQuery");
@@ -255,6 +261,7 @@ const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml)");
+const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
 #else
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
@@ -280,6 +287,7 @@ const QLatin1Literal FILE_PATTERN_USERDATA_CSV("(*.csv *.Csv *.CSV)");
 const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml *.Xml *.XML)");
+const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf *.LNMPERF *.Lnmperf *.LNMperf)");
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 

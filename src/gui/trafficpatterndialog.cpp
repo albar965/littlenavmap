@@ -26,8 +26,9 @@
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 #include "navapp.h"
-#include "common/unit.h"
 #include "gui/helphandler.h"
+#include "common/unitstringtool.h"
+#include "common/unit.h"
 
 #include "ui_trafficpatterndialog.h"
 
@@ -43,12 +44,6 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
   ui->setupUi(this);
 
-  doubleSpinBoxTrafficPatternBaseDistanceSuffix = ui->doubleSpinBoxTrafficPatternBaseDistance->suffix();
-  doubleSpinBoxDownwindDistanceSuffix = ui->doubleSpinBoxDownwindDistance->suffix();
-  spinBoxTrafficPatternAltitudeSuffix = ui->spinBoxTrafficPatternAltitude->suffix();
-
-  updateWidgetUnits();
-
   fillRunwayComboBox();
   fillAirportLabel();
 
@@ -59,10 +54,18 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
   connect(ui->pushButtonTrafficPatternColor, &QPushButton::clicked, this, &TrafficPatternDialog::colorButtonClicked);
 
   restoreState();
+
+  units = new UnitStringTool();
+  units->init({
+    ui->doubleSpinBoxTrafficPatternBaseDistance,
+    ui->doubleSpinBoxDownwindDistance,
+    ui->spinBoxTrafficPatternAltitude
+  });
 }
 
 TrafficPatternDialog::~TrafficPatternDialog()
 {
+  delete units;
   delete ui;
 }
 
@@ -171,14 +174,6 @@ void TrafficPatternDialog::colorButtonClicked()
 void TrafficPatternDialog::updateButtonColor()
 {
   atools::gui::util::changeWidgetColor(ui->pushButtonTrafficPatternColor, color);
-}
-
-void TrafficPatternDialog::updateWidgetUnits()
-{
-  ui->doubleSpinBoxTrafficPatternBaseDistance->
-  setSuffix(Unit::replacePlaceholders(doubleSpinBoxTrafficPatternBaseDistanceSuffix));
-  ui->doubleSpinBoxDownwindDistance->setSuffix(Unit::replacePlaceholders(doubleSpinBoxDownwindDistanceSuffix));
-  ui->spinBoxTrafficPatternAltitude->setSuffix(Unit::replacePlaceholders(spinBoxTrafficPatternAltitudeSuffix));
 }
 
 void TrafficPatternDialog::updateRunwayLabel(int index)

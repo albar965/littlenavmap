@@ -33,6 +33,7 @@ class QCheckBox;
 class QRadioButton;
 class RangeRingValidator;
 class QTreeWidgetItem;
+class UnitStringTool;
 
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
@@ -151,9 +152,7 @@ private:
   QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
   QHash<opts::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
 
-  QString doubleSpinBoxOptionsMapZoomShowMapSuffix, doubleSpinBoxOptionsMapZoomShowMapMenuSuffix,
-          spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText,
-          doubleSpinBoxOptionsRouteTodRuleSuffix;
+  UnitStringTool *units = nullptr;
 
 };
 

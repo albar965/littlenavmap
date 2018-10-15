@@ -50,8 +50,13 @@ public:
     return value / func(1.f);
   }
 
-  static QString replacePlaceholders(const QString& text, QString& origtext);
-  static QString replacePlaceholders(const QString& text);
+  static inline float rev(float value, std::function<float(float value, bool fuelAsVolume)> func, bool fuelAsVolume)
+  {
+    return value / func(1.f, fuelAsVolume);
+  }
+
+  static QString replacePlaceholders(const QString& text, QString& origtext, bool fuelAsVolume = false);
+  static QString replacePlaceholders(const QString& text, bool fuelAsVolume = false);
 
   /* Read all unit names (Meter, Nm, ...) in the methods as "from" values */
 
@@ -87,18 +92,28 @@ public:
   static float altMeterF(float value);
   static float altFeetF(float value);
 
-  /* Volume: Returns either gal or l */
+  /* Volume: Returns either gal or l for fuel*/
   static QString volGallon(float value, bool addUnit = true);
   static float volGallonF(float value);
 
-  /* Weight: Returns either lbs or kg */
+  static QString volLiter(float value, bool addUnit = true);
+  static float volLiterF(float value);
+
+  /* Weight: Returns either lbs or kg for fuel */
   static QString weightLbs(float value, bool addUnit = true);
   static float weightLbsF(float value);
+  static QString weightKg(float value, bool addUnit = true);
+  static float weightKgF(float value);
 
   static QString ffGallon(float value, bool addUnit = true);
   static float ffGallonF(float value);
   static QString ffLbs(float value, bool addUnit = true);
   static float ffLbsF(float value);
+
+  static QString fuelLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
+  static float fuelLbsGallonF(float value, bool fuelAsVolume = false);
+  static QString fuelKgLiter(float value, bool addUnit = true, bool fuelAsVolume = false);
+  static float fuelKgLiterF(float value, bool fuelAsVolume = false);
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);

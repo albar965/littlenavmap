@@ -25,6 +25,14 @@
 #include <QFutureWatcher>
 #include <QWidget>
 
+namespace atools {
+namespace fs {
+namespace perf {
+class AircraftPerf;
+}
+}
+}
+
 namespace Marble {
 class ElevationModel;
 class GeoDataLineString;
@@ -127,6 +135,8 @@ public:
 
   /* From center button */
   void jumpBackToAircraftCancel();
+
+  void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf* perf);
 
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.

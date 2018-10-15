@@ -68,6 +68,8 @@
 #include "query/airspacequery.h"
 #include "gui/timedialog.h"
 #include "util/version.h"
+#include "perf/aircraftperfcontroller.h"
+#include "fs/perf/aircraftperf.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -247,6 +249,7 @@ MainWindow::MainWindow()
 
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
+    NavApp::getAircraftPerfController()->connectAllSlots();
 
     // Add user defined points toolbar button and submenu items
     NavApp::getUserdataController()->addToolbarButton();
@@ -760,6 +763,8 @@ void MainWindow::connectAllSlots()
           NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
 
   // Style handler ===================================================================
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
@@ -768,6 +773,18 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
+
+  // Aircraft performance signals =======================================================
+  connect(NavApp::getAircraftPerfController(), &AircraftPerfController::aircraftPerformanceChanged,
+          routeController, &RouteController::aircraftPerformanceChanged);
+
+  connect(routeController, &RouteController::routeChanged,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::routeChanged);
+
+  connect(routeController, &RouteController::routeAltitudeChanged,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapWidget::showRect);
@@ -1635,6 +1652,15 @@ void MainWindow::updateWindowTitle()
   else if(routeController->hasChanged())
     newTitle += tr(" - *");
 
+  // Add a star to the flight plan tab if changed
+  if(routeController->hasChanged())
+  {
+    if(!ui->tabWidgetRoute->tabText(0).endsWith(tr(" *")))
+      ui->tabWidgetRoute->setTabText(0, ui->tabWidgetRoute->tabText(0) + tr(" *"));
+  }
+  else
+    ui->tabWidgetRoute->setTabText(0, ui->tabWidgetRoute->tabText(0).replace(tr(" *"), QString()));
+
   setWindowTitle(newTitle);
 }
 
@@ -1686,8 +1712,7 @@ void MainWindow::routeNewFromString()
       {
         routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(),
                                         true /*quiet*/, true /*changed*/,
-                                        !routeStringDialog.isAltitudeIncluded(), /*adjust alt*/
-                                        routeStringDialog.getSpeedKts());
+                                        !routeStringDialog.isAltitudeIncluded() /*adjust alt*/);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
         setStatusMessage(tr("Created new flight plan."));
@@ -1997,7 +2022,7 @@ bool MainWindow::openInSkyVector()
 
   QString route =
     RouteString::createStringForRoute(NavApp::getRoute(),
-                                      NavApp::getSpeedKts(),
+                                      NavApp::getRouteCruiseSpeedKts(),
                                       rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
   HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
@@ -2704,6 +2729,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "userdataControlle";
   NavApp::getUserdataController()->restoreState();
 
+  qDebug() << "aircraftPerfController";
+  NavApp::getAircraftPerfController()->restoreState();
+
   qDebug() << "routeController";
   routeController->restoreState();
 
@@ -2780,9 +2808,13 @@ void MainWindow::saveStateMain()
   if(mapWidget != nullptr)
     mapWidget->saveState();
 
-  qDebug() << "mapWidget";
+  qDebug() << "userDataController";
   if(NavApp::getUserdataController() != nullptr)
     NavApp::getUserdataController()->saveState();
+
+  qDebug() << "aircraftPerfController";
+  if(NavApp::getAircraftPerfController() != nullptr)
+    NavApp::getAircraftPerfController()->saveState();
 
   qDebug() << "routeController";
   if(routeController != nullptr)
@@ -2885,27 +2917,35 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
   // Catch all close events like Ctrl-Q or Menu/Exit or clicking on the
   // close button on the window frame
-  qDebug() << "closeEvent";
+  qDebug() << Q_FUNC_INFO;
 
-  if(routeController != nullptr)
+  if(routeController->hasChanged())
   {
-    if(routeController->hasChanged())
+    if(!routeCheckForChanges())
     {
-      if(!routeCheckForChanges())
-        event->ignore();
-    }
-    else
-    {
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT,
-                                              tr("Really Quit?"),
-                                              tr("Do not &show this dialog again."),
-                                              QMessageBox::Yes | QMessageBox::No,
-                                              QMessageBox::No, QMessageBox::Yes);
-
-      if(result != QMessageBox::Yes)
-        event->ignore();
+      event->ignore();
+      return;
     }
   }
+
+  if(NavApp::getAircraftPerfController()->hasChanged())
+  {
+    if(!NavApp::getAircraftPerfController()->checkForChanges())
+    {
+      event->ignore();
+      return;
+    }
+  }
+
+  int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT,
+                                          tr("Really Quit?"),
+                                          tr("Do not &show this dialog again."),
+                                          QMessageBox::Yes | QMessageBox::No,
+                                          QMessageBox::No, QMessageBox::Yes);
+
+  if(result != QMessageBox::Yes)
+    event->ignore();
+
   saveStateMain();
 }
 
@@ -3177,7 +3217,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
       // accept if file exists, is readable and matches the supported extensions
       QFileInfo file(url.toLocalFile());
       if(file.exists() && file.isReadable() && file.isFile() &&
-         atools::fs::pln::FlightplanIO::getAcceptedFlightPlanExtensions().contains(file.suffix().toLower()))
+         getAcceptedFileExtensions().contains(file.suffix().toLower()))
       {
         qDebug() << Q_FUNC_INFO << "accepting" << url;
         event->acceptProposedAction();
@@ -3192,9 +3232,22 @@ void MainWindow::dropEvent(QDropEvent *event)
 {
   if(event->mimeData()->urls().size() == 1)
   {
-    QString fileName = event->mimeData()->urls().first().toLocalFile();
-    qDebug() << Q_FUNC_INFO << "Dropped file:" << fileName;
+    QString filepath = event->mimeData()->urls().first().toLocalFile();
+    qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
-    routeOpenFile(fileName);
+    if(QFileInfo(filepath).suffix().toLower() == "lnmperf")
+      // Load aircraft performance file
+      NavApp::getAircraftPerfController()->loadFile(filepath);
+    else
+      // Load flight plan
+      routeOpenFile(filepath);
   }
+}
+
+QStringList MainWindow::getAcceptedFileExtensions()
+{
+  QStringList extensions;
+  extensions.append(atools::fs::pln::FlightplanIO::getAcceptedFlightPlanExtensions());
+  extensions.append("lnmperf");
+  return extensions;
 }

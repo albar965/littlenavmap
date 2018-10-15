@@ -29,6 +29,7 @@
 #include "gui/helphandler.h"
 #include "userdata/userdataicons.h"
 #include "gui/widgetstate.h"
+#include "common/unitstringtool.h"
 
 #include <QPushButton>
 #include <QDateTime>
@@ -68,8 +69,11 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   }
 
   // Update units
-  ui->spinBoxUserdataAltitude->setSuffix(Unit::replacePlaceholders(ui->spinBoxUserdataAltitude->suffix()));
-  ui->spinBoxUserdataVisible->setSuffix(Unit::replacePlaceholders(ui->spinBoxUserdataVisible->suffix()));
+  units = new UnitStringTool();
+  units->init({
+    ui->spinBoxUserdataAltitude,
+    ui->spinBoxUserdataVisible
+  });
 
   // Show checkboxes when editing more than one entry
   ui->checkBoxUserdataAltitude->setVisible(showCheckbox);
@@ -121,6 +125,7 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
 
 UserdataDialog::~UserdataDialog()
 {
+  delete units;
   delete ui;
   delete record;
 }

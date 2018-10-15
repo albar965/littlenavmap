@@ -279,6 +279,9 @@ private:
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
 
+  /* Get all file extensions accepted by the drag and drop handler */
+  QStringList getAcceptedFileExtensions();
+
   /* Original unchanged window title */
   QString mainWindowTitle;
   SearchController *searchController = nullptr;

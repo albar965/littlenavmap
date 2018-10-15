@@ -1198,6 +1198,16 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
   updateLabel();
 }
 
+void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf)
+{
+  Q_UNUSED(perf);
+
+  updateScreenCoords();
+  scrollArea->routeChanged(false);
+  updateErrorMessages();
+  updateLabel();
+}
+
 void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
 {
   if(!widgetVisible || databaseLoadStatus)

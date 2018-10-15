@@ -26,6 +26,7 @@
 #include "common/constants.h"
 #include "fs/db/databasemeta.h"
 #include "common/formatter.h"
+#include "fs/perf/aircraftperf.h"
 #include "search/proceduresearch.h"
 #include "common/unit.h"
 #include "exception.h"
@@ -46,6 +47,7 @@
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "atools.h"
+#include "routealtitude.h"
 #include "routeexport.h"
 #include "route/userwaypointdialog.h"
 #include "route/flightplanentrybuilder.h"
@@ -55,6 +57,8 @@
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "perf/aircraftperfcontroller.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -82,6 +86,7 @@ enum RouteColumns
   REMAINING_DISTANCE,
   LEG_TIME,
   ETA,
+  FUEL,
   REMARKS,
   LAST_COLUMN = REMARKS
 };
@@ -115,9 +120,17 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Remaining\n%dist%"),
                                  QObject::tr("Leg Time\nhh:mm"),
                                  QObject::tr("ETA\nhh:mm"),
+                                 QObject::tr("Fuel Rem.\n%fuel%"),
                                  QObject::tr("Remarks")});
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
+
+  // Update units
+  units = new UnitStringTool();
+  units->init({
+    NavApp::getMainUi()->spinBoxRouteAlt,
+    NavApp::getMainUi()->spinBoxAircraftPerformanceWindSpeed
+  });
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -158,9 +171,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   ui->menuRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
   ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);
-
-  connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &RouteController::routeSpeedChanged);
 
   connect(ui->spinBoxRouteAlt, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &RouteController::routeAltChanged);
@@ -225,13 +235,12 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearSelection);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
-
-  updateSpinboxSuffices();
 }
 
 RouteController::~RouteController()
 {
   routeAltDelayTimer.stop();
+  delete units;
   delete entryBuilder;
   delete model;
   delete undoStack;
@@ -340,7 +349,8 @@ void RouteController::routeStringToClipboard() const
   qDebug() << Q_FUNC_INFO;
 
   QString str = RouteString::createStringForRoute(route,
-                                                  getSpinBoxSpeedKts(), RouteStringDialog::getOptionsFromSettings());
+                                                  NavApp::getRouteCruiseSpeedKts(),
+                                                  RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -349,25 +359,24 @@ void RouteController::routeStringToClipboard() const
   NavApp::setStatusMessage(QString(tr("Flight plan string to clipboard.")));
 }
 
-/* Spin box speed has changed value */
-void RouteController::routeSpeedChanged()
+void RouteController::aircraftPerformanceChanged()
 {
+  qDebug() << Q_FUNC_INFO;
   if(!route.isEmpty())
   {
-    RouteCommand *undoCommand = nullptr;
-
-    // if(route.getFlightplan().canSaveSpeed())
-    undoCommand = preChange(tr("Change Speed"), rctype::SPEED);
-
     // Get type, speed and cruise altitude from widgets
+    updateTableHeaders(); // Update lbs/gal for fuel
     updateFlightplanFromWidgets();
+    route.updateLegAltitudes();
 
     updateWindowLabel();
-    updateModelRouteTime();
-    postChange(undoCommand);
+    updateModelRouteTimeFuel();
+
+    highlightProcedureItems();
+    highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
     NavApp::updateWindowTitle();
-    emit routeChanged(false);
+    emit routeChanged(true);
   }
 }
 
@@ -393,6 +402,9 @@ void RouteController::routeAltChanged()
 void RouteController::routeAltChangedDelayed()
 {
   route.updateLegAltitudes();
+
+  // Update performance
+  updateModelRouteTimeFuel();
 
   // Delay change to avoid hanging spin box when profile updates
   emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
@@ -454,8 +466,10 @@ void RouteController::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType,
-                                                  ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->comboBoxRouteType,
+                                                  ui->spinBoxRouteAlt,
+                                                  ui->actionRouteFollowSelection,
+                                                  ui->tabWidgetRoute});
 
   atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
 }
@@ -464,8 +478,11 @@ void RouteController::updateTableHeaders()
 {
   QList<QString> routeHeaders(routeColumns);
 
+  const atools::fs::perf::AircraftPerf *perf = NavApp::getAircraftPerformance();
+  bool fuelAsVol = perf != nullptr ? perf->getFuelUnit() == atools::fs::perf::VOLUME : false;
+
   for(QString& str : routeHeaders)
-    str = Unit::replacePlaceholders(str);
+    str = Unit::replacePlaceholders(str, fuelAsVol);
 
   model->setHorizontalHeaderLabels(routeHeaders);
 }
@@ -476,8 +493,8 @@ void RouteController::restoreState()
   updateTableHeaders();
 
   atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
-  state.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt,
-                 ui->actionRouteFollowSelection});
+  state.restore({view, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection,
+                 ui->tabWidgetRoute});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {
@@ -512,11 +529,8 @@ void RouteController::restoreState()
 
   if(route.isEmpty())
     updateFlightplanFromWidgets();
-}
 
-float RouteController::getSpinBoxSpeedKts() const
-{
-  return Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+  units->update();
 }
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
@@ -552,7 +566,7 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, const QString& filename,
-                                     bool quiet, bool changed, bool adjustAltitude, float speedKts)
+                                     bool quiet, bool changed, bool adjustAltitude)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -635,11 +649,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   fileDestination = flightplan.getDestinationIdent();
   fileIfrVfr = flightplan.getFlightplanType();
 
-  if(!(speedKts > 0.f))
-    speedKts = static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value());
-
-  route.getFlightplan().getProperties().insert(pln::SPEED, QString::number(speedKts, 'f', 4));
-
   route.createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
@@ -668,13 +677,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
                                                         "primary runway of the departure airport."),
                                                      tr("Do not &show this dialog again."));
     }
-  }
-
-  if(speedKts > 0.f)
-  {
-    QSignalBlocker blocker(NavApp::getMainUi()->spinBoxRouteSpeed);
-    Q_UNUSED(blocker);
-    NavApp::getMainUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
   }
 
   updateTableModel();
@@ -732,8 +734,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     // Convert altitude to local unit
     newFlightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
 
-    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/,
-                   newFlightplan.getProperties().value(pln::SPEED).toFloat());
+    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/);
   }
   catch(atools::Exception& e)
   {
@@ -925,7 +926,6 @@ bool RouteController::saveFlightplan(bool cleanExport)
       atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
 
     QHash<QString, QString>& properties = flightplan.getProperties();
-    properties.insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 
     properties.insert(pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
     properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
@@ -1936,19 +1936,17 @@ void RouteController::styleChanged()
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
-  route.updateLegAltitudes(); // Potential change of descent rule
   updateIcons();
   updateTableHeaders();
   updateTableModel();
 
-  updateSpinboxSuffices();
+  updateUnits();
   view->update();
 }
 
-void RouteController::updateSpinboxSuffices()
+void RouteController::updateUnits()
 {
-  NavApp::getMainUi()->spinBoxRouteAlt->setSuffix(" " + Unit::getUnitAltStr());
-  NavApp::getMainUi()->spinBoxRouteSpeed->setSuffix(" " + Unit::getUnitSpeedStr());
+  units->update();
 }
 
 bool RouteController::hasChanged() const
@@ -2747,8 +2745,6 @@ void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
   flightplan.setFlightplanType(ui->comboBoxRouteType->currentIndex() ==
                                0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
-
-  flightplan.getProperties().insert(pln::SPEED, QString::number(getSpinBoxSpeedKts(), 'f', 4));
 }
 
 QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
@@ -2947,7 +2943,7 @@ void RouteController::updateTableModel()
     row++;
   }
 
-  updateModelRouteTime();
+  updateModelRouteTimeFuel();
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -2958,17 +2954,6 @@ void RouteController::updateTableModel()
       QSignalBlocker blocker(ui->spinBoxRouteAlt);
       Q_UNUSED(blocker);
       ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
-    }
-
-    {
-      QSignalBlocker blocker(ui->spinBoxRouteSpeed);
-      Q_UNUSED(blocker);
-      if(flightplan.getProperties().contains(pln::SPEED))
-      {
-        float speed = flightplan.getProperties().value(pln::SPEED).toFloat();
-        if(speed > 0.f)
-          ui->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speed)));
-      }
     }
 
     { // Set combo box and block signals to avoid recursive call
@@ -3018,31 +3003,72 @@ QString RouteController::procedureLegText(const RouteLeg& leg)
 }
 
 /* Update travel times in table view model after speed change */
-void RouteController::updateModelRouteTime()
+void RouteController::updateModelRouteTimeFuel()
 {
+  const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
+  if(altitudeLegs.isEmpty())
+    return;
+
   int row = 0;
   float cumulatedDistance = 0.f;
-  for(const RouteLeg& leg : route)
+  float cumulatedTravelTime = 0.f;
+  const atools::fs::perf::AircraftPerf *perf = NavApp::getAircraftPerformance();
+  float totalFuel = altitudeLegs.getTripFuel();
+
+  if(perf != nullptr)
   {
-    if(!route.isAirportAfterArrival(row))
+    totalFuel *= perf->getContingencyFuelFactor();
+    totalFuel += perf->getExtraFuel() + perf->getReserveFuel();
+  }
+
+  int widthLegTime = view->columnWidth(rc::LEG_TIME);
+  int widthEta = view->columnWidth(rc::ETA);
+  int widthFuel = view->columnWidth(rc::FUEL);
+
+  for(int i = 0; i < route.size(); i++)
+  {
+    if(perf == nullptr)
     {
-      if(row == 0)
+      model->setItem(row, rc::LEG_TIME, new QStandardItem());
+      model->setItem(row, rc::ETA, new QStandardItem());
+      model->setItem(row, rc::FUEL, new QStandardItem());
+    }
+    else if(!route.isAirportAfterArrival(row))
+    {
+      const RouteLeg& leg = route.at(i);
+      float travelTime = altitudeLegs.at(i).getTravelTimeHours();
+      if(row == 0 || !(travelTime < map::INVALID_TIME_VALUE) || leg.getProcedureLeg().isMissed())
         model->setItem(row, rc::LEG_TIME, new QStandardItem());
       else
       {
-        float travelTime = calcTravelTime(leg.getDistanceTo());
-        model->setItem(row, rc::LEG_TIME, new QStandardItem(formatter::formatMinutesHours(travelTime)));
+        QString txt = formatter::formatMinutesHours(travelTime);
+#ifdef DEBUG_INFORMATION
+        txt += " [" + QString::number(travelTime * 3600., 'f', 0) + "]";
+#endif
+        model->setItem(row, rc::LEG_TIME, new QStandardItem(txt));
       }
 
       if(!leg.getProcedureLeg().isMissed())
       {
         cumulatedDistance += leg.getDistanceTo();
-        float eta = calcTravelTime(cumulatedDistance);
-        model->setItem(row, rc::ETA, new QStandardItem(formatter::formatMinutesHours(eta)));
+        cumulatedTravelTime += travelTime;
+        QString txt = formatter::formatMinutesHours(cumulatedTravelTime);
+#ifdef DEBUG_INFORMATION
+        txt += " [" + QString::number(cumulatedTravelTime * 3600., 'f', 0) + "]";
+#endif
+        model->setItem(row, rc::ETA, new QStandardItem(txt));
+
+        totalFuel -= altitudeLegs.at(i).getFuel();
+        txt = Unit::fuelLbsGallon(totalFuel, false);
+        model->setItem(row, rc::FUEL, new QStandardItem(txt));
       }
     }
     row++;
   }
+
+  view->setColumnWidth(rc::LEG_TIME, widthLegTime);
+  view->setColumnWidth(rc::ETA, widthEta);
+  view->setColumnWidth(rc::FUEL, widthFuel);
 }
 
 void RouteController::disconnectedFromSimulator()
@@ -3175,7 +3201,12 @@ void RouteController::highlightProcedureItems()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  NavApp::getMainUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2());
+  QString text = buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2();
+  if(!NavApp::getAircraftPerfController()->hasAircraftPerformance())
+    text += tr("  <span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
+               "No aircraft performance loaded.</span>");
+
+  NavApp::getMainUi()->labelRouteInfo->setText(text);
 }
 
 QString RouteController::buildFlightplanLabel(bool html) const
@@ -3399,24 +3430,18 @@ QString RouteController::buildFlightplanLabel2() const
         break;
     }
 
-    float totalDistance = route.getTotalDistance();
-
-    return tr("%1, %2, %3").
-           arg(Unit::distNm(totalDistance)).
-           arg(formatter::formatMinutesHoursLong(calcTravelTime(route.getTotalDistance()))).
-           arg(routeType);
+    if(NavApp::getAircraftPerfController()->hasAircraftPerformance())
+      return tr("%1, %2, %3").
+             arg(Unit::distNm(route.getTotalDistance())).
+             arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours())).
+             arg(routeType);
+    else
+      return tr("%1, %2").
+             arg(Unit::distNm(route.getTotalDistance())).
+             arg(routeType);
   }
   else
     return QString();
-}
-
-float RouteController::calcTravelTime(float distance) const
-{
-  float travelTime = 0.f;
-  float speedKts = Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
-  if(speedKts > 0.f)
-    travelTime = distance / speedKts;
-  return travelTime;
 }
 
 /* Reset route and clear undo stack (new route) */

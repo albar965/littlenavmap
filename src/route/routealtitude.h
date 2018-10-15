@@ -20,11 +20,24 @@
 
 #include "route/routealtitudeleg.h"
 
+namespace atools {
+namespace geo {
+class LineString;
+}
+namespace fs {
+namespace perf {
+class AircraftPerf;
+}
+}
+}
+
 class Route;
 
 /*
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
+ *
+ * Also contains methods to calculate trip time and fuel consumption base on AircraftPerf information.
  *
  * Uses the route object for calculation and caches all values.
  */
@@ -37,11 +50,18 @@ public:
   ~RouteAltitude();
 
   /* Calculate altitudes for all legs. TOD and TOC are INVALID_DISTANCE_VALUE if these could not be calculated which
-   * can happen for short routes with too high cruise altitude. */
-  void calculate();
+   * can happen for short routes with too high cruise altitude.
+   * Use perf to calculate climb and descent legs
+   */
+  void calculate(const atools::fs::perf::AircraftPerf *perf);
 
-  /* Get interpolated altitude value for the given distance to destination in NM */
+  /* Calculate travelling time and fuel consumption based on given performance object and wind */
+  void calculateTrip(const atools::fs::perf::AircraftPerf *perf, float windDir, float windSpeed);
+
+  /* Get interpolated altitude value in ft for the given distance to destination in NM */
   float getAltitudeForDistance(float distanceToDest) const;
+
+  float getTravelTimeHours() const;
 
   /* Position on the route. EMPTY_POS if it could not be calculated. */
   atools::geo::Pos getTopOfDescentPos() const;
@@ -102,18 +122,6 @@ public:
     return violatesRestrictions;
   }
 
-  /* value is climb in feet per NM.Default is 333. */
-  void setAltitudePerNmClimb(float value)
-  {
-    altitudePerNmClimb = value;
-  }
-
-  /* value is climb in feet per NM. Default is 333. */
-  void setAltitudePerNmDescent(float value)
-  {
-    altitudePerNmDescent = value;
-  }
-
   /* Pull only the needed methods in public space to have control over it and allow only read access */
   using QVector<RouteAltitudeLeg>::const_iterator;
   using QVector<RouteAltitudeLeg>::begin;
@@ -146,7 +154,38 @@ public:
     return legIndexTopOfDescent;
   }
 
+  /* Average ground speed in knots */
+  float getAverageGroundSpeed() const
+  {
+    return averageGroundSpeed;
+  }
+
+  bool isFuelUnitVolume() const;
+
+  /* Route distance in NM */
+  float getTotalDistance() const;
+
+  /* Trip fuel. Does not include reserve, extra, taxi and contingency fuel, Unit depends on performance settings. */
+  float getTripFuel() const
+  {
+    return tripFuel;
+  }
+
+  /* true if there are legs where the headwind is higher than aircraft capabilities */
+  bool hasUnflyableLegs() const
+  {
+    return unflyableLegs;
+  }
+
+  /* Cruising altitude in feet */
+  float getCruiseAltitide() const
+  {
+    return cruiseAltitide;
+  }
+
 private:
+  friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
+
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
   void adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const;
@@ -173,10 +212,10 @@ private:
   void calculateDistances();
 
   /* Calculate altitude and TOD for approach/STAR or no procedures */
-  void calculateArrival();
+  void calculateArrival(const atools::fs::perf::AircraftPerf *perf);
 
   /* Calculate altitude and TOC for SID  or no procedures */
-  void calculateDeparture();
+  void calculateDeparture(const atools::fs::perf::AircraftPerf *perf);
 
   /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
   void calculateApproachIlsAndSlopes();
@@ -191,6 +230,11 @@ private:
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
         distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
+
+  /* Fuel and performance calculation results */
+  float tripFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
+  bool unflyableLegs = false;
+
   /* index in altitude legs */
   int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
       legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
@@ -198,16 +242,12 @@ private:
   const Route *route;
 
   /* Configuration options */
-  bool simplify = false;
+  bool simplify = true;
   bool calcTopOfDescent = true;
   bool calcTopOfClimb = true;
 
   /* Set by calculate */
   bool violatesRestrictions = false;
-
-  /* Climb or descent speed in ft per NM */
-  float altitudePerNmClimb = 333.f;
-  float altitudePerNmDescent = 333.f;
 
   float cruiseAltitide = 0.f;
 
