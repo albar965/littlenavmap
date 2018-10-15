@@ -518,7 +518,7 @@ void MapWidget::historyNext()
     jumpBackToAircraftStart();
 
     // Do not fix zoom - display as is
-    setDistanceToMap(entry.getDistance(), true /* Allow adjust zoom */);
+    setDistanceToMap(entry.getDistance(), false /* Allow adjust zoom */);
     centerPosOnMap(entry.getPos());
     noStoreInHistory = true;
     mainWindow->setStatusMessage(tr("Map position history next."));
@@ -534,7 +534,7 @@ void MapWidget::historyBack()
     jumpBackToAircraftStart();
 
     // Do not fix zoom - display as is
-    setDistanceToMap(entry.getDistance(), true /* Allow adjust zoom */);
+    setDistanceToMap(entry.getDistance(), false /* Allow adjust zoom */);
     centerPosOnMap(entry.getPos());
     noStoreInHistory = true;
     mainWindow->setStatusMessage(tr("Map position history back."));
@@ -942,7 +942,7 @@ void MapWidget::showSavedPosOnStartup()
       qDebug() << "Show Last" << currentPos;
       centerPosOnMap(currentPos.getPos());
       // Do not fix zoom - display as is
-      setDistanceToMap(currentPos.getDistance(), true /* Allow adjust zoom */);
+      setDistanceToMap(currentPos.getDistance(), false /* Allow adjust zoom */);
     }
     else
     {
@@ -1114,14 +1114,14 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
 
 void MapWidget::showHome()
 {
-  qDebug() << "NavMapWidget::showHome" << homePos;
+  qDebug() << Q_FUNC_INFO << homePos;
 
   hideTooltip();
   jumpBackToAircraftStart();
   showAircraft(false);
   if(!atools::almostEqual(homeDistance, 0.))
     // Only center position is valid - Do not fix zoom - display as is
-    setDistanceToMap(homeDistance, true /* Allow adjust zoom */);
+    setDistanceToMap(homeDistance, false /* Allow adjust zoom */);
 
   if(homePos.isValid())
   {
