@@ -376,8 +376,8 @@ void RouteController::aircraftPerformanceChanged()
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
     NavApp::updateWindowTitle();
-    emit routeChanged(true);
   }
+  emit routeChanged(true);
 }
 
 /* Spin box altitude has changed value */
@@ -3407,7 +3407,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
     }
   }
 
-  QString fp(tr("No Flight Plan loaded"));
+  QString fp(tr("No Flight Plan loaded."));
   if(!flightplan.isEmpty())
     fp = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
 

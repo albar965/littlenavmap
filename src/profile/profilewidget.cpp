@@ -184,6 +184,8 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
              )
           {
             // Aircraft position has changed enough
+            updateLabelWidget = true;
+
             lastSimData = simData;
             lastAircraftDistanceFromStart = aircraftDistanceFromStart;
 
@@ -191,7 +193,6 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
             {
               // Scale up to keep the aircraft visible
               updateScreenCoords();
-              updateLabelWidget = true;
             }
 
             // Probably center aircraft on scroll area

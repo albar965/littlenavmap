@@ -1831,7 +1831,7 @@ TOC and TOD (also for flight plan):</string>
           <item row="13" column="2">
            <widget class="QCheckBox" name="checkBoxOptionsShowTod">
             <property name="toolTip">
-             <string>Enable this option to show the top of descent point on the map and in the elevation profile.</string>
+             <string>Enable this option to show the top of descent and top of climb points on the map and in the elevation profile.</string>
             </property>
             <property name="text">
              <string>Draw &amp;top of descent
