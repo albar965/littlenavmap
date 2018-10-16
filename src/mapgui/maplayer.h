@@ -84,6 +84,7 @@ public:
   MapLayer& airportOverviewRunway(bool value = true);
 
   /* Show airport diagram with runways, taxiways, etc. */
+  MapLayer& airportDiagramRunway(bool value = true);
   MapLayer& airportDiagram(bool value = true);
   MapLayer& airportDiagramDetail(bool value = true);
   MapLayer& airportDiagramDetail2(bool value = true);
@@ -215,6 +216,11 @@ public:
   bool isAirportDiagram() const
   {
     return layerAirportDiagram;
+  }
+
+  bool isAirportDiagramRunway() const
+  {
+    return layerAirportDiagramRunway;
   }
 
   bool isAirportDiagramDetail() const
@@ -546,7 +552,7 @@ private:
 
   layer::AirportSource src;
   bool layerAirport = false, layerAirportOverviewRunway = false,
-       layerAirportDiagram = false,
+       layerAirportDiagram = false, layerAirportDiagramRunway = false,
        layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false, layerAirportDiagramDetail3 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachTextAndDetail = false,

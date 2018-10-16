@@ -120,6 +120,12 @@ MapLayer& MapLayer::airportDiagram(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airportDiagramRunway(bool value)
+{
+  layerAirportDiagramRunway = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportDiagramDetail(bool value)
 {
   layerAirportDiagramDetail = value;
