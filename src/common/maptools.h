@@ -56,7 +56,7 @@ float removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
   return closestDist;
 }
 
-/* Sorts elements by distance to a point */
+/* Erase all elements that are farther away than maxDistanceMeter */
 template<typename TYPE>
 void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDistanceMeter)
 {
@@ -74,7 +74,7 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
 
 }
 
-/* Sorts elements by distance to a point */
+/* Erase all elements that are farther away than maxDistanceMeter */
 template<typename TYPE>
 void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxDistanceMeter)
 {

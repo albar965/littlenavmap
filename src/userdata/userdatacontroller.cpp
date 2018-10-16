@@ -336,27 +336,15 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
 {
   if(NavApp::getMainUi()->actionUserdataCreateLogbook->isChecked())
   {
-    QVector<map::MapRunway> runways;
-
-    // Use inflated rectangle for query
-    atools::geo::Rect rect(aircraft.getPosition());
-    rect.inflate(0.5f, 0.5f);
-
-    // Get runways that more or less match the aircraft heading
-    float track = aircraft.getTrackDegTrue();
-    AirportQuery *airportQuery = NavApp::getAirportQuerySim();
-    airportQuery->getRunways(runways, rect, aircraft.getPosition());
-
-    // Get closes runway that matches heading
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
-    airportQuery->getBestRunwayEndAndAirport(runwayEnd, airport, runways, track);
-
-    if(!airport.isValid())
-      qWarning() << Q_FUNC_INFO << "No runways or airports found for takeoff/landing"
-                 << aircraft.getPosition() << track;
-
-    qDebug() << Q_FUNC_INFO << runwayEnd.name << aircraft.getPosition() << track << airport.ident;
+    if(!NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport,
+                                                                   aircraft.getPosition(), aircraft.getTrackDegTrue()))
+    {
+      qWarning() << Q_FUNC_INFO << "No runway found for aircraft"
+                 << aircraft.getPosition() << aircraft.getTrackDegTrue();
+      return;
+    }
 
     QString departureArrivalText = takeoff ? tr("Departure") : tr("Arrival");
     QString runwayText = runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString();

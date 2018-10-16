@@ -398,6 +398,10 @@ Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
 }
+int NavApp::getRouteSize()
+{
+  return mainWindow->getRouteController()->getRoute().size();
+}
 
 const RouteAltitude& NavApp::getAltitudeLegs()
 {

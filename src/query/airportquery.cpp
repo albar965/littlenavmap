@@ -40,6 +40,7 @@ using map::MapHelipad;
 
 /* maximum difference in angle for aircraft to recognize the right runway */
 const static float MAX_HEADING_RUNWAY_DEVIATION = 20.f;
+const static float MAX_RUNWAY_DISTANCE_FT = 5000.f;
 
 AirportQuery::AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool nav)
   : QObject(parent), navdata(nav), db(sqlDb)
@@ -482,23 +483,33 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
 }
 
 void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                              const QVector<map::MapRunway>& runways, float heading)
+                                              const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos,
+                                              float heading)
 {
   if(!runways.isEmpty())
   {
+    map::MapRunway runway;
+    atools::geo::LineDistance result;
+
     // Loop through the list of distance ordered runways from getRunways
     for(const map::MapRunway& rw : runways)
     {
+      Line(rw.primaryPosition, rw.secondaryPosition).distanceMeterToLine(pos, result);
+      if(std::abs(result.distance) > atools::geo::feetToMeter(MAX_RUNWAY_DISTANCE_FT))
+        continue;
+
       map::MapRunwayEnd primaryEnd = getRunwayEndById(rw.primaryEndId);
       map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw.secondaryEndId);
 
       // Check if either primary or secondary end matches by heading
       if(atools::geo::angleInRange(heading,
-                                   atools::geo::normalizeCourse(primaryEnd.heading - MAX_HEADING_RUNWAY_DEVIATION),
-                                   atools::geo::normalizeCourse(primaryEnd.heading + MAX_HEADING_RUNWAY_DEVIATION)))
+                                   atools::geo::normalizeCourse(primaryEnd.heading -
+                                                                MAX_HEADING_RUNWAY_DEVIATION),
+                                   atools::geo::normalizeCourse(primaryEnd.heading +
+                                                                MAX_HEADING_RUNWAY_DEVIATION)))
       {
-        qDebug() << "Found primary" << primaryEnd.name;
         runwayEnd = primaryEnd;
+        runway = rw;
         break;
       }
       else if(atools::geo::angleInRange(heading,
@@ -507,17 +518,20 @@ void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map:
                                         atools::geo::normalizeCourse(secondaryEnd.heading +
                                                                      MAX_HEADING_RUNWAY_DEVIATION)))
       {
-        qDebug() << "Found secondary" << secondaryEnd.name;
         runwayEnd = secondaryEnd;
+        runway = rw;
         break;
       }
     }
 
-    // No runway end found - get at least the nearest airport
-    getAirportById(airport, runways.first().airportId);
-
-    if(!runwayEnd.isValid())
-      qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing";
+    if(runwayEnd.isValid())
+      getAirportById(airport, runway.airportId);
+    else
+    {
+      // No runway end found - get at least the nearest airport
+      getAirportById(airport, runways.first().airportId);
+      runwayEnd = map::MapRunwayEnd();
+    }
   }
 }
 
@@ -549,11 +563,8 @@ void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const atools::ge
     LineDistance result1, result2;
     Line(r1.primaryPosition, r1.secondaryPosition).distanceMeterToLine(pos, result1);
     Line(r2.primaryPosition, r2.secondaryPosition).distanceMeterToLine(pos, result2);
-    return result1.distance < result2.distance;
+    return std::abs(result1.distance) < std::abs(result2.distance);
   });
-
-  if(runways.isEmpty())
-    qWarning() << Q_FUNC_INFO << "No runways found for takeoff/landing at" << pos << "inside" << rect;
 }
 
 const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
@@ -639,6 +650,28 @@ map::MapRunwayEnd AirportQuery::getRunwayEndByName(int airportId, const QString&
     }
   }
   return map::MapRunwayEnd();
+}
+
+bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+                                                   const Pos& pos, float trackTrue)
+{
+  QVector<map::MapRunway> runways;
+
+  // Use inflated rectangle for query
+  atools::geo::Rect rect(pos);
+  rect.inflate(0.5f, 0.5f);
+
+  // Get all runways nearby ordered by distance between pos and runway line
+  getRunways(runways, rect, pos);
+
+  // Get closest runway that matches heading
+  getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue);
+
+  if(!airport.isValid())
+    qWarning() << Q_FUNC_INFO << "No runways or airports found for takeoff/landing";
+
+  qDebug() << Q_FUNC_INFO << airport.ident << runwayEnd.name << pos << trackTrue;
+  return airport.isValid();
 }
 
 /* Compare runways to put betters ones (hard surface, longer) at the end of a list */

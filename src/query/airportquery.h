@@ -112,6 +112,8 @@ public:
   QStringList getRunwayNames(int airportId);
   void getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd getRunwayEndByName(int airportId, const QString& runway);
+  bool getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+                                       const atools::geo::Pos& pos, float trackTrue);
 
   const QList<map::MapApron> *getAprons(int airportId);
 
@@ -129,7 +131,7 @@ public:
   /* Get the best fitting runway end from the given list of runways according to heading.
    *  Only the rearest airport is returned if no runway was found */
   void getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                  const QVector<map::MapRunway>& runways, float heading);
+                                  const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos, float heading);
 
   map::MapRunwayEnd getRunwayEndById(int id);
 

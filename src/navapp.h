@@ -151,6 +151,8 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+  static int getRouteSize();
+
   static const RouteAltitude& getAltitudeLegs();
 
   static float getRouteCruiseSpeedKts();

@@ -1246,6 +1246,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       takeoffLandingTimer.start(TAKEOFF_LANDING_TIMEOUT);
   }
 
+  // map::MapRunwayEnd runwayEnd;
+  // map::MapAirport airport;
+  // NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport,
+  // aircraft.getPosition(), aircraft.getTrackDegTrue());
+
   // Create screen coordinates =============================
   CoordinateConverter conv(viewport());
   bool curPosVisible = false;
