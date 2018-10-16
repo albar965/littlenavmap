@@ -412,11 +412,7 @@ void AircraftPerfController::updateReport()
 
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
     if(altitudeLegs.hasUnflyableLegs())
-    {
-      html.p(tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
-                  "Flight plan has unflyable legs where head wind is larger than cruise speed.</span>"),
-             atools::util::html::NO_ENTITIES);
-    }
+      html.p().error(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).pEnd();
     else
     {
       // Flight data =======================================================

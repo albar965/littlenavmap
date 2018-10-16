@@ -3202,9 +3202,8 @@ void RouteController::highlightProcedureItems()
 void RouteController::updateWindowLabel()
 {
   QString text = buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2();
-  if(!NavApp::getAircraftPerfController()->hasAircraftPerformance())
-    text += tr("  <span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
-               "No aircraft performance loaded.</span>");
+  if(route.size() >= 2 && !NavApp::getAircraftPerfController()->hasAircraftPerformance())
+    text += atools::util::HtmlBuilder().error(tr("No aircraft performance loaded.")).getHtml();
 
   NavApp::getMainUi()->labelRouteInfo->setText(text);
 }
@@ -3375,8 +3374,8 @@ QString RouteController::buildFlightplanLabel(bool html) const
       if(!approachRunway.isEmpty() && !starRunway.isEmpty() && approachRunway != starRunway)
       {
         boldTextFlag << true;
-        procedureText.append(tr("<br/><span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold\">"
-                                  "Runway mismatch: %1 &ne; %2.</span>").arg(starRunway).arg(approachRunway));
+        procedureText.append(atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR %1 ≠ Approach %2.").
+                                                                     arg(starRunway).arg(approachRunway)));
       }
 
       if(html)

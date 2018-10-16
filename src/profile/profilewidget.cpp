@@ -1678,10 +1678,7 @@ void ProfileWidget::updateLabel()
   else
     fixedLabelText.clear();
 
-  QString msg = messages.isEmpty() ? QString() :
-                ("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold\">" +
-                 messages.join(" ") +
-                 "</span><br/>");
+  QString msg = messages.isEmpty() ? QString() : atools::util::HtmlBuilder::errorMessage(messages.join(" ")) + "<br/>";
 
   NavApp::getMainUi()->labelProfileInfo->setText(msg + fixedLabelText + " " + variableLabelText);
 }

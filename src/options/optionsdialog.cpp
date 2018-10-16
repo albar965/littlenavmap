@@ -31,6 +31,7 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 #include "util/updatecheck.h"
+#include "util/htmlbuilder.h"
 #include "common/unitstringtool.h"
 
 #include <QFileInfo>
@@ -52,6 +53,7 @@ const int MAX_RANGE_RINGS = 10;
 
 using atools::settings::Settings;
 using atools::gui::HelpHandler;
+using atools::util::HtmlBuilder;
 
 /* Validates the space separated list of range ring sizes */
 class RangeRingValidator :
@@ -1383,19 +1385,13 @@ void OptionsDialog::updateCacheElevationStates()
     {
       QFileInfo fileinfo(path);
       if(!fileinfo.exists())
-        ui->labelCacheGlobePathState->setText(
-          tr(
-            "<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Directory does not exist.</span>"));
+        ui->labelCacheGlobePathState->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
       else if(!fileinfo.isDir())
-        ui->labelCacheGlobePathState->setText(
-          tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not a directory.</span>"));
+        ui->labelCacheGlobePathState->setText(HtmlBuilder::errorMessage(tr(("Is not a directory."))));
       else if(!NavApp::getElevationProvider()->isGlobeDirectoryValid(path))
-        ui->labelCacheGlobePathState->setText(
-          tr(
-            "<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">No valid GLOBE data found.</span>"));
+        ui->labelCacheGlobePathState->setText(HtmlBuilder::errorMessage(tr("No valid GLOBE data found.")));
       else
-        ui->labelCacheGlobePathState->setText(
-          tr("Directory and files are valid."));
+        ui->labelCacheGlobePathState->setText(tr("Directory and files are valid."));
     }
     else
       ui->labelCacheGlobePathState->setText(tr("No directory selected."));
@@ -1427,14 +1423,13 @@ void OptionsDialog::updateActiveSkyPathStatus()
     QFileInfo fileinfo(path);
     if(!fileinfo.exists())
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">File does not exist.</span>"));
+        HtmlBuilder::errorMessage(tr("File does not exist.")));
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not a file.</span>"));
+        HtmlBuilder::errorMessage(tr("Is not a file.")));
     else if(!WeatherReporter::validateActiveSkyFile(path))
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr(
-          "<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">Is not an Active Sky weather snapshot file.</span>"));
+        HtmlBuilder::errorMessage(tr("Is not an Active Sky weather snapshot file.")));
     else
       ui->labelOptionsWeatherAsnPathState->setText(
         tr("Weather snapshot file is valid. Using this one for all simulators"));

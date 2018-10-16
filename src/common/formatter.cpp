@@ -22,6 +22,7 @@
 #include "atools.h"
 #include "fs/util/coordinates.h"
 #include "unit.h"
+#include "util/htmlbuilder.h"
 #include "geo/pos.h"
 
 #include <QDateTime>
@@ -161,8 +162,7 @@ bool checkCoordinates(QString& message, const QString& text)
   }
   else
     // Show red warning
-    message = QObject::tr("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
-                            "Coordinates are not valid.</span>");
+    message = atools::util::HtmlBuilder::errorMessage(QObject::tr("Coordinates are not valid."));
   return false;
 }
 
