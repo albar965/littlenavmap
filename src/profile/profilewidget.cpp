@@ -25,6 +25,7 @@
 #include "profile/profilelabelwidget.h"
 #include "ui_mainwindow.h"
 #include "common/symbolpainter.h"
+#include "util/htmlbuilder.h"
 #include "route/routecontroller.h"
 #include "route/routealtitude.h"
 #include "common/aircrafttrack.h"
@@ -641,39 +642,41 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Keep margin to left, right and top
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
-  // Fill background sky blue ====================================================
-  QPainter painter(this);
-  painter.setRenderHint(QPainter::Antialiasing);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform);
-  painter.fillRect(X0, 0, rect().width() - X0 * 2, rect().height(), mapcolors::profileSkyColor);
-
   SymbolPainter symPainter;
-
+  QPainter painter(this);
   if(!hasValidRouteForDisplay(route))
   {
     // Nothing to show label =========================
-    symPainter.textBox(&painter, {tr("No Flight Plan")}, QPen(Qt::black),
-                       X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 255);
+    symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QApplication::palette().color(QPalette::Text),
+                       X0 + w / 2, Y0 + h / 2, textatt::BOLD | textatt::CENTER, 0);
     return;
   }
 
-  if(route.getAltitudeLegs().size() != route.size())
+  if(altitudeLegs.size() != route.size())
+  {
     // Do not draw if route altitudes are not updated to avoid invalid indexes
+    qWarning() << Q_FUNC_INFO << "Route altitudes not udpated";
     return;
-
-  // Draw the ground ======================================================
-  painter.setBrush(mapcolors::profileLandColor);
-  painter.setPen(mapcolors::profileLandOutlinePen);
-  painter.drawPolygon(landPolygon);
+  }
 
   // Draw grey vertical lines for waypoints
   int flightplanY = getFlightplanAltY();
   int safeAltY = getMinSafeAltitudeY();
   if(flightplanY == map::INVALID_INDEX_VALUE || safeAltY == map::INVALID_INDEX_VALUE)
   {
-    qWarning() << Q_FUNC_INFO;
+    qWarning() << Q_FUNC_INFO << "No flight plan elevation";
     return;
   }
+
+  // Fill background sky blue ====================================================
+  painter.setRenderHint(QPainter::Antialiasing);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform);
+  painter.fillRect(X0, 0, rect().width() - X0 * 2, rect().height(), mapcolors::profileSkyColor);
+
+  // Draw the ground ======================================================
+  painter.setBrush(mapcolors::profileLandColor);
+  painter.setPen(mapcolors::profileLandOutlinePen);
+  painter.drawPolygon(landPolygon);
 
   int flightplanTextY = flightplanY + 14;
   painter.setPen(mapcolors::profileWaypointLinePen);
@@ -709,9 +712,19 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Get TOD position from active route  ======================================================
 
   // Calculate line y positions ======================================================
+  bool showTodToc = OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD;
   QVector<QPolygon> altLegs; /* Flight plan waypoint screen coordinates. x = distance and y = altitude */
   for(const RouteAltitudeLeg& routeAlt : altitudeLegs)
-    altLegs.append(toScreen(routeAlt.getGeometry()));
+  {
+    QPolygonF geo = routeAlt.getGeometry();
+    if(!showTodToc)
+    {
+      // Set all points to flight plan cruise altitude if no TOD and TOC wanted
+      for(QPointF& pt : geo)
+        pt.setY(flightplanAltFt);
+    }
+    altLegs.append(toScreen(geo));
+  }
 
   // Collect indexes in reverse (painting) order without missed ================
   QVector<int> indexes;
@@ -1636,20 +1649,17 @@ void ProfileWidget::updateErrorMessages()
 {
   // Collect errors from profile calculation
   const RouteAltitude& altitudeLegs = NavApp::getRoute().getAltitudeLegs();
+  messages.clear();
   if(!altitudeLegs.isEmpty())
   {
-    if(!altitudeLegs.isEmpty())
-    {
-      messages.clear();
-      if(altitudeLegs.altRestrictionsViolated())
-        messages << tr("Cannot comply with altitude restrictions.");
-      else if(!(altitudeLegs.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-                altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
-        messages << tr("Cannot calculate top of climb or top of descent.");
+    if(altitudeLegs.altRestrictionsViolated())
+      messages << tr("Cannot comply with altitude restrictions.");
+    else if(!(altitudeLegs.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+              altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
+      messages << tr("Cannot calculate top of climb or top of descent.");
 
-      if(!messages.isEmpty())
-        messages.prepend(tr("Flight Plan is not valid."));
-    }
+    if(!messages.isEmpty())
+      messages.prepend(tr("Flight Plan is not valid."));
   }
 }
 
