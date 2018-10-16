@@ -649,6 +649,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   fileDestination = flightplan.getDestinationIdent();
   fileIfrVfr = flightplan.getFlightplanType();
 
+  assignAircraftPerformance(flightplan);
+
   route.createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
@@ -927,6 +929,7 @@ bool RouteController::saveFlightplan(bool cleanExport)
 
     QHash<QString, QString>& properties = flightplan.getProperties();
 
+    assignAircraftPerformance(flightplan);
     properties.insert(pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
     properties.insert(pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
     properties.insert(pln::AIRAC_CYCLE, NavApp::getDatabaseAiracCycleNav());
@@ -2736,7 +2739,21 @@ void RouteController::routeToFlightPlan()
 /* Copy type and cruise altitude from widgets to flight plan */
 void RouteController::updateFlightplanFromWidgets()
 {
+  assignAircraftPerformance(route.getFlightplan());
   updateFlightplanFromWidgets(route.getFlightplan());
+}
+
+void RouteController::assignAircraftPerformance(Flightplan& flightplan)
+{
+  const atools::fs::perf::AircraftPerf *perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
+
+  if(perf != nullptr)
+  {
+    flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_NAME, perf->getName());
+    flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, perf->getAircraftType());
+    flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_FILE,
+                                      NavApp::getAircraftPerfController()->getCurrentFilepath());
+  }
 }
 
 void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)

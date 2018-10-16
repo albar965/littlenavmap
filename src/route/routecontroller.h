@@ -322,8 +322,12 @@ private:
 
   void updateModelRouteTimeFuel();
 
+  /* Assign type and altitude from GUI */
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
+
+  /* Insert properties for aircraft performance */
+  void assignAircraftPerformance(atools::fs::pln::Flightplan& flightplan);
 
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
