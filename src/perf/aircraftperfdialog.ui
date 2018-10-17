@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>531</width>
-    <height>643</height>
+    <height>642</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditType"/>
+      <widget class="QLineEdit" name="lineEditType">
+       <property name="toolTip">
+        <string>Aircraft type like B732 or C172</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -91,6 +95,10 @@
       </item>
       <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxExtraFuel">
+        <property name="toolTip">
+         <string>Fuel added at the discretion of the 
+captain or the dispatcher</string>
+        </property>
         <property name="suffix">
          <string> %fuel%</string>
         </property>
@@ -134,6 +142,11 @@
       </item>
       <item row="1" column="1">
        <widget class="QSpinBox" name="spinBoxReserveFuel">
+        <property name="toolTip">
+         <string>Minimum fuel required to fly for 30 minutes at 1,500 feet
+above the alternate or at the destination at holding speed if 
+an alternate is not required</string>
+        </property>
         <property name="suffix">
          <string> %fuel%</string>
         </property>
@@ -147,6 +160,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="spinBoxTaxiFuel">
+        <property name="toolTip">
+         <string>Fuel used prior to takeoff by APU, engine start and taxi</string>
+        </property>
         <property name="suffix">
          <string> %fuel%</string>
         </property>
@@ -160,6 +176,11 @@
       </item>
       <item row="4" column="1">
        <widget class="QSpinBox" name="spinBoxContingencyFuel">
+        <property name="toolTip">
+         <string>This accounts for additional enroute fuel consumption 
+caused by wind or routing changes. 
+This will increase the trip fuel by the given percentage.</string>
+        </property>
         <property name="suffix">
          <string> percent</string>
         </property>
@@ -224,29 +245,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="spinBoxClimbFuelFlow">
-        <property name="suffix">
-         <string> %fuel% per hour</string>
-        </property>
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="singleStep">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelClimbFuelFlow">
-        <property name="text">
-         <string>Average fuel flow for &amp;climb:</string>
-        </property>
-        <property name="buddy">
-         <cstring>spinBoxClimbFuelFlow</cstring>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="labelClimbSpeed">
         <property name="text">
@@ -283,6 +281,29 @@
         </property>
         <property name="value">
          <number>1500</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelClimbFuelFlow">
+        <property name="text">
+         <string>Average fuel flow for &amp;climb:</string>
+        </property>
+        <property name="buddy">
+         <cstring>spinBoxClimbFuelFlow</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="spinBoxClimbFuelFlow">
+        <property name="suffix">
+         <string> %fuel% per hour</string>
+        </property>
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
         </property>
        </widget>
       </item>
@@ -415,29 +436,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelDescentFuelFlow">
-        <property name="text">
-         <string>Average fuel flow for &amp;descent:</string>
-        </property>
-        <property name="buddy">
-         <cstring>spinBoxDescentFuelFlow</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="spinBoxDescentFuelFlow">
-        <property name="suffix">
-         <string> %fuel% per hour</string>
-        </property>
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="singleStep">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="labelDescentSpeed">
         <property name="text">
@@ -467,10 +465,37 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <widget class="QLabel" name="labelDescentRule">
+        <property name="toolTip">
+         <string>Equivalent rule of thumb for 
+the given descent speeds</string>
+        </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelDescentFuelFlow">
+        <property name="text">
+         <string>Average fuel flow for &amp;descent:</string>
+        </property>
+        <property name="buddy">
+         <cstring>spinBoxDescentFuelFlow</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="spinBoxDescentFuelFlow">
+        <property name="suffix">
+         <string> %fuel% per hour</string>
+        </property>
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
         </property>
        </widget>
       </item>
@@ -493,7 +518,7 @@
       <set>Qt::TextEditorInteraction</set>
      </property>
      <property name="placeholderText">
-      <string>Description</string>
+      <string>Description or Comments</string>
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
@@ -512,6 +537,22 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditName</tabstop>
+  <tabstop>lineEditType</tabstop>
+  <tabstop>comboBoxFuelUnit</tabstop>
+  <tabstop>spinBoxReserveFuel</tabstop>
+  <tabstop>spinBoxTaxiFuel</tabstop>
+  <tabstop>spinBoxExtraFuel</tabstop>
+  <tabstop>spinBoxContingencyFuel</tabstop>
+  <tabstop>spinBoxClimbSpeed</tabstop>
+  <tabstop>spinBoxClimbVertSpeed</tabstop>
+  <tabstop>spinBoxCruiseSpeed</tabstop>
+  <tabstop>spinBoxCruiseFuelFlow</tabstop>
+  <tabstop>spinBoxDescentSpeed</tabstop>
+  <tabstop>spinBoxDescentVertSpeed</tabstop>
+  <tabstop>textBrowserDescription</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

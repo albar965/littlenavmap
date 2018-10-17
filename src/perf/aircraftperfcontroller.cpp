@@ -422,11 +422,13 @@ void AircraftPerfController::updateReport()
       if(altitudeLegs.size() > 1)
       {
         // Flight data =======================================================
+        atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
         html.p().b(tr("Flight")).pEnd();
         html.table();
         html.row2(tr("Distance and Time:"), tr("%1, %2").
                   arg(Unit::distNm(altitudeLegs.getTotalDistance())).
-                  arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())));
+                  arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())),
+                  atools::util::html::BOLD | flags);
         html.row2(tr("Average Ground Speed:"), Unit::speedKts(altitudeLegs.getAverageGroundSpeed()));
         html.row2(tr("True Airspeed at Cruise:"), Unit::speedKts(perf->getCruiseSpeed()));
 
@@ -437,7 +439,6 @@ void AircraftPerfController::updateReport()
         html.tableEnd();
 
         // Fuel data =======================================================
-        atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
         html.p().b(tr("Fuel")).pEnd();
         html.table();
         bool fuelAsVol = perf->getFuelUnit() == atools::fs::perf::VOLUME;
@@ -462,17 +463,18 @@ void AircraftPerfController::updateReport()
         // Climb and descent phases =======================================================
         html.p().b(tr("Climb and Descent")).pEnd();
         html.table();
-        html.row2(tr("Climb:"), tr("%1 at %2, %3° flight path angle").
+        html.row2(tr("Climb:"), tr("%1 at %2, %3° Flight Path Angle").
                   arg(Unit::speedVertFpm(perf->getClimbVertSpeed())).
                   arg(Unit::speedKts(perf->getClimbSpeed())).
                   arg(QLocale().toString(perf->getClimbFlightPathAngle(), 'f', 1)));
-        html.row2(tr("Descent:"), tr("%1 at %2, %3° flight path angle").
+        html.row2(tr("Time to Climb:"),
+                  formatter::formatMinutesHoursLong(altitudeLegs.getTopOfClimbDistance() / perf->getClimbSpeed()));
+        html.row2(tr("Descent:"), tr("%1 at %2, %3° Flight Path Angle").
                   arg(Unit::speedVertFpm(perf->getDescentVertSpeed())).
                   arg(Unit::speedKts(perf->getDescentSpeed())).
                   arg(QLocale().toString(perf->getDescentFlightPathAngle(), 'f', 1)));
-        html.row2(tr("Descent Rule:"), tr("%1 %2 per %3 %4").
-                  arg(Unit::altFeetF(1.f / perf->getDescentVertSpeed() * 1000.f), 0, 'f', 1).
-                  arg(Unit::getUnitDistStr()).
+        html.row2(tr("Descent Rule:"), tr("%1 per %2 %3").
+                  arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm() * 1000.f)).
                   arg(QLocale().toString(1000.f, 'f', 0)).
                   arg(Unit::getUnitAltStr()));
         html.tableEnd();

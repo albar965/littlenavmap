@@ -3220,7 +3220,7 @@ void RouteController::updateWindowLabel()
 {
   QString text = buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2();
   if(route.size() >= 2 && !NavApp::getAircraftPerfController()->hasAircraftPerformance())
-    text += atools::util::HtmlBuilder().error(tr("No aircraft performance loaded.")).getHtml();
+    text += atools::util::HtmlBuilder().nbsp().nbsp().error(tr("No aircraft performance loaded.")).getHtml();
 
   NavApp::getMainUi()->labelRouteInfo->setText(text);
 }
@@ -3447,12 +3447,12 @@ QString RouteController::buildFlightplanLabel2() const
     }
 
     if(NavApp::getAircraftPerfController()->hasAircraftPerformance())
-      return tr("%1, %2, %3").
+      return tr("<b>%1, %2</b>, %3").
              arg(Unit::distNm(route.getTotalDistance())).
              arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours())).
              arg(routeType);
     else
-      return tr("%1, %2").
+      return tr("<b>%1, %2</b>").
              arg(Unit::distNm(route.getTotalDistance())).
              arg(routeType);
   }

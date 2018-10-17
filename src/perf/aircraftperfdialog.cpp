@@ -147,9 +147,10 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 
 void AircraftPerfDialog::vertSpeedChanged()
 {
-  QString txt = tr("Descent Rule: %1 %2 per %3 %4").
-                arg(Unit::altFeetF(1.f / ui->spinBoxDescentVertSpeed->value() * 1000.f), 0, 'f', 1).
-                arg(Unit::getUnitDistStr()).
+  float descentRateFtPerNm = ui->spinBoxDescentVertSpeed->value() * 60.f / ui->spinBoxDescentSpeed->value();
+
+  QString txt = tr("Descent Rule: %1 per %2 %3").
+                arg(Unit::distNm(1.f / descentRateFtPerNm * 1000.f)).
                 arg(QLocale().toString(1000.f, 'f', 0)).
                 arg(Unit::getUnitAltStr());
 
