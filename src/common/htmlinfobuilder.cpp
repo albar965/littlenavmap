@@ -2691,7 +2691,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     hdg.append(locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
 
   if(!hdg.isEmpty())
-    html.row2(tr("Heading:"), hdg.join(", "));
+    html.row2(tr("Heading:"), hdg.join(", "), atools::util::html::BOLD);
 
   if(userAircaft != nullptr && info)
   {
@@ -2741,7 +2741,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(aircraft.getCategory() != atools::fs::sc::BOAT)
   {
     if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()));
+      html.row2(tr("Indicated:"), Unit::altFeet(aircraft.getIndicatedAltitudeFt()), atools::util::html::BOLD);
   }
   html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
 
@@ -2783,7 +2783,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.table();
     if(longDisplay && aircraft.getCategory() != atools::fs::sc::BOAT &&
        aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
+      html.row2(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()), atools::util::html::BOLD);
 
     if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(longDisplay ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
