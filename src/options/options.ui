@@ -3075,15 +3075,15 @@ If this field is empty, the default Active Sky weather file path will be used wh
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.
-Never use values smaller than two minutes for official networks like VATSIM or IVAO.
-Use lower values only for private networks.</string>
+             <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.&lt;br/&gt;&lt;br/&gt;
+&lt;b&gt;Never use values smaller than two minutes for official networks like VATSIM or IVAO.
+Use lower values only for private networks.&lt;/b&gt;</string>
             </property>
             <property name="suffix">
              <string> seconds</string>
             </property>
             <property name="minimum">
-             <number>30</number>
+             <number>5</number>
             </property>
             <property name="maximum">
              <number>1800</number>
