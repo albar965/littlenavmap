@@ -483,7 +483,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   }
 }
 
-void RouteAltitude::calculate(const atools::fs::perf::AircraftPerf& perf)
+void RouteAltitude::calculate()
 {
   clearAll();
 
@@ -496,10 +496,10 @@ void RouteAltitude::calculate(const atools::fs::perf::AircraftPerf& perf)
     calculateDistances();
 
     if(calcTopOfClimb)
-      calculateDeparture(perf);
+      calculateDeparture();
 
     if(calcTopOfDescent)
-      calculateArrival(perf);
+      calculateArrival();
 
     // Check for violations because of too low cruise
     violatesRestrictions = false;
@@ -582,7 +582,7 @@ void RouteAltitude::calculateDistances()
   }
 }
 
-void RouteAltitude::calculateDeparture(const atools::fs::perf::AircraftPerf& perf)
+void RouteAltitude::calculateDeparture()
 {
   int departureLegIdx = route->getDepartureLegIndex();
   if(departureLegIdx == map::INVALID_INDEX_VALUE)
@@ -591,7 +591,6 @@ void RouteAltitude::calculateDeparture(const atools::fs::perf::AircraftPerf& per
     return;
   }
 
-  float climbRateFtPerNm = perf.getClimbRateFtPerNm();
   if(climbRateFtPerNm < 1.f)
   {
     qWarning() << Q_FUNC_INFO << "climbRateFtPerNm " << climbRateFtPerNm;
@@ -665,7 +664,7 @@ void RouteAltitude::calculateDeparture(const atools::fs::perf::AircraftPerf& per
   }
 }
 
-void RouteAltitude::calculateArrival(const atools::fs::perf::AircraftPerf& perf)
+void RouteAltitude::calculateArrival()
 {
   int destinationLegIdx = route->getDestinationLegIndex();
   int departureLegIndex = route->getDepartureLegIndex();
@@ -677,7 +676,6 @@ void RouteAltitude::calculateArrival(const atools::fs::perf::AircraftPerf& perf)
     return;
   }
 
-  float desentRateFtPerNm = perf.getDescentRateFtPerNm();
   if(desentRateFtPerNm < 1.f)
   {
     qWarning() << Q_FUNC_INFO << "climbRateFtPerNm " << desentRateFtPerNm;

@@ -28,6 +28,7 @@
 #include "fs/util/fsutil.h"
 #include "route/routealtitude.h"
 #include "perf/aircraftperfcontroller.h"
+#include "fs/perf/aircraftperf.h"
 
 #include <QRegularExpression>
 
@@ -1064,18 +1065,21 @@ void Route::updateLegAltitudes()
   AircraftPerfController *aircraftPerfController = NavApp::getAircraftPerfController();
 
   bool collecting = aircraftPerfController->isCollecting();
+  // Calculate if values are valid or collecting data
+  altitude->setCalcTopOfClimb(collecting || aircraftPerfController->isClimbValid());
+  altitude->setCalcTopOfDescent(collecting || aircraftPerfController->isDescentValid());
 
-  // Do not calculate TOC and TOD if invalid or collecting performance data
-  altitude->setCalcTopOfClimb(aircraftPerfController->isClimbValid() && !collecting);
-  altitude->setCalcTopOfDescent(aircraftPerfController->isDescentValid() && !collecting);
+  // Use default values if invalid values or collecting data
+  const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
+  altitude->setClimbRateFtPerNm(collecting ? 333.f : perf.getClimbRateFtPerNm());
+  altitude->setDesentRateFtPerNm(collecting ? 333.f : perf.getDescentRateFtPerNm());
 
   altitude->setCruiseAltitude(getCruisingAltitudeFeet());
-  altitude->calculate(NavApp::getAircraftPerformance());
+  altitude->calculate();
 
-  if(!collecting)
-    altitude->calculateTrip(NavApp::getAircraftPerformance(),
-                            aircraftPerfController->getWindDir(),
-                            aircraftPerfController->getWindSpeed());
+  altitude->calculateTrip(NavApp::getAircraftPerformance(),
+                          aircraftPerfController->getWindDir(),
+                          aircraftPerfController->getWindSpeed());
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */

@@ -57,7 +57,7 @@ public:
    * can happen for short routes with too high cruise altitude.
    * Use perf to calculate climb and descent legs
    */
-  void calculate(const atools::fs::perf::AircraftPerf& perf);
+  void calculate();
 
   /* Calculate travelling time and fuel consumption based on given performance object and wind */
   void calculateTrip(const atools::fs::perf::AircraftPerf& perf, float windDir, float windSpeed);
@@ -190,6 +190,16 @@ public:
   bool hasErrors() const;
   QStringList getErrorStrings(QString& tooltip) const;
 
+  void setClimbRateFtPerNm(float value)
+  {
+    climbRateFtPerNm = value;
+  }
+
+  void setDesentRateFtPerNm(float value)
+  {
+    desentRateFtPerNm = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
@@ -219,10 +229,10 @@ private:
   void calculateDistances();
 
   /* Calculate altitude and TOD for approach/STAR or no procedures */
-  void calculateArrival(const atools::fs::perf::AircraftPerf& perf);
+  void calculateArrival();
 
   /* Calculate altitude and TOC for SID  or no procedures */
-  void calculateDeparture(const atools::fs::perf::AircraftPerf& perf);
+  void calculateDeparture();
 
   /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
   void calculateApproachIlsAndSlopes();
@@ -256,6 +266,7 @@ private:
   /* Set by calculate */
   bool violatesRestrictions = false;
 
+  float climbRateFtPerNm = 333.f, desentRateFtPerNm = 333.f;
   float cruiseAltitide = 0.f;
 
   QVector<map::MapIls> destRunwayIls;

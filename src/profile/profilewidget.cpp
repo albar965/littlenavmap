@@ -582,8 +582,8 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
         // Build geometry
         QLineF center(x, y, xUpper, yUpper);
-        QLineF lower(x, y, xUpper, yUpper + 40 /*(ydiffUpper *verticalScale)*/);
-        QLineF upper(x, y, xUpper, yUpper - 40 /*(ydiffUpper *verticalScale)*/);
+        QLineF lower(x, y, xUpper, yUpper + 30 /*(ydiffUpper *verticalScale)*/);
+        QLineF upper(x, y, xUpper, yUpper - 30 /*(ydiffUpper *verticalScale)*/);
 
         lower.setLength(center.length());
         upper.setLength(center.length());
@@ -1673,6 +1673,8 @@ void ProfileWidget::updateLabel()
   }
   else
     fixedLabelText.clear();
+
+  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText + " " + variableLabelText);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */

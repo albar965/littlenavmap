@@ -371,16 +371,19 @@ bool AircraftPerfController::collectPerformanceDialog()
 
   QString doNotShow = tr("Do not &show this dialog again.");
   QString message = tr("<p>Aircraft Performance will be collected automtically during flight.</p>"
-                         "<p>Note that no performance information like fuel estimates, time to waypoint, "
-                           "top of descent or top of climb is displayed during this process.</p>"
-                           "<ol><li>Connect to the simulator,</li>"
-                             "<li>load a flight plan,</li>"
-                               "<li>place your aircraft at the departure airport and</li>"
-                                 "<li>fly the flight plan precise as possible.</li></ol>"
-                                   "<p>Do not change the flight plan cruise altitude while collecting information.</p>"
-                                     "<p><b>Click the link below for more information:<br/><br/>"
-                                     "<a href=\"%1\">Online Manual - Aircraft Performance</a></b><br/></p>"
-                                       "<p><b>Start performance collection?</b></p>")
+                         "<p>Note that no performance information like fuel estimates or time to waypoint "
+                           "is displayed during this process.</p>"
+                           "<p>Top of climb and top of descent will be shown based on "
+                             "a 3 nm per 1000 ft rule of thumb</p>"
+                             "<ol><li>Connect to the simulator,</li>"
+                               "<li>load a flight plan,</li>"
+                                 "<li>place your aircraft at the departure airport and</li>"
+                                   "<li>fly the flight plan as precise as possible.</li></ol>"
+                                     "<p>Performance collection will stop on touch down at destination.</p>"
+                                       "<p>Do not change the flight plan cruise altitude while collecting information.</p>"
+                                         "<p><b>Click the link below for more information:<br/><br/>"
+                                         "<a href=\"%1\">Online Manual - Aircraft Performance</a></b><br/></p>"
+                                           "<p><b>Start performance collection now?</b></p>")
                     .arg(url.toString());
 
   int retval = atools::gui::Dialog(mainWindow).showQuestionMsgBox(

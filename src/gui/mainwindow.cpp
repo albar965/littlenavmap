@@ -3265,10 +3265,11 @@ QStringList MainWindow::getAcceptedFileExtensions()
 
 void MainWindow::updateErrorLabels()
 {
-
   QString tooltip;
   QString err;
-  bool showError = NavApp::getAltitudeLegs().hasErrors() && !NavApp::isCollectingPerformance();
+  // Show only if route is valid, there are errors and nothing is collecting performance
+  bool showError = NavApp::getRoute().size() >= 2 && NavApp::getAltitudeLegs().hasErrors() &&
+                   !NavApp::isCollectingPerformance();
   if(showError)
     err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(tooltip).join(" "));
 
