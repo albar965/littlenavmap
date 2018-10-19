@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>965</height>
+    <height>966</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1571,12 +1571,18 @@
              <property name="text">
               <string/>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QLabel" name="labelAirportSearchOverride">
              <property name="text">
               <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -2312,12 +2318,18 @@
              <property name="text">
               <string/>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QLabel" name="labelNavSearchOverride">
              <property name="text">
               <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -2893,12 +2905,18 @@
            <property name="text">
             <string/>
            </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="labelUserdataOverride">
            <property name="text">
             <string/>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -3152,6 +3170,9 @@
           <widget class="QLabel" name="labelOnlineClientSearchStatus">
            <property name="text">
             <string/>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -3409,6 +3430,9 @@
           <widget class="QLabel" name="labelOnlineCenterSearchStatus">
            <property name="text">
             <string/>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -7652,6 +7676,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="toolTip">
     <string>Show or hide all airspaces</string>
    </property>
+   <property name="statusTip">
+    <string>Show or hide all airspaces</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Alt+C</string>
    </property>
@@ -8374,6 +8401,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show Online Network Airspaces</string>
    </property>
    <property name="toolTip">
+    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
+   </property>
+   <property name="statusTip">
     <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
    </property>
    <property name="shortcut">
