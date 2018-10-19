@@ -56,12 +56,12 @@ InfoController::InfoController(MainWindow *parent)
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
-  // Set search path to silence text browser warnings
-  Ui::MainWindow *ui = NavApp::getMainUi();
   // Get base font size for widgets
+  Ui::MainWindow *ui = NavApp::getMainUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
   simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
 
+  // Set search path to silence text browser warnings
   QStringList paths({QApplication::applicationDirPath()});
   ui->textBrowserAirportInfo->setSearchPaths(paths);
   ui->textBrowserRunwayInfo->setSearchPaths(paths);

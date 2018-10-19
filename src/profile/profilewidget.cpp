@@ -77,6 +77,8 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   setContextMenuPolicy(Qt::DefaultContextMenu);
   setFocusPolicy(Qt::WheelFocus);
 
+  ui->labelProfileError->setVisible(false);
+
   scrollArea = new ProfileScrollArea(this, ui->scrollAreaProfile);
   scrollArea->setProfileLeftOffset(X0);
   scrollArea->setProfileTopOffset(Y0);
@@ -1208,7 +1210,7 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
 
   updateScreenCoords();
   update();
-  updateErrorMessages();
+  updateErrorLabel();
   updateLabel();
 }
 
@@ -1218,7 +1220,7 @@ void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftP
 
   updateScreenCoords();
   scrollArea->routeChanged(false);
-  updateErrorMessages();
+  updateErrorLabel();
   updateLabel();
 }
 
@@ -1239,7 +1241,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
     updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
                        ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
-  updateErrorMessages();
+  updateErrorLabel();
   updateLabel();
 }
 
@@ -1280,7 +1282,7 @@ void ProfileWidget::updateThreadFinished()
     // Was not terminated in the middle of calculations - get result from the future
     legList = future.result();
     updateScreenCoords();
-    updateErrorMessages();
+    updateErrorLabel();
     updateLabel();
     update();
   }
@@ -1645,24 +1647,6 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   contextMenuActive = false;
 }
 
-void ProfileWidget::updateErrorMessages()
-{
-  // Collect errors from profile calculation
-  const RouteAltitude& altitudeLegs = NavApp::getRoute().getAltitudeLegs();
-  messages.clear();
-  if(!altitudeLegs.isEmpty())
-  {
-    if(altitudeLegs.altRestrictionsViolated())
-      messages << tr("Cannot comply with altitude restrictions.");
-    else if(!(altitudeLegs.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-              altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
-      messages << tr("Cannot calculate top of climb or top of descent.");
-
-    if(!messages.isEmpty())
-      messages.prepend(tr("Flight Plan is not valid."));
-  }
-}
-
 void ProfileWidget::updateLabel()
 {
   float distFromStartNm = 0.f, distToDestNm = 0.f;
@@ -1674,7 +1658,8 @@ void ProfileWidget::updateLabel()
       if(routeController->getRoute().isActiveMissed())
         distToDestNm = 0.f;
 
-      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD)
+      if(OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
+         routeController->getRoute().getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
       {
         float toTod = routeController->getRoute().getTopOfDescentDistance() - distFromStartNm;
 
@@ -1688,10 +1673,6 @@ void ProfileWidget::updateLabel()
   }
   else
     fixedLabelText.clear();
-
-  QString msg = messages.isEmpty() ? QString() : atools::util::HtmlBuilder::errorMessage(messages.join(" ")) + "<br/>";
-
-  NavApp::getMainUi()->labelProfileInfo->setText(msg + fixedLabelText + " " + variableLabelText);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
@@ -1756,7 +1737,7 @@ void ProfileWidget::postDatabaseLoad()
 void ProfileWidget::optionsChanged()
 {
   updateScreenCoords();
-  updateErrorMessages();
+  updateErrorLabel();
   updateLabel();
   update();
 }
@@ -1849,4 +1830,9 @@ void ProfileWidget::jumpBackToAircraftTimeout()
   }
   else
     jumpBack->cancel();
+}
+
+void ProfileWidget::updateErrorLabel()
+{
+  NavApp::updateErrorLabels();
 }

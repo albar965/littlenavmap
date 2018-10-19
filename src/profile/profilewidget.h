@@ -136,7 +136,7 @@ public:
   /* From center button */
   void jumpBackToAircraftCancel();
 
-  void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf* perf);
+  void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
 
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
@@ -191,7 +191,6 @@ private:
   bool aircraftTrackValid();
 
   void updateLabel();
-  void updateErrorMessages();
 
   /* Calculate map position on flight plan for x screen/widget position on profile.
    *  Additionally gives index into route, distances from/to and altitude at x. maxElev is minimum elevation for leg */
@@ -214,6 +213,11 @@ private:
   /* Paint slopes at destination if an approach is selected. */
   void paintIls(QPainter& painter, const Route& route);
   void paintVasi(QPainter& painter, const Route& route);
+
+  void jumpBackToAircraftStart();
+  void jumpBackToAircraftTimeout();
+
+  void updateErrorLabel();
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
@@ -277,11 +281,6 @@ private:
 
   float verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
         horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
-
-  /* Error messages from profile altitude calculation */
-  QStringList messages;
-  void jumpBackToAircraftStart();
-  void jumpBackToAircraftTimeout();
 
 };
 

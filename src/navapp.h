@@ -196,6 +196,7 @@ public:
   static map::MapWeatherSource getAirportWeatherSource();
 
   static void updateWindowTitle();
+  static void updateErrorLabels();
   static void setStatusMessage(const QString& message);
 
   /* Get main window in different variations to avoid including it */
@@ -241,7 +242,8 @@ public:
   static UserdataController *getUserdataController();
   static OnlinedataController *getOnlinedataController();
   static AircraftPerfController *getAircraftPerfController();
-  static const atools::fs::perf::AircraftPerf *getAircraftPerformance();
+  static bool isCollectingPerformance();
+  static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 

@@ -125,12 +125,15 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
 
+  Ui::MainWindow *ui = NavApp::getMainUi();
   // Update units
   units = new UnitStringTool();
   units->init({
-    NavApp::getMainUi()->spinBoxRouteAlt,
-    NavApp::getMainUi()->spinBoxAircraftPerformanceWindSpeed
+    ui->spinBoxRouteAlt,
+    ui->spinBoxAircraftPerformanceWindSpeed
   });
+
+  ui->labelRouteError->setVisible(false);
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -165,7 +168,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(redoAction, &QAction::triggered, this, &RouteController::redoTriggered);
   connect(undoAction, &QAction::triggered, this, &RouteController::undoTriggered);
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, redoAction);
 
@@ -374,7 +376,7 @@ void RouteController::aircraftPerformanceChanged()
 
     highlightProcedureItems();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
-
+    updateErrorLabel();
     NavApp::updateWindowTitle();
   }
   emit routeChanged(true);
@@ -405,6 +407,7 @@ void RouteController::routeAltChangedDelayed()
 
   // Update performance
   updateModelRouteTimeFuel();
+  updateErrorLabel();
 
   // Delay change to avoid hanging spin box when profile updates
   emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
@@ -478,11 +481,9 @@ void RouteController::updateTableHeaders()
 {
   QList<QString> routeHeaders(routeColumns);
 
-  const atools::fs::perf::AircraftPerf *perf = NavApp::getAircraftPerformance();
-  bool fuelAsVol = perf != nullptr ? perf->getFuelUnit() == atools::fs::perf::VOLUME : false;
-
+  bool fuelAsVolume = NavApp::getAircraftPerformance().useFuelAsVolume();
   for(QString& str : routeHeaders)
-    str = Unit::replacePlaceholders(str, fuelAsVol);
+    str = Unit::replacePlaceholders(str, fuelAsVolume);
 
   model->setHorizontalHeaderLabels(routeHeaders);
 }
@@ -562,6 +563,7 @@ void RouteController::newFlightplan()
 
   updateTableModel();
   NavApp::updateWindowTitle();
+  updateErrorLabel();
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
@@ -682,6 +684,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   }
 
   updateTableModel();
+  updateErrorLabel();
   NavApp::updateWindowTitle();
 
 #ifdef DEBUG_INFORMATION
@@ -880,6 +883,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     else if(middleInsert)
       selectRange(insertPosSelection, insertPosSelection + flightplan.getEntries().size() - 1);
 
+    updateErrorLabel();
+
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -1011,6 +1016,7 @@ void RouteController::calculateDirect()
   updateTableModel();
   postChange(undoCommand);
   NavApp::updateWindowTitle();
+  updateErrorLabel();
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Calculated direct flight plan."));
 }
@@ -1230,6 +1236,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       qDebug() << flightplan;
 #endif
 
+      updateErrorLabel();
       emit routeChanged(true);
     }
     else
@@ -1276,6 +1283,7 @@ void RouteController::adjustFlightplanAltitude()
     postChange(undoCommand);
 
     NavApp::updateWindowTitle();
+    updateErrorLabel();
 
     if(!route.isEmpty())
       emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
@@ -1313,6 +1321,7 @@ void RouteController::reverseRoute()
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
+  updateErrorLabel();
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Reversed flight plan."));
 }
@@ -1927,6 +1936,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   updateTableModel();
   NavApp::updateWindowTitle();
   updateMoveAndDeleteActions();
+  updateErrorLabel();
   emit routeChanged(true);
 }
 
@@ -2067,6 +2077,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
+    updateErrorLabel();
     emit routeChanged(true);
     NavApp::setStatusMessage(tr("Moved flight plan legs."));
   }
@@ -2131,6 +2142,7 @@ void RouteController::deleteSelectedLegs()
 
     postChange(undoCommand);
     NavApp::updateWindowTitle();
+    updateErrorLabel();
     emit routeChanged(true);
     NavApp::setStatusMessage(tr("Removed flight plan legs."));
   }
@@ -2745,15 +2757,12 @@ void RouteController::updateFlightplanFromWidgets()
 
 void RouteController::assignAircraftPerformance(Flightplan& flightplan)
 {
-  const atools::fs::perf::AircraftPerf *perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
+  const atools::fs::perf::AircraftPerf perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
 
-  if(perf != nullptr)
-  {
-    flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_NAME, perf->getName());
-    flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, perf->getAircraftType());
-    flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_FILE,
-                                      NavApp::getAircraftPerfController()->getCurrentFilepath());
-  }
+  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_NAME, perf.getName());
+  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, perf.getAircraftType());
+  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_FILE,
+                                    NavApp::getAircraftPerfController()->getCurrentFilepath());
 }
 
 void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
@@ -3029,13 +3038,15 @@ void RouteController::updateModelRouteTimeFuel()
   int row = 0;
   float cumulatedDistance = 0.f;
   float cumulatedTravelTime = 0.f;
-  const atools::fs::perf::AircraftPerf *perf = NavApp::getAircraftPerformance();
+
+  bool setValues = !NavApp::isCollectingPerformance() && !altitudeLegs.hasErrors();
+  const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
   float totalFuel = altitudeLegs.getTripFuel();
 
-  if(perf != nullptr)
+  if(setValues)
   {
-    totalFuel *= perf->getContingencyFuelFactor();
-    totalFuel += perf->getExtraFuel() + perf->getReserveFuel();
+    totalFuel *= perf.getContingencyFuelFactor();
+    totalFuel += perf.getExtraFuel() + perf.getReserveFuel();
   }
 
   int widthLegTime = view->columnWidth(rc::LEG_TIME);
@@ -3044,7 +3055,7 @@ void RouteController::updateModelRouteTimeFuel()
 
   for(int i = 0; i < route.size(); i++)
   {
-    if(perf == nullptr)
+    if(!setValues)
     {
       model->setItem(row, rc::LEG_TIME, new QStandardItem());
       model->setItem(row, rc::ETA, new QStandardItem());
@@ -3219,9 +3230,6 @@ void RouteController::highlightProcedureItems()
 void RouteController::updateWindowLabel()
 {
   QString text = buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2();
-  if(route.size() >= 2 && !NavApp::getAircraftPerfController()->hasAircraftPerformance())
-    text += atools::util::HtmlBuilder().nbsp().nbsp().error(tr("No aircraft performance loaded.")).getHtml();
-
   NavApp::getMainUi()->labelRouteInfo->setText(text);
 }
 
@@ -3446,7 +3454,7 @@ QString RouteController::buildFlightplanLabel2() const
         break;
     }
 
-    if(NavApp::getAircraftPerfController()->hasAircraftPerformance())
+    if(NavApp::getAircraftPerfController()->isDescentValid() && !NavApp::isCollectingPerformance())
       return tr("<b>%1, %2</b>, %3").
              arg(Unit::distNm(route.getTotalDistance())).
              arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours())).
@@ -3614,4 +3622,9 @@ void RouteController::updateIcons()
   userpointIcon = symbolPainter->createUserpointIcon(iconSize);
   invalidIcon = symbolPainter->createWaypointIcon(iconSize, mapcolors::routeInvalidPointColor);
   procedureIcon = symbolPainter->createProcedurePointIcon(iconSize);
+}
+
+void RouteController::updateErrorLabel()
+{
+  NavApp::updateErrorLabels();
 }

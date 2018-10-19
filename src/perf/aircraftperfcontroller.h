@@ -18,6 +18,8 @@
 #ifndef LNM_AIRCRAFTPERFCONTROLLER_H
 #define LNM_AIRCRAFTPERFCONTROLLER_H
 
+#include "fs/perf/aircraftperfconstants.h"
+
 #include <QTimer>
 
 namespace atools {
@@ -25,8 +27,13 @@ namespace gui {
 class FileHistoryHandler;
 }
 namespace fs {
+namespace sc {
+class SimConnectData;
+}
+
 namespace perf {
 class AircraftPerf;
+class AircraftPerfHandler;
 }
 }
 }
@@ -35,6 +42,8 @@ class MainWindow;
 
 /*
  * Takes care of aircraft performance managment, loading, saving, generating the report on the flight plan dock.
+ *
+ * Handles all menus, actions and buttons.
  */
 class AircraftPerfController :
   public QObject
@@ -63,11 +72,14 @@ public:
   /* Open save dialog and save current performance file */
   bool saveAs();
 
-  /* TODO */
-  void collectToggled();
+  /* true if currently collection performance data */
+  bool isCollecting() const
+  {
+    return perfHandler != nullptr;
+  }
 
   /* Open related help in browser */
-  void helpClicked();
+  void helpClicked() const;
 
   /* Ask user if data can be deleted when quitting.
    * @return true continue with new, exit, etc. */
@@ -80,7 +92,7 @@ public:
   }
 
   /* Currently loaded performance filepath */
-  QString getCurrentFilepath() const
+  const QString& getCurrentFilepath() const
   {
     return currentFilepath;
   }
@@ -94,16 +106,16 @@ public:
   void optionsChanged();
 
   /* Get currently loaded performance data */
-  const atools::fs::perf::AircraftPerf *getAircraftPerformance() const
+  const atools::fs::perf::AircraftPerf& getAircraftPerformance() const
   {
-    return perf;
+    return *perf;
   }
 
-  /* true if aircraft performance is loaded */
-  bool hasAircraftPerformance() const
-  {
-    return perf != nullptr;
-  }
+  /* true if gallons/liters are used */
+  bool useFuelAsVolume() const;
+
+  /* Updates for automatic performance calculation */
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
   /* Cruise speed knots TAS */
   float getRouteCruiseSpeedKts();
@@ -118,11 +130,20 @@ public:
   void routeChanged(bool geometryChanged, bool newFlightplan = false);
   void routeAltitudeChanged(float altitudeFeet);
 
+  void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
+
+  /* true if the performance segments are valid, i.e. speeds are > 0 */
+  bool isClimbValid() const;
+  bool isDescentValid() const;
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
 
 private:
+  /* Collect information action toggled */
+  void collectToggled();
+
   /* Wind spin boxes changed */
   void windChanged();
 
@@ -140,17 +161,34 @@ private:
   /* URL or show file in performance report clicked */
   void anchorClicked(const QUrl& url);
 
+  /* Show information dialog on performance collection */
+  bool collectPerformanceDialog();
+
+  /* Start and stop collecting performance data */
+  void startCollecting();
+  void stopCollecting();
+
   MainWindow *mainWindow;
 
   /* Default font size - can be changed in settings */
   float infoFontPtSize = 10.f;
   int symbolSize = 16;
 
+  bool fuelAsVolume = false;
+
   /* true if data was changed */
   bool changed = false;
+
+  /* Filename or empty if not saved yet */
   QString currentFilepath;
   atools::fs::perf::AircraftPerf *perf = nullptr;
+
+  /* null if not collecting */
+  atools::fs::perf::AircraftPerfHandler *perfHandler = nullptr;
   atools::gui::FileHistoryHandler *fileHistory = nullptr;
+
+  /* Last update of report when collecting data */
+  qint64 reportLastSampleTimeMs = 0L;
 
   /* Timer to delay wind updates */
   QTimer windChangeTimer;

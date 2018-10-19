@@ -23,8 +23,10 @@
 #include "atools.h"
 #include "common/mapcolors.h"
 #include "gui/stylehandler.h"
+#include "util/htmlbuilder.h"
 #include "fs/common/morareader.h"
 #include "gui/application.h"
+#include "route/routealtitude.h"
 #include "weather/weatherreporter.h"
 #include "connect/connectclient.h"
 #include "common/elevationprovider.h"
@@ -1201,6 +1203,8 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, mapWidget, &MapWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::simDataChanged);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
           &RouteController::disconnectedFromSimulator);
@@ -2328,6 +2332,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
+  s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
@@ -3250,4 +3255,24 @@ QStringList MainWindow::getAcceptedFileExtensions()
   extensions.append(atools::fs::pln::FlightplanIO::getAcceptedFlightPlanExtensions());
   extensions.append("lnmperf");
   return extensions;
+}
+
+void MainWindow::updateErrorLabels()
+{
+
+  QString tooltip;
+  QString err;
+  bool showError = NavApp::getAltitudeLegs().hasErrors() && !NavApp::isCollectingPerformance();
+  if(showError)
+    err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(tooltip).join(" "));
+
+  ui->labelRouteError->setVisible(showError);
+  ui->labelRouteError->setText(err);
+  ui->labelRouteError->setToolTip(tooltip);
+  ui->labelRouteError->setStatusTip(tooltip);
+
+  ui->labelProfileError->setVisible(showError);
+  ui->labelProfileError->setText(err);
+  ui->labelProfileError->setToolTip(tooltip);
+  ui->labelProfileError->setStatusTip(tooltip);
 }

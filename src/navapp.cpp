@@ -398,6 +398,7 @@ Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
 }
+
 int NavApp::getRouteSize()
 {
   return mainWindow->getRouteController()->getRoute().size();
@@ -503,7 +504,12 @@ AircraftPerfController *NavApp::getAircraftPerfController()
   return aircraftPerfController;
 }
 
-const atools::fs::perf::AircraftPerf *NavApp::getAircraftPerformance()
+bool NavApp::isCollectingPerformance()
+{
+  return aircraftPerfController->isCollecting();
+}
+
+const atools::fs::perf::AircraftPerf& NavApp::getAircraftPerformance()
 {
   return aircraftPerfController->getAircraftPerformance();
 }
@@ -582,6 +588,11 @@ map::MapWeatherSource NavApp::getAirportWeatherSource()
 void NavApp::updateWindowTitle()
 {
   mainWindow->updateWindowTitle();
+}
+
+void NavApp::updateErrorLabels()
+{
+  mainWindow->updateErrorLabels();
 }
 
 void NavApp::setStatusMessage(const QString& message)

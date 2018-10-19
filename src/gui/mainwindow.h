@@ -166,6 +166,9 @@ public:
   void updateMarkActionStates();
   void updateHighlightActionStates();
 
+  /* Update red messages at bottom of route dock window and profile dock window if altitude calculation has errors*/
+  void updateErrorLabels();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

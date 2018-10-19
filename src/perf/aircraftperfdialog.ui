@@ -268,7 +268,7 @@ This will increase the trip fuel by the given percentage.</string>
       <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxClimbVertSpeed">
         <property name="suffix">
-         <string> %vspeed%</string>
+         <string> %vspeed% ▲</string>
         </property>
         <property name="minimum">
          <number>100</number>
@@ -280,7 +280,7 @@ This will increase the trip fuel by the given percentage.</string>
          <number>100</number>
         </property>
         <property name="value">
-         <number>1500</number>
+         <number>550</number>
         </property>
        </widget>
       </item>
@@ -420,19 +420,22 @@ This will increase the trip fuel by the given percentage.</string>
       <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxDescentVertSpeed">
         <property name="suffix">
-         <string> %vspeed%</string>
+         <string> %vspeed% ▼</string>
+        </property>
+        <property name="prefix">
+         <string/>
         </property>
         <property name="minimum">
-         <number>100</number>
+         <number>-10000</number>
         </property>
         <property name="maximum">
-         <number>10000</number>
+         <number>-100</number>
         </property>
         <property name="singleStep">
          <number>100</number>
         </property>
         <property name="value">
-         <number>1500</number>
+         <number>-550</number>
         </property>
        </widget>
       </item>

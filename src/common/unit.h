@@ -105,6 +105,7 @@ public:
   static QString weightKg(float value, bool addUnit = true);
   static float weightKgF(float value);
 
+  /* Fuel flow */
   static QString ffGallon(float value, bool addUnit = true);
   static float ffGallonF(float value);
   static QString ffLbs(float value, bool addUnit = true);
@@ -112,8 +113,9 @@ public:
 
   static QString fuelLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
   static float fuelLbsGallonF(float value, bool fuelAsVolume = false);
-  static QString fuelKgLiter(float value, bool addUnit = true, bool fuelAsVolume = false);
-  static float fuelKgLiterF(float value, bool fuelAsVolume = false);
+
+  static QString ffLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
+  static float ffLbsGallonF(float value, bool fuelAsVolume = false);
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);

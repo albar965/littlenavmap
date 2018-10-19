@@ -390,14 +390,14 @@ float Unit::fuelLbsGallonF(float value, bool fuelAsVolume)
   return fuelAsVolume ? volGallonF(value) : weightLbsF(value);
 }
 
-QString Unit::fuelKgLiter(float value, bool addUnit, bool fuelAsVolume)
+QString Unit::ffLbsGallon(float value, bool addUnit, bool fuelAsVolume)
 {
-  return fuelAsVolume ? volLiter(value, addUnit) : weightKg(value, addUnit);
+  return fuelAsVolume ? ffGallon(value, addUnit) : ffLbs(value, addUnit);
 }
 
-float Unit::fuelKgLiterF(float value, bool fuelAsVolume)
+float Unit::ffLbsGallonF(float value, bool fuelAsVolume)
 {
-  return fuelAsVolume ? volLiterF(value) : weightKgF(value);
+  return fuelAsVolume ? ffGallonF(value) : ffLbsF(value);
 }
 
 QString Unit::coords(const atools::geo::Pos& pos)

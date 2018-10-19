@@ -99,6 +99,7 @@ const QLatin1Literal ACTIONS_SHOW_UPDATE_FAILED("Actions/ShowUpdateFailed");
 const QLatin1Literal ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
 const QLatin1Literal ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
+const QLatin1Literal ACTIONS_SHOW_START_PERF_COLLECTION("Actions/ShowPerfCollection");
 
 const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
@@ -178,6 +179,7 @@ const QLatin1Literal AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
 const QLatin1Literal AIRCRAFT_PERF_FILENAMESRECENT("AircraftPerformance/FilenamesRecent");
 const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG("AircraftPerformance/EditDialog");
 const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG_SIZE("AircraftPerformance/EditDialogSize");
+const QLatin1Literal AIRCRAFT_PERF_EDIT_FUEL_AS_VOL("AircraftPerformance/EditDialogFuelAsVolume");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");

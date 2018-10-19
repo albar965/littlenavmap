@@ -1061,11 +1061,21 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
+  AircraftPerfController *aircraftPerfController = NavApp::getAircraftPerfController();
+
+  bool collecting = aircraftPerfController->isCollecting();
+
+  // Do not calculate TOC and TOD if invalid or collecting performance data
+  altitude->setCalcTopOfClimb(aircraftPerfController->isClimbValid() && !collecting);
+  altitude->setCalcTopOfDescent(aircraftPerfController->isDescentValid() && !collecting);
+
   altitude->setCruiseAltitude(getCruisingAltitudeFeet());
   altitude->calculate(NavApp::getAircraftPerformance());
-  altitude->calculateTrip(NavApp::getAircraftPerformance(),
-                          NavApp::getAircraftPerfController()->getWindDir(),
-                          NavApp::getAircraftPerfController()->getWindSpeed());
+
+  if(!collecting)
+    altitude->calculateTrip(NavApp::getAircraftPerformance(),
+                            aircraftPerfController->getWindDir(),
+                            aircraftPerfController->getWindSpeed());
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */

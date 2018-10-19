@@ -20,6 +20,8 @@
 
 #include "route/routealtitudeleg.h"
 
+#include <QApplication>
+
 namespace atools {
 namespace geo {
 class LineString;
@@ -44,6 +46,8 @@ class Route;
 class RouteAltitude
   : private QVector<RouteAltitudeLeg>
 {
+  Q_DECLARE_TR_FUNCTIONS(RouteAltitude)
+
 public:
   /* route used for calculation */
   RouteAltitude(const Route *routeParam);
@@ -53,10 +57,10 @@ public:
    * can happen for short routes with too high cruise altitude.
    * Use perf to calculate climb and descent legs
    */
-  void calculate(const atools::fs::perf::AircraftPerf *perf);
+  void calculate(const atools::fs::perf::AircraftPerf& perf);
 
   /* Calculate travelling time and fuel consumption based on given performance object and wind */
-  void calculateTrip(const atools::fs::perf::AircraftPerf *perf, float windDir, float windSpeed);
+  void calculateTrip(const atools::fs::perf::AircraftPerf& perf, float windDir, float windSpeed);
 
   /* Get interpolated altitude value in ft for the given distance to destination in NM */
   float getAltitudeForDistance(float distanceToDest) const;
@@ -183,6 +187,9 @@ public:
     return cruiseAltitide;
   }
 
+  bool hasErrors() const;
+  QStringList getErrorStrings(QString& tooltip) const;
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
@@ -212,10 +219,10 @@ private:
   void calculateDistances();
 
   /* Calculate altitude and TOD for approach/STAR or no procedures */
-  void calculateArrival(const atools::fs::perf::AircraftPerf *perf);
+  void calculateArrival(const atools::fs::perf::AircraftPerf& perf);
 
   /* Calculate altitude and TOC for SID  or no procedures */
-  void calculateDeparture(const atools::fs::perf::AircraftPerf *perf);
+  void calculateDeparture(const atools::fs::perf::AircraftPerf& perf);
 
   /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
   void calculateApproachIlsAndSlopes();

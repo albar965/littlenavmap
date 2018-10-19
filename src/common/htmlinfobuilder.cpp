@@ -2441,8 +2441,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           head(html, tr("Top of Descent"));
         html.table();
 
-        if(!less)
+        if(!less && route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE &&
+           route.getTopOfDescentFromDestination() > 0.f)
           html.row2(tr("To Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
+        else
+          html.row2(tr("Not valid."));
 
         if(toTod > 0 && toTod < map::INVALID_DISTANCE_VALUE)
         {
