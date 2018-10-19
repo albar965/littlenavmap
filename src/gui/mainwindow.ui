@@ -134,6 +134,7 @@
     </property>
     <addaction name="actionHelpContents"/>
     <addaction name="actionHelpTutorials"/>
+    <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpContentsOffline"/>
     <addaction name="separator"/>
     <addaction name="actionHelpNavmapLegend"/>
@@ -9089,6 +9090,21 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Add new aircraft performance data</string>
+   </property>
+  </action>
+  <action name="actionHelpFaq">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Frequently asked Questions (Online)</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the online frequently asked questions in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the online tutorials in a browser</string>
    </property>
   </action>
  </widget>

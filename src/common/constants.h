@@ -77,7 +77,9 @@ const QLatin1Literal HELP_LEGEND_INLINE_FILE("help/legend-${LANG}.html");
 
 const QLatin1Literal HELP_OFFLINE_FILE("help/little-navmap-user-manual-${LANG}.pdf");
 
-const QLatin1Literal HELP_DONTATE_URL("https://albar965.github.io/donate.html");
+const QLatin1Literal HELP_DONATE_URL("https://albar965.github.io/donate.html");
+
+const QLatin1Literal HELP_FAQ_URL("https://albar965.github.io/littlenavmap-faq.html");
 
 const QLatin1Literal OPTIONS_UPDATE_DEFAULT_URL("https://albar965.github.io/littlenavmap-version");
 

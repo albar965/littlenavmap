@@ -135,7 +135,7 @@ MainWindow::MainWindow()
                   "<p>"
                     "<b>Copyright 2015-2018 Alexander Barthel"
                     "</b>"
-                  "</p>").arg(lnm::HELP_DONTATE_URL);
+                  "</p>").arg(lnm::HELP_DONATE_URL);
 
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
@@ -455,7 +455,12 @@ void MainWindow::showOnlineTutorials()
 
 void MainWindow::showDonationPage()
 {
-  HelpHandler::openUrlWeb(this, lnm::HELP_DONTATE_URL);
+  HelpHandler::openUrlWeb(this, lnm::HELP_DONATE_URL);
+}
+
+void MainWindow::showFaqPage()
+{
+  HelpHandler::openUrlWeb(this, lnm::HELP_FAQ_URL);
 }
 
 void MainWindow::showOfflineHelp()
@@ -1034,6 +1039,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
   connect(ui->actionHelpDonate, &QAction::triggered, this, &MainWindow::showDonationPage);
+  connect(ui->actionHelpFaq, &QAction::triggered, this, &MainWindow::showFaqPage);
 
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);

@@ -241,6 +241,7 @@ private:
   void mapSaveImage();
   void distanceChanged();
   void showDonationPage();
+  void showFaqPage();
 
   void kmlOpenRecent(const QString& kmlFile);
   void kmlOpen();
