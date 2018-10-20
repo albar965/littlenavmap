@@ -147,7 +147,7 @@ private:
   void startDownloadInternal();
   void startDownloadTimer();
   void stopAllProcesses();
-  void initAtcDefaultRadii();
+  void updateAtcSizes();
 
   /* Show message from status.txt */
   void showMessageDialog();

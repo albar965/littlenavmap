@@ -790,6 +790,47 @@ public:
     return displayTextSizeCompassRose;
   }
 
+  /* Online center diameter below. -1 if network value should be used */
+  int getDisplayOnlineClearance() const
+  {
+    return displayOnlineClearance;
+  }
+
+  int getDisplayOnlineArea() const
+  {
+    return displayOnlineArea;
+  }
+
+  int getDisplayOnlineApproach() const
+  {
+    return displayOnlineApproach;
+  }
+
+  int getDisplayOnlineDeparture() const
+  {
+    return displayOnlineDeparture;
+  }
+
+  int getDisplayOnlineFir() const
+  {
+    return displayOnlineFir;
+  }
+
+  int getDisplayOnlineObserver() const
+  {
+    return displayOnlineObserver;
+  }
+
+  int getDisplayOnlineGround() const
+  {
+    return displayOnlineGround;
+  }
+
+  int getDisplayOnlineTower() const
+  {
+    return displayOnlineTower;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -979,6 +1020,30 @@ private:
 
   // spinBoxOptionsDisplayTextSizeCompassRose
   int displayTextSizeCompassRose = 100;
+
+  // spinBoxDisplayOnlineClearance
+  int displayOnlineClearance = -1;
+
+  // spinBoxDisplayOnlineArea
+  int displayOnlineArea = 200;
+
+  // spinBoxDisplayOnlineApproach
+  int displayOnlineApproach = 40;
+
+  // spinBoxDisplayOnlineDeparture
+  int displayOnlineDeparture = -1;
+
+  // spinBoxDisplayOnlineFir
+  int displayOnlineFir = 200;
+
+  // spinBoxDisplayOnlineObserver
+  int displayOnlineObserver = -1;
+
+  // spinBoxDisplayOnlineGround
+  int displayOnlineGround = 10;
+
+  // spinBoxDisplayOnlineTower
+  int displayOnlineTower = 20;
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, flightplanPassedColor, trailColor;
 

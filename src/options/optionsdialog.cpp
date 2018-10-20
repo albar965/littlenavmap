@@ -129,7 +129,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->doubleSpinBoxOptionsMapZoomShowMap,
     ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
     ui->spinBoxOptionsRouteGroundBuffer,
-    ui->labelOptionsMapRangeRings
+    ui->labelOptionsMapRangeRings,
+    ui->spinBoxDisplayOnlineClearance,
+    ui->spinBoxDisplayOnlineArea,
+    ui->spinBoxDisplayOnlineApproach,
+    ui->spinBoxDisplayOnlineDeparture,
+    ui->spinBoxDisplayOnlineFir,
+    ui->spinBoxDisplayOnlineObserver,
+    ui->spinBoxDisplayOnlineGround,
+    ui->spinBoxDisplayOnlineTower
   });
 
   // Build tree settings to map tab =====================================================
@@ -313,6 +321,23 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->spinBoxOptionsOnlineUpdate);
   widgets.append(ui->comboBoxOptionsOnlineFormat);
 
+  widgets.append(ui->checkBoxDisplayOnlineGroundRange);
+  widgets.append(ui->checkBoxDisplayOnlineApproachRange);
+  widgets.append(ui->checkBoxDisplayOnlineObserverRange);
+  widgets.append(ui->checkBoxDisplayOnlineFirRange);
+  widgets.append(ui->checkBoxDisplayOnlineAreaRange);
+  widgets.append(ui->checkBoxDisplayOnlineDepartureRange);
+  widgets.append(ui->checkBoxDisplayOnlineTowerRange);
+  widgets.append(ui->checkBoxDisplayOnlineClearanceRange);
+  widgets.append(ui->spinBoxDisplayOnlineClearance);
+  widgets.append(ui->spinBoxDisplayOnlineArea);
+  widgets.append(ui->spinBoxDisplayOnlineApproach);
+  widgets.append(ui->spinBoxDisplayOnlineDeparture);
+  widgets.append(ui->spinBoxDisplayOnlineFir);
+  widgets.append(ui->spinBoxDisplayOnlineObserver);
+  widgets.append(ui->spinBoxDisplayOnlineGround);
+  widgets.append(ui->spinBoxDisplayOnlineTower);
+
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
@@ -420,6 +445,24 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::onlineTestStatusUrlClicked);
   connect(ui->pushButtonOptionsOnlineTestWhazzupUrl, &QPushButton::clicked,
           this, &OptionsDialog::onlineTestWhazzupUrlClicked);
+
+  // Online map display =======================================================================
+  connect(ui->checkBoxDisplayOnlineGroundRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineApproachRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineObserverRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineFirRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineAreaRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineDepartureRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineTowerRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
+  connect(ui->checkBoxDisplayOnlineClearanceRange, &QCheckBox::toggled,
+          this, &OptionsDialog::onlineDisplayRangeClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -439,6 +482,18 @@ int OptionsDialog::exec()
   updateOnlineWidgetStatus();
 
   return QDialog::exec();
+}
+
+void OptionsDialog::onlineDisplayRangeClicked()
+{
+  ui->spinBoxDisplayOnlineClearance->setEnabled(!ui->checkBoxDisplayOnlineClearanceRange->isChecked());
+  ui->spinBoxDisplayOnlineArea->setEnabled(!ui->checkBoxDisplayOnlineAreaRange->isChecked());
+  ui->spinBoxDisplayOnlineApproach->setEnabled(!ui->checkBoxDisplayOnlineApproachRange->isChecked());
+  ui->spinBoxDisplayOnlineDeparture->setEnabled(!ui->checkBoxDisplayOnlineDepartureRange->isChecked());
+  ui->spinBoxDisplayOnlineFir->setEnabled(!ui->checkBoxDisplayOnlineFirRange->isChecked());
+  ui->spinBoxDisplayOnlineObserver->setEnabled(!ui->checkBoxDisplayOnlineObserverRange->isChecked());
+  ui->spinBoxDisplayOnlineGround->setEnabled(!ui->checkBoxDisplayOnlineGroundRange->isChecked());
+  ui->spinBoxDisplayOnlineTower->setEnabled(!ui->checkBoxDisplayOnlineTowerRange->isChecked());
 }
 
 void OptionsDialog::onlineTestStatusUrlClicked()
@@ -651,6 +706,7 @@ void OptionsDialog::restoreState()
   mapEmptyAirportsClicked(false);
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
+  onlineDisplayRangeClicked();
 }
 
 void OptionsDialog::updateButtonColors()
@@ -724,7 +780,7 @@ template<typename TYPE>
 QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, QHash<TYPE, QTreeWidgetItem *>& index,
                                         const QString& text, const QString& tooltip, TYPE type, bool checked) const
 {
-  QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, type);
+  QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, static_cast<int>(type));
   item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
   item->setToolTip(0, tooltip);
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
@@ -1114,7 +1170,33 @@ void OptionsDialog::widgetsToOptionData()
   data.onlineReloadSeconds = ui->spinBoxOptionsOnlineUpdate->value();
   data.onlineFormat = static_cast<opts::OnlineFormat>(ui->comboBoxOptionsOnlineFormat->currentIndex());
 
+  data.displayOnlineClearance = displayOnlineRangeToData(ui->spinBoxDisplayOnlineClearance,
+                                                         ui->checkBoxDisplayOnlineClearanceRange);
+  data.displayOnlineArea = displayOnlineRangeToData(ui->spinBoxDisplayOnlineArea, ui->checkBoxDisplayOnlineAreaRange);
+  data.displayOnlineApproach = displayOnlineRangeToData(ui->spinBoxDisplayOnlineApproach,
+                                                        ui->checkBoxDisplayOnlineApproachRange);
+  data.displayOnlineDeparture = displayOnlineRangeToData(ui->spinBoxDisplayOnlineDeparture,
+                                                         ui->checkBoxDisplayOnlineDepartureRange);
+  data.displayOnlineFir = displayOnlineRangeToData(ui->spinBoxDisplayOnlineFir, ui->checkBoxDisplayOnlineFirRange);
+  data.displayOnlineObserver = displayOnlineRangeToData(ui->spinBoxDisplayOnlineObserver,
+                                                        ui->checkBoxDisplayOnlineObserverRange);
+  data.displayOnlineGround = displayOnlineRangeToData(ui->spinBoxDisplayOnlineGround,
+                                                      ui->checkBoxDisplayOnlineGroundRange);
+  data.displayOnlineTower =
+    displayOnlineRangeToData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange);
+
   data.valid = true;
+}
+
+int OptionsDialog::displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton)
+{
+  return checkButton->isChecked() ? -1 : spinBox->value();
+}
+
+void OptionsDialog::displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value)
+{
+  spinBox->setValue(value);
+  checkButton->setChecked(value == -1);
 }
 
 /* Copy OptionData object to widget */
@@ -1301,6 +1383,21 @@ void OptionsDialog::optionDataToWidgets()
   ui->lineEditOptionsOnlineWhazzupUrl->setText(data.onlineWhazzupUrl);
   ui->spinBoxOptionsOnlineUpdate->setValue(data.onlineReloadSeconds);
   ui->comboBoxOptionsOnlineFormat->setCurrentIndex(data.onlineFormat);
+
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange,
+                             data.displayOnlineClearance);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineArea, ui->checkBoxDisplayOnlineAreaRange, data.displayOnlineArea);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineApproach, ui->checkBoxDisplayOnlineApproachRange,
+                             data.displayOnlineApproach);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineDeparture, ui->checkBoxDisplayOnlineDepartureRange,
+                             data.displayOnlineDeparture);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineFir, ui->checkBoxDisplayOnlineFirRange, data.displayOnlineFir);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineObserver, ui->checkBoxDisplayOnlineObserverRange,
+                             data.displayOnlineObserver);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineGround, ui->checkBoxDisplayOnlineGroundRange,
+                             data.displayOnlineGround);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange,
+                             data.displayOnlineTower);
 }
 
 /* Add flag from checkbox to OptionData flags */

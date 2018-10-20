@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1009</width>
-    <height>636</height>
+    <width>886</width>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidgetOptions">
-     <property name="tabShape">
-      <enum>QTabWidget::Rounded</enum>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -40,6 +37,15 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
            <number>2</number>
           </property>
           <item>
@@ -85,18 +91,18 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_16">
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
            <number>9</number>
           </property>
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="0" column="1">
@@ -208,7 +214,19 @@
           <string>Startup</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_17">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="0">
@@ -316,16 +334,16 @@
            <number>2</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QCheckBox" name="checkBoxOptionsGuiOverrideLanguage">
@@ -372,7 +390,19 @@ A restart is required for the settings to take effect.</string>
           <string>Text Size</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_20">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="5" column="0">
@@ -601,16 +631,16 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
            <number>2</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QCheckBox" name="checkBoxOptionsMapClickAirport">
@@ -664,16 +694,16 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
            <number>2</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QCheckBox" name="checkBoxOptionsMapTooltipAirport">
@@ -724,18 +754,18 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
          </property>
          <layout class="QGridLayout" name="gridLayout_12">
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="0">
@@ -830,18 +860,18 @@ Map views might be shown with a larger zoom distance than expected if this optio
          </property>
          <layout class="QGridLayout" name="gridLayout_13">
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="0" column="2">
@@ -919,18 +949,18 @@ Smaller values will allow a finer selection.</string>
          </property>
          <layout class="QGridLayout" name="gridLayoutOptionsMapLower">
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="3" column="0">
@@ -1062,18 +1092,18 @@ A range ring will be added for each radius value.</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_10">
           <property name="leftMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>9</number>
+           <number>2</number>
           </property>
-          <property name="verticalSpacing">
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="10" column="2">
@@ -1136,22 +1166,6 @@ A range ring will be added for each radius value.</string>
             </property>
             <property name="value">
              <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="1">
-           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanProcedureColor">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Color for the procedure legs of a flight plan</string>
-            </property>
-            <property name="text">
-             <string>Procedure Leg Color</string>
             </property>
            </widget>
           </item>
@@ -1308,22 +1322,6 @@ Enable &quot;Dim passed Legs&quot; to see his color.</string>
             </property>
            </widget>
           </item>
-          <item row="10" column="1">
-           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Color for flight plan line</string>
-            </property>
-            <property name="text">
-             <string>Color</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsMapAirportDiagram">
             <property name="toolTip">
@@ -1341,7 +1339,8 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
           <item row="3" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
             <property name="toolTip">
-             <string/>
+             <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
+Afftects map and elevation profile.</string>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1423,20 +1422,6 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
             </property>
             <property name="value">
              <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="11" column="2">
-           <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDimPassed">
-            <property name="toolTip">
-             <string>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
-Change color with the &quot;Passed Leg Color&quot;.</string>
-            </property>
-            <property name="text">
-             <string>&amp;Dim passed Legs</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1531,22 +1516,6 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
             </property>
            </widget>
           </item>
-          <item row="11" column="1">
-           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanActiveColor">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Color for the active flight plan leg</string>
-            </property>
-            <property name="text">
-             <string>Active Leg Color</string>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="0" colspan="3">
            <widget class="Line" name="line_4">
             <property name="orientation">
@@ -1574,7 +1543,8 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
           <item row="3" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeNavaid">
             <property name="toolTip">
-             <string/>
+             <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
+Afftects map and elevation profile.</string>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1817,8 +1787,7 @@ distance measurement:</string>
           <item row="3" column="0" rowspan="2">
            <widget class="QLabel" name="labelOptionsMapSizeNavaid">
             <property name="text">
-             <string>&amp;VOR, NDB, ILS,waypoints, airways,
-TOC and TOD (also for flight plan):</string>
+             <string>&amp;Navaids:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1829,16 +1798,77 @@ TOC and TOD (also for flight plan):</string>
            </widget>
           </item>
           <item row="13" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanProcedureColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Color for the procedure legs of a flight plan</string>
+            </property>
+            <property name="text">
+             <string>Procedure Leg Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="1">
+           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Color for flight plan line</string>
+            </property>
+            <property name="text">
+             <string>Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanActiveColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Color for the active flight plan leg</string>
+            </property>
+            <property name="text">
+             <string>Active Leg Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0" colspan="2">
            <widget class="QCheckBox" name="checkBoxOptionsShowTod">
             <property name="toolTip">
              <string>Enable this option to show the top of descent and top of climb points on the map and in the elevation profile.</string>
             </property>
             <property name="text">
-             <string>Draw &amp;top of descent
-and top of climb</string>
+             <string>Draw &amp;top of descent and top of climb</string>
             </property>
             <property name="checked">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDimPassed">
+            <property name="toolTip">
+             <string>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
+Change color with the &quot;Passed Leg Color&quot;.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Dim passed Legs</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1886,6 +1916,374 @@ and top of climb</string>
           </item>
          </layout>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabDisplayOnline">
+      <attribute name="title">
+       <string>Map Display Online</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_27">
+       <item row="1" column="0">
+        <spacer name="verticalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBoxDisplayOnline">
+         <property name="title">
+          <string>Display Size for Online Airspaces / Centers</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_19">
+          <item row="6" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineApproach">
+            <property name="text">
+             <string>&amp;Approach Control:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineApproach</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineGroundRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineDeparture">
+            <property name="text">
+             <string>&amp;Departure Control:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineDeparture</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineClearanceRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineApproachRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineGround">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineTower">
+            <property name="text">
+             <string>&amp;Tower:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineTower</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineApproach">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>40</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineClearance">
+            <property name="text">
+             <string>&amp;Clearance Delivery:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineClearance</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineDeparture">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineGround">
+            <property name="text">
+             <string>&amp;Ground Control:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineGround</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineTowerRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineFirRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineArea">
+            <property name="text">
+             <string>&amp;Area Control Center:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineArea</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineTower">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineFir">
+            <property name="text">
+             <string>&amp;Center</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineFir</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineFir">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>200</number>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineDepartureRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineClearance">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineArea">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>200</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="spinBoxDisplayOnlineObserver">
+            <property name="suffix">
+             <string> %dist%</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>2000</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineObserverRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QCheckBox" name="checkBoxDisplayOnlineAreaRange">
+            <property name="toolTip">
+             <string>Use visual range provided from online network</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelDisplayOnlineObserver">
+            <property name="text">
+             <string>&amp;Online Observer:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxDisplayOnlineObserver</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Range Circle Size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Use Size</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -2136,7 +2534,19 @@ and top of climb</string>
           <string>While flying</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_24">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="2" column="2">
@@ -2231,6 +2641,18 @@ This setting is also used in the elevation profile.</string>
           <property name="spacing">
            <number>2</number>
           </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsSimUpdateLow">
             <property name="text">
@@ -2264,7 +2686,19 @@ This setting is also used in the elevation profile.</string>
           <string>Map Movement</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_23">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="0">
@@ -2344,6 +2778,21 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
           <string>Aircraft Track</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="labelSimMaxTrackPoints">
             <property name="text">
@@ -2411,6 +2860,18 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
           <property name="spacing">
            <number>2</number>
           </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QCheckBox" name="checkBoxOptionsRouteExportUserWpt">
             <property name="toolTip">
@@ -2444,7 +2905,19 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
           <string>Flight Plan Calculation</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_18">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="5" column="2">
@@ -2604,6 +3077,18 @@ when transitioning from airport to airway.</string>
           <string>Weather Display in Tooltip</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <property name="spacing">
            <number>2</number>
           </property>
@@ -2672,6 +3157,18 @@ when transitioning from airport to airway.</string>
           <string>Weather Display in Information Panels</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <property name="spacing">
            <number>2</number>
           </property>
@@ -2750,6 +3247,21 @@ when transitioning from airport to airway.</string>
           <string>Files and Web Addresses</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_22">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
+           <number>2</number>
+          </property>
           <item row="3" column="0">
            <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
             <property name="text">
@@ -2935,6 +3447,18 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <property name="spacing">
            <number>2</number>
           </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsOnlineNone">
             <property name="toolTip">
@@ -3003,7 +3527,19 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <string>Web Addresses</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_25">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="3" column="2">
@@ -3175,7 +3711,19 @@ Use lower values only for private networks.&lt;/b&gt;</string>
           <string>Map Display</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_15">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="0">
@@ -3288,7 +3836,19 @@ Use lower values only for private networks.&lt;/b&gt;</string>
           <string>Flight Plan Elevation Profile</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_14">
-          <property name="verticalSpacing">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
            <number>2</number>
           </property>
           <item row="1" column="2">
@@ -3581,12 +4141,8 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftAi</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
-  <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
   <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
-  <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
-  <tabstop>checkBoxOptionsMapFlightplanDimPassed</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanPassedColor</tabstop>
-  <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
   <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>

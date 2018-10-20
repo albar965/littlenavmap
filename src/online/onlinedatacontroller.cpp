@@ -75,7 +75,7 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
   downloader = new atools::util::HttpDownloader(mainWindow, false /* verbose */);
 
-  initAtcDefaultRadii();
+  updateAtcSizes();
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &OnlinedataController::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &OnlinedataController::downloadFailed);
@@ -98,32 +98,48 @@ OnlinedataController::~OnlinedataController()
   manager->clearData();
 }
 
-void OnlinedataController::initAtcDefaultRadii()
+void OnlinedataController::updateAtcSizes()
 {
   // Override default circle radius for certain ATC center types
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  const OptionData& opts = OptionData::instance();
 
-  QHash<atools::fs::online::fac::FacilityType, int> radii;
+  QHash<atools::fs::online::fac::FacilityType, int> sizeMap;
   for(atools::fs::online::fac::FacilityType type : atools::fs::online::allFacilityTypes())
   {
-    QVariant defaultValue(-1);
-    if(type == atools::fs::online::fac::GROUND)
-      defaultValue = 5;
-    else if(type == atools::fs::online::fac::TOWER)
-      defaultValue = 10;
-    else if(type == atools::fs::online::fac::APPROACH)
-      defaultValue = 20;
-    else if(type == atools::fs::online::fac::FLIGHT_INFORMATION)
-      defaultValue = 100;
-    else if(type == atools::fs::online::fac::ACC)
-      defaultValue = 100;
+    int diameter = -1;
+    switch(type)
+    {
+      case atools::fs::online::fac::UNKNOWN:
+        break;
+      case atools::fs::online::fac::OBSERVER:
+        diameter = opts.getDisplayOnlineObserver();
+        break;
+      case atools::fs::online::fac::FLIGHT_INFORMATION:
+        diameter = opts.getDisplayOnlineFir();
+        break;
+      case atools::fs::online::fac::DELIVERY:
+        diameter = opts.getDisplayOnlineClearance();
+        break;
+      case atools::fs::online::fac::GROUND:
+        diameter = opts.getDisplayOnlineGround();
+        break;
+      case atools::fs::online::fac::TOWER:
+        diameter = opts.getDisplayOnlineTower();
+        break;
+      case atools::fs::online::fac::APPROACH:
+        diameter = opts.getDisplayOnlineApproach();
+        break;
+      case atools::fs::online::fac::ACC:
+        diameter = opts.getDisplayOnlineArea();
+        break;
+      case atools::fs::online::fac::DEPARTURE:
+        diameter = opts.getDisplayOnlineDeparture();
+        break;
+    }
 
-    QVariant value = settings.getAndStoreValue("Online/CenterRadius" +
-                                               atools::fs::online::facilityTypeTextSettings(type),
-                                               defaultValue);
-    radii.insert(type, value.toInt());
+    sizeMap.insert(type, diameter != -1 ? std::max(1, diameter / 2) : -1);
   }
-  manager->setAtcRadius(radii);
+  manager->setAtcSize(sizeMap);
 }
 
 void OnlinedataController::startProcessing()
@@ -347,6 +363,8 @@ void OnlinedataController::optionsChanged()
   aircraftCache.clear();
   simulatorAiRegistrations.clear();
   clientCallsignAndPosMap.clear();
+
+  updateAtcSizes();
 
   emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
   emit onlineServersUpdated(true /* load all */, true /* keep selection */);

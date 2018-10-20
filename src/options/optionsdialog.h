@@ -33,6 +33,7 @@ class QCheckBox;
 class QRadioButton;
 class RangeRingValidator;
 class QTreeWidgetItem;
+class QSpinBox;
 class UnitStringTool;
 
 /* Takes care about loading, changing and saving of global options.
@@ -106,6 +107,7 @@ private:
   void flightplanPassedColorClicked();
   void flightplanProcedureColorClicked();
   void trailColorClicked();
+  void onlineDisplayRangeClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
   QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
@@ -136,6 +138,8 @@ private:
   void onlineTestStatusUrlClicked();
   void onlineTestWhazzupUrlClicked();
   void onlineTestUrl(const QString& url);
+  int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
+  void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
 
   QVector<int> ringStrToVector(const QString& string) const;
 
