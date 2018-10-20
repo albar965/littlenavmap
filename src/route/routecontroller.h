@@ -120,7 +120,7 @@ public:
   bool hasChanged() const;
 
   /* Get the current flight plan name or empty if no plan is loaded */
-  const QString& getCurrentRouteFilename() const
+  const QString& getCurrentRouteFilepath() const
   {
     return routeFilename;
   }

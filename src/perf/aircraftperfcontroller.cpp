@@ -93,6 +93,7 @@ void AircraftPerfController::create()
     perf->resetToDefault();
     perf->setFuelAsVolume(fuelAsVolume);
     currentFilepath.clear();
+    changed = false;
   }
 
   updateActionStates();

@@ -9083,7 +9083,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Aircraft Performance ...</string>
+    <string>&amp;New Aircraft Performance</string>
    </property>
    <property name="toolTip">
     <string>Add new aircraft performance data</string>

@@ -3213,6 +3213,11 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+  qDebug() << Q_FUNC_INFO
+           << "state" << mouseState
+           << "modifiers" << event->modifiers()
+           << "pos" << event->pos();
+
   // Take actions (add/remove range rings, measurement)
   if(mousePressCheckModifierActions(event))
     // Event was consumed - do not proceed here
@@ -3605,7 +3610,7 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 
 void MapWidget::handleInfoClick(QPoint pos)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << pos;
 
   map::MapSearchResult result;
   screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);

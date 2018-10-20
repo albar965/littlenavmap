@@ -1487,11 +1487,11 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     {QString(), QMessageBox::Help}
   };
 
-  bool airways = NavApp::getRouteConst().hasAirways();
-  bool userWaypoints = NavApp::getRouteConst().hasUserWaypoints();
-  bool procedures = NavApp::getRouteConst().hasAnyProcedure();
-  bool parking = NavApp::getRouteConst().hasDepartureParking();
-  QString routeFilename = NavApp::getRouteController()->getCurrentRouteFilename();
+  bool airways = routeController->getRoute().hasAirways();
+  bool userWaypoints = routeController->getRoute().hasUserWaypoints();
+  bool procedures = routeController->getRoute().hasAnyProcedure();
+  bool parking = routeController->getRoute().hasDepartureParking();
+  QString routeFilename = routeController->getCurrentRouteFilepath();
   int result = QMessageBox::Save;
 
   // Build button text depending if this is a "save as" or plain save
@@ -1641,11 +1641,13 @@ void MainWindow::updateWindowTitle()
 
   atools::util::Version version(NavApp::applicationVersion());
 
+  // Program version and revision ==========================================
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
     newTitle += QString(" %1").arg(version.getVersionString());
   else
     newTitle += QString(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
 
+  // Database information  ==========================================
   if(navDbStatus == dm::NAVDATABASE_ALL)
     newTitle += " - (" + NavApp::getCurrentSimulatorShortName() + ")";
   else
@@ -1656,10 +1658,18 @@ void MainWindow::updateWindowTitle()
   else if(navDbStatus == dm::NAVDATABASE_MIXED)
     newTitle += " / N";
 
-  if(!routeController->getCurrentRouteFilename().isEmpty())
-    newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
+  // Flight plan name  ==========================================
+  if(!routeController->getCurrentRouteFilepath().isEmpty())
+    newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilepath()).fileName() +
                 (routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
+    newTitle += tr(" - *");
+
+  // Performance name  ==========================================
+  if(!NavApp::getCurrentAircraftPerfFilepath().isEmpty())
+    newTitle += " - " + QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName() +
+                (NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
+  else if(NavApp::getAircraftPerfController()->hasChanged())
     newTitle += tr(" - *");
 
   // Add a star to the flight plan tab if changed
@@ -1692,7 +1702,7 @@ bool MainWindow::routeCheckForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(routeController->getCurrentRouteFilename().isEmpty())
+      if(routeController->getCurrentRouteFilepath().isEmpty())
         return routeSaveAsPln();
       else
         return routeSave();
@@ -1854,7 +1864,7 @@ bool MainWindow::routeSave()
   if(!routeSaveCheckFMS11Warnings())
     return false;
 
-  if(routeController->getCurrentRouteFilename().isEmpty() || !routeController->doesFilenameMatchRoute(format))
+  if(routeController->getCurrentRouteFilepath().isEmpty() || !routeController->doesFilenameMatchRoute(format))
   {
     // No filename or plan has changed - save as
     if(format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11)
@@ -1881,7 +1891,7 @@ bool MainWindow::routeSave()
         // Save in loaded format PLN, FLP or FMS
         if(routeController->saveFlightplan(false /* clean */))
         {
-          routeFileHistory->addFile(routeController->getCurrentRouteFilename());
+          routeFileHistory->addFile(routeController->getCurrentRouteFilepath());
           updateActionStates();
           setStatusMessage(tr("Flight plan saved."));
           saveFileHistoryStates();

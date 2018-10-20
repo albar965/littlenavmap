@@ -339,7 +339,8 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
     if(!NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport,
-                                                                   aircraft.getPosition(), aircraft.getTrackDegTrue()))
+                                                                      aircraft.getPosition(),
+                                                                      aircraft.getTrackDegTrue()))
     {
       qWarning() << Q_FUNC_INFO << "No runway found for aircraft"
                  << aircraft.getPosition() << aircraft.getTrackDegTrue();
@@ -377,12 +378,16 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     description << tr("Date and Time: %1").arg(QDateTime::currentDateTime().toString());
 
     // Add flight plan file name =========================================================
-    QString file = NavApp::getRouteController()->getCurrentRouteFilename();
+    QString file = NavApp::getCurrentRouteFilepath();
     if(!file.isEmpty())
       description << QString() << tr("Flight Plan:") << QFileInfo(file).fileName();
-    const Route& route = NavApp::getRouteConst();
+
+    QString perffile = NavApp::getCurrentAircraftPerfFilepath();
+    if(!perffile.isEmpty())
+      description << QString() << tr("Aircraft Performance:") << QFileInfo(perffile).fileName();
 
     // Current start and destination =========================================================
+    const Route& route = NavApp::getRouteConst();
     if(!route.isEmpty())
     {
       QString from, to;

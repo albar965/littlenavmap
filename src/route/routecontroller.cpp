@@ -377,8 +377,10 @@ void RouteController::aircraftPerformanceChanged()
     highlightProcedureItems();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
     updateErrorLabel();
-    NavApp::updateWindowTitle();
   }
+  NavApp::updateWindowTitle();
+
+  // Emit also for empty route to catch performance changes
   emit routeChanged(true);
 }
 
@@ -3070,7 +3072,7 @@ void RouteController::updateModelRouteTimeFuel()
       else
       {
         QString txt = formatter::formatMinutesHours(travelTime);
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_LEGTIME
         txt += " [" + QString::number(travelTime * 3600., 'f', 0) + "]";
 #endif
         model->setItem(row, rc::LEG_TIME, new QStandardItem(txt));
@@ -3081,13 +3083,13 @@ void RouteController::updateModelRouteTimeFuel()
         cumulatedDistance += leg.getDistanceTo();
         cumulatedTravelTime += travelTime;
         QString txt = formatter::formatMinutesHours(cumulatedTravelTime);
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_LEGTIME
         txt += " [" + QString::number(cumulatedTravelTime * 3600., 'f', 0) + "]";
 #endif
         model->setItem(row, rc::ETA, new QStandardItem(txt));
 
         totalFuel -= altitudeLegs.at(i).getFuel();
-        txt = Unit::fuelLbsGallon(totalFuel, false);
+        txt = perf.isFuelFlowValid() ? Unit::fuelLbsGallon(totalFuel, false) : QString();
         model->setItem(row, rc::FUEL, new QStandardItem(txt));
       }
     }

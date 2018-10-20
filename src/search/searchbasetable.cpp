@@ -791,6 +791,8 @@ void SearchBaseTable::nothingSelectedTriggered()
 /* Context menu in table view selected */
 void SearchBaseTable::contextMenu(const QPoint& pos)
 {
+  qDebug() << Q_FUNC_INFO << "pos" << pos;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   QPoint menuPos = QCursor::pos();

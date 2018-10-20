@@ -263,6 +263,9 @@ public:
 
   static map::MapWeatherSource getMapWeatherSource();
 
+  static const QString& getCurrentRouteFilepath();
+  static const QString& getCurrentAircraftPerfFilepath();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;

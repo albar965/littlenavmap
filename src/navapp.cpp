@@ -630,6 +630,16 @@ RouteController *NavApp::getRouteController()
   return mainWindow->getRouteController();
 }
 
+const QString& NavApp::getCurrentRouteFilepath()
+{
+  return mainWindow->getRouteController()->getCurrentRouteFilepath();
+}
+
+const QString& NavApp::getCurrentAircraftPerfFilepath()
+{
+  return aircraftPerfController->getCurrentFilepath();
+}
+
 DatabaseManager *NavApp::getDatabaseManager()
 {
   return databaseManager;
