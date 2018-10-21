@@ -378,6 +378,10 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     // Use arc or intercept geometry to calculate distance
     geometryLeg = &at(active).getProcedureLeg();
 
+#ifdef DEBUG_INFORMATION_ROUTE_DIST
+  qDebug() << Q_FUNC_INFO << activeLegResult;
+#endif
+
   if(crossTrackDistance != nullptr)
   {
     if(geometryLeg != nullptr)
@@ -417,6 +421,10 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
       else
         distToCurrent = meterToNm(getPositionAt(routeIndex).distanceMeterTo(activePos.pos));
     }
+
+#ifdef DEBUG_INFORMATION_ROUTE_DIST
+    qDebug() << Q_FUNC_INFO << distToCurrent;
+#endif
 
     if(nextLegDistance != nullptr)
       *nextLegDistance = distToCurrent;

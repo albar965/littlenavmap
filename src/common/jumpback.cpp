@@ -54,7 +54,7 @@ void JumpBack::start(const QVariantList& jumpBackValues)
      OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << parent()->metaObject()->className();
 #endif
 
     if(!active)
@@ -73,7 +73,7 @@ void JumpBack::start(const QVariantList& jumpBackValues)
 void JumpBack::cancel()
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className();
 #endif
 
   timer.stop();
@@ -83,7 +83,7 @@ void JumpBack::cancel()
 void JumpBack::timeout()
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className();
 #endif
 
   emit jumpBack(values);

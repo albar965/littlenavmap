@@ -63,6 +63,8 @@ public:
    */
   bool getRouteDistances(float *distFromStart, float *distToDest = nullptr,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
+
+  /* Start from distance but values do not decrease if aircraft is leaving route */
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects */

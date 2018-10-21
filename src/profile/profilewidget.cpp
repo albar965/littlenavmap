@@ -149,8 +149,14 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
         Pos lastPos = lastSimData.getUserAircraftConst().getPosition();
         Pos simPos = simData.getUserAircraftConst().getPosition();
 
-        if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
+        aircraftDistanceFromStart = route.getDistanceFromStart(simPos);
+        if(aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
         {
+#ifdef DEBUG_INFORMATION_PROFILE_SIMDATA
+          if(simData.getUserAircraft().isDebug())
+            qDebug() << Q_FUNC_INFO << aircraftDistanceFromStart;
+#endif
+
           // Get screen point from last update
           QPoint lastPoint;
           if(lastPos.isValid())
@@ -1738,6 +1744,7 @@ void ProfileWidget::postDatabaseLoad()
 
 void ProfileWidget::optionsChanged()
 {
+  jumpBack->cancel();
   updateScreenCoords();
   updateErrorLabel();
   updateLabel();
@@ -1824,10 +1831,12 @@ void ProfileWidget::jumpBackToAircraftTimeout()
     {
       jumpBack->cancel();
       if(simData.getUserAircraft().getPosition().isValid())
+      {
         scrollArea->centerAircraft(toScreen(QPointF(aircraftDistanceFromStart,
                                                     simData.getUserAircraft().getPosition().getAltitude())));
 
-      NavApp::setStatusMessage(tr("Jumped back to aircraft."));
+        NavApp::setStatusMessage(tr("Jumped back to aircraft."));
+      }
     }
   }
   else

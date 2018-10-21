@@ -246,7 +246,7 @@ private:
   QPolygon aircraftTrackPoints;
   float maxTrackAltitudeFt = 0.f;
 
-  float aircraftDistanceFromStart, aircraftDistanceToDest;
+  float aircraftDistanceFromStart;
   float lastAircraftDistanceFromStart;
   ElevationLegList legList;
 

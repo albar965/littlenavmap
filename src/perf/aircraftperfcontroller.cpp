@@ -455,9 +455,8 @@ void AircraftPerfController::flightSegmentChanged(const atools::fs::perf::Flight
     updateActionStates();
   }
   updateReport();
-  NavApp::setStatusMessage(tr("Performance data collection detected flight segment %1.").
+  NavApp::setStatusMessage(tr("Flight segment %1.").
                            arg(AircraftPerfHandler::getFlightSegmentString(flightSegment).toLower()));
-
 }
 
 bool AircraftPerfController::isClimbValid() const
