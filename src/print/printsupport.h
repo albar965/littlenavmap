@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_PRINTSUPPORT_H
 
 #include <QCoreApplication>
+#include <QFont>
 
 class MainWindow;
 class QPrinter;
@@ -30,6 +31,11 @@ class PrintDialog;
 class MapQuery;
 class InfoQuery;
 class QTextCursor;
+
+namespace map {
+struct MapAirport;
+
+}
 
 namespace atools {
 namespace util {
@@ -49,12 +55,13 @@ public:
   PrintSupport(MainWindow *parent);
   virtual ~PrintSupport();
 
-  /* Print the current map view */
+  /* Open preview for the current map view */
   void printMap();
 
   /* Show dialog for options and print flight plan */
   void printFlightplan();
 
+  /* Save and restore print dialog settings and size */
   void saveState();
   void restoreState();
 
@@ -63,24 +70,47 @@ public:
   static void drawWatermark(const QPoint& pos, QPixmap *pixmap);
 
 private:
-  void paintRequestedMap(QPrinter *printer);
-  void paintRequestedFlightplan(QPrinter *printer);
-  static void drawWatermarkInternal(const QPoint& pos, QPainter *painter);
-  QPrintPreviewDialog *buildPreviewDialog(QWidget *parent);
+  /* Draw map */
+  void paintRequestedMap(QPrinter *);
+
+  /* Draw flight plan document into the printer */
+  void paintRequestedFlightplan(QPrinter *);
+
+  QPrintPreviewDialog *buildPreviewDialog();
   void deletePreviewDialog(QPrintPreviewDialog *print);
+
+  /* Button box in print dialog clicked */
   void printPreviewFlightplanClicked();
   void printFlightplanClicked();
+
+  /* Create and file the document for the flight plan print job */
   void createFlightplanDocuments();
   void deleteFlightplanDocuments();
-  void addHeader(QTextCursor& cursor);
+
+  void addHeader(atools::util::HtmlBuilder& html);
+
+  /* Load weather so it is available for printing */
   void fillWeatherCache();
 
+  void buildPrinter();
+  void deletePrinter();
+
+  /* Add airport information at cursor */
+  void addAirport(QTextCursor& cursor, const map::MapAirport& airport, const QString& prefix, bool departure);
+
+  static void drawWatermarkInternal(const QPoint& pos, QPainter *painter);
+  void setPrintTextSize(int percent);
+
+  QPrinter *printer = nullptr;
   MainWindow *mainWindow;
-  PrintDialog *printFlightplanDialog = nullptr;
+  PrintDialog *printDialog = nullptr;
   MapQuery *mapQuery = nullptr;
 
-  QTextDocument *flightPlanPrintDocument = nullptr;
-  QPixmap *mapScreenPrintPixmap = nullptr;
+  /* Document that will contain the flight plan print */
+  QTextDocument *printDocument = nullptr;
+
+  /* Default font */
+  QFont printDocumentFont;
 
 };
 

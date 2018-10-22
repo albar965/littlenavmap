@@ -2510,8 +2510,6 @@ void MainWindow::mainWindowShown()
 
   setStatusMessage(tr("Ready."));
 
-  // TODO DEBUG
-  // routeNewFromString();
   qDebug() << Q_FUNC_INFO << "leave";
 }
 

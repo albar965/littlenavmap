@@ -6,14 +6,254 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>531</width>
-    <height>359</height>
+    <width>490</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Print Flight Plan</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="groupBoxPrintOptions">
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBoxPrintFuel">
+        <property name="toolTip">
+         <string>Include estimated fuel consumption, trip and block fuel if aircraft performance is loaded.</string>
+        </property>
+        <property name="text">
+         <string>Print fuel &amp;report</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBoxPrintNewPage">
+        <property name="toolTip">
+         <string>Start a new page after each chapter.</string>
+        </property>
+        <property name="text">
+         <string>&amp;New page after each chapter</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxPrintHeader">
+        <property name="toolTip">
+         <string>Include a header which shows total distance, flight time and procedures.</string>
+        </property>
+        <property name="text">
+         <string>Print table &amp;header</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QSpinBox" name="spinBoxPrintTextSize">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Overall text size in the document</string>
+        </property>
+        <property name="suffix">
+         <string> %</string>
+        </property>
+        <property name="prefix">
+         <string>Text size </string>
+        </property>
+        <property name="minimum">
+         <number>20</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBoxPrintFlightplan">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Flight Plan</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="checkBoxPrintFlightplan">
+          <property name="toolTip">
+           <string>Include the flight plan</string>
+          </property>
+          <property name="text">
+           <string>Print &amp;flight plan table</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxPrintTextSizeFlightplan">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Text size for the flight plan</string>
+          </property>
+          <property name="suffix">
+           <string> %</string>
+          </property>
+          <property name="prefix">
+           <string>Text size </string>
+          </property>
+          <property name="minimum">
+           <number>20</number>
+          </property>
+          <property name="maximum">
+           <number>200</number>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="labelPrintFlightplanCols">
+          <property name="text">
+           <string>Select Flight Plan &amp;Columns to Print:</string>
+          </property>
+          <property name="buddy">
+           <cstring>listWidgetPrintFlightplanCols</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidgetPrintFlightplanCols">
+          <property name="toolTip">
+           <string>Select columns from the flight plan table to include in the print</string>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+           <bool>false</bool>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <layout class="QGridLayout" name="gridLayouPrint">
      <item row="0" column="0">
@@ -22,8 +262,26 @@
         <string>Departure Airport</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureOverview">
+          <property name="toolTip">
+           <string>Print the departure airport information as shown in the dock window &quot;Information&quot; on tab &quot;Airport&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Overview</string>
           </property>
@@ -34,6 +292,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureRunways">
+          <property name="toolTip">
+           <string>Print runway information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Runways&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Runways / Helipads</string>
           </property>
@@ -58,6 +319,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureCom">
+          <property name="toolTip">
+           <string>Print airport communication frequencies as shown in the dock window &quot;Information&quot; on tab &quot;Com&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;COM frequencies</string>
           </property>
@@ -68,6 +332,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureAppr">
+          <property name="toolTip">
+           <string>Include procedure information as shown in the dock window &quot;Information&quot; on tab &quot;Procedures&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Approaches</string>
           </property>
@@ -75,6 +342,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureWeather">
+          <property name="toolTip">
+           <string>Print decoded weather information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Weather</string>
           </property>
@@ -92,8 +362,26 @@
         <string>Destination Airport</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationOverview">
+          <property name="toolTip">
+           <string>Print the destination airport information as shown in the dock window &quot;Information&quot; on tab &quot;Airport&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Overview</string>
           </property>
@@ -104,6 +392,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationRunways">
+          <property name="toolTip">
+           <string>Print runway information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Runways&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Runways / Helipads</string>
           </property>
@@ -128,6 +419,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationCom">
+          <property name="toolTip">
+           <string>Print airport communication frequencies as shown in the dock window &quot;Information&quot; on tab &quot;Com&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;COM frequencies</string>
           </property>
@@ -138,6 +432,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationAppr">
+          <property name="toolTip">
+           <string>Include procedure information as shown in the dock window &quot;Information&quot; on tab &quot;Procedures&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Approaches</string>
           </property>
@@ -145,6 +442,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationWeather">
+          <property name="toolTip">
+           <string>Print decoded weather information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</string>
+          </property>
           <property name="text">
            <string>&amp;Weather</string>
           </property>
@@ -159,65 +459,6 @@
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_4">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="checkBoxPrintFlightplan">
-     <property name="text">
-      <string>Print &amp;flight plan table</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="spinBoxPrintTextSize">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="suffix">
-      <string> %</string>
-     </property>
-     <property name="prefix">
-      <string>Text size </string>
-     </property>
-     <property name="minimum">
-      <number>50</number>
-     </property>
-     <property name="maximum">
-      <number>150</number>
-     </property>
-     <property name="singleStep">
-      <number>10</number>
-     </property>
-     <property name="value">
-      <number>100</number>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBoxPrint">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -230,19 +471,26 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>checkBoxPrintHeader</tabstop>
+  <tabstop>checkBoxPrintFuel</tabstop>
+  <tabstop>checkBoxPrintNewPage</tabstop>
+  <tabstop>spinBoxPrintTextSize</tabstop>
+  <tabstop>checkBoxPrintFlightplan</tabstop>
+  <tabstop>spinBoxPrintTextSizeFlightplan</tabstop>
+  <tabstop>listWidgetPrintFlightplanCols</tabstop>
   <tabstop>checkBoxPrintDepartureOverview</tabstop>
-  <tabstop>checkBoxPrintDestinationOverview</tabstop>
   <tabstop>checkBoxPrintDepartureRunways</tabstop>
-  <tabstop>checkBoxPrintDestinationRunways</tabstop>
   <tabstop>checkBoxPrintDepartureSoftRunways</tabstop>
-  <tabstop>checkBoxPrintDestinationSoftRunways</tabstop>
   <tabstop>checkBoxPrintDepartureDetailRunways</tabstop>
-  <tabstop>checkBoxPrintDestinationDetailRunways</tabstop>
   <tabstop>checkBoxPrintDepartureCom</tabstop>
-  <tabstop>checkBoxPrintDestinationCom</tabstop>
   <tabstop>checkBoxPrintDepartureAppr</tabstop>
-  <tabstop>checkBoxPrintDestinationAppr</tabstop>
   <tabstop>checkBoxPrintDepartureWeather</tabstop>
+  <tabstop>checkBoxPrintDestinationOverview</tabstop>
+  <tabstop>checkBoxPrintDestinationRunways</tabstop>
+  <tabstop>checkBoxPrintDestinationSoftRunways</tabstop>
+  <tabstop>checkBoxPrintDestinationCom</tabstop>
+  <tabstop>checkBoxPrintDestinationDetailRunways</tabstop>
+  <tabstop>checkBoxPrintDestinationAppr</tabstop>
   <tabstop>checkBoxPrintDestinationWeather</tabstop>
  </tabstops>
  <resources/>

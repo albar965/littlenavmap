@@ -608,81 +608,7 @@ void AircraftPerfController::updateReport()
     else
     {
       if(altitudeLegs.size() > 1)
-      {
-        // Flight data =======================================================
-        atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
-        html.p().b(tr("Flight")).pEnd();
-        html.table();
-        html.row2(tr("Distance and Time:"), tr("%1, %2").
-                  arg(Unit::distNm(altitudeLegs.getTotalDistance())).
-                  arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())),
-                  atools::util::html::BOLD | flags);
-        html.row2(tr("Average Ground Speed:"), Unit::speedKts(altitudeLegs.getAverageGroundSpeed()));
-        html.row2(tr("True Airspeed at Cruise:"), Unit::speedKts(perf->getCruiseSpeed()));
-
-        float mach = atools::geo::tasToMachFromAlt(altitudeLegs.getCruiseAltitide(),
-                                                   static_cast<float>(perf->getCruiseSpeed()));
-        if(mach > 0.4f)
-          html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2));
-        html.tableEnd();
-
-        // Fuel data =======================================================
-        html.p().b(tr("Fuel")).pEnd();
-        html.table();
-        float tripFuel = altitudeLegs.getTripFuel();
-        html.row2(tr("Trip Fuel:"), Unit::fuelLbsGallon(tripFuel, true, fuelAsVol),
-                  atools::util::html::BOLD | flags);
-        float blockFuel = (altitudeLegs.getTripFuel() * perf->getContingencyFuelFactor()) +
-                          perf->getTaxiFuel() + perf->getExtraFuel() + perf->getReserveFuel();
-        html.row2(tr("Block Fuel:"), Unit::fuelLbsGallon(blockFuel, true, fuelAsVol),
-                  atools::util::html::BOLD | flags);
-        float destFuel = blockFuel - tripFuel - perf->getTaxiFuel();
-        if(atools::almostEqual(destFuel, 0.f, 0.1f))
-          // Avoid -0 case
-          destFuel = 0.f;
-        html.row2(tr("Fuel at Destination:"), Unit::fuelLbsGallon(destFuel, true, fuelAsVol), flags);
-        html.row2(tr("Reserve Fuel:"), Unit::fuelLbsGallon(perf->getReserveFuel(), true, fuelAsVol), flags);
-        html.row2(tr("Taxi Fuel:"), Unit::fuelLbsGallon(perf->getTaxiFuel(), true, fuelAsVol), flags);
-        html.row2(tr("Extra Fuel:"), Unit::fuelLbsGallon(perf->getExtraFuel(), true, fuelAsVol), flags);
-        html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
-                  arg(perf->getContingencyFuel(), 0, 'f', 0).
-                  arg(Unit::fuelLbsGallon(altitudeLegs.getTripFuel() * (perf->getContingencyFuelFactor() - 1.f)),
-                      fuelAsVol), flags);
-        html.tableEnd();
-
-        // Climb and descent phases =======================================================
-        html.p().b(tr("Climb and Descent")).pEnd();
-        html.table();
-        if(perf->isClimbValid())
-        {
-          html.row2(tr("Climb:"), tr("%1 at %2, %3° Flight Path Angle").
-                    arg(Unit::speedVertFpm(perf->getClimbVertSpeed())).
-                    arg(Unit::speedKts(perf->getClimbSpeed())).
-                    arg(QLocale().toString(perf->getClimbFlightPathAngle(), 'f', 1)));
-
-          if(altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
-            html.row2(tr("Time to Climb:"),
-                      formatter::formatMinutesHoursLong(altitudeLegs.getTopOfClimbDistance() /
-                                                        perf->getClimbSpeed()));
-        }
-        else
-          html.row2(tr("Climb not valid"));
-
-        if(perf->isDescentValid())
-        {
-          html.row2(tr("Descent:"), tr("%1 at %2, %3° Flight Path Angle").
-                    arg(Unit::speedVertFpm(perf->getDescentVertSpeed())).
-                    arg(Unit::speedKts(perf->getDescentSpeed())).
-                    arg(QLocale().toString(perf->getDescentFlightPathAngle(), 'f', 1)));
-          html.row2(tr("Descent Rule of Thumb:"), tr("%1 per %2 %3").
-                    arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm() * 1000.f)).
-                    arg(QLocale().toString(1000.f, 'f', 0)).
-                    arg(Unit::getUnitAltStr()));
-        }
-        else
-          html.row2(tr("Descent not valid"));
-        html.tableEnd();
-      }
+        fuelReport(html);
       else
         html.p().b(tr("No Flight Plan loaded.")).pEnd();
     }
@@ -700,24 +626,127 @@ void AircraftPerfController::updateReport()
     html.tableEnd();
   }
 
-  if(!currentFilepath.isEmpty())
-  {
-    html.p().b(tr("Performance File")).pEnd();
-    html.table();
-
-    // Show link inactive if file does not exist
-    atools::util::HtmlBuilder link(html.cleared());
-    if(QFileInfo::exists(currentFilepath))
-      link.a(currentFilepath, QString("lnm://show?filepath=%1").arg(currentFilepath), atools::util::html::LINK_NO_UL);
-    else
-      link.text(currentFilepath);
-
-    html.row2(QString(), link.getHtml(), atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-    html.tableEnd();
-  }
+  // File path  =======================================================
+  fuelReportFilepath(html, false /* print */);
 
   atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
                                     false /*scrollToTop*/, true /* keep selection */);
+}
+
+void AircraftPerfController::fuelReportFilepath(atools::util::HtmlBuilder& html, bool print)
+{
+  if(!currentFilepath.isEmpty())
+  {
+    if(!print)
+    {
+      html.p().b(tr("Performance File")).pEnd();
+      html.table();
+
+      // Show link inactive if file does not exist
+      atools::util::HtmlBuilder link(html.cleared());
+      if(QFileInfo::exists(currentFilepath))
+        link.a(currentFilepath, QString("lnm://show?filepath=%1").arg(currentFilepath), atools::util::html::LINK_NO_UL);
+      else
+        link.text(currentFilepath);
+
+      html.row2(QString(), link.getHtml(), atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+      html.tableEnd();
+    }
+    else
+      // Use a simple layout for printing
+      html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilepath).pEnd();
+  }
+}
+
+void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool print)
+{
+  if(print)
+    // Include header here if printing
+    html.h2(tr("Aircraft Performance %1 - %2").arg(perf->getName()).arg(perf->getAircraftType()),
+            atools::util::html::BOLD | atools::util::html::BIG);
+
+  const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
+  bool fuelAsVol = perf->useFuelAsVolume();
+
+  // Flight data =======================================================
+  atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
+  html.p().b(tr("Flight")).pEnd();
+  html.table();
+  html.row2(tr("Distance and Time:"), tr("%1, %2").
+            arg(Unit::distNm(altitudeLegs.getTotalDistance())).
+            arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())),
+            atools::util::html::BOLD | flags);
+  html.row2(tr("Average Ground Speed:"), Unit::speedKts(altitudeLegs.getAverageGroundSpeed()));
+  html.row2(tr("True Airspeed at Cruise:"), Unit::speedKts(perf->getCruiseSpeed()));
+
+  float mach = atools::geo::tasToMachFromAlt(altitudeLegs.getCruiseAltitide(),
+                                             static_cast<float>(perf->getCruiseSpeed()));
+  if(mach > 0.4f)
+    html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2));
+  html.tableEnd();
+
+  // Fuel data =======================================================
+  html.p().b(tr("Fuel")).pEnd();
+  html.table();
+  float tripFuel = altitudeLegs.getTripFuel();
+  html.row2(tr("Trip Fuel:"), Unit::fuelLbsGallon(tripFuel, true, fuelAsVol),
+            atools::util::html::BOLD | flags);
+  float blockFuel = (altitudeLegs.getTripFuel() * perf->getContingencyFuelFactor()) +
+                    perf->getTaxiFuel() + perf->getExtraFuel() + perf->getReserveFuel();
+  html.row2(tr("Block Fuel:"), Unit::fuelLbsGallon(blockFuel, true, fuelAsVol),
+            atools::util::html::BOLD | flags);
+  float destFuel = blockFuel - tripFuel - perf->getTaxiFuel();
+  if(atools::almostEqual(destFuel, 0.f, 0.1f))
+    // Avoid -0 case
+    destFuel = 0.f;
+  html.row2(tr("Fuel at Destination:"), Unit::fuelLbsGallon(destFuel, true, fuelAsVol), flags);
+  html.row2(tr("Reserve Fuel:"), Unit::fuelLbsGallon(perf->getReserveFuel(), true, fuelAsVol), flags);
+  html.row2(tr("Taxi Fuel:"), Unit::fuelLbsGallon(perf->getTaxiFuel(), true, fuelAsVol), flags);
+  html.row2(tr("Extra Fuel:"), Unit::fuelLbsGallon(perf->getExtraFuel(), true, fuelAsVol), flags);
+  html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
+            arg(perf->getContingencyFuel(), 0, 'f', 0).
+            arg(Unit::fuelLbsGallon(altitudeLegs.getTripFuel() * (perf->getContingencyFuelFactor() - 1.f)),
+                fuelAsVol), flags);
+  html.tableEnd();
+
+  // Climb and descent phases =======================================================
+  html.p().b(tr("Climb and Descent")).pEnd();
+  html.table();
+  if(perf->isClimbValid())
+  {
+    html.row2(tr("Climb:"), tr("%1 at %2, %3° Flight Path Angle").
+              arg(Unit::speedVertFpm(perf->getClimbVertSpeed())).
+              arg(Unit::speedKts(perf->getClimbSpeed())).
+              arg(QLocale().toString(perf->getClimbFlightPathAngle(), 'f', 1)));
+
+    if(altitudeLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
+      html.row2(tr("Time to Climb:"),
+                formatter::formatMinutesHoursLong(altitudeLegs.getTopOfClimbDistance() /
+                                                  perf->getClimbSpeed()));
+  }
+  else
+    html.row2(tr("Climb not valid"));
+
+  if(perf->isDescentValid())
+  {
+    html.row2(tr("Descent:"), tr("%1 at %2, %3° Flight Path Angle").
+              arg(Unit::speedVertFpm(perf->getDescentVertSpeed())).
+              arg(Unit::speedKts(perf->getDescentSpeed())).
+              arg(QLocale().toString(perf->getDescentFlightPathAngle(), 'f', 1)));
+    html.row2(tr("Descent Rule of Thumb:"), tr("%1 per %2 %3").
+              arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm() * 1000.f)).
+              arg(QLocale().toString(1000.f, 'f', 0)).
+              arg(Unit::getUnitAltStr()));
+  }
+  else
+    html.row2(tr("Descent not valid"));
+  html.tableEnd();
+
+  if(print && !perf->getDescription().isEmpty())
+  {
+    html.p().b(tr("Performance File Description")).pEnd();
+    html.table().row2(QString(), perf->getDescription()).tableEnd();
+  }
 }
 
 void AircraftPerfController::saveState()

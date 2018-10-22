@@ -29,7 +29,9 @@ namespace atools {
 namespace gui {
 class ItemViewZoomHandler;
 }
-
+namespace util {
+class HtmlBuilder;
+}
 namespace fs {
 
 namespace sc {
@@ -53,6 +55,7 @@ class FlightplanEntryBuilder;
 class SymbolPainter;
 class AirportQuery;
 class UnitStringTool;
+class QTextCursor;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -197,7 +200,13 @@ public:
   void styleChanged();
 
   /* Get the route table as a HTML document only containing the table and header */
-  QString flightplanTableAsHtml(int iconSizePixel) const;
+  QString flightplanTableAsHtml(float iconSizePixel) const;
+
+  /* Insert a flight plan table as QTextTable object at the cursor position */
+  void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
+
+  /* Get header for print report */
+  void flightplanHeader(atools::util::HtmlBuilder& html, bool titleOnly) const;
 
   /* Copy the route as a string to the clipboard */
   void routeStringToClipboard() const;
@@ -227,6 +236,9 @@ public:
   bool hasSelection();
 
   void aircraftPerformanceChanged();
+
+  /* Get table columns from the view */
+  QStringList getRouteColumns() const;
 
 signals:
   /* Show airport on map */
@@ -346,7 +358,7 @@ private:
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
 
-  QString buildFlightplanLabel(bool html) const;
+  QString buildFlightplanLabel(bool print = false, bool titleOnly = false) const;
   QString buildFlightplanLabel2() const;
 
   void updateTableHeaders();
@@ -356,7 +368,7 @@ private:
   void updateIcons();
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
-  QIcon iconForLeg(const RouteLeg& leg, int size) const;
+  QIcon iconForLeg(const RouteLeg& leg, float size) const;
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
@@ -420,7 +432,7 @@ private:
   QTimer routeAltDelayTimer;
 
   // Route table colum headings
-  QList<QString> routeColumns;
+  QStringList routeColumns;
   UnitStringTool *units = nullptr;
 };
 

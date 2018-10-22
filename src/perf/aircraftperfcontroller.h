@@ -23,6 +23,10 @@
 #include <QTimer>
 
 namespace atools {
+namespace util {
+class HtmlBuilder;
+}
+
 namespace gui {
 class FileHistoryHandler;
 }
@@ -135,6 +139,10 @@ public:
   /* true if the performance segments are valid, i.e. speeds are > 0 */
   bool isClimbValid() const;
   bool isDescentValid() const;
+
+  /* Called from print support to get a HTML report */
+  void fuelReport(atools::util::HtmlBuilder& html, bool print = false);
+  void fuelReportFilepath(atools::util::HtmlBuilder& html, bool print);
 
 signals:
   /* Sent if performance or wind has changed */

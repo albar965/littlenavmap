@@ -19,7 +19,6 @@
 #define LITTLENAVMAP_PRINTDIALOG_H
 
 #include <QDialog>
-#include <QTimer>
 
 namespace Ui {
 class PrintDialog;
@@ -29,23 +28,26 @@ class QAbstractButton;
 namespace prt {
 enum PrintFlightPlanOpt
 {
-  NONE = 0x0000,
-  DEPARTURE_OVERVIEW = 0x0001,
-  DEPARTURE_RUNWAYS = 0x0002,
-  DEPARTURE_RUNWAYS_SOFT = 0x0004,
-  DEPARTURE_RUNWAYS_DETAIL = 0x0008,
-  DEPARTURE_COM = 0x0010,
-  DEPARTURE_APPR = 0x0020,
-  DESTINATION_OVERVIEW = 0x0040,
-  DESTINATION_RUNWAYS = 0x0080,
-  DESTINATION_RUNWAYS_SOFT = 0x0100,
-  DESTINATION_RUNWAYS_DETAIL = 0x0200,
-  DESTINATION_COM = 0x0400,
-  DESTINATION_APPR = 0x0800,
-  FLIGHTPLAN = 0x1000,
+  NONE = 0,
+  DEPARTURE_OVERVIEW = 1 << 0,
+  DEPARTURE_RUNWAYS = 1 << 1,
+  DEPARTURE_RUNWAYS_SOFT = 1 << 2,
+  DEPARTURE_RUNWAYS_DETAIL = 1 << 3,
+  DEPARTURE_COM = 1 << 4,
+  DEPARTURE_APPR = 1 << 5,
+  DESTINATION_OVERVIEW = 1 << 6,
+  DESTINATION_RUNWAYS = 1 << 7,
+  DESTINATION_RUNWAYS_SOFT = 1 << 8,
+  DESTINATION_RUNWAYS_DETAIL = 1 << 9,
+  DESTINATION_COM = 1 << 10,
+  DESTINATION_APPR = 1 << 11,
+  FLIGHTPLAN = 1 << 12, /* Print flight plan */
+  NEW_PAGE = 1 << 13, /* New page after each chapter */
+  FUEL_REPORT = 1 << 14, /* Print fuel and aircraft performance report */
+  HEADER = 1 << 15, /* Print a detailed header as on top of the flight plan dock */
 
-  DEPARTURE_WEATHER = 0x2000,
-  DESTINATION_WEATHER = 0x4000,
+  DEPARTURE_WEATHER = 1 << 16,
+  DESTINATION_WEATHER = 1 << 17,
 
   DEPARTURE_ANY = DEPARTURE_OVERVIEW | DEPARTURE_RUNWAYS |
                   DEPARTURE_COM | DEPARTURE_APPR | DEPARTURE_WEATHER,
@@ -58,7 +60,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightPlanOpts);
 }
 
 /*
- * Provides a dialog that allows to select fligh plan documents for printing
+ * Provides a dialog that allows to select flight plan documents for printing and various other configuration options.
+ * Has a list widget to select flight plan table columns.
  */
 class PrintDialog :
   public QDialog
@@ -66,16 +69,28 @@ class PrintDialog :
   Q_OBJECT
 
 public:
-  explicit PrintDialog(QWidget *parent = 0);
-  ~PrintDialog();
+  explicit PrintDialog(QWidget *parent);
+  virtual ~PrintDialog() override;
 
+  /* Get options as set in the dialog */
   prt::PrintFlightPlanOpts getPrintOptions() const;
-  int getPrintTextSize() const;
 
+  /* Save and restore dialog size and selected options */
   void saveState();
   void restoreState();
 
+  /* Text size in percent of default font */
+  int getPrintTextSize() const;
+  int getPrintTextSizeFlightplan() const;
+
+  /* Fill column selection widget with texts */
+  void setRouteTableColumns(const QStringList& columns);
+
+  /* Bits for selected colums with size equal to number of columns as set above */
+  QBitArray getSelectedRouteTableColumns() const;
+
 signals:
+  /* Preview or print clicked - dialog is not closed */
   void printPreviewClicked();
   void printClicked();
 

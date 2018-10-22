@@ -811,6 +811,9 @@ void MapWidget::showOverlays(bool show)
     AbstractFloatItem *overlay = floatItem(name);
     if(overlay != nullptr)
     {
+      if(overlay->nameId() == "scalebar")
+        continue;
+
       bool showConfig = mapOverlays.value(name)->isChecked();
 
       overlay->blockSignals(true);

@@ -92,9 +92,12 @@ HtmlInfoBuilder::~HtmlInfoBuilder()
 
 void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating) const
 {
-  html.img(SymbolPainter().createAirportIcon(airport, symbolSizeTitle.height()),
-           QString(), QString(), symbolSizeTitle);
-  html.nbsp().nbsp();
+  if(!print)
+  {
+    html.img(SymbolPainter().createAirportIcon(airport, symbolSizeTitle.height()),
+             QString(), QString(), symbolSizeTitle);
+    html.nbsp().nbsp();
+  }
 
   // Adapt title to airport status
   Flags titleFlags = atools::util::html::BOLD;
@@ -155,7 +158,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   // Add bearing/distance to table
-  bearingText(airport.position, airport.magvar, html);
+  if(!print)
+    bearingText(airport.position, airport.magvar, html);
 
   // Administrative information
   if(!city.isEmpty())
@@ -211,7 +215,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   html.tableEnd();
-
   // Create a list of facilities =============================
   if(info)
     head(html, tr("Facilities"));
@@ -450,7 +453,6 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
     {
-      html.h3(tr("COM Frequencies"));
       html.table();
       html.tr(QColor()).td(tr("Type"), atools::util::html::BOLD).
       td(tr("Frequency"), atools::util::html::BOLD).
@@ -569,14 +571,23 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 
         if(details)
         {
+          if(print)
+            html.table().tr().td();
+
           runwayEndText(html, airport, recPrim, hdgPrim, rec.valueFloat("length"));
 #ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).pEnd();
 #endif
+          if(print)
+            html.tdEnd().td();
+
           runwayEndText(html, airport, recSec, hdgSec, rec.valueFloat("length"));
 #ifdef DEBUG_INFORMATION
           html.p().small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).pEnd();
 #endif
+
+          if(print)
+            html.tdEnd().trEnd().tableEnd();
         }
       }
     }
@@ -812,8 +823,6 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     if(!print)
       airportTitle(airport, html, -1);
 
-    html.p(tr("Approaches and Transitions"));
-
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(navAirport.id);
     if(recAppVector != nullptr)
     {
@@ -996,7 +1005,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         }
       }
     }
-    else
+    else if(!print)
       html.p(tr("Airport has no approach."));
   }
 }
@@ -3174,9 +3183,13 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
 void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html,
                                            const atools::fs::weather::Metar& metar, bool mapDisplay) const
 {
-  html.img(SymbolPainter().createAirportWeatherIcon(metar, symbolSize.height()),
-           QString(), QString(), symbolSize);
-  html.nbsp();
+  if(!print)
+  {
+    html.img(SymbolPainter().createAirportWeatherIcon(metar, symbolSize.height()),
+             QString(), QString(), symbolSize);
+    html.nbsp();
+  }
+
   html.text(metar.getParsedMetar().getFlightRulesString());
   if(mapDisplay)
     html.nbsp().text(tr("-")).nbsp().text(tr("Map"));

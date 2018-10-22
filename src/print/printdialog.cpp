@@ -20,13 +20,11 @@
 #include "gui/widgetstate.h"
 #include "gui/helphandler.h"
 #include "common/constants.h"
-#include "weather/weatherreporter.h"
-#include "connect/connectclient.h"
-#include "options/optiondata.h"
-#include "gui/mainwindow.h"
-#include "route/routecontroller.h"
+#include "settings/settings.h"
 
+#include <QBitArray>
 #include <QPushButton>
+#include <QTimer>
 
 #include "route/route.h"
 
@@ -38,8 +36,9 @@ PrintDialog::PrintDialog(QWidget *parent)
 
   ui->setupUi(this);
 
+  // Change default button box texts
   ui->buttonBoxPrint->button(QDialogButtonBox::Ok)->setText(tr("&Print"));
-  ui->buttonBoxPrint->button(QDialogButtonBox::Yes)->setText(tr("&Print Preview"));
+  ui->buttonBoxPrint->button(QDialogButtonBox::Yes)->setText(tr("Print Pre&view"));
 
   connect(ui->buttonBoxPrint, &QDialogButtonBox::clicked, this, &PrintDialog::buttonBoxClicked);
 
@@ -53,14 +52,13 @@ PrintDialog::PrintDialog(QWidget *parent)
   connect(ui->checkBoxPrintDepartureWeather, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationOverview, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationRunways, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
-  connect(ui->checkBoxPrintDestinationDetailRunways, &QCheckBox::toggled, this,
-          &PrintDialog::updateButtonStates);
-  connect(ui->checkBoxPrintDestinationSoftRunways, &QCheckBox::toggled, this,
-          &PrintDialog::updateButtonStates);
+  connect(ui->checkBoxPrintDestinationDetailRunways, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
+  connect(ui->checkBoxPrintDestinationSoftRunways, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationCom, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationAppr, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationWeather, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintFlightplan, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
+  connect(ui->checkBoxPrintFuel, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
 }
 
 PrintDialog::~PrintDialog()
@@ -70,11 +68,15 @@ PrintDialog::~PrintDialog()
 
 void PrintDialog::updateButtonStates()
 {
+  // Disable or enable widgets based on check boxes
   ui->checkBoxPrintDepartureDetailRunways->setEnabled(ui->checkBoxPrintDepartureRunways->isChecked());
   ui->checkBoxPrintDepartureSoftRunways->setEnabled(ui->checkBoxPrintDepartureRunways->isChecked());
 
   ui->checkBoxPrintDestinationDetailRunways->setEnabled(ui->checkBoxPrintDestinationRunways->isChecked());
   ui->checkBoxPrintDestinationSoftRunways->setEnabled(ui->checkBoxPrintDestinationRunways->isChecked());
+
+  ui->spinBoxPrintTextSizeFlightplan->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
+  ui->listWidgetPrintFlightplanCols->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
 
   prt::PrintFlightPlanOpts opts = getPrintOptions();
   bool canPrint = opts & prt::DEPARTURE_ANY || opts & prt::DESTINATION_ANY || opts & prt::FLIGHTPLAN;
@@ -96,14 +98,15 @@ prt::PrintFlightPlanOpts PrintDialog::getPrintOptions() const
   opts |= ui->checkBoxPrintDepartureWeather->isChecked() ? prt::DEPARTURE_WEATHER : prt::NONE;
   opts |= ui->checkBoxPrintDestinationOverview->isChecked() ? prt::DESTINATION_OVERVIEW : prt::NONE;
   opts |= ui->checkBoxPrintDestinationRunways->isChecked() ? prt::DESTINATION_RUNWAYS : prt::NONE;
-  opts |=
-    ui->checkBoxPrintDestinationDetailRunways->isChecked() ? prt::DESTINATION_RUNWAYS_DETAIL : prt::NONE;
+  opts |= ui->checkBoxPrintDestinationDetailRunways->isChecked() ? prt::DESTINATION_RUNWAYS_DETAIL : prt::NONE;
   opts |= ui->checkBoxPrintDestinationSoftRunways->isChecked() ? prt::DESTINATION_RUNWAYS_SOFT : prt::NONE;
   opts |= ui->checkBoxPrintDestinationCom->isChecked() ? prt::DESTINATION_COM : prt::NONE;
   opts |= ui->checkBoxPrintDestinationAppr->isChecked() ? prt::DESTINATION_APPR : prt::NONE;
   opts |= ui->checkBoxPrintDestinationWeather->isChecked() ? prt::DESTINATION_WEATHER : prt::NONE;
-
   opts |= ui->checkBoxPrintFlightplan->isChecked() ? prt::FLIGHTPLAN : prt::NONE;
+  opts |= ui->checkBoxPrintNewPage->isChecked() ? prt::NEW_PAGE : prt::NONE;
+  opts |= ui->checkBoxPrintFuel->isChecked() ? prt::FUEL_REPORT : prt::NONE;
+  opts |= ui->checkBoxPrintHeader->isChecked() ? prt::HEADER : prt::NONE;
   return opts;
 }
 
@@ -112,63 +115,118 @@ int PrintDialog::getPrintTextSize() const
   return ui->spinBoxPrintTextSize->value();
 }
 
+int PrintDialog::getPrintTextSizeFlightplan() const
+{
+  return ui->spinBoxPrintTextSizeFlightplan->value();
+}
+
+void PrintDialog::setRouteTableColumns(const QStringList& columns)
+{
+  ui->listWidgetPrintFlightplanCols->clear();
+  ui->listWidgetPrintFlightplanCols->addItems(columns);
+
+  // Load selection
+  QBitArray bits = atools::settings::Settings::instance().valueVar(lnm::ROUTE_PRINT_DIALOG + "Selection").toBitArray();
+  if(bits.size() == ui->listWidgetPrintFlightplanCols->count())
+  {
+    for(int i = 0; i < bits.size(); i++)
+      ui->listWidgetPrintFlightplanCols->item(i)->setSelected(bits.at(i));
+  }
+  else
+  {
+    // Size does not match - set all to selected
+    for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
+      ui->listWidgetPrintFlightplanCols->item(i)->setSelected(true);
+  }
+}
+
+QBitArray PrintDialog::getSelectedRouteTableColumns() const
+{
+  QBitArray bits(ui->listWidgetPrintFlightplanCols->count());
+  for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
+    bits.setBit(i, ui->listWidgetPrintFlightplanCols->item(i)->isSelected());
+  return bits;
+}
+
 void PrintDialog::saveState()
 {
   atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(
-    {ui->checkBoxPrintDepartureOverview,
-     ui->checkBoxPrintDepartureRunways,
-     ui->checkBoxPrintDepartureDetailRunways,
-     ui->checkBoxPrintDepartureSoftRunways,
-     ui->checkBoxPrintDepartureCom,
-     ui->checkBoxPrintDepartureAppr,
-     ui->checkBoxPrintDepartureWeather,
-     ui->checkBoxPrintDestinationOverview,
-     ui->checkBoxPrintDestinationRunways,
-     ui->checkBoxPrintDestinationDetailRunways,
-     ui->checkBoxPrintDestinationSoftRunways,
-     ui->checkBoxPrintDestinationCom,
-     ui->checkBoxPrintDestinationAppr,
-     ui->checkBoxPrintDestinationWeather,
-     ui->checkBoxPrintFlightplan,
-     ui->spinBoxPrintTextSize});
+  {
+    this,
+    ui->checkBoxPrintDepartureOverview,
+    ui->checkBoxPrintDepartureRunways,
+    ui->checkBoxPrintDepartureDetailRunways,
+    ui->checkBoxPrintDepartureSoftRunways,
+    ui->checkBoxPrintDepartureCom,
+    ui->checkBoxPrintDepartureAppr,
+    ui->checkBoxPrintDepartureWeather,
+    ui->checkBoxPrintDestinationOverview,
+    ui->checkBoxPrintDestinationRunways,
+    ui->checkBoxPrintDestinationDetailRunways,
+    ui->checkBoxPrintDestinationSoftRunways,
+    ui->checkBoxPrintDestinationCom,
+    ui->checkBoxPrintDestinationAppr,
+    ui->checkBoxPrintDestinationWeather,
+    ui->checkBoxPrintFlightplan,
+    ui->checkBoxPrintHeader,
+    ui->checkBoxPrintFuel,
+    ui->checkBoxPrintNewPage,
+    ui->spinBoxPrintTextSize,
+    ui->spinBoxPrintTextSizeFlightplan
+  });
 
+  // Save selection to bitarray
+  QBitArray bits(ui->listWidgetPrintFlightplanCols->count());
+  for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
+    bits.setBit(i, ui->listWidgetPrintFlightplanCols->item(i)->isSelected());
+  atools::settings::Settings::instance().setValueVar(lnm::ROUTE_PRINT_DIALOG + "Selection", bits);
 }
 
 void PrintDialog::restoreState()
 {
   atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).restore(
-    {ui->checkBoxPrintDepartureOverview,
-     ui->checkBoxPrintDepartureRunways,
-     ui->checkBoxPrintDepartureDetailRunways,
-     ui->checkBoxPrintDepartureSoftRunways,
-     ui->checkBoxPrintDepartureCom,
-     ui->checkBoxPrintDepartureAppr,
-     ui->checkBoxPrintDepartureWeather,
-     ui->checkBoxPrintDestinationOverview,
-     ui->checkBoxPrintDestinationRunways,
-     ui->checkBoxPrintDestinationDetailRunways,
-     ui->checkBoxPrintDestinationSoftRunways,
-     ui->checkBoxPrintDestinationCom,
-     ui->checkBoxPrintDestinationAppr,
-     ui->checkBoxPrintDestinationWeather,
-     ui->checkBoxPrintFlightplan,
-     ui->spinBoxPrintTextSize});
+  {
+    this,
+    ui->checkBoxPrintDepartureOverview,
+    ui->checkBoxPrintDepartureRunways,
+    ui->checkBoxPrintDepartureDetailRunways,
+    ui->checkBoxPrintDepartureSoftRunways,
+    ui->checkBoxPrintDepartureCom,
+    ui->checkBoxPrintDepartureAppr,
+    ui->checkBoxPrintDepartureWeather,
+    ui->checkBoxPrintDestinationOverview,
+    ui->checkBoxPrintDestinationRunways,
+    ui->checkBoxPrintDestinationDetailRunways,
+    ui->checkBoxPrintDestinationSoftRunways,
+    ui->checkBoxPrintDestinationCom,
+    ui->checkBoxPrintDestinationAppr,
+    ui->checkBoxPrintDestinationWeather,
+    ui->checkBoxPrintFlightplan,
+    ui->checkBoxPrintHeader,
+    ui->checkBoxPrintFuel,
+    ui->checkBoxPrintNewPage,
+    ui->spinBoxPrintTextSize,
+    ui->spinBoxPrintTextSizeFlightplan
+  });
+
   updateButtonStates();
 }
 
 void PrintDialog::buttonBoxClicked(QAbstractButton *button)
 {
+  saveState();
   if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Ok))
     emit printClicked();
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Yes))
     emit printPreviewClicked();
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "PRINT.html#printing-the-flight-plan",
-                                          lnm::helpLanguageOnline());
+                                             lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Close))
     QDialog::reject();
 }
 
 void PrintDialog::accept()
 {
+  /* Override to avoid closing the dialog */
 }

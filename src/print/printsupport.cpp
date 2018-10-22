@@ -22,27 +22,20 @@
 #include "mapgui/mapwidget.h"
 #include "settings/settings.h"
 #include "route/routecontroller.h"
+#include "perf/aircraftperfcontroller.h"
 #include "util/htmlbuilder.h"
 #include "print/printdialog.h"
 #include "common/htmlinfobuilder.h"
-#include "options/optiondata.h"
 #include "weather/weatherreporter.h"
-#include "connect/connectclient.h"
 #include "gui/mainwindow.h"
 
 #include <QPainter>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QtPrintSupport/QPrinter>
-#include <QStandardPaths>
-#include <QDir>
-#include <QDesktopServices>
 #include <QTextDocument>
 #include <QPrintDialog>
-#include <QTextBlockFormat>
 #include <QTextCursor>
-#include <QTextDocumentWriter>
-#include <QThread>
-#include <QMainWindow>
+#include <QBitArray>
 
 using atools::settings::Settings;
 using atools::util::HtmlBuilder;
@@ -50,34 +43,32 @@ using atools::util::HtmlBuilder;
 PrintSupport::PrintSupport(MainWindow *parent)
   : mainWindow(parent), mapQuery(NavApp::getMapQuery())
 {
-  printFlightplanDialog = new PrintDialog(mainWindow);
+  printDialog = new PrintDialog(mainWindow);
 
-  connect(printFlightplanDialog, &PrintDialog::printPreviewClicked,
-          this, &PrintSupport::printPreviewFlightplanClicked);
-  connect(printFlightplanDialog, &PrintDialog::printClicked,
-          this, &PrintSupport::printFlightplanClicked);
+  connect(printDialog, &PrintDialog::printPreviewClicked, this, &PrintSupport::printPreviewFlightplanClicked);
+  connect(printDialog, &PrintDialog::printClicked, this, &PrintSupport::printFlightplanClicked);
 }
 
 PrintSupport::~PrintSupport()
 {
-  delete printFlightplanDialog;
-  delete mapScreenPrintPixmap;
-  delete flightPlanPrintDocument;
+  delete printDialog;
+  delete printer;
+  delete printDocument;
 }
 
 void PrintSupport::printMap()
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::getMapWidget()->showOverlays(false);
-  delete mapScreenPrintPixmap;
-  mapScreenPrintPixmap = new QPixmap(NavApp::getMapWidget()->mapScreenShot());
-  NavApp::getMapWidget()->showOverlays(true);
+  buildPrinter();
 
-  QPrintPreviewDialog *print = buildPreviewDialog(mainWindow);
+  NavApp::getMapWidget()->showOverlays(false);
+  QPrintPreviewDialog *print = buildPreviewDialog();
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
+
+  NavApp::getMapWidget()->showOverlays(true);
   deletePreviewDialog(print);
 }
 
@@ -85,9 +76,11 @@ void PrintSupport::printFlightplan()
 {
   qDebug() << Q_FUNC_INFO;
 
+  // Prime weather cache
   fillWeatherCache();
 
-  printFlightplanDialog->exec();
+  printDialog->setRouteTableColumns(NavApp::getRouteController()->getRouteColumns());
+  printDialog->exec();
 }
 
 void PrintSupport::fillWeatherCache()
@@ -109,32 +102,14 @@ void PrintSupport::printPreviewFlightplanClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString cssContent;
-  // QString css = atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/css/print.css");
-  // QFile f(css);
-  // if(f.open(QIODevice::ReadOnly | QIODevice::Text))
-  // {
-  // QTextStream in(&f);
-  // cssContent = in.readAll();
-  // }
-
+  // Create and fill document to print
   createFlightplanDocuments();
 
-  QPrintPreviewDialog *print = buildPreviewDialog(printFlightplanDialog);
+  QPrintPreviewDialog *print = buildPreviewDialog();
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedFlightplan);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedFlightplan);
   deletePreviewDialog(print);
-
-  // QFile f2("/home/alex/Temp/lnm_route_export.html");
-  // if(f2.open(QIODevice::Text | QIODevice::WriteOnly))
-  // {
-  // QTextStream ds(&f2);
-  // ds << html.getHtml();
-  // f2.close();
-  // QDesktopServices::openUrl(QUrl::fromLocalFile("/home/alex/Temp/lnm_route_export.html"));
-  // }
-
   deleteFlightplanDocuments();
 }
 
@@ -143,38 +118,37 @@ void PrintSupport::printFlightplanClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QPrinter printer;
-  // printer.setOutputFormat(QPrinter::NativeFormat);
-  // printer.setOutputFileName("LittleNavmapFlightplan");
-  QPrintDialog dialog(&printer, printFlightplanDialog);
+  QPrintDialog dialog(printer, printDialog);
 
   dialog.setWindowTitle(tr("Print Flight Plan"));
   if(dialog.exec() == QDialog::Accepted)
   {
     createFlightplanDocuments();
-    paintRequestedFlightplan(&printer);
+    paintRequestedFlightplan(printer);
     deleteFlightplanDocuments();
 
     // Close settings dialog if the user printed
-    printFlightplanDialog->hide();
+    printDialog->hide();
   }
 }
 
-/* Fill the flightPlanDocument with HTML code depending on selected options */
-void PrintSupport::createFlightplanDocuments()
+void PrintSupport::setPrintTextSize(int percent)
 {
-  deleteFlightplanDocuments();
-  flightPlanPrintDocument = new QTextDocument();
-
-  QFont font = flightPlanPrintDocument->defaultFont();
-  qDebug() << "font pixel size" << font.pixelSize() << "font point size" << font.pointSizeF();
+  if(printDocument == nullptr)
+  {
+    qWarning() << Q_FUNC_INFO << "printDocument==nullptr";
+    return;
+  }
 
 #ifdef Q_OS_MACOS
-  int printTextSize = printFlightplanDialog->getPrintTextSize() / 2;
+  float printTextSize = percent / 2;
 #else
-  int printTextSize = printFlightplanDialog->getPrintTextSize();
+  float printTextSize = percent;
 #endif
 
+  // printTextSize *= 1.5f;
+
+  QFont font = printDocumentFont;
   // Adjust font size according to dialog setting
   if(font.pointSize() != -1)
     font.setPointSizeF(font.pointSizeF() * printTextSize / 100.f);
@@ -183,199 +157,201 @@ void PrintSupport::createFlightplanDocuments()
   else
     qWarning() << "Unable to set font size";
 
-  flightPlanPrintDocument->setDefaultFont(font);
+  printDocument->setDefaultFont(font);
+}
 
-  // Create a cursor to append html and page breaks
-  QTextCursor cursor(flightPlanPrintDocument);
+/* Fill the flightPlanDocument with HTML code depending on selected options */
+void PrintSupport::createFlightplanDocuments()
+{
+  deleteFlightplanDocuments();
+  printDocument = new QTextDocument();
+  printDocumentFont = printDocument->defaultFont();
 
-  // Create a block format inserting page breakss
+  // Create a cursor to append html, text table and page breaks =================
+  QTextCursor cursor(printDocument);
+
+  // Create a block format inserting page breaks
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  prt::PrintFlightPlanOpts opts = printFlightplanDialog->getPrintOptions();
-  atools::util::HtmlBuilder html(false);
-
+  prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
   const Route& route = NavApp::getRouteConst();
+  bool newPage = opts & prt::NEW_PAGE;
 
-  bool printFlightplan = opts & prt::FLIGHTPLAN;
-  bool printAnyDeparture = route.hasValidDeparture() && opts & prt::DEPARTURE_ANY;
-  bool printAnyDestination = route.hasValidDestination() && opts & prt::DESTINATION_ANY;
+  // Header =========================================================================
+  HtmlBuilder html(true);
+  // Header line with program version
+  addHeader(html);
+  NavApp::getRouteController()->flightplanHeader(html, !(opts & prt::HEADER));
 
-  if(printFlightplan)
+  if(opts & prt::HEADER)
   {
-    // Get font size in pixels to adjust icon size
-    QFontMetricsF metrics(font);
-
-    // Print the flight plan table
-    html.append(NavApp::getRouteController()->flightplanTableAsHtml(metrics.height()));
-
-    addHeader(cursor);
-    cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
-    cursor.insertHtml(html.getHtml());
+    html.p().b(tr("Flight Plan File:")).nbsp().nbsp().
+    small(NavApp::getRouteController()->getCurrentRouteFilepath()).pEnd();
   }
+
+  cursor.insertHtml(html.getHtml());
+  if(newPage)
+    cursor.insertBlock(pageBreakBlock);
+
+  // Performance  =========================================================================
+  if(opts & prt::FUEL_REPORT)
+  {
+    html.clear();
+    if(!newPage)
+      // Add a line to separate if page breaks are off
+      html.hr();
+    NavApp::getAircraftPerfController()->fuelReport(html, true);
+    NavApp::getAircraftPerfController()->fuelReportFilepath(html, true);
+    cursor.insertHtml(html.getHtml());
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
+  }
+
+  // Flight plan  =========================================================================
+  if(opts & prt::FLIGHTPLAN)
+  {
+    html.clear();
+    if(!newPage)
+      // Add a line to separate if page breaks are off
+      html.hr();
+    html.h2(tr("Flight Plan"));
+    cursor.insertHtml(html.getHtml());
+
+    float fontPointSize = static_cast<float>(printDocumentFont.pointSizeF()) *
+                          printDialog->getPrintTextSizeFlightplan() / 100.f;
+    NavApp::getRouteController()->flightplanTableAsTextTable(cursor, printDialog->getSelectedRouteTableColumns(),
+                                                             fontPointSize);
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
+  }
+
+  setPrintTextSize(printDialog->getPrintTextSize());
+
+  // Start and destination  =========================================================================
+  // print start and destination information if these are airports
+  if(route.hasValidDeparture() && opts & prt::DEPARTURE_ANY)
+    addAirport(cursor, route.first().getAirport(), tr("Departure"), true);
+  if(route.hasValidDestination() && opts & prt::DESTINATION_ANY)
+    addAirport(cursor, route.last().getAirport(), tr("Destination"), false);
+
+  printDocument->adjustSize();
+}
+
+void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airport, const QString& prefix,
+                              bool departure)
+{
+  // Create a block format inserting page breaks
+  QTextBlockFormat pageBreakBlock;
+  pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
   HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
+  map::WeatherContext weatherContext;
 
-  if(printAnyDeparture || printAnyDestination)
+  prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
+  bool newPage = opts & prt::NEW_PAGE;
+
+  HtmlBuilder html(true);
+  if(departure ? (opts& prt::DEPARTURE_OVERVIEW) : (opts & prt::DESTINATION_OVERVIEW))
   {
-    map::WeatherContext weatherContext;
-
-    // print start and destination information if these are airports
-    if(printAnyDeparture)
-    {
-
-      // Create HTML fragments
-      html.clear().table();
-      HtmlBuilder departureHtml(true);
-      if(opts & prt::DEPARTURE_OVERVIEW)
-      {
-        mainWindow->buildWeatherContext(weatherContext, route.first().getAirport());
-        builder.airportText(
-          route.first().getAirport(), weatherContext, departureHtml, nullptr);
-      }
-
-      HtmlBuilder departureRunway(true);
-      if(opts & prt::DEPARTURE_RUNWAYS)
-        builder.runwayText(route.first().getAirport(), departureRunway,
-                           opts & prt::DEPARTURE_RUNWAYS_DETAIL, opts & prt::DEPARTURE_RUNWAYS_SOFT);
-
-      HtmlBuilder departureCom(true);
-      if(opts & prt::DEPARTURE_COM)
-        builder.comText(route.first().getAirport(), departureCom);
-
-      HtmlBuilder departureWeather(true);
-      if(opts & prt::DEPARTURE_WEATHER)
-        builder.weatherText(weatherContext, route.first().getAirport(), departureCom);
-
-      HtmlBuilder departureAppr(true);
-      if(opts & prt::DEPARTURE_APPR)
-        builder.procedureText(route.first().getAirport(), departureAppr);
-
-      // Calculate the number of table columns - need to calculate column width in percent
-      int numCols = 0;
-      if(!departureHtml.isEmpty() || !departureCom.isEmpty() || !departureWeather.isEmpty())
-        numCols++;
-      if(!departureRunway.isEmpty())
-        numCols++;
-      if(!departureAppr.isEmpty())
-        numCols++;
-      numCols = std::max(1, numCols);
-
-      // Merge all fragments into a table
-      html.tr(QColor());
-      if(!departureHtml.isEmpty() || !departureCom.isEmpty() || !departureWeather.isEmpty())
-        html.tdW(100 / numCols).append(departureHtml).append(departureCom).append(departureWeather).tdEnd();
-      if(!departureRunway.isEmpty())
-        html.tdW(100 / numCols).append(departureRunway).tdEnd();
-      if(!departureAppr.isEmpty())
-        html.tdW(100 / numCols).append(departureAppr).tdEnd();
-      html.trEnd();
-      html.tableEnd();
-
-      // Add to document and add a page feed, if needed
-      cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
-      if(printFlightplan)
-        cursor.insertBlock(pageBreakBlock);
-      addHeader(cursor);
-      cursor.insertHtml(html.getHtml());
-    }
-
-    if(printAnyDestination)
-    {
-      // Create HTML fragments
-      html.clear().table();
-      HtmlBuilder destinationHtml(true);
-      if(opts & prt::DESTINATION_OVERVIEW)
-      {
-        mainWindow->buildWeatherContext(weatherContext, route.last().getAirport());
-        builder.airportText(
-          route.last().getAirport(), weatherContext, destinationHtml, nullptr);
-      }
-
-      HtmlBuilder destinationRunway(true);
-      if(opts & prt::DESTINATION_RUNWAYS)
-        builder.runwayText(route.last().getAirport(), destinationRunway,
-                           opts & prt::DESTINATION_RUNWAYS_DETAIL, opts & prt::DESTINATION_RUNWAYS_SOFT);
-
-      HtmlBuilder destinationCom(true);
-      if(opts & prt::DESTINATION_COM)
-        builder.comText(route.last().getAirport(), destinationCom);
-
-      HtmlBuilder destinationWeather(true);
-      if(opts & prt::DESTINATION_WEATHER)
-        builder.weatherText(weatherContext, route.last().getAirport(), destinationCom);
-
-      HtmlBuilder destinationAppr(true);
-      if(opts & prt::DESTINATION_APPR)
-        builder.procedureText(route.last().getAirport(), destinationAppr);
-
-      // Calculate the number of table columns - need to calculate column width in percent
-      int numCols = 0;
-      if(!destinationHtml.isEmpty() || !destinationCom.isEmpty() || !destinationWeather.isEmpty())
-        numCols++;
-      if(!destinationRunway.isEmpty())
-        numCols++;
-      if(!destinationAppr.isEmpty())
-        numCols++;
-
-      numCols = std::max(1, numCols);
-
-      // Merge all fragments into a table
-      html.tr(QColor());
-      if(!destinationHtml.isEmpty() || !destinationCom.isEmpty() || !destinationWeather.isEmpty())
-        html.tdW(100 / numCols).append(destinationHtml).append(destinationCom).
-        append(destinationWeather).tdEnd();
-      if(!destinationRunway.isEmpty())
-        html.tdW(100 / numCols).append(destinationRunway).tdEnd();
-      if(!destinationAppr.isEmpty())
-        html.tdW(100 / numCols).append(destinationAppr).tdEnd();
-      html.trEnd();
-      html.tableEnd();
-
-      // Add to document and add a page feed, if needed
-      cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
-      if(printAnyDeparture || printFlightplan)
-        cursor.insertBlock(pageBreakBlock);
-      addHeader(cursor);
-      cursor.insertHtml(html.getHtml());
-    }
+    mainWindow->buildWeatherContext(weatherContext, airport);
+    if(!newPage)
+      html.hr();
+    html.h2(tr("%1 Airport").arg(prefix));
+    builder.airportText(airport, weatherContext, html, nullptr);
+    cursor.insertHtml(html.getHtml());
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
   }
 
-  flightPlanPrintDocument->adjustSize();
+  if(departure ? (opts& prt::DEPARTURE_RUNWAYS) : (opts & prt::DESTINATION_RUNWAYS))
+  {
+    html.clear();
+    if(!newPage)
+      html.hr();
+    html.h3(tr("%1 Airport Runways").arg(prefix));
+    builder.runwayText(airport, html,
+                       departure ? (opts& prt::DEPARTURE_RUNWAYS_DETAIL) : (opts & prt::DESTINATION_RUNWAYS_DETAIL),
+                       departure ? (opts& prt::DEPARTURE_RUNWAYS_SOFT) : (opts & prt::DESTINATION_RUNWAYS_SOFT));
+    cursor.insertHtml(html.getHtml());
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
+  }
 
-  // QFile file(QStandardPaths::standardLocations(
-  // QStandardPaths::TempLocation).first() + QDir::separator() + "little_navmap_print.html");
-  // if(file.open(QIODevice::WriteOnly))
-  // {
-  // qDebug() << "Writing print to" << file.fileName();
-  // QTextDocumentWriter writer(&file, "HTML");
-  // writer.write(flightPlanDocument);
-  // QDesktopServices::openUrl(QUrl::fromLocalFile(file.fileName()));
-  // file.close();
-  // }
+  if(departure ? (opts& prt::DEPARTURE_COM) : (opts & prt::DESTINATION_COM))
+  {
+    html.clear();
+    if(!newPage)
+      html.hr();
+    html.h3(tr("%1 Airport COM Frequencies").arg(prefix));
+    builder.comText(airport, html);
+    cursor.insertHtml(html.getHtml());
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
+  }
+
+  if(departure ? (opts& prt::DEPARTURE_WEATHER) : (opts & prt::DESTINATION_WEATHER))
+  {
+    html.clear();
+    if(!newPage)
+      html.hr();
+    html.h3(tr("%1 Airport Weather").arg(prefix));
+    builder.weatherText(weatherContext, airport, html);
+    cursor.insertHtml(html.getHtml());
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
+  }
+
+  if(departure ? (opts& prt::DEPARTURE_APPR) : (opts & prt::DESTINATION_APPR))
+  {
+    html.clear();
+    if(!newPage)
+      html.hr();
+    html.h3(tr("%1 Airport Procedures").arg(prefix));
+    builder.procedureText(airport, html);
+    cursor.insertHtml(html.getHtml());
+    if(newPage)
+      cursor.insertBlock(pageBreakBlock);
+  }
 }
 
 /* Add header paragraph at cursor position */
-void PrintSupport::addHeader(QTextCursor& cursor)
+void PrintSupport::addHeader(atools::util::HtmlBuilder& html)
 {
-  atools::util::HtmlBuilder html(true);
-  html.p(tr("%1 Version %2 (revision %3) on %4 ").
-         arg(QApplication::applicationName()).
-         arg(QApplication::applicationVersion()).
-         arg(GIT_REVISION).
-         arg(QLocale().toString(QDateTime::currentDateTime()))).br().br();
-  cursor.insertHtml(html.getHtml());
+  html.p().small(tr("%1 Version %2 (revision %3) on %4 ").
+                 arg(QApplication::applicationName()).
+                 arg(QApplication::applicationVersion()).
+                 arg(GIT_REVISION).
+                 arg(QLocale().toString(QDateTime::currentDateTime()))).pEnd();
 }
 
 void PrintSupport::deleteFlightplanDocuments()
 {
-  delete flightPlanPrintDocument;
-  flightPlanPrintDocument = nullptr;
+  delete printDocument;
+  printDocument = nullptr;
 }
 
-QPrintPreviewDialog *PrintSupport::buildPreviewDialog(QWidget *parent)
+void PrintSupport::deletePrinter()
 {
-  QPrintPreviewDialog *print = new QPrintPreviewDialog(parent);
+  delete printer;
+  printer = nullptr;
+}
+
+void PrintSupport::buildPrinter()
+{
+  if(printer == nullptr)
+  {
+    printer = new QPrinter(QPrinter::HighResolution);
+    printer->setOrientation(QPrinter::Landscape);
+
+    qDebug() << Q_FUNC_INFO << "printer resolution" << printer->resolution();
+  }
+}
+
+QPrintPreviewDialog *PrintSupport::buildPreviewDialog()
+{
+  buildPrinter();
+  QPrintPreviewDialog *print = new QPrintPreviewDialog(printer, mainWindow);
   print->setWindowFlags(print->windowFlags() & ~Qt::WindowContextHelpButtonHint);
   print->setWindowModality(Qt::ApplicationModal);
 
@@ -392,50 +368,60 @@ void PrintSupport::deletePreviewDialog(QPrintPreviewDialog *print)
   }
 }
 
-void PrintSupport::paintRequestedFlightplan(QPrinter *printer)
+void PrintSupport::paintRequestedFlightplan(QPrinter *)
 {
-  if(flightPlanPrintDocument != nullptr)
-    flightPlanPrintDocument->print(printer);
+  if(printDocument != nullptr)
+    printDocument->print(printer);
 }
 
-void PrintSupport::paintRequestedMap(QPrinter *printer)
+void PrintSupport::paintRequestedMap(QPrinter *)
 {
-  if(mapScreenPrintPixmap != nullptr)
-  {
-    QPixmap printScreen(mapScreenPrintPixmap->scaled(printer->pageRect().size(),
-                                                     Qt::KeepAspectRatio, Qt::SmoothTransformation));
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
-    QPainter painter;
-    painter.begin(printer);
+  MapWidget *mapWidget = NavApp::getMapWidget();
+  QPainter painter;
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    qDebug() << "font.pointSize" << painter.font().pointSize()
-             << "page" << printer->pageRect() << "paper" << printer->paperRect()
-             << "screen" << mapScreenPrintPixmap->rect() << "printScreen" << printScreen.rect();
+  // Calculate best ratio
+  double xscale = printer->pageRect().width() / static_cast<double>(mapWidget->width());
+  double yscale = printer->pageRect().height() / static_cast<double>(mapWidget->height());
+  double scale = std::min(xscale, yscale);
 
-    // Center image
-    int x = (printer->pageRect().width() - printScreen.width()) / 2;
-    int y = (printer->pageRect().height() - printScreen.height()) / 2;
+  painter.begin(printer);
+  painter.translate(printer->paperRect().x() + printer->pageRect().width() / 2,
+                    printer->paperRect().y() + printer->pageRect().height() / 2);
 
-    painter.drawPixmap(QPoint(x, y), printScreen);
+  // Scale to printer resolution for better images
+  painter.scale(scale, scale);
+  painter.translate(-mapWidget->width() / 2, -mapWidget->height() / 2);
 
-    drawWatermark(QPoint(printer->pageRect().left(), printer->pageRect().height()), &painter);
+  mapWidget->render(&painter);
 
-    painter.end();
-  }
+  QFont font = painter.font();
+  font.setPixelSize(10);
+  painter.setFont(font);
+  drawWatermarkInternal(QPoint(0, mapWidget->height()), &painter);
+
+  painter.end();
+
+  QGuiApplication::restoreOverrideCursor();
 }
 
 void PrintSupport::saveState()
 {
-  printFlightplanDialog->saveState();
+  printDialog->saveState();
 }
 
 void PrintSupport::restoreState()
 {
-  printFlightplanDialog->restoreState();
+  printDialog->restoreState();
 }
 
 void PrintSupport::drawWatermark(const QPoint& pos, QPixmap *pixmap)
 {
+  // Watermark for images
   QPainter painter;
   painter.begin(pixmap);
   QFont font = painter.font();
@@ -457,7 +443,8 @@ void PrintSupport::drawWatermarkInternal(const QPoint& pos, QPainter *painter)
 {
   // Draw text
   painter->setPen(Qt::black);
-  painter->setBackground(QColor("#e0e0e0"));
+  painter->setBackground(QColor("#a0ffffff"));
+  painter->setBrush(Qt::NoBrush);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
   painter->drawText(pos.x(),

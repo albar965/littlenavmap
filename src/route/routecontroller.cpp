@@ -65,6 +65,7 @@
 #include <QStandardItemModel>
 #include <QInputDialog>
 #include <QFileInfo>
+#include <QTextTable>
 
 namespace rc {
 // Route table column indexes
@@ -291,7 +292,119 @@ void RouteController::tableCopyClipboard()
   NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
-QString RouteController::flightplanTableAsHtml(int iconSizePixel) const
+void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols,
+                                                 float fontPointSize) const
+{
+  int numCols = selectedCols.count(true);
+
+  // Prepare table format ===================================
+  QTextTableFormat fmt;
+  fmt.setHeaderRowCount(1);
+  fmt.setCellPadding(1);
+  fmt.setCellSpacing(0);
+  fmt.setBorder(2);
+  fmt.setBorderBrush(Qt::lightGray);
+  fmt.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
+  QTextTable *table = cursor.insertTable(model->rowCount() + 1, numCols, fmt);
+
+  // Cell alignment formats ===================================
+  QTextBlockFormat alignRight;
+  alignRight.setAlignment(Qt::AlignRight);
+  QTextBlockFormat alignLeft;
+  alignLeft.setAlignment(Qt::AlignLeft);
+
+  // Text size and alternating background formats ===================================
+  QTextCharFormat altFormat1 = table->cellAt(0, 0).format();
+  altFormat1.setFontPointSize(fontPointSize);
+
+  QTextCharFormat altFormat2 = altFormat1;
+  altFormat2.setBackground(QColor(240, 240, 240));
+
+  // Header font and background ================
+  QTextCharFormat headerFormat = altFormat1;
+  headerFormat.setFontWeight(QFont::Bold);
+  headerFormat.setBackground(QColor(220, 220, 220));
+
+  // Fill header =====================================================================
+  // Table header from GUI widget
+  QHeaderView *header = view->horizontalHeader();
+
+  int cellIdx = 0;
+  for(int col = 0; col < model->columnCount(); col++)
+  {
+    if(!selectedCols.at(col))
+      // Ignore if not selected in the print dialog
+      continue;
+
+    table->cellAt(0, cellIdx).setFormat(headerFormat);
+    cursor.setPosition(table->cellAt(0, cellIdx).firstPosition());
+    QString txt = model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
+                  replace("-\n", "-").replace("\n", " ");
+    cursor.insertText(txt);
+    cellIdx++;
+  }
+
+  // Fill table =====================================================================
+  for(int row = 0; row < model->rowCount(); row++)
+  {
+    cellIdx = 0;
+    for(int col = 0; col < model->columnCount(); col++)
+    {
+      if(!selectedCols.at(col))
+        // Ignore if not selected in the print dialog
+        continue;
+
+      const QStandardItem *item = model->item(row, header->logicalIndex(col));
+
+      if(item != nullptr)
+      {
+        // Alternating background =============================
+        QTextCharFormat textFormat = (row % 2) == 0 ? altFormat1 : altFormat2;
+
+        // Determine font color base on leg =============
+        const RouteLeg& leg = route.at(row);
+        if(leg.isAnyProcedure())
+          textFormat.setForeground(leg.getProcedureLeg().isMissed() ?
+                                   mapcolors::routeProcedureMissedTableColor :
+                                   mapcolors::routeProcedureTableColor);
+        else if((col == rc::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                (col == rc::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid()))
+          textFormat.setForeground(Qt::red);
+        else
+          textFormat.setForeground(Qt::black);
+
+        if(col == 0)
+          // Make ident bold
+          textFormat.setFontWeight(QFont::Bold);
+
+        table->cellAt(row + 1, cellIdx).setFormat(textFormat);
+        cursor.setPosition(table->cellAt(row + 1, cellIdx).firstPosition());
+
+        // Assign alignment to cell
+        if(item->textAlignment() == Qt::AlignRight)
+          cursor.setBlockFormat(alignRight);
+        else
+          cursor.setBlockFormat(alignLeft);
+
+        cursor.insertText(item->text());
+      }
+      cellIdx++;
+    }
+  }
+
+  // Move cursor after table
+  cursor.setPosition(table->lastPosition() + 1);
+}
+
+void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool titleOnly) const
+{
+  html.text(buildFlightplanLabel(true /* print */, titleOnly), atools::util::html::NO_ENTITIES);
+
+  if(!titleOnly)
+    html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+}
+
+QString RouteController::flightplanTableAsHtml(float iconSizePixel) const
 {
   qDebug() << Q_FUNC_INFO;
   using atools::util::HtmlBuilder;
@@ -300,7 +413,7 @@ QString RouteController::flightplanTableAsHtml(int iconSizePixel) const
   int minColWidth = view->horizontalHeader()->minimumSectionSize() + 1;
 
   // Header lines
-  html.p(buildFlightplanLabel(true), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+  html.p(buildFlightplanLabel(true /* print */), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.table();
 
@@ -323,9 +436,14 @@ QString RouteController::flightplanTableAsHtml(int iconSizePixel) const
     html.tr(QColor());
     const RouteLeg& routeLeg = route.at(row);
 
-    html.td();
-    html.img(iconForLeg(routeLeg, iconSizePixel), QString(), QString(), QSize(iconSizePixel, iconSizePixel));
-    html.tdEnd();
+    if(iconSizePixel > 0.f)
+    {
+      int sizeInt = atools::roundToInt(iconSizePixel);
+
+      html.td();
+      html.img(iconForLeg(routeLeg, iconSizePixel), QString(), QString(), QSize(sizeInt, sizeInt));
+      html.tdEnd();
+    }
 
     // Rest of columns
     for(int col = 0; col < model->columnCount(); col++)
@@ -2775,13 +2893,14 @@ void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 }
 
-QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
+QIcon RouteController::iconForLeg(const RouteLeg& leg, float size) const
 {
+  int sizeInt = atools::roundToInt(size);
   QIcon icon;
   if(leg.getMapObjectType() == map::AIRPORT)
-    icon = symbolPainter->createAirportIcon(leg.getAirport(), size);
+    icon = symbolPainter->createAirportIcon(leg.getAirport(), sizeInt);
   else if(leg.getVor().isValid())
-    icon = symbolPainter->createVorIcon(leg.getVor(), size);
+    icon = symbolPainter->createVorIcon(leg.getVor(), sizeInt);
   else if(leg.getNdb().isValid())
     icon = ndbIcon;
   else if(leg.getWaypoint().isValid())
@@ -2956,6 +3075,8 @@ void RouteController::updateTableModel()
                              ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled));
     }
 
+    // Align cells to the right - rest is aligned in updateModelRouteTimeFuel
+    itemRow[rc::REGION]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::DIST]->setTextAlignment(Qt::AlignRight);
     itemRow[rc::COURSE]->setTextAlignment(Qt::AlignRight);
@@ -3075,7 +3196,9 @@ void RouteController::updateModelRouteTimeFuel()
 #ifdef DEBUG_INFORMATION_LEGTIME
         txt += " [" + QString::number(travelTime * 3600., 'f', 0) + "]";
 #endif
-        model->setItem(row, rc::LEG_TIME, new QStandardItem(txt));
+        QStandardItem *item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rc::LEG_TIME, item);
       }
 
       if(!leg.getProcedureLeg().isMissed())
@@ -3086,13 +3209,19 @@ void RouteController::updateModelRouteTimeFuel()
 #ifdef DEBUG_INFORMATION_LEGTIME
         txt += " [" + QString::number(cumulatedTravelTime * 3600., 'f', 0) + "]";
 #endif
-        model->setItem(row, rc::ETA, new QStandardItem(txt));
+        QStandardItem *item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rc::ETA, item);
 
         totalFuel -= altitudeLegs.at(i).getFuel();
         txt = perf.isFuelFlowValid() ? Unit::fuelLbsGallon(totalFuel, false) : QString();
-        model->setItem(row, rc::FUEL, new QStandardItem(txt));
+
+        item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rc::FUEL, item);
       }
     }
+
     row++;
   }
 
@@ -3231,11 +3360,11 @@ void RouteController::highlightProcedureItems()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  QString text = buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2();
+  QString text = buildFlightplanLabel() + "<br/>" + buildFlightplanLabel2();
   NavApp::getMainUi()->labelRouteInfo->setText(text);
 }
 
-QString RouteController::buildFlightplanLabel(bool html) const
+QString RouteController::buildFlightplanLabel(bool print, bool titleOnly) const
 {
   const Flightplan& flightplan = route.getFlightplan();
 
@@ -3279,152 +3408,164 @@ QString RouteController::buildFlightplanLabel(bool html) const
                     arg(flightplan.getEntries().last().getIcaoIdent()).
                     arg(flightplan.getEntries().last().getWaypointTypeAsString());
 
-    // Add procedures to text ==============================================================
-    const proc::MapProcedureLegs& arrivalLegs = route.getArrivalLegs();
-    const proc::MapProcedureLegs& starLegs = route.getStarLegs();
-    if(route.hasAnyProcedure())
+    if(!titleOnly)
     {
-      QStringList procedureText;
-      QVector<bool> boldTextFlag;
-
-      const proc::MapProcedureLegs& departureLegs = route.getDepartureLegs();
-      if(!departureLegs.isEmpty())
+      // Add procedures to text ==============================================================
+      const proc::MapProcedureLegs& arrivalLegs = route.getArrivalLegs();
+      const proc::MapProcedureLegs& starLegs = route.getStarLegs();
+      if(route.hasAnyProcedure())
       {
-        // Add departure procedure to text
-        if(!departureLegs.runwayEnd.isValid())
+        QStringList procedureText;
+        QVector<bool> boldTextFlag;
+
+        const proc::MapProcedureLegs& departureLegs = route.getDepartureLegs();
+        if(!departureLegs.isEmpty())
         {
-          boldTextFlag << false;
-          procedureText.append(tr("Depart via SID"));
+          // Add departure procedure to text
+          if(!departureLegs.runwayEnd.isValid())
+          {
+            boldTextFlag << false;
+            procedureText.append(tr("Depart via SID"));
+          }
+          else
+          {
+            boldTextFlag << false << true << false;
+            procedureText.append(tr("Depart runway"));
+            procedureText.append(departureLegs.runwayEnd.name);
+            procedureText.append(tr("via SID"));
+          }
+
+          QString sid(departureLegs.approachFixIdent);
+          if(!departureLegs.transitionFixIdent.isEmpty())
+            sid += "." + departureLegs.transitionFixIdent;
+          boldTextFlag << true;
+          procedureText.append(sid);
+
+          if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL)
+          {
+            boldTextFlag << false;
+            procedureText.append(tr("."));
+          }
         }
-        else
+
+        // Add arrival procedures procedure to text
+        // STAR
+        if(!starLegs.isEmpty())
         {
-          boldTextFlag << false << true << false;
-          procedureText.append(tr("Depart runway"));
-          procedureText.append(departureLegs.runwayEnd.name);
-          procedureText.append(tr("via SID"));
+          if(print)
+          {
+            // Add line break between departure and arrival for printing
+            boldTextFlag << false;
+            procedureText.append("<br/>");
+          }
+
+          boldTextFlag << false << true;
+          procedureText.append(tr("Arrive via STAR"));
+
+          QString star(starLegs.approachFixIdent);
+          if(!starLegs.transitionFixIdent.isEmpty())
+            star += "." + starLegs.transitionFixIdent;
+          procedureText.append(star);
+
+          starRunway = starLegs.procedureRunway;
+
+          if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+          {
+            boldTextFlag << false << true;
+            procedureText.append(tr("at runway"));
+            procedureText.append(starLegs.procedureRunway);
+          }
+          else if(!starLegs.procedureRunway.isEmpty())
+          {
+            boldTextFlag << false;
+            procedureText.append(tr("(<b>%1</b>)").arg(starLegs.procedureRunway));
+          }
+
+          if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+          {
+            boldTextFlag << false;
+            procedureText.append(tr("."));
+          }
         }
 
-        QString sid(departureLegs.approachFixIdent);
-        if(!departureLegs.transitionFixIdent.isEmpty())
-          sid += "." + departureLegs.transitionFixIdent;
-        boldTextFlag << true;
-        procedureText.append(sid);
-
-        if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-        {
-          boldTextFlag << false;
-          procedureText.append(tr("."));
-        }
-      }
-
-      // Add arrival procedures procedure to text
-      // STAR
-      if(!starLegs.isEmpty())
-      {
-        boldTextFlag << false << true;
-        procedureText.append(tr("Arrive via STAR"));
-
-        QString star(starLegs.approachFixIdent);
-        if(!starLegs.transitionFixIdent.isEmpty())
-          star += "." + starLegs.transitionFixIdent;
-        procedureText.append(star);
-
-        starRunway = starLegs.procedureRunway;
-
-        if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+        if(arrivalLegs.mapType & proc::PROCEDURE_TRANSITION)
         {
           boldTextFlag << false << true;
-          procedureText.append(tr("at runway"));
-          procedureText.append(starLegs.procedureRunway);
+          procedureText.append(!starLegs.isEmpty() ? tr("via") : tr("Via"));
+          procedureText.append(arrivalLegs.transitionFixIdent);
         }
-        else if(!starLegs.procedureRunway.isEmpty())
+
+        if(arrivalLegs.mapType & proc::PROCEDURE_APPROACH)
         {
           boldTextFlag << false;
-          procedureText.append(tr("(<b>%1</b>)").arg(starLegs.procedureRunway));
+          procedureText.append((arrivalLegs.mapType & proc::PROCEDURE_TRANSITION ||
+                                !starLegs.isEmpty()) ? tr("and") : tr("Via"));
+
+          // Type and suffix =======================
+          QString type(arrivalLegs.approachType);
+          if(!arrivalLegs.approachSuffix.isEmpty())
+            type += tr("-%1").arg(arrivalLegs.approachSuffix);
+
+          boldTextFlag << true;
+          procedureText.append(type);
+
+          boldTextFlag << true;
+          procedureText.append(arrivalLegs.approachFixIdent);
+
+          if(!arrivalLegs.approachArincName.isEmpty())
+          {
+            boldTextFlag << true;
+            procedureText.append(tr("(%1)").arg(arrivalLegs.approachArincName));
+          }
+
+          // Runway =======================
+          if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
+          {
+            // Add runway for approach
+            boldTextFlag << false << true << false;
+            procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
+            procedureText.append(arrivalLegs.runwayEnd.name);
+            procedureText.append(tr("."));
+          }
+          else
+          {
+            // Add runway text
+            boldTextFlag << false;
+            procedureText.append(procedureText.isEmpty() ? tr("To runway.") : tr("to runway."));
+          }
+          approachRunway = arrivalLegs.runwayEnd.name;
         }
 
-        if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
-        {
-          boldTextFlag << false;
-          procedureText.append(tr("."));
-        }
-      }
-
-      if(arrivalLegs.mapType & proc::PROCEDURE_TRANSITION)
-      {
-        boldTextFlag << false << true;
-        procedureText.append(!starLegs.isEmpty() ? tr("via") : tr("Via"));
-        procedureText.append(arrivalLegs.transitionFixIdent);
-      }
-
-      if(arrivalLegs.mapType & proc::PROCEDURE_APPROACH)
-      {
-        boldTextFlag << false;
-        procedureText.append((arrivalLegs.mapType & proc::PROCEDURE_TRANSITION ||
-                              !starLegs.isEmpty()) ? tr("and") : tr("Via"));
-
-        // Type and suffix =======================
-        QString type(arrivalLegs.approachType);
-        if(!arrivalLegs.approachSuffix.isEmpty())
-          type += tr("-%1").arg(arrivalLegs.approachSuffix);
-
-        boldTextFlag << true;
-        procedureText.append(type);
-
-        boldTextFlag << true;
-        procedureText.append(arrivalLegs.approachFixIdent);
-
-        if(!arrivalLegs.approachArincName.isEmpty())
+        if(!approachRunway.isEmpty() && !starRunway.isEmpty() && approachRunway != starRunway)
         {
           boldTextFlag << true;
-          procedureText.append(tr("(%1)").arg(arrivalLegs.approachArincName));
+          procedureText.append(atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR %1 ≠ Approach %2.").
+                                                                       arg(starRunway).arg(approachRunway)));
         }
 
-        // Runway =======================
-        if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
-        {
-          // Add runway for approach
-          boldTextFlag << false << true << false;
-          procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
-          procedureText.append(arrivalLegs.runwayEnd.name);
-          procedureText.append(tr("."));
-        }
-        else
-        {
-          // Add runway text
-          boldTextFlag << false;
-          procedureText.append(procedureText.isEmpty() ? tr("To runway.") : tr("to runway."));
-        }
-        approachRunway = arrivalLegs.runwayEnd.name;
-      }
-
-      if(!approachRunway.isEmpty() && !starRunway.isEmpty() && approachRunway != starRunway)
-      {
-        boldTextFlag << true;
-        procedureText.append(atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR %1 ≠ Approach %2.").
-                                                                     arg(starRunway).arg(approachRunway)));
-      }
-
-      if(html)
-      {
         for(int i = 0; i < procedureText.size(); i++)
         {
           if(boldTextFlag.at(i))
             procedureText[i] = "<b>" + procedureText.at(i) + "</b>";
         }
+        approach = procedureText.join(" ");
       }
-      approach = procedureText.join(" ");
     }
   }
 
-  QString fp(tr("No Flight Plan loaded."));
+  QString title(tr("No Flight Plan loaded."));
   if(!flightplan.isEmpty())
-    fp = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
+  {
+    if(print)
+      title = tr("<h2>%1 to %2</h2>").arg(departure).arg(destination);
+    else
+      title = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
+  }
 
-  if(html)
-    return fp + (approach.isEmpty() ? QString() : "<br/>" + approach);
+  if(print)
+    return title + (approach.isEmpty() ? QString() : "<p><big>" + approach + "</big></p>");
   else
-    return tr("%1 to %2 %3").arg(departure).arg(destination).arg(approach);
+    return title + (approach.isEmpty() ? QString() : "<br/>" + approach);
 }
 
 QString RouteController::buildFlightplanLabel2() const
@@ -3629,4 +3770,17 @@ void RouteController::updateIcons()
 void RouteController::updateErrorLabel()
 {
   NavApp::updateErrorLabels();
+}
+
+QStringList RouteController::getRouteColumns() const
+{
+  QStringList colums;
+  QHeaderView *header = view->horizontalHeader();
+
+  // Get column names from header and remove line feeds
+  for(int col = 0; col < model->columnCount(); col++)
+    colums.append(model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
+                  replace("-\n", "-").replace("\n", " "));
+
+  return colums;
 }
