@@ -103,7 +103,7 @@ captain or the dispatcher</string>
          <string> %fuel%</string>
         </property>
         <property name="maximum">
-         <number>100000</number>
+         <number>1000000</number>
         </property>
         <property name="singleStep">
          <number>100</number>
@@ -151,7 +151,7 @@ an alternate is not required</string>
          <string> %fuel%</string>
         </property>
         <property name="maximum">
-         <number>100000</number>
+         <number>1000000</number>
         </property>
         <property name="singleStep">
          <number>100</number>
@@ -167,7 +167,7 @@ an alternate is not required</string>
          <string> %fuel%</string>
         </property>
         <property name="maximum">
-         <number>100000</number>
+         <number>1000000</number>
         </property>
         <property name="singleStep">
          <number>100</number>
@@ -185,7 +185,7 @@ This will increase the trip fuel by the given percentage.</string>
          <string> percent</string>
         </property>
         <property name="maximum">
-         <number>500</number>
+         <number>1000</number>
         </property>
         <property name="singleStep">
          <number>5</number>
@@ -235,7 +235,7 @@ This will increase the trip fuel by the given percentage.</string>
          <number>20</number>
         </property>
         <property name="maximum">
-         <number>5000</number>
+         <number>10000</number>
         </property>
         <property name="singleStep">
          <number>10</number>
@@ -300,7 +300,7 @@ This will increase the trip fuel by the given percentage.</string>
          <string> %fuel% per hour</string>
         </property>
         <property name="maximum">
-         <number>10000</number>
+         <number>100000</number>
         </property>
         <property name="singleStep">
          <number>10</number>
@@ -350,7 +350,7 @@ This will increase the trip fuel by the given percentage.</string>
          <number>20</number>
         </property>
         <property name="maximum">
-         <number>5000</number>
+         <number>10000</number>
         </property>
         <property name="singleStep">
          <number>10</number>
@@ -376,7 +376,7 @@ This will increase the trip fuel by the given percentage.</string>
          <string> %fuel% per hour</string>
         </property>
         <property name="maximum">
-         <number>10000</number>
+         <number>100000</number>
         </property>
         <property name="singleStep">
          <number>10</number>
@@ -458,7 +458,7 @@ This will increase the trip fuel by the given percentage.</string>
          <number>20</number>
         </property>
         <property name="maximum">
-         <number>5000</number>
+         <number>10000</number>
         </property>
         <property name="singleStep">
          <number>10</number>
@@ -495,7 +495,7 @@ the given descent speeds</string>
          <string> %fuel% per hour</string>
         </property>
         <property name="maximum">
-         <number>10000</number>
+         <number>100000</number>
         </property>
         <property name="singleStep">
          <number>10</number>
