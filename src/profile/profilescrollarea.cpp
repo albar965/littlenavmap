@@ -63,9 +63,10 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   // Update label on scroll bar changes and remember position
   connect(horizScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::horizScrollBarChanged);
+  connect(horizScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::horizScrollBarValueChanged);
+
   connect(vertScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::vertScrollBarChanged);
-  connect(horizScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::horizScrollBarChanged);
-  connect(vertScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::vertScrollBarChanged);
+  connect(vertScrollBar, &QScrollBar::valueChanged, this, &ProfileScrollArea::vertScrollBarValueChanged);
 
   // Buttons and menu actions
   connect(ui->pushButtonProfileExpand, &QPushButton::clicked, this, &ProfileScrollArea::expandWidget);
@@ -127,6 +128,12 @@ void ProfileScrollArea::splitterMoved(int pos, int index)
   resizeEvent();
 }
 
+void ProfileScrollArea::vertScrollBarValueChanged()
+{
+  vertScrollBarChanged();
+  emit jumpBackToAircraftStart();
+}
+
 void ProfileScrollArea::vertScrollBarChanged()
 {
   if(!noLastScrollPosUpdate && vertScrollBar->maximum() > 0)
@@ -142,10 +149,14 @@ void ProfileScrollArea::vertScrollBarChanged()
       lastVertScrollPos = toScrollPos(vertScrollBar);
   }
 
-  emit jumpBackToAircraftStart();
-
   // Update y scale
   labelWidget->update();
+}
+
+void ProfileScrollArea::horizScrollBarValueChanged()
+{
+  horizScrollBarChanged();
+  emit jumpBackToAircraftStart();
 }
 
 void ProfileScrollArea::horizScrollBarChanged()
@@ -162,8 +173,6 @@ void ProfileScrollArea::horizScrollBarChanged()
       // Remember position
       lastHorizScrollPos = toScrollPos(horizScrollBar);
   }
-
-  emit jumpBackToAircraftStart();
 }
 
 void ProfileScrollArea::update()

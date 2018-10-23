@@ -190,6 +190,8 @@ private:
    * Needed to correct if scrolling is limited at the boundaries. */
   int calculatedHorizScrollPos = 0;
   int calculatedVertScrollPos = 0;
+  void horizScrollBarValueChanged();
+  void vertScrollBarValueChanged();
 };
 
 #endif // LNM_PROFILESCROLLAREA_H
