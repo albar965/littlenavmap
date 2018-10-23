@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_PRINTDIALOG_H
 #define LITTLENAVMAP_PRINTDIALOG_H
 
+#include <QBitArray>
 #include <QDialog>
 
 namespace Ui {
@@ -87,7 +88,7 @@ public:
   void setRouteTableColumns(const QStringList& columns);
 
   /* Bits for selected colums with size equal to number of columns as set above */
-  QBitArray getSelectedRouteTableColumns() const;
+  const QBitArray& getSelectedRouteTableColumns() const;
 
 signals:
   /* Preview or print clicked - dialog is not closed */
@@ -99,7 +100,7 @@ private:
   void updateButtonStates();
 
   Ui::PrintDialog *ui;
-
+  QBitArray selectedRows;
   /* Override to avoid closing the dialog */
   virtual void accept() override;
 

@@ -112,6 +112,11 @@ extern QColor profileHighlightBackColor;
 extern QColor profileHighlightColor;
 extern QColor profileHighlightColorFast;
 
+/* Map print colors */
+extern QColor mapPrintRowColor;
+extern QColor mapPrintRowColorAlt;
+extern QColor mapPrintHeaderColor;
+
 // ==========================================================================
 /* General text pens */
 const QPen textBackgroundPen = QPen(QBrush(QColor(Qt::lightGray)), 1, Qt::SolidLine, Qt::FlatCap);

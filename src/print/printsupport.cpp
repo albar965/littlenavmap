@@ -20,6 +20,7 @@
 #include "navapp.h"
 #include "common/constants.h"
 #include "mapgui/mapwidget.h"
+#include "common/mapcolors.h"
 #include "settings/settings.h"
 #include "route/routecontroller.h"
 #include "perf/aircraftperfcontroller.h"
@@ -79,7 +80,6 @@ void PrintSupport::printFlightplan()
   // Prime weather cache
   fillWeatherCache();
 
-  printDialog->setRouteTableColumns(NavApp::getRouteController()->getRouteColumns());
   printDialog->exec();
 }
 
@@ -179,7 +179,7 @@ void PrintSupport::createFlightplanDocuments()
   bool newPage = opts & prt::NEW_PAGE;
 
   // Header =========================================================================
-  HtmlBuilder html(true);
+  HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
   // Header line with program version
   addHeader(html);
   NavApp::getRouteController()->flightplanHeader(html, !(opts & prt::HEADER));
@@ -201,8 +201,8 @@ void PrintSupport::createFlightplanDocuments()
     if(!newPage)
       // Add a line to separate if page breaks are off
       html.hr();
-    NavApp::getAircraftPerfController()->fuelReport(html, true);
-    NavApp::getAircraftPerfController()->fuelReportFilepath(html, true);
+    NavApp::getAircraftPerfController()->fuelReport(html, true /* print */);
+    NavApp::getAircraftPerfController()->fuelReportFilepath(html, true /* print */);
     cursor.insertHtml(html.getHtml());
     if(newPage)
       cursor.insertBlock(pageBreakBlock);
@@ -231,9 +231,9 @@ void PrintSupport::createFlightplanDocuments()
   // Start and destination  =========================================================================
   // print start and destination information if these are airports
   if(route.hasValidDeparture() && opts & prt::DEPARTURE_ANY)
-    addAirport(cursor, route.first().getAirport(), tr("Departure"), true);
+    addAirport(cursor, route.first().getAirport(), tr("Departure"), true /* departure */);
   if(route.hasValidDestination() && opts & prt::DESTINATION_ANY)
-    addAirport(cursor, route.last().getAirport(), tr("Destination"), false);
+    addAirport(cursor, route.last().getAirport(), tr("Destination"), false /* destination */);
 
   printDocument->adjustSize();
 }
@@ -251,7 +251,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
   bool newPage = opts & prt::NEW_PAGE;
 
-  HtmlBuilder html(true);
+  HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
   if(departure ? (opts& prt::DEPARTURE_OVERVIEW) : (opts & prt::DESTINATION_OVERVIEW))
   {
     mainWindow->buildWeatherContext(weatherContext, airport);
@@ -397,7 +397,10 @@ void PrintSupport::paintRequestedMap(QPrinter *)
   painter.scale(scale, scale);
   painter.translate(-mapWidget->width() / 2, -mapWidget->height() / 2);
 
+  // Print map and avoid dark map in night mode
+  mapWidget->setPrinting(true);
   mapWidget->render(&painter);
+  mapWidget->setPrinting(false);
 
   QFont font = painter.font();
   font.setPixelSize(10);
@@ -417,6 +420,7 @@ void PrintSupport::saveState()
 void PrintSupport::restoreState()
 {
   printDialog->restoreState();
+  printDialog->setRouteTableColumns(NavApp::getRouteController()->getRouteColumns());
 }
 
 void PrintSupport::drawWatermark(const QPoint& pos, QPixmap *pixmap)

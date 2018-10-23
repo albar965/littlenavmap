@@ -107,6 +107,11 @@ QColor profileHighlightBackColor(Qt::black);
 QColor profileHighlightColor(Qt::cyan);
 QColor profileHighlightColorFast(Qt::darkCyan);
 
+/* Map print colors */
+QColor mapPrintRowColor(250, 250, 250);
+QColor mapPrintRowColorAlt(240, 240, 240);
+QColor mapPrintHeaderColor(220, 220, 220);
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -562,6 +567,12 @@ void syncColors()
   syncColor(colorSettings, "ProfileHighlightBackColor", profileHighlightBackColor);
   syncColor(colorSettings, "ProfileHighlightColor", profileHighlightColor);
   syncColor(colorSettings, "ProfileHighlightColorFast", profileHighlightColorFast);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Print");
+  syncColor(colorSettings, "MapPrintRowColor", mapPrintRowColor);
+  syncColor(colorSettings, "MapPrintRowColorAlt", mapPrintRowColorAlt);
+  syncColor(colorSettings, "MapPrintHeaderColor", mapPrintHeaderColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Weather");

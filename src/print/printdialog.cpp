@@ -22,7 +22,6 @@
 #include "common/constants.h"
 #include "settings/settings.h"
 
-#include <QBitArray>
 #include <QPushButton>
 #include <QTimer>
 
@@ -126,11 +125,10 @@ void PrintDialog::setRouteTableColumns(const QStringList& columns)
   ui->listWidgetPrintFlightplanCols->addItems(columns);
 
   // Load selection
-  QBitArray bits = atools::settings::Settings::instance().valueVar(lnm::ROUTE_PRINT_DIALOG + "Selection").toBitArray();
-  if(bits.size() == ui->listWidgetPrintFlightplanCols->count())
+  if(selectedRows.size() == ui->listWidgetPrintFlightplanCols->count())
   {
-    for(int i = 0; i < bits.size(); i++)
-      ui->listWidgetPrintFlightplanCols->item(i)->setSelected(bits.at(i));
+    for(int i = 0; i < selectedRows.size(); i++)
+      ui->listWidgetPrintFlightplanCols->item(i)->setSelected(selectedRows.at(i));
   }
   else
   {
@@ -140,12 +138,9 @@ void PrintDialog::setRouteTableColumns(const QStringList& columns)
   }
 }
 
-QBitArray PrintDialog::getSelectedRouteTableColumns() const
+const QBitArray& PrintDialog::getSelectedRouteTableColumns() const
 {
-  QBitArray bits(ui->listWidgetPrintFlightplanCols->count());
-  for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
-    bits.setBit(i, ui->listWidgetPrintFlightplanCols->item(i)->isSelected());
-  return bits;
+  return selectedRows;
 }
 
 void PrintDialog::saveState()
@@ -176,10 +171,10 @@ void PrintDialog::saveState()
   });
 
   // Save selection to bitarray
-  QBitArray bits(ui->listWidgetPrintFlightplanCols->count());
+  selectedRows = QBitArray(ui->listWidgetPrintFlightplanCols->count());
   for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
-    bits.setBit(i, ui->listWidgetPrintFlightplanCols->item(i)->isSelected());
-  atools::settings::Settings::instance().setValueVar(lnm::ROUTE_PRINT_DIALOG + "Selection", bits);
+    selectedRows.setBit(i, ui->listWidgetPrintFlightplanCols->item(i)->isSelected());
+  atools::settings::Settings::instance().setValueVar(lnm::ROUTE_PRINT_DIALOG + "Selection", selectedRows);
 }
 
 void PrintDialog::restoreState()
@@ -209,6 +204,7 @@ void PrintDialog::restoreState()
     ui->spinBoxPrintTextSizeFlightplan
   });
 
+  selectedRows = atools::settings::Settings::instance().valueVar(lnm::ROUTE_PRINT_DIALOG + "Selection").toBitArray();
   updateButtonStates();
 }
 

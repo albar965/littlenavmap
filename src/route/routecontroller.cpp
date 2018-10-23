@@ -316,14 +316,15 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   // Text size and alternating background formats ===================================
   QTextCharFormat altFormat1 = table->cellAt(0, 0).format();
   altFormat1.setFontPointSize(fontPointSize);
+  altFormat1.setBackground(mapcolors::mapPrintRowColor);
 
   QTextCharFormat altFormat2 = altFormat1;
-  altFormat2.setBackground(QColor(240, 240, 240));
+  altFormat2.setBackground(mapcolors::mapPrintRowColorAlt);
 
   // Header font and background ================
   QTextCharFormat headerFormat = altFormat1;
   headerFormat.setFontWeight(QFont::Bold);
-  headerFormat.setBackground(QColor(220, 220, 220));
+  headerFormat.setBackground(mapcolors::mapPrintHeaderColor);
 
   // Fill header =====================================================================
   // Table header from GUI widget

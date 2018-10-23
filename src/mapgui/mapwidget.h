@@ -331,6 +331,17 @@ public:
   /* From center button */
   void jumpBackToAircraftCancel();
 
+  /* Avoids dark background when printing in night mode */
+  void setPrinting(bool value)
+  {
+    printing = value;
+  }
+
+  bool isPrinting() const
+  {
+    return printing;
+  }
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);
@@ -553,6 +564,9 @@ private:
 
   /* The the overlays from updating */
   bool ignoreOverlayUpdates = false;
+
+  /* Avoids dark background when printing in night mode */
+  bool printing = false;
 
   JumpBack *jumpBack;
 
