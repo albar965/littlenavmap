@@ -3,14 +3,16 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 Version 2.2.0.beta
 
-List of closed issues for milestone 2.2:
-https://github.com/albar965/littlenavmap/milestone/6?closed=1
+=== Notes ===
+* List of closed issues for milestone 2.2: https://github.com/albar965/littlenavmap/milestone/6?closed=1
+* A reload of the scenery library is recommended.
+* Some new features like the MORA grid, display of FAF and others need an AIRAC cycle from Navigraph
+  later or equal to cycle 1810 or the included AIRAC cycle.
+* X-Plane: Replace the Little Xpconnect plugin with the new included one to see the improvements mentioned below
+  at "X-Plane / Little Xpconnect".
+* The manual is not updated yet. Therefore, help links do not work.
 
-A reload of the scenery library is recommended.
-
-Some new features like the MORA grid, display of FAF and others need an AIRAC cycle from Navigraph
-later or equal to cycle 1810 or the included AIRAC cycle.
-
+=== Changes ===
 Elevation Profile:
 * Added scrolling and zooming ability to elevation profile. Elevation profile now has a context
   menu also including "show on map" and more functions. Added splitter to elevation profile dock
@@ -253,6 +255,11 @@ Scenery Library:
 * Fixed issues with assignment of stray VASIs to runways in X-Plane.
 * Fixed issues with symbolic links in scenery loader. Now using paths as-is instead of converting to canonical
   paths (i.e. resolving the symbolic links). #29
+
+X-Plane / Little Xpconnect:
+* Added airplane model and registration. Now using description for title. albar965/littlenavmap#271
+* Now reading X-Plane "acf" files once to get aircraft name and engine type for a better classification.
+  Allows to show helicopter and jet AI symbols in Little Navmap. albar965/littlenavmap#271
 
 related from atools version 3.2.0.beta
 * Database minor version updated to 13.
