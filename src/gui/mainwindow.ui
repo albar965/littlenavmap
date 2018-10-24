@@ -279,7 +279,7 @@
     </widget>
     <widget class="QMenu" name="menuSunShading">
      <property name="title">
-      <string>Sun Shading</string>
+      <string>Sun &amp;Shading</string>
      </property>
      <addaction name="actionMapShowSunShadingSimulatorTime"/>
      <addaction name="actionMapShowSunShadingRealTime"/>
@@ -8735,7 +8735,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/minaltitude.svg</normaloff>:/littlenavmap/resources/icons/minaltitude.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Minimum Altitude</string>
+    <string>Show &amp;Minimum Altitude</string>
    </property>
    <property name="toolTip">
     <string>Show Minimum Altitude (MORA) on the map</string>

@@ -380,9 +380,6 @@ void PrintSupport::paintRequestedMap(QPrinter *)
 
   MapWidget *mapWidget = NavApp::getMapWidget();
   QPainter painter;
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setRenderHint(QPainter::TextAntialiasing, true);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
   // Calculate best ratio
   double xscale = printer->pageRect().width() / static_cast<double>(mapWidget->width());
@@ -390,6 +387,9 @@ void PrintSupport::paintRequestedMap(QPrinter *)
   double scale = std::min(xscale, yscale);
 
   painter.begin(printer);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
   painter.translate(printer->paperRect().x() + printer->pageRect().width() / 2,
                     printer->paperRect().y() + printer->pageRect().height() / 2);
 
