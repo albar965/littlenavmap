@@ -57,7 +57,7 @@ const QLatin1Literal HELP_BRANCH("");
 const QLatin1Literal HELP_BASE_URL("https://albar965.gitbooks.io/little-navmap-user-manual/content/v/");
 
 // "master" or "release/1.4"
-const QLatin1Literal HELP_BRANCH("release/2.0"); // VERSION_NUMBER
+const QLatin1Literal HELP_BRANCH("release/2.2"); // VERSION_NUMBER
 #endif
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
