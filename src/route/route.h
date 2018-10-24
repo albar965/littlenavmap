@@ -50,21 +50,23 @@ public:
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
-   * All distances in nautical miles.
+   * All distances in nautical miles. Considers the active leg.
    * @param pos
    * @param distFromStartNm Distance from departure
    * @param distToDestNm Distance to destination
    * @param nextLegDistance Distance to next leg
    * @param crossTrackDistance Cross track distance to current leg. Positive and
    * negative values indicate left or right of track.
-   * @param nextLegIndex Index of next leg
-   * @param nextRouteLegIndex Index of next leg
    * @return false if no current/next leg was found
    */
   bool getRouteDistances(float *distFromStart, float *distToDest = nullptr,
-                         float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
+                         float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
+                         float *projectionDistance = nullptr) const;
 
-  /* Start from distance but values do not decrease if aircraft is leaving route */
+  float getProjectionDistance() const;
+
+  /* Start from distance but values do not decrease if aircraft is leaving route.
+   *  Ignores active and looks for all legs. */
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects */
@@ -83,12 +85,12 @@ public:
    * 1 for first leg to route.size() - 1 for active legs */
   int getActiveLegIndex() const
   {
-    return activeLeg;
+    return activeLegIndex;
   }
 
   bool isActiveValid() const
   {
-    return activeLeg > 0 && activeLeg < size();
+    return activeLegIndex > 0 && activeLegIndex < size();
   }
 
   /* Either destination airport or last leg of approach procedure (usually runway) before missed */
@@ -420,7 +422,7 @@ private:
   proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
   map::MapObjectTypes shownTypes;
 
-  int activeLeg = map::INVALID_INDEX_VALUE;
+  int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
   map::PosCourse activePos;
   int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,

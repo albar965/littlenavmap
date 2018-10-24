@@ -188,7 +188,6 @@ private:
   void updateScreenCoords();
   void terminateThread();
   float calcGroundBuffer(float maxElevation);
-  bool aircraftTrackValid();
 
   void updateLabel();
 
@@ -238,13 +237,9 @@ private:
   /* Do not calculate a profile for legs longer than this value */
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
 
-  /* Minimum screen size of the aircraft track on the screen to be shown and to alter the profile altitude */
-  static Q_DECL_CONSTEXPR int MIN_AIRCRAFT_TRACK_WIDTH = 10;
-
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
   QPolygon aircraftTrackPoints;
-  float maxTrackAltitudeFt = 0.f;
 
   float aircraftDistanceFromStart;
   float lastAircraftDistanceFromStart;

@@ -76,7 +76,7 @@ void Route::resetActive()
         map::INVALID_DISTANCE_VALUE;
   activeLegResult.status = atools::geo::INVALID;
   activePos = map::PosCourse();
-  activeLeg = map::INVALID_INDEX_VALUE;
+  activeLegIndex = map::INVALID_INDEX_VALUE;
 }
 
 void Route::copy(const Route& other)
@@ -98,7 +98,7 @@ void Route::copy(const Route& other)
   starLegsOffset = other.starLegsOffset;
   arrivalLegsOffset = other.arrivalLegsOffset;
 
-  activeLeg = other.activeLeg;
+  activeLegIndex = other.activeLegIndex;
   activeLegResult = other.activeLegResult;
 
   // Update flightplan pointers to this instance
@@ -198,7 +198,7 @@ void Route::updateActiveLegAndPos(bool force)
         activeLegResult.distance =
           map::INVALID_DISTANCE_VALUE;
     activeLegResult.status = atools::geo::INVALID;
-    activeLeg = map::INVALID_INDEX_VALUE;
+    activeLegIndex = map::INVALID_INDEX_VALUE;
   }
   updateActiveLegAndPos(activePos);
 }
@@ -218,42 +218,43 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     return;
   }
 
-  if(activeLeg == map::INVALID_INDEX_VALUE)
+  if(activeLegIndex == map::INVALID_INDEX_VALUE)
   {
     // Start with nearest leg
     float crossDummy;
-    nearestAllLegIndex(pos, crossDummy, activeLeg);
+    nearestAllLegIndex(pos, crossDummy, activeLegIndex);
   }
 
-  if(activeLeg >= size())
-    activeLeg = size() - 1;
+  if(activeLegIndex >= size())
+    activeLegIndex = size() - 1;
 
   activePos = pos;
 
   if(size() == 1)
   {
     // Special case point route
-    activeLeg = 0;
+    activeLegIndex = 0;
     // Test if still nearby
     activePos.pos.distanceMeterToLine(first().getPosition(), first().getPosition(), activeLegResult);
   }
   else
   {
-    if(activeLeg == 0)
+    if(activeLegIndex == 0)
       // Reset from point route
-      activeLeg = 1;
-    activePos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
+      activeLegIndex = 1;
+    activePos.pos.distanceMeterToLine(getPositionAt(activeLegIndex - 1), getPositionAt(activeLegIndex),
+                                      activeLegResult);
   }
 
   // qDebug() << "activePos" << activeLegResult;
 
   // Get potential next leg and course difference
-  int nextLeg = activeLeg + 1;
+  int nextLeg = activeLegIndex + 1;
   float courseDiff = 0.f;
   if(nextLeg < size())
   {
     // Catch the case of initial fixes or others that are points instead of lines and try the next legs
-    if(!at(activeLeg).getProcedureLeg().isHold())
+    if(!at(activeLegIndex).getProcedureLeg().isHold())
     {
       while(atools::contains(at(nextLeg).getProcedureLegType(),
                              {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) &&
@@ -286,11 +287,11 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     // qDebug() << "NEXT" << nextLeg << nextLegResult;
 
     bool switchToNextLeg = false;
-    if(at(activeLeg).getProcedureLeg().isHold())
+    if(at(activeLegIndex).getProcedureLeg().isHold())
     {
       // qDebug() << "ACTIVE HOLD";
       // Test next leg if we can exit a hold
-      if(at(nextLeg).getProcedureLeg().line.getPos1() == at(activeLeg).getPosition())
+      if(at(nextLeg).getProcedureLeg().line.getPos1() == at(activeLegIndex).getPosition())
       {
         // qDebug() << "HOLD SAME";
 
@@ -304,7 +305,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
       else
       {
         atools::geo::LineDistance resultHold;
-        at(activeLeg).getProcedureLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
+        at(activeLegIndex).getProcedureLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
         // qDebug() << "NEXT HOLD" << nextLeg << resultHold;
 
         // qDebug() << "HOLD DIFFER";
@@ -313,7 +314,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
         // Hold point differs from next leg start - use the helping line
         if(resultHold.status == atools::geo::ALONG_TRACK) // Check if we are outside of the hold
         {
-          if(at(activeLeg).getProcedureLeg().turnDirection == "R")
+          if(at(activeLegIndex).getProcedureLeg().turnDirection == "R")
             switchToNextLeg = resultHold.distance < nmToMeter(-0.5f);
           else
             switchToNextLeg = resultHold.distance > nmToMeter(0.5f);
@@ -328,7 +329,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
         if(std::abs(nextLegResult.distance) < nmToMeter(0.5f))
           switchToNextLeg = true;
       }
-      else if(at(activeLeg).getProcedureLegType() == proc::PROCEDURE_TURN)
+      else if(at(activeLegIndex).getProcedureLegType() == proc::PROCEDURE_TURN)
       {
         // Ignore the after end indication for current leg for procedure turns since turn can happen earlier
         if(isSmaller(nextLegResult, activeLegResult, 100.f /* meter */) && courseDiff < 45.f)
@@ -355,8 +356,8 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
       if(!(!(shownTypes& map::MISSED_APPROACH) && at(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
-        activeLeg = nextLeg;
-        pos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
+        activeLegIndex = nextLeg;
+        pos.pos.distanceMeterToLine(getPositionAt(activeLegIndex - 1), getPositionAt(activeLegIndex), activeLegResult);
       }
     }
   }
@@ -365,20 +366,21 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
 }
 
 bool Route::getRouteDistances(float *distFromStart, float *distToDest,
-                              float *nextLegDistance, float *crossTrackDistance) const
+                              float *nextLegDistance, float *crossTrackDistance, float *projectionDistance) const
 {
   const proc::MapProcedureLeg *geometryLeg = nullptr;
 
-  if(activeLeg == map::INVALID_INDEX_VALUE)
+  if(activeLegIndex == map::INVALID_INDEX_VALUE)
     return false;
 
   int active = adjustedActiveLeg();
+  const RouteLeg& activeLeg = at(active);
 
-  if(at(active).isAnyProcedure() && (at(active).getGeometry().size() > 2))
+  if(activeLeg.isAnyProcedure() && (activeLeg.getGeometry().size() > 2))
     // Use arc or intercept geometry to calculate distance
-    geometryLeg = &at(active).getProcedureLeg();
+    geometryLeg = &activeLeg.getProcedureLeg();
 
-#ifdef DEBUG_INFORMATION_ROUTE_DIST
+#ifdef DEBUG_INFORMATION_ROUTE_LEG
   qDebug() << Q_FUNC_INFO << activeLegResult;
 #endif
 
@@ -407,14 +409,14 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     float distToCurrent = 0.f;
 
-    bool activeIsMissed = at(active).getProcedureLeg().isMissed();
+    bool activeIsMissed = activeLeg.getProcedureLeg().isMissed();
 
     // Ignore missed approach legs until the active is a missed approach leg
     if(!at(routeIndex).getProcedureLeg().isMissed() || activeIsMissed)
     {
+      atools::geo::LineDistance result;
       if(geometryLeg != nullptr)
       {
-        atools::geo::LineDistance result;
         geometryLeg->geometry.distanceMeterToLineString(activePos.pos, result);
         distToCurrent = meterToNm(result.distanceFrom2);
       }
@@ -422,7 +424,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
         distToCurrent = meterToNm(getPositionAt(routeIndex).distanceMeterTo(activePos.pos));
     }
 
-#ifdef DEBUG_INFORMATION_ROUTE_DIST
+#ifdef DEBUG_INFORMATION_ROUTE_LEG
     qDebug() << Q_FUNC_INFO << distToCurrent;
 #endif
 
@@ -431,19 +433,32 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     // Sum up all distances along the legs
     // Ignore missed approach legs until the active is a missedd approach leg
-    float fromstart = 0.f;
+    float fromStart = 0.f;
     for(int i = 0; i <= routeIndex; i++)
     {
       if(!at(i).getProcedureLeg().isMissed() || activeIsMissed)
-        fromstart += at(i).getDistanceTo();
+        fromStart += at(i).getDistanceTo();
       else
         break;
     }
-    fromstart -= distToCurrent;
-    fromstart = std::abs(fromstart);
+    float fromStartLegs = fromStart;
+    fromStart -= distToCurrent;
+    fromStart = std::abs(fromStart);
 
     if(distFromStart != nullptr)
-      *distFromStart = std::max(fromstart, 0.f);
+      *distFromStart = std::max(fromStart, 0.f);
+
+    if(projectionDistance != nullptr)
+    {
+      // Use along track distance only for projection to avoid aircraft travelling backwards
+      if(activeLegResult.status == atools::geo::ALONG_TRACK)
+        *projectionDistance = fromStartLegs - meterToNm(activeLegResult.distanceFrom2);
+      else // Stick aircraft to waypoint if turning to avoid moving back
+        *projectionDistance = fromStartLegs - activeLeg.getDistanceTo();
+
+      if(isPassedLastLeg() || isActiveMissed())
+        *projectionDistance = totalDistance;
+    }
 
     if(distToDest != nullptr)
     {
@@ -452,7 +467,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
       else
       {
         if(!activeIsMissed)
-          *distToDest = std::max(totalDistance - fromstart, 0.f);
+          *distToDest = std::max(totalDistance - fromStart, 0.f);
         else
         {
           // Summarize remaining missed leg distance if on missed
@@ -473,11 +488,24 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
   return false;
 }
 
+float Route::getProjectionDistance() const
+{
+  float distance = 0.f;
+  if(getRouteDistances(nullptr, nullptr, nullptr, nullptr, &distance))
+    return distance;
+  else
+    return map::INVALID_DISTANCE_VALUE;
+}
+
 float Route::getDistanceFromStart(const atools::geo::Pos& pos) const
 {
   atools::geo::LineDistance result;
   int leg = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */);
   float distFromStart = map::INVALID_DISTANCE_VALUE;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "leg" << leg << "result" << result;
+#endif
 
   if(leg < map::INVALID_INDEX_VALUE && result.status == atools::geo::ALONG_TRACK)
   {
@@ -931,7 +959,7 @@ void Route::updateAirportRegions()
 
 int Route::adjustedActiveLeg() const
 {
-  int retval = activeLeg;
+  int retval = activeLegIndex;
   if(retval < map::INVALID_INDEX_VALUE)
   {
     // Put the active back into bounds
@@ -943,7 +971,7 @@ int Route::adjustedActiveLeg() const
 
 void Route::updateIndicesAndOffsets()
 {
-  activeLeg = adjustedActiveLeg();
+  activeLegIndex = adjustedActiveLeg();
   departureLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
   arrivalLegsOffset = map::INVALID_INDEX_VALUE;
@@ -977,18 +1005,18 @@ const RouteLeg *Route::getActiveLegCorrected(bool *corrected) const
 
 const RouteLeg *Route::getActiveLeg() const
 {
-  if(activeLeg != map::INVALID_INDEX_VALUE)
-    return &at(activeLeg);
+  if(activeLegIndex != map::INVALID_INDEX_VALUE)
+    return &at(activeLegIndex);
   else
     return nullptr;
 }
 
 int Route::getActiveLegIndexCorrected(bool *corrected) const
 {
-  if(activeLeg == map::INVALID_INDEX_VALUE)
+  if(activeLegIndex == map::INVALID_INDEX_VALUE)
     return map::INVALID_INDEX_VALUE;
 
-  int nextLeg = activeLeg + 1;
+  int nextLeg = activeLegIndex + 1;
   if(nextLeg < size() && nextLeg == size() &&
      at(nextLeg).isAnyProcedure()
      /*&&
@@ -996,13 +1024,13 @@ int Route::getActiveLegIndexCorrected(bool *corrected) const
   {
     if(corrected != nullptr)
       *corrected = true;
-    return activeLeg + 1;
+    return activeLegIndex + 1;
   }
   else
   {
     if(corrected != nullptr)
       *corrected = false;
-    return activeLeg;
+    return activeLegIndex;
   }
 }
 
@@ -1017,7 +1045,8 @@ bool Route::isActiveMissed() const
 
 bool Route::isPassedLastLeg() const
 {
-  if((activeLeg >= size() - 1 || (activeLeg + 1 < size() && at(activeLeg + 1).getProcedureLeg().isMissed())) &&
+  if((activeLegIndex >= size() - 1 ||
+      (activeLegIndex + 1 < size() && at(activeLegIndex + 1).getProcedureLeg().isMissed())) &&
      activeLegResult.status == atools::geo::AFTER_END)
     return true;
 
@@ -1027,11 +1056,12 @@ bool Route::isPassedLastLeg() const
 void Route::setActiveLeg(int value)
 {
   if(value > 0 && value < size())
-    activeLeg = value;
+    activeLegIndex = value;
   else
-    activeLeg = 1;
+    activeLegIndex = 1;
 
-  activePos.pos.distanceMeterToLine(at(activeLeg - 1).getPosition(), at(activeLeg).getPosition(), activeLegResult);
+  activePos.pos.distanceMeterToLine(at(activeLegIndex - 1).getPosition(), at(
+                                      activeLegIndex).getPosition(), activeLegResult);
 }
 
 bool Route::isAirportAfterArrival(int index)
