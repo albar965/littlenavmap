@@ -2,6 +2,394 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="es_AR">
 <context>
+    <name>AircraftPerfController</name>
+    <message>
+        <source>Aircraft performance created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft performance changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft performance loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Aircraft Performance File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft Performance Files %1;;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft performance saved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Aircraft Performance File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Performance data collection started.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Performance data collection stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft Performance has been changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save changes?</source>
+        <translation type="unfinished">Grabar los cambios?</translation>
+    </message>
+    <message>
+        <source>Do not &amp;show this dialog again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight segment %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> *</source>
+        <translation type="unfinished"> *</translation>
+    </message>
+    <message>
+        <source>%1 - %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collecting performance information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current flight segment: %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel</source>
+        <translation type="unfinished">Combustible</translation>
+    </message>
+    <message>
+        <source>Total Fuel Consumed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Taxi Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Climb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>True Airspeed:</source>
+        <translation type="unfinished">Velocidad de aire verdadera:</translation>
+    </message>
+    <message>
+        <source>Vertical Speed:</source>
+        <translation type="unfinished">Velocidad Vertical:</translation>
+    </message>
+    <message>
+        <source> &lt;b&gt;▲&lt;/b&gt;</source>
+        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>Fuel Flow:</source>
+        <translation type="unfinished">Flujo de combustible:</translation>
+    </message>
+    <message>
+        <source>Cruise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> &lt;b&gt;▼&lt;/b&gt;</source>
+        <translation type="unfinished"> &lt;b&gt;▼&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>Flight plan has unflyable legs where head wind is larger than cruise speed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Flight Plan loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Performance File Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Performance File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Performance File:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft Performance %1 - %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance and Time:</source>
+        <translation type="unfinished">Distancia y Tiempo:</translation>
+    </message>
+    <message>
+        <source>%1, %2</source>
+        <translation type="unfinished">%1: %2 {1,?}</translation>
+    </message>
+    <message>
+        <source>Average Ground Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>True Airspeed at Cruise:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mach at cruise:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trip Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Block Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel at Destination:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reserve Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contingency Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %, %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Climb and Descent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Climb:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 at %2, %3° Flight Path Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time to Climb:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Climb not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent Rule of Thumb:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 per %2 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AircraftPerfDialog</name>
+    <message>
+        <source>Little Navmap - Aircraft Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Name:</source>
+        <translation type="unfinished">&amp;Nombre:</translation>
+    </message>
+    <message>
+        <source>Aircraft &amp;Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft type like B732 or C172</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel</source>
+        <translation type="unfinished">Combustible</translation>
+    </message>
+    <message>
+        <source>Weight (%weight%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Volume (%volume%)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Fuel Units:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel added at the discretion of the 
+captain or the dispatcher</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %fuel%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Extra fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Reserve Fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Taxi fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
+above the alternate or at the destination at holding speed if 
+an alternate is not required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This accounts for additional enroute fuel consumption 
+caused by wind or routing changes. 
+This will increase the trip fuel by the given percentage.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> percent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Contingency fuel:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Climb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %speed% true airspeed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average &amp;climb speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average vertical &amp;climb speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %vspeed% ▲</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average fuel flow for &amp;climb:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %fuel% per hour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cruise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>C&amp;ruise speed at typical cruise altitude:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel flow in c&amp;ruise:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average vertical &amp;descent speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %vspeed% ▼</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average &amp;descent speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Equivalent rule of thumb for 
+the given descent speeds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average fuel flow for &amp;descent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description or Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent Rule of Thumb: %1 per %2 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AirportSearch</name>
     <message>
         <source>ILS</source>
@@ -929,7 +1317,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source>Error opening path &quot;%1&quot;</source>
-        <translation>Error al abrir la ruta de &quot;%1&quot;</translation>
+        <translation type="vanished">Error al abrir la ruta de &quot;%1&quot;</translation>
     </message>
     <message>
         <source>&lt;b&gt;AI and multiplayer aircraft are not shown on map.&lt;/b&gt;&lt;br/&gt;</source>
@@ -951,6 +1339,10 @@ Saliendo ahora.</translation>
         <source>Showing information for online clients.</source>
         <translation>Mostrando información para clientes en línea.</translation>
     </message>
+    <message>
+        <source>Remove Highlights from Map</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -968,7 +1360,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source> ft</source>
-        <translation> pies</translation>
+        <translation type="vanished"> pies</translation>
     </message>
     <message>
         <source>All</source>
@@ -1004,7 +1396,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source> kts</source>
-        <translation> nudos</translation>
+        <translation type="vanished"> nudos</translation>
     </message>
     <message>
         <source>&amp;Map</source>
@@ -1300,7 +1692,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source>Remove All Range Rings and Distance Measurements</source>
-        <translation>Suprimir todos los anillos de rango y medidas de distancias</translation>
+        <translation type="vanished">Suprimir todos los anillos de rango y medidas de distancias</translation>
     </message>
     <message>
         <source>Show &amp;Missed Approaches</source>
@@ -1360,7 +1752,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source>Do not show this dialog again and save the Flight Plan in the future.</source>
-        <translation>No mostrar este diálogo de nuevo y en el futuro grabar el Plan de Vuelo.</translation>
+        <translation type="vanished">No mostrar este diálogo de nuevo y en el futuro grabar el Plan de Vuelo.</translation>
     </message>
     <message>
         <source>Activate Flight Plan Leg</source>
@@ -2020,7 +2412,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;&lt;big&gt;This new format can only be loaded from&lt;br/&gt;X-Plane 11.10 and above.&lt;br/&gt;&lt;br/&gt;Do not use it with X-Plane 11.05 or lower.&lt;br/&gt;It might crash the simulator.&lt;/big&gt;&lt;br/&gt;&lt;br/&gt;Use &quot;Export Flight Plan as X-Plane FMS 3...&quot; instead.&lt;/b&gt;&lt;/p&gt;The new X-Plane FMS format version 11 does not allow saving of:&lt;ul&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;/ul&gt;This information will be lost when reloading the file.&lt;br/&gt;&lt;br/&gt;Really save as FMS file?&lt;br/&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;&lt;big&gt;Este nuevo formato solo se puede cargar desde &lt;br/&gt;X-Plane 11.10 o superior.&lt;br/&gt;&lt;br/&gt;No lo use con X-Plane 11.05 o inferior.&lt;br/&gt;Puede bloquear el simulador.&lt;/big&gt;&lt;br/&gt;&lt;br/&gt;Use &quot;Exportar Plan de Vuelo como X-Plane FMS 3 ...&quot; en su lugar.&lt;/b&gt;&lt;/p&gt;El nuevo X-Plane La versión 11 del formato FMS no permite guardar:&lt;ul&gt;&lt;li&gt;Velocidad de pista&lt;/li&gt;&lt;li&gt;Posición de salida de estacionamiento&lt;/li&gt;&lt;li&gt;Tipos (IFR / VFR, Alt bajo / Alto)&lt;/li&gt;&lt;/ul&gt;Esta información se perderá al volver a cargar el archivo.&lt;br/&gt;&lt;br/&gt;¿Realmente guardar como archivo FMS?&lt;br/&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;&lt;big&gt;Este nuevo formato solo se puede cargar desde &lt;br/&gt;X-Plane 11.10 o superior.&lt;br/&gt;&lt;br/&gt;No lo use con X-Plane 11.05 o inferior.&lt;br/&gt;Puede bloquear el simulador.&lt;/big&gt;&lt;br/&gt;&lt;br/&gt;Use &quot;Exportar Plan de Vuelo como X-Plane FMS 3 ...&quot; en su lugar.&lt;/b&gt;&lt;/p&gt;El nuevo X-Plane La versión 11 del formato FMS no permite guardar:&lt;ul&gt;&lt;li&gt;Velocidad de pista&lt;/li&gt;&lt;li&gt;Posición de salida de estacionamiento&lt;/li&gt;&lt;li&gt;Tipos (IFR / VFR, Alt bajo / Alto)&lt;/li&gt;&lt;/ul&gt;Esta información se perderá al volver a cargar el archivo.&lt;br/&gt;&lt;br/&gt;¿Realmente guardar como archivo FMS?&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Move selected Legs Up</source>
@@ -2928,7 +3320,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Estimated ground speed for the flight plan that will be used to calculate travelling times</source>
-        <translation>Velocidad de desplazamiento estimada para el plan de vuelo que utilizará para calcular tiempos de viaje</translation>
+        <translation type="vanished">Velocidad de desplazamiento estimada para el plan de vuelo que utilizará para calcular tiempos de viaje</translation>
     </message>
     <message>
         <source>Scenery Path</source>
@@ -3248,7 +3640,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Remove all range rings and distance measurements from map</source>
-        <translation>Quitar todos los anillos de rango y distancia del mapa</translation>
+        <translation type="vanished">Quitar todos los anillos de rango y distancia del mapa</translation>
     </message>
     <message>
         <source>Airports with procedures</source>
@@ -4205,10 +4597,6 @@ Online Network:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show the sun shadind on the globe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Real UTC Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4243,6 +4631,395 @@ Online Network:
     <message>
         <source>Flight plan cruise altitude is zero.
 Simulator might not be able to load the flight plan.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Userpoints</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Navaids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Airport Weather &amp;Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Aircraft</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Recent Performance Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight Plan Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Aircraft Performance and Fuel Planning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Wind:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average wind at flight plan cruise level. 
+Wind speed will be interpolated for climb and descent phases.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average wind at flight plan cruise level.  Wind speed will be interpolated for climb and descent phases.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %speed%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average magnetic wind direction at flight plan cruise level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> °M</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Aircraft Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add new aircraft performance data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Aircraft Performance File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Aircraft Performance File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Aircraft Performance File as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show help for aircraft performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No aircraft performance report available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom horizontally into the elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom vertically into the elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand elevation profile to window size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show help for the elevation profile window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove all Ranges, Measurements and Patterns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove all range rings, distance measurement lines and airport traffic patterns from map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Shift+H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+J</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Clear Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+F1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+J</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+U</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show sun shading on the globe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Airport &amp;Weather</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show airport weather icons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Active Sky</source>
+        <translation type="unfinished">Cielo &amp;Activo</translation>
+    </message>
+    <message>
+        <source>Use ActiveSky weather to display weather icons on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flight Simulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Flight Simulator weather to display weather icons on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;NOAA</source>
+        <translation type="unfinished">&amp;NOAA</translation>
+    </message>
+    <message>
+        <source>Use NOAA weather to display weather icons on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;VATSIM</source>
+        <translation type="unfinished">&amp;VATSIM</translation>
+    </message>
+    <message>
+        <source>Use VATSIM weather to display weather icons on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;IVAO</source>
+        <translation type="unfinished">&amp;IVAO</translation>
+    </message>
+    <message>
+        <source>Use IVAO weather to display weather icons on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Minimum Altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Minimum Altitude (MORA) on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Airport Traffic Pattern at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Airport traffic pattern for a runway at this airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Airport Traffic Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove this airport traffic pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Insert Flight Plan before %1 ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert flight plan before the current position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Expand to Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Follow on Map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Follow the cursor position above the elevation profile on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center the user aircraft on the elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show &amp;Labels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show or hide the labels at the left side of the elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Scroll&amp;bars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show or hide scrollbars around the elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Show Position on Map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show this position on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show &amp;Zoom Sliders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show or hide the zoom sliders in the split window on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show &amp;VASI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show VASI slope at destination if a procedure is selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove all &amp;Highlights and Selections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear all highlights on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+H</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show &amp;ILS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show ILS slope at destination if a procedure is selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Load Aircraft Performance ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Edit Aircraft Performance ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Shift+E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove all recent aircraft performance files from menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Collect Performance for Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collect Performance for Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save Aircraft Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Aircraft Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Shift+S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Aircraft Performance &amp;as ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Aircraft Performance as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New Aircraft Performance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Frequently asked Questions (Online)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the online frequently asked questions in a browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not show this dialog again and save the Flight Plan in the future as FMS 3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This format can only be loaded from X-Plane 11.10 and above.&lt;br/&gt;It does not allow saving of:&lt;ul&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Departure parking position&lt;/li&gt;&lt;li&gt;Types (IFR/VFR, Low Alt/High Alt)&lt;/li&gt;&lt;/ul&gt;This information will be lost when reloading the file.&lt;br/&gt;&lt;br/&gt;Really save as FMS file?&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not show this dialog again and save the Flight Plan in the future as FMS 11.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not show this dialog again and save the Flight Plan in the future as FLP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert info Flight Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight plan inserted.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5114,7 +5891,7 @@ Simulator might not be able to load the flight plan.</source>
     </message>
     <message>
         <source>Approaches and Transitions</source>
-        <translation>Aproximación yTransiciones</translation>
+        <translation type="vanished">Aproximación yTransiciones</translation>
     </message>
     <message>
         <source>Pattern Altitude:</source>
@@ -6005,6 +6782,54 @@ Simulator might not be able to load the flight plan.</source>
         <source>Active times announced by NOTAM</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Sun never rises</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sun never sets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Airport:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Designation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Estimated Arrival Time:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not valid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crab angle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Less</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapPainter</name>
@@ -6030,7 +6855,7 @@ Simulator might not be able to load the flight plan.</source>
     </message>
     <message>
         <source>°</source>
-        <translation>°</translation>
+        <translation type="vanished">°</translation>
     </message>
     <message>
         <source> / </source>
@@ -6110,11 +6935,11 @@ Simulator might not be able to load the flight plan.</source>
     </message>
     <message>
         <source> / DME</source>
-        <translation> / DME</translation>
+        <translation type="vanished"> / DME</translation>
     </message>
     <message>
         <source> / GS </source>
-        <translation> / GS </translation>
+        <translation type="vanished"> / GS </translation>
     </message>
     <message>
         <source>%1 °M</source>
@@ -6175,6 +7000,10 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <source>None</source>
         <translation type="unfinished">Ninguno</translation>
+    </message>
+    <message>
+        <source>TOC</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6439,7 +7268,7 @@ Simulator might not be able to load the flight plan.</source>
     <name>MapWidget</name>
     <message>
         <source>Add </source>
-        <translation>Agregar </translation>
+        <translation type="vanished">Agregar </translation>
     </message>
     <message>
         <source>here</source>
@@ -6547,7 +7376,7 @@ Simulator might not be able to load the flight plan.</source>
     </message>
     <message>
         <source> to Flight Plan</source>
-        <translation> al Plan de Vuelo</translation>
+        <translation type="vanished"> al Plan de Vuelo</translation>
     </message>
     <message>
         <source>Online Center %1</source>
@@ -6604,6 +7433,26 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <source> / </source>
         <translation type="unfinished"> / </translation>
+    </message>
+    <message>
+        <source>Add %1 to Flight Plan</source>
+        <translation type="unfinished">Agregar %1 al Plan de Vuelo</translation>
+    </message>
+    <message>
+        <source>Insert %1 to Flight Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Append %1 to Flight Plan</source>
+        <translation type="unfinished">Agregar %1 al plan de vuelo</translation>
+    </message>
+    <message>
+        <source>Added airport traffic pattern for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Traffic pattern removed from map.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6889,6 +7738,11 @@ Conexión</translation>
         <source>Yes</source>
         <translation>Sí</translation>
     </message>
+    <message>
+        <source>Estimated
+Arrival</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OnlineServerSearch</name>
@@ -7020,7 +7874,7 @@ Descárguela del enlace &lt;b&gt;&lt;i&gt;Todos los mosaicos en uno solo (all10g
     </message>
     <message>
         <source>N&amp;OAA</source>
-        <translation>N&amp;OAA</translation>
+        <translation type="vanished">N&amp;OAA</translation>
     </message>
     <message>
         <source>Flight Plan Elevation Profile</source>
@@ -7087,7 +7941,7 @@ Valores bajos permiten una selección mas afinada.</translation>
     <message>
         <source>&amp;VOR, NDB, waypoints and
 airways:</source>
-        <translation>&amp;VOR, NDB, waypoints y
+        <translation type="vanished">&amp;VOR, NDB, waypoints y
 aerovías:</translation>
     </message>
     <message>
@@ -7131,7 +7985,7 @@ aerovías:</translation>
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</source>
-        <translation>Todos los directorios, incluidos los subdirectorios de esta lista, se incluirán al cargar la biblioteca de escenarios en la base de datos de Little Navmap.
+        <translation type="vanished">Todos los directorios, incluidos los subdirectorios de esta lista, se incluirán al cargar la biblioteca de escenarios en la base de datos de Little Navmap.
 También pueden excluir directorios que no contengan aeropuertos o ayudas a la navegación.
 Estas rutas se aplican a todos los simuladores de vuelo (FSX, P3D y X-Plane).
 Tiene que volver a cargar los escenarios para que el cambio surta efecto.</translation>
@@ -7222,7 +8076,7 @@ Cambia solo la configuración que se puede hacer con este diálogo.</translation
     </message>
     <message>
         <source>&amp;Rule of thumb to calculate top of descent:</source>
-        <translation>&amp;Regla del pulgar para calcular parte superior del descenso:</translation>
+        <translation type="vanished">&amp;Regla del pulgar para calcular parte superior del descenso:</translation>
     </message>
     <message>
         <source>Stable Versions only</source>
@@ -7404,7 +8258,7 @@ Sur / Norte: Igual que Norte / Sur pero invirtiendo impares a pares.</translatio
     </message>
     <message>
         <source>&amp;Add ...</source>
-        <translation>&amp;Agregar ...</translation>
+        <translation type="vanished">&amp;Agregar ...</translation>
     </message>
     <message>
         <source>Little Navmap - Options</source>
@@ -7424,7 +8278,7 @@ Sur / Norte: Igual que Norte / Sur pero invirtiendo impares a pares.</translatio
     </message>
     <message>
         <source>Symbol and Text Sizes (do not affect airport diagrams)</source>
-        <translation>Tamaño de Texto y Símbolos (no afecta diagrama de aeropuertos)</translation>
+        <translation type="vanished">Tamaño de Texto y Símbolos (no afecta diagrama de aeropuertos)</translation>
     </message>
     <message>
         <source>Show tooltips for waypoints, VOR, NDB and airways when hovering the cursor over the map</source>
@@ -7464,7 +8318,7 @@ Debe volver a cargar la biblioteca de escenarios para que los cambios surtan efe
     </message>
     <message>
         <source>Flight Simulator</source>
-        <translation>Simulador de Vuelo</translation>
+        <translation type="vanished">Simulador de Vuelo</translation>
     </message>
     <message>
         <source>Does not apply to the flight plan loaded after startup.</source>
@@ -7542,7 +8396,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>VA&amp;TSIM</source>
-        <translation>VA&amp;TSIM</translation>
+        <translation type="vanished">VA&amp;TSIM</translation>
     </message>
     <message>
         <source>Center the last used flight plan on the map on startup.</source>
@@ -7656,7 +8510,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>Active &amp;Sky</source>
-        <translation>Cielo Activo &amp;S</translation>
+        <translation type="vanished">Cielo Activo &amp;S</translation>
     </message>
     <message>
         <source>&amp;Simulator aircraft scroll box size (percent of map window size):</source>
@@ -7696,7 +8550,7 @@ cuando se realiza la transición del aeropuerto a la vía aérea.</translation>
     </message>
     <message>
         <source>Draw top of descent point on map and in elevation profile</source>
-        <translation>Dibujar la parte superior de la pendiente en el mapa y perfil de elevación</translation>
+        <translation type="vanished">Dibujar la parte superior de la pendiente en el mapa y perfil de elevación</translation>
     </message>
     <message>
         <source>Load the last flight trail flown</source>
@@ -7808,7 +8662,7 @@ Se requiere un reinicio para que la configuración surta efecto.</translation>
     </message>
     <message>
         <source> %dist% per 1000 %alt%</source>
-        <translation> %dist% para 1000 % alt%</translation>
+        <translation type="vanished"> %dist% para 1000 % alt%</translation>
     </message>
     <message>
         <source>US Gallon / Pound (gal / lbs)</source>
@@ -7838,7 +8692,7 @@ Los valores más pequeños se acercarán más a un aeropuerto o navaid. </transl
     </message>
     <message>
         <source>Enable this option to show the top of descent point on the map and in the elevation profile.</source>
-        <translation>Active esta opción para mostrar la parte superior del punto de descenso en el mapa y en el perfil de elevación.</translation>
+        <translation type="vanished">Active esta opción para mostrar la parte superior del punto de descenso en el mapa y en el perfil de elevación.</translation>
     </message>
     <message>
         <source>Show tooltips for airspaces when hovering the cursor over the map</source>
@@ -8000,11 +8854,11 @@ Cambie el color con el &quot;Color del tramo volado&quot;.</translation>
     </message>
     <message>
         <source>Thickness of the range ring and distance measurment lines</source>
-        <translation>Grosor del anillo de rango y líneas de medidas de distancia</translation>
+        <translation type="vanished">Grosor del anillo de rango y líneas de medidas de distancia</translation>
     </message>
     <message>
         <source>&amp;Range rings and distanc measurement lines:</source>
-        <translation>Anillos de &amp;Rango y medidas de líneas de distancia:</translation>
+        <translation type="vanished">Anillos de &amp;Rango y medidas de líneas de distancia:</translation>
     </message>
     <message>
         <source>Thickness of the compass rose lines</source>
@@ -8012,7 +8866,7 @@ Cambie el color con el &quot;Color del tramo volado&quot;.</translation>
     </message>
     <message>
         <source>&amp;Compass rose line thickness:</source>
-        <translation>Espesor de Rosa del &amp;Compás:</translation>
+        <translation type="vanished">Espesor de Rosa del &amp;Compás:</translation>
     </message>
     <message>
         <source>Draw airport diagrams.
@@ -8026,7 +8880,7 @@ Estacionamiento, aprons, taxiways, combustible y posición de torre se omiten si
     </message>
     <message>
         <source>Display Options for Labels</source>
-        <translation>Mostrar Etiquetas de Opciones</translation>
+        <translation type="vanished">Mostrar Etiquetas de Opciones</translation>
     </message>
     <message>
         <source>While flying</source>
@@ -8034,7 +8888,7 @@ Estacionamiento, aprons, taxiways, combustible y posición de torre se omiten si
     </message>
     <message>
         <source>Time until aircraft following is activated again after any map interaction like scrolling or zooming</source>
-        <translation>Tiempo mientras aeronave seguida es activada de nuevo después de interacción con el mapa</translation>
+        <translation type="vanished">Tiempo mientras aeronave seguida es activada de nuevo después de interacción con el mapa</translation>
     </message>
     <message>
         <source> seconds</source>
@@ -8046,7 +8900,7 @@ Estacionamiento, aprons, taxiways, combustible y posición de torre se omiten si
     </message>
     <message>
         <source>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming</source>
-        <translation>El mapa detiene seguimiento de aeronave en cierto tiempo si el usuario no interactúa con él</translation>
+        <translation type="vanished">El mapa detiene seguimiento de aeronave en cierto tiempo si el usuario no interactúa con él</translation>
     </message>
     <message>
         <source>&amp;Allow scrolling and zooming in the map</source>
@@ -8202,7 +9056,7 @@ Ignorado cuando &quot;Centrar Mapa en aeronave y próximo waypoint del Plan de V
         <source>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.
 Never use values smaller than two minutes for official networks like VATSIM or IVAO.
 Use lower values only for private networks.</source>
-        <translation>Descargue archivo &quot;whazzup.txt&quot; o &quot;status.txt&quot; periódicamente.
+        <translation type="vanished">Descargue archivo &quot;whazzup.txt&quot; o &quot;status.txt&quot; periódicamente.
 Nunca use valores menores a dos minutos para redes oficiales como VATSIM o IVAO.
 Use valores más bajos solo para redes privadas.</translation>
     </message>
@@ -8248,6 +9102,157 @@ Tiene un Arco de 30 segundos de grilla (Aproxim. 900 metros cerca del Ecuador).<
         <source>Sun shading level. Lower values result in a darker display.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Text size for &amp;aircraft performance report:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
+This works best with the Mercator projection and online maps.
+Map views might be shown with a larger zoom distance than expected if this option is selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Avoid blurred map display by zooming out to next best step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Symbol and Text Sizes for Map and Elevation Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thickness of the range ring, pattern and distance measurement lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
+Afftects map and elevation profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text size of the range ring, pattern and distance measurement line labels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Range rings, pattern and
+distance measurement:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Compass rose:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text size of the compass rose line labels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Navaids:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable this option to show the top of descent and top of climb points on the map and in the elevation profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw &amp;top of descent and top of climb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map Display Online</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Size for Online Airspaces / Centers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Approach Control:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use visual range provided from online network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Departure Control:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Tower:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Clearance Delivery:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ground Control:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Area Control Center:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Online Observer:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Range Circle Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A restart is recommended after changing units.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time until aircraft following is activated again after any map interaction like scrolling or zooming.
+This setting is also used in the elevation profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming.
+This setting is also used in the elevation profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Flight Simulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.&lt;br/&gt;&lt;br/&gt;
+&lt;b&gt;Never use values smaller than two minutes for official networks like VATSIM or IVAO.
+Use lower values only for private networks.&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add Directory ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add Files ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
+You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
+These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
+You have to reload the scenery library so that the changes take effect.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OptionsDialog</name>
@@ -8269,7 +9274,7 @@ Tiene un Arco de 30 segundos de grilla (Aproxim. 900 metros cerca del Ecuador).<
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No valid GLOBE data found.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No se hallaron datos válidos de GLOBE.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No se hallaron datos válidos de GLOBE.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Select airport labels to display on the map.</source>
@@ -8333,7 +9338,7 @@ Tiene un Arco de 30 segundos de grilla (Aproxim. 900 metros cerca del Ecuador).<
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Directory does not exist.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;El directorio no existe.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;El directorio no existe.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
@@ -8369,11 +9374,11 @@ Tiene un Arco de 30 segundos de grilla (Aproxim. 900 metros cerca del Ecuador).<
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not a directory.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No es un directorio.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No es un directorio.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not a file.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No es un archivo.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No es un archivo.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Name (Ident)</source>
@@ -8425,7 +9430,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;File does not exist.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;El archivo no existe.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;El archivo no existe.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Registration</source>
@@ -8449,7 +9454,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Is not an Active Sky weather snapshot file.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No es una imagen de Active Sky Weather.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;No es una imagen de Active Sky Weather.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Heading</source>
@@ -8503,6 +9508,106 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
         <source>Select information that is displayed on top of the map.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Compass Rose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select display options for the compass rose.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction Labels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show N, S, E and W labels.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Degree Tick Marks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show tick marks for degrees on ring.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Degree Labels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show degree labels on ring.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Range Rings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show range rings and distance labels inside.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Heading Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the dashed heading line for user aircraft.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the solid track line for user aircraft.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Track Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show track label for user aircraft.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crab Angle Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the crab angle for the user aircraft as a small magenta circle.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Course to Next Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the course to next waypoint for the user aircraft as a small magenta line.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Files to exclude from Scenery Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No valid GLOBE data found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Is not a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Is not an Active Sky weather snapshot file.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ParkingDialog</name>
@@ -8539,7 +9644,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>&amp;Print Preview</source>
-        <translation>Vista &amp;Previa de impresión</translation>
+        <translation type="vanished">Vista &amp;Previa de impresión</translation>
     </message>
     <message>
         <source>&amp;Runways / Helipads</source>
@@ -8593,6 +9698,94 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
         <source>Departure Airport</source>
         <translation>Aeropuerto de partida</translation>
     </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include estimated fuel consumption, trip and block fuel if aircraft performance is loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print fuel &amp;report</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start a new page after each chapter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New page after each chapter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include a header which shows total distance, flight time and procedures.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print table &amp;header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overall text size in the document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight Plan</source>
+        <translation type="unfinished">Plan de Vuelo</translation>
+    </message>
+    <message>
+        <source>Include the flight plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text size for the flight plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Flight Plan &amp;Columns to Print:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select columns from the flight plan table to include in the print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print the departure airport information as shown in the dock window &quot;Information&quot; on tab &quot;Airport&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print runway information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Runways&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print airport communication frequencies as shown in the dock window &quot;Information&quot; on tab &quot;Com&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include procedure information as shown in the dock window &quot;Information&quot; on tab &quot;Procedures&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print decoded weather information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print the destination airport information as shown in the dock window &quot;Information&quot; on tab &quot;Airport&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print runway information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Runways&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print decoded weather information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Pre&amp;view</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PrintSupport</name>
@@ -8603,6 +9796,42 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     <message>
         <source>Print Flight Plan</source>
         <translation>Imprimir Plan de Vuelo</translation>
+    </message>
+    <message>
+        <source>Flight Plan File:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flight Plan</source>
+        <translation type="unfinished">Plan de Vuelo</translation>
+    </message>
+    <message>
+        <source>Departure</source>
+        <translation type="unfinished">Partida</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation type="unfinished">Destino</translation>
+    </message>
+    <message>
+        <source>%1 Airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Airport Runways</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Airport COM Frequencies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Airport Weather</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Airport Procedures</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8831,7 +10060,35 @@ Really use it?</source>
     </message>
     <message>
         <source>No Flight Plan</source>
-        <translation>Sin Plan de Vuelo</translation>
+        <translation type="vanished">Sin Plan de Vuelo</translation>
+    </message>
+    <message>
+        <source> ►</source>
+        <translation type="unfinished"> ►</translation>
+    </message>
+    <message>
+        <source>%1 / %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1° ►</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1° / %2 ►</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Flight Plan loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jumped back to aircraft.</source>
+        <translation type="unfinished">Saltó a la aeronave.</translation>
     </message>
 </context>
 <context>
@@ -9407,7 +10664,7 @@ Really use it?</source>
     <message>
         <source>Procedure
 Type</source>
-        <translation>Procedimiento
+        <translation type="vanished">Procedimiento
 Tipo</translation>
     </message>
     <message>
@@ -10400,7 +11657,7 @@ hh:mm</translation>
     </message>
     <message>
         <source>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Coordinates are not valid.&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Coordenadas no son válidas.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Coordenadas no son válidas.&lt;/span&gt;</translation>
     </message>
     <message>
         <source>Online Observer</source>
@@ -10486,6 +11743,97 @@ hh:mm</translation>
         <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Options Dialog / Flight Plan Elevation Profile&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Coordinates are not valid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Simulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ActiveSky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NOAA</source>
+        <translation type="unfinished">NOAA</translation>
+    </message>
+    <message>
+        <source>VATSIM</source>
+        <translation type="unfinished">VATSIM</translation>
+    </message>
+    <message>
+        <source>IVAO</source>
+        <translation type="unfinished">IVAO</translation>
+    </message>
+    <message>
+        <source> / GS </source>
+        <translation type="unfinished"> / GS </translation>
+    </message>
+    <message>
+        <source>°</source>
+        <translation type="unfinished">°</translation>
+    </message>
+    <message>
+        <source> / DME</source>
+        <translation type="unfinished"> / DME</translation>
+    </message>
+    <message>
+        <source>Procedure</source>
+        <translation type="unfinished">Procedimiento</translation>
+    </message>
+    <message>
+        <source>Fuel Rem.
+%fuel%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2 %3%4</source>
+        <translation type="unfinished">%1 %2 %3%4</translation>
+    </message>
+    <message>
+        <source>Transition %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>STAR %1</source>
+        <translation type="unfinished">STAR %1</translation>
+    </message>
+    <message>
+        <source>SID %1</source>
+        <translation type="unfinished">SID %1</translation>
+    </message>
+    <message>
+        <source>SID Transition %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>STAR Transition %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RouteAltitude</name>
+    <message>
+        <source>Cannot comply with altitude restrictions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Flight Plan.
+Check the flight plan cruise altitude and procedures.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot calculate top of climb or top of descent.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Flight Plan or Aircraft Performance.
+Check the flight plan cruise altitude and
+climb/descent speeds in the Aircraft Performance.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RouteController</name>
@@ -10521,7 +11869,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>%1 to %2 %3</source>
-        <translation>%1 a %2 %3</translation>
+        <translation type="vanished">%1 a %2 %3</translation>
     </message>
     <message>
         <source>Loading of FLP flight plan failed:&lt;br/&gt;&lt;br/&gt;</source>
@@ -10553,7 +11901,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>%1, %2, %3</source>
-        <translation>%1, %2, %3</translation>
+        <translation type="vanished">%1, %2, %3</translation>
     </message>
     <message>
         <source>Do not &amp;show this dialog again.</source>
@@ -10565,7 +11913,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Change Speed</source>
-        <translation>Cambiar velocidad</translation>
+        <translation type="vanished">Cambiar velocidad</translation>
     </message>
     <message>
         <source>Departure set to %1.</source>
@@ -10601,7 +11949,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>No Flight Plan loaded</source>
-        <translation>Ningún Plan de Vuelo cargado</translation>
+        <translation type="vanished">Ningún Plan de Vuelo cargado</translation>
     </message>
     <message>
         <source> Runway %1</source>
@@ -10879,7 +12227,55 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <source>&lt;br/&gt;&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;Runway mismatch: %1 &amp;ne; %2.&lt;/span&gt;</source>
-        <translation>&lt;br/&gt;&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;Pista equivocada: %1 &amp;ne; %2.&lt;/span&gt;</translation>
+        <translation type="vanished">&lt;br/&gt;&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;Pista equivocada: %1 &amp;ne; %2.&lt;/span&gt;</translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert Flight Plan before ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Airport Traffic Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missed</source>
+        <translation type="unfinished">Perdido</translation>
+    </message>
+    <message>
+        <source>Approach</source>
+        <translation type="unfinished">Aproximación</translation>
+    </message>
+    <message>
+        <source>-</source>
+        <translation type="unfinished">-</translation>
+    </message>
+    <message>
+        <source>(%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Runway mismatch: STAR %1 ≠ Approach %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Flight Plan loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h2&gt;%1 to %2&lt;/h2&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1, %2&lt;/b&gt;, %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1, %2&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11432,6 +12828,10 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
         <source>Showing online client/aircraft on map.</source>
         <translation>Mostrando en mapa cliente/aeronave en línea.</translation>
     </message>
+    <message>
+        <source>Display Airport Traffic Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleHandler</name>
@@ -11482,6 +12882,93 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
     <message>
         <source>HH:mm UTC</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TrafficPatternDialog</name>
+    <message>
+        <source>Little Navmap - Airport Traffic Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %dist%</source>
+        <translation type="unfinished"> %dist%</translation>
+    </message>
+    <message>
+        <source>&amp;Downwind to runway:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %alt%</source>
+        <translation type="unfinished"> %alt%</translation>
+    </message>
+    <message>
+        <source>&amp;Base 45° after threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Runway:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation type="unfinished">Izquierda</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished">Derecha</translation>
+    </message>
+    <message>
+        <source>&amp;Turn direction:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Base leg to runway treshold:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Altitude:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Entry and exit indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Line Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1, elevation %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hard</source>
+        <translation type="unfinished">Duro</translation>
+    </message>
+    <message>
+        <source>Soft</source>
+        <translation type="unfinished">Suave</translation>
+    </message>
+    <message>
+        <source>Water</source>
+        <translation type="unfinished">Agua</translation>
+    </message>
+    <message>
+        <source>%1, %2, %3</source>
+        <translation type="unfinished">%1, %2, %3</translation>
+    </message>
+    <message>
+        <source>Lighted</source>
+        <translation type="unfinished">Iluminada</translation>
+    </message>
+    <message>
+        <source>Closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;%1&lt;/b&gt;, %2 x %3, %4°M, %5%6</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11905,6 +13392,10 @@ before deleting.</source>
 Se creará un backup en
 &quot;%1&quot;
 antes de borrar.</translation>
+    </message>
+    <message>
+        <source>Aircraft Performance:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
