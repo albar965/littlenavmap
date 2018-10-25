@@ -101,6 +101,9 @@ signals:
   /* Show information info window on navaid on double click */
   void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
 
+  /* Show a map object in the search panel (context menu) */
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+
 private:
   friend class TreeEventFilter;
 
@@ -201,7 +204,6 @@ private:
   ProcedureQuery *procedureQuery = nullptr;
   AirportQuery *airportQuery = nullptr;
   QTreeWidget *treeWidget = nullptr;
-  QMainWindow *mainWindow = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
   map::MapAirport currentAirportNav;
 

@@ -9107,6 +9107,57 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show the online tutorials in a browser</string>
    </property>
   </action>
+  <action name="actionSearchProcedureInformation">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Information for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Information for airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Information for airport</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionSearchProcedureShowInSearch">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/search.svg</normaloff>:/littlenavmap/resources/icons/search.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show %1 in Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airport in search window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport in search window</string>
+   </property>
+  </action>
+  <action name="actionSearchProcedureShowOnMap">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show %1 on Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the airport on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the airport on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

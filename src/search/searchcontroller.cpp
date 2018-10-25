@@ -164,7 +164,6 @@ void SearchController::createUserdataSearch(QTableView *tableView)
           NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
   connect(userdataSearch, &UserdataSearch::addUserpoint,
           NavApp::getUserdataController(), &UserdataController::addUserpoint);
-
 }
 
 void SearchController::createOnlineClientSearch(QTableView *tableView)
@@ -189,6 +188,7 @@ void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
 {
   procedureSearch = new ProcedureSearch(mainWindow, treeWidget, si::SEARCH_PROC);
   postCreateSearch(procedureSearch);
+  connect(procedureSearch, &ProcedureSearch::showInSearch, this, &SearchController::showInSearch);
 }
 
 /* Connect signals and append search object to all search tabs list */

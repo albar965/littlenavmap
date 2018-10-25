@@ -104,7 +104,7 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 }
 
 ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::SearchTabIndex tabWidgetIndex)
-  : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam), mainWindow(main)
+  : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam)
 {
   infoQuery = NavApp::getInfoQuery();
   procedureQuery = NavApp::getProcedureQuery();
@@ -808,7 +808,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach});
+  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach,
+                         ui->actionSearchProcedureInformation, ui->actionSearchProcedureShowOnMap,
+                         ui->actionSearchProcedureShowInSearch});
   Q_UNUSED(saver);
 
   ActionStateSaver stateSaver({
@@ -890,6 +892,17 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(tr("Procedure")));
   }
 
+  // Build airport context menu entries ====================================================
+  map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
+  ui->actionSearchProcedureInformation->setEnabled(airportSim.isValid());
+  ui->actionSearchProcedureShowOnMap->setEnabled(airportSim.isValid());
+  ui->actionSearchProcedureShowInSearch->setEnabled(airportSim.isValid());
+  QString airportText = map::airportTextShort(airportSim);
+  ui->actionSearchProcedureInformation->setText(ui->actionSearchProcedureInformation->text().arg(airportText));
+  ui->actionSearchProcedureShowOnMap->setText(ui->actionSearchProcedureShowOnMap->text().arg(airportText));
+  ui->actionSearchProcedureShowInSearch->setText(ui->actionSearchProcedureShowInSearch->text().arg(airportText));
+
+  // Create menu ===================================================================================
   QMenu menu;
   menu.addAction(ui->actionInfoApproachShow);
   menu.addSeparator();
@@ -905,6 +918,11 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   ui->actionInfoApproachExpandAll->setEnabled(!itemIndex.isEmpty());
   ui->actionInfoApproachCollapseAll->setEnabled(!itemIndex.isEmpty());
+
+  menu.addSeparator();
+  menu.addAction(ui->actionSearchProcedureInformation);
+  menu.addAction(ui->actionSearchProcedureShowOnMap);
+  menu.addAction(ui->actionSearchProcedureShowInSearch);
 
   menu.addSeparator();
   menu.addAction(ui->actionInfoApproachExpandAll);
@@ -967,6 +985,19 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     }
     else
       qDebug() << Q_FUNC_INFO << "legs not found";
+  }
+  else if(action == ui->actionSearchProcedureInformation)
+  {
+    map::MapSearchResult result;
+    result.airports.append(airportSim);
+    emit showInformation(result, map::AIRPORT);
+  }
+  else if(action == ui->actionSearchProcedureShowOnMap)
+    emit showRect(airportSim.bounding, false);
+  else if(action == ui->actionSearchProcedureShowInSearch)
+  {
+    ui->tabWidgetSearch->setCurrentIndex(0);
+    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident));
   }
 
   // Done by the actions themselves
