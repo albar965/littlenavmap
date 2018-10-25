@@ -140,20 +140,12 @@ void PrintSupport::setPrintTextSize(int percent)
     return;
   }
 
-#ifdef Q_OS_MACOS
-  float printTextSize = percent / 2;
-#else
-  float printTextSize = percent;
-#endif
-
-  // printTextSize *= 1.5f;
-
   QFont font = printDocumentFont;
   // Adjust font size according to dialog setting
   if(font.pointSize() != -1)
-    font.setPointSizeF(font.pointSizeF() * printTextSize / 100.f);
+    font.setPointSizeF(font.pointSizeF() * percent / 100.f);
   else if(font.pixelSize() != -1)
-    font.setPixelSize(font.pixelSize() * static_cast<int>(printTextSize / 100.f));
+    font.setPixelSize(font.pixelSize() * static_cast<int>(percent / 100.f));
   else
     qWarning() << "Unable to set font size";
 
