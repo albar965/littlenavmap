@@ -45,7 +45,7 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadPa
   }
 
   if(hasDownload)
-    ui->buttonBoxUpdate->addButton(tr("&Download"), QDialogButtonBox::YesRole);
+    ui->buttonBoxUpdate->addButton(tr("&Download in Web Browser"), QDialogButtonBox::YesRole);
 
   connect(ui->buttonBoxUpdate, &QDialogButtonBox::clicked, this, &UpdateDialog::buttonBoxClicked);
   connect(ui->textBrowserUpdate, &QTextBrowser::anchorClicked, this, &UpdateDialog::anchorClicked);
