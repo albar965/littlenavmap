@@ -856,10 +856,20 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
               // At 50ft above threshold
               // TODO this does not consider displaced thresholds
               rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f;
+
               rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
               rwleg.mapType = proc::PROCEDURE_APPROACH;
 
               int insertPosition = i + 1 - legs.transitionLegs.size();
+
+              if(insertPosition > 1)
+              {
+                // Fix threshold altitude since it might be above the last altitude restriction
+                const proc::MapAltRestriction& lastAltRestr = legs.at(insertPosition - 1).altRestriction;
+                if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
+                  rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
+              }
+
               legs.approachLegs.insert(insertPosition, rwleg);
 
               // Coordinates for missed after CTL legs are already correct since this new leg is missing when the

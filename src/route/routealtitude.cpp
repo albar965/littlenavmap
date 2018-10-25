@@ -504,7 +504,10 @@ void RouteAltitude::calculate()
     // Check for violations because of too low cruise
     violatesRestrictions = false;
     for(RouteAltitudeLeg& leg : *this)
-      violatesRestrictions |= violatesAltitudeRestriction(leg);
+    {
+      if(!leg.isMissed())
+        violatesRestrictions |= violatesAltitudeRestriction(leg);
+    }
 
     if(violatesRestrictions || distanceTopOfClimb > distanceTopOfDescent ||
        (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
