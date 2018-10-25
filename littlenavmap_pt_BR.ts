@@ -9273,7 +9273,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="243"/>
         <source>%1 to %2</source>
-        <translation type="unfinished">%1 para %2 {1 ?}</translation>
+        <translation type="unfinished">%1 para %2</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="244"/>

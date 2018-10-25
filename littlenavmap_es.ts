@@ -157,7 +157,7 @@
     </message>
     <message>
         <source>%1, %2</source>
-        <translation type="unfinished">%1: %2 {1,?}</translation>
+        <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
         <source>Average Ground Speed:</source>
@@ -6995,7 +6995,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>%1 to %2</source>
-        <translation type="unfinished">%1 a %2 {1 ?}</translation>
+        <translation type="unfinished">%1 a %2</translation>
     </message>
     <message>
         <source>None</source>

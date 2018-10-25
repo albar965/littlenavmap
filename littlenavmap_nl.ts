@@ -209,7 +209,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="675"/>
         <source>%1, %2</source>
-        <translation type="unfinished">%1: %2 {1,?}</translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="679"/>
@@ -9385,7 +9385,7 @@ Alleen JPG, PNG en BMP zijn toegestaan.</translation>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="243"/>
         <source>%1 to %2</source>
-        <translation type="unfinished">%1 naar %2 {1 ?}</translation>
+        <translation type="unfinished">%1 naar %2</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="244"/>

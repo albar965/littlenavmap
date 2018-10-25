@@ -209,7 +209,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="675"/>
         <source>%1, %2</source>
-        <translation type="unfinished">%1: %2 {1,?}</translation>
+        <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="679"/>
