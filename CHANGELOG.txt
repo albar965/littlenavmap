@@ -109,6 +109,7 @@ Flight Plan:
 * Removed annoying change in flight plan when adapting start position on loading.
 * Removing duplicate ILS designators or frequencies from flight plan.
 * Disabled export of approach procedures for Flight Factor airbus since required data is unknown.
+* Fixed issue for FSX/P3D flight plans missing byte order mark which were not accepted by ASN or ASX.
 
 Map:
 * Added mouse click and modifier options for quick access. Doing a second click on the hot spot of a shown feature
@@ -207,6 +208,8 @@ Options:
 * Various other changes. See related items in this change log.
 
 Search:
+* Added "Show Information for Airport", "Show Airport on Map" and "Show Airport in Search" items to the context menu in
+  the procedure search tab.
 * Fixed issue where runway filter was not reset in procedure search when selecting "Show Arrival/Departure Procedures".
 * Fixed issue where procedure highlight reappeared after closing dock and restart.
 
