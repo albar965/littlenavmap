@@ -670,7 +670,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
   // Flight data =======================================================
   atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
-  html.p().b(tr("Flight")).pEnd();
+  html.p().b(tr("Flight Plan")).pEnd();
   html.table();
   html.row2(tr("Distance and Time:"), tr("%1, %2").
             arg(Unit::distNm(altitudeLegs.getTotalDistance())).
@@ -686,7 +686,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   html.tableEnd();
 
   // Fuel data =======================================================
-  html.p().b(tr("Fuel")).pEnd();
+  html.p().b(tr("Fuel Plan")).pEnd();
   html.table();
   float tripFuel = altitudeLegs.getTripFuel();
   html.row2(tr("Trip Fuel:"), Unit::fuelLbsGallon(tripFuel, true, fuelAsVol),
