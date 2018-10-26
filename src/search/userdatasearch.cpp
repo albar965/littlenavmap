@@ -60,7 +60,7 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::S
 
   int size = ui->comboBoxUserdataType->fontMetrics().height();
   for(const QString& type : icons->getAllTypes())
-    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(type, size)), type);
+    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(type, size - 2)), type);
   ui->comboBoxUserdataType->lineEdit()->setPlaceholderText(tr("Type"));
   ui->comboBoxUserdataType->lineEdit()->setClearButtonEnabled(true);
 
@@ -194,6 +194,7 @@ void UserdataSearch::saveState()
 
 void UserdataSearch::restoreState()
 {
+  Ui::MainWindow *ui = NavApp::getMainUi();
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
@@ -204,11 +205,14 @@ void UserdataSearch::restoreState()
     // Need to block signals here to avoid unwanted behavior (will enable
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
-    Ui::MainWindow *ui = NavApp::getMainUi();
     widgetState.restore({ui->horizontalLayoutUserdata, ui->horizontalLayoutUserdataMore});
   }
   else
-    atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewUserdata);
+  {
+    atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).restore(ui->tableViewUserdata);
+    ui->comboBoxUserdataType->setCurrentIndex(0);
+    ui->comboBoxUserdataType->clearEditText();
+  }
 }
 
 void UserdataSearch::saveViewState(bool distSearchActive)
