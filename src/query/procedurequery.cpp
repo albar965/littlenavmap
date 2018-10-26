@@ -300,8 +300,15 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   else if(leg.fixType == "A")
   {
     mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent, QString(), airport.ident, airport.position);
+
+    // Try to workaround the 4/3 three letter airport idents (K1G5 vs 1G5)
+    if(leg.navaids.airports.isEmpty() && leg.fixIdent.size() == 4 &&
+       (leg.fixIdent.startsWith("X") || leg.fixIdent.startsWith("K") || leg.fixIdent.startsWith("C")))
+      mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent.right(3), QString(), airport.ident, airport.position);
+
     if(!leg.navaids.airports.isEmpty())
     {
+      leg.fixIdent = leg.navaids.airports.first().ident;
       leg.fixPos = leg.navaids.airports.first().position;
       leg.magvar = leg.navaids.airports.first().magvar;
       leg.navId = leg.navaids.airports.first().id;
