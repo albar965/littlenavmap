@@ -23,6 +23,8 @@
 #include <QAbstractButton>
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <QClipboard>
+#include <QMimeData>
 
 UpdateDialog::UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadParam) :
   QDialog(parent), ui(new Ui::UpdateDialog), manual(manualParam), hasDownload(hasDownloadParam)
@@ -47,6 +49,8 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualParam, bool hasDownloadPa
   if(hasDownload)
     ui->buttonBoxUpdate->addButton(tr("&Download in Web Browser"), QDialogButtonBox::YesRole);
 
+  ui->buttonBoxUpdate->addButton(tr("&Copy to Clipboard"), QDialogButtonBox::ActionRole);
+
   connect(ui->buttonBoxUpdate, &QDialogButtonBox::clicked, this, &UpdateDialog::buttonBoxClicked);
   connect(ui->textBrowserUpdate, &QTextBrowser::anchorClicked, this, &UpdateDialog::anchorClicked);
 }
@@ -58,7 +62,15 @@ void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
 
   if(buttonClickedRole == QDialogButtonBox::ButtonRole::YesRole)
     atools::gui::HelpHandler::openUrl(this, downloadUrl);
-
+  else if(buttonClickedRole == QDialogButtonBox::ButtonRole::ActionRole)
+  {
+    // Copy formatted and plain text to clipboard
+    QMimeData *data = new QMimeData;
+    data->setHtml(ui->textBrowserUpdate->toHtml());
+    data->setText(ui->textBrowserUpdate->toPlainText());
+    QGuiApplication::clipboard()->setMimeData(data);
+    return;
+  }
   QDialog::accept();
 }
 
