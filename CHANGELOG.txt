@@ -43,6 +43,8 @@ Elevation Profile:
   result in wrong profile maximum altitude.
 
 Aircraft Performance: (see main menu -> "Aircraft" and tab "Aircraft" in dock window "Flight plan")
+Not that the new tab in the "Flight plan" dock window is meant for fuel planning and does not
+change during flight (except when collecting performance data).
 * Added aircraft performance facilities including edit dialog, new, save, save as, load, file history and report.
   Performance files (*.lnmperf) can be dragged into the main window to load. Added main menu
   "Aircraft" and tab on flight plan dock window for loading and saving of performance files.
@@ -246,6 +248,8 @@ User Interface and General:
 * Changed deployment to use local folder "little_navmap_help" in Projects for manuals. Removed PDF
   manuals from Git since commits are getting too large.
 * Updated translations to fix translated menu shortcut Ctrl+Up and Ctrl+Down in German translation.
+* Added "Copy to Clipboard" to update notification dialog to copy contents as plain and formatted text.
+* Fixed several issues around display of procedures.
 
 Scenery Library:
 * Files can now be excluded from loading for all simulators in options dialog. List in exclusion
