@@ -768,8 +768,8 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
           legs.transitionLegs.append(leg);
         }
-      }
-    }
+      } // if(legs.mapType & proc::PROCEDURE_STAR_ALL)
+    } // if(!legs.transitionLegs.isEmpty() && !legs.approachLegs.isEmpty() && addArtificialLegs)
 
     if(legs.mapType & proc::PROCEDURE_DEPARTURE)
     {
@@ -804,12 +804,12 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
           legList.prepend(rwleg);
         }
       }
-    }
+    } // if(legs.mapType & proc::PROCEDURE_DEPARTURE)
     else
     {
       if(!contains(legs.first().type, {proc::INITIAL_FIX}) && !legs.first().line.isPoint() && addArtificialLegs)
       {
-        // Add an artificial initial fix to keep all consistent
+        // Add an artificial initial fix to keep all consistent ========================
         proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
         sleg.type = proc::START_OF_PROCEDURE;
         sleg.line = Line(legs.first().line.getPos1());
@@ -836,51 +836,93 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
         }
       }
 
-      for(int i = 0; i < legs.size() - 1; i++)
+      if(legs.mapType & proc::PROCEDURE_STAR_ALL || legs.mapType & proc::PROCEDURE_SID_ALL)
       {
-        // Look for the transition from approach to missed
-        proc::MapProcedureLeg& leg = legs[i];
-        if(leg.isApproach() && legs.at(i + 1).isMissed())
+        for(int i = 0; i < legs.size() - 1; i++)
         {
-          if(leg.fixType != "R" && legs.runwayEnd.isValid())
+          // Look for the transition from approach to missed ====================================
+          proc::MapProcedureLeg& leg = legs[i];
+          if(leg.isApproach() && legs.at(i + 1).isMissed())
           {
-            legs.circleToLand = true;
-
-            if(addArtificialLegs)
+            if(leg.fixType != "R" && legs.runwayEnd.isValid())
             {
-              // Not a runway fix and runway reference is valid - add own runway fix
-              // This is a circle to land approach
-              proc::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
-              rwleg.type = proc::CIRCLE_TO_LAND;
+              legs.circleToLand = true;
 
-              // At 50ft above threshold
-              // TODO this does not consider displaced thresholds
-              rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f;
-
-              rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
-              rwleg.mapType = proc::PROCEDURE_APPROACH;
-
-              int insertPosition = i + 1 - legs.transitionLegs.size();
-
-              if(insertPosition > 1)
+              if(addArtificialLegs)
               {
-                // Fix threshold altitude since it might be above the last altitude restriction
-                const proc::MapAltRestriction& lastAltRestr = legs.at(insertPosition - 1).altRestriction;
-                if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
-                  rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
+                // Not a runway fix and runway reference is valid - add own runway fix
+                // This is a circle to land approach
+                proc::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
+                rwleg.type = proc::CIRCLE_TO_LAND;
+
+                // At 50ft above threshold
+                // TODO this does not consider displaced thresholds
+                rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f;
+
+                rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
+                rwleg.mapType = proc::PROCEDURE_APPROACH;
+
+                int insertPosition = i + 1 - legs.transitionLegs.size();
+
+                if(insertPosition > 1)
+                {
+                  // Fix threshold altitude since it might be above the last altitude restriction
+                  const proc::MapAltRestriction& lastAltRestr = legs.at(insertPosition - 1).altRestriction;
+                  if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
+                    rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
+                }
+
+                legs.approachLegs.insert(insertPosition, rwleg);
+
+                // Coordinates for missed after CTL legs are already correct since this new leg is missing when the
+                // coordinates are calculated
+                // proc::MapProcedureLeg& mapLeg = legs[insertPosition + 1];
+                // mapLeg.line.setPos1(rwleg.line.getPos1());
               }
 
-              legs.approachLegs.insert(insertPosition, rwleg);
-
-              // Coordinates for missed after CTL legs are already correct since this new leg is missing when the
-              // coordinates are calculated
-              // proc::MapProcedureLeg& mapLeg = legs[insertPosition + 1];
-              // mapLeg.line.setPos1(rwleg.line.getPos1());
+              break;
             }
-
-            break;
           }
         }
+      }
+    } // if(legs.mapType & proc::PROCEDURE_DEPARTURE) else
+
+    // Add vector legs between manual and next one that do not overlap
+    for(int i = legs.size() - 2; i >= 0; i--)
+    {
+      // Look for the transition from approach to missed
+      proc::MapProcedureLeg& prevLeg = legs[i];
+      proc::MapProcedureLeg& nextLeg = legs[i + 1];
+
+      if(nextLeg.type == proc::INITIAL_FIX &&
+         (prevLeg.type == proc::FROM_FIX_TO_MANUAL_TERMINATION || prevLeg.type == proc::HEADING_TO_MANUAL_TERMINATION))
+      {
+        qDebug() << Q_FUNC_INFO << prevLeg;
+        proc::MapProcedureLeg vectorLeg;
+        vectorLeg.approachId = legs.ref.approachId;
+        vectorLeg.transitionId = legs.ref.transitionId;
+        vectorLeg.approachId = legs.ref.approachId;
+        vectorLeg.navId = nextLeg.navId;
+
+        vectorLeg.mapType = legs.mapType;
+        vectorLeg.type = proc::VECTORS;
+
+        // Use a generated id base on the previous leg id
+        vectorLeg.legId = VECTOR_LEG_ID_BASE + nextLeg.legId;
+
+        vectorLeg.altRestriction.descriptor = proc::MapAltRestriction::NONE;
+        // geometry is populated later
+        vectorLeg.fixType = nextLeg.fixType;
+        vectorLeg.fixRegion = nextLeg.fixRegion;
+        vectorLeg.fixIdent = nextLeg.fixIdent;
+        vectorLeg.fixPos = nextLeg.fixPos;
+        vectorLeg.line = Line(prevLeg.line.getPos2(), nextLeg.line.getPos2());
+        nextLeg.line.setPos1(nextLeg.line.getPos2());
+        vectorLeg.time = vectorLeg.theta = vectorLeg.rho = 0.f;
+        vectorLeg.magvar = nextLeg.magvar;
+        vectorLeg.missed = vectorLeg.flyover = vectorLeg.trueCourse = vectorLeg.intercept = vectorLeg.disabled = false;
+
+        legs.approachLegs.insert(i + 1, vectorLeg);
       }
     }
   }
@@ -1032,7 +1074,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
                             proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                             proc::COURSE_TO_RADIAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION,
-                            proc::DIRECT_TO_FIX, proc::TRACK_TO_FIX,
+                            proc::DIRECT_TO_FIX, proc::TRACK_TO_FIX, proc::VECTORS,
                             proc::COURSE_TO_INTERCEPT, proc::HEADING_TO_INTERCEPT,
                             proc::DIRECT_TO_RUNWAY, proc::CIRCLE_TO_LAND}))
     {
@@ -1174,7 +1216,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     }
     // ===========================================================
     else if(contains(type, {proc::DIRECT_TO_FIX, proc::INITIAL_FIX, proc::START_OF_PROCEDURE,
-                            proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC,
+                            proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC, proc::VECTORS,
                             proc::DIRECT_TO_RUNWAY, proc::CIRCLE_TO_LAND}))
     {
       curPos = leg.fixPos;

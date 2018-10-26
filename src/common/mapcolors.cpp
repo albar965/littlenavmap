@@ -623,6 +623,17 @@ void adjustPenForCircleToLand(QPainter *painter)
   // Use different pattern and smaller line for circle-to-land approaches
   QPen pen = painter->pen();
   pen.setStyle(Qt::DotLine);
+  pen.setCapStyle(Qt::FlatCap);
+  // pen.setWidthF(pen.widthF() * 3.f / 4.f);
+  painter->setPen(pen);
+}
+
+void adjustPenForVectors(QPainter *painter)
+{
+  // Use different pattern and smaller line for vector legs
+  QPen pen = painter->pen();
+  pen.setStyle(Qt::DashLine);
+  pen.setCapStyle(Qt::FlatCap);
   // pen.setWidthF(pen.widthF() * 3.f / 4.f);
   painter->setPen(pen);
 }

@@ -18,7 +18,6 @@
 #ifndef LITTLENAVMAP_APPROACHQUERY_H
 #define LITTLENAVMAP_APPROACHQUERY_H
 
-#include "geo/pos.h"
 #include "common/proctypes.h"
 #include "fs/fspaths.h"
 
@@ -134,6 +133,8 @@ private:
   void updateBounding(proc::MapProcedureLegs& legs);
 
   void assignType(proc::MapProcedureLegs& procedure);
+
+  /* Create artificial legs, i.e. legs which are not official ones */
   proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg,
                                         const proc::MapProcedureLegs& legs);
   proc::MapProcedureLeg createStartLeg(const proc::MapProcedureLeg& leg,
@@ -182,12 +183,15 @@ private:
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
 
-  /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
-   * leg again */
-  Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 1000000000;
+  /* Use this value as an id base for the artifical vector legs. */
+  Q_DECL_CONSTEXPR static int VECTOR_LEG_ID_BASE = 1250000000;
 
   /* Base id for artificial transition/approach connections */
-  Q_DECL_CONSTEXPR static int TRANS_CONNECT_LEG_ID_BASE = 1500000000;
+  Q_DECL_CONSTEXPR static int TRANS_CONNECT_LEG_ID_BASE = 1000000000;
+
+  /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
+   * leg again */
+  Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 750000000;
 
   /* Base id for artificial start legs */
   Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;

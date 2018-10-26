@@ -814,7 +814,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                         Qt::RoundJoin));
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
-      if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand())
+      if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand() /*&& !route.at(i).getProcedureLeg().isVectors()*/)
         painter.drawPolyline(altLegs.at(i));
     }
 
@@ -847,6 +847,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
         if(route.at(i).getProcedureLeg().isCircleToLand())
           mapcolors::adjustPenForCircleToLand(&painter);
+        // else if(route.at(i).getProcedureLeg().isVectors())
+        // mapcolors::adjustPenForVectors(&painter);
 
         painter.drawPolyline(altLegs.at(i));
       }
@@ -862,6 +864,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       if(route.at(activeRouteLeg).getProcedureLeg().isCircleToLand())
         mapcolors::adjustPenForCircleToLand(&painter);
+      // else if(route.at(activeRouteLeg).getProcedureLeg().isVectors())
+      // mapcolors::adjustPenForVectors(&painter);
 
       painter.drawPolyline(altLegs.at(activeRouteLeg));
     }

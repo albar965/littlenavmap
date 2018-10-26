@@ -122,7 +122,8 @@ void initTranslateableTexts()
 
       {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
       {CIRCLE_TO_LAND, QObject::tr("Circle to land")},
-      {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
+      {START_OF_PROCEDURE, QObject::tr("Start of procedure")},
+      {VECTORS, QObject::tr("Vectors")}
     });
 
   approachLegRemarkStr = QHash<ProcedureLegType, QString>(
@@ -153,7 +154,8 @@ void initTranslateableTexts()
 
       {DIRECT_TO_RUNWAY, QObject::tr("")},
       {CIRCLE_TO_LAND, QObject::tr("")},
-      {START_OF_PROCEDURE, QObject::tr("")}
+      {START_OF_PROCEDURE, QObject::tr("")},
+      {VECTORS, QObject::tr("")}
     });
 }
 
@@ -185,7 +187,8 @@ const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
 
     {"RX", DIRECT_TO_RUNWAY},
     {"CX", CIRCLE_TO_LAND},
-    {"SX", START_OF_PROCEDURE}
+    {"SX", START_OF_PROCEDURE},
+    {"VX", VECTORS}
   });
 
 const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
@@ -216,7 +219,8 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
 
     {DIRECT_TO_RUNWAY, "RX"},
     {CIRCLE_TO_LAND, "CX"},
-    {START_OF_PROCEDURE, "SX"}
+    {START_OF_PROCEDURE, "SX"},
+    {VECTORS, "VX"}
   });
 
 QString procedureFixType(const QString& type)

@@ -385,7 +385,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // Do not draw background for passed legs but calculate lastLine
     bool draw = (i >= passedProcLeg) || !activeValid || preview;
-    if(legs.at(i).isCircleToLand())
+    if(legs.at(i).isCircleToLand() /* || legs.at(i).isVectors()*/)
       // Do not draw outline for circle-to-land approach legs
       draw = false;
 
@@ -431,6 +431,8 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
     if(legs.at(i).isCircleToLand())
       mapcolors::adjustPenForCircleToLand(painter);
+    // else if(legs.at(i).isVectors())
+    // mapcolors::adjustPenForVectors(painter);
 
     paintProcedureSegment(context, legs, i, lastLine, &drawTextLines, noText, preview, true /* draw */);
   }
@@ -443,6 +445,8 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
     if(legs.at(activeProcLeg).isCircleToLand())
       mapcolors::adjustPenForCircleToLand(painter);
+    // else if(legs.at(activeProcLeg).isVectors())
+    // mapcolors::adjustPenForVectors(painter);
 
     paintProcedureSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
                           true /* draw */);
@@ -629,6 +633,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
   else if(contains(leg.type, {proc::COURSE_TO_ALTITUDE,
                               proc::COURSE_TO_FIX,
                               proc::DIRECT_TO_FIX,
+                              proc::VECTORS,
                               proc::FIX_TO_ALTITUDE,
                               proc::TRACK_TO_FIX,
                               proc::TRACK_FROM_FIX_FROM_DISTANCE,

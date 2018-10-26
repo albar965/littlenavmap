@@ -139,8 +139,9 @@ enum ProcedureLegType
 
   DIRECT_TO_RUNWAY, /* Artifical last segment inserted for first leg of departure (similar to IF) */
   CIRCLE_TO_LAND, /* Artifical last segment inserted if approach does not contain a runway end and is a CTL */
-  START_OF_PROCEDURE /* Artifical first point if procedures do not start with an initial fix
-                      *  or with a track, heading or course to fix having length 0 */
+  START_OF_PROCEDURE, /* Artifical first point if procedures do not start with an initial fix
+                       *  or with a track, heading or course to fix having length 0 */
+  VECTORS /* Fills a gap between manual segments and an initial fix */
 };
 
 QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
@@ -366,6 +367,11 @@ struct MapProcedureLeg
   bool isCircleToLand() const
   {
     return type == proc::CIRCLE_TO_LAND;
+  }
+
+  bool isVectors() const
+  {
+    return type == proc::VECTORS;
   }
 
   bool isFinalApproachFix() const;
