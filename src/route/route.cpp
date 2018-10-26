@@ -1596,7 +1596,7 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
 
     // Get the runway end for arrival
     QList<map::MapRunwayEnd> runwayEnds;
-    if(leg.getRunwayEnd().isValid())
+    if(arrivalLegs.runwayEnd.isValid())
       NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, arrivalLegs.runwayEnd.name, last().getAirport(),
                                                      false /* sim data */);
     runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
