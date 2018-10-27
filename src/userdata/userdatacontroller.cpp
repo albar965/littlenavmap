@@ -590,7 +590,8 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
 
   QMessageBox::StandardButton retval =
     QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Delete %n userpoint(s)?", "", ids.size()));
+                          (ids.size() == 1 ? tr("Delete userpoint?") : tr("Delete %1 userpoints?").arg(ids.size())) +
+                          tr("\n\nThis cannot be undone."));
 
   if(retval == QMessageBox::Yes)
   {
