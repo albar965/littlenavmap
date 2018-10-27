@@ -588,10 +588,10 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QMessageBox::StandardButton retval =
+  int retval =
     QMessageBox::question(mainWindow, QApplication::applicationName(),
                           (ids.size() == 1 ? tr("Delete userpoint?") : tr("Delete %1 userpoints?").arg(ids.size())) +
-                          tr("\n\nThis cannot be undone."));
+                          tr("\n\nThis cannot be undone."), QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
 
   if(retval == QMessageBox::Yes)
   {
@@ -845,7 +845,8 @@ void UserdataController::clearDatabase()
                              "A backup will be created in\n"
                              "\"%1\"\n"
                              "before deleting.")
-                          .arg(atools::settings::Settings::instance().getPath()));
+                          .arg(atools::settings::Settings::instance().getPath()),
+                          QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
 
   if(retval == QMessageBox::Yes)
   {

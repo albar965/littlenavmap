@@ -600,8 +600,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   {
     qDebug() << "OptionsDialog::resetDefaultClicked";
 
-    QMessageBox::StandardButton result = QMessageBox::question(this, QApplication::applicationName(),
-                                                               tr("Reset all options to default?"));
+    int result = QMessageBox::question(this, QApplication::applicationName(),
+                                       tr("Reset all options to default?"),
+                                       QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
 
     if(result == QMessageBox::Yes)
     {
@@ -1602,7 +1603,8 @@ void OptionsDialog::clearDiskCachedClicked()
                           tr("Clear the disk cache?\n"
                              "All files in the directory \"%1\" will be deleted.\n"
                              "This process will run in background and can take a while.").
-                          arg(Marble::MarbleDirs::localPath()));
+                          arg(Marble::MarbleDirs::localPath()),
+                          QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
 
   if(result == QMessageBox::Yes)
   {
