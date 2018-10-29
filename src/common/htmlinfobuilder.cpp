@@ -1860,7 +1860,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.row2If(tr("ATIS Time:"), locale.toString(onlineRec.valueDateTime("atis_time")));
 
     float qnh = onlineRec.valueFloat("qnh_mb");
-    if(qnh > 0.f)
+    if(qnh > 0.f && qnh < 10000.f)
       html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
                 locale.toString(atools::geo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
 
@@ -2207,7 +2207,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     html.row2If(tr("Server:"), onlineRec.valueStr("server"));
 
     float qnh = onlineRec.valueFloat("qnh_mb");
-    if(qnh > 0.f)
+    if(qnh > 0.f && qnh < 10000.f)
       html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
                 locale.toString(atools::geo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
 
