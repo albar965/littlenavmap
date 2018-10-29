@@ -63,7 +63,7 @@ private:
   void fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf) const;
 
   /* Change volume/weight units */
-  void fuelUnitChanged(int index);
+  void fuelUnitChanged();
   void buttonBoxClicked(QAbstractButton *button);
 
   /* Update vertical speed descent rule */

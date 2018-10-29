@@ -159,21 +159,24 @@ void AircraftPerfDialog::vertSpeedChanged()
   ui->labelDescentRule->setText(txt);
 }
 
-void AircraftPerfDialog::fuelUnitChanged(int index)
+void AircraftPerfDialog::fuelUnitChanged()
 {
-  if((index == 0 && perf->isAvgas()) || (index == 1 && perf->isJetFuel()))
+  // Avoid recursion
+  QSignalBlocker blocker(ui->comboBoxFuelUnit);
+
+  bool fuelAsVolume = ui->comboBoxFuelUnit->currentIndex() == 1;
+  if(fuelAsVolume && perf->useFuelAsVolume())
     // Nothing changed
     return;
 
-  atools::fs::perf::AircraftPerf temp;
-  fromDialog(&temp);
-  if(index == 0)
-    temp.fromGalToLbs();
+  fromDialog(perf);
+  if(fuelAsVolume)
+    perf->fromLbsToGal();
   else
-    temp.fromLbsToGal();
+    perf->fromGalToLbs();
 
-  units->update(index);
-  toDialog(&temp);
+  units->update(fuelAsVolume);
+  toDialog(perf);
 }
 
 void AircraftPerfDialog::toDialog(const atools::fs::perf::AircraftPerf *aircraftPerf)
