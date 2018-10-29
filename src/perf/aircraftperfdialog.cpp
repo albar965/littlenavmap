@@ -46,6 +46,7 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   units = new UnitStringTool();
   units->init({
     ui->comboBoxFuelUnit,
+    ui->comboBoxFuelType,
     ui->spinBoxClimbFuelFlow,
     ui->spinBoxCruiseSpeed,
     ui->spinBoxDescentFuelFlow,
@@ -75,12 +76,16 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   // Update vertical speed descent rule
   vertSpeedChanged();
 
+  // Fuel by volume or weight changed
   connect(ui->comboBoxFuelUnit, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &AircraftPerfDialog::updateUnits);
-  connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AircraftPerfDialog::buttonBoxClicked);
+          this, &AircraftPerfDialog::fuelUnitChanged);
 
+  // Update descent rule
   connect(ui->spinBoxDescentVertSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &AircraftPerfDialog::vertSpeedChanged);
+
+  connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AircraftPerfDialog::buttonBoxClicked);
+
 }
 
 AircraftPerfDialog::~AircraftPerfDialog()
@@ -154,14 +159,27 @@ void AircraftPerfDialog::vertSpeedChanged()
   ui->labelDescentRule->setText(txt);
 }
 
-void AircraftPerfDialog::updateUnits()
+void AircraftPerfDialog::fuelUnitChanged(int index)
 {
-  units->update(ui->comboBoxFuelUnit->currentIndex());
+  if((index == 0 && perf->isAvgas()) || (index == 1 && perf->isJetFuel()))
+    // Nothing changed
+    return;
+
+  atools::fs::perf::AircraftPerf temp;
+  fromDialog(&temp);
+  if(index == 0)
+    temp.fromGalToLbs();
+  else
+    temp.fromLbsToGal();
+
+  units->update(index);
+  toDialog(&temp);
 }
 
 void AircraftPerfDialog::toDialog(const atools::fs::perf::AircraftPerf *aircraftPerf)
 {
   ui->comboBoxFuelUnit->setCurrentIndex(aircraftPerf->useFuelAsVolume());
+  ui->comboBoxFuelType->setCurrentIndex(aircraftPerf->isJetFuel());
   bool vol = ui->comboBoxFuelUnit->currentIndex() == 1;
 
   ui->lineEditName->setText(aircraftPerf->getName());
@@ -192,6 +210,7 @@ void AircraftPerfDialog::fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf
   aircraftPerf->setName(ui->lineEditName->text());
   aircraftPerf->setAircraftType(ui->lineEditType->text());
   aircraftPerf->setFuelAsVolume(ui->comboBoxFuelUnit->currentIndex());
+  aircraftPerf->setJetFuel(ui->comboBoxFuelType->currentIndex()); // 0 = avgas
   aircraftPerf->setDescription(ui->textBrowserDescription->toPlainText());
 
   aircraftPerf->setReserveFuel(Unit::rev(ui->spinBoxReserveFuel->value(), Unit::fuelLbsGallonF, vol));

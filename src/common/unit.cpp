@@ -380,6 +380,16 @@ float Unit::ffLbsF(float value)
   return weightLbsF(value);
 }
 
+QString Unit::ffLbsAndGal(float valueLbs, float valueGal, bool addUnit)
+{
+  return tr("%1, %2").arg(ffLbs(valueLbs, addUnit)).arg(ffGallon(valueGal, addUnit));
+}
+
+QString Unit::fuelLbsAndGal(float valueLbs, float valueGal, bool addUnit)
+{
+  return tr("%1, %2").arg(weightLbs(valueLbs, addUnit), volGallon(valueGal, addUnit));
+}
+
 QString Unit::fuelLbsGallon(float value, bool addUnit, bool fuelAsVolume)
 {
   return fuelAsVolume ? volGallon(value, addUnit) : weightLbs(value, addUnit);

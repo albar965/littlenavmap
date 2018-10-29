@@ -111,6 +111,10 @@ public:
   static QString ffLbs(float value, bool addUnit = true);
   static float ffLbsF(float value);
 
+  /* Return string containing both units - weight and volume */
+  static QString ffLbsAndGal(float valueLbs, float valueGal, bool addUnit = true);
+  static QString fuelLbsAndGal(float valueLbs, float valueGal, bool addUnit = true);
+
   static QString fuelLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
   static float fuelLbsGallonF(float value, bool fuelAsVolume = false);
 

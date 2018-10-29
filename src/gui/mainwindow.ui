@@ -263,7 +263,7 @@
     </widget>
     <widget class="QMenu" name="menuViewAirport">
      <property name="title">
-      <string>&amp;Airport</string>
+      <string>&amp;Airports</string>
      </property>
      <addaction name="actionMapShowAddonAirports"/>
      <addaction name="actionMapShowAirports"/>
@@ -279,7 +279,7 @@
     </widget>
     <widget class="QMenu" name="menuSunShading">
      <property name="title">
-      <string>Sun &amp;Shading</string>
+      <string>Sun &amp;Shading Time</string>
      </property>
      <addaction name="actionMapShowSunShadingSimulatorTime"/>
      <addaction name="actionMapShowSunShadingRealTime"/>

@@ -115,9 +115,6 @@ public:
     return *perf;
   }
 
-  /* true if gallons/liters are used */
-  bool useFuelAsVolume() const;
-
   /* Updates for automatic performance calculation */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
@@ -176,13 +173,15 @@ private:
   void startCollecting();
   void stopCollecting();
 
+  /* Make a string with fuel in lbs and gallons or kg and liter */
+  QString fuelLbsGal(float valueLbsGal);
+  QString ffLbsGal(float valueLbsGal);
+
   MainWindow *mainWindow;
 
   /* Default font size - can be changed in settings */
   float infoFontPtSize = 10.f;
   int symbolSize = 16;
-
-  bool fuelAsVolume = false;
 
   /* true if data was changed */
   bool changed = false;

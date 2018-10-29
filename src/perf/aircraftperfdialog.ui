@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>531</width>
-    <height>642</height>
+    <height>668</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,10 +93,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QSpinBox" name="spinBoxExtraFuel">
         <property name="toolTip">
-         <string>Fuel added at the discretion of the 
+         <string>Fuel added at the discretion of the
 captain or the dispatcher</string>
         </property>
         <property name="suffix">
@@ -110,7 +110,7 @@ captain or the dispatcher</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="labelCruiseExtraFuel">
         <property name="text">
          <string>&amp;Extra fuel:</string>
@@ -120,7 +120,7 @@ captain or the dispatcher</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="labelReserveFuel">
         <property name="text">
          <string>&amp;Reserve Fuel:</string>
@@ -130,7 +130,7 @@ captain or the dispatcher</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="labelTaxiFuel">
         <property name="text">
          <string>&amp;Taxi fuel:</string>
@@ -140,11 +140,11 @@ captain or the dispatcher</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QSpinBox" name="spinBoxReserveFuel">
         <property name="toolTip">
          <string>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if 
+above the alternate or at the destination at holding speed if
 an alternate is not required</string>
         </property>
         <property name="suffix">
@@ -158,7 +158,7 @@ an alternate is not required</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxTaxiFuel">
         <property name="toolTip">
          <string>Fuel used prior to takeoff by APU, engine start and taxi</string>
@@ -174,11 +174,11 @@ an alternate is not required</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <widget class="QSpinBox" name="spinBoxContingencyFuel">
         <property name="toolTip">
-         <string>This accounts for additional enroute fuel consumption 
-caused by wind or routing changes. 
+         <string>This accounts for additional enroute fuel consumption
+caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
         </property>
         <property name="suffix">
@@ -192,13 +192,37 @@ This will increase the trip fuel by the given percentage.</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="labelExtraCruiseFuel">
         <property name="text">
          <string>&amp;Contingency fuel:</string>
         </property>
         <property name="buddy">
          <cstring>spinBoxContingencyFuel</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBoxFuelType">
+        <item>
+         <property name="text">
+          <string>Avgas</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jetfuel</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelFuelType">
+        <property name="text">
+         <string>&amp;Fuel Type:</string>
+        </property>
+        <property name="buddy">
+         <cstring>comboBoxFuelType</cstring>
         </property>
        </widget>
       </item>
@@ -471,7 +495,7 @@ This will increase the trip fuel by the given percentage.</string>
       <item row="5" column="1">
        <widget class="QLabel" name="labelDescentRule">
         <property name="toolTip">
-         <string>Equivalent rule of thumb for 
+         <string>Equivalent rule of thumb for
 the given descent speeds</string>
         </property>
         <property name="text">

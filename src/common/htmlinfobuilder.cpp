@@ -2337,8 +2337,8 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
                                                     userAircraft.getAirplaneEmptyWeightLbs() -
                                                     userAircraft.getFuelTotalWeightLbs()));
 
-    html.row2(tr("Fuel:"), Unit::weightLbs(userAircraft.getFuelTotalWeightLbs()) + ", " +
-              Unit::volGallon(userAircraft.getFuelTotalQuantityGallons()));
+    html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(userAircraft.getFuelTotalWeightLbs(),
+                                               userAircraft.getFuelTotalQuantityGallons()));
     html.tableEnd();
   }
 }
@@ -2430,8 +2430,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               html.row2(tr("Gross Weight:"),
                         Unit::weightLbs(userAircaft->getAirplaneTotalWeightLbs() - neededFuelWeight));
               html.row2(tr("Fuel:"),
-                        Unit::weightLbs(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight) + tr(", ") +
-                        Unit::volGallon(userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
+                        Unit::fuelLbsAndGal(userAircaft->getFuelTotalWeightLbs() - neededFuelWeight,
+                                            userAircaft->getFuelTotalQuantityGallons() - neededFuelVol));
             }
           }
 
@@ -2481,8 +2481,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Distance and Time:"), todTexts.join(tr(", ")));
 
           if(!less && fuelAtTod < INVALID_WEIGHT_VALUE && fuelVolAtTod < INVALID_VOLUME_VALUE)
-            html.row2(tr("Fuel:"),
-                      Unit::weightLbs(fuelAtTod) + tr(", ") + Unit::volGallon(fuelVolAtTod));
+            html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(fuelAtTod, fuelVolAtTod));
         }
         html.tableEnd();
       }

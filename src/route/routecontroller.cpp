@@ -87,7 +87,8 @@ enum RouteColumns
   REMAINING_DISTANCE,
   LEG_TIME,
   ETA,
-  FUEL,
+  FUEL_WEIGHT,
+  FUEL_VOLUME,
   REMARKS,
   LAST_COLUMN = REMARKS
 };
@@ -121,7 +122,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Remaining\n%dist%"),
                                  QObject::tr("Leg Time\nhh:mm"),
                                  QObject::tr("ETA\nhh:mm"),
-                                 QObject::tr("Fuel Rem.\n%fuel%"),
+                                 QObject::tr("Fuel Rem.\n%weight%"),
+                                 QObject::tr("Fuel Rem.\n%volume%"),
                                  QObject::tr("Remarks")});
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
@@ -600,11 +602,12 @@ void RouteController::saveState()
 
 void RouteController::updateTableHeaders()
 {
+  using atools::fs::perf::AircraftPerf;
+
   QList<QString> routeHeaders(routeColumns);
 
-  bool fuelAsVolume = NavApp::getAircraftPerformance().useFuelAsVolume();
   for(QString& str : routeHeaders)
-    str = Unit::replacePlaceholders(str, fuelAsVolume);
+    str = Unit::replacePlaceholders(str);
 
   model->setHorizontalHeaderLabels(routeHeaders);
 }
@@ -3155,6 +3158,7 @@ QString RouteController::procedureLegText(const RouteLeg& leg)
 /* Update travel times in table view model after speed change */
 void RouteController::updateModelRouteTimeFuel()
 {
+  using atools::fs::perf::AircraftPerf;
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   if(altitudeLegs.isEmpty())
     return;
@@ -3164,18 +3168,19 @@ void RouteController::updateModelRouteTimeFuel()
   float cumulatedTravelTime = 0.f;
 
   bool setValues = !NavApp::isCollectingPerformance() && !altitudeLegs.hasErrors();
-  const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
-  float totalFuel = altitudeLegs.getTripFuel();
+  const AircraftPerf& perf = NavApp::getAircraftPerformance();
+  float totalFuelLbsOrGal = altitudeLegs.getTripFuel();
 
   if(setValues)
   {
-    totalFuel *= perf.getContingencyFuelFactor();
-    totalFuel += perf.getExtraFuel() + perf.getReserveFuel();
+    totalFuelLbsOrGal *= perf.getContingencyFuelFactor();
+    totalFuelLbsOrGal += perf.getExtraFuel() + perf.getReserveFuel();
   }
 
   int widthLegTime = view->columnWidth(rc::LEG_TIME);
   int widthEta = view->columnWidth(rc::ETA);
-  int widthFuel = view->columnWidth(rc::FUEL);
+  int widthFuelWeight = view->columnWidth(rc::FUEL_WEIGHT);
+  int widthFuelVol = view->columnWidth(rc::FUEL_VOLUME);
 
   for(int i = 0; i < route.size(); i++)
   {
@@ -3183,7 +3188,8 @@ void RouteController::updateModelRouteTimeFuel()
     {
       model->setItem(row, rc::LEG_TIME, new QStandardItem());
       model->setItem(row, rc::ETA, new QStandardItem());
-      model->setItem(row, rc::FUEL, new QStandardItem());
+      model->setItem(row, rc::FUEL_WEIGHT, new QStandardItem());
+      model->setItem(row, rc::FUEL_VOLUME, new QStandardItem());
     }
     else if(!route.isAirportAfterArrival(row))
     {
@@ -3214,12 +3220,28 @@ void RouteController::updateModelRouteTimeFuel()
         item->setTextAlignment(Qt::AlignRight);
         model->setItem(row, rc::ETA, item);
 
-        totalFuel -= altitudeLegs.at(i).getFuel();
-        txt = perf.isFuelFlowValid() ? Unit::fuelLbsGallon(totalFuel, false) : QString();
+        totalFuelLbsOrGal -= altitudeLegs.at(i).getFuel();
+        float weight = 0.f, vol = 0.f;
+        if(perf.useFuelAsVolume())
+        {
+          weight = AircraftPerf::fromGalToLbs(perf.isJetFuel(), totalFuelLbsOrGal);
+          vol = totalFuelLbsOrGal;
+        }
+        else
+        {
+          weight = totalFuelLbsOrGal;
+          vol = AircraftPerf::fromLbsToGal(perf.isJetFuel(), totalFuelLbsOrGal);
+        }
 
+        txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* no unit */) : QString();
         item = new QStandardItem(txt);
         item->setTextAlignment(Qt::AlignRight);
-        model->setItem(row, rc::FUEL, item);
+        model->setItem(row, rc::FUEL_WEIGHT, item);
+
+        txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* no unit */) : QString();
+        item = new QStandardItem(txt);
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(row, rc::FUEL_VOLUME, item);
       }
     }
 
@@ -3228,7 +3250,8 @@ void RouteController::updateModelRouteTimeFuel()
 
   view->setColumnWidth(rc::LEG_TIME, widthLegTime);
   view->setColumnWidth(rc::ETA, widthEta);
-  view->setColumnWidth(rc::FUEL, widthFuel);
+  view->setColumnWidth(rc::FUEL_WEIGHT, widthFuelWeight);
+  view->setColumnWidth(rc::FUEL_VOLUME, widthFuelVol);
 }
 
 void RouteController::disconnectedFromSimulator()

@@ -181,7 +181,6 @@ const QLatin1Literal AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
 const QLatin1Literal AIRCRAFT_PERF_FILENAMESRECENT("AircraftPerformance/FilenamesRecent");
 const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG("AircraftPerformance/EditDialog");
 const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG_SIZE("AircraftPerformance/EditDialogSize");
-const QLatin1Literal AIRCRAFT_PERF_EDIT_FUEL_AS_VOL("AircraftPerformance/EditDialogFuelAsVolume");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");
