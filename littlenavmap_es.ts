@@ -148,10 +148,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Flight</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distance and Time:</source>
         <translation type="unfinished">Distancia y Tiempo:</translation>
     </message>
@@ -235,6 +231,54 @@
         <source>Descent not valid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Fuel Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avgas</source>
+        <translation type="unfinished">Avgas</translation>
+    </message>
+    <message>
+        <source>Jetfuel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>reserve fuel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>climb fuel flow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cruise fuel flow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>descent fuel flow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid value for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid values for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, </source>
+        <translation type="unfinished">, </translation>
+    </message>
+    <message>
+        <source>Flight Plan</source>
+        <translation type="unfinished">Plan de Vuelo</translation>
+    </message>
+    <message>
+        <source>Fuel Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AircraftPerfDialog</name>
@@ -271,11 +315,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fuel added at the discretion of the 
-captain or the dispatcher</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> %fuel%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -292,19 +331,7 @@ captain or the dispatcher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if 
-an alternate is not required</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This accounts for additional enroute fuel consumption 
-caused by wind or routing changes. 
-This will increase the trip fuel by the given percentage.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -372,11 +399,6 @@ This will increase the trip fuel by the given percentage.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Equivalent rule of thumb for 
-the given descent speeds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Average fuel flow for &amp;descent:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -386,6 +408,40 @@ the given descent speeds</source>
     </message>
     <message>
         <source>Descent Rule of Thumb: %1 per %2 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel added at the discretion of the
+captain or the dispatcher</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
+above the alternate or at the destination at holding speed if
+an alternate is not required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This accounts for additional enroute fuel consumption
+caused by wind or routing changes.
+This will increase the trip fuel by the given percentage.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avgas</source>
+        <translation type="unfinished">Avgas</translation>
+    </message>
+    <message>
+        <source>Jetfuel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Fuel Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Equivalent rule of thumb for
+the given descent speeds</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4577,10 +4633,6 @@ Online Network:
         <translation type="unfinished">Estilo</translation>
     </message>
     <message>
-        <source>Sun Shading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show Map Window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4631,10 +4683,6 @@ Online Network:
     <message>
         <source>Flight plan cruise altitude is zero.
 Simulator might not be able to load the flight plan.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Airport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4835,10 +4883,6 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Minimum Altitude</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show Minimum Altitude (MORA) on the map</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5020,6 +5064,34 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>Flight plan inserted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Airports</source>
+        <translation type="unfinished">&amp;Aeropuertos</translation>
+    </message>
+    <message>
+        <source>Sun &amp;Shading Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show &amp;Minimum Altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Information for airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show airport in search window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show %1 on Map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the airport on the map</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11784,11 +11856,6 @@ hh:mm</translation>
         <translation type="unfinished">Procedimiento</translation>
     </message>
     <message>
-        <source>Fuel Rem.
-%fuel%</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 %2 %3%4</source>
         <translation type="unfinished">%1 %2 %3%4</translation>
     </message>
@@ -11810,6 +11877,20 @@ hh:mm</translation>
     </message>
     <message>
         <source>STAR Transition %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vectors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel Rem.
+%weight%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuel Rem.
+%volume%</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13046,6 +13127,10 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
         <source>km/h</source>
         <translation>km/h</translation>
     </message>
+    <message>
+        <source>%1, %2</source>
+        <translation type="unfinished">%1, %2</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>
@@ -13055,7 +13140,7 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
     <message>
         <source>&amp;Download</source>
-        <translation>&amp;Descargar</translation>
+        <translation type="vanished">&amp;Descargar</translation>
     </message>
     <message>
         <source>&amp;Ignore this Update</source>
@@ -13064,6 +13149,14 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     <message>
         <source>Little Navmap</source>
         <translation>Little Navmap</translation>
+    </message>
+    <message>
+        <source>&amp;Download in Web Browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy to Clipboard</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13311,7 +13404,7 @@ Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.
     </message>
     <message numerus="yes">
         <source>Delete %n userpoint(s)?</source>
-        <translation>
+        <translation type="vanished">
             <numerusform>Borrar %n punto de usuario?</numerusform>
             <numerusform>Borrar %n puntos de usuarios?</numerusform>
         </translation>
@@ -13395,6 +13488,20 @@ antes de borrar.</translation>
     </message>
     <message>
         <source>Aircraft Performance:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete userpoint?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete %1 userpoints?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+
+This cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
