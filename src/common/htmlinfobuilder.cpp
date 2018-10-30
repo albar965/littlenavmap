@@ -1058,8 +1058,10 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
                     vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
       }
     }
+#ifdef DEBUG_INFORMATION
     else
       qWarning() << "VOR data not found";
+#endif
   }
   else if(fixType == "N" || fixType == "TN")
   {
@@ -1086,8 +1088,10 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident),
                 atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
+#ifdef DEBUG_INFORMATION
     else
       qWarning() << "NDB data not found";
+#endif
   }
 }
 

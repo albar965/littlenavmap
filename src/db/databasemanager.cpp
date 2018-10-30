@@ -200,8 +200,11 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
       userdataManager->updateSchema();
 
     // Open online network database
+    atools::settings::Settings& settings = atools::settings::Settings::instance();
+    bool verbose = settings.getAndStoreValue(lnm::OPTIONS_WHAZZUP_PARSER_DEBUG, false).toBool();
+
     openWriteableDatabase(databaseOnline, "onlinedata", "online network", false /* backup */);
-    onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline);
+    onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline, verbose);
     onlinedataManager->createSchema();
     onlinedataManager->initQueries();
   }
