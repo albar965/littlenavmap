@@ -144,6 +144,15 @@ private:
       geometry.last().setY(y);
   }
 
+  /* Length of this leg */
+  float dx() const
+  {
+    if(!geometry.isEmpty())
+      return static_cast<float>(geometry.last().x() - geometry.first().x());
+    else
+      return map::INVALID_DISTANCE_VALUE;
+  }
+
   QString ident;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;

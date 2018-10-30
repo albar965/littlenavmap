@@ -203,9 +203,41 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     QString descriptor = query->value("alt_descriptor").toString();
 
     if(descriptor == "A")
-      leg.altRestriction.descriptor = MapAltRestriction::AT;
+    {
+      if(alt2 < alt1 && alt2 > 0.f)
+      {
+        // Adjust ILS glide slope - workaround for missing G and I indicators
+
+        // G Glide Slope altitude (MSL) specified in the second “Altitude” field and
+        // “at” altitude specified in the first “Altitude” field on the FAF Waypoint in Precision Approach Coding
+        // with electronic Glide Slope.
+        // I Glide Slope Intercept Altitude specified in second “Altitude” field and
+        // “at” altitude specified in first “Altitude” field on the FACF Waypoint in Precision Approach Coding
+        // with electronic Glide Slope
+        std::swap(alt1, alt2);
+        leg.altRestriction.descriptor = MapAltRestriction::ILS_AT;
+      }
+      else
+        leg.altRestriction.descriptor = MapAltRestriction::AT;
+    }
     else if(descriptor == "+")
-      leg.altRestriction.descriptor = MapAltRestriction::AT_OR_ABOVE;
+    {
+      if(alt2 < alt1 && alt2 > 0.f)
+      {
+        // Adjust ILS glide slope - workaround for missing H and J indicators
+
+        // H Glide Slope Altitude (MSL) specified in second “Altitude” field and
+        // “at or above” altitude specified in first “Altitude” field on the FAF Waypoint in Precision Approach Coding
+        // with electronic Glide Slope
+        // J Glide Slope Intercept Altitude specified in second “Altitude” field and
+        // “at or above” altitude J specified in first “Altitude” field on the FACF Waypoint in Precision Approach Coding
+        // with electronic Glide Slope “At” altitude on the coded vertical angle in the
+        std::swap(alt1, alt2);
+        leg.altRestriction.descriptor = MapAltRestriction::ILS_AT_OR_ABOVE;
+      }
+      else
+        leg.altRestriction.descriptor = MapAltRestriction::AT_OR_ABOVE;
+    }
     else if(descriptor == "-")
       leg.altRestriction.descriptor = MapAltRestriction::AT_OR_BELOW;
     else if(descriptor == "B")
@@ -685,6 +717,9 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
 
   // Update the mapTypes
   assignType(legs);
+
+  // Set the force altitude flag for FAF and FACF
+  processAltRestrictions(legs);
 
   updateMagvar(airport, legs);
 
@@ -2261,6 +2296,17 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     procedureId = ids.first();
 
   return procedureId;
+}
+
+void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure)
+{
+  if(procedure.mapType & proc::PROCEDURE_APPROACH)
+  {
+    for(MapProcedureLeg& leg : procedure.approachLegs)
+      // Force lowest resriction altitude for FAF and FACF
+      leg.altRestriction.forceFinal = (leg.isFinalApproachCourseFix() || leg.isFinalApproachFix()) && !leg.isMissed() &&
+                                      leg.mapType == proc::PROCEDURE_APPROACH && leg.altRestriction.isValid();
+  }
 }
 
 void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure)

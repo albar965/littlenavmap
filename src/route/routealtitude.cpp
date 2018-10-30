@@ -171,26 +171,44 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
     case proc::MapAltRestriction::NONE:
       break;
 
+    case proc::MapAltRestriction::ILS_AT:
+    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+      // Force to lowest altitude for ILS
+      altitude = restriction.alt1;
+      break;
+
     case proc::MapAltRestriction::AT:
       altitude = restriction.alt1;
       break;
 
     case proc::MapAltRestriction::AT_OR_ABOVE:
-      if(altitude < restriction.alt1)
+      if(restriction.forceFinal)
+        // Stick to lowest altitude on FAF and FACF
+        altitude = restriction.alt1;
+      else if(altitude < restriction.alt1)
         altitude = restriction.alt1;
       break;
 
     case proc::MapAltRestriction::AT_OR_BELOW:
-      if(altitude > restriction.alt1)
+      if(restriction.forceFinal)
+        // Stick to lowest altitude on FAF and FACF
+        altitude = restriction.alt1;
+      else if(altitude > restriction.alt1)
         altitude = restriction.alt1;
       break;
 
     case proc::MapAltRestriction::BETWEEN:
-      if(altitude > restriction.alt1)
-        altitude = restriction.alt1;
-
-      if(altitude < restriction.alt2)
+      if(restriction.forceFinal)
+        // Stick to lowest altitude on FAF and FACF
         altitude = restriction.alt2;
+      else
+      {
+        if(altitude > restriction.alt1)
+          altitude = restriction.alt1;
+
+        if(altitude < restriction.alt2)
+          altitude = restriction.alt2;
+      }
       break;
   }
   return altitude;
@@ -205,6 +223,8 @@ bool RouteAltitude::violatesAltitudeRestriction(const RouteAltitudeLeg& leg) con
       case proc::MapAltRestriction::NONE:
         return false;
 
+      case proc::MapAltRestriction::ILS_AT:
+      case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
       case proc::MapAltRestriction::AT:
         return atools::almostNotEqual(leg.y2(), leg.restriction.alt1, 10.f);
 
@@ -238,8 +258,11 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
         {
           const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
-          if(r.descriptor == proc::MapAltRestriction::AT || r.descriptor == proc::MapAltRestriction::AT_OR_BELOW ||
-             r.descriptor == proc::MapAltRestriction::BETWEEN)
+          if(r.forceFinal || atools::contains(r.descriptor,
+                                              {proc::MapAltRestriction::AT,
+                                               proc::MapAltRestriction::AT_OR_BELOW,
+                                               proc::MapAltRestriction::BETWEEN,
+                                               proc::MapAltRestriction::ILS_AT}))
             return r.alt1;
         }
       }
@@ -272,8 +295,9 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
         {
           const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
-          if(r.descriptor == proc::MapAltRestriction::AT || r.descriptor == proc::MapAltRestriction::AT_OR_BELOW ||
-             r.descriptor == proc::MapAltRestriction::BETWEEN)
+          if(r.forceFinal || atools::contains(r.descriptor,
+                                              {proc::MapAltRestriction::AT, proc::MapAltRestriction::AT_OR_BELOW,
+                                               proc::MapAltRestriction::BETWEEN}))
             return r.alt1;
         }
       }
@@ -467,9 +491,19 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 #endif
 
     // Change middle leg and adjust altitude
-    midAlt->setY2(static_cast<float>(mid.y()));
-    if(!midAlt->isEmpty())
-      midAlt->setY2(adjustAltitudeForRestriction(midAlt->y2(), restriction));
+    if(midAlt->dx() < 0.01f)
+    {
+      // Middle leg is point
+      midAlt->setAlt(static_cast<float>(mid.y()));
+      if(!midAlt->isEmpty())
+        midAlt->setAlt(adjustAltitudeForRestriction(midAlt->y2(), restriction));
+    }
+    else
+    {
+      midAlt->setY2(static_cast<float>(mid.y()));
+      if(!midAlt->isEmpty())
+        midAlt->setY2(adjustAltitudeForRestriction(midAlt->y2(), restriction));
+    }
 
     // Also change skipped right neighbor
     if(rightSkippedAlt != nullptr)

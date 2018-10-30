@@ -114,6 +114,7 @@ private:
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
   void processLegs(proc::MapProcedureLegs& legs);
   void processLegErrors(proc::MapProcedureLegs& legs);
+  void processAltRestrictions(proc::MapProcedureLegs& procedure);
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
   void processCourseInterceptLegs(proc::MapProcedureLegs& legs);

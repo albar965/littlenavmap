@@ -77,11 +77,16 @@ struct MapAltRestriction
     AT,
     AT_OR_ABOVE,
     AT_OR_BELOW,
-    BETWEEN /* At or above alt2 and at or below alt1 */
+    BETWEEN, /* At or above alt2 and at or below alt1 */
+    ILS_AT, /* ILS glideslope altitude at alt1 */
+    ILS_AT_OR_ABOVE /* ILS glideslope altitude at alt1*/
   };
 
   Descriptor descriptor = NONE;
   float alt1, alt2;
+
+  /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI */
+  bool forceFinal = false;
 
   bool isValid() const
   {
@@ -375,6 +380,7 @@ struct MapProcedureLeg
   }
 
   bool isFinalApproachFix() const;
+  bool isFinalApproachCourseFix() const;
 
   bool isHold() const;
   bool isCircular() const;

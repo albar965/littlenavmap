@@ -314,6 +314,12 @@ QString altRestrictionText(const MapAltRestriction& restriction)
 {
   switch(restriction.descriptor)
   {
+    case proc::MapAltRestriction::ILS_AT:
+      return QObject::tr("ILS GS at %1").arg(Unit::altFeet(restriction.alt1));
+
+    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+      return QObject::tr("ILS GS at or above %1").arg(Unit::altFeet(restriction.alt1));
+
     case proc::MapAltRestriction::NONE:
       return QString();
 
@@ -339,17 +345,29 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
   QString retval;
   switch(altRestriction.descriptor)
   {
+    case proc::MapAltRestriction::ILS_AT:
+      retval = QObject::tr("GS") + Unit::altFeet(altRestriction.alt1, true, true);
+      break;
+
+    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+      retval = QObject::tr("GS A") + Unit::altFeet(altRestriction.alt1, true, true);
+      break;
+
     case proc::MapAltRestriction::NONE:
       break;
+
     case proc::MapAltRestriction::AT:
       retval = Unit::altFeet(altRestriction.alt1, true, true);
       break;
+
     case proc::MapAltRestriction::AT_OR_ABOVE:
       retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
+
     case proc::MapAltRestriction::AT_OR_BELOW:
       retval = QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
+
     case proc::MapAltRestriction::BETWEEN:
       retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt2, false, true) +
                QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
@@ -363,6 +381,12 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction)
   QString retval;
   switch(altRestriction.descriptor)
   {
+    case proc::MapAltRestriction::ILS_AT:
+      retval = QObject::tr("GS ") + Unit::altFeet(altRestriction.alt1, false, false);
+      break;
+    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+      retval = QObject::tr("GS A ") + Unit::altFeet(altRestriction.alt1, false, false);
+      break;
     case proc::MapAltRestriction::NONE:
       break;
     case proc::MapAltRestriction::AT:
@@ -569,6 +593,11 @@ float MapProcedureLeg::legTrueCourse() const
 bool MapProcedureLeg::isFinalApproachFix() const
 {
   return proc::specialType(arincDescrCode) == proc::FAF;
+}
+
+bool MapProcedureLeg::isFinalApproachCourseFix() const
+{
+  return proc::specialType(arincDescrCode) == proc::FACF;
 }
 
 bool MapProcedureLeg::isHold() const

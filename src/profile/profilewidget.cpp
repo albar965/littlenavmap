@@ -746,13 +746,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           painter.drawLine(QPoint(wpx, y1), altLegs.at(routeIndex).last());
 
           if(descr == proc::MapAltRestriction::AT_OR_ABOVE ||
-             descr == proc::MapAltRestriction::AT)
-            // Draw diagonal pattern rectancle
+             descr == proc::MapAltRestriction::AT ||
+             descr == proc::MapAltRestriction::ILS_AT ||
+             descr == proc::MapAltRestriction::ILS_AT_OR_ABOVE)
+            // Draw diagonal pattern rectancle above
             painter.fillRect(x11, y1, rectWidth, rectHeight, diagPatternBrush);
 
           if(descr == proc::MapAltRestriction::AT_OR_BELOW ||
-             descr == proc::MapAltRestriction::AT)
-            // Draw diagonal pattern rectancle
+             descr == proc::MapAltRestriction::AT ||
+             descr == proc::MapAltRestriction::ILS_AT)
+            // Draw diagonal pattern rectancle below
             painter.fillRect(x11, y1 - rectHeight, rectWidth, rectHeight, diagPatternBrush);
 
           if(descr == proc::MapAltRestriction::BETWEEN)

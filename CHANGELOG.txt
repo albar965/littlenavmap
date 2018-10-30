@@ -43,7 +43,7 @@ Elevation Profile:
   result in wrong profile maximum altitude.
 
 Aircraft Performance: (see main menu -> "Aircraft" and tab "Aircraft" in dock window "Flight plan")
-Not that the new tab in the "Flight plan" dock window is meant for fuel planning and does not
+Note that the new tab in the "Flight plan" dock window is meant for fuel planning and does not
 change during flight (except when collecting performance data).
 * Added aircraft performance facilities including edit dialog, new, save, save as, load, file history and report.
   Performance files (*.lnmperf) can be dragged into the main window to load. Added main menu

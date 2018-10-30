@@ -503,7 +503,7 @@ float Route::getDistanceFromStart(const atools::geo::Pos& pos) const
   int leg = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */);
   float distFromStart = map::INVALID_DISTANCE_VALUE;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << Q_FUNC_INFO << "leg" << leg << "result" << result;
 #endif
 
