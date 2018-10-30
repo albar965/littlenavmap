@@ -4702,7 +4702,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
             <number>1</number>
            </property>
            <property name="pageStep">
-            <number>4</number>
+            <number>1</number>
            </property>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -4755,7 +4755,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
             <number>1</number>
            </property>
            <property name="pageStep">
-            <number>4</number>
+            <number>1</number>
            </property>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
