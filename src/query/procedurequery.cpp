@@ -193,6 +193,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   leg.calculatedDistance = 0.f;
   leg.calculatedTrueCourse = 0.f;
   leg.disabled = false;
+  leg.malteseCross = false;
   leg.intercept = false;
 
   float alt1 = query->valueFloat("altitude1");
@@ -475,8 +476,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
 }
 
-/* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
- * position if no runway ends were found */
 void ProcedureQuery::runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport)
 {
   Q_ASSERT(airport.navdata);
@@ -742,19 +741,23 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
 
   processLegErrors(legs);
 
+  // Check which leg is used to draw the maltesian cross
+  processLegsFafAndFacf(legs);
+
   // qDebug() << legs;
 }
 
 void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
                                            bool addArtificialLegs)
 {
-  if(!legs.isEmpty())
+  if(!legs.isEmpty() && addArtificialLegs)
   {
-    if(!legs.transitionLegs.isEmpty() && !legs.approachLegs.isEmpty() && addArtificialLegs)
+    if(!legs.transitionLegs.isEmpty() && !legs.approachLegs.isEmpty())
     {
+      // ====================================================================================
+      // Insert leg between approach and transition and add new one to approach
       if(legs.mapType & proc::PROCEDURE_SID_ALL)
       {
-        // Insert between approach and transition and add new one to approach
         MapProcedureLeg& firstTransLeg = legs.transitionLegs.first();
         MapProcedureLeg& lastApprLeg = legs.approachLegs.last();
 
@@ -782,9 +785,10 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
         }
       }
 
+      // ====================================================================================
+      // Insert between transition and approach and add new one to transition
       if(legs.mapType & proc::PROCEDURE_STAR_ALL)
       {
-        // Insert between transition and approach and add new one to transition
         MapProcedureLeg& lastTransLeg = legs.transitionLegs.last();
         MapProcedureLeg& firstApprLeg = legs.approachLegs.first();
 
@@ -811,11 +815,13 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
           legs.transitionLegs.append(leg);
         }
       } // if(legs.mapType & proc::PROCEDURE_STAR_ALL)
-    } // if(!legs.transitionLegs.isEmpty() && !legs.approachLegs.isEmpty() && addArtificialLegs)
+    } // if(!legs.transitionLegs.isEmpty() && !legs.approachLegs.isEmpty())
 
+    // ====================================================================================
+    // Add legs that connect airport center to departure runway
     if(legs.mapType & proc::PROCEDURE_DEPARTURE)
     {
-      if(legs.runwayEnd.isValid() && addArtificialLegs)
+      if(legs.runwayEnd.isValid())
       {
         QVector<MapProcedureLeg>& legList = legs.approachLegs.isEmpty() ? legs.transitionLegs : legs.approachLegs;
 
@@ -849,9 +855,10 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
     } // if(legs.mapType & proc::PROCEDURE_DEPARTURE)
     else
     {
-      if(!contains(legs.first().type, {proc::INITIAL_FIX}) && !legs.first().line.isPoint() && addArtificialLegs)
+      // ====================================================================================
+      // Add an artificial initial fix if first leg is no point to keep all consistent ========================
+      if(!contains(legs.first().type, {proc::INITIAL_FIX}) && !legs.first().line.isPoint())
       {
-        // Add an artificial initial fix to keep all consistent ========================
         proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
         sleg.type = proc::START_OF_PROCEDURE;
         sleg.line = Line(legs.first().line.getPos1());
@@ -877,58 +884,58 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
           legs.approachLegs.prepend(sleg);
         }
       }
-
-      if(legs.mapType & proc::PROCEDURE_STAR_ALL || legs.mapType & proc::PROCEDURE_SID_ALL)
-      {
-        for(int i = 0; i < legs.size() - 1; i++)
-        {
-          // Look for the transition from approach to missed ====================================
-          proc::MapProcedureLeg& leg = legs[i];
-          if(leg.isApproach() && legs.at(i + 1).isMissed())
-          {
-            if(leg.fixType != "R" && legs.runwayEnd.isValid())
-            {
-              legs.circleToLand = true;
-
-              if(addArtificialLegs)
-              {
-                // Not a runway fix and runway reference is valid - add own runway fix
-                // This is a circle to land approach
-                proc::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
-                rwleg.type = proc::CIRCLE_TO_LAND;
-
-                // At 50ft above threshold
-                // TODO this does not consider displaced thresholds
-                rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f;
-
-                rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
-                rwleg.mapType = proc::PROCEDURE_APPROACH;
-
-                int insertPosition = i + 1 - legs.transitionLegs.size();
-
-                if(insertPosition > 1)
-                {
-                  // Fix threshold altitude since it might be above the last altitude restriction
-                  const proc::MapAltRestriction& lastAltRestr = legs.at(insertPosition - 1).altRestriction;
-                  if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
-                    rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
-                }
-
-                legs.approachLegs.insert(insertPosition, rwleg);
-
-                // Coordinates for missed after CTL legs are already correct since this new leg is missing when the
-                // coordinates are calculated
-                // proc::MapProcedureLeg& mapLeg = legs[insertPosition + 1];
-                // mapLeg.line.setPos1(rwleg.line.getPos1());
-              }
-
-              break;
-            }
-          }
-        }
-      }
     } // if(legs.mapType & proc::PROCEDURE_DEPARTURE) else
 
+    // ====================================================================================
+    // Add circle to land or straight in leg
+    if(legs.mapType & proc::PROCEDURE_ARRIVAL)
+    {
+      for(int i = 0; i < legs.size() - 1; i++)
+      {
+        // Look for the transition from approach to missed ====================================
+        proc::MapProcedureLeg& leg = legs[i];
+        if(leg.isApproach() && legs.at(i + 1).isMissed())
+        {
+          if(leg.fixType != "R") // Not a runway?
+          {
+            // Airport but no runway if name is empty - set to CTL approach
+            legs.circleToLand = legs.runwayEnd.name.isEmpty();
+
+            // Not a runway fix and runway reference is valid - add own runway fix
+            // This is a circle to land approach
+            proc::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
+            rwleg.type = legs.circleToLand ? proc::CIRCLE_TO_LAND : proc::STRAIGHT_IN;
+
+            // At 50ft above threshold
+            // TODO this does not consider displaced thresholds
+            rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f;
+
+            rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
+            rwleg.mapType = proc::PROCEDURE_APPROACH;
+
+            int insertPosition = i + 1 - legs.transitionLegs.size();
+
+            if(insertPosition > 1)
+            {
+              // Fix threshold altitude since it might be above the last altitude restriction
+              const proc::MapAltRestriction& lastAltRestr = legs.at(insertPosition - 1).altRestriction;
+              if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
+                rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
+            }
+
+            legs.approachLegs.insert(insertPosition, rwleg);
+
+            // Coordinates for missed after CTL legs are already correct since this new leg is missing when the
+            // coordinates are calculated
+            // proc::MapProcedureLeg& mapLeg = legs[insertPosition + 1];
+            // mapLeg.line.setPos1(rwleg.line.getPos1());
+          }
+          break;
+        }
+      }
+    }
+
+    // ====================================================================================
     // Add vector legs between manual and next one that do not overlap
     for(int i = legs.size() - 2; i >= 0; i--)
     {
@@ -937,7 +944,8 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
       proc::MapProcedureLeg& nextLeg = legs[i + 1];
 
       if(nextLeg.type == proc::INITIAL_FIX &&
-         (prevLeg.type == proc::FROM_FIX_TO_MANUAL_TERMINATION || prevLeg.type == proc::HEADING_TO_MANUAL_TERMINATION))
+         (prevLeg.type == proc::FROM_FIX_TO_MANUAL_TERMINATION ||
+          prevLeg.type == proc::HEADING_TO_MANUAL_TERMINATION))
       {
         qDebug() << Q_FUNC_INFO << prevLeg;
         proc::MapProcedureLeg vectorLeg;
@@ -962,7 +970,9 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
         nextLeg.line.setPos1(nextLeg.line.getPos2());
         vectorLeg.time = vectorLeg.theta = vectorLeg.rho = 0.f;
         vectorLeg.magvar = nextLeg.magvar;
-        vectorLeg.missed = vectorLeg.flyover = vectorLeg.trueCourse = vectorLeg.intercept = vectorLeg.disabled = false;
+        vectorLeg.missed = vectorLeg.flyover =
+                             vectorLeg.trueCourse = vectorLeg.intercept =
+                                                      vectorLeg.disabled = vectorLeg.malteseCross = false;
 
         legs.approachLegs.insert(i + 1, vectorLeg);
       }
@@ -990,6 +1000,32 @@ void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs)
       // Found the connection between transition and approach with same altitudes
       // Use restriction of the initial fix
       prevLeg.altRestriction.descriptor = leg.altRestriction.descriptor;
+  }
+}
+
+void ProcedureQuery::processLegsFafAndFacf(proc::MapProcedureLegs& legs)
+{
+  if(legs.mapType & proc::PROCEDURE_ARRIVAL)
+  {
+    int fafIndex = map::INVALID_INDEX_VALUE, facfIndex = map::INVALID_INDEX_VALUE;
+
+    for(int i = 0; i < legs.size(); i++)
+    {
+      const proc::MapProcedureLeg& leg = legs.at(i);
+      if(leg.isFinalApproachCourseFix() && leg.altRestriction.descriptor != proc::MapAltRestriction::ILS_AT &&
+         leg.altRestriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)
+        facfIndex = i;
+      if(leg.isFinalApproachFix() && leg.altRestriction.descriptor != proc::MapAltRestriction::ILS_AT &&
+         leg.altRestriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)
+        fafIndex = i;
+    }
+
+    if(fafIndex < map::INVALID_INDEX_VALUE && facfIndex < map::INVALID_INDEX_VALUE)
+      legs[fafIndex].malteseCross = true;
+    else if(facfIndex < map::INVALID_INDEX_VALUE)
+      legs[facfIndex].malteseCross = true;
+    else if(fafIndex < map::INVALID_INDEX_VALUE)
+      legs[fafIndex].malteseCross = true;
   }
 }
 
@@ -1118,7 +1154,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
                             proc::COURSE_TO_RADIAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION,
                             proc::DIRECT_TO_FIX, proc::TRACK_TO_FIX, proc::VECTORS,
                             proc::COURSE_TO_INTERCEPT, proc::HEADING_TO_INTERCEPT,
-                            proc::DIRECT_TO_RUNWAY, proc::CIRCLE_TO_LAND}))
+                            proc::DIRECT_TO_RUNWAY, proc::CIRCLE_TO_LAND, proc::STRAIGHT_IN}))
     {
       leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
@@ -1130,7 +1166,8 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
     {
       // Add distance from any existing gaps, bows or turns except for intercept legs
       // Use first position (MAP) of last leg for circle-to-land approaches
-      Pos lastPos = prevLeg->isCircleToLand() && leg.isMissed() ? prevLeg->line.getPos1() : prevLeg->line.getPos2();
+      Pos lastPos = (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) &&
+                    leg.isMissed() ? prevLeg->line.getPos1() : prevLeg->line.getPos2();
       leg.calculatedDistance += meterToNm(lastPos.distanceMeterTo(leg.line.getPos1()));
     }
 
@@ -1259,7 +1296,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
     // ===========================================================
     else if(contains(type, {proc::DIRECT_TO_FIX, proc::INITIAL_FIX, proc::START_OF_PROCEDURE,
                             proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC, proc::VECTORS,
-                            proc::DIRECT_TO_RUNWAY, proc::CIRCLE_TO_LAND}))
+                            proc::DIRECT_TO_RUNWAY, proc::CIRCLE_TO_LAND, proc::STRAIGHT_IN}))
     {
       curPos = leg.fixPos;
     }
@@ -1419,7 +1456,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
           bool nextIsArc = next->isCircular();
           Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
 
-          if(prevLeg != nullptr && prevLeg->isCircleToLand() && leg.isMissed())
+          if(prevLeg != nullptr && (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) && leg.isMissed())
             // Use first position (MAP) of last leg for circle-to-land approaches
             start = prevLeg->line.getPos1();
 
@@ -2392,7 +2429,7 @@ proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLe
   rwleg.distance = meterToNm(rwleg.line.lengthMeter());
   rwleg.course = normalizeCourse(rwleg.line.angleDeg() - rwleg.magvar);
   rwleg.navaids.runwayEnds.append(legs.runwayEnd);
-  rwleg.missed = rwleg.flyover = rwleg.trueCourse = rwleg.intercept = rwleg.disabled = false;
+  rwleg.missed = rwleg.flyover = rwleg.trueCourse = rwleg.intercept = rwleg.disabled = rwleg.malteseCross = false;
 
   return rwleg;
 }
@@ -2425,7 +2462,7 @@ proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg
   sleg.magvar = leg.magvar;
   sleg.distance = 0.f;
   sleg.course = 0.f;
-  sleg.missed = sleg.flyover = sleg.trueCourse = sleg.intercept = sleg.disabled = false;
+  sleg.missed = sleg.flyover = sleg.trueCourse = sleg.intercept = sleg.disabled = sleg.malteseCross = false;
 
   return sleg;
 }

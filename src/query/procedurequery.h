@@ -111,10 +111,12 @@ private:
   proc::MapProcedureLeg buildApproachLegEntry(const map::MapAirport& airport);
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
 
+  /* See comments in postProcessLegs about the steps below */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
   void processLegs(proc::MapProcedureLegs& legs);
   void processLegErrors(proc::MapProcedureLegs& legs);
   void processAltRestrictions(proc::MapProcedureLegs& procedure);
+  void processLegsFafAndFacf(proc::MapProcedureLegs& legs);
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
   void processCourseInterceptLegs(proc::MapProcedureLegs& legs);
@@ -155,6 +157,9 @@ private:
                      const QString& runway, float distance, int size);
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                          const QString& suffix, const QString& runway, float distance, int size, bool transition);
+
+  /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
+   * position if no runway ends were found */
   void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern or matches exactly */

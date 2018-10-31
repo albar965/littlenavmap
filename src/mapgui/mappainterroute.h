@@ -66,7 +66,10 @@ public:
 private:
   struct DrawText
   {
+    /* Line for text placement */
     atools::geo::Line line;
+
+    /* Draw distance and/or course information */
     bool distance, course;
   };
 
@@ -101,15 +104,15 @@ private:
                            const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void paintProcedureSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
-                             int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview,
-                             bool draw);
+                             int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines, bool noText,
+                             bool preview, bool draw);
 
   void paintTopOfDescentAndClimb(const PaintContext *context);
 
-  QLineF paintProcedureTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
-                            QPointF intersectPoint, bool draw);
-  void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
-                         const proc::MapProcedureLeg& leg, bool draw);
+  QLineF paintProcedureTurn(QVector<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg,
+                            QPainter *painter, const QPointF& intersectPoint, bool draw);
+  void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QVector<QLineF>& lastLines, QPainter *painter,
+                         QLineF line, const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Waypoint Underlays */
   void paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg, int x, int y, int size);

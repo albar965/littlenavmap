@@ -143,7 +143,9 @@ enum ProcedureLegType
   HEADING_TO_RADIAL_TERMINATION,
 
   DIRECT_TO_RUNWAY, /* Artifical last segment inserted for first leg of departure (similar to IF) */
-  CIRCLE_TO_LAND, /* Artifical last segment inserted if approach does not contain a runway end and is a CTL */
+  CIRCLE_TO_LAND, /* Artifical last segment inserted if approach does not contain a runway end and is a CTL
+                   *  Points for airport center */
+  STRAIGHT_IN, /* Artifical last segment inserted from MAP to runway */
   START_OF_PROCEDURE, /* Artifical first point if procedures do not start with an initial fix
                        *  or with a track, heading or course to fix having length 0 */
   VECTORS /* Fills a gap between manual segments and an initial fix */
@@ -299,7 +301,8 @@ struct MapProcedureLeg
 
   bool missed, flyover, trueCourse,
        intercept, /* Leg was modfied by a previous intercept */
-       disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
+       disabled, /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */
+       malteseCross; /* Draw maltese cross for either FAF or FACF depending on ILS altitude restriction */
 
   bool isValid() const
   {
@@ -374,6 +377,11 @@ struct MapProcedureLeg
     return type == proc::CIRCLE_TO_LAND;
   }
 
+  bool isStraightIn() const
+  {
+    return type == proc::STRAIGHT_IN;
+  }
+
   bool isVectors() const
   {
     return type == proc::VECTORS;
@@ -425,7 +433,7 @@ struct MapProcedureLegs
 
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
-       circleToLand /* Runway is not part of procedure and was added internally */;
+       circleToLand; /* Runway is not part of procedure and was added internally */
 
   bool isTypeIls() const
   {

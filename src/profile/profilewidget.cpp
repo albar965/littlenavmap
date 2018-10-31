@@ -725,7 +725,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       const proc::MapAltRestriction& restriction = altitudeLegs.at(routeIndex).getRestriction();
 
-      if(restriction.isValid())
+      if(restriction.isValid() && restriction.descriptor != proc::MapAltRestriction::ILS_AT &&
+         restriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)
       {
         // Use 5 NM width and minimum of 10 pix and maximum of 40 pix
         int rectWidth = atools::roundToInt(std::min(std::max(5.f * horizontalScale, 10.f), 40.f));
@@ -746,15 +747,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           painter.drawLine(QPoint(wpx, y1), altLegs.at(routeIndex).last());
 
           if(descr == proc::MapAltRestriction::AT_OR_ABOVE ||
-             descr == proc::MapAltRestriction::AT ||
-             descr == proc::MapAltRestriction::ILS_AT ||
-             descr == proc::MapAltRestriction::ILS_AT_OR_ABOVE)
+             descr == proc::MapAltRestriction::AT)
             // Draw diagonal pattern rectancle above
             painter.fillRect(x11, y1, rectWidth, rectHeight, diagPatternBrush);
 
           if(descr == proc::MapAltRestriction::AT_OR_BELOW ||
-             descr == proc::MapAltRestriction::AT ||
-             descr == proc::MapAltRestriction::ILS_AT)
+             descr == proc::MapAltRestriction::AT)
             // Draw diagonal pattern rectancle below
             painter.fillRect(x11, y1 - rectHeight, rectWidth, rectHeight, diagPatternBrush);
 
@@ -817,7 +815,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                         Qt::RoundJoin));
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
-      if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand() /*&& !route.at(i).getProcedureLeg().isVectors()*/)
+      if(i > 0 && !route.at(i).getProcedureLeg().isCircleToLand() &&
+         !route.at(i).getProcedureLeg().isStraightIn() /*&& !route.at(i).getProcedureLeg().isVectors()*/)
         painter.drawPolyline(altLegs.at(i));
     }
 
@@ -848,7 +847,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         painter.setPen(altitudeLegs.at(i).isAnyProcedure() ? procedurePen : flightplanPen);
 
-        if(route.at(i).getProcedureLeg().isCircleToLand())
+        if(route.at(i).getProcedureLeg().isCircleToLand() || route.at(i).getProcedureLeg().isStraightIn())
           mapcolors::adjustPenForCircleToLand(&painter);
         // else if(route.at(i).getProcedureLeg().isVectors())
         // mapcolors::adjustPenForVectors(&painter);
@@ -865,7 +864,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      if(route.at(activeRouteLeg).getProcedureLeg().isCircleToLand())
+      if(route.at(activeRouteLeg).getProcedureLeg().isCircleToLand() ||
+         route.at(activeRouteLeg).getProcedureLeg().isStraightIn())
         mapcolors::adjustPenForCircleToLand(&painter);
       // else if(route.at(activeRouteLeg).getProcedureLeg().isVectors())
       // mapcolors::adjustPenForVectors(&painter);
@@ -919,7 +919,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
           symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, leg.getProcedureLeg().flyover,
-                                           leg.getProcedureLeg().isFinalApproachFix());
+                                           leg.getProcedureLeg().malteseCross);
 
         // Labels ========================================================
         int symytxt = std::min(symPt.y() + 14, h);
@@ -960,7 +960,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
           symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, leg.getProcedureLeg().flyover,
-                                           leg.getProcedureLeg().isFinalApproachFix());
+                                           leg.getProcedureLeg().malteseCross);
 
         // Labels ========================================================
         int symytxt = std::min(symPt.y() + 14, h);

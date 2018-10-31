@@ -377,7 +377,10 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
-  QLineF lastLine, lastActiveLine;
+
+  // Keep a stack of last painted geometry since some functions need access back into the history
+  QVector<QLineF> lastLines({QLineF()});
+  QLineF lastActiveLine;
 
   painter->setPen(QPen(mapcolors::routeProcedureOutlineColor, outerlinewidth,
                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -385,11 +388,11 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // Do not draw background for passed legs but calculate lastLine
     bool draw = (i >= passedProcLeg) || !activeValid || preview;
-    if(legs.at(i).isCircleToLand() /* || legs.at(i).isVectors()*/)
+    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() /* || legs.at(i).isVectors()*/)
       // Do not draw outline for circle-to-land approach legs
       draw = false;
 
-    paintProcedureSegment(context, legs, i, lastLine, nullptr, true /* no text */, preview, draw);
+    paintProcedureSegment(context, legs, i, lastLines, nullptr, true /* no text */, preview, draw);
   }
 
   QPen missedPen(color, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
@@ -400,7 +403,8 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   QPen apprActivePen(od.getFlightplanActiveSegmentColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   QPen routePassedPen(od.getFlightplanPassedSegmentColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-  lastLine = QLineF();
+  lastLines.clear();
+  lastLines.append(QLineF());
   QVector<DrawText> drawTextLines;
   drawTextLines.fill({Line(), false, false}, legs.size());
 
@@ -427,29 +431,19 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
     if(i == activeProcLeg)
       // Remember for drawing the active one
-      lastActiveLine = lastLine;
+      lastActiveLine = lastLines.last();
 
-    if(legs.at(i).isCircleToLand())
+    if(!preview && activeValid && activeProcLeg == i)
+      // Use pen for active leg
+      painter->setPen(legs.at(i).isMissed() ? missedActivePen : apprActivePen);
+
+    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn())
+      // Use dashed line for CTL or straight in
       mapcolors::adjustPenForCircleToLand(painter);
     // else if(legs.at(i).isVectors())
     // mapcolors::adjustPenForVectors(painter);
 
-    paintProcedureSegment(context, legs, i, lastLine, &drawTextLines, noText, preview, true /* draw */);
-  }
-
-  // Paint active leg if in range for this procedure
-  if(!preview && activeValid && activeProcLeg >= 0 && activeProcLeg < legs.size())
-  {
-    QPen pen = legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen;
-    painter->setPen(pen);
-
-    if(legs.at(activeProcLeg).isCircleToLand())
-      mapcolors::adjustPenForCircleToLand(painter);
-    // else if(legs.at(activeProcLeg).isVectors())
-    // mapcolors::adjustPenForVectors(painter);
-
-    paintProcedureSegment(context, legs, activeProcLeg, lastActiveLine, &drawTextLines, context->drawFast, preview,
-                          true /* draw */);
+    paintProcedureSegment(context, legs, i, lastLines, &drawTextLines, noText, preview, true /* draw */);
   }
 
   // Draw text along lines only on low zoom factors ========
@@ -534,7 +528,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 }
 
 void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
-                                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
+                                            int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines,
                                             bool noText, bool preview, bool draw)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
@@ -560,7 +554,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
   if(leg.type == proc::INITIAL_FIX)
   {
     // Nothing to do here
-    lastLine = line;
+    lastLines.append(line);
     return;
   }
 
@@ -569,7 +563,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
      !(leg.mapType & proc::PROCEDURE_DEPARTURE))
   {
     // Nothing to do here
-    lastLine = line;
+    lastLines.append(line);
     return;
   }
 
@@ -587,12 +581,12 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
       // QLineF simpleLine(lastLine.p2(), line.p1());
       if(draw)
       {
-        if(!lastLine.p2().isNull() && !line.p1().isNull())
-          drawLine(painter, lastLine.p2(), line.p1());
+        if(!lastLines.last().p2().isNull() && !line.p1().isNull())
+          drawLine(painter, lastLines.last().p2(), line.p1());
         if(!line.isNull())
           drawLine(painter, line);
       }
-      lastLine = line;
+      lastLines.append(line);
 
       if(drawTextLines != nullptr)
         // Disable all drawing
@@ -620,14 +614,14 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
     {
       if(draw)
         drawLine(painter, line);
-      lastLine = line;
+      lastLines.append(line);
 
       if(drawTextLines != nullptr)
         // Can draw a label along the line
         (*drawTextLines)[index] = {leg.line, showDistance, true};
     }
 
-    lastLine = line;
+    lastLines.append(line);
   }
   // ===========================================================
   else if(contains(leg.type, {proc::COURSE_TO_ALTITUDE,
@@ -643,25 +637,30 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::COURSE_TO_INTERCEPT,
                               proc::HEADING_TO_INTERCEPT}))
   {
-    if(contains(leg.turnDirection, {"R", "L" /*, "B"*/}) &&
+    if(contains(leg.turnDirection, {"R", "L"}) &&
        prevLeg != nullptr && prevLeg->type != proc::INITIAL_FIX && prevLeg->type != proc::START_OF_PROCEDURE)
     {
-      float lineDist = static_cast<float>(QLineF(lastLine.p2(), line.p1()).length());
-      if(!lastLine.p2().isNull() && lineDist > 2)
+      float lineDist = static_cast<float>(QLineF(lastLines.last().p2(), line.p1()).length());
+      if(!lastLines.last().p2().isNull() && lineDist > 2)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
-        paintProcedureBow(prevLeg, lastLine, painter, line, leg, draw);
+        paintProcedureBow(prevLeg, lastLines, painter, line, leg, intersectPoint, draw);
 
         if(drawTextLines != nullptr)
-          // Can draw a label along the line with course but not distance
-          (*drawTextLines)[index] = {leg.line, false, true};
+        {
+          if(leg.interceptPos.isValid())
+            (*drawTextLines)[index] = {Line(leg.interceptPos, leg.line.getPos2()), false, true};
+          else
+            // Can draw a label along the line with course but not distance
+            (*drawTextLines)[index] = {leg.line, false, true};
+        }
       }
       else
       {
         // Lines are connected but a turn direction is given
         // Draw a small arc if a turn direction is given
 
-        QLineF nextLine = paintProcedureTurn(lastLine, line, leg, painter, intersectPoint, draw);
+        QLineF nextLine = paintProcedureTurn(lastLines, line, leg, painter, intersectPoint, draw);
 
         Pos p1 = sToW(nextLine.p1());
         Pos p2 = sToW(nextLine.p2());
@@ -688,7 +687,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
           drawLine(painter, line.p1(), intersectPoint);
           drawLine(painter, intersectPoint, line.p2());
         }
-        lastLine = QLineF(intersectPoint, line.p2());
+        lastLines.append(QLineF(intersectPoint, line.p2()));
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
@@ -698,16 +697,16 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
       {
         if(draw)
         {
-          if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
+          if(!lastLines.last().p2().isNull() && QLineF(lastLines.last().p2(), line.p1()).length() > 2)
           {
-            if(!(prevLeg != nullptr && prevLeg->isCircleToLand() && leg.isMissed()))
+            if(!(prevLeg != nullptr && (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) && leg.isMissed()))
               // Close any gaps in the lines but not for circle-to-land legs
-              drawLine(painter, lastLine.p2(), line.p1());
+              drawLine(painter, lastLines.last().p2(), line.p1());
           }
 
           drawLine(painter, line);
         }
-        lastLine = line;
+        lastLines.append(line);
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
@@ -723,11 +722,12 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
                               proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                               proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
                               proc::DIRECT_TO_RUNWAY,
-                              proc::CIRCLE_TO_LAND}))
+                              proc::CIRCLE_TO_LAND,
+                              proc::STRAIGHT_IN}))
   {
     if(draw)
       drawLine(painter, line);
-    lastLine = line;
+    lastLines.append(line);
 
     if(drawTextLines != nullptr)
       // Can draw a label along the line
@@ -791,7 +791,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
     if(draw)
       paintProcedureTurnWithText(painter, static_cast<float>(pc.x()), static_cast<float>(pc.y()),
                                  trueCourse, leg.distance,
-                                 leg.turnDirection == "L", &lastLine, text,
+                                 leg.turnDirection == "L", &lastLines.last(), text,
                                  leg.missed ? mapcolors::routeProcedureMissedTextColor : mapcolors::
                                  routeProcedureTextColor,
                                  mapcolors::routeTextBackgroundColor);
@@ -805,29 +805,65 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
   }
 }
 
-void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
-                                        QLineF line, const proc::MapProcedureLeg& leg, bool draw)
+void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QVector<QLineF>& lastLines,
+                                        QPainter *painter,
+                                        QLineF line, const proc::MapProcedureLeg& leg, const QPointF& intersectPoint,
+                                        bool draw)
 {
   if(!prevLeg->line.getPos2().isValid() || !leg.line.getPos1().isValid())
     return;
 
-  QLineF lineDraw(line.p2(), line.p1());
+  bool firstMissed = !prevLeg->isMissed() && leg.isMissed() && (prevLeg->isCircleToLand() || prevLeg->isStraightIn());
+  Pos prevPos;
+  QPointF lastP1, lastP2;
+  if(firstMissed)
+  {
+    // This is the first missed approach leg after a CTL or straight in
+    // Adjust geometry so that missed begins at the MAP
+    prevPos = prevLeg->line.getPos1();
 
-  // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
-  float oneNmPixel = scale->getPixelForNm(0.95f);
-  if(lineDraw.length() > oneNmPixel * 2.f)
-    lineDraw.setLength(lineDraw.length() - oneNmPixel);
-  lineDraw.setPoints(lineDraw.p2(), lineDraw.p1());
+    if(lastLines.size() >= 2)
+    {
+      lastP1 = lastLines.at(lastLines.size() - 2).p1();
+      lastP2 = lastLines.at(lastLines.size() - 2).p2();
+    }
+  }
+  else
+  {
+    prevPos = prevLeg->line.getPos2();
+    lastP1 = lastLines.last().p1();
+    lastP2 = lastLines.last().p2();
+  }
+
+  Pos nextPos;
+  QLineF lineDraw;
+  if(leg.interceptPos.isValid() && !intersectPoint.isNull())
+  {
+    // Next leg is a intercept leg - adjust geometry
+    nextPos = leg.interceptPos;
+    lineDraw = QLineF(line.p2(), intersectPoint);
+  }
+  else
+  {
+    nextPos = leg.line.getPos1();
+    lineDraw = QLineF(line.p2(), line.p1());
+  }
 
   // Calculate distance to control points
-  float dist = prevLeg->line.getPos2().distanceMeterToRhumb(leg.line.getPos1());
+  float dist = prevPos.distanceMeterToRhumb(nextPos);
 
   if(dist < atools::geo::Pos::INVALID_VALUE)
   {
+    // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
+    float oneNmPixel = scale->getPixelForNm(0.95f);
+    if(lineDraw.length() > oneNmPixel * 2.f)
+      lineDraw.setLength(lineDraw.length() - oneNmPixel);
+    lineDraw.setPoints(lineDraw.p2(), lineDraw.p1());
+
     dist = dist * 3 / 4;
 
     // Calculate bezier control points by extending the last and next line
-    QLineF ctrl1(lastLine.p1(), lastLine.p2());
+    QLineF ctrl1(lastP1, lastP2);
     ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
     QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
     ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
@@ -836,22 +872,24 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QL
     if(draw)
     {
       QPainterPath path;
-      path.moveTo(lastLine.p2());
+      path.moveTo(lastP2);
       path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
       painter->drawPath(path);
 
       drawLine(painter, lineDraw);
     }
-    lastLine = lineDraw;
+    lastLines.append(lineDraw);
   }
 }
 
-QLineF MapPainterRoute::paintProcedureTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg,
-                                           QPainter *painter, QPointF intersectPoint, bool draw)
+QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg,
+                                           QPainter *painter, const QPointF& intersectPoint, bool draw)
 {
   QPointF endPos = line.p2();
   if(leg.interceptPos.isValid())
     endPos = intersectPoint;
+
+  const QLineF& lastLine = lastLines.last();
 
   // The returned value represents the number of degrees you need to add to this
   // line to make it have the same angle as the given line, going counter-clockwise.
@@ -891,7 +929,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QLineF& lastLine, QLineF line, const 
       drawLine(painter, endPos, line.p2());
   }
 
-  lastLine = nextLine.toLine();
+  lastLines.append(nextLine.toLine());
 
   return nextLine;
 }
@@ -1309,7 +1347,7 @@ void MapPainterRoute::paintProcedureUnderlay(const PaintContext *context, const 
 {
   // Ring to indicate fly over
   // Maltese cross to indicate FAF on the map
-  symbolPainter->drawProcedureUnderlay(context->painter, x, y, size, leg.flyover, leg.isFinalApproachFix());
+  symbolPainter->drawProcedureUnderlay(context->painter, x, y, size, leg.flyover, leg.malteseCross);
 }
 
 /* Paint user defined waypoint */

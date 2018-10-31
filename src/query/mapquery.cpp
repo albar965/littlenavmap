@@ -1001,13 +1001,16 @@ void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, con
                                        const map::MapAirport& airport, bool navData)
 {
   AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
-
-  QString bestRunway = map::runwayBestFit(name, aquery->getRunwayNames(airport.id));
-
   map::MapSearchResult result;
-  if(!bestRunway.isEmpty())
-    getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
-                        navData /* airport or runway from nav database */);
+
+  if(!name.isEmpty())
+  {
+    QString bestRunway = map::runwayBestFit(name, aquery->getRunwayNames(airport.id));
+
+    if(!bestRunway.isEmpty())
+      getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
+                          navData /* airport or runway from nav database */);
+  }
 
   if(result.runwayEnds.isEmpty())
   {
@@ -1024,11 +1027,16 @@ void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, con
     end.secondary = false;
     result.runwayEnds.append(end);
 
+#ifdef DEBUG_INFORMATION
     qWarning() << "Created runway dummy" << name << "for airport" << airport.ident;
+#endif
   }
+#ifdef DEBUG_INFORMATION
   else if(result.runwayEnds.first().name != name)
     qWarning() << "Found runway" << result.runwayEnds.first().name
                << "as replacement for" << name << "airport" << airport.ident;
+#endif
+
   runwayEnds = result.runwayEnds;
 }
 

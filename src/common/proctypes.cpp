@@ -122,6 +122,7 @@ void initTranslateableTexts()
 
       {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
       {CIRCLE_TO_LAND, QObject::tr("Circle to land")},
+      {STRAIGHT_IN, QObject::tr("Straight in")},
       {START_OF_PROCEDURE, QObject::tr("Start of procedure")},
       {VECTORS, QObject::tr("Vectors")}
     });
@@ -154,6 +155,7 @@ void initTranslateableTexts()
 
       {DIRECT_TO_RUNWAY, QObject::tr("")},
       {CIRCLE_TO_LAND, QObject::tr("")},
+      {STRAIGHT_IN, QObject::tr("")},
       {START_OF_PROCEDURE, QObject::tr("")},
       {VECTORS, QObject::tr("")}
     });
@@ -187,6 +189,7 @@ const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
 
     {"RX", DIRECT_TO_RUNWAY},
     {"CX", CIRCLE_TO_LAND},
+    {"TX", STRAIGHT_IN},
     {"SX", START_OF_PROCEDURE},
     {"VX", VECTORS}
   });
@@ -219,6 +222,7 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
 
     {DIRECT_TO_RUNWAY, "RX"},
     {CIRCLE_TO_LAND, "CX"},
+    {STRAIGHT_IN, "TX"},
     {START_OF_PROCEDURE, "SX"},
     {VECTORS, "VX"}
   });
@@ -315,10 +319,8 @@ QString altRestrictionText(const MapAltRestriction& restriction)
   switch(restriction.descriptor)
   {
     case proc::MapAltRestriction::ILS_AT:
-      return QObject::tr("ILS GS at %1").arg(Unit::altFeet(restriction.alt1));
-
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      return QObject::tr("ILS GS at or above %1").arg(Unit::altFeet(restriction.alt1));
+      return QObject::tr("ILS GS %1").arg(Unit::altFeet(restriction.alt1));
 
     case proc::MapAltRestriction::NONE:
       return QString();
@@ -346,11 +348,8 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
   switch(altRestriction.descriptor)
   {
     case proc::MapAltRestriction::ILS_AT:
-      retval = QObject::tr("GS") + Unit::altFeet(altRestriction.alt1, true, true);
-      break;
-
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      retval = QObject::tr("GS A") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("GS") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::NONE:
@@ -382,10 +381,8 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction)
   switch(altRestriction.descriptor)
   {
     case proc::MapAltRestriction::ILS_AT:
-      retval = QObject::tr("GS ") + Unit::altFeet(altRestriction.alt1, false, false);
-      break;
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      retval = QObject::tr("GS A ") + Unit::altFeet(altRestriction.alt1, false, false);
+      retval = QObject::tr("GS ") + Unit::altFeet(altRestriction.alt1, false, false);
       break;
     case proc::MapAltRestriction::NONE:
       break;
