@@ -371,19 +371,6 @@ A restart is required for the settings to take effect.</string>
          </layout>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
-         <property name="toolTip">
-          <string>Does not apply to the flight plan loaded after startup.</string>
-         </property>
-         <property name="text">
-          <string>Center &amp;flight plan after loading</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="6" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox_8">
          <property name="title">
@@ -585,20 +572,6 @@ A restart is required for the settings to take effect.</string>
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
-         <property name="toolTip">
-          <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
-The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
-         </property>
-         <property name="text">
-          <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
        <item row="8" column="0">
@@ -2854,7 +2827,7 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
        <item row="7" column="0">
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>Saving and Export</string>
+          <string>Loading, Saving and Export</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <property name="spacing">
@@ -2873,6 +2846,47 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
            <number>2</number>
           </property>
           <item>
+           <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
+            <property name="toolTip">
+             <string>Does not apply to the flight plan loaded after startup.</string>
+            </property>
+            <property name="text">
+             <string>Center &amp;flight plan on map after loading</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
+            <property name="toolTip">
+             <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
+The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxOptionsRouteShortName">
+            <property name="text">
+             <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX or P3D flight plans instead of the long name</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_10">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="checkBoxOptionsRouteExportUserWpt">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This saves all waypoints as user defined waypoints when exporting flight plans for a Garmin unit. &lt;br/&gt;This avoids locked waypoints due to different AIRAC cycles and affects the export functions below: &lt;/p&gt;
@@ -2886,13 +2900,6 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
             </property>
             <property name="text">
              <string>&amp;Export navaids and airports as user defined waypoints for Garmin GTN and GNS to avoid locked waypoints</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBoxOptionsRouteShortName">
-            <property name="text">
-             <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX or P3D flight plans instead of the long name</string>
             </property>
            </widget>
           </item>
@@ -3031,15 +3038,15 @@ when transitioning from airport to airway.</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="Line" name="line_7">
+          <item row="2" column="0" colspan="3">
+           <widget class="Line" name="line_9">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="Line" name="line_9">
+          <item row="4" column="0" colspan="3">
+           <widget class="Line" name="line_7">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -4104,9 +4111,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>comboBoxOptionsStartupUpdateRate</tabstop>
   <tabstop>comboBoxOptionsStartupUpdateChannels</tabstop>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
-  <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
-  <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
   <tabstop>spinBoxOptionsGuiInfoText</tabstop>
@@ -4169,7 +4174,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
-  <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
   <tabstop>checkBoxOptionsRouteShortName</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
