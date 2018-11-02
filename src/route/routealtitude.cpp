@@ -369,8 +369,8 @@ void RouteAltitude::simplyfyRouteAltitudes()
   // Flatten descent legs starting from TOD to destination
   if(legIndexTopOfDescent < map::INVALID_INDEX_VALUE && legIndexTopOfDescent >= 0)
   {
-    // Use eight iterations
-    for(int i = 0; i < 8; i++)
+    // Use several iterations
+    for(int i = 0; i < 16; i++)
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "=================================================";
@@ -382,10 +382,10 @@ void RouteAltitude::simplyfyRouteAltitudes()
   else
     qWarning() << Q_FUNC_INFO;
 
-  // Flatten departute legs starting from departure to TOC
+  // Flatten departure legs starting from departure to TOC
   if(legIndexTopOfClimb < map::INVALID_INDEX_VALUE && legIndexTopOfClimb >= 0)
   {
-    // Use eight iterations
+    // Use several iterations
     for(int i = 0; i < 8; i++)
     {
    #ifdef DEBUG_INFORMATION
@@ -412,20 +412,15 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   }
 
   RouteAltitudeLeg *midAlt = &(*this)[index];
-
   RouteAltitudeLeg *leftAlt = &(*this)[index - 1];
   RouteAltitudeLeg *rightAlt = &(*this)[index + 1];
   RouteAltitudeLeg *rightSkippedAlt = nullptr, *leftSkippedAlt = nullptr;
-  proc::MapAltRestriction restriction = midAlt->restriction;
 
-  if(atools::almostEqual(midAlt->getDistanceFromStart(), leftAlt->getDistanceFromStart()) && index >= 2)
+  // Check if left neighbor has zero distance to this one, i.e. left.x2 = mid.x1 = mid.x2
+  if(midAlt->isPoint() && index >= 2)
   {
     if(leftAlt->geometry.size() <= 2)
     {
-      if(!restriction.isValid() && leftAlt->restriction.isValid())
-        // Take the altitude restriction from one of the duplicate points
-        restriction = leftAlt->restriction;
-
       // This duplicate leg with the same postion (IAF, etc.) will be skipped
       leftSkippedAlt = &(*this)[index - 1];
 
@@ -434,14 +429,11 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     }
   }
 
-  if(atools::almostEqual(midAlt->getDistanceFromStart(), rightAlt->getDistanceFromStart()) && index < size() - 2)
+  // Check if the right neighbor has zero distance to this one, i.e. mid.x2 = right.x1 = right.x2
+  if(rightAlt->isPoint() && index < size() - 2)
   {
     if(rightAlt->geometry.size() <= 2)
     {
-      if(!restriction.isValid() && rightAlt->restriction.isValid())
-        // Take the altitude restriction from one of the duplicate points
-        restriction = rightAlt->restriction;
-
       // This duplicate leg with the same postion (IAF, etc.) will be skipped
       rightSkippedAlt = &(*this)[index + 1];
 
@@ -490,30 +482,29 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     qDebug() << Q_FUNC_INFO << "old" << midAlt->y2() << "new" << mid.y();
 #endif
 
+    // Apply limitations for skipped (close) waypoints
+    float newAlt = adjustAltitudeForRestriction(static_cast<float>(mid.y()), midAlt->restriction);
+    if(rightSkippedAlt != nullptr)
+      newAlt = adjustAltitudeForRestriction(newAlt, rightSkippedAlt->restriction);
+    if(leftSkippedAlt != nullptr)
+      newAlt = adjustAltitudeForRestriction(newAlt, leftSkippedAlt->restriction);
+
     // Change middle leg and adjust altitude
-    if(midAlt->dx() < 0.01f)
-    {
+    if(midAlt->isPoint())
       // Middle leg is point
-      midAlt->setAlt(static_cast<float>(mid.y()));
-      if(!midAlt->isEmpty())
-        midAlt->setAlt(adjustAltitudeForRestriction(midAlt->y2(), restriction));
-    }
+      midAlt->setAlt(newAlt);
     else
-    {
-      midAlt->setY2(static_cast<float>(mid.y()));
-      if(!midAlt->isEmpty())
-        midAlt->setY2(adjustAltitudeForRestriction(midAlt->y2(), restriction));
-    }
+      midAlt->setY2(newAlt);
 
     // Also change skipped right neighbor
     if(rightSkippedAlt != nullptr)
-      rightSkippedAlt->setAlt(midAlt->y2());
+      rightSkippedAlt->setAlt(newAlt);
 
-    rightAlt->setY1(midAlt->y2());
+    rightAlt->setY1(newAlt);
 
     // Also change skipped left neighbor
     if(leftSkippedAlt != nullptr)
-      leftSkippedAlt->setY2(midAlt->y2());
+      leftSkippedAlt->setY2(newAlt);
   }
 }
 
@@ -669,13 +660,20 @@ void RouteAltitude::calculateDeparture()
 
       // Avoid climbing above any below/at/between restrictions
       float maxAlt = findDepartureMaxAltitude(i);
+      bool maxAltRestricts = false;
       if(maxAlt < map::INVALID_ALTITUDE_VALUE)
+      {
         alt.setY2(std::min(alt.y2(), maxAlt));
+
+        // Avoid climbing above next limiting restriction - no TOC yet
+        maxAltRestricts = maxAlt < cruiseAltitide;
+      }
 
       // Never lower than last leg
       alt.setY2(std::max(alt.y2(), lastLegAlt));
 
-      if(i > 0 && uncorrectedAlt > cruiseAltitide && !(distanceTopOfClimb < map::INVALID_ALTITUDE_VALUE))
+      if(i > 0 && uncorrectedAlt > cruiseAltitide && !(distanceTopOfClimb < map::INVALID_ALTITUDE_VALUE) &&
+         !maxAltRestricts)
       {
         // Reached TOC - calculate distance
         distanceTopOfClimb = distanceForAltitude(alt.geometry.first(), QPointF(alt.geometry.last().x(), uncorrectedAlt),
@@ -757,10 +755,10 @@ void RouteAltitude::calculateArrival()
 
       // Check the limits to the left - either cruise or an altitude restriction
       // Set to true if an altitude restriction is limiting and postone calculation of the TOD
-      bool noTod = maxAlt < map::INVALID_ALTITUDE_VALUE && maxAlt < cruiseAltitide;
+      bool altitudeRestricts = maxAlt < map::INVALID_ALTITUDE_VALUE && maxAlt <= cruiseAltitide;
 
-      if(!noTod && !(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) && uncorrectedAltitude > cruiseAltitide &&
-         i + 1 < size())
+      if(!altitudeRestricts && !(distanceTopOfDescent < map::INVALID_ALTITUDE_VALUE) &&
+         uncorrectedAltitude > cruiseAltitide && i + 1 < size())
       {
         if(at(i + 1).isEmpty())
           // Stepped into the dummies after arrival runway - bail out
@@ -828,8 +826,14 @@ float RouteAltitude::getDestinationAltitude() const
 {
   const RouteLeg& destLeg = route->at(route->getDestinationLegIndex());
   if(destLeg.isAnyProcedure() && destLeg.getProcedureLegAltRestr().isValid())
-    // Use restriction from procedure - field elevation + 50 ft
-    return destLeg.getProcedureLegAltRestr().alt1;
+  {
+    if(destLeg.getRunwayEnd().isValid())
+      // Use restriction from procedure - field elevation + 50 ft
+      return destLeg.getProcedureLegAltRestr().alt1;
+    else
+      // Not valid - start at cruise at a waypoint
+      return adjustAltitudeForRestriction(cruiseAltitide, destLeg.getProcedureLegAltRestr());
+  }
   else if(destLeg.getAirport().isValid())
     // Airport altitude
     return destLeg.getPosition().getAltitude();
@@ -852,8 +856,14 @@ float RouteAltitude::departureAltitude() const
 {
   const RouteLeg& startLeg = route->at(route->getDepartureLegIndex());
   if(startLeg.isAnyProcedure() && startLeg.getProcedureLegAltRestr().isValid())
-    // Use restriction from procedure - field elevation + 50 ft
-    return startLeg.getProcedureLegAltRestr().alt1;
+  {
+    if(startLeg.getRunwayEnd().isValid())
+      // Use restriction from procedure - airport dummy or runway - field elevation + 50 ft
+      return startLeg.getProcedureLegAltRestr().alt1;
+    else
+      // Not valid - start at cruise at a waypoint
+      return adjustAltitudeForRestriction(cruiseAltitide, startLeg.getProcedureLegAltRestr());
+  }
   else if(startLeg.getAirport().isValid())
     // Airport altitude
     return startLeg.getPosition().getAltitude();

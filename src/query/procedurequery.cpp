@@ -2339,10 +2339,17 @@ void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure)
 {
   if(procedure.mapType & proc::PROCEDURE_APPROACH)
   {
+    bool force = false;
     for(MapProcedureLeg& leg : procedure.approachLegs)
-      // Force lowest resriction altitude for FAF and FACF
-      leg.altRestriction.forceFinal = (leg.isFinalApproachCourseFix() || leg.isFinalApproachFix()) && !leg.isMissed() &&
-                                      leg.mapType == proc::PROCEDURE_APPROACH && leg.altRestriction.isValid();
+    {
+      force |= (leg.isFinalApproachCourseFix() || leg.isFinalApproachFix()) && !leg.isMissed() &&
+               leg.mapType == proc::PROCEDURE_APPROACH && leg.altRestriction.isValid() &&
+               contains(leg.altRestriction.descriptor, {proc::MapAltRestriction::AT,
+                                                        proc::MapAltRestriction::AT_OR_ABOVE});
+
+      // Force lowest restriction altitude for FAF and FACF
+      leg.altRestriction.forceFinal = force;
+    }
   }
 }
 

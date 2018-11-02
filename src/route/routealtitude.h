@@ -207,7 +207,7 @@ private:
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
   void adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const;
 
-  /* Find the maximum allowed altitide for approach/STAR and SID beginning from index */
+  /* Find the maximum allowed altitude for approach/STAR and SID beginning from index */
   float findApproachMaxAltitude(int index) const;
   float findDepartureMaxAltitude(int index) const;
 

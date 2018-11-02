@@ -49,6 +49,35 @@ void RouteAltitudeLeg::setAlt(float alt)
     pt.setY(alt);
 }
 
+void RouteAltitudeLeg::setY1(float y)
+{
+  if(isPoint())
+    setAlt(y);
+  else if(!geometry.isEmpty())
+    geometry.first().setY(y);
+}
+
+void RouteAltitudeLeg::setY2(float y)
+{
+  if(isPoint())
+    setAlt(y);
+  else if(!geometry.isEmpty())
+    geometry.last().setY(y);
+}
+
+bool RouteAltitudeLeg::isPoint() const
+{
+  return dx() < atools::geo::Pos::POS_EPSILON_5M;
+}
+
+float RouteAltitudeLeg::dx() const
+{
+  if(!geometry.isEmpty())
+    return static_cast<float>(geometry.last().x() - geometry.first().x());
+  else
+    return map::INVALID_DISTANCE_VALUE;
+}
+
 QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
 {
   out << obj.getIdent()

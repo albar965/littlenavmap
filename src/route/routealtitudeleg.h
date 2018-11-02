@@ -126,11 +126,7 @@ private:
     return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.first().y());
   }
 
-  void setY1(float y)
-  {
-    if(!geometry.isEmpty())
-      geometry.first().setY(y);
-  }
+  void setY1(float y);
 
   /* Waypoint of this  leg */
   float y2() const
@@ -138,20 +134,24 @@ private:
     return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.last().y());
   }
 
-  void setY2(float y)
+  QPointF pt1() const
   {
-    if(!geometry.isEmpty())
-      geometry.last().setY(y);
+    return geometry.isEmpty() ? QPointF() : geometry.first();
   }
 
-  /* Length of this leg */
-  float dx() const
+  QPointF pt2() const
   {
-    if(!geometry.isEmpty())
-      return static_cast<float>(geometry.last().x() - geometry.first().x());
-    else
-      return map::INVALID_DISTANCE_VALUE;
+    return geometry.isEmpty() ? QPointF() : geometry.last();
   }
+
+  /* Sets all if leg is a point */
+  void setY2(float y);
+
+  /* Length of this leg */
+  float dx() const;
+
+  /* Length is 0 */
+  bool isPoint() const;
 
   QString ident;
   QPolygonF geometry;
