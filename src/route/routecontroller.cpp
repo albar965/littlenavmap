@@ -779,7 +779,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 
   route.createRouteLegsFromFlightplan();
 
-  loadProceduresFromFlightplan(false /* quiet */);
+  loadProceduresFromFlightplan(true /* clear old procedure properties */, false /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(adjustAltitude, adjustRouteType);
 
@@ -819,35 +819,32 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 }
 
 /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
-void RouteController::loadProceduresFromFlightplan(bool quiet)
+void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet)
 {
   if(route.isEmpty())
     return;
 
+  QStringList procedureLoadingErrors;
   proc::MapProcedureLegs arrival, departure, star;
-  if(NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplan().getProperties(),
-                                                                 route.first().getAirport(),
-                                                                 route.last().getAirport(),
-                                                                 arrival, star, departure))
-  {
-    // SID/STAR with multiple runways are already assigned
+  NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplan().getProperties(),
+                                                              route.first().getAirport(),
+                                                              route.last().getAirport(),
+                                                              arrival, star, departure, procedureLoadingErrors);
+  // SID/STAR with multiple runways are already assigned
+  route.setDepartureProcedureLegs(departure);
+  route.setStarProcedureLegs(star);
+  route.setArrivalProcedureLegs(arrival);
+  route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties);
 
-    route.setDepartureProcedureLegs(departure);
-    route.setStarProcedureLegs(star);
-    route.setArrivalProcedureLegs(arrival);
-    route.updateProcedureLegs(entryBuilder);
-  }
-  else
+  if(!quiet && !procedureLoadingErrors.isEmpty())
   {
-    if(!quiet)
-    {
-      NavApp::deleteSplashScreen();
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_PROC_ERROR,
-                                                     tr("Cannot load procedures into flight plan."),
-                                                     tr("Do not &show this dialog again."));
-    }
-    return;
+    NavApp::deleteSplashScreen();
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_PROC_ERROR,
+                                                   tr("<p>Cannot load procedures into flight plan:</p><ul><li>%1</li></ul>").
+                                                   arg(procedureLoadingErrors.join("</li><li>")),
+                                                   tr("Do not &show this dialog again."));
   }
+
 }
 
 bool RouteController::loadFlightplan(const QString& filename)
@@ -987,7 +984,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     route.createRouteLegsFromFlightplan();
 
     // Load procedures and add legs
-    loadProceduresFromFlightplan(false /* quiet */);
+    loadProceduresFromFlightplan(true /* clear old procedure properties */, false /* quiet */);
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
 
@@ -1335,7 +1332,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       route.createRouteLegsFromFlightplan();
 
       // Reload procedures from properties
-      loadProceduresFromFlightplan(true /* quiet */);
+      loadProceduresFromFlightplan(true /* clear old procedure properties */, true /* quiet */);
       QGuiApplication::restoreOverrideCursor();
 
       // Remove duplicates in flight plan and route
@@ -1467,7 +1464,7 @@ void RouteController::postDatabaseLoad()
   route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
   route.createRouteLegsFromFlightplan();
-  loadProceduresFromFlightplan(false /* quiet */);
+  loadProceduresFromFlightplan(false /* clear old procedure properties */, false /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
 
@@ -1480,7 +1477,7 @@ void RouteController::postDatabaseLoad()
 
   route.updateActiveLegAndPos(true /* force update */);
   updateTableModel();
-
+  updateErrorLabel();
   NavApp::updateWindowTitle();
   routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
 }
@@ -2053,7 +2050,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   route.getFlightplan().setFileFormat(routeFileFormat);
 
   route.createRouteLegsFromFlightplan();
-  loadProceduresFromFlightplan(true /* quiet */);
+  loadProceduresFromFlightplan(true /* clear old procedure properties */, true /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
 
@@ -2557,7 +2554,7 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
     if(legs.mapType & proc::PROCEDURE_ARRIVAL)
       route.setArrivalProcedureLegs(legs);
 
-    route.updateProcedureLegs(entryBuilder);
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */);
   }
   else if(legs.mapType & proc::PROCEDURE_DEPARTURE)
   {
@@ -2572,9 +2569,9 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
 
     // Will take care of the flight plan entries too
     route.setDepartureProcedureLegs(legs);
-    route.updateProcedureLegs(entryBuilder);
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */);
   }
-
+  updateErrorLabel();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
   routeToFlightPlan();

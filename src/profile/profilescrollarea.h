@@ -161,6 +161,9 @@ private:
   void setMaxHorizZoom();
   void setMaxVertZoom();
 
+  void horizScrollBarValueChanged();
+  void vertScrollBarValueChanged();
+
   /* Scaling factor for widget - default is minimum as set in ui file */
   int horizScaleFactor = 1;
   int vertScaleFactor = 1;
@@ -177,8 +180,8 @@ private:
 
   /* Remember old values so, that the scroll bar can be adjusted to remain in position.
    *  These are the center positions of the scroll bar  */
-  double lastVertScrollPos = 0.5; /* Default left */
-  double lastHorizScrollPos = 0.5; /* Default top */
+  double lastVertScrollPos = 0.5; /* Default center */
+  double lastHorizScrollPos = 0.5; /* Default center */
 
   /* Disable changing the last scroll bar position above when resizing the widget */
   bool noLastScrollPosUpdate = false;
@@ -190,8 +193,7 @@ private:
    * Needed to correct if scrolling is limited at the boundaries. */
   int calculatedHorizScrollPos = 0;
   int calculatedVertScrollPos = 0;
-  void horizScrollBarValueChanged();
-  void vertScrollBarValueChanged();
+
 };
 
 #endif // LNM_PROFILESCROLLAREA_H

@@ -65,11 +65,11 @@ public:
 
   QVector<int> getTransitionIdsForApproach(int approachId);
 
-  bool getLegsForFlightplanProperties(const QHash<QString, QString> properties,
+  void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                       map::MapAirport departure,
                                       map::MapAirport destination,
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
-                                      proc::MapProcedureLegs& departureLegs);
+                                      proc::MapProcedureLegs& departureLegs, QStringList& errors);
 
   static QString getSidAndTransition(QHash<QString, QString>& properties);
   static QString getStarAndTransition(QHash<QString, QString>& properties);

@@ -364,7 +364,7 @@ private:
   void updateTableHeaders();
   void highlightNextWaypoint(int nearestLegIndex);
   void highlightProcedureItems();
-  void loadProceduresFromFlightplan(bool quiet);
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet);
   void updateIcons();
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);

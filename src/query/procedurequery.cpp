@@ -1845,14 +1845,15 @@ QVector<int> ProcedureQuery::getTransitionIdsForApproach(int approachId)
   return transitionIds;
 }
 
-bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
+void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                                     map::MapAirport departure,
                                                     map::MapAirport destination,
                                                     proc::MapProcedureLegs& arrivalLegs,
                                                     proc::MapProcedureLegs& starLegs,
-                                                    proc::MapProcedureLegs& departureLegs)
+                                                    proc::MapProcedureLegs& departureLegs,
+                                                    QStringList& errors)
 {
-  bool error = false;
+  errors.clear();
 
   mapQuery->getAirportNavReplace(departure);
   mapQuery->getAirportNavReplace(destination);
@@ -1870,7 +1871,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(sidApprId == -1)
     {
       qWarning() << "Loading of SID" << properties.value(pln::SIDAPPR) << "failed";
-      error = true;
+      errors.append(tr("SID %1").arg(properties.value(pln::SIDAPPR)));
     }
   }
 
@@ -1885,12 +1886,13 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(sidTransId == -1)
     {
       qWarning() << "Loading of SID transition" << properties.value(pln::SIDTRANS) << "failed";
-      error = true;
+      errors.append(tr("SID transition %1").arg(properties.value(pln::SIDTRANS)));
     }
   }
 
   // Get an approach id =================================================================
-  if(properties.contains(pln::APPROACH_ARINC) && approachIdByArincNameQuery != nullptr)
+  if(properties.contains(pln::APPROACH_ARINC) && !properties.value(pln::APPROACH_ARINC).isEmpty() &&
+     approachIdByArincNameQuery != nullptr)
   {
     // Use ARINC name which is more specific - potential source is new X-Plane FMS file
     QString arincName = properties.value(pln::APPROACH_ARINC);
@@ -1929,7 +1931,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(approachId == -1)
     {
       qWarning() << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
-      error = true;
+      errors.append(tr("Approach %1").arg(properties.value(pln::APPROACH_ARINC)));
     }
   }
   else if(properties.contains(pln::APPROACH))
@@ -1950,7 +1952,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(approachId == -1)
     {
       qWarning() << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
-      error = true;
+      errors.append(tr("Approach %1").arg(properties.value(pln::APPROACH)));
     }
   }
 
@@ -1970,7 +1972,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(transitionId == -1)
     {
       qWarning() << "Loading of transition" << properties.value(pln::TRANSITION) << "failed";
-      error = true;
+      errors.append(tr("Transition %1").arg(properties.value(pln::TRANSITION)));
     }
   }
 
@@ -1985,7 +1987,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(starId == -1)
     {
       qWarning() << "Loading of STAR " << properties.value(pln::STAR) << "failed";
-      error = true;
+      errors.append(tr("STAR %1").arg(properties.value(pln::STAR)));
     }
   }
 
@@ -2000,80 +2002,76 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(starTransId == -1)
     {
       qWarning() << "Loading of STAR transition" << properties.value(pln::STARTRANS) << "failed";
-      error = true;
+      errors.append(tr("STAR transition %1").arg(properties.value(pln::STARTRANS)));
     }
   }
 
-  if(!error) // load all or nothing in case of error
+  if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
   {
-    if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
+    const proc::MapProcedureLegs *legs = getTransitionLegs(departure, sidTransId);
+    if(legs != nullptr)
     {
-      const proc::MapProcedureLegs *legs = getTransitionLegs(departure, sidTransId);
-      if(legs != nullptr)
-      {
-        departureLegs = *legs;
-        // Assign runway to the legs copy if procedure has parallel or all runway reference
-        insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
-      }
-      else
-        qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidTransId;
+      departureLegs = *legs;
+      // Assign runway to the legs copy if procedure has parallel or all runway reference
+      insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
     }
-    else if(sidApprId != -1) // Fetch and copy SID only from cache
-    {
-      const proc::MapProcedureLegs *legs = getApproachLegs(departure, sidApprId);
-      if(legs != nullptr)
-      {
-        departureLegs = *legs;
-        // Assign runway to the legs copy if procedure has parallel or all runway reference
-        insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
-      }
-      else
-        qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidApprId;
-    }
-
-    if(transitionId != -1) // Fetch and copy transition together with approach (here from cache)
-    {
-      const proc::MapProcedureLegs *legs = getTransitionLegs(destination, transitionId);
-      if(legs != nullptr)
-        arrivalLegs = *legs;
-      else
-        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << transitionId;
-    }
-    else if(approachId != -1) // Fetch and copy approach only from cache
-    {
-      const proc::MapProcedureLegs *legs = getApproachLegs(destination, approachId);
-      if(legs != nullptr)
-        arrivalLegs = *legs;
-      else
-        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << approachId;
-    }
-
-    if(starTransId != -1)
-    {
-      const proc::MapProcedureLegs *legs = getTransitionLegs(destination, starTransId);
-      if(legs != nullptr)
-      {
-        starLegs = *legs;
-        // Assign runway if procedure has parallel or all runway reference
-        insertSidStarRunway(starLegs, properties.value(pln::STARRW));
-      }
-      else
-        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starTransId;
-    }
-    else if(starId != -1)
-    {
-      const proc::MapProcedureLegs *legs = getApproachLegs(destination, starId);
-      if(legs != nullptr)
-      {
-        starLegs = *legs;
-        // Assign runway if procedure has parallel or all runway reference
-        insertSidStarRunway(starLegs, properties.value(pln::STARRW));
-      }
-      else
-        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starId;
-    }
+    else
+      qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidTransId;
   }
-  return !error;
+  else if(sidApprId != -1) // Fetch and copy SID only from cache
+  {
+    const proc::MapProcedureLegs *legs = getApproachLegs(departure, sidApprId);
+    if(legs != nullptr)
+    {
+      departureLegs = *legs;
+      // Assign runway to the legs copy if procedure has parallel or all runway reference
+      insertSidStarRunway(departureLegs, properties.value(pln::SIDAPPRRW));
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidApprId;
+  }
+
+  if(transitionId != -1) // Fetch and copy transition together with approach (here from cache)
+  {
+    const proc::MapProcedureLegs *legs = getTransitionLegs(destination, transitionId);
+    if(legs != nullptr)
+      arrivalLegs = *legs;
+    else
+      qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << transitionId;
+  }
+  else if(approachId != -1) // Fetch and copy approach only from cache
+  {
+    const proc::MapProcedureLegs *legs = getApproachLegs(destination, approachId);
+    if(legs != nullptr)
+      arrivalLegs = *legs;
+    else
+      qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << approachId;
+  }
+
+  if(starTransId != -1)
+  {
+    const proc::MapProcedureLegs *legs = getTransitionLegs(destination, starTransId);
+    if(legs != nullptr)
+    {
+      starLegs = *legs;
+      // Assign runway if procedure has parallel or all runway reference
+      insertSidStarRunway(starLegs, properties.value(pln::STARRW));
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starTransId;
+  }
+  else if(starId != -1)
+  {
+    const proc::MapProcedureLegs *legs = getApproachLegs(destination, starId);
+    if(legs != nullptr)
+    {
+      starLegs = *legs;
+      // Assign runway if procedure has parallel or all runway reference
+      insertSidStarRunway(starLegs, properties.value(pln::STARRW));
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starId;
+  }
 }
 
 QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)

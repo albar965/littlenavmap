@@ -187,7 +187,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show the dashed heading line for user aircraft."), opts::ROSE_HEADING_LINE, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"), tr("Show the solid track line for user aircraft."), opts::ROSE_TRACK_LINE, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), opts::ROSE_TRACK_LABEL, true);
-  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Crab Angle Circle"), tr("Show the crab angle for the user aircraft as a small magenta circle."), opts::ROSE_CRAB_ANGLE, true);
+  addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Crab Angle Indicator"), tr("Show the crab angle for the user aircraft as a small magenta circle."), opts::ROSE_CRAB_ANGLE, true);
   addItem<opts::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as a small magenta line."), opts::ROSE_NEXT_WAYPOINT, true);
   /* *INDENT-ON* */
 

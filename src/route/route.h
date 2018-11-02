@@ -260,7 +260,7 @@ public:
   }
 
   /* Insert legs of procedures into flight plan and update all offsets and indexes */
-  void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
+  void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties);
 
   void removeRouteLegs();
 

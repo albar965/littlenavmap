@@ -826,7 +826,7 @@ void Route::clearFlightplanProcedureProperties(proc::MapProcedureTypes type)
   ProcedureQuery::clearFlightplanProcedureProperties(flightplan.getProperties(), type);
 }
 
-void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
+void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties)
 {
   clearProcedureLegs(proc::PROCEDURE_ALL);
 
@@ -887,7 +887,8 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
   }
 
   // Leave procedure information in the PLN file
-  clearFlightplanProcedureProperties(proc::PROCEDURE_ALL);
+  if(clearOldProcedureProperties)
+    clearFlightplanProcedureProperties(proc::PROCEDURE_ALL);
 
   ProcedureQuery::fillFlightplanProcedureProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
 }
