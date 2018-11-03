@@ -256,6 +256,10 @@ int main(int argc, char *argv[])
     qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
     qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
+    // Disable tooltip effects since these do not work well with tooltip updates while displaying
+    QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
+    QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
+
     // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application
     bool databasesErased = false;
