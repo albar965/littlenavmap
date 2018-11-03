@@ -2572,6 +2572,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Restriction:"), restrictions.first());
         }
 
+        float courseToWptTrue = map::INVALID_COURSE_VALUE;
+
         if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
         {
           QString timeStr;
@@ -2582,10 +2584,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           // Not for arc legs
           if((routeLeg.isRoute() || !leg.isCircular()) && routeLeg.getPosition().isValid())
           {
-            float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(
-                                          routeLeg.getPosition()) - routeLeg.getMagvar());
+            courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
+
             html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
-                      locale.toString(crs, 'f', 0) + tr("°M, ") + timeStr);
+                      locale.toString(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()), 'f', 0) +
+                      tr("°M, ") + timeStr);
           }
           else // if(!leg.noDistanceDisplay())
                // Only distance and time for arc legs
@@ -2602,21 +2605,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             if(legCourse < INVALID_COURSE_VALUE)
               html.row2(tr("Leg Course:"), locale.toString(legCourse, 'f', 0) + tr("°M"));
 
-            float courseToTrue = routeLeg.getCourseToRhumbTrue();
-            if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToTrue < INVALID_COURSE_VALUE)
+            if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
               float crabAngle = atools::geo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
                                                                   userAircaft->getWindDirectionDegT(),
-                                                                  courseToTrue,
+                                                                  courseToWptTrue,
                                                                   userAircaft->getTrueAirspeedKts());
               if(crabAngle < INVALID_COURSE_VALUE)
               {
                 crabAngle = normalizeCourse(crabAngle - userAircaft->getMagVarDeg());
                 html.row2(tr("Crab angle:"), locale.toString(crabAngle, 'f', 0) + tr("°M"));
               }
-              else
-                html.row2(tr("Crab angle:"));
             }
           }
 
