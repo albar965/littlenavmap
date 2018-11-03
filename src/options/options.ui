@@ -2568,8 +2568,10 @@ This setting is also used in the elevation profile.</string>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowOnScroll">
             <property name="toolTip">
-             <string>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming.
-This setting is also used in the elevation profile.</string>
+             <string>The map will stop following the aircraft for the given time if the user does not do any interaction with the map like scrolling or zooming.
+This setting is also used in the elevation profile.
+
+Start the timer by moving the map instead of scrolling.</string>
             </property>
             <property name="text">
              <string>&amp;Allow scrolling and zooming in the map</string>
