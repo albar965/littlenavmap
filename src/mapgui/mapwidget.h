@@ -331,6 +331,9 @@ public:
   /* From center button */
   void jumpBackToAircraftCancel();
 
+  /* Update zoom */
+  void jumpBackToAircraftUpdateDistance();
+
   /* Avoids dark background when printing in night mode */
   void setPrinting(bool value)
   {
@@ -466,7 +469,7 @@ private:
   void sunShadingToUi(map::MapSunShading sunShading);
 
   void jumpBackToAircraftTimeout(const QVariantList& values);
-  void jumpBackToAircraftStart();
+  void jumpBackToAircraftStart(bool saveDistance);
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;

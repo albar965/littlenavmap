@@ -44,6 +44,9 @@ using atools::geo::manhattanDistance;
 using atools::fs::pln::FlightplanEntry;
 using atools::fs::pln::Flightplan;
 
+// Disable leg activation if distance is larger
+const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
+
 Route::Route()
 {
   resetActive();
@@ -244,6 +247,12 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
       activeLegIndex = 1;
     activePos.pos.distanceMeterToLine(getPositionAt(activeLegIndex - 1), getPositionAt(activeLegIndex),
                                       activeLegResult);
+  }
+
+  if(getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM)
+  {
+    activeLegIndex = map::INVALID_INDEX_VALUE;
+    return;
   }
 
   // qDebug() << "activePos" << activeLegResult;
@@ -1608,6 +1617,14 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
                                                      false /* sim data */);
     runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
   }
+}
+
+float Route::getDistanceToFlightPlan() const
+{
+  if(activeLegResult.status != atools::geo::INVALID)
+    return atools::geo::meterToNm(std::abs(activeLegResult.distance));
+  else
+    return map::INVALID_DISTANCE_VALUE;
 }
 
 QDebug operator<<(QDebug out, const Route& route)

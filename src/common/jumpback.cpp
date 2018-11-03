@@ -48,13 +48,21 @@ void JumpBack::restart()
   start(values);
 }
 
+void JumpBack::updateValues(const QVariantList& jumpBackValues)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << jumpBackValues;
+#endif
+  values = jumpBackValues;
+}
+
 void JumpBack::start(const QVariantList& jumpBackValues)
 {
   if(NavApp::isConnectedAndAircraft() &&
      OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << parent()->metaObject()->className();
+    qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << jumpBackValues;
 #endif
 
     if(!active)
@@ -73,7 +81,7 @@ void JumpBack::start(const QVariantList& jumpBackValues)
 void JumpBack::cancel()
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className();
+  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << values;
 #endif
 
   timer.stop();
@@ -83,7 +91,7 @@ void JumpBack::cancel()
 void JumpBack::timeout()
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className();
+  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << values;
 #endif
 
   emit jumpBack(values);

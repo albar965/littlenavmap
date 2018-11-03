@@ -51,6 +51,13 @@ public:
   /* Start timer and do not reset values */
   void restart();
 
+  void updateValues(const QVariantList& jumpBackValues);
+
+  const QVariantList& getValues() const
+  {
+    return values;
+  }
+
 signals:
   /* Timer triggered. Go back to aircraft centering. */
   void jumpBack(const QVariantList& values);

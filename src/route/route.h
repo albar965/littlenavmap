@@ -394,6 +394,9 @@ public:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
   void getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd& runwayEnd) const;
 
+  /* general distance in NM which is either cross track, previous or next waypoint */
+  float getDistanceToFlightPlan() const;
+
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
