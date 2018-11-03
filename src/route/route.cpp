@@ -1359,6 +1359,12 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp)
 
   Route route(*this);
 
+  // Copy flight plan profile altitudes into entries for FMS and other formats
+  // All following functions have to use setCoords instead of setPosition to avoid overwriting
+  QVector<float> altVector = altitude->getAltitudes();
+  for(int i = 0; i < route.size(); i++)
+    route.getFlightplan().getEntries()[i].setAltitude(altVector.at(i));
+
   // First remove properties and procedure structures
   if(saveApproachWp)
   {
@@ -1389,7 +1395,7 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp)
         // Entry is one of the category which have to be replaced
         entry.setIcaoIdent(QString());
         entry.setIcaoRegion(QString());
-        entry.setPosition(leg.getPosition());
+        entry.setCoords(leg.getPosition());
         entry.setAirway(QString());
         entry.setNoSave(false);
 

@@ -200,6 +200,9 @@ public:
     desentRateFtPerNm = value;
   }
 
+  /* Get an array for all altitudes in feet. Includes procedure points. */
+  QVector<float> getAltitudes() const;
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 

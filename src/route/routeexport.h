@@ -104,7 +104,8 @@ public:
   QString buildDefaultFilename(const QString& extension = QString(), const QString& suffix = ".pln") const;
   QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
 
-  /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu */
+  /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
+   *  Also sets altitude into FlightplanEntry position. */
   static Route routeAdjustedToProcedureOptions(const Route& route);
   Route routeAdjustedToProcedureOptions();
 
@@ -128,7 +129,7 @@ private:
   bool exportFlighplanAsRxpGtn(const QString& filename);
 
   bool exportFlighplan(const QString& filename, std::function<void(const atools::fs::pln::Flightplan&,
-                                                                   const QString &)> exportFunc);
+                                                                   const QString&)> exportFunc);
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

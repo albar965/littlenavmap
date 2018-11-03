@@ -423,7 +423,8 @@ void RouteLeg::updateUserName(const QString& name)
 
 void RouteLeg::updateUserPosition(const atools::geo::Pos& pos)
 {
-  flightplan->getEntries()[index].setPosition(pos);
+  // Use setCoords to keep altitude
+  flightplan->getEntries()[index].setCoords(pos);
 }
 
 int RouteLeg::getId() const
@@ -733,7 +734,7 @@ void RouteLeg::assignIntersection(const map::MapSearchResult& mapobjectResult,
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setIcaoRegion(waypoint.region);
   flightplanEntry->setIcaoIdent(waypoint.ident);
-  flightplanEntry->setPosition(waypoint.position);
+  flightplanEntry->setCoords(waypoint.position); // Use setCoords to keep altitude
   flightplanEntry->setWaypointType(atools::fs::pln::entry::INTERSECTION);
   flightplanEntry->setMagvar(waypoint.magvar);
 }
@@ -746,7 +747,7 @@ void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setIcaoRegion(vor.region);
   flightplanEntry->setIcaoIdent(vor.ident);
-  flightplanEntry->setPosition(vor.position);
+  flightplanEntry->setCoords(vor.position); // Use setCoords to keep altitude
   flightplanEntry->setWaypointType(atools::fs::pln::entry::VOR);
   flightplanEntry->setName(vor.name);
   flightplanEntry->setMagvar(vor.magvar);
@@ -760,7 +761,7 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setIcaoRegion(ndb.region);
   flightplanEntry->setIcaoIdent(ndb.ident);
-  flightplanEntry->setPosition(ndb.position);
+  flightplanEntry->setCoords(ndb.position); // Use setCoords to keep altitude
   flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
   flightplanEntry->setName(ndb.name);
   flightplanEntry->setMagvar(ndb.magvar);

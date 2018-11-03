@@ -557,6 +557,10 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
 
   if(boundingRect.isValid() && !overrideModeActive)
   {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << boundingRect;
+#endif
+
     QString rectCond;
     if(boundingRect.crossesAntiMeridian())
     {

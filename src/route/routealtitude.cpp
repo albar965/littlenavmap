@@ -158,6 +158,24 @@ QStringList RouteAltitude::getErrorStrings(QString& tooltip) const
   return messages;
 }
 
+QVector<float> RouteAltitude::getAltitudes() const
+{
+  QVector<float> retval;
+
+  for(const RouteAltitudeLeg& leg: (*this))
+    retval.append(leg.y2());
+
+  if(!route->isEmpty())
+  {
+    // Replace the zero altitude of the last dummy segment with the airport altitude
+    const RouteLeg& leg = route->last();
+    if(leg.isRoute() && leg.getAirport().isValid())
+      retval.replace(retval.size() - 1, leg.getPosition().getAltitude());
+  }
+
+  return retval;
+}
+
 void RouteAltitude::adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const
 {
   if(!leg.isEmpty())

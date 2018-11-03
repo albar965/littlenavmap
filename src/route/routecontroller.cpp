@@ -840,11 +840,11 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
   {
     NavApp::deleteSplashScreen();
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_PROC_ERROR,
-                                                   tr("<p>Cannot load procedures into flight plan:</p><ul><li>%1</li></ul>").
+                                                   tr("<p>Cannot load procedures into flight plan:</p>"
+                                                        "<ul><li>%1</li></ul>").
                                                    arg(procedureLoadingErrors.join("</li><li>")),
                                                    tr("Do not &show this dialog again."));
   }
-
 }
 
 bool RouteController::loadFlightplan(const QString& filename)
@@ -1033,6 +1033,8 @@ bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat t
 /* Save flight plan using the same format indicated in the flight plan object */
 bool RouteController::saveFlightplan(bool cleanExport)
 {
+  // Get a copy that has procedures replaced with waypoints depending on settings
+  // Also fills altitude in flight plan entry position
   Flightplan flightplan = RouteExport::routeAdjustedToProcedureOptions(route).getFlightplan();
   qDebug() << Q_FUNC_INFO << "flightplan.getFileFormat()" << flightplan.getFileFormat()
            << "routeFileFormat" << routeFileFormat;
