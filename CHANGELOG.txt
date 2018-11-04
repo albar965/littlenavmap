@@ -78,6 +78,7 @@ User Interface:
 * Modified all question message boxes with destructive actions to have default "No" also on windows.
 * Added "Copy to Clipboard" button to update dialog.
 * Changed download button in update dialog to make clear that download is started in browser.
+* Now pre-filling altitude and turn direction in airport pattern dialog if available (FSX and P3D only).
 
 * Updated Italian translations from Flavio.
 * Added French translation by Patrick.

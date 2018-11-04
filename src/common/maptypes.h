@@ -179,7 +179,7 @@ struct MapRunway
 {
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
   int length /* ft */, primaryEndId, secondaryEndId;
-  float heading;
+  float heading, patternAlt;
   int width,
       primaryOffset, secondaryOffset, /* part of the runway length */
       primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
@@ -231,7 +231,7 @@ struct MapRunway
 struct MapRunwayEnd
 {
   int id;
-  QString name, leftVasiType, rightVasiType;
+  QString name, leftVasiType, rightVasiType, pattern;
   float heading, leftVasiPitch = 0.f, rightVasiPitch = 0.f;
   atools::geo::Pos position;
   bool secondary;

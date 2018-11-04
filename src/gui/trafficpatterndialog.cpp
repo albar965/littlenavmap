@@ -205,7 +205,20 @@ void TrafficPatternDialog::updateRunwayLabel(int index)
                  arg(QLocale().toString(heading, 'f', 0)).
                  arg(map::surfaceName(rw.surface)).
                  arg(atts.isEmpty() ? QString() : ", " + atts.join(", ")));
+
+    if(rw.patternAlt > 100.f)
+    {
+      name.append(tr(", Pattern Altitude %1").arg(Unit::altFeet(rw.patternAlt)));
+      ui->spinBoxTrafficPatternAltitude->setValue(atools::roundToInt(Unit::rev(rw.patternAlt, Unit::altFeetF)));
+    }
+
+    map::MapRunwayEnd end =
+      NavApp::getAirportQuerySim()->getRunwayEndById(primary ? rw.primaryEndId : rw.secondaryEndId);
+    if(end.isValid() && (end.pattern == "R" || end.pattern == "L"))
+      ui->comboBoxTrafficPatternTurnDirection->setCurrentIndex(end.pattern == "L" ? 0 : 1);
+
     ui->labelTrafficPatternRunwayInfo->setText(name);
+
   }
 }
 

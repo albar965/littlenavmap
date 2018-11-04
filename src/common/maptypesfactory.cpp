@@ -113,6 +113,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
 
   runway.length = record.valueInt("length");
   runway.heading = record.valueFloat("heading");
+  runway.patternAlt = record.valueFloat("pattern_altitude", 0.f);
   runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"));
   runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
@@ -130,6 +131,7 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
   end.rightVasiPitch = record.valueFloat("right_vasi_pitch");
   end.leftVasiType = record.valueStr("left_vasi_type");
   end.rightVasiType = record.valueStr("right_vasi_type");
+  end.pattern = record.valueStr("is_pattern", QString());
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)
