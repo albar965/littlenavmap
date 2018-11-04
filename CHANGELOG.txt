@@ -1,6 +1,103 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.1.beta
+
+Aircraft Performance:
+* Now always showing both volume and weight in aircraft performance report on tab "Aircraft".
+  **Avgas is the default fuel type. Change you present performance configurations to the correct fuel type to ensure
+    proper weight volume conversion.**
+* Aircraft performance edit dialog now has a fuel type (Avgas and Jetfuel) setting and converts fuel between
+  weight and volume in input boxes when changing.
+* Flight plan table now shows both fuel weight and volume in separate columns.
+* Performance collection now always uses weight and detects fuel type automatically from simulator.
+  You can change from weight to volume in the edit dialog which will also do the conversion for you.
+* Now showing red error messages on top of fuel report indicating invalid or missing values.
+* Small text changes for performance report to make more clear that it is not updated during flight and
+  used for fuel planning only.
+
+Online Networks:
+* Fixed regression when reading whazzup files. This resulted in occasional crashes and wrong aircraft headings.
+* Limited excessive logging when reading whazzup files for online networks and added debug option for error
+  reports when reading whazzup.
+* Now omitting invalid QNH values from online center or client.
+
+Simulator Aircraft and Flight Plan:
+* Flight plan active leg sequencing is now suppressed if aircraft distance to nearest route leg is more than 50 NM.
+* Centering of active flight plan leg and aircraft (if enabled in options) falls back to simple aircraft centering
+  if distance to flight plan is larger than 50 NM.
+  This helps to avoid situations where the program zoomed too far out.
+* Changed jump-back-to-aircraft logic to avoid weird behavior (zooming far out and others).
+  **Now always start looking around by moving the map (mouse drag or cursor keys) and not by
+    zooming (mouse wheel or plus and minus keys) to avoid aircraft centering for the time given in options.**
+
+Elevation Profile:
+* Fixed several issues with elevation profile and altitude restrictions as well as TOC and TOD calculation.
+* Now forcing all legs after FAF and FACF to minimum altitude to avoid arriving above ILS glideslope or above VASI.
+* Added display of "GS" indicator for certain altitude restrictions.
+* Fixed issue with circle-to-land approaches having a lower MAP altitude restriction than runway elevation + 50 ft.
+  This resulted in a "cannot comply to alt restrictions" message.
+* Made zoom sliders in profile less sensitive to mouse wheel by lowering page size.
+
+Procedures:
+* Now adding last leg "Circle to Land" only if approach has no runway assigned.
+  This avoids classifiying too many approaches as circle-to-land.
+* Adding new leg type "Straight In" for the last segment between MAP and runway now.
+* Fixed drawing issues with missed approaches where first leg is of type "Intercept".
+  Missed approach now correctly starts at MAP in these cases.
+* The Maltese cross is now applied to either FAF or FACF depending on ILS GS intercept altitude.
+* Fixed regression where the last leg to runway was omitted for all approaches.
+* Omitting altitude restriction now for waypoints on ILS GS.
+* Added workaround for 3-letter airport idents in procedures which were not recognized and showed an error in the
+  procedure search (red procedure leg).
+* Drawing problems with the turn to the first missed leg solved.
+* Fixed issue with manual procedure legs before initial fix.
+  This corrupted flight plans, altitude and distance calculation. Added new leg type "Vectors" for this.
+* Now loading procedures partially from a flight plan if some could not be found.
+* Better error report on procedure loading issues. No showing the procedure names which cannot be found in the database.
+* Fixed lost procedure information after switching scenery databases.
+
+Map:
+* Crab angle in compass rose now based on course to next waypoint instead of leg course. This is now consistent with
+  the indicator showing course to the next waypoint of active flight plan leg.
+* Now hiding details for airport patterns on higher zoom distances.
+
+User Interface:
+* Crab angle in aircraft progress now based on course to next waypoint instead of leg course.
+* Moved options "Use a short name "ICAO_ICAO.pln" when saving FSX or P3D flight plans instead of the long name",
+ "Avoid overwriting Flight Plan with not matching departure and destination" and
+ "Center flight plan on map after loading" to flight plan tab in options.
+* User data type search is now properly reloaded for userpoints if the option for reloading saves is disabled.
+  Always reloaded with "Airport" userpoint type before.
+* Disabled tooltip effects (fading, sliding, etc.) since these do not work well with tooltip updates for weather.
+* Now raising all floating windows on startup to avoid hidden and/or inaccessible windows.
+* Changed "Show map window" menu item to "Show all floating Windows" which raises all floating docks windows.
+* Fixed issue where main window title was not updated after "save as".
+* Added workaround to restore elevation profile window height on startup.
+* Modified all question message boxes with destructive actions to have default "No" also on windows.
+* Added "Copy to Clipboard" button to update dialog.
+* Changed download button in update dialog to make clear that download is started in browser.
+
+* Updated Italian translations from Flavio.
+* Added French translation by Patrick.
+
+Help:
+* Updated included map legend for new features.
+
+related from atools version 3.2.1.beta
+
+* Added saving of altitudes for X-Plane FMS formats.
+* Fixed issue when creating bounding rectangle from radius covering one of the poles which broke distance
+  search with large radius values.
+* Fixed issue where short lines were given wrong elevation (first 0) in GLOBE reader resulting in gaps in the
+  elevation profile ground.
+* Renamed fuel key names in aircraft performance file and added update functions.
+* Added option to limit excessive error logging in whazzup reader. Error logging is now off as default.
+* Added fuel type to performance class now allowing conversion from weight to volume.
+  Performance handler now detects fuel type and uses lbs as default now. albar965/littlenavmap#255
+
+===============================================================================
+
 Version 2.2.0.beta
 
 === Notes ===
