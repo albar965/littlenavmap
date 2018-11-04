@@ -541,6 +541,9 @@ the given descent speeds</string>
      <property name="readOnly">
       <bool>false</bool>
      </property>
+     <property name="acceptRichText">
+      <bool>false</bool>
+     </property>
      <property name="textInteractionFlags">
       <set>Qt::TextEditorInteraction</set>
      </property>
