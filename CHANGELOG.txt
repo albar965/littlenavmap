@@ -38,6 +38,7 @@ Elevation Profile:
 * Fixed issue with circle-to-land approaches having a lower MAP altitude restriction than runway elevation + 50 ft.
   This resulted in a "cannot comply to alt restrictions" message.
 * Made zoom sliders in profile less sensitive to mouse wheel by lowering page size.
+* Display of "Above Ground Altitude" now follows climb and descent slope instead of using cruise altitude.
 
 Procedures:
 * Now adding last leg "Circle to Land" only if approach has no runway assigned.

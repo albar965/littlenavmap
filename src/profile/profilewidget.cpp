@@ -1519,13 +1519,16 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString from = atools::elideTextShort(legList.route.at(index).getIdent(), 20);
   QString to = atools::elideTextShort(legList.route.at(index + 1).getIdent(), 20);
 
+  float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
+  float aboveGround = std::max(0.f, altitude - groundElevation);
+
   // Add text to upper dock window label ==========================
   variableLabelText =
     from + tr(" ► ") + to + tr(", ") +
     Unit::distNm(distance) + tr(" ► ") +
     Unit::distNm(distanceToGo) + tr(", ") +
     tr(" Ground Elevation ") + Unit::altFeet(groundElevation) + tr(", ") +
-    tr(" Above Ground Altitude ") + Unit::altFeet(flightplanAltFt - groundElevation) + tr(", ") +
+    tr(" Above Ground Altitude ") + Unit::altFeet(aboveGround) + tr(", ") +
     tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev);
 
 #ifdef DEBUG_INFORMATION
