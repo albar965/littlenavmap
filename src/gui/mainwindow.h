@@ -184,6 +184,8 @@ private:
 
   void connectAllSlots();
   void mainWindowShown();
+  void raiseFloatingWindows();
+  void raiseFloatingWindow(QDockWidget *dockWidget);
 
   void saveStateMain();
   void saveActionStates();
@@ -269,7 +271,7 @@ private:
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
   void updateAirspaceTypes(map::MapAirspaceFilter types);
   void resetWindowLayout();
-  void showMapWindow();
+  void adjustProfileDockHeight();
 
   bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
   bool routeSaveCheckFMS11Warnings();

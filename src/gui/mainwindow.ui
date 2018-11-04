@@ -116,14 +116,14 @@
     </widget>
     <widget class="QMenu" name="menuWindowStyle">
      <property name="title">
-      <string>Style</string>
+      <string>&amp;Style</string>
      </property>
     </widget>
     <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
     <addaction name="menuWindowStyle"/>
     <addaction name="separator"/>
-    <addaction name="actionShowMapWindow"/>
+    <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
     <addaction name="actionResetLayout"/>
@@ -5533,7 +5533,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>&amp;Statusbar</string>
+    <string>Status&amp;bar</string>
    </property>
    <property name="toolTip">
     <string>Show the statusbar</string>
@@ -8538,9 +8538,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show navaid scenery search options</string>
    </property>
   </action>
-  <action name="actionShowMapWindow">
+  <action name="actionShowFloatingWindows">
    <property name="text">
-    <string>Show Map Window</string>
+    <string>Show all &amp;floating Windows</string>
    </property>
    <property name="toolTip">
     <string>Raise and show the map window if undocked</string>

@@ -963,7 +963,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
   // Windows menu ============================================================
-  connect(ui->actionShowMapWindow, &QAction::triggered, this, &MainWindow::showMapWindow);
+  connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
 
   // File menu ============================================================
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
@@ -2488,12 +2488,6 @@ void MainWindow::mainWindowShown()
     databaseManager->run();
   }
 
-  // Focus map widget instead of a random widget
-  ui->dockWidgetMap->show();
-  ui->dockWidgetMap->raise();
-  ui->dockWidgetMap->activateWindow();
-  mapWidget->setFocus();
-
   // If enabled connect to simulator without showing dialog
   NavApp::getConnectClient()->tryConnectOnStartup();
 
@@ -2508,9 +2502,55 @@ void MainWindow::mainWindowShown()
 
   NavApp::getOnlinedataController()->startProcessing();
 
+  // Raise all floating docks and focus map widget
+  QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
+
+  // Workaround for profile dock widget which is not resized properly on startup
+  QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
+
   setStatusMessage(tr("Ready."));
 
   qDebug() << Q_FUNC_INFO << "leave";
+}
+
+void MainWindow::raiseFloatingWindow(QDockWidget *dockWidget)
+{
+  if(dockWidget->isVisible() && dockWidget->isFloating())
+    dockWidget->raise();
+}
+
+void MainWindow::raiseFloatingWindows()
+{
+  raiseFloatingWindow(ui->dockWidgetLegend);
+  raiseFloatingWindow(ui->dockWidgetAircraft);
+  raiseFloatingWindow(ui->dockWidgetSearch);
+  raiseFloatingWindow(ui->dockWidgetProfile);
+  raiseFloatingWindow(ui->dockWidgetInformation);
+  raiseFloatingWindow(ui->dockWidgetRoute);
+
+  raiseFloatingWindow(ui->dockWidgetMap);
+
+  // Avoid having random widget focus
+  mapWidget->setFocus();
+}
+
+void MainWindow::adjustProfileDockHeight()
+{
+  // Load last height
+  int profileHeight = Settings::instance().valueInt(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", -1);
+  if(profileHeight > 20)
+  {
+    // resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
+
+    // Workaround - set minimum since resize and resize docks does not work
+    int oldMinHeight = ui->dockWidgetContentsProfile->minimumHeight();
+    ui->dockWidgetContentsProfile->setMinimumHeight(profileHeight);
+
+    // Reset to old value later in event loop
+    QTimer::singleShot(0, [ = ]() -> void {
+      ui->dockWidgetContentsProfile->setMinimumHeight(oldMinHeight);
+    });
+  }
 }
 
 /* Enable or disable actions related to online networks */
@@ -2688,14 +2728,6 @@ void MainWindow::resetWindowLayout()
 
   const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
   restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)), lnm::MAINWINDOW_STATE_VERSION);
-}
-
-void MainWindow::showMapWindow()
-{
-  mapWidget->setFocus();
-  ui->dockWidgetMap->show();
-  ui->dockWidgetMap->raise();
-  ui->dockWidgetMap->activateWindow();
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -2904,6 +2936,9 @@ void MainWindow::saveMainWindowStates()
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos());
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", size());
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", isMaximized());
+
+  // Save profile dock size separately since it is sometimes resized by other docks
+  settings.setValue(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", ui->dockWidgetContentsProfile->height());
   Settings::instance().syncSettings();
 }
 
