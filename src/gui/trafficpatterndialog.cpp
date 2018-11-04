@@ -240,7 +240,14 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   float heading = primary ? atools::geo::opposedCourseDeg(rw.heading) : rw.heading;
   Pos pos = rw.position.endpointRhumb(
     atools::geo::feetToMeter(rw.length / 2 - (primary ? rw.primaryOffset : rw.secondaryOffset)), heading);
-  pos.setAltitude(Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF) +
-                  airport.getPosition().getAltitude());
+
+  float altLocalUnit = Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF);
+  qDebug() << Q_FUNC_INFO << "ui->spinBoxTrafficPatternAltitude->value()" << ui->spinBoxTrafficPatternAltitude->value();
+  qDebug() << Q_FUNC_INFO << "airport.getPosition().getAltitude()" << airport.getPosition().getAltitude();
+  qDebug() << Q_FUNC_INFO << "altLocalUnit" << altLocalUnit;
+
+  pos.setAltitude(altLocalUnit + airport.getPosition().getAltitude());
   pattern.position = pos;
+
+  qDebug() << Q_FUNC_INFO << "pattern.position" << pattern.position;
 }
