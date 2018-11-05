@@ -28,8 +28,10 @@ Simulator Aircraft and Flight Plan:
   if distance to flight plan is larger than 50 NM.
   This helps to avoid situations where the program zoomed too far out.
 * Changed jump-back-to-aircraft logic to avoid weird behavior (zooming far out and others).
-  **Now always start looking around by moving the map (mouse drag or cursor keys) and not by
-    zooming (mouse wheel or plus and minus keys) to avoid aircraft centering for the time given in options.**
+  **When aircraft is on ground or "&Center map on aircraft and next flight plan waypoint" is not selected:
+    Start looking around on the map by moving first (mouse drag or cursor keys) and not by
+    zooming (mouse wheel or plus and minus keys) to avoid aircraft centering for the time given in options.
+    Zooming without movement (drag or cursor keys) keeps the zoom distance.**
 
 Elevation Profile:
 * Fixed several issues with elevation profile and altitude restrictions as well as TOC and TOD calculation.
@@ -62,6 +64,7 @@ Map:
 * Crab angle in compass rose now based on course to next waypoint instead of leg course. This is now consistent with
   the indicator showing course to the next waypoint of active flight plan leg.
 * Now hiding details for airport patterns on higher zoom distances.
+* Fixed wrong zooming that appeared when centering a flight plan which crossed the anti-meridian (date line).
 
 User Interface:
 * Crab angle in aircraft progress now based on course to next waypoint instead of leg course.
@@ -76,10 +79,10 @@ User Interface:
 * Fixed issue where main window title was not updated after "save as".
 * Added workaround to restore elevation profile window height on startup.
 * Modified all question message boxes with destructive actions to have default "No" also on windows.
+* Now pre-filling altitude and turn direction in airport pattern dialog if available (FSX and P3D only).
 * Added "Copy to Clipboard" button to update dialog.
 * Changed download button in update dialog to make clear that download is started in browser.
-* Now pre-filling altitude and turn direction in airport pattern dialog if available (FSX and P3D only).
-
+* Update dialog now remains open after clicking download to give user a chance to read or copy text.
 * Updated Italian translations from Flavio.
 * Added French translation by Patrick.
 

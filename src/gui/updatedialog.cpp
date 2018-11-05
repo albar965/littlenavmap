@@ -69,9 +69,9 @@ void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
     data->setHtml(ui->textBrowserUpdate->toHtml());
     data->setText(ui->textBrowserUpdate->toPlainText());
     QGuiApplication::clipboard()->setMimeData(data);
-    return;
   }
-  QDialog::accept();
+  else if(buttonClickedRole == QDialogButtonBox::ButtonRole::RejectRole)
+    QDialog::accept();
 }
 
 UpdateDialog::~UpdateDialog()
