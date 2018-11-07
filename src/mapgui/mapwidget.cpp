@@ -970,9 +970,41 @@ void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
   {
     GeoDataLatLonBox box(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                          GeoDataCoordinates::Degree);
+
+    // Center rectangle first
     centerOn(box, false /* animated */);
 
-    if(allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP)
+    // Correct zoom - zoom out until all points are visible ==========================
+    // Needed since Marble does zoom correctly
+    qreal x, y;
+    // Limit to 10 iterations to avoid endless loop
+    int zoomIterations = 0;
+    while((!screenCoordinates(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree), x, y) ||
+           !screenCoordinates(box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree), x, y)) &&
+          (zoomIterations < 10) && (zoom() < maximumZoom()))
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "out distance NM" << atools::geo::meterToNm(distance() * 1000.);
+#endif
+      zoomOut();
+      zoomIterations++;
+    }
+
+    // Correct zoom - zoom in until at least one point is not visible ==========================
+    zoomIterations = 0;
+    while(screenCoordinates(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree), x, y) &&
+          screenCoordinates(box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree), x, y) &&
+          (zoomIterations < 10) && (zoom() > minimumZoom()))
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "in distance NM" << atools::geo::meterToNm(distance() * 1000.);
+#endif
+      zoomIn();
+      zoomIterations++;
+    }
+
+    // Fix blurryness or zoom one out after correcting
+    if((allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP) || zoomIterations > 0)
       // Zoom out to next step to get a sharper map display
       zoomOut();
   }
@@ -1355,6 +1387,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
       // Check if centering of leg is reqired =======================================
       const Route& route = NavApp::getRouteConst();
+      const RouteLeg *activeLeg = route.getActiveLeg();
       bool centerAircraftAndLeg = isCenterLegAndAircraftActive();
 
       // Get position of next waypoint and check visibility
@@ -1363,7 +1396,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       bool nextWpPosVisible = false;
       if(centerAircraftAndLeg)
       {
-        nextWpPos = route.getActiveLeg() != nullptr ? route.getActiveLeg()->getPosition() : Pos();
+        nextWpPos = activeLeg != nullptr ? route.getActiveLeg()->getPosition() : Pos();
         nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
         nextWpPosVisible = widgetRectSmall.contains(nextWpPoint);
       }
@@ -1379,11 +1412,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
           {
             if(centerAircraftAndLeg)
             {
-              // Update two times based on flying time to next waypoint - this is recursive
+              // Update four times based on flying time to next waypoint - this is recursive
               // and will update more often close to the wp
               int timeToWpUpdateMs =
                 std::max(static_cast<int>(atools::geo::meterToNm(aircraft.getPosition().distanceMeterTo(nextWpPos)) /
-                                          (aircraft.getGroundSpeedKts() + 1.f) * 3600.f / 2.f), 2) * 1000;
+                                          (aircraft.getGroundSpeedKts() + 1.f) * 3600.f / 4.f), 4) * 1000;
 
               // Zoom to rectangle every 15 seconds
               bool zoomToRect = now - lastCenterAcAndWp > timeToWpUpdateMs;
@@ -1416,35 +1449,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
                 if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
                 {
-                  // Calculate a correction to inflate rectangle towards north and south since Marble is not
-                  // capable of precise zooming in Mercator. Correction is increasing towards the poles
-                  float nsCorrection = 0.f;
-                  if(projection() == Mercator)
-                  {
-                    float lat = static_cast<float>(std::abs(centerLatitude()));
-                    if(lat > 70.f)
-                      nsCorrection = rect.getHeightDegree() / 2.f;
-                    else if(lat > 60.f)
-                      nsCorrection = rect.getHeightDegree() / 3.f;
-                    else if(lat > 50.f)
-                      nsCorrection = rect.getHeightDegree() / 6.f;
-
-#ifdef DEBUG_INFORMATION
-                    qDebug() << "nsCorrection" << nsCorrection;
-#endif
-                  }
-
-                  Rect box(rect.getWest(), rect.getNorth() + nsCorrection,
-                           rect.getEast(), rect.getSouth() - nsCorrection);
-
-#ifdef DEBUG_INFORMATION
-                  qDebug() << Q_FUNC_INFO << "box" << box;
-#endif
-                  centerRectOnMap(box);
+                  rect.inflate(rect.getWidthDegree() * 0.1f, rect.getHeightDegree() * 0.1f);
+                  centerRectOnMap(rect);
 
                   // Minimum zoom depends on flight altitude
                   float minZoom =
-                    atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / 1400.f, 0.4f), 28.f));
+                    atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / 2800.f, 0.4f), 28.f));
 
                   if(distance() < minZoom)
                   {
