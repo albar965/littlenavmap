@@ -46,6 +46,10 @@ class AirportQuery;
 class MapScale;
 class MapWidget;
 
+namespace map {
+struct MapAirport;
+}
+
 /* Struct that is passed on each paint event to all painters */
 struct PaintContext
 {
@@ -154,6 +158,12 @@ struct PaintContext
 
 };
 
+struct PaintAirportType
+{
+  const map::MapAirport *airport;
+  QPointF point;
+};
+
 /*
  * Base class for all map painters
  */
@@ -214,6 +224,8 @@ protected:
 
   /* Draw arrow at line postion. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
+
+  static bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

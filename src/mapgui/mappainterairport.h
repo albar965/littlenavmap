@@ -33,15 +33,8 @@ struct MapRunway;
 
 }
 
-namespace atools {
-namespace fs {
-namespace weather {
-class Metar;
-}
-}
-}
-
 class Route;
+struct PaintAirportType;
 
 /*
  * Draws airport symbols, runway overview and complete airport diagram. Airport details are also drawn for
@@ -60,8 +53,6 @@ public:
 
 private:
   void drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y);
-  void drawAirportWeather(PaintContext *context, const atools::fs::weather::Metar& metar,
-                          float x, float y);
 
   // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
 

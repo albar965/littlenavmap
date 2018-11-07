@@ -18,6 +18,7 @@
 #include "mapgui/mappaintlayer.h"
 
 #include "navapp.h"
+#include "mapgui/mappainterweather.h"
 #include "connect/connectclient.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
@@ -64,6 +65,7 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterShip = new MapPainterShip(mapWidget, mapScale);
   mapPainterUser = new MapPainterUser(mapWidget, mapScale);
   mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale);
+  mapPainterWeather = new MapPainterWeather(mapWidget, mapScale);
 
   // Default for visible object types
   objectTypes = map::MapObjectTypes(map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER | map::WAYPOINT);
@@ -82,6 +84,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterShip;
   delete mapPainterUser;
   delete mapPainterAltitude;
+  delete mapPainterWeather;
 
   delete layers;
   delete mapScale;
@@ -519,6 +522,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
       // if(!context.isOverflow()) always paint route even if number of objets is too large
       mapPainterRoute->render(&context);
+
+      mapPainterWeather->render(&context);
 
       // if(!context.isOverflow())
       mapPainterMark->render(&context);

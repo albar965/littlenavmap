@@ -32,8 +32,6 @@
 #include "mapgui/aprongeometrycache.h"
 #include "atools.h"
 #include "navapp.h"
-#include "fs/weather/metar.h"
-#include "weather/weatherreporter.h"
 
 #include <QElapsedTimer>
 
@@ -69,8 +67,6 @@ MapPainterAirport::~MapPainterAirport()
 
 void MapPainterAirport::render(PaintContext *context)
 {
-  typedef std::pair<const MapAirport *, QPointF> PaintAirportType;
-
   // Get all airports from the route and add them to the map
   QSet<int> routeAirportIdMap; // Collect all airports from route and bounding rectangle
 
@@ -102,69 +98,40 @@ void MapPainterAirport::render(PaintContext *context)
   QList<PaintAirportType> visibleAirports;
   for(const MapAirport& airport : *airportCache)
   {
-    // Either part of the route or enabled in the actions/menus/toolbar
-    if(!airport.isVisible(context->objectTypes) && !routeAirportIdMap.contains(airport.id))
-      continue;
-
     // Avoid drawing too many airports during animation when zooming out
     if(airport.longestRunwayLength >= context->mapLayer->getMinRunwayLength())
     {
       float x, y;
       bool hidden;
-      bool visible = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+      bool visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
       if(!hidden)
       {
-        if(!visible && context->mapLayer->isAirportOverviewRunway())
+        if(!visibleOnMap && context->mapLayer->isAirportOverviewRunway())
           // Check bounding rect for visibility if relevant - not for point symbols
-          visible = airport.bounding.overlaps(context->viewportRect);
+          visibleOnMap = airport.bounding.overlaps(context->viewportRect);
 
         airport.bounding.overlaps(context->viewportRect);
 
-        if(visible)
-          visibleAirports.append(std::make_pair(&airport, QPointF(x, y)));
+        // Either part of the route or enabled in the actions/menus/toolbar
+        bool drawAirport = airport.isVisible(context->objectTypes) || routeAirportIdMap.contains(airport.id);
+
+        if(visibleOnMap)
+        {
+          if(drawAirport)
+            visibleAirports.append({&airport, QPointF(x, y)});
+        }
       }
     }
   }
 
-  const OptionData& od = OptionData::instance();
-  std::sort(visibleAirports.begin(), visibleAirports.end(),
-            [od](const PaintAirportType& pap1, const PaintAirportType& pap2) -> bool {
-    // returns ​true if the first argument is less than (i.e. is ordered before) the second.
-    // ">" puts true behind
-    const MapAirport *ap1 = pap1.first, *ap2 = pap2.first;
-
-    if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
-    {
-      if(ap1->waterOnly() == ap2->waterOnly()) // Then water
-      {
-        if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
-        {
-          if(ap1->softOnly() == ap2->softOnly()) // Soft airports
-          {
-            // if(ap1->rating == ap2->rating)
-            return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
-            // else
-            // return ap1->rating < ap2->rating; // Larger value to end of list - drawn on top
-          }
-          else
-            return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
-        }
-        else
-          return ap1->helipadOnly() > ap2->helipadOnly();
-      }
-      else
-        return ap1->waterOnly() > ap2->waterOnly();
-    }
-    else
-      return ap1->emptyDraw(od) > ap2->emptyDraw(od);
-  });
+  std::sort(visibleAirports.begin(), visibleAirports.end(), sortAirportFunction);
 
   if(context->mapLayerEffective->isAirportDiagramRunway() && context->flags2 & opts::MAP_AIRPORT_BOUNDARY)
   {
     // In diagram mode draw background first to avoid overwriting other airports
     for(const PaintAirportType& airport : visibleAirports)
-      drawAirportDiagramBackround(context, *airport.first);
+      drawAirportDiagramBackround(context, *airport.airport);
   }
 
   // Draw the diagrams first
@@ -172,14 +139,14 @@ void MapPainterAirport::render(PaintContext *context)
   {
     // Airport diagram is not influenced by detail level
     if(context->mapLayerEffective->isAirportDiagramRunway())
-      drawAirportDiagram(context, *airport.first);
+      drawAirportDiagram(context, *airport.airport);
   }
 
   // Add airport symbols on top of diagrams
   for(int i = 0; i < visibleAirports.size(); i++)
   {
-    const MapAirport *airport = visibleAirports.at(i).first;
-    const QPointF& pt = visibleAirports.at(i).second;
+    const MapAirport *airport = visibleAirports.at(i).airport;
+    const QPointF& pt = visibleAirports.at(i).point;
     const MapLayer *layer = context->mapLayer;
     float x = static_cast<float>(pt.x());
     float y = static_cast<float>(pt.y());
@@ -217,13 +184,6 @@ void MapPainterAirport::render(PaintContext *context)
                                      context->mapLayerEffective->isAirportDiagramRunway(),
                                      context->mapLayer->getMaxTextLengthAirport());
     }
-
-    if(context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather() &&
-       context->viewContext == Marble::Still)
-      // Do not draw while scrolling
-      drawAirportWeather(context,
-                         NavApp::getWeatherReporter()->getAirportWeather(airport->ident, airport->position,
-                                                                         context->weatherSource), x, y);
   }
 }
 
@@ -1052,17 +1012,6 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
     // Draw small symbol on top to find a clickspot
     symbolPainter->drawAirportSymbol(context->painter, ap, x, y, 10, false, context->drawFast);
   }
-}
-
-/* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
-void MapPainterAirport::drawAirportWeather(PaintContext *context,
-                                           const atools::fs::weather::Metar& metar, float x, float y)
-{
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-  bool windBarbs = context->mapLayer->isAirportWeatherDetails();
-
-  symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4 / 5, y - size * 4 / 5, size,
-                                    true /* Wind pointer*/, windBarbs, context->drawFast);
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */

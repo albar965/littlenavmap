@@ -45,6 +45,7 @@ class MapPainterAircraft;
 class MapPainterShip;
 class MapPainterUser;
 class MapPainterAltitude;
+class MapPainterWeather;
 
 /*
  * Implements the Marble layer interface that paints upon the Marble map. Contains all painter instances
@@ -163,6 +164,7 @@ private:
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;
   MapPainterAltitude *mapPainterAltitude;
+  MapPainterWeather *mapPainterWeather;
 
   /* Database source */
   MapQuery *mapQuery = nullptr;

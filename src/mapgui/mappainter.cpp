@@ -23,6 +23,7 @@
 #include "geo/calculations.h"
 #include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"
+#include "common/maptypes.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -429,4 +430,38 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, cons
   painter->rotate(atools::geo::angleFromQt(line.angle()));
   painter->drawPolygon(arrow);
   painter->resetTransform();
+}
+
+bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2)
+{
+  const OptionData& od = OptionData::instance();
+
+  // returns ​true if the first argument is less than (i.e. is ordered before) the second.
+  // ">" puts true behind
+  const map::MapAirport *ap1 = pap1.airport, *ap2 = pap2.airport;
+
+  if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
+  {
+    if(ap1->waterOnly() == ap2->waterOnly()) // Then water
+    {
+      if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
+      {
+        if(ap1->softOnly() == ap2->softOnly()) // Soft airports
+        {
+          // if(ap1->rating == ap2->rating)
+          return ap1->longestRunwayLength < ap2->longestRunwayLength; // Larger value to end of list - drawn on top
+          // else
+          // return ap1->rating < ap2->rating; // Larger value to end of list - drawn on top
+        }
+        else
+          return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
+      }
+      else
+        return ap1->helipadOnly() > ap2->helipadOnly();
+    }
+    else
+      return ap1->waterOnly() > ap2->waterOnly();
+  }
+  else
+    return ap1->emptyDraw(od) > ap2->emptyDraw(od);
 }
