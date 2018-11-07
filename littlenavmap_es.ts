@@ -2896,7 +2896,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>&amp;Statusbar</source>
-        <translation>Barra de e&amp;stado</translation>
+        <translation type="vanished">Barra de e&amp;stado</translation>
     </message>
     <message>
         <source>All Ratings</source>
@@ -4630,11 +4630,7 @@ Online Network:
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished">Estilo</translation>
-    </message>
-    <message>
-        <source>Show Map Window</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Estilo</translation>
     </message>
     <message>
         <source>Raise and show the map window if undocked</source>
@@ -5092,6 +5088,18 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>Show the airport on the map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status&amp;bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show all &amp;floating Windows</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7918,7 +7926,7 @@ Descárguela del enlace &lt;b&gt;&lt;i&gt;Todos los mosaicos en uno solo (all10g
     </message>
     <message>
         <source>Saving and Export</source>
-        <translation>Grabar y Exportar</translation>
+        <translation type="vanished">Grabar y Exportar</translation>
     </message>
     <message>
         <source>Check for &amp;Updates:</source>
@@ -8410,7 +8418,7 @@ Debe volver a cargar la biblioteca de escenarios para que los cambios surtan efe
     </message>
     <message>
         <source>Center &amp;flight plan after loading</source>
-        <translation>Centrar &amp;plan de vuelo después de cargarlo</translation>
+        <translation type="vanished">Centrar &amp;plan de vuelo después de cargarlo</translation>
     </message>
     <message>
         <source>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
@@ -9296,11 +9304,6 @@ This setting is also used in the elevation profile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming.
-This setting is also used in the elevation profile.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Flight Simulator</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9323,6 +9326,21 @@ Use lower values only for private networks.&lt;/b&gt;</source>
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The map will stop following the aircraft for the given time if the user does not do any interaction with the map like scrolling or zooming.
+This setting is also used in the elevation profile.
+
+Start the timer by moving the map instead of scrolling.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading, Saving and Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center &amp;flight plan on map after loading</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9641,10 +9659,6 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Crab Angle Circle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show the crab angle for the user aircraft as a small magenta circle.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9678,6 +9692,10 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>Is not an Active Sky weather snapshot file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crab Angle Indicator</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9947,6 +9965,30 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     <message>
         <source>Course to Fix</source>
         <translation>Curso magnético a fijar (Rm)</translation>
+    </message>
+    <message>
+        <source>SID %1</source>
+        <translation type="unfinished">SID %1</translation>
+    </message>
+    <message>
+        <source>SID transition %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Approach %1</source>
+        <translation type="unfinished">Aproximación %1</translation>
+    </message>
+    <message>
+        <source>Transition %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>STAR %1</source>
+        <translation type="unfinished">STAR %1</translation>
+    </message>
+    <message>
+        <source>STAR transition %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11893,6 +11935,18 @@ hh:mm</translation>
 %volume%</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Straight in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ILS GS %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GS </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RouteAltitude</name>
@@ -12202,7 +12256,7 @@ La posición de inicio ahora está configurada en la pista principal más larga 
     </message>
     <message>
         <source>Cannot load procedures into flight plan.</source>
-        <translation>No se puede cargar procedimiento dentro del Plan de Vuelo.</translation>
+        <translation type="vanished">No se puede cargar procedimiento dentro del Plan de Vuelo.</translation>
     </message>
     <message>
         <source>Cannot find a route.
@@ -12356,6 +12410,10 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <source>&lt;b&gt;%1, %2&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Cannot load procedures into flight plan:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13009,10 +13067,6 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Altitude:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Entry and exit indicators</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13050,6 +13104,34 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;, %2 x %3, %4°M, %5%6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance from runway to downwind leg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pattern altitude above airport elevation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance from turn to final to runway end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore base leg to runway distance and calculate it using 45° from runway end to downwind leg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pattern &amp;altitude:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show arrows indicating recommended entry end exit paths</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, Pattern Altitude %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

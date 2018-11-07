@@ -248,7 +248,8 @@ SOURCES += src/main.cpp\
     src/common/jumpback.cpp \
     src/perf/aircraftperfdialog.cpp \
     src/perf/aircraftperfcontroller.cpp \
-    src/common/unitstringtool.cpp
+    src/common/unitstringtool.cpp \
+    src/mapgui/mappainterweather.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -363,7 +364,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/jumpback.h \
     src/perf/aircraftperfdialog.h \
     src/perf/aircraftperfcontroller.h \
-    src/common/unitstringtool.h
+    src/common/unitstringtool.h \
+    src/mapgui/mappainterweather.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
