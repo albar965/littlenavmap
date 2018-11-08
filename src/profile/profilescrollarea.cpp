@@ -131,7 +131,9 @@ void ProfileScrollArea::splitterMoved(int pos, int index)
 void ProfileScrollArea::vertScrollBarValueChanged()
 {
   vertScrollBarChanged();
-  emit jumpBackToAircraftStart();
+
+  if(!centeringAircraft)
+    emit jumpBackToAircraftStart();
 }
 
 void ProfileScrollArea::vertScrollBarChanged()
@@ -156,7 +158,9 @@ void ProfileScrollArea::vertScrollBarChanged()
 void ProfileScrollArea::horizScrollBarValueChanged()
 {
   horizScrollBarChanged();
-  emit jumpBackToAircraftStart();
+
+  if(!centeringAircraft)
+    emit jumpBackToAircraftStart();
 }
 
 void ProfileScrollArea::horizScrollBarChanged()
@@ -333,7 +337,7 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
     consumed = true;
   }
 
-  if(consumed)
+  if(consumed && !centeringAircraft)
     emit jumpBackToAircraftStart();
 
   return consumed;
@@ -361,7 +365,8 @@ bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
     startDragPos = event->pos();
 
     // Event consumed - do not propagate
-    emit jumpBackToAircraftStart();
+    if(!centeringAircraft)
+      emit jumpBackToAircraftStart();
     return true;
   }
   return false;
@@ -465,7 +470,8 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
     }
   }
 
-  emit jumpBackToAircraftStart();
+  if(!centeringAircraft)
+    emit jumpBackToAircraftStart();
 
   // Consume all events
   return true;
@@ -609,12 +615,14 @@ void ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
   int x = screenPoint.x();
   int y = screenPoint.y();
 
+  centeringAircraft = true;
   if(x - xmarginLeft < horizScrollBar->value() || x > horizScrollBar->value() + viewport->width() - xmarginRight)
     horizScrollBar->setValue(std::min(std::max(horizScrollBar->minimum(), x - xmarginLeft), horizScrollBar->maximum()));
 
   if(y - ymarginTop < vertScrollBar->value() || y > vertScrollBar->value() + viewport->height() - ymarginBottom)
     vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - viewport->height() / 2),
                                      vertScrollBar->maximum()));
+  centeringAircraft = false;
 }
 
 void ProfileScrollArea::styleChanged()

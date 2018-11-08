@@ -108,6 +108,7 @@ signals:
   void showPosAlongFlightplan(int x, bool doubleClick);
   void hideRubberBand();
   void jumpBackToAircraftStart();
+  void jumpBackToAircraftCancel();
 
 private:
   /* Horizontal or vertical scroll bar of view has changed value or range */
@@ -194,6 +195,8 @@ private:
   int calculatedHorizScrollPos = 0;
   int calculatedVertScrollPos = 0;
 
+  /* Omit notifications from widgets (jumping back, ...) when updating position */
+  bool centeringAircraft = false;
 };
 
 #endif // LNM_PROFILESCROLLAREA_H

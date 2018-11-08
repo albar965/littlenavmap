@@ -89,6 +89,7 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   connect(scrollArea, &ProfileScrollArea::showPosAlongFlightplan, this, &ProfileWidget::showPosAlongFlightplan);
   connect(scrollArea, &ProfileScrollArea::hideRubberBand, this, &ProfileWidget::hideRubberBand);
   connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftStart, this, &ProfileWidget::jumpBackToAircraftStart);
+  connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftCancel, this, &ProfileWidget::jumpBackToAircraftCancel);
   connect(ui->actionProfileCenterAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
 
   routeController = NavApp::getRouteController();
