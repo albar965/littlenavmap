@@ -643,8 +643,10 @@ void RouteAltitude::calculateDeparture()
     return;
   }
 
+  float departAlt = departureAltitude();
+
   if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
-    first().setAlt(departureAltitude());
+    first().setAlt(departAlt);
 
   // Start from departure forward until hitting cruise altitude (TOC)
   for(int i = departureLegIdx; i < route->size(); i++)
@@ -656,11 +658,11 @@ void RouteAltitude::calculateDeparture()
       continue;
 
     // Altitude of last leg
-    float lastLegAlt = i > departureLegIdx ? at(i - 1).y2() : 0.;
+    float lastLegAlt = i > departureLegIdx ? at(i - 1).y2() : departAlt;
 
     if(i <= departureLegIdx)
       // Departure leg - assign altitude to airport and RW too if available
-      alt.setAlt(departureAltitude());
+      alt.setAlt(departAlt);
     else
     {
       // Set geometry for climbing
