@@ -13,7 +13,7 @@
    width="300"
    height="300"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="rangerings.svg">
   <metadata
      id="metadata17">
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,32 +65,25 @@
      id="g3338"
      transform="translate(1.303346,15.110008)">
     <ellipse
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#bc0000;fill-opacity:1;stroke:none;stroke-width:64.41306305;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path8414"
        cx="148.12178"
        cy="136.88121"
-       rx="6.7311864"
-       ry="6.9234343" />
+       rx="19.708015"
+       ry="20.270893" />
     <ellipse
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.38720608;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#bc0000;stroke-width:25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path8077"
        cx="149.52026"
        cy="135.10876"
        rx="134.50131"
        ry="132.99709" />
     <ellipse
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path8077-5"
-       cx="148.96942"
-       cy="136.16809"
-       rx="101.04828"
-       ry="99.918182" />
-    <ellipse
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#bc0000;stroke-width:29.4920311;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path8077-5-8"
        cx="149.35077"
        cy="135.02402"
-       rx="62.482868"
-       ry="61.784077" />
+       rx="73.709869"
+       ry="72.885521" />
   </g>
 </svg>

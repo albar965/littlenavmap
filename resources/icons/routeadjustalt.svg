@@ -13,7 +13,7 @@
    width="149.92134"
    height="140.26547"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="routeadjustalt.svg">
   <metadata
      id="metadata17">
@@ -52,7 +52,8 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -61,11 +62,20 @@
   </sodipodi:namedview>
   <defs
      id="defs4" />
-  <path
-     inkscape:connector-curvature="0"
-     id="path21952"
-     d="M 101.45226,47.86141 48.766021,98.3367"
-     style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:12.15062618;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <rect
+     style="opacity:1;fill:#dedede;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:15.09922981;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect843-5"
+     width="50.554291"
+     height="51.952213"
+     x="33.149048"
+     y="87.885216" />
+  <rect
+     style="opacity:1;fill:#dedede;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:15.89466286;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect843"
+     width="50.554291"
+     height="57.570118"
+     x="60.130363"
+     y="-0.43579215" />
   <path
      inkscape:connector-curvature="0"
      id="path8101"

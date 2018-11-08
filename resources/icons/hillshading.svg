@@ -13,7 +13,7 @@
    width="149.92134"
    height="140.26547"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="hillshading.svg">
   <metadata
      id="metadata17">
@@ -64,6 +64,13 @@
   <g
      id="g3338"
      transform="translate(1.303346,-144.62452)">
+    <rect
+       style="opacity:1;fill:#dedede;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:39.954216;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect843"
+       width="140"
+       height="131.35593"
+       x="4.7744989"
+       y="148.73166" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#7d7d7d;stroke-width:19.334;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 40.440528,200.43386 18.795066,51.36253"

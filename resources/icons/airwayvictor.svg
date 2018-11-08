@@ -13,7 +13,7 @@
    width="300"
    height="300"
    id="svg2"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="airwayvictor.svg">
   <metadata
      id="metadata17">
@@ -52,7 +52,8 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -61,6 +62,18 @@
   </sodipodi:namedview>
   <defs
      id="defs4" />
+  <rect
+     style="opacity:1;fill:#dedebc;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:53.04660416;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect843"
+     width="183.81357"
+     height="176.35593"
+     x="10.908354"
+     y="1.2992951" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 23.747336,148.71455 180.000004,60 70,-70"
+     id="path12697"
+     inkscape:connector-curvature="0" />
   <path
      style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="m 23.747336,18.714553 180.000004,189.999997 80,-189.999997"
@@ -76,20 +89,15 @@
      d="m 203.74734,208.71455 -180.000004,20"
      id="path12695"
      inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 23.747336,148.71455 180.000004,60 70,-70"
-     id="path12697"
-     inkscape:connector-curvature="0" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:246.61824036px;line-height:125%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      x="29.209415"
      y="164.73553"
-     id="text17209"
-     sodipodi:linespacing="125%"><tspan
+     id="text17209"><tspan
        sodipodi:role="line"
        id="tspan17211"
        x="29.209415"
-       y="164.73553">V</tspan></text>
+       y="164.73553"
+       style="font-size:246.61824036px;line-height:1.25">V</tspan></text>
 </svg>
