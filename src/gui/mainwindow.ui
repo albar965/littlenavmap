@@ -4534,12 +4534,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <addaction name="actionRouteAdjustAltitude"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetProfile">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <property name="windowIcon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/profiledock.svg</normaloff>:/littlenavmap/resources/icons/profiledock.svg</iconset>

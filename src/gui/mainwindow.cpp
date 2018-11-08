@@ -150,13 +150,14 @@ MainWindow::MainWindow()
 
     // Setup central widget ==================================================
     // Set one pixel fixed width
-    QWidget *centralWidget = new QWidget(this);
-    centralWidget->setWindowFlags(windowFlags() & ~(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus));
-    centralWidget->setMinimumSize(1, 1);
-    centralWidget->resize(1, 1);
-    centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
-    setCentralWidget(centralWidget);
+    // QWidget *centralWidget = new QWidget(this);
+    // centralWidget->setWindowFlags(windowFlags() & ~(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus));
+    // centralWidget->setMinimumSize(1, 1);
+    // centralWidget->resize(1, 1);
+    // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
+    // setCentralWidget(centralWidget);
+    centralWidget()->hide();
 
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
@@ -631,29 +632,25 @@ void MainWindow::setupUi()
   ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                             arg(ui->dockWidgetInformation->windowTitle().
                                                                 toLower()));
-  ui->dockWidgetInformation->toggleViewAction()->setStatusTip(
-    ui->dockWidgetInformation->toggleViewAction()->toolTip());
+  ui->dockWidgetInformation->toggleViewAction()->setStatusTip(ui->dockWidgetInformation->toggleViewAction()->toolTip());
 
   ui->dockWidgetProfile->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
   ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetProfile->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                         arg(ui->dockWidgetProfile->windowTitle()));
-  ui->dockWidgetProfile->toggleViewAction()->setStatusTip(
-    ui->dockWidgetProfile->toggleViewAction()->toolTip());
+  ui->dockWidgetProfile->toggleViewAction()->setStatusTip(ui->dockWidgetProfile->toggleViewAction()->toolTip());
 
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
   ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
   ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                          arg(ui->dockWidgetAircraft->windowTitle()));
-  ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(
-    ui->dockWidgetAircraft->toggleViewAction()->toolTip());
+  ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
   ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
   ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
   ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                        arg(ui->dockWidgetLegend->windowTitle()));
-  ui->dockWidgetLegend->toggleViewAction()->setStatusTip(
-    ui->dockWidgetLegend->toggleViewAction()->toolTip());
+  ui->dockWidgetLegend->toggleViewAction()->setStatusTip(ui->dockWidgetLegend->toggleViewAction()->toolTip());
 
   // Add dock actions to main menu
   ui->menuView->insertActions(ui->actionShowStatusbar,
@@ -2505,8 +2502,8 @@ void MainWindow::mainWindowShown()
   // Raise all floating docks and focus map widget
   QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
 
-  // Workaround for profile dock widget which is not resized properly on startup
-  QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
+  //// Workaround for profile dock widget which is not resized properly on startup
+  // QTimer::singleShot(20, this, &MainWindow::adjustProfileDockHeight);
 
   setStatusMessage(tr("Ready."));
 
@@ -2534,24 +2531,22 @@ void MainWindow::raiseFloatingWindows()
   mapWidget->setFocus();
 }
 
-void MainWindow::adjustProfileDockHeight()
-{
-  // Load last height
-  int profileHeight = Settings::instance().valueInt(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", -1);
-  if(profileHeight > 20)
-  {
-    // resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
-
-    // Workaround - set minimum since resize and resize docks does not work
-    int oldMinHeight = ui->dockWidgetContentsProfile->minimumHeight();
-    ui->dockWidgetContentsProfile->setMinimumHeight(profileHeight);
-
-    // Reset to old value later in event loop
-    QTimer::singleShot(0, [ = ]() -> void {
-      ui->dockWidgetContentsProfile->setMinimumHeight(oldMinHeight);
-    });
-  }
-}
+// void MainWindow::adjustProfileDockHeight()
+// {
+//// Load last height
+// int profileHeight = Settings::instance().valueInt(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", -1);
+// if(profileHeight > 20)
+// {
+//// resizeDocks({ui->dockWidgetProfile}, {profileHeight}, Qt::Vertical);
+//// Workaround - set minimum since resize and resize docks does not work
+// int oldMinHeight = ui->dockWidgetContentsProfile->minimumHeight();
+// ui->dockWidgetContentsProfile->setMinimumHeight(profileHeight);
+//// Reset to old value later in event loop
+// QTimer::singleShot(0, [ = ]() -> void {
+// ui->dockWidgetContentsProfile->setMinimumHeight(oldMinHeight);
+// });
+// }
+// }
 
 /* Enable or disable actions related to online networks */
 void MainWindow::updateOnlineActionStates()
@@ -2726,8 +2721,16 @@ void MainWindow::resetWindowLayout()
 {
   qDebug() << Q_FUNC_INFO;
 
-  const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
-  restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)), lnm::MAINWINDOW_STATE_VERSION);
+  setWindowState(windowState() & ~Qt::WindowMinimized);
+  setWindowState(windowState() & ~Qt::WindowMaximized);
+  setWindowState(windowState() & ~Qt::WindowFullScreen);
+
+  QRect screenSize = QApplication::desktop()->availableGeometry(this);
+  resize(lnm::DEFAULT_MAINWINDOW_SIZE);
+  move((screenSize.width() - lnm::DEFAULT_MAINWINDOW_SIZE.width()) / 2,
+       (screenSize.height() - lnm::DEFAULT_MAINWINDOW_SIZE.height()) / 2);
+
+  restoreState(lnm::DEFAULT_MAINWINDOW_STATE, lnm::MAINWINDOW_STATE_VERSION);
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -2743,10 +2746,31 @@ void MainWindow::restoreStateMain()
   if(settings.contains(lnm::MAINWINDOW_WIDGET_STATE))
   {
     restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(), lnm::MAINWINDOW_STATE_VERSION);
-    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, pos()).toPoint());
-    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, sizeHint()).toSize());
-    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
+
+    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, QPoint(0, 0)).toPoint());
+    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, lnm::DEFAULT_MAINWINDOW_SIZE).toSize());
+
+    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, false).toBool())
+    {
+      qDebug() << Q_FUNC_INFO << "Full screen";
+      setWindowState(windowState() & ~Qt::WindowMinimized);
+      setWindowState(windowState() & ~Qt::WindowMaximized);
+      setWindowState(windowState() | Qt::WindowFullScreen);
+    }
+    else if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
+    {
+      qDebug() << Q_FUNC_INFO << "Maximized";
+      setWindowState(windowState() & ~Qt::WindowMinimized);
       setWindowState(windowState() | Qt::WindowMaximized);
+      setWindowState(windowState() & ~Qt::WindowFullScreen);
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Normal";
+      setWindowState(windowState() & ~Qt::WindowMinimized);
+      setWindowState(windowState() & ~Qt::WindowMaximized);
+      setWindowState(windowState() & ~Qt::WindowFullScreen);
+    }
   }
   else
     // Use default state saved in application
@@ -2758,7 +2782,7 @@ void MainWindow::restoreStateMain()
   qDebug() << "Screen geometry" << geo << "Win geometry" << frameGeometry();
   if(!geo.intersects(frameGeometry()))
   {
-    qDebug() << "Getting window back on screen";
+    qDebug() << Q_FUNC_INFO << "Getting window back on screen";
     move(geo.topLeft());
   }
 
@@ -2844,7 +2868,7 @@ void MainWindow::saveStateMain()
   QByteArray state = saveState();
   for(char i : state)
     hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
-  qDebug().noquote().nospace() << "\n\nconst unsigned char DEFAULT_MAINWINDOW_STATE["
+  qDebug().noquote().nospace() << "\n\nconst static unsigned char mainWindowState["
                                << state.size() << "] ="
                                << "{" << hexStr.join(",") << "};\n";
 #endif
@@ -2933,12 +2957,16 @@ void MainWindow::saveMainWindowStates()
 
   Settings& settings = Settings::instance();
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", size());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", isMaximized());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, pos());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, size());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, isMaximized());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, isFullScreen());
+
+  qDebug() << Q_FUNC_INFO << "pos" << pos() << "size" << size()
+           << "maximized" << isMaximized() << "fullscreen" << isFullScreen();
 
   // Save profile dock size separately since it is sometimes resized by other docks
-  settings.setValue(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", ui->dockWidgetContentsProfile->height());
+  // settings.setValue(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", ui->dockWidgetContentsProfile->height());
   Settings::instance().syncSettings();
 }
 
