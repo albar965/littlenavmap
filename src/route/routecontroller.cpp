@@ -492,13 +492,13 @@ void RouteController::aircraftPerformanceChanged()
     updateFlightplanFromWidgets();
     route.updateLegAltitudes();
 
-    updateWindowLabel();
     updateModelRouteTimeFuel();
 
     highlightProcedureItems();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
     updateErrorLabel();
   }
+  updateWindowLabel();
   NavApp::updateWindowTitle();
 
   // Emit also for empty route to catch performance changes
@@ -518,6 +518,7 @@ void RouteController::routeAltChanged()
 
   postChange(undoCommand);
 
+  updateWindowLabel();
   NavApp::updateWindowTitle();
 
   // Calls ProfileWidget::routeAltChangedDelayed
@@ -531,6 +532,7 @@ void RouteController::routeAltChangedDelayed()
   // Update performance
   updateModelRouteTimeFuel();
   updateErrorLabel();
+  updateWindowLabel();
 
   // Delay change to avoid hanging spin box when profile updates
   emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
@@ -3620,13 +3622,14 @@ QString RouteController::buildFlightplanLabel2() const
         break;
     }
 
-    if(NavApp::getAircraftPerfController()->isDescentValid() && !NavApp::isCollectingPerformance())
+    if(NavApp::getAircraftPerfController()->isDescentValid() && !NavApp::isCollectingPerformance() &&
+       route.getAltitudeLegs().getTravelTimeHours() > 0.f)
       return tr("<b>%1, %2</b>, %3").
              arg(Unit::distNm(route.getTotalDistance())).
              arg(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours())).
              arg(routeType);
     else
-      return tr("<b>%1, %2</b>").
+      return tr("<b>%1</b>, %2").
              arg(Unit::distNm(route.getTotalDistance())).
              arg(routeType);
   }

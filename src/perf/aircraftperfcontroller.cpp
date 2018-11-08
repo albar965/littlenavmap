@@ -688,10 +688,17 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
   html.p().b(tr("Flight Plan")).pEnd();
   html.table();
-  html.row2(tr("Distance and Time:"), tr("%1, %2").
-            arg(Unit::distNm(altitudeLegs.getTotalDistance())).
-            arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())),
-            atools::util::html::BOLD | flags);
+
+  if(altitudeLegs.getTravelTimeHours() > 0.f)
+    html.row2(tr("Distance and Time:"), tr("%1, %2").
+              arg(Unit::distNm(altitudeLegs.getTotalDistance())).
+              arg(formatter::formatMinutesHoursLong(altitudeLegs.getTravelTimeHours())),
+              atools::util::html::BOLD | flags);
+  else
+    html.row2(tr("Distance:"), tr("%1").
+              arg(Unit::distNm(altitudeLegs.getTotalDistance())),
+              atools::util::html::BOLD | flags);
+
   html.row2(tr("Average Ground Speed:"), Unit::speedKts(altitudeLegs.getAverageGroundSpeed()), flags);
   html.row2(tr("True Airspeed at Cruise:"), Unit::speedKts(perf->getCruiseSpeed()), flags);
 

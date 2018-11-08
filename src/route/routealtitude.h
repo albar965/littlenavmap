@@ -65,6 +65,7 @@ public:
   /* Get interpolated altitude value in ft for the given distance to destination in NM */
   float getAltitudeForDistance(float distanceToDest) const;
 
+  /* 0 if invalid */
   float getTravelTimeHours() const;
 
   /* Position on the route. EMPTY_POS if it could not be calculated. */
