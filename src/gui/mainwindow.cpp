@@ -2750,6 +2750,7 @@ void MainWindow::restoreStateMain()
     move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_POS, QPoint(0, 0)).toPoint());
     resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_SIZE, lnm::DEFAULT_MAINWINDOW_SIZE).toSize());
 
+#if !defined(Q_OS_MACOS)
     if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_FULLSCREEN, false).toBool())
     {
       qDebug() << Q_FUNC_INFO << "Full screen";
@@ -2757,7 +2758,9 @@ void MainWindow::restoreStateMain()
       setWindowState(windowState() & ~Qt::WindowMaximized);
       setWindowState(windowState() | Qt::WindowFullScreen);
     }
-    else if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
+    else
+#endif
+    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE_MAXIMIZED, false).toBool())
     {
       qDebug() << Q_FUNC_INFO << "Maximized";
       setWindowState(windowState() & ~Qt::WindowMinimized);
