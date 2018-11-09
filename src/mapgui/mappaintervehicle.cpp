@@ -249,10 +249,14 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
     {
       if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
       {
+        float heading = atools::fs::sc::SC_INVALID_FLOAT;
         if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
-          texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
+          heading = aircraft.getHeadingDegMag();
         else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-          texts.append(tr("HDG %3°T").arg(QString::number(aircraft.getHeadingDegTrue(), 'f', 0)));
+          heading = aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition());
+
+        if(heading < atools::fs::sc::SC_INVALID_FLOAT)
+          texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
       }
 
       if(context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))

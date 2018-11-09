@@ -2697,10 +2697,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   html.table();
 
   QStringList hdg;
+  float heading = atools::fs::sc::SC_INVALID_FLOAT;
   if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
-    hdg.append(locale.toString(aircraft.getHeadingDegMag(), 'f', 0) + tr("°M"));
-  if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-    hdg.append(locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
+    heading = aircraft.getHeadingDegMag();
+  else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+    heading = aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition());
+
+  if(heading < atools::fs::sc::SC_INVALID_FLOAT)
+    hdg.append(locale.toString(heading, 'f', 0) + tr("°M"));
 
   if(!hdg.isEmpty())
     html.row2(tr("Heading:"), hdg.join(", "), atools::util::html::BOLD);
