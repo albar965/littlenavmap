@@ -1398,7 +1398,7 @@ const ElevationModel *MainWindow::getElevationModel()
 void MainWindow::resultTruncated(int truncatedTo)
 {
   if(truncatedTo > 0)
-    messageLabel->setText(tr("<b style=\"color: red;\">Too many objects.</b>"));
+    messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects.")));
 }
 
 void MainWindow::distanceChanged()
@@ -1413,7 +1413,8 @@ void MainWindow::distanceChanged()
 
 void MainWindow::renderStatusChanged(RenderStatus status)
 {
-  QString prefix = mapWidget->model()->workOffline() ? tr("<b style=\"color:red\">Offline. </b>") : QString();
+  QString prefix =
+    mapWidget->model()->workOffline() ? atools::util::HtmlBuilder::errorMessage(tr("Offline.")) : QString();
 
   switch(status)
   {
