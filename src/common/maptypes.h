@@ -715,6 +715,8 @@ struct MapSearchResult
   /* Remove the given types only */
   void clear(const MapObjectTypes& types = map::ALL);
 
+  void clearAllButFirst(const MapObjectTypes& types = map::ALL);
+
   bool hasAirports() const
   {
     return !airports.isEmpty();
@@ -769,6 +771,10 @@ struct MapSearchResult
   QList<MapAirspace> getNavdataAirspaces() const;
 
   QList<MapAirspace> getOnlineAirspaces() const;
+
+private:
+  template<typename T>
+  void clearAllButFirst(QList<T>& list);
 
 };
 

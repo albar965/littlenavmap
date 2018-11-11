@@ -2009,10 +2009,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.airspaces.isEmpty())
     airspace = &result.airspaces.first();
 
-  // Add "more" text if multiple navaids will be added to the information panel
-  bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() + result.userpoints.size() +
-                  result.userPointsRoute.size() + result.airways.size()) > 1 && airport == nullptr;
-
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
   bool isAircraft = false;
@@ -2195,8 +2191,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
      airway != nullptr || airspace != nullptr || userpoint != nullptr)
   {
     ui->actionMapShowInformation->setEnabled(true);
-    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().
-                                          arg(informationText + (andMore ? tr(" and more") : QString())));
+    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(informationText));
   }
   else
   {
@@ -2542,6 +2537,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = onlineCenter->id;
         type = map::AIRSPACE_ONLINE;
       }
+      else if(airway != nullptr)
+      {
+        id = airway->id;
+        type = map::AIRWAY;
+      }
       else
       {
         if(userpointRoute != nullptr)
@@ -2608,6 +2608,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
               type |= map::AIRCRAFT_ONLINE;
           }
         }
+        else
+          // Display only one map object as shown in the menu item
+          result.clearAllButFirst();
 
         emit showInformation(result, type);
       }

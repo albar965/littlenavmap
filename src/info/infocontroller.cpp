@@ -662,7 +662,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
         if(!airportActive)
           newIdx = ic::INFO_AIRPORT;
       }
-      else if(preferredType & map::NAV_ALL || preferredType & map::USERPOINT)
+      else if(preferredType & map::NAV_ALL || preferredType & map::USERPOINT || preferredType & map::AIRWAY)
         newIdx = ic::INFO_NAVAID;
       else if(preferredType & map::AIRSPACE_ONLINE)
         newIdx = ic::INFO_ONLINE_CENTER;

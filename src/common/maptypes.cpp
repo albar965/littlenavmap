@@ -1330,6 +1330,76 @@ void MapSearchResult::clear(const MapObjectTypes& types)
   }
 }
 
+template<typename T>
+void MapSearchResult::clearAllButFirst(QList<T>& list)
+{
+  while(list.size() > 1)
+    list.removeLast();
+}
+
+void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
+{
+  if(types & map::AIRPORT)
+  {
+    clearAllButFirst(airports);
+    airportIds.clear();
+  }
+
+  if(types & map::WAYPOINT)
+  {
+    clearAllButFirst(waypoints);
+    waypointIds.clear();
+  }
+
+  if(types & map::VOR)
+  {
+    clearAllButFirst(vors);
+    vorIds.clear();
+  }
+
+  if(types & map::NDB)
+  {
+    clearAllButFirst(ndbs);
+    ndbIds.clear();
+  }
+
+  if(types & map::AIRWAY)
+    clearAllButFirst(airways);
+
+  if(types & map::AIRSPACE)
+    clearAllButFirst(airspaces);
+
+  if(types & map::RUNWAYEND)
+    clearAllButFirst(runwayEnds);
+
+  if(types & map::ILS)
+    clearAllButFirst(ils);
+
+  if(types & map::AIRSPACE)
+    clearAllButFirst(airspaces);
+
+  if(types & map::USERPOINTROUTE)
+    clearAllButFirst(userPointsRoute);
+
+  if(types & map::USERPOINT)
+  {
+    clearAllButFirst(userpoints);
+    userpointIds.clear();
+  }
+
+  if(types & map::AIRCRAFT_AI)
+    clearAllButFirst(aiAircraft);
+
+  if(types & map::AIRCRAFT)
+    userAircraft = atools::fs::sc::SimConnectUserAircraft();
+
+  if(types & map::AIRCRAFT_ONLINE)
+  {
+    clearAllButFirst(onlineAircraft);
+    onlineAircraftIds.clear();
+  }
+}
+
 bool MapSearchResult::hasNavdataAirspaces() const
 {
   for(const map::MapAirspace& airspace : airspaces)
