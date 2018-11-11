@@ -460,13 +460,19 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     if(projectionDistance != nullptr)
     {
       // Use along track distance only for projection to avoid aircraft travelling backwards
-      if(activeLegResult.status == atools::geo::ALONG_TRACK)
+      if(activeLegResult.status == atools::geo::ALONG_TRACK || // Middle of flight plan
+         (activeLegResult.status == atools::geo::BEFORE_START && activeLegIndex == 1)) // Before first leg
         *projectionDistance = fromStartLegs - meterToNm(activeLegResult.distanceFrom2);
-      else // Stick aircraft to waypoint if turning to avoid moving back
+      else if(activeLegResult.status == atools::geo::AFTER_END && activeLegIndex >= getDestinationLegIndex())
+        // After destination leg
+        *projectionDistance = fromStartLegs + meterToNm(std::abs(activeLegResult.distanceFrom2));
+      else
+        // Middle of flight plan between legs
         *projectionDistance = fromStartLegs - activeLeg.getDistanceTo();
 
-      if(isPassedLastLeg() || isActiveMissed())
-        *projectionDistance = totalDistance;
+      if(isActiveMissed())
+        // Hide aircraft if missed is active
+        *projectionDistance = map::INVALID_DISTANCE_VALUE;
     }
 
     if(distToDest != nullptr)

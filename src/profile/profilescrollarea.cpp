@@ -605,7 +605,7 @@ void ProfileScrollArea::restoreState()
   });
 }
 
-void ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
+bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
 {
   // Use rectangle on the left side of the view
   int xmarginLeft = viewport->width() / 10;
@@ -615,14 +615,22 @@ void ProfileScrollArea::centerAircraft(const QPoint& screenPoint)
   int x = screenPoint.x();
   int y = screenPoint.y();
 
+  bool centered = false;
   centeringAircraft = true;
   if(x - xmarginLeft < horizScrollBar->value() || x > horizScrollBar->value() + viewport->width() - xmarginRight)
+  {
+    centered = true;
     horizScrollBar->setValue(std::min(std::max(horizScrollBar->minimum(), x - xmarginLeft), horizScrollBar->maximum()));
+  }
 
   if(y - ymarginTop < vertScrollBar->value() || y > vertScrollBar->value() + viewport->height() - ymarginBottom)
+  {
+    centered = true;
     vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - viewport->height() / 2),
                                      vertScrollBar->maximum()));
+  }
   centeringAircraft = false;
+  return centered;
 }
 
 void ProfileScrollArea::styleChanged()

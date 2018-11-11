@@ -182,7 +182,7 @@ void WeatherReporter::createFsWatcher()
 
     // Watch file for changes
     fsWatcherAsPath = new FileSystemWatcher(this, verbose);
-    fsWatcherAsPath->setMinFileSize(500000);
+    fsWatcherAsPath->setMinFileSize(100000);
     fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
                              &WeatherReporter::activeSkyWeatherFileChanged);
   }

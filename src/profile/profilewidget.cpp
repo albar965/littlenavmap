@@ -151,6 +151,11 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
       Pos simPos = simData.getUserAircraftConst().getPosition();
 
       aircraftDistanceFromStart = route.getProjectionDistance();
+
+      // Update if new or last distance is/was invalid
+      updateWidget = (aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) !=
+                     (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE);
+
       if(aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
       {
 #ifdef DEBUG_INFORMATION_PROFILE_SIMDATA
@@ -189,6 +194,9 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           // Aircraft position has changed enough
           updateLabelWidget = true;
 
+          movingBackwards = (lastAircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE) &&
+                            (lastAircraftDistanceFromStart > aircraftDistanceFromStart);
+
           lastSimData = simData;
           lastAircraftDistanceFromStart = aircraftDistanceFromStart;
 
@@ -205,7 +213,6 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           updateWidget = true;
         }
       } // if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
-        // } // if(!route.isPassedLastLeg() && !route.isActiveMissed())
     } // if((showAircraft || showAircraftTrack))
     else
     {
@@ -1107,9 +1114,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw user aircraft =========================================================
-  if( /*!route.isPassedLastLeg() && !route.isActiveMissed() &&*/ simData.getUserAircraftConst().getPosition().isValid()
-                                                                 &&
-                                                                 showAircraft)
+  if(simData.getUserAircraftConst().getPosition().isValid() && showAircraft &&
+     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
   {
     float acx = distanceX(aircraftDistanceFromStart);
     float acy = altitudeY(simData.getUserAircraftConst().getPosition().getAltitude());
@@ -1120,8 +1126,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     painter.rotate(90);
     painter.scale(0.75, 1.);
     painter.shear(0.0, 0.5);
-    painter.drawPixmap(QPointF(-acsize / 2., -acsize / 2.),
-                       *NavApp::getVehicleIcons()->pixmapFromCache(simData.getUserAircraftConst(), acsize, 0));
+
+    // Turn aircraft if distance shrinks
+    if(movingBackwards)
+      // Reflection is a special case of scaling matrix
+      painter.scale(1., -1.);
+
+    const QPixmap *pixmap = NavApp::getVehicleIcons()->pixmapFromCache(simData.getUserAircraftConst(), acsize, 0);
+    painter.drawPixmap(QPointF(-acsize / 2., -acsize / 2.), *pixmap);
     painter.resetTransform();
 
     // Draw aircraft label
@@ -1792,22 +1804,20 @@ void ProfileWidget::jumpBackToAircraftCancel()
 void ProfileWidget::jumpBackToAircraftTimeout()
 {
   if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE)
+     OptionData::instance().getFlags2() & opts::ROUTE_NO_FOLLOW_ON_MOVE &&
+     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
   {
-
     if(QApplication::mouseButtons() & Qt::LeftButton || contextMenuActive)
       // Restart as long as menu is active or user is dragging around
       jumpBack->restart();
     else
     {
       jumpBack->cancel();
-      if(simData.getUserAircraft().getPosition().isValid())
-      {
-        scrollArea->centerAircraft(toScreen(QPointF(aircraftDistanceFromStart,
-                                                    simData.getUserAircraft().getPosition().getAltitude())));
+      bool centered = scrollArea->centerAircraft(toScreen(QPointF(aircraftDistanceFromStart,
+                                                                  simData.getUserAircraft().getPosition().getAltitude())));
 
+      if(centered)
         NavApp::setStatusMessage(tr("Jumped back to aircraft."));
-      }
     }
   }
   else

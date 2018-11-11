@@ -243,6 +243,7 @@ private:
 
   float aircraftDistanceFromStart;
   float lastAircraftDistanceFromStart;
+  bool movingBackwards = false;
   ElevationLegList legList;
 
   RouteController *routeController = nullptr;
