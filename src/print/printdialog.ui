@@ -336,7 +336,7 @@
            <string>Include procedure information as shown in the dock window &quot;Information&quot; on tab &quot;Procedures&quot;.</string>
           </property>
           <property name="text">
-           <string>&amp;Approaches</string>
+           <string>&amp;Procedures</string>
           </property>
          </widget>
         </item>
@@ -436,7 +436,7 @@
            <string>Include procedure information as shown in the dock window &quot;Information&quot; on tab &quot;Procedures&quot;.</string>
           </property>
           <property name="text">
-           <string>&amp;Approaches</string>
+           <string>&amp;Procedures</string>
           </property>
          </widget>
         </item>
