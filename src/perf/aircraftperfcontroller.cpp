@@ -368,7 +368,7 @@ bool AircraftPerfController::checkForChanges()
 
 bool AircraftPerfController::collectPerformanceDialog()
 {
-  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_URL + "AIRCRAFTPERF.html#collect",
+  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_URL + "AIRCRAFTPERF.html#aircraft-performance-collect",
                                                      lnm::helpLanguageOnline());
 
   QString doNotShow = tr("Do not &show this dialog again.");
