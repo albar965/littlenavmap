@@ -51,6 +51,7 @@
 #include "sql/sqlrecord.h"
 #include "gui/trafficpatterndialog.h"
 #include "common/jumpback.h"
+#include "route/routealtitude.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -2998,7 +2999,22 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-      Pos pos(lon, lat, NavApp::getMainUi()->spinBoxRouteAlt->value());
+
+      float projectionDistance = NavApp::getRouteConst().getProjectionDistance();
+
+      double alt = 100.f;
+      if(projectionDistance < map::INVALID_DISTANCE_VALUE)
+        alt = static_cast<double>(NavApp::getAltitudeLegs().getAltitudeForDistance(
+                                    NavApp::getRoute().getTotalDistance() - projectionDistance));
+      Pos pos(lon, lat, alt);
+
+      if(pos.getAltitude() < 100.f)
+        pos.setAltitude(100.f);
+
+      if(!(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE))
+        pos.setAltitude(100.f);
+
+      qDebug() << Q_FUNC_INFO << "pos" << pos << "projectionDistance" << projectionDistance;
 
       atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
       data.setPacketId(packetId++);
