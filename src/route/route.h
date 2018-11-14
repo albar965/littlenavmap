@@ -63,13 +63,16 @@ public:
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
                          float *projectionDistance = nullptr) const;
 
+  /* Calculated distance for aircraft projection in profile */
   float getProjectionDistance() const;
 
   /* Start from distance but values do not decrease if aircraft is leaving route.
-   *  Ignores active and looks for all legs. */
+   *  Ignores active and looks for all legs.
+   *  Unreliable.*/
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
-  /* Ignores approach objects */
+  /* Ignores approach objects if ignoreNotEditable is true.
+   *  Checks course if not INVALID_COURSE_VALUE */
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                                bool ignoreNotEditable) const;
 
@@ -417,6 +420,9 @@ private:
   void nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
   int adjustedActiveLeg() const;
+
+  /* Calculated distance for aircraft projection in profile */
+  float projectedDistance(const atools::geo::LineDistance& result, float legFromStart, int legIndex) const;
 
   atools::geo::Rect boundingRect;
   /* Nautical miles not including missed approach */

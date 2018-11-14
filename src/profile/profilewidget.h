@@ -218,6 +218,10 @@ private:
 
   void updateErrorLabel();
 
+  /* Load and save track separately */
+  void saveAircraftTrack();
+  void loadAircraftTrack();
+
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
@@ -239,7 +243,9 @@ private:
 
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
-  QPolygon aircraftTrackPoints;
+
+  /* Track x = distance from start in NM and y = altitude in feet */
+  QPolygonF aircraftTrackPoints;
 
   float aircraftDistanceFromStart;
   float lastAircraftDistanceFromStart;
@@ -278,6 +284,9 @@ private:
   float verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
         horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
 
+  /* Numbers for aircraft track */
+  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x6B7C2A3C;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 1;
 };
 
 Q_DECLARE_TYPEINFO(ProfileWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

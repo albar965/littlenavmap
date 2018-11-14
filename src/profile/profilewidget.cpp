@@ -30,6 +30,7 @@
 #include "route/routealtitude.h"
 #include "common/aircrafttrack.h"
 #include "common/unit.h"
+#include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
 #include "common/elevationprovider.h"
@@ -143,8 +144,6 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
     if((showAircraft || showAircraftTrack))
     {
-      // if(!route.isPassedLastLeg() && !route.isActiveMissed())
-      // {
       simData = simulatorData;
 
       Pos lastPos = lastSimData.getUserAircraftConst().getPosition();
@@ -163,30 +162,37 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           qDebug() << Q_FUNC_INFO << aircraftDistanceFromStart;
 #endif
 
-        // Get screen point from last update
-        QPoint lastPoint;
-        if(lastPos.isValid())
-          lastPoint = toScreen(QPointF(lastAircraftDistanceFromStart, lastPos.getAltitude()));
+        // Get point (NM/ft) for current update
+        QPointF currentPoint(aircraftDistanceFromStart, simPos.getAltitude());
 
-        // Get screen point for current update
-        QPoint currentPoint = toScreen(QPointF(aircraftDistanceFromStart, simPos.getAltitude()));
-
-        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - currentPoint).manhattanLength() > 3)
+        // Add track point if delta value between last and current update is large enough
+        if(simPos.isValid())
         {
-          // Add track point and update widget if delta value between last and current update is large enough
-          if(simPos.isValid())
-          {
+          if(aircraftTrackPoints.isEmpty())
             aircraftTrackPoints.append(currentPoint);
-            updateWidget = true;
+          else
+          {
+            QLineF delta(aircraftTrackPoints.last(), currentPoint);
+
+            if(std::abs(delta.dx()) > 0.1 /* NM */ || std::abs(delta.dy()) > 50. /* ft */)
+              aircraftTrackPoints.append(currentPoint);
+
+            if(aircraftTrackPoints.size() > OptionData::instance().getAircraftTrackMaxPoints())
+              aircraftTrackPoints.removeFirst();
           }
         }
 
         const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
         using atools::almostNotEqual;
+        // Get point (NM/ft) from last update
+        QPointF lastPoint;
+        if(lastPos.isValid())
+          lastPoint = QPointF(lastAircraftDistanceFromStart, lastPos.getAltitude());
 
+        // Update widget if delta value between last and current update is large enough
         if(!lastPos.isValid() || // No last position
-           (lastPoint - currentPoint).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
+           (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
            almostNotEqual(lastPos.getAltitude(), simPos.getAltitude(),
                           deltas.altitudeDelta) // Altitude change
            )
@@ -201,14 +207,12 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           lastAircraftDistanceFromStart = aircraftDistanceFromStart;
 
           if(simPos.getAltitude() > maxWindowAlt)
-          {
             // Scale up to keep the aircraft visible
             updateScreenCoords();
-          }
 
           // Probably center aircraft on scroll area
           if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
-            scrollArea->centerAircraft(currentPoint);
+            scrollArea->centerAircraft(toScreen(currentPoint));
 
           updateWidget = true;
         }
@@ -262,7 +266,6 @@ void ProfileWidget::updateScreenCoords()
 {
   /* Update all screen coordinates and scale factors */
 
-  MapWidget *mapWidget = NavApp::getMapWidget();
   // Widget drawing region width and height
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
@@ -317,29 +320,6 @@ void ProfileWidget::updateScreenCoords()
 
   // Last point closing polygon
   landPolygon.append(QPoint(X0 + w, h + Y0));
-
-  aircraftTrackPoints.clear();
-  if(!NavApp::getRouteConst().isFlightplanEmpty() && showAircraftTrack)
-  {
-    // Update aircraft track screen coordinates
-    const Route& route = legList.route;
-    const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
-
-    for(int i = 0; i < aircraftTrack.size(); i++)
-    {
-      const Pos& aircraftPos = aircraftTrack.at(i).pos;
-      float distFromStart = route.getDistanceFromStart(aircraftPos);
-
-      if(distFromStart < map::INVALID_DISTANCE_VALUE)
-      {
-        QPoint pt(X0 + static_cast<int>(distFromStart *horizontalScale),
-                  Y0 + static_cast<int>(rect().height() - Y0 - aircraftPos.getAltitude() * verticalScale));
-
-        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
-          aircraftTrackPoints.append(pt);
-      }
-    }
-  }
 }
 
 QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
@@ -399,8 +379,14 @@ QPoint ProfileWidget::toScreen(const QPointF& pt) const
 QPolygon ProfileWidget::toScreen(const QPolygonF& leg) const
 {
   QPolygon retval;
-  for(const QPointF& pt : leg)
-    retval.append(toScreen(pt));
+  for(const QPointF& point : leg)
+  {
+    QPoint pt = toScreen(point);
+    if(retval.isEmpty())
+      retval.append(pt);
+    else if((retval.last() - point).manhattanLength() > 3)
+      retval.append(pt);
+  }
   return retval;
 }
 
@@ -1110,7 +1096,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
   {
     painter.setPen(mapcolors::aircraftTrailPen(optData.getDisplayThicknessTrail() / 100.f * 2.f));
-    painter.drawPolyline(aircraftTrackPoints);
+    painter.drawPolyline(toScreen(aircraftTrackPoints));
   }
 
   // Draw user aircraft =========================================================
@@ -1228,6 +1214,9 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
     updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
                        ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
+  else
+    update();
+
   updateErrorLabel();
   updateLabel();
 }
@@ -1742,11 +1731,15 @@ void ProfileWidget::styleChanged()
 void ProfileWidget::saveState()
 {
   scrollArea->saveState();
+
+  saveAircraftTrack();
 }
 
 void ProfileWidget::restoreState()
 {
   scrollArea->restoreState();
+
+  loadAircraftTrack();
 }
 
 void ProfileWidget::preRouteCalc()
@@ -1827,4 +1820,51 @@ void ProfileWidget::jumpBackToAircraftTimeout()
 void ProfileWidget::updateErrorLabel()
 {
   NavApp::updateErrorLabels();
+}
+
+void ProfileWidget::saveAircraftTrack()
+{
+  QFile trackFile(atools::settings::Settings::getConfigFilename("_profile.track"));
+
+  if(trackFile.open(QIODevice::WriteOnly))
+  {
+    QDataStream out(&trackFile);
+    out.setVersion(QDataStream::Qt_5_5);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    out << FILE_MAGIC_NUMBER << FILE_VERSION << aircraftTrackPoints;
+    trackFile.close();
+  }
+  else
+    qWarning() << "Cannot write track" << trackFile.fileName() << ":" << trackFile.errorString();
+}
+
+void ProfileWidget::loadAircraftTrack()
+{
+  QFile trackFile(atools::settings::Settings::getConfigFilename("_profile.track"));
+  if(trackFile.exists())
+  {
+    if(trackFile.open(QIODevice::ReadOnly))
+    {
+      quint32 magic;
+      quint16 version;
+      QDataStream in(&trackFile);
+      in.setVersion(QDataStream::Qt_5_5);
+      in.setFloatingPointPrecision(QDataStream::SinglePrecision);
+      in >> magic;
+
+      if(magic == FILE_MAGIC_NUMBER)
+      {
+        in >> version;
+        if(version == FILE_VERSION)
+          in >> aircraftTrackPoints;
+        else
+          qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid version number:" << version;
+      }
+      else
+        qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid magic number:" << magic;
+      trackFile.close();
+    }
+    else
+      qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
+  }
 }

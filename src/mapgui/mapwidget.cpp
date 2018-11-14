@@ -3014,8 +3014,6 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       if(!(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE))
         pos.setAltitude(100.f);
 
-      qDebug() << Q_FUNC_INFO << "pos" << pos << "projectionDistance" << projectionDistance;
-
       atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
       data.setPacketId(packetId++);
 

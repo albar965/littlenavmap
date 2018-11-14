@@ -458,22 +458,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
       *distFromStart = std::max(fromStart, 0.f);
 
     if(projectionDistance != nullptr)
-    {
-      // Use along track distance only for projection to avoid aircraft travelling backwards
-      if(activeLegResult.status == atools::geo::ALONG_TRACK || // Middle of flight plan
-         (activeLegResult.status == atools::geo::BEFORE_START && activeLegIndex == 1)) // Before first leg
-        *projectionDistance = fromStartLegs - meterToNm(activeLegResult.distanceFrom2);
-      else if(activeLegResult.status == atools::geo::AFTER_END && activeLegIndex >= getDestinationLegIndex())
-        // After destination leg
-        *projectionDistance = fromStartLegs + meterToNm(std::abs(activeLegResult.distanceFrom2));
-      else
-        // Middle of flight plan between legs
-        *projectionDistance = fromStartLegs - activeLeg.getDistanceTo();
-
-      if(isActiveMissed())
-        // Hide aircraft if missed is active
-        *projectionDistance = map::INVALID_DISTANCE_VALUE;
-    }
+      *projectionDistance = projectedDistance(activeLegResult, fromStartLegs, activeLegIndex);
 
     if(distToDest != nullptr)
     {
@@ -515,29 +500,45 @@ float Route::getProjectionDistance() const
 float Route::getDistanceFromStart(const atools::geo::Pos& pos) const
 {
   atools::geo::LineDistance result;
-  int leg = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */);
-  float distFromStart = map::INVALID_DISTANCE_VALUE;
+  int legIndex = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */);
 
 #ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << Q_FUNC_INFO << "leg" << leg << "result" << result;
 #endif
 
-  if(leg < map::INVALID_INDEX_VALUE && result.status == atools::geo::ALONG_TRACK)
+  if(legIndex < map::INVALID_INDEX_VALUE)
   {
-    float fromstart = 0.f;
-    for(int i = 1; i < leg; i++)
+    if(result.status != atools::geo::INVALID)
     {
-      if(!at(i).getProcedureLeg().isMissed())
-        fromstart += nmToMeter(at(i).getDistanceTo());
-      else
-        break;
-    }
-    fromstart += result.distanceFrom1;
-    fromstart = std::abs(fromstart);
+      float fromstart = 0.f;
+      for(int i = 1; i <= legIndex; i++)
+        fromstart += at(i).getDistanceTo();
 
-    distFromStart = std::max(fromstart, 0.f);
+      return projectedDistance(result, fromstart, legIndex);
+    }
   }
-  return meterToNm(distFromStart);
+  return map::INVALID_DISTANCE_VALUE;
+}
+
+float Route::projectedDistance(const atools::geo::LineDistance& result, float legFromStart, int legIndex) const
+{
+  float projectionDistance = map::INVALID_DISTANCE_VALUE;
+  // Use along track distance only for projection to avoid aircraft travelling backwards
+  if(result.status == atools::geo::ALONG_TRACK || // Middle of flight plan
+     (result.status == atools::geo::BEFORE_START && legIndex == 1)) // Before first leg
+    projectionDistance = legFromStart - meterToNm(result.distanceFrom2);
+  else if(result.status == atools::geo::AFTER_END && legIndex >= getDestinationLegIndex())
+    // After destination leg
+    projectionDistance = legFromStart + meterToNm(std::abs(result.distanceFrom2));
+  else
+    // Middle of flight plan between legs
+    projectionDistance = legFromStart - at(legIndex).getDistanceTo();
+
+  if(at(legIndex).isAnyProcedure() && at(legIndex).getProcedureLeg().isMissed())
+    // Hide aircraft if missed is active
+    projectionDistance = map::INVALID_DISTANCE_VALUE;
+
+  return projectionDistance;
 }
 
 float Route::getTopOfDescentDistance() const

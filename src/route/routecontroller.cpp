@@ -521,7 +521,7 @@ void RouteController::routeAltChanged()
   updateWindowLabel();
   NavApp::updateWindowTitle();
 
-  // Calls ProfileWidget::routeAltChangedDelayed
+  // Calls RouteController::routeAltChangedDelayed
   routeAltDelayTimer.start(ROUTE_ALT_CHANGE_DELAY_MS);
 }
 
