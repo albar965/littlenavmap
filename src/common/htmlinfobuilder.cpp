@@ -2265,7 +2265,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
 
     float range = onlineRec.valueFloat("visual_range");
     if(range > 0.f && range < map::INVALID_ALTITUDE_VALUE)
-      html.row2If(tr("Visual Range"), Unit::distNm(range));
+      html.row2If(tr("Visual Range:"), Unit::distNm(range));
     html.row2If(tr("Flight Rules:"), onlineRec.valueStr("flightplan_flight_rules"));
     html.row2If(tr("Type of Flight:"), onlineRec.valueStr("flightplan_type_of_flight"));
 
@@ -2287,10 +2287,10 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     double enrouteMin = onlineRec.valueDouble("flightplan_enroute_minutes");
 
     if(enrouteMin > 0.)
-      html.row2(tr("Enroute hh:mm"), formatter::formatMinutesHours(enrouteMin / 60.));
+      html.row2(tr("Estimated Enroute time hh:mm:"), formatter::formatMinutesHours(enrouteMin / 60.));
     double enduranceMin = onlineRec.valueDouble("flightplan_endurance_minutes");
     if(enduranceMin > 0.)
-      html.row2If(tr("Endurance hh:mm"), formatter::formatMinutesHours(enduranceMin / 60.));
+      html.row2If(tr("Endurance hh:mm:"), formatter::formatMinutesHours(enduranceMin / 60.));
 
     QStringList alternates({onlineRec.valueStr("flightplan_alternate_aerodrome"),
                             onlineRec.valueStr("flightplan_2nd_alternate_aerodrome")});
