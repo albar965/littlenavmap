@@ -827,7 +827,7 @@ void RouteAltitude::calculateArrival()
 
 void RouteAltitude::calculateApproachIlsAndSlopes()
 {
-  route->getApproachRunwayEndAndIls(destRunwayIls, destRunwayEnd);
+  route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd);
 
   // Filter out unusable ILS
   auto it = std::remove_if(destRunwayIls.begin(), destRunwayIls.end(),

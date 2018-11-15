@@ -2988,8 +2988,7 @@ void RouteController::updateTableModel()
     QVector<map::MapIls> ilsByAirportAndRunway;
     if((route.getArrivalLegs().isTypeIls() || route.getArrivalLegs().isTypeLoc()) &&
        leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
-      ilsByAirportAndRunway = mapQuery->getIlsByAirportAndRunway(route.last().getAirport().ident,
-                                                                 leg.getRunwayEnd().name);
+      route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
 
     // VOR/NDB type ===========================
     if(leg.getVor().isValid())
@@ -3233,6 +3232,13 @@ void RouteController::updateModelRouteTimeFuel()
           weight = totalFuelLbsOrGal;
           vol = AircraftPerf::fromLbsToGal(perf.isJetFuel(), totalFuelLbsOrGal);
         }
+
+        if(atools::almostEqual(vol, 0.f, 0.01f))
+          // Avoid -0 case
+          vol = 0.f;
+        if(atools::almostEqual(weight, 0.f, 0.01f))
+          // Avoid -0 case
+          weight = 0.f;
 
         txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* no unit */) : QString();
         item = new QStandardItem(txt);

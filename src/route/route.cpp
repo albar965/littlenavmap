@@ -1605,24 +1605,31 @@ int Route::adjustAltitude(int minAltitude) const
   return minAltitude;
 }
 
-void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd& runwayEnd) const
+void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd) const
 {
   int destinationLegIdx = getDestinationLegIndex();
   if(destinationLegIdx < map::INVALID_INDEX_VALUE)
   {
     const RouteLeg& leg = at(destinationLegIdx);
 
-    ils.clear();
-    if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
-      // Get all ils if this is an ILS approach (not LOC)
-      ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, leg.getRunwayEnd().name);
-
     // Get the runway end for arrival
     QList<map::MapRunwayEnd> runwayEnds;
     if(arrivalLegs.runwayEnd.isValid())
       NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, arrivalLegs.runwayEnd.name, last().getAirport(),
                                                      false /* sim data */);
-    runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
+
+    ils.clear();
+    if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
+    {
+      ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, leg.getRunwayEnd().name);
+
+      if(ils.isEmpty())
+        // Get all ils if this is an ILS approach (not LOC)
+        ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, runwayEnds.first().name);
+    }
+
+    if(runwayEnd != nullptr)
+      *runwayEnd = runwayEnds.isEmpty() ? map::MapRunwayEnd() : runwayEnds.first();
   }
 }
 
