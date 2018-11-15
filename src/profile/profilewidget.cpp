@@ -1588,6 +1588,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->actionProfileShowOnMap->setEnabled(hasPosition && !routeEmpty);
+  ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());
 
   QMenu menu;
   menu.addAction(ui->actionProfileShowOnMap);
@@ -1595,6 +1596,8 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addAction(ui->actionProfileExpand);
   menu.addSeparator();
   menu.addAction(ui->actionProfileCenterAircraft);
+  menu.addAction(ui->actionProfileDeleteAircraftTrack);
+  menu.addSeparator();
   menu.addAction(ui->actionProfileShowVasi);
   menu.addAction(ui->actionProfileShowIls);
   menu.addSeparator();
@@ -1615,6 +1618,8 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
     scrollArea->update();
   else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi)
     update();
+  else if(action == ui->actionProfileDeleteAircraftTrack)
+    deleteAircraftTrack();
 
   // Other actions are connected to methods or used during updates
   // else if(action == ui->actionProfileFit)

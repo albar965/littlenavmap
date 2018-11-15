@@ -130,6 +130,11 @@ public:
 
   bool hasValidRouteForDisplay(const Route& route) const;
 
+  bool hasTrackPoints() const
+  {
+    return !aircraftTrackPoints.isEmpty();
+  }
+
   /* Call by this and profile label widget class. Point in screen coordinates. */
   void showContextMenu(const QPoint& globalPoint);
 

@@ -188,6 +188,11 @@ public:
     return aircraftTrack;
   }
 
+  bool hasTrackPoints() const
+  {
+    return !aircraftTrack.isEmpty();
+  }
+
   /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
    * if dragging departure or destination */
   void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);

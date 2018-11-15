@@ -4681,10 +4681,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <item row="4" column="0" alignment="Qt::AlignHCenter">
           <widget class="QSlider" name="verticalSliderProfileZoom">
            <property name="toolTip">
-            <string>Zoom horizontally into the elevation profile</string>
+            <string>Zoom vertically into the elevation profile</string>
            </property>
            <property name="statusTip">
-            <string>Zoom horizontally into the elevation profile</string>
+            <string>Zoom vertically into the elevation profile</string>
            </property>
            <property name="minimum">
             <number>1</number>
@@ -4734,10 +4734,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
          <item row="4" column="1" alignment="Qt::AlignHCenter">
           <widget class="QSlider" name="horizontalSliderProfileZoom">
            <property name="toolTip">
-            <string>Zoom vertically into the elevation profile</string>
+            <string>Zoom horizontally into the elevation profile</string>
            </property>
            <property name="statusTip">
-            <string>Zoom vertically into the elevation profile</string>
+            <string>Zoom horizontally into the elevation profile</string>
            </property>
            <property name="minimum">
             <number>1</number>
@@ -6696,10 +6696,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Delete Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
-    <string>Delete simulator aircraft trail from map</string>
+    <string>Delete simulator aircraft trail from map and elevation profile</string>
    </property>
    <property name="statusTip">
-    <string>Delete simulator aircraft trail from map</string>
+    <string>Delete simulator aircraft trail from map and elevation profile</string>
    </property>
   </action>
   <action name="actionMapShowInformation">
@@ -9150,6 +9150,24 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionProfileDeleteAircraftTrack">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Aircraft &amp;Trail</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete simulator aircraft trail from elevation profile</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete simulator aircraft trail from elevation profile</string>
    </property>
   </action>
  </widget>

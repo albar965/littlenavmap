@@ -2699,7 +2699,7 @@ void MainWindow::updateActionStates()
 #endif
 
   ui->actionMapShowAircraftTrack->setEnabled(true);
-  ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
+  ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->hasTrackPoints() || profileWidget->hasTrackPoints());
 
   bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
