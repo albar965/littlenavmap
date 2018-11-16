@@ -98,7 +98,6 @@ const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
 
 const static double MINIMUM_DISTANCE = 0.1;
 const static double MAXIMUM_DISTANCE = 6000.;
-const static double DISTANCE_EPSILON = 0.00001;
 
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
@@ -963,14 +962,15 @@ void MapWidget::showSavedPosOnStartup()
 
 void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 {
-  if(!rect.isPoint(static_cast<float>(DISTANCE_EPSILON)) &&
+  if(!rect.isPoint(POS_IS_POINT_EPSILON) &&
      rect.getWidthDegree() < 180.f &&
      rect.getHeightDegree() < 180.f &&
-     rect.getWidthDegree() > DISTANCE_EPSILON &&
-     rect.getHeightDegree() > DISTANCE_EPSILON)
+     rect.getWidthDegree() > POS_IS_POINT_EPSILON &&
+     rect.getHeightDegree() > POS_IS_POINT_EPSILON)
   {
-    GeoDataLatLonBox box(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                         GeoDataCoordinates::Degree);
+    double north = rect.getNorth(), south = rect.getSouth(), east = rect.getEast(), west = rect.getWest();
+
+    GeoDataLatLonBox box(north, south, east, west, GeoDataCoordinates::Degree);
 
     // Center rectangle first
     centerOn(box, false /* animated */);
@@ -978,10 +978,9 @@ void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
     // Correct zoom - zoom out until all points are visible ==========================
     // Needed since Marble does zoom correctly
     qreal x, y;
-    // Limit to 10 iterations to avoid endless loop
+    // Limit iterations to avoid endless loop
     int zoomIterations = 0;
-    while((!screenCoordinates(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree), x, y) ||
-           !screenCoordinates(box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree), x, y)) &&
+    while((!screenCoordinates(west, north, x, y) || !screenCoordinates(east, south, x, y)) &&
           (zoomIterations < 10) && (zoom() < maximumZoom()))
     {
 #ifdef DEBUG_INFORMATION
@@ -993,8 +992,7 @@ void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 
     // Correct zoom - zoom in until at least one point is not visible ==========================
     zoomIterations = 0;
-    while(screenCoordinates(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree), x, y) &&
-          screenCoordinates(box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree), x, y) &&
+    while(screenCoordinates(west, north, x, y) && screenCoordinates(east, south, x, y) &&
           (zoomIterations < 10) && (zoom() > minimumZoom()))
     {
 #ifdef DEBUG_INFORMATION
@@ -1004,7 +1002,7 @@ void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
       zoomIterations++;
     }
 
-    // Fix blurryness or zoom one out after correcting
+    // Fix blurryness or zoom one out after correcting by zooming in
     if((allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP) || zoomIterations > 0)
       // Zoom out to next step to get a sharper map display
       zoomOut();
@@ -1302,8 +1300,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QRect widgetRect = rect();
 
   // Used to check if objects are still visible
-  QRect widgetRectSmall = widgetRect.adjusted(widgetRect.width() / 20, widgetRect.height() / 20,
-                                              -widgetRect.width() / 20, -widgetRect.height() / 20);
+  QRect widgetRectSmall = widgetRect /*.adjusted(widgetRect.width() / 20, widgetRect.height() / 20,
+                                      *         -widgetRect.width() / 20, -widgetRect.height() / 20)*/;
   curPosVisible = widgetRectSmall.contains(curPoint);
 
   bool wasEmpty = aircraftTrack.isEmpty();
@@ -1439,6 +1437,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
                 Rect rect(nextWpPos);
                 rect.extend(aircraft.getPosition());
+
+                if(rect.getWidthDegree() > 180.f || rect.getHeightDegree() > 180.f)
+                  rect = Rect(nextWpPos);
+
 #ifdef DEBUG_INFORMATION_SIMUPDATE
                 qDebug() << Q_FUNC_INFO;
                 qDebug() << "curPoint" << curPoint;
@@ -1448,9 +1450,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 qDebug() << "rect" << rect;
 #endif
 
-                if(!rect.isPoint() /*&& rect.getWidthDegree() > 0.01 && rect.getHeightDegree() > 0.01*/)
+                if(!rect.isPoint(POS_IS_POINT_EPSILON))
                 {
-                  rect.inflate(rect.getWidthDegree() * 0.1f, rect.getHeightDegree() * 0.1f);
+                  // Adjust zoom distance to be bigger (more out)
+                  rect.inflate(std::min(rect.getWidthDegree() * 0.1f, 1.f / 600.f /* 1/10 NM */),
+                               std::min(rect.getHeightDegree() * 0.1f, 1.f / 600.f /* 1/10 NM */));
                   centerRectOnMap(rect);
 
                   // Minimum zoom depends on flight altitude
