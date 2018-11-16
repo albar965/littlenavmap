@@ -56,6 +56,7 @@
      <addaction name="actionRouteSaveAsRxpGtn"/>
      <addaction name="actionRouteSaveAsRxpGns"/>
      <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsFms3"/>
      <addaction name="actionRouteSaveAsRte"/>
      <addaction name="actionRouteSaveAsTxt"/>
      <addaction name="actionRouteSaveAsFpr"/>
@@ -83,7 +84,6 @@
     <addaction name="actionRouteSaveAsFlp"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveAsClean"/>
-    <addaction name="actionRouteSaveAsFms3"/>
     <addaction name="menuEXport"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveApprWaypoints"/>
@@ -96,6 +96,8 @@
     <addaction name="actionWorkOffline"/>
     <addaction name="separator"/>
     <addaction name="actionSaveMapAsImage"/>
+    <addaction name="actionMapCopyClipboard"/>
+    <addaction name="separator"/>
     <addaction name="actionPrintMap"/>
     <addaction name="actionPrintFlightplan"/>
     <addaction name="separator"/>
@@ -3827,7 +3829,7 @@
            <item>
             <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
              <property name="toolTip">
-              <string>Average wind at flight plan cruise level. 
+              <string>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</string>
              </property>
              <property name="statusTip">
@@ -7900,10 +7902,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
   </action>
   <action name="actionRouteSaveAsFms3">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
-   </property>
    <property name="text">
     <string>Export Flight Plan as X-Plane FMS &amp;3 ...</string>
    </property>
@@ -9168,6 +9166,20 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Delete simulator aircraft trail from elevation profile</string>
+   </property>
+  </action>
+  <action name="actionMapCopyClipboard">
+   <property name="text">
+    <string>Copy Map &amp;Image to Clipboard ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save current map view as an image to the clipboard</string>
+   </property>
+   <property name="statusTip">
+    <string>Save current map view as an image to the clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+P</string>
    </property>
   </action>
  </widget>

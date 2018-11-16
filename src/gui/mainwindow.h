@@ -241,6 +241,7 @@ private:
   void resetMessages();
   void showDatabaseFiles();
   void mapSaveImage();
+  void mapCopyToClipboard();
   void distanceChanged();
   void showDonationPage();
   void showFaqPage();

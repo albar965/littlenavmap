@@ -89,6 +89,7 @@
 #include <QSslSocket>
 #include <QEvent>
 #include <QMimeData>
+#include <QClipboard>
 
 #include "ui_mainwindow.h"
 
@@ -1003,6 +1004,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
   connect(ui->actionPrintFlightplan, &QAction::triggered, printSupport, &PrintSupport::printFlightplan);
   connect(ui->actionSaveMapAsImage, &QAction::triggered, this, &MainWindow::mapSaveImage);
+  connect(ui->actionMapCopyClipboard, &QAction::triggered, this, &MainWindow::mapCopyToClipboard);
 
   // KML actions
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
@@ -2097,7 +2099,8 @@ void MainWindow::mapSaveImage()
   QString imageFile = dialog->saveFileDialog(
     tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
     "jpg", "MainWindow/",
-    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Screenshot.jpg"));
+    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
+    arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
 
   if(!imageFile.isEmpty())
   {
@@ -2111,6 +2114,21 @@ void MainWindow::mapSaveImage()
     if(!pixmap.save(imageFile))
       atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
   }
+}
+
+void MainWindow::mapCopyToClipboard()
+{
+  QPixmap pixmap;
+  mapWidget->showOverlays(false);
+  pixmap = mapWidget->mapScreenShot();
+  mapWidget->showOverlays(true);
+
+  PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
+
+  // Copy formatted and plain text to clipboard
+  QMimeData *data = new QMimeData;
+  data->setImageData(pixmap);
+  QGuiApplication::clipboard()->setMimeData(data);
 }
 
 void MainWindow::sunShadingTimeChanged()
