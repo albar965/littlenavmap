@@ -88,6 +88,7 @@ private:
   void simComboChanged(int index);
   void updateComboBox();
   void updateWidgets();
+  QString fixBasePath(QString path);
 
   Ui::DatabaseDialog *ui;
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;

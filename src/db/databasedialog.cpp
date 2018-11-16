@@ -84,7 +84,7 @@ DatabaseDialog::~DatabaseDialog()
 
 void DatabaseDialog::basePathEdited(const QString& text)
 {
-  simulators[currentFsType].basePath = QDir::toNativeSeparators(text);
+  simulators[currentFsType].basePath = fixBasePath(text);
 }
 
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
@@ -125,7 +125,7 @@ void DatabaseDialog::selectBasePathClicked()
 
   if(!path.isEmpty())
   {
-    simulators[currentFsType].basePath = QDir::toNativeSeparators(path);
+    simulators[currentFsType].basePath = fixBasePath(path);
     updateWidgets();
   }
 }
@@ -226,4 +226,11 @@ void DatabaseDialog::updateWidgets()
   ui->pushButtonDatabaseSceneryFile->setEnabled(!showXplane);
   ui->lineEditDatabaseSceneryFile->setEnabled(!showXplane);
   ui->pushButtonDatabaseResetPaths->setEnabled(!showXplane);
+}
+
+QString DatabaseDialog::fixBasePath(QString path)
+{
+  if(!path.isEmpty() && !QDir(path).isRoot() && (path.endsWith("/") || path.endsWith("\\")))
+    path.remove(path.size() - 1, 1);
+  return QDir::toNativeSeparators(path);
 }
