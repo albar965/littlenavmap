@@ -1214,6 +1214,8 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
           &RouteController::disconnectedFromSimulator);
 
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::sunShadingTimeChanged);
+
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapWidget::disconnectedFromSimulator);
