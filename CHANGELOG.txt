@@ -1,6 +1,66 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.2.rc1
+
+Elevation Profile:
+* Fixed several issues with aircraft movement and trail in elevation profile.
+  Profile trail now depends on active leg and is now saved seperate from aircraft trail on map.
+* Aircraft direction now turned if reversal relative to active leg detected.
+* Aircraft now removed from profile if missed approach flown.
+* Added new menu item in elevation profile to clean its aircraft trail.
+* VASI glideslope in elevation profile now also shown for destinations where airport and procedure runway
+  do not match because of renamed runways.
+
+Information:
+* Fixed issues with file links for "BGL" and "apt.dat" files which did not work on Windows
+  if base path had a trailing backslash.
+* Fixed issue where airways were not displayed when selecting "Show information" on the map.
+
+Flight Plan:
+* ILS frequency in flight plan table now also shown for destinations where airport and procedure runway do not match.
+* Traveling time in flight plan table header now updated correctly on altitude change. Time is now omitted if invalid.
+* Moved FMS 3 format to export sub-menu since it is less important.
+
+Online Networks:
+* Fixed online network aircraft heading on map display for VATSIM and IVAO.
+* Removed display of true heading in information window and tooltips. Now always calculating magnetic.
+
+Map:
+* Changed map context menu to show only the mentioned item in "Show information" and nothing else.
+* Removed "and more" indication in context menu since it is not used any more.
+* Attempt to fix several zoom issues like zooming all way out and permanent map update when
+  centering aircraft and active flight plan leg.
+* Added workaround for issues when zooming to map objects. Now determining the best zoom distance until all is visible.
+* Made "Too many objects" and "Offline" warning messages more clear.
+* Now drawing weather symbols above flight plan.
+* Sun shading is now reset to real time when disconnecting simulator.
+* Fixed issue that caused wrong zooming in LNM on the anti-meridian.
+
+Help:
+* Updated manual is online. Updated PDF is included in the download.
+* All help buttons and menus are now working.
+* Updated included legend with weather, MORA and modifier mouse click description.
+
+User Interface:
+* Added "Copy Map Image to Clipboard" function in file menu.
+* Now appending date and time suffix to map screenshot name to avoid overwriting for "Save Map as Image".
+* Disabled restoring of full screen mode on macOS since Qt freezes dock windows.
+  If that happens double click the title bar of any dock window to float it. Double click again
+  to dock it back and you can resize all docks again.
+* Maximized window state is now correctly saved and restored.
+* "Reset window layout" now also changes window size and centers window to avoid messed up layouts.
+  Changed default layout to avoid locked elevation profile size.
+* Updated icons that were barely visible in night mode.
+* Updated French translation by Patrick.
+
+related from atools version 3.2.2.rc1
+
+* Small improvements to file system watcher to improve reliability when reading weather files.
+* Updated French translation.
+
+===============================================================================
+
 Version 2.2.1.beta
 
 Aircraft Performance:

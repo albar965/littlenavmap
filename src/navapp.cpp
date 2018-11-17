@@ -86,7 +86,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setOrganizationName("ABarthel");
   setOrganizationDomain("abarthel.org");
 
-  setApplicationVersion("2.2.1.beta"); // VERSION_NUMBER
+  setApplicationVersion("2.2.2.rc1"); // VERSION_NUMBER
 }
 
 NavApp::~NavApp()
