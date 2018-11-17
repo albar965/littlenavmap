@@ -279,6 +279,14 @@
         <source>Fuel Plan</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Distance:</source>
+        <translation type="unfinished">Distancia:</translation>
+    </message>
+    <message>
+        <source>%1</source>
+        <translation type="unfinished">%1</translation>
+    </message>
 </context>
 <context>
     <name>AircraftPerfDialog</name>
@@ -1652,7 +1660,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source>&lt;b style=&quot;color: red;&quot;&gt;Too many objects.&lt;/b&gt;</source>
-        <translation>&lt;b style=&quot;color: red;&quot;&gt;Demasiados objetos.&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b style=&quot;color: red;&quot;&gt;Demasiados objetos.&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Aircraft</source>
@@ -1916,7 +1924,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <source>&lt;b style=&quot;color:red&quot;&gt;Offline. &lt;/b&gt;</source>
-        <translation>&lt;b style=&quot;color:red&quot;&gt;Sin Conexión. &lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b style=&quot;color:red&quot;&gt;Sin Conexión. &lt;/b&gt;</translation>
     </message>
     <message>
         <source>Plain offline map theme</source>
@@ -2420,7 +2428,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Delete simulator aircraft trail from map</source>
-        <translation>Borrar la traza de nuestra aeronave del mapa</translation>
+        <translation type="vanished">Borrar la traza de nuestra aeronave del mapa</translation>
     </message>
     <message>
         <source>Map theme changed to %1</source>
@@ -3656,7 +3664,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <source>Little Navmap Screenshot.jpg</source>
-        <translation>Captura de pantalla de LNM como screenshoot.jpg</translation>
+        <translation type="vanished">Captura de pantalla de LNM como screenshoot.jpg</translation>
     </message>
     <message>
         <source>At least one Ramp Cargo</source>
@@ -4718,11 +4726,6 @@ Simulator might not be able to load the flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Average wind at flight plan cruise level. 
-Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Average wind at flight plan cruise level.  Wind speed will be interpolated for climb and descent phases.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5100,6 +5103,43 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>Show all &amp;floating Windows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average wind at flight plan cruise level.
+Wind speed will be interpolated for climb and descent phases.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete simulator aircraft trail from map and elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete simulator aircraft trail from elevation profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Map &amp;Image to Clipboard ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save current map view as an image to the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Shift+P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many objects.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offline.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Little Navmap Map %1.jpg</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6755,7 +6795,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>Visual Range</source>
-        <translation>Rango Visual</translation>
+        <translation type="vanished">Rango Visual</translation>
     </message>
     <message>
         <source>Flight Rules:</source>
@@ -6775,11 +6815,11 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>Enroute hh:mm</source>
-        <translation>En viaje hh:mm</translation>
+        <translation type="vanished">En viaje hh:mm</translation>
     </message>
     <message>
         <source>Endurance hh:mm</source>
-        <translation>Resistencia hh:mm</translation>
+        <translation type="vanished">Resistencia hh:mm</translation>
     </message>
     <message>
         <source>Alternates:</source>
@@ -6908,6 +6948,14 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Estimated Enroute time hh:mm:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Endurance hh:mm:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7039,7 +7087,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source>HDG %3°T</source>
-        <translation>HDG %3°T</translation>
+        <translation type="vanished">HDG %3°T</translation>
     </message>
     <message>
         <source>°M ◄</source>
@@ -7372,7 +7420,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <source> and more</source>
-        <translation> y más</translation>
+        <translation type="vanished"> y más</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9766,7 +9814,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>&amp;Approaches</source>
-        <translation>&amp;Aproximaciones</translation>
+        <translation type="vanished">&amp;Aproximaciones</translation>
     </message>
     <message>
         <source>&amp;Include runways with soft surface</source>
@@ -9875,6 +9923,10 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     <message>
         <source>Print Pre&amp;view</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Procedures</source>
+        <translation type="unfinished">&amp;Procedimientos</translation>
     </message>
 </context>
 <context>
@@ -12409,11 +12461,11 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;%1, %2&lt;/b&gt;</source>
+        <source>&lt;p&gt;Cannot load procedures into flight plan:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p&gt;Cannot load procedures into flight plan:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</source>
+        <source>&lt;b&gt;%1&lt;/b&gt;, %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
