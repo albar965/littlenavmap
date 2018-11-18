@@ -238,7 +238,6 @@ void MapWidget::setTheme(const QString& theme, int index)
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(true);
         ui->actionMapShowSunShading->setEnabled(true);
-        ui->actionMapShowSunShading->setEnabled(true);
         break;
 
       case map::SIMPLE:

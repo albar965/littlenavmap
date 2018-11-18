@@ -4464,7 +4464,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <addaction name="actionRouteCenter"/>
    <addaction name="separator"/>
    <addaction name="actionMapAircraftCenter"/>
+   <addaction name="separator"/>
    <addaction name="actionMapDeleteAircraftTrack"/>
+   <addaction name="actionMapClearAllHighlights"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
