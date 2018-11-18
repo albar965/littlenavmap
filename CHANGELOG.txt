@@ -3,6 +3,59 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 Version 2.2.2.rc1
 
+Help:
+* Updated manual is online. Updated PDF is included in the download.
+* All help buttons and menus are now working.
+* Updated included legend with weather, MORA and modifier mouse click description.
+* New online manual chapters and/or changes:
+  - Major update and enhancements in elevation profile:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/PROFILE.html
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/LEGEND.html#elevation-profile-legend
+  - Aircraft performance:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/AIRCRAFTPERF.html
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/AIRCRAFTPERFEDIT.html
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/FLIGHTPLAN.html#flight-plan-table-columns
+  - Airport Weather:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/WEATHER.html#airport-weather
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/MENUS.html#show-airport-weather
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/LEGEND.html#airport-weather
+  - Sun shading:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/SUNSHADOW.html
+  - New settings, crab angle and next wayppoint in compass rose:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/COMPASSROSE.html
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/LEGEND.html#compass-rose
+  - Airport traffic pattern:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/TRAFFICPATTERN.html
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/MAPDISPLAY.html#show-traffic-pattern
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/LEGEND.html#airport-traffic-pattern
+  - MORA Grid:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/MENUS.html#show-mora-grid
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/LEGEND.html#mora-grid
+  - Mouse clicks with modifiers in map:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/MAPDISPLAY.html#mouse-clicks-modifiers
+  - Switch user interface styles on the fly:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/MENUS.html#window-styles
+  - Options for map display and simulator aircraft:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/OPTIONS.html#blurred-map
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/OPTIONS.html#simulator-aircraft-allow-scroll-zoom
+  - Scenery loading can now exclude files and use X-Plane "scenery_packs.ini":
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/SCENERY.html#load-scenery-library-dialog-options
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/OPTIONS.html#scenery-library-database_exclude
+  - Improvements to printing:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/PRINT.html#printing-the-flight-plan
+  - New airport related menu items in procedure search:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/SEARCHPROCS.html#show-information
+  - Insert flight plan into current plan:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/FLIGHTPLAN.html#insert-flight-plan
+  - Sunrise and sunset for airport in information:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/INFO.html#airport
+  - Bearing and distance of user aircraft to airport or navaid in information:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/INFO.html#general
+  - Show more less data in aircraft progress:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/INFO.html#progress
+  - Better highlighting for airspaces from information window:
+    https://albar965.gitbooks.io/little-navmap-user-manual/content/v/release/2.2/en/INFO.html#airspaces
+
 Elevation Profile:
 * Fixed several issues with aircraft movement and trail in elevation profile.
   Profile trail now depends on active leg and is now saved seperate from aircraft trail on map.
@@ -36,11 +89,6 @@ Map:
 * Now drawing weather symbols above flight plan.
 * Sun shading is now reset to real time when disconnecting simulator.
 * Fixed issue that caused wrong zooming in LNM on the anti-meridian.
-
-Help:
-* Updated manual is online. Updated PDF is included in the download.
-* All help buttons and menus are now working.
-* Updated included legend with weather, MORA and modifier mouse click description.
 
 User Interface:
 * Added "Copy Map Image to Clipboard" function in file menu.
