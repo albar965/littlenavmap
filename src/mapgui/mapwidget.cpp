@@ -967,8 +967,11 @@ void MapWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
      rect.getWidthDegree() > POS_IS_POINT_EPSILON &&
      rect.getHeightDegree() > POS_IS_POINT_EPSILON)
   {
-    double north = rect.getNorth(), south = rect.getSouth(), east = rect.getEast(), west = rect.getWest();
+    // Make rectangle slightly bigger to avoid waypoints hiding at the window corners
+    Rect scaled(rect);
+    scaled.scale(1.075f, 1.075f);
 
+    double north = scaled.getNorth(), south = scaled.getSouth(), east = scaled.getEast(), west = scaled.getWest();
     GeoDataLatLonBox box(north, south, east, west, GeoDataCoordinates::Degree);
 
     // Center rectangle first
@@ -1451,9 +1454,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
                 if(!rect.isPoint(POS_IS_POINT_EPSILON))
                 {
-                  // Adjust zoom distance to be bigger (more out)
-                  rect.inflate(std::min(rect.getWidthDegree() * 0.1f, 1.f / 600.f /* 1/10 NM */),
-                               std::min(rect.getHeightDegree() * 0.1f, 1.f / 600.f /* 1/10 NM */));
                   centerRectOnMap(rect);
 
                   // Minimum zoom depends on flight altitude
