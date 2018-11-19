@@ -37,6 +37,8 @@ class RouteAltitude;
 class Route :
   private QList<RouteLeg>
 {
+  Q_DECLARE_TR_FUNCTIONS(Route)
+
 public:
   Route();
   Route(const Route& other);
@@ -399,6 +401,9 @@ public:
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;
+
+  /* SID RAMY6, Approach ILS 12, etc. */
+  QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
 
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);

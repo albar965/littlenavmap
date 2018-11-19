@@ -536,8 +536,9 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   return out;
 }
 
-MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg)
+MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg, bool previewParam)
 {
+  preview = previewParam;
   calculatedDistance = leg.calculatedDistance;
   calculatedTrueCourse = leg.calculatedTrueCourse;
   time = leg.time;

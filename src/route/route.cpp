@@ -724,7 +724,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
       }
 
       if(leg.isAnyProcedure())
-        procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg()));
+        procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
     }
   }
 }
@@ -1639,6 +1639,32 @@ float Route::getDistanceToFlightPlan() const
     return atools::geo::meterToNm(std::abs(activeLegResult.distance));
   else
     return map::INVALID_DISTANCE_VALUE;
+}
+
+QString Route::getProcedureLegText(proc::MapProcedureTypes mapType) const
+{
+  QString procText;
+
+  if(mapType & proc::PROCEDURE_APPROACH || mapType & proc::PROCEDURE_MISSED)
+  {
+    procText = QObject::tr("%1 %2 %3%4").
+               arg(mapType & proc::PROCEDURE_MISSED ? tr("Missed") : tr("Approach")).
+               arg(arrivalLegs.approachType).
+               arg(arrivalLegs.approachFixIdent).
+               arg(arrivalLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + arrivalLegs.approachSuffix));
+  }
+  else if(mapType & proc::PROCEDURE_TRANSITION)
+    procText = QObject::tr("Transition %1").arg(arrivalLegs.transitionFixIdent);
+  else if(mapType & proc::PROCEDURE_STAR)
+    procText = QObject::tr("STAR %1").arg(starLegs.approachFixIdent);
+  else if(mapType & proc::PROCEDURE_SID)
+    procText = QObject::tr("SID %1").arg(departureLegs.approachFixIdent);
+  else if(mapType & proc::PROCEDURE_SID_TRANSITION)
+    procText = QObject::tr("SID Transition %1").arg(departureLegs.transitionFixIdent);
+  else if(mapType & proc::PROCEDURE_STAR_TRANSITION)
+    procText = QObject::tr("STAR Transition %1").arg(starLegs.transitionFixIdent);
+
+  return procText;
 }
 
 QDebug operator<<(QDebug out, const Route& route)

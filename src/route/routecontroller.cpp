@@ -2962,7 +2962,7 @@ void RouteController::updateTableModel()
     // Region, navaid name, procedure type ===========================================
     itemRow[rc::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rc::NAME] = new QStandardItem(leg.getName());
-    itemRow[rc::PROCEDURE] = new QStandardItem(procedureLegText(leg));
+    itemRow[rc::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));
 
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())
@@ -3122,37 +3122,6 @@ void RouteController::updateTableModel()
   highlightProcedureItems();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
   updateWindowLabel();
-}
-
-QString RouteController::procedureLegText(const RouteLeg& leg)
-{
-  QString procText;
-  if(leg.isAnyProcedure())
-  {
-    proc::MapProcedureTypes mapType = leg.getProcedureType();
-    const proc::MapProcedureLegs& arrivalLegs = route.getArrivalLegs();
-    const proc::MapProcedureLegs& starLegs = route.getStarLegs();
-    const proc::MapProcedureLegs& sidLegs = route.getDepartureLegs();
-    if(mapType & proc::PROCEDURE_APPROACH || mapType & proc::PROCEDURE_MISSED)
-    {
-      procText = QObject::tr("%1 %2 %3%4").
-                 arg(mapType & proc::PROCEDURE_MISSED ? tr("Missed") : tr("Approach")).
-                 arg(arrivalLegs.approachType).
-                 arg(arrivalLegs.approachFixIdent).
-                 arg(arrivalLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + arrivalLegs.approachSuffix));
-    }
-    else if(mapType & proc::PROCEDURE_TRANSITION)
-      procText = QObject::tr("Transition %1").arg(arrivalLegs.transitionFixIdent);
-    else if(mapType & proc::PROCEDURE_STAR)
-      procText = QObject::tr("STAR %1").arg(starLegs.approachFixIdent);
-    else if(mapType & proc::PROCEDURE_SID)
-      procText = QObject::tr("SID %1").arg(sidLegs.approachFixIdent);
-    else if(mapType & proc::PROCEDURE_SID_TRANSITION)
-      procText = QObject::tr("SID Transition %1").arg(sidLegs.transitionFixIdent);
-    else if(mapType & proc::PROCEDURE_STAR_TRANSITION)
-      procText = QObject::tr("STAR Transition %1").arg(starLegs.transitionFixIdent);
-  }
-  return procText;
 }
 
 /* Update travel times in table view model after speed change */

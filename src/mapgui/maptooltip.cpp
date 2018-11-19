@@ -123,7 +123,7 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       html.p();
-      info.procedurePointText(ap, html);
+      info.procedurePointText(ap, html, &route);
       html.pEnd();
       numEntries++;
     }

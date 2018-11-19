@@ -230,7 +230,7 @@ public:
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
+  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html, const Route* route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.

@@ -457,7 +457,7 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
     if(conv.wToS(leg.line.getPos2(), x, y))
     {
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        procPoints.append(proc::MapProcedurePoint(leg));
+        procPoints.append(proc::MapProcedurePoint(leg, true /* preview */));
     }
   }
 }

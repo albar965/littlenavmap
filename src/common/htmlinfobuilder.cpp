@@ -2025,9 +2025,9 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
 
-void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, HtmlBuilder& html) const
+void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, HtmlBuilder& html, const Route *route) const
 {
-  QString header = proc::procedureTypeText(ap.mapType);
+  QString header = ap.preview ? proc::procedureTypeText(ap.mapType) : route->getProcedureLegText(ap.mapType);
 
   head(html, header);
 

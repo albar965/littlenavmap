@@ -381,8 +381,6 @@ private:
 
   void contextMenu(const QPoint& pos);
 
-  QString procedureLegText(const RouteLeg& leg);
-
   void updateUnits();
   void updateErrorLabel();
 
