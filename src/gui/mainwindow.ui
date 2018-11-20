@@ -4465,7 +4465,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <addaction name="separator"/>
    <addaction name="actionMapAircraftCenter"/>
    <addaction name="separator"/>
-   <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="actionMapClearAllHighlights"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
@@ -6704,6 +6703,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Delete simulator aircraft trail from map and elevation profile</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+T</string>
    </property>
   </action>
   <action name="actionMapShowInformation">
