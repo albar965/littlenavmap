@@ -2984,10 +2984,10 @@ void RouteController::updateTableModel()
       itemRow[rc::RESTRICTION] = new QStandardItem(restrictions);
     }
 
-    // Get ILS for approach runway if it marks the end of an ILS procedure
+    // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
     QVector<map::MapIls> ilsByAirportAndRunway;
     if((route.getArrivalLegs().isTypeIls() || route.getArrivalLegs().isTypeLoc()) &&
-       leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
+       leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
       route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
 
     // VOR/NDB type ===========================
