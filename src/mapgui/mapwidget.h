@@ -425,7 +425,7 @@ private:
   virtual bool event(QEvent *event) override;
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void paintEvent(QPaintEvent *paintEvent) override;
-  virtual void focusOutEvent(QFocusEvent *event) override;
+  virtual void focusOutEvent(QFocusEvent *) override;
   virtual void keyPressEvent(QKeyEvent *event) override;
   virtual void leaveEvent(QEvent *) override;
 

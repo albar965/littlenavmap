@@ -3509,6 +3509,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(mouseState != mw::NONE)
     return;
 
+  hideTooltip();
+
   map::MapSearchResult mapSearchResult;
   screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
 
@@ -3549,9 +3551,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 }
 
 /* Stop all line drag and drop if the map looses focus */
-void MapWidget::focusOutEvent(QFocusEvent *event)
+void MapWidget::focusOutEvent(QFocusEvent *)
 {
-  Q_UNUSED(event);
+  hideTooltip();
 
   if(!(mouseState & mw::DRAG_POST_MENU))
   {
@@ -3562,6 +3564,7 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
 
 void MapWidget::leaveEvent(QEvent *)
 {
+  hideTooltip();
   mainWindow->updateMapPosLabel(Pos(), -1, -1);
 }
 
