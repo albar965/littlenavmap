@@ -1616,16 +1616,25 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
     QList<map::MapRunwayEnd> runwayEnds;
     if(arrivalLegs.runwayEnd.isValid())
       NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, arrivalLegs.runwayEnd.name, last().getAirport(),
-                                                     false /* sim data */);
+                                                     false /* nav data */);
 
     ils.clear();
     if(leg.isAnyProcedure() && !(leg.getProcedureType() & proc::PROCEDURE_MISSED) && leg.getRunwayEnd().isValid())
     {
+      // Get ILS from flight plan leg as is
       ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, leg.getRunwayEnd().name);
 
       if(ils.isEmpty())
-        // Get all ils if this is an ILS approach (not LOC)
+        // Get all ILS for the runway end found in a fuzzy way
         ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, runwayEnds.first().name);
+
+      if(ils.isEmpty())
+      {
+        // ILS does not even match runway - try again fuzzy
+        QStringList variants = map::runwayNameVariants(runwayEnds.first().name);
+        for(const QString& runwayVariant : variants)
+          ils.append(NavApp::getMapQuery()->getIlsByAirportAndRunway(last().getAirport().ident, runwayVariant));
+      }
     }
 
     if(runwayEnd != nullptr)
