@@ -3002,9 +3002,7 @@ void RouteController::updateTableModel()
       QSet<QString> texts;
       for(const map::MapIls& ils : ilsByAirportAndRunway)
       {
-        QStringList txt(tr("ILS"));
-        if(ils.slope > 0.f)
-          txt.append("GS");
+        QStringList txt(ils.slope > 0.f ? tr("ILS") : tr("LOC"));
         if(ils.hasDme)
           txt.append("DME");
         texts.insert(txt.join("/"));
