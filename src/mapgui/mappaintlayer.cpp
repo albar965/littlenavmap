@@ -393,8 +393,8 @@ void MapPaintLayer::updateLayers()
   mapLayer = layers->getLayer(dist, detailFactor);
 }
 
-bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
-                           const QString& renderPos, GeoSceneLayer *layer)
+bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos,
+                           GeoSceneLayer *layer)
 {
   Q_UNUSED(renderPos);
   Q_UNUSED(layer);
@@ -408,7 +408,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     opts::MapScrollDetail mapScrollDetail = OptionData::instance().getMapScrollDetail();
 
     // Check if no painting wanted during scroll
-    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation))
+    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation) && // Performance settings
+       !(viewport->projection() == Marble::Mercator && // Do not draw if Mercator wraps around whole planet
+         viewport->viewLatLonAltBox().width(GeoDataCoordinates::Degree) >= 359.))
     {
       updateLayers();
 

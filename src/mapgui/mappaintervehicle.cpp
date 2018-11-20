@@ -170,8 +170,8 @@ void MapPainterVehicle::paintTrack(const PaintContext *context)
 
     for(int i = 1; i < aircraftTrack.size(); i++)
     {
-      const at::AircraftTrackPos& trackPos = aircraftTrack.at(i);
-      wToS(trackPos.pos, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
+      const Pos& trackPos = aircraftTrack.at(i).pos;
+      wToS(trackPos, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 
       QRect rect(QPoint(x1, y1), QPoint(x2, y2));
       rect = rect.normalized();
@@ -181,6 +181,10 @@ void MapPainterVehicle::paintTrack(const PaintContext *context)
       bool visible2 = false;
       if(!hidden1 && !hidden2)
         visible2 = rect.intersects(vpRect);
+
+      if(visible2 && context->viewport->projection() == Marble::Mercator)
+        // Workaround to detect jumping between sides in Mercator projection - do not draw lines from far edges
+        visible2 = QLineF(QPoint(x1, y1), QPoint(x2, y2)).length() < scale->getPixelForNm(1000.f);
 
       if(visible1 || visible2)
       {
