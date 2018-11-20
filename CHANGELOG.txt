@@ -64,6 +64,7 @@ Elevation Profile:
 * Added new menu item in elevation profile to clean its aircraft trail.
 * VASI glideslope in elevation profile now also shown for destinations where airport and procedure runway
   do not match because of renamed runways.
+* Fixed issue where ILS and localizers were not recognized for renamed runways and inconsistent data.
 
 Information:
 * Fixed issues with file links for "BGL" and "apt.dat" files which did not work on Windows
@@ -74,6 +75,7 @@ Flight Plan:
 * ILS frequency in flight plan table now also shown for destinations where airport and procedure runway do not match.
 * Traveling time in flight plan table header now updated correctly on altitude change. Time is now omitted if invalid.
 * Moved FMS 3 format to export sub-menu since it is less important.
+* Flight plan table now displays localizer frequencies.
 
 Online Networks:
 * Fixed online network aircraft heading on map display for VATSIM and IVAO.
@@ -88,7 +90,11 @@ Map:
 * Made "Too many objects" and "Offline" warning messages more clear.
 * Now drawing weather symbols above flight plan.
 * Sun shading is now reset to real time when disconnecting simulator.
-* Fixed issue that caused wrong zooming in LNM on the anti-meridian.
+* Fixed issue of map jumping to the wrong place when zooming around the anti-meridian.
+* Fixed drawing issues with the aircraft trail in Mercator projection.
+* Improved zooming when using a touchpad.
+* Added `Shift+Wheel` for zooming in small steps.
+* Fixed issue where OpenTopoMap constantly showed waiting for data.
 
 User Interface:
 * Added "Copy Map Image to Clipboard" function in file menu.
@@ -100,6 +106,7 @@ User Interface:
 * "Reset window layout" now also changes window size and centers window to avoid messed up layouts.
   Changed default layout to avoid locked elevation profile size.
 * Updated icons that were barely visible in night mode.
+* Added "clear all highlights" to toolbar and removed clear aircraft trail button.
 * Updated French translation by Patrick.
 
 related from atools version 3.2.2.rc1
