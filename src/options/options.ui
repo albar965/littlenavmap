@@ -1841,7 +1841,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
              <string>&amp;Dim passed Legs</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
