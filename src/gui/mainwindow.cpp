@@ -1411,8 +1411,13 @@ void MainWindow::distanceChanged()
   // qDebug() << Q_FUNC_INFO << "minimumZoom" << mapWidget->minimumZoom() << "maximumZoom" << mapWidget->maximumZoom()
   // << "step" << mapWidget->zoomStep() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
   // #endif
+  QString text = Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f));
 
-  mapDistanceLabel->setText(Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f)));
+#ifdef DEBUG_INFORMATION
+  text += QString(" [%1]").arg(mapWidget->zoom());
+#endif
+
+  mapDistanceLabel->setText(text);
 }
 
 void MainWindow::renderStatusChanged(RenderStatus status)

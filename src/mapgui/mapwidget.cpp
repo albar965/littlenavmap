@@ -2883,6 +2883,15 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     return true; // Do not process further
   }
 
+  if(e->type() == QEvent::Wheel)
+  {
+    // Catch the wheel event and do own zooming since Marble is buggy
+
+    e->accept(); // Do not propagate further
+    event(e); // Call own event handler
+    return true; // Do not process further
+  }
+
   if(e->type() == QEvent::MouseButtonPress)
   {
     QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
@@ -3117,6 +3126,60 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     // Force fast updates while dragging
     setViewContext(Marble::Animation);
     update();
+  }
+}
+
+void MapWidget::wheelEvent(QWheelEvent *event)
+{
+  // qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
+  // << event->source();
+
+  if(!geometry().contains(event->pos()))
+    // Ignore wheel events that appear outside of the view and on the scrollbars
+    return;
+
+  if(event->timestamp() > lastWheelEventTimestamp + 500)
+    lastWheelPos = 0;
+
+  // Sum up wheel events
+  lastWheelPos += event->angleDelta().y();
+
+  // Check for threshold
+  if(std::abs(lastWheelPos) >= 120)
+  {
+    bool directionIn = lastWheelPos > 0;
+    lastWheelPos = 0;
+
+    qreal lon, lat;
+    if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat, GeoDataCoordinates::Degree))
+    {
+      // Position is visible
+      qreal centerLat = centerLatitude();
+      qreal centerLon = centerLongitude();
+
+      if(event->modifiers() == Qt::ShiftModifier)
+      {
+        // Smooth zoom
+        if(directionIn)
+          zoomViewBy(zoomStep() / 4);
+        else
+          zoomViewBy(-zoomStep() / 4);
+      }
+      else
+      {
+        if(directionIn)
+          zoomIn();
+        else
+          zoomOut();
+      }
+
+      // Get global coordinates of cursor in new zoom level
+      qreal lon2, lat2;
+      geoCoordinates(event->pos().x(), event->pos().y(), lon2, lat2, GeoDataCoordinates::Degree);
+
+      // Correct position and move center back to mouse cursor position
+      centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
+    }
   }
 }
 

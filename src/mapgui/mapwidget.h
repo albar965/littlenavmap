@@ -417,6 +417,7 @@ private:
   virtual void mouseReleaseEvent(QMouseEvent *event) override;
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
   virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual void wheelEvent(QWheelEvent *event) override;
 
   /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
   bool mousePressCheckModifierActions(QMouseEvent *event);
@@ -577,6 +578,12 @@ private:
   bool printing = false;
 
   JumpBack *jumpBack;
+
+  /* Sum up mouse wheel or trackpad movement before zooming */
+  int lastWheelPos = 0;
+
+  /* Reset lastWheelPos in case of no wheel events */
+  ulong lastWheelEventTimestamp = 0L;
 
 #ifdef DEBUG_MOVING_AIRPLANE
   void debugMovingPlane(QMouseEvent *event);
