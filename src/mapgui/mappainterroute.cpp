@@ -243,18 +243,17 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Draw procedures ==========================================================================
   if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
   {
-    // Draw arrival and departure procedures ============================
     const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
-    if(route->hasAnyDepartureProcedure())
-      paintProcedure(lastLegPoint, context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
+    if(route->hasAnyArrivalProcedure())
+      paintProcedure(lastLegPoint, context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
 
     if(route->hasAnyStarProcedure())
       paintProcedure(lastLegPoint, context, route->getStarLegs(), route->getStarLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
 
-    if(route->hasAnyArrivalProcedure())
-      paintProcedure(lastLegPoint, context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
+    if(route->hasAnyDepartureProcedure())
+      paintProcedure(lastLegPoint, context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
                      flightplanProcedureColor, false /* preview */);
   }
 
@@ -517,7 +516,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   }
 
   // Texts and navaid icons ====================================================
-  for(int i = 0; i < legs.size(); i++)
+  for(int i = legs.size() - 1; i >= 0; i--)
   {
     // No text labels for passed points
     bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
