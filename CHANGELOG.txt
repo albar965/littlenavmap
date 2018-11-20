@@ -94,6 +94,8 @@ Map:
 * Fixed drawing issues with the aircraft trail in Mercator projection.
 * Improved zooming when using a touchpad.
 * Added `Shift+Wheel` for zooming in small steps.
+* Now drawing flight text for procedures in the right order to avoid overlaying text.
+* Military parking is now draw in the right color.
 * Fixed issue where OpenTopoMap constantly showed waiting for data.
 
 User Interface:
@@ -107,6 +109,7 @@ User Interface:
   Changed default layout to avoid locked elevation profile size.
 * Updated icons that were barely visible in night mode.
 * Added "clear all highlights" to toolbar and removed clear aircraft trail button.
+* Fixed issue where tooltips reappeared after leaving the map.
 * Updated French translation by Patrick.
 
 related from atools version 3.2.2.rc1
