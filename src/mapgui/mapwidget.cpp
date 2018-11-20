@@ -1456,17 +1456,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 {
                   centerRectOnMap(rect);
 
+                  float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
                   // Minimum zoom depends on flight altitude
-                  float minZoom =
-                    atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / 2800.f, 0.4f), 28.f));
+                  float minZoomDist = atools::geo::nmToKm(
+                    std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.4f), 28.f));
 
-                  if(distance() < minZoom)
+                  if(distance() < minZoomDist)
                   {
 #ifdef DEBUG_INFORMATION
-                    qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoom;
+                    qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoomDist;
 #endif
                     // Correct zoom for minimum distance
-                    setDistanceToMap(minZoom);
+                    setDistanceToMap(minZoomDist);
 #ifdef DEBUG_INFORMATION
                     qDebug() << Q_FUNC_INFO << "zoom()" << zoom();
 #endif
