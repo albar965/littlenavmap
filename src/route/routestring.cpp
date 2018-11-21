@@ -22,6 +22,7 @@
 #include "fs/util/fsutil.h"
 #include "query/procedurequery.h"
 #include "route/route.h"
+#include "util/htmlbuilder.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "route/flightplanentrybuilder.h"
@@ -47,10 +48,6 @@ const static map::MapObjectTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYP
                                                         map::AIRWAY);
 
 const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
-
-const static QString SPANERR("<span style=\"color: #ff0000; font-weight:600\">");
-const static QString SPANWARN("<span style=\"color: #ff3000\">");
-const static QString SPANEND("</span>");
 
 RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
@@ -398,6 +395,8 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     lastIndex = i;
   }
 
+  // Append if departure airport present
+  int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
   if(!retval.isEmpty())
   {
     if(hasStar && retval.last() == "DCT")
@@ -408,28 +407,27 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       // Remove last DCT if approach information is desired
       retval.removeLast();
 
-    int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
     if(options & rs::RUNWAY && !depRwy.isEmpty())
       insertPosition++;
-
-    QString transSeparator = options & rs::SID_STAR_SPACE ? " " : ".";
-
-    // Add SID
-    if((options& rs::SID_STAR) && !sid.isEmpty())
-      retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : transSeparator + sidTrans));
-    else if(options & rs::SID_STAR_GENERIC)
-      retval.insert(insertPosition, "SID");
-
-    // Add speed and altitude
-    if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
-      retval.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
-
-    // Add STAR
-    if((options& rs::SID_STAR) && !star.isEmpty())
-      retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
-    else if(options & rs::SID_STAR_GENERIC)
-      retval.append("STAR");
   }
+
+  QString transSeparator = options & rs::SID_STAR_SPACE ? " " : ".";
+
+  // Add SID
+  if((options& rs::SID_STAR) && !sid.isEmpty())
+    retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : transSeparator + sidTrans));
+  else if(options & rs::SID_STAR_GENERIC)
+    retval.insert(insertPosition, "SID");
+
+  // Add speed and altitude
+  if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
+    retval.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
+
+  // Add STAR
+  if((options& rs::SID_STAR) && !star.isEmpty())
+    retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
+  else if(options & rs::SID_STAR_GENERIC)
+    retval.append("STAR");
 
   // Add destination airport
   if(options & rs::START_AND_DEST)
@@ -702,7 +700,7 @@ void RouteString::appendWarning(const QString& message)
   if(plaintextMessages)
     messages.append(message);
   else
-    messages.append(SPANWARN + message + SPANEND);
+    messages.append(atools::util::HtmlBuilder::warningMessage(message));
   qWarning() << "Warning:" << message;
 }
 
@@ -711,7 +709,7 @@ void RouteString::appendError(const QString& message)
   if(plaintextMessages)
     messages.append(message);
   else
-    messages.append(SPANERR + message + SPANEND);
+    messages.append(atools::util::HtmlBuilder::errorMessage(message));
   qWarning() << "Error:" << message;
 }
 

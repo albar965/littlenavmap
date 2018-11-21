@@ -76,6 +76,7 @@ Flight Plan:
 * Traveling time in flight plan table header now updated correctly on altitude change. Time is now omitted if invalid.
 * Moved FMS 3 format to export sub-menu since it is less important.
 * Flight plan table now displays localizer frequencies.
+* Fixed issue in route description generator which omitted SID and STAR in some cases.
 
 Online Networks:
 * Fixed online network aircraft heading on map display for VATSIM and IVAO.
