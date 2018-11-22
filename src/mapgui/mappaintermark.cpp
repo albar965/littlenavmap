@@ -979,7 +979,8 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         QPointF center = downwind.center();
         QString text = QString("%1/%2°M").
                        arg(Unit::altFeet(pattern.position.getAltitude(), true, true)).
-                       arg(QLocale().toString(opposedCourseDeg(pattern.heading - pattern.magvar), 'f', 0));
+                       arg(QLocale().toString(
+                             opposedCourseDeg(normalizeCourse(pattern.heading - pattern.magvar)), 'f', 0));
 
         painter->setBrush(Qt::white);
         textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()),
@@ -988,7 +989,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         // Text for final leg =======================================
         text = QString("RW%1/%2°M").
                arg(pattern.runwayName).
-               arg(QLocale().toString(pattern.heading - pattern.magvar, 'f', 0));
+               arg(QLocale().toString(normalizeCourse(pattern.heading - pattern.magvar), 'f', 0));
         textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
                                            true /* both visible */);
 
