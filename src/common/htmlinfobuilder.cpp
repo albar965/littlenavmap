@@ -60,6 +60,7 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::weather::Metar;
 using atools::geo::Pos;
+using atools::fs::util::roundComFrequency;
 
 const float HELIPAD_ZOOM_METER = 200.f;
 const float STARTPOS_ZOOM_METER = 500.f;
@@ -380,15 +381,16 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       head(html, tr("COM Frequencies"));
     html.table();
     if(airport.towerFrequency > 0)
-      html.row2(tr("Tower:"), locale.toString(airport.towerFrequency / 1000., 'f', 3) + tr(" MHz"));
+      html.row2(tr("Tower:"),
+                locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) + tr(" MHz"));
     if(airport.atisFrequency > 0)
-      html.row2(tr("ATIS:"), locale.toString(airport.atisFrequency / 1000., 'f', 3) + tr(" MHz"));
+      html.row2(tr("ATIS:"), locale.toString(roundComFrequency(airport.atisFrequency), 'f', 3) + tr(" MHz"));
     if(airport.awosFrequency > 0)
-      html.row2(tr("AWOS:"), locale.toString(airport.awosFrequency / 1000., 'f', 3) + tr(" MHz"));
+      html.row2(tr("AWOS:"), locale.toString(roundComFrequency(airport.awosFrequency), 'f', 3) + tr(" MHz"));
     if(airport.asosFrequency > 0)
-      html.row2(tr("ASOS:"), locale.toString(airport.asosFrequency / 1000., 'f', 3) + tr(" MHz"));
+      html.row2(tr("ASOS:"), locale.toString(roundComFrequency(airport.asosFrequency), 'f', 3) + tr(" MHz"));
     if(airport.unicomFrequency > 0)
-      html.row2(tr("Unicom:"), locale.toString(airport.unicomFrequency / 1000., 'f', 3) + tr(" MHz"));
+      html.row2(tr("Unicom:"), locale.toString(roundComFrequency(airport.unicomFrequency), 'f', 3) + tr(" MHz"));
     html.tableEnd();
   }
 
@@ -462,7 +464,8 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
       {
         html.tr(QColor());
         html.td(map::comTypeName(rec.valueStr("type")));
-        html.td(locale.toString(rec.valueInt("frequency") / 1000., 'f', 3) + tr(" MHz"));
+        // Round frequencies to nearest valid value to workaround for a compiler rounding bug
+        html.td(locale.toString(roundComFrequency(rec.valueInt("frequency")), 'f', 3) + tr(" MHz"));
         if(rec.valueStr("type") != tr("ATIS"))
           html.td(capString(rec.valueStr("name")));
         else
@@ -1847,7 +1850,13 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   {
     QStringList freqTxt;
     for(int freq : airspace.comFrequencies)
-      freqTxt.append(locale.toString(freq / 1000., 'f', 3));
+    {
+      // Round frequencies to nearest valid value to workaround for a compiler rounding bug
+      freqTxt.append(locale.toString(roundComFrequency(freq), 'f', 3));
+#ifdef DEBUG_INFORMATION
+      freqTxt.append(QString("[%1]").arg(freq));
+#endif
+    }
 
     html.row2(tr("COM Frequency:"), freqTxt.join(tr(", ") + tr(" MHz")));
   }
@@ -1994,7 +2003,7 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) co
   {
     head(html, tr("Tower:"));
     html.br();
-    head(html, locale.toString(airport.towerFrequency / 1000., 'f', 3) + tr(" MHz"));
+    head(html, locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) + tr(" MHz"));
   }
   else
     head(html, tr("Tower"));

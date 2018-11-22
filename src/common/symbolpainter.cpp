@@ -25,6 +25,7 @@
 #include "geo/calculations.h"
 #include "util/paintercontextsaver.h"
 #include "fs/weather/metar.h"
+#include "fs/util/fsutil.h"
 #include "fs/weather/metarparser.h"
 
 #include <QPainter>
@@ -34,6 +35,7 @@
 using namespace Marble;
 using namespace map;
 using atools::geo::angleToQt;
+using atools::fs::util::roundComFrequency;
 
 /* Simulator aircraft symbol */
 const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
@@ -952,17 +954,17 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
   if(flags & textflags::INFO)
   {
     if(airport.towerFrequency != 0 && dispOpts & opts::ITEM_AIRPORT_TOWER)
-      texts.append(tr("CT ") + QString::number(airport.towerFrequency / 1000., 'f', 3));
+      texts.append(tr("CT ") + QString::number(roundComFrequency(airport.towerFrequency), 'f', 3));
 
     QString autoWeather;
     if(dispOpts & opts::ITEM_AIRPORT_ATIS)
     {
       if(airport.atisFrequency > 0)
-        autoWeather = tr("ATIS ") + QString::number(airport.atisFrequency / 1000., 'f', 3);
+        autoWeather = tr("ATIS ") + QString::number(roundComFrequency(airport.atisFrequency), 'f', 3);
       else if(airport.awosFrequency > 0)
-        autoWeather = tr("AWOS ") + QString::number(airport.awosFrequency / 1000., 'f', 3);
+        autoWeather = tr("AWOS ") + QString::number(roundComFrequency(airport.awosFrequency), 'f', 3);
       else if(airport.asosFrequency > 0)
-        autoWeather = tr("ASOS ") + QString::number(airport.asosFrequency / 1000., 'f', 3);
+        autoWeather = tr("ASOS ") + QString::number(roundComFrequency(airport.asosFrequency), 'f', 3);
     }
 
     if(!autoWeather.isEmpty())

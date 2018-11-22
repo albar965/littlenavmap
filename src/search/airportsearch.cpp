@@ -23,6 +23,7 @@
 #include "search/sqlcontroller.h"
 #include "navapp.h"
 #include "search/column.h"
+#include "fs/util/fsutil.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
 #include "gui/widgetutil.h"
@@ -467,7 +468,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
     if(displayRoleValue.isNull())
       return QString();
     else
-      return QLocale().toString(displayRoleValue.toDouble() / 1000, 'f', 3);
+      return QLocale().toString(atools::fs::util::roundComFrequency(displayRoleValue.toInt()), 'f', 3);
   }
   else if(col->getColumnName() == "altitude")
     return Unit::altFeet(displayRoleValue.toFloat(), false);
