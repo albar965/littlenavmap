@@ -1411,7 +1411,12 @@ void MainWindow::distanceChanged()
   // qDebug() << Q_FUNC_INFO << "minimumZoom" << mapWidget->minimumZoom() << "maximumZoom" << mapWidget->maximumZoom()
   // << "step" << mapWidget->zoomStep() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
   // #endif
-  QString text = Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f));
+  float dist = Unit::distMeterF(static_cast<float>(mapWidget->distance() * 1000.f));
+  QString distStr = QLocale().toString(dist, 'f', dist < 20.f ? (dist < 0.2f ? 2 : 1) : 0);
+  if(distStr.endsWith(QString(QLocale().decimalPoint()) + "0"))
+    distStr.chop(2);
+
+  QString text = distStr + " " + Unit::getUnitDistStr();
 
 #ifdef DEBUG_INFORMATION
   text += QString(" [%1]").arg(mapWidget->zoom());
@@ -3382,4 +3387,9 @@ void MainWindow::updateErrorLabels()
   ui->labelProfileError->setText(err);
   ui->labelProfileError->setToolTip(tooltip);
   ui->labelProfileError->setStatusTip(tooltip);
+}
+
+map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
+{
+  return static_cast<map::MapThemeComboIndex>(mapThemeComboBox->currentIndex());
 }

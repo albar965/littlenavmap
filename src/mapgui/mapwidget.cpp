@@ -3168,10 +3168,20 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       }
       else
       {
-        if(directionIn)
-          zoomIn();
+        if(mainWindow->getMapThemeIndex() == map::PLAIN || mainWindow->getMapThemeIndex() == map::SIMPLE)
+        {
+          if(directionIn)
+            zoomViewBy(zoomStep() * 3);
+          else
+            zoomViewBy(-zoomStep() * 3);
+        }
         else
-          zoomOut();
+        {
+          if(directionIn)
+            zoomIn();
+          else
+            zoomOut();
+        }
       }
 
       // Get global coordinates of cursor in new zoom level
