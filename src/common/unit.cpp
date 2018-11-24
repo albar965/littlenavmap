@@ -478,9 +478,9 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
 {
   if(narrow)
   {
-    // Get rid of the trailing zero
+    // Get rid of the trailing dot zero
     QString nm(num);
-    if(nm.endsWith(".0"))
+    if(nm.endsWith(QString(locale->decimalPoint()) + "0"))
       nm.chop(2);
 
     return nm + (addUnit ? un : QString());
