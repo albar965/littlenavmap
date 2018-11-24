@@ -31,6 +31,7 @@
 #include "fs/weather/metar.h"
 #include "util/filesystemwatcher.h"
 #include "connect/connectclient.h"
+#include "fs/weather/metarparser.h"
 
 #include <QDebug>
 #include <QDir>
@@ -332,6 +333,7 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 /* Loads flight plan weather for start and destination */
 void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
 {
+  using atools::fs::weather::MetarParser;
   // DepartureMETAR=NZTU 282151Z 33112KT 9999 FEW030 FEW168 11/05 Q0998 RMK ADVANCED INTERPOLATION
   // DestinationMETAR=NZHR 282151Z 31706KT 9999 -RA SCT020 SCT085 11/07 Q1000 RMK ADVANCED INTERPOLATION
   // AlternateMETAR=
@@ -366,11 +368,27 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
         {
           activeSkyDepartureIdent = match.captured(2);
           activeSkyDepartureMetar = activeSkyDepartureIdent + match.captured(3);
+
+          if(MetarParser(activeSkyDepartureMetar).getDateTime() <
+             MetarParser(activeSkyMetars.value(activeSkyDepartureIdent, QString())).getDateTime())
+          {
+            // Do not use activeflightplanwx.txt if values are older
+            activeSkyDepartureMetar.clear();
+            activeSkyDepartureIdent.clear();
+          }
         }
         else if(type == "DestinationMETAR")
         {
           activeSkyDestinationIdent = match.captured(2);
           activeSkyDestinationMetar = activeSkyDestinationIdent + match.captured(3);
+
+          if(MetarParser(activeSkyDestinationMetar).getDateTime() <
+             MetarParser(activeSkyMetars.value(activeSkyDestinationIdent, QString())).getDateTime())
+          {
+            // Do not use activeflightplanwx.txt if values are older
+            activeSkyDestinationMetar.clear();
+            activeSkyDestinationIdent.clear();
+          }
         }
       }
     }
@@ -378,7 +396,6 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
-
 }
 
 bool WeatherReporter::validateActiveSkyFile(const QString& path)
