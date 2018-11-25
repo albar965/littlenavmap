@@ -87,12 +87,14 @@ public:
   const RouteLeg& getDestinationBeforeProcedure() const;
 
   /* map::INVALID_INDEX_VALUE if no active.
-   * 1 for first leg to route.size() - 1 for active legs */
+   * 1 for first leg to route.size() - 1 for active legs.
+   * 0 is special case for plans consisting of only one airport */
   int getActiveLegIndex() const
   {
     return activeLegIndex;
   }
 
+  /* true if active leg is valid. false for special one airport case */
   bool isActiveValid() const
   {
     return activeLegIndex > 0 && activeLegIndex < size();

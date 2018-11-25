@@ -1223,7 +1223,7 @@ bool MapWidget::isCenterLegAndAircraftActive()
   const Route& route = NavApp::getRouteConst();
   return OptionData::instance().getFlags2() & opts::ROUTE_AUTOZOOM && // Waypoint and aircraft center enabled
          !route.isEmpty() && // Have a route
-         route.isActiveValid() && // Active leg present
+         route.getActiveLegIndex() < map::INVALID_INDEX_VALUE && // Active leg present - special case 0 for one waypoint only
          screenIndex->getUserAircraft().isFlying() && // Aircraft in air
          route.getDistanceToFlightPlan() < MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM; // not too far away from flight plan
 }
@@ -1302,8 +1302,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QRect widgetRect = rect();
 
   // Used to check if objects are still visible
-  QRect widgetRectSmall = widgetRect /*.adjusted(widgetRect.width() / 20, widgetRect.height() / 20,
-                                      *         -widgetRect.width() / 20, -widgetRect.height() / 20)*/;
+  QRect widgetRectSmall = widgetRect.adjusted(10, 10, -10, -10);
   curPosVisible = widgetRectSmall.contains(curPoint);
 
   bool wasEmpty = aircraftTrack.isEmpty();
