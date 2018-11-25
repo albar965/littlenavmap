@@ -2710,7 +2710,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
     heading = aircraft.getHeadingDegMag();
   else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-    heading = aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition());
+    heading = normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
   if(heading < atools::fs::sc::SC_INVALID_FLOAT)
     hdg.append(locale.toString(heading, 'f', 0) + tr("°M"));
