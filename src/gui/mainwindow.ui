@@ -4109,7 +4109,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>8</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <property name="toolTip">
@@ -9189,8 +9189,21 @@ Wind speed will be interpolated for climb and descent phases.</string>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
+  <tabstop>tabWidgetRoute</tabstop>
+  <tabstop>spinBoxRouteAlt</tabstop>
+  <tabstop>comboBoxRouteType</tabstop>
   <tabstop>pushButtonRouteClearSelection</tabstop>
   <tabstop>pushButtonRouteHelp</tabstop>
+  <tabstop>tableViewRoute</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
+  <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
+  <tabstop>pushButtonAircraftPerformanceNew</tabstop>
+  <tabstop>pushButtonAircraftPerformanceLoad</tabstop>
+  <tabstop>pushButtonAircraftPerformanceSave</tabstop>
+  <tabstop>pushButtonAircraftPerformanceSaveAs</tabstop>
+  <tabstop>pushButtonAircraftPerformanceHelp</tabstop>
+  <tabstop>textBrowserAircraftPerformanceReport</tabstop>
   <tabstop>tabWidgetInformation</tabstop>
   <tabstop>textBrowserAirportInfo</tabstop>
   <tabstop>textBrowserRunwayInfo</tabstop>
@@ -9201,6 +9214,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>textBrowserAirspaceInfo</tabstop>
   <tabstop>textBrowserClientInfo</tabstop>
   <tabstop>textBrowserCenterInfo</tabstop>
+  <tabstop>tabWidgetSearch</tabstop>
   <tabstop>lineEditAirportIcaoSearch</tabstop>
   <tabstop>lineEditAirportNameSearch</tabstop>
   <tabstop>pushButtonAirportSearchReset</tabstop>
@@ -9221,7 +9235,11 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>checkBoxAirportClosedSearch</tabstop>
   <tabstop>checkBoxAirportJetASearch</tabstop>
   <tabstop>comboBoxAirportRampSearch</tabstop>
+  <tabstop>comboBoxAirportHelipadSearch</tabstop>
+  <tabstop>comboBoxAirportGateSearch</tabstop>
   <tabstop>spinBoxAirportRunwaysMinSearch</tabstop>
+  <tabstop>spinBoxAirportRunwaysMaxSearch</tabstop>
+  <tabstop>comboBoxAirportSurfaceSearch</tabstop>
   <tabstop>spinBoxAirportAltitudeMinSearch</tabstop>
   <tabstop>spinBoxAirportAltitudeMaxSearch</tabstop>
   <tabstop>checkBoxAirportDistSearch</tabstop>
@@ -9239,6 +9257,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>pushButtonNavSearchClearSelection</tabstop>
   <tabstop>pushButtonNavHelpSearch</tabstop>
   <tabstop>toolButtonNavSearch</tabstop>
+  <tabstop>comboBoxNavNavAidSearch</tabstop>
+  <tabstop>comboBoxNavTypeSearch</tabstop>
+  <tabstop>spinBoxNavMaxRangeSearch</tabstop>
   <tabstop>checkBoxNavDistSearch</tabstop>
   <tabstop>spinBoxNavDistMinSearch</tabstop>
   <tabstop>spinBoxNavDistMaxSearch</tabstop>
@@ -9284,13 +9305,19 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>pushButtonOnlineCenterHelpSearch</tabstop>
   <tabstop>tableViewOnlineCenterSearch</tabstop>
   <tabstop>tableViewOnlineServerSearch</tabstop>
-  <tabstop>tabWidgetLegend</tabstop>
-  <tabstop>textBrowserLegendNavInfo</tabstop>
-  <tabstop>textBrowserLegendInfo</tabstop>
+  <tabstop>widgetProfileLabelLeft</tabstop>
+  <tabstop>scrollAreaProfile</tabstop>
+  <tabstop>pushButtonProfileExpand</tabstop>
+  <tabstop>pushButtonProfileHelp</tabstop>
+  <tabstop>verticalSliderProfileZoom</tabstop>
+  <tabstop>horizontalSliderProfileZoom</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
+  <tabstop>tabWidgetLegend</tabstop>
+  <tabstop>textBrowserLegendNavInfo</tabstop>
+  <tabstop>textBrowserLegendInfo</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

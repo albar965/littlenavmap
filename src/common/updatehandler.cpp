@@ -152,7 +152,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     if(!update.download.isEmpty())
     {
       hasDownload = true;
-      html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Download &lt;&lt;</b>"),
+      html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Download in Web Browser &lt;&lt;</b>"),
              update.download, html::NO_ENTITIES | html::LINK_NO_UL);
     }
     else
