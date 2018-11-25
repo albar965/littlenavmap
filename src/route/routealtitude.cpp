@@ -162,15 +162,39 @@ QVector<float> RouteAltitude::getAltitudes() const
 {
   QVector<float> retval;
 
-  for(const RouteAltitudeLeg& leg: (*this))
-    retval.append(leg.y2());
-
-  if(!route->isEmpty())
+  if(!isEmpty())
   {
-    // Replace the zero altitude of the last dummy segment with the airport altitude
-    const RouteLeg& leg = route->last();
-    if(leg.isRoute() && leg.getAirport().isValid())
-      retval.replace(retval.size() - 1, leg.getPosition().getAltitude());
+    // Have valid altitude legs ==========================
+    for(const RouteAltitudeLeg& leg: (*this))
+      retval.append(leg.y2());
+
+    if(!route->isEmpty())
+    {
+      // Fix departure altitude if airport is valid
+      const RouteLeg& first = route->first();
+      if(first.isRoute() && first.getAirport().isValid())
+        retval.replace(0, first.getPosition().getAltitude());
+
+      // Replace the zero altitude of the last dummy segment with the airport altitude
+      const RouteLeg& last = route->last();
+      if(last.isRoute() && last.getAirport().isValid())
+        retval.replace(retval.size() - 1, last.getPosition().getAltitude());
+    }
+  }
+  else
+  {
+    // No altitude legs - copy airport and cruise altitude ==========================
+    for(int i = 0; i < route->size(); i++)
+    {
+      const RouteLeg& leg = route->at(i);
+
+      if(i == 0 && leg.getAirport().isValid())
+        retval.append(leg.getPosition().getAltitude());
+      else if(i == route->size() - 1 && leg.getAirport().isValid())
+        retval.append(leg.getPosition().getAltitude());
+      else
+        retval.append(route->getCruisingAltitudeFeet());
+    }
   }
 
   return retval;
