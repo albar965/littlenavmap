@@ -940,10 +940,6 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
 
-  connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
-  connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
-  connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
-
   connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
 
@@ -1151,6 +1147,11 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowSunShadingRealTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
   connect(ui->actionMapShowSunShadingUserTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
   connect(ui->actionMapShowSunShadingSetTime, &QAction::triggered, this, &MainWindow::sunShadingTimeSet);
+
+  // Update information after updateMapObjectsShown updated the flags ============================
+  connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   // Order is important here. First let the mapwidget delete the track then notify the profile
   connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, mapWidget, &MapWidget::deleteAircraftTrack);
