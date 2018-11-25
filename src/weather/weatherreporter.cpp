@@ -25,6 +25,7 @@
 #include "navapp.h"
 #include "fs/weather/weathernetdownload.h"
 #include "fs/sc/simconnecttypes.h"
+#include "fs/util/fsutil.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "fs/weather/weathernetsingle.h"
@@ -499,7 +500,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
     qInfo() << "file does not exist" << weatherFile;
 }
 
-bool WeatherReporter::testUrl(const QString& url, const QString& airportIcao, QString& result)
+bool WeatherReporter::testUrl(const QString& url, const QString& airportIcao, QStringList& result)
 {
   return atools::fs::weather::testUrl(url, airportIcao, result);
 }

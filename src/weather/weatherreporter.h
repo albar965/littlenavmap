@@ -119,7 +119,7 @@ public:
    * @param result metar if successfull - otherwise error message
    * @return true if successfull
    */
-  static bool testUrl(const QString& url, const QString& airportIcao, QString& result);
+  static bool testUrl(const QString& url, const QString& airportIcao, QStringList& result);
 
   enum ActiveSkyType
   {

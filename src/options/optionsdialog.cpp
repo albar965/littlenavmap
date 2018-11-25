@@ -509,12 +509,13 @@ void OptionsDialog::onlineTestWhazzupUrlClicked()
 void OptionsDialog::onlineTestUrl(const QString& url)
 {
   qDebug() << Q_FUNC_INFO << url;
-  QString result;
+  QStringList result;
   if(WeatherReporter::testUrl(url, QString(), result))
     QMessageBox::information(this, QApplication::applicationName(),
-                             tr("Success. First lines in file:\n%1").arg(result));
+                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                             arg(result.join("<br/>")));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
 }
 
 void OptionsDialog::updateOnlineWidgetStatus()
@@ -865,21 +866,24 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
 void OptionsDialog::testWeatherIvaoUrlClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  QString result;
+  QStringList result;
   if(WeatherReporter::testUrl(ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), result))
     QMessageBox::information(this, QApplication::applicationName(),
-                             tr("Success. First METARs in file:\n%1").arg(result));
+                             tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
+                             arg(result.join("<br/>")));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
 }
 
 void OptionsDialog::testWeatherUrl(const QString& url)
 {
-  QString result;
+  QStringList result;
   if(WeatherReporter::testUrl(url, "KORD", result))
-    QMessageBox::information(this, QApplication::applicationName(), tr("Success. Result:\n%1").arg(result));
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("<p>Success. Result:</p><hr/><code>%1</code><hr/><br/>").
+                             arg(result.join("<br/>")));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
 }
 
 /* Show directory dialog to add exclude path */
