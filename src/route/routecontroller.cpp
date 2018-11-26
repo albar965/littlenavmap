@@ -1072,8 +1072,29 @@ bool RouteController::saveFlightplan(bool cleanExport)
     if(cleanExport)
       options |= atools::fs::pln::SAVE_CLEAN;
 
+    // Check for a circle-to-land approach without runway - add a random (best) runway from the airport to
+    // satisfy the X-Plane GPS/FMC/G1000
+    bool dummyRwAdded = false;
+    if(route.last().getAirport().isValid() &&
+       flightplan.getFileFormat() == atools::fs::pln::FMS11 &&
+       flightplan.getProperties().value(atools::fs::pln::APPROACHRW).isEmpty() &&
+       (!flightplan.getProperties().value(atools::fs::pln::APPROACH).isEmpty() ||
+        !flightplan.getProperties().value(atools::fs::pln::APPROACH_ARINC).isEmpty()))
+    {
+      // Get best runway - longest with probably hard surface
+      const QList<map::MapRunway> *runways = airportQuery->getRunways(route.last().getId());
+      if(runways != nullptr && !runways->isEmpty())
+      {
+        dummyRwAdded = true;
+        flightplan.getProperties().insert(atools::fs::pln::APPROACHRW, runways->last().primaryName);
+      }
+    }
+
     // Save PLN, FLP or FMS
     flightplanIO->save(flightplan, routeFilename, NavApp::getDatabaseAiracCycleNav(), options);
+
+    if(dummyRwAdded)
+      flightplan.getProperties().insert(atools::fs::pln::APPROACHRW, QString());
 
     if(flightplan.getFileFormat() == atools::fs::pln::PLN_FS9 || flightplan.getFileFormat() == atools::fs::pln::PLN_FSC)
     {

@@ -107,8 +107,10 @@ public:
   /* Get best start position for an airport. This is the longest preferrably hard surfaced primary runway end */
   void getBestStartPositionForAirport(map::MapStart& start, int airportId, const QString& runwayName);
 
-  /* Get a completely filled runway list for the airport */
+  /* Get a completely filled runway list for the airport.
+   * runways are sorted to get betters ones (hard surface, longer) at the end of a list */
   const QList<map::MapRunway> *getRunways(int airportId);
+
   QStringList getRunwayNames(int airportId);
   void getRunwayEndByNames(map::MapSearchResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd getRunwayEndByName(int airportId, const QString& runway);
