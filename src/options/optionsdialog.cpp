@@ -510,10 +510,23 @@ void OptionsDialog::onlineTestUrl(const QString& url)
 {
   qDebug() << Q_FUNC_INFO << url;
   QStringList result;
-  if(WeatherReporter::testUrl(url, QString(), result))
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                             arg(result.join("<br/>")));
+
+  if(atools::fs::weather::testUrl(url, QString(), result, 250))
+  {
+    bool ok = false;
+    for(const QString& str : result)
+      ok |= str.simplified().startsWith("!GENERAL") || str.simplified().startsWith("!CLIENTS");
+
+    if(ok)
+      QMessageBox::information(this, QApplication::applicationName(),
+                               tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                               arg(result.mid(0, 6).join("<br/>")));
+    else
+      atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                              "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                                "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                   arg(result.mid(0, 6).join("<br/>")));
+  }
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
 }
