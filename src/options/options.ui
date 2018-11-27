@@ -4102,10 +4102,10 @@ Changes only settings that can be done with this dialog.</string>
  <tabstops>
   <tabstop>tabWidgetOptions</tabstop>
   <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
-  <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
-  <tabstop>checkBoxOptionsStartupLoadKml</tabstop>
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadTrail</tabstop>
   <tabstop>checkBoxOptionsStartupLoadInfoContent</tabstop>
+  <tabstop>checkBoxOptionsStartupLoadKml</tabstop>
   <tabstop>checkBoxOptionsStartupLoadSearch</tabstop>
   <tabstop>radioButtonOptionsStartupShowLast</tabstop>
   <tabstop>radioButtonOptionsStartupShowHome</tabstop>
@@ -4115,17 +4115,20 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
+  <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
   <tabstop>spinBoxOptionsGuiInfoText</tabstop>
   <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
   <tabstop>checkBoxOptionsGuiOverrideLanguage</tabstop>
   <tabstop>checkBoxOptionsGuiOverrideLocale</tabstop>
+  <tabstop>checkBoxOptionsMapUndock</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
   <tabstop>comboBoxMapScrollDetails</tabstop>
   <tabstop>lineEditOptionsMapRangeRings</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
+  <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
   <tabstop>spinBoxOptionsMapClickRect</tabstop>
   <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>
@@ -4134,9 +4137,9 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsMapClickAirport</tabstop>
   <tabstop>checkBoxOptionsMapClickNavaid</tabstop>
   <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
+  <tabstop>checkBoxOptionsMapAirportDiagram</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
-  <tabstop>checkBoxOptionsMapAirportDiagram</tabstop>
   <tabstop>checkBoxOptionsMapAirportBoundary</tabstop>
   <tabstop>checkBoxOptionsMapAirportText</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>
@@ -4148,12 +4151,39 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftAi</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
+  <tabstop>checkBoxOptionsShowTod</tabstop>
   <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanDimPassed</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanPassedColor</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
   <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessRangeDistance</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeRangeDistance</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessCompassRose</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeCompassRose</tabstop>
+  <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
+  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
   <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
+  <tabstop>spinBoxDisplayOnlineObserver</tabstop>
+  <tabstop>checkBoxDisplayOnlineObserverRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineFir</tabstop>
+  <tabstop>checkBoxDisplayOnlineFirRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineClearance</tabstop>
+  <tabstop>checkBoxDisplayOnlineClearanceRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineGround</tabstop>
+  <tabstop>checkBoxDisplayOnlineGroundRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineTower</tabstop>
+  <tabstop>checkBoxDisplayOnlineTowerRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineApproach</tabstop>
+  <tabstop>checkBoxDisplayOnlineApproachRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineArea</tabstop>
+  <tabstop>checkBoxDisplayOnlineAreaRange</tabstop>
+  <tabstop>spinBoxDisplayOnlineDeparture</tabstop>
+  <tabstop>checkBoxDisplayOnlineDepartureRange</tabstop>
   <tabstop>comboBoxOptionsUnitDistance</tabstop>
   <tabstop>comboBoxOptionsUnitShortDistance</tabstop>
   <tabstop>comboBoxOptionsUnitAlt</tabstop>
@@ -4176,7 +4206,10 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
+  <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
+  <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>checkBoxOptionsRouteShortName</tabstop>
+  <tabstop>checkBoxOptionsRouteExportUserWpt</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>
@@ -4217,6 +4250,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
   <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExcludeDir</tabstop>
+  <tabstop>pushButtonOptionsDatabaseAddExcludeFile</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveExclude</tabstop>
   <tabstop>listWidgetOptionsDatabaseAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>

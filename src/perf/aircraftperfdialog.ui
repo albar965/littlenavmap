@@ -571,16 +571,19 @@ the given descent speeds</string>
   <tabstop>lineEditName</tabstop>
   <tabstop>lineEditType</tabstop>
   <tabstop>comboBoxFuelUnit</tabstop>
+  <tabstop>comboBoxFuelType</tabstop>
   <tabstop>spinBoxReserveFuel</tabstop>
   <tabstop>spinBoxTaxiFuel</tabstop>
   <tabstop>spinBoxExtraFuel</tabstop>
   <tabstop>spinBoxContingencyFuel</tabstop>
   <tabstop>spinBoxClimbSpeed</tabstop>
   <tabstop>spinBoxClimbVertSpeed</tabstop>
+  <tabstop>spinBoxClimbFuelFlow</tabstop>
   <tabstop>spinBoxCruiseSpeed</tabstop>
   <tabstop>spinBoxCruiseFuelFlow</tabstop>
   <tabstop>spinBoxDescentSpeed</tabstop>
   <tabstop>spinBoxDescentVertSpeed</tabstop>
+  <tabstop>spinBoxDescentFuelFlow</tabstop>
   <tabstop>textBrowserDescription</tabstop>
  </tabstops>
  <resources/>

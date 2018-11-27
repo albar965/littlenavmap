@@ -210,6 +210,7 @@ ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR proce
   <tabstop>pushButtonRouteStringFromClipboard</tabstop>
   <tabstop>pushButtonRouteStringUpdate</tabstop>
   <tabstop>pushButtonRouteStringRead</tabstop>
+  <tabstop>comboBoxRouteStringFlightplanType</tabstop>
   <tabstop>toolButtonRouteStringOptions</tabstop>
   <tabstop>textEditRouteStringErrors</tabstop>
  </tabstops>
