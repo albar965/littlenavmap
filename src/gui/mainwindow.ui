@@ -4109,7 +4109,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>8</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <property name="toolTip">
@@ -4465,6 +4465,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <addaction name="separator"/>
    <addaction name="actionMapAircraftCenter"/>
    <addaction name="separator"/>
+   <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="actionMapClearAllHighlights"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>

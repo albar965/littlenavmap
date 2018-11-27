@@ -1158,14 +1158,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowSunShadingUserTime, &QAction::triggered, this, &MainWindow::sunShadingTimeChanged);
   connect(ui->actionMapShowSunShadingSetTime, &QAction::triggered, this, &MainWindow::sunShadingTimeSet);
 
-  // Update information after updateMapObjectsShown updated the flags ============================
+  // Update information after updateMapObjectsShownr updated the flags ============================
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   // Order is important here. First let the mapwidget delete the track then notify the profile
-  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, mapWidget, &MapWidget::deleteAircraftTrack);
-  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, profileWidget, &ProfileWidget::deleteAircraftTrack);
+  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, this, &MainWindow::deleteAircraftTrack);
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
@@ -1705,6 +1704,22 @@ void MainWindow::updateWindowTitle()
     ui->tabWidgetRoute->setTabText(0, ui->tabWidgetRoute->tabText(0).replace(tr(" *"), QString()));
 
   setWindowTitle(newTitle);
+}
+
+void MainWindow::deleteAircraftTrack()
+{
+  int result = atools::gui::Dialog(this).
+               showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL,
+                                  tr("Delete aircraft trail?"),
+                                  tr("Do not &show this dialog again."),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No, QMessageBox::Yes);
+
+  if(result == QMessageBox::Yes)
+  {
+    mapWidget->deleteAircraftTrack();
+    profileWidget->deleteAircraftTrack();
+  }
 }
 
 /* Ask user if flight plan can be deleted when quitting.
@@ -2388,6 +2403,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
+  s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }

@@ -278,6 +278,9 @@ private:
   bool routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileFormat fileFormat);
   bool routeSaveCheckFMS11Warnings();
 
+  /* Question dialog and then delete map and profile trail */
+  void deleteAircraftTrack();
+
   void checkForUpdates();
   void updateClock() const;
 
