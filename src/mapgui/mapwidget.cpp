@@ -3131,10 +3131,12 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
 void MapWidget::wheelEvent(QWheelEvent *event)
 {
-  // qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
-  // << event->source();
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
+           << event->source() << "geometry()" << geometry() << "event->pos()" << event->pos();
+#endif
 
-  if(!geometry().contains(event->pos()))
+  if(!rect().contains(event->pos()))
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return;
 

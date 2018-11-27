@@ -149,17 +149,6 @@ MainWindow::MainWindow()
     ui->setupUi(this);
     setAcceptDrops(true);
 
-    // Setup central widget ==================================================
-    // Set one pixel fixed width
-    // QWidget *centralWidget = new QWidget(this);
-    // centralWidget->setWindowFlags(windowFlags() & ~(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus));
-    // centralWidget->setMinimumSize(1, 1);
-    // centralWidget->resize(1, 1);
-    // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
-    // setCentralWidget(centralWidget);
-    centralWidget()->hide();
-
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
@@ -171,12 +160,24 @@ MainWindow::MainWindow()
 
     routeExport = new RouteExport(this);
 
-    setupUi();
-
     qDebug() << "MainWindow Creating OptionsDialog";
     optionsDialog = new OptionsDialog(this);
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
+
+    // Setup central widget ==================================================
+    // Set one pixel fixed width
+    // QWidget *centralWidget = new QWidget(this);
+    // centralWidget->setWindowFlags(windowFlags() & ~(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus));
+    // centralWidget->setMinimumSize(1, 1);
+    // centralWidget->resize(1, 1);
+    // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
+    // setCentralWidget(centralWidget);
+    if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
+      centralWidget()->hide();
+
+    setupUi();
 
     // Load all map feature colors
     mapcolors::syncColors();
@@ -217,7 +218,16 @@ MainWindow::MainWindow()
     // Create map widget and replace dummy widget in window
     qDebug() << "MainWindow Creating MapWidget";
     mapWidget = new MapWidget(this);
-    ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
+    if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
+    {
+      ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
+      ui->dockWidgetMap->show();
+    }
+    else
+    {
+      setCentralWidget(mapWidget);
+      ui->dockWidgetMap->hide();
+    }
 
     NavApp::initElevationProvider();
 
@@ -2763,6 +2773,11 @@ void MainWindow::resetWindowLayout()
        (screenSize.height() - lnm::DEFAULT_MAINWINDOW_SIZE.height()) / 2);
 
   restoreState(lnm::DEFAULT_MAINWINDOW_STATE, lnm::MAINWINDOW_STATE_VERSION);
+
+  if(!(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK))
+    ui->dockWidgetMap->hide();
+  else
+    ui->dockWidgetMap->show();
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
@@ -2889,6 +2904,11 @@ void MainWindow::restoreStateMain()
 
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
+
+  if(!(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK))
+    ui->dockWidgetMap->hide();
+  else
+    ui->dockWidgetMap->show();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }

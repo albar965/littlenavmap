@@ -209,6 +209,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsMapClickAirport);
   widgets.append(ui->checkBoxOptionsMapClickNavaid);
   widgets.append(ui->checkBoxOptionsMapClickAirspace);
+  widgets.append(ui->checkBoxOptionsMapUndock);
   widgets.append(ui->checkBoxOptionsRouteEastWestRule);
   widgets.append(ui->comboBoxOptionsRouteAltitudeRuleType);
   widgets.append(ui->checkBoxOptionsRoutePreferNdb);
@@ -1067,7 +1068,9 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   toFlags(ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
+
   toFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts::MAP_AVOID_BLURRED_MAP);
+  toFlags2(ui->checkBoxOptionsMapUndock, opts::MAP_ALLOW_UNDOCK);
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
@@ -1261,7 +1264,9 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   fromFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   fromFlags(ui->checkBoxOptionsShowTod, opts::FLIGHT_PLAN_SHOW_TOD);
+
   fromFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts::MAP_AVOID_BLURRED_MAP);
+  fromFlags2(ui->checkBoxOptionsMapUndock, opts::MAP_ALLOW_UNDOCK);
 
   fromFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);

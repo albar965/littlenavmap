@@ -195,7 +195,10 @@ enum Flag2
   WEATHER_TOOLTIP_IVAO = 1 << 12,
 
   /* checkBoxOptionsMapZoomAvoidBlurred */
-  MAP_AVOID_BLURRED_MAP = 1 << 13
+  MAP_AVOID_BLURRED_MAP = 1 << 13,
+
+  /* checkBoxOptionsMapUndock */
+  MAP_ALLOW_UNDOCK = 1 << 14
 
 };
 
@@ -869,7 +872,8 @@ private:
   ;
 
   opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
-                        opts::MAP_ROUTE_DIM_PASSED | opts::MAP_AIRPORT_BOUNDARY | opts::MAP_AIRPORT_DIAGRAM;
+                        opts::MAP_ROUTE_DIM_PASSED | opts::MAP_AIRPORT_BOUNDARY | opts::MAP_AIRPORT_DIAGRAM |
+                        opts::MAP_ALLOW_UNDOCK | opts::MAP_AVOID_BLURRED_MAP;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
