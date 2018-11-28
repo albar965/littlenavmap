@@ -5142,6 +5142,14 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <source>Little Navmap Map %1.jpg</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Alt+Shift+T</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete aircraft trail?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapHtmlInfoBuilder</name>
@@ -9391,6 +9399,17 @@ Start the timer by moving the map instead of scrolling.</source>
         <source>Center &amp;flight plan on map after loading</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Allows to undock and put the map window into a floating state. 
+This can cause several unwanted effects when arranging dock windows. 
+Uncheck this if you do experience strange effects when resizing dock windows.
+Restart the program after changing this option. You might also need to reset the window layout.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow to &amp;undock  the map window (restart required after change)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OptionsDialog</name>
@@ -9559,7 +9578,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     <message>
         <source>Success. Result:
 %1</source>
-        <translation>Exitoso. Resultado:
+        <translation type="vanished">Exitoso. Resultado:
 %1</translation>
     </message>
     <message>
@@ -9625,13 +9644,13 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     <message>
         <source>Success. First lines in file:
 %1</source>
-        <translation>Exitoso. Primera línea en archivo:
+        <translation type="vanished">Exitoso. Primera línea en archivo:
 %1</translation>
     </message>
     <message>
         <source>Success. First METARs in file:
 %1</source>
-        <translation>Exitoso. Primer METAR en archivo:
+        <translation type="vanished">Exitoso. Primer METAR en archivo:
 %1</translation>
     </message>
     <message>
@@ -9744,6 +9763,22 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
     </message>
     <message>
         <source>Crab Angle Indicator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Success. First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Downloaded successfully but the file does not look like a whazzup.txt file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;One of the sections &lt;i&gt;!GENERAL&lt;/i&gt; and/or &lt;i&gt;!CLIENTS&lt;/i&gt; is missing.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Success. First METARs in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Success. Result:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12001,6 +12036,21 @@ hh:mm</translation>
     </message>
 </context>
 <context>
+    <name>Route</name>
+    <message>
+        <source>Missed</source>
+        <translation type="unfinished">Perdido</translation>
+    </message>
+    <message>
+        <source>Approach</source>
+        <translation type="unfinished">Aproximación</translation>
+    </message>
+    <message>
+        <source>-</source>
+        <translation type="unfinished">-</translation>
+    </message>
+</context>
+<context>
     <name>RouteAltitude</name>
     <message>
         <source>Cannot comply with altitude restrictions.</source>
@@ -12430,15 +12480,15 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <source>Missed</source>
-        <translation type="unfinished">Perdido</translation>
+        <translation type="obsolete">Perdido</translation>
     </message>
     <message>
         <source>Approach</source>
-        <translation type="unfinished">Aproximación</translation>
+        <translation type="obsolete">Aproximación</translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="unfinished">-</translation>
+        <translation type="obsolete">-</translation>
     </message>
     <message>
         <source>(%1)</source>
@@ -12466,6 +12516,10 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <source>&lt;b&gt;%1&lt;/b&gt;, %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LOC</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13321,7 +13375,7 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     </message>
     <message>
         <source>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Download &amp;lt;&amp;lt;&lt;/b&gt;</source>
-        <translation>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Descargar &amp;lt;&amp;lt;&lt;/b&gt;</translation>
+        <translation type="vanished">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Descargar &amp;lt;&amp;lt;&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Stable Version</source>
@@ -13338,6 +13392,10 @@ ETD y ETA son ignorados. Los ALTERNOS no funcionan en combinación con un proced
     <message>
         <source>Update Available</source>
         <translation>Actualización disponible</translation>
+    </message>
+    <message>
+        <source>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Download in Web Browser &amp;lt;&amp;lt;&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
