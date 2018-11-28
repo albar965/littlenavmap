@@ -1719,6 +1719,7 @@ void MainWindow::deleteAircraftTrack()
   {
     mapWidget->deleteAircraftTrack();
     profileWidget->deleteAircraftTrack();
+    updateActionStates();
   }
 }
 
