@@ -1,6 +1,37 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.2.rc2
+
+* Added option to disable map window undocking in options dialog on tab "Map".
+  Allowing to undock the map window (option checked - default) can cause issues
+  when resizing dock windows or the main window.
+  Uncheck this option if you see strange or annoying resizing behavior when changing dock window or main
+  window sizes. In some cases the dock window might also freeze, i.e. docks cannot be resized. Uncheck this option
+  if you see one of these issues.
+
+* Better URL test for weather and online URLs now also considering files.
+* Improved check for valid whazzup file. Now looking for sections "!GENERAL" and "!CLIENTS".
+* Fixed issue with missing runway in X-Plane FMS files having circle-to-land approaches.
+  X-Plane can now load these type of approaches without error message.
+* Fixed wrong heading display for online aircraft in information display in some cases.
+* Now centering destination and aircraft also for single airport plans (if flying a pattern).
+* Fixed crash and/or freeze when saving flight plans with one leg or if TOC/TOD could not be calculated.
+* Sped up zoom for maps "Plain" and "Simple". More accurate display for zoom distance at lower levels.
+* Fixed issue with ActiveSky showing old weather from stale "activeflightplanwx.txt" flight plan files.
+  Now always using the latest from either "activeflightplanwx.txt" or "current_wx_snapshot.txt".
+* Fixed issue with wrong course display in traffic pattern in some cases.
+* Com frequencies are now forced into 25 kHz raster on display.
+* More minor GUI adjustements and fixes.
+
+related from atools version 3.2.2.rc2
+
+* Fixed rounding error for COM frequencies in DFD compiler.
+* Fixed warning message "q_startOperation was called more than once" in log file
+  by skipping if already downloading weather files.
+
+===============================================================================
+
 Version 2.2.2.rc1
 
 Help:
