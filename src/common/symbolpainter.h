@@ -130,7 +130,7 @@ public:
                        int maxTextLength);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
+  void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar,
@@ -166,10 +166,10 @@ public:
                         bool fast);
 
   /* User defined flight plan waypoint */
-  void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
+  void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
 
   /* Circle for approach points which are not navaids */
-  void drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
+  void drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
 
   /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
   void drawProcedureUnderlay(QPainter *painter, int x, int y, int size, bool flyover, bool faf);

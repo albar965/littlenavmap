@@ -896,15 +896,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       // Symbols ========================================================
       if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-        symPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, true, false);
+        symPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, true);
       else if(type == map::USERPOINTROUTE)
-        symPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true, false);
+        symPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
       else if(type == map::INVALID)
-        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, true,
-                                      false);
+        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, true);
       else if(type == map::PROCEDURE)
         // Missed is not included
-        symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true, false);
+        symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
       else
         continue;
 

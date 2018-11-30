@@ -75,7 +75,7 @@ void MapPainterNav::render(PaintContext *context)
     // If airways are drawn we also have to go through waypoints
     const QList<MapWaypoint> *waypoints = mapQuery->getWaypoints(curBox, context->mapLayer, context->lazyUpdate);
     if(waypoints != nullptr)
-      paintWaypoints(context, waypoints, drawWaypoint, context->drawFast);
+      paintWaypoints(context, waypoints, drawWaypoint);
   }
 
   // VOR -------------------------------------------------
@@ -274,8 +274,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
-void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints,
-                                   bool drawWaypoint, bool drawFast)
+void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints, bool drawWaypoint)
 {
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
@@ -297,7 +296,7 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
         return;
 
       int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false, drawFast);
+      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
       // If airways are drawn force display of the respecive waypoints
       if(context->mapLayer->isWaypointName() ||

@@ -1308,7 +1308,7 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview, false);
+  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview);
 }
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
@@ -1338,7 +1338,7 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
 void MapPainterRoute::paintProcedurePoint(const PaintContext *context, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, !preview, false);
+  symbolPainter->drawProcedureSymbol(context->painter, x, y, size + 3, !preview);
 }
 
 void MapPainterRoute::paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg,
@@ -1353,7 +1353,7 @@ void MapPainterRoute::paintProcedureUnderlay(const PaintContext *context, const 
 void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y, bool preview)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview, false);
+  symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview);
 }
 
 /* Draw text with light yellow background for flight plan */

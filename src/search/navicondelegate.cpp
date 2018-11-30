@@ -72,7 +72,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
 
   if(type == map::WAYPOINT)
     // An empty waypoint is enough to draw the symbol
-    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false, false);
+    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false);
   else if(type == map::NDB)
     symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
   else if(type == map::VOR)
