@@ -1051,6 +1051,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
         paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
       texts.clear();
     }
+    return;
   }
 
   // Manual and altitude terminated legs that have a calculated position needing extra text
@@ -1144,7 +1145,24 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   // Merge restricions between overlapping fixes across procedures
   if(lastLegPoint.isValid() && lastLegPoint.fixPos.almostEqual(leg.fixPos) &&
-     lastLegPoint.fixIdent == leg.fixIdent && lastLegPoint.fixRegion == leg.fixRegion)
+     lastLegPoint.fixIdent == leg.fixIdent && lastLegPoint.fixRegion == leg.fixRegion &&
+     // Do not merge text from legs which are labeled at calculated end position
+     !contains(lastLegPoint.type, {proc::COURSE_TO_ALTITUDE,
+                                   proc::COURSE_TO_DME_DISTANCE,
+                                   proc::COURSE_TO_INTERCEPT,
+                                   proc::COURSE_TO_RADIAL_TERMINATION,
+                                   // proc::HOLD_TO_FIX,
+                                   // proc::HOLD_TO_MANUAL_TERMINATION,
+                                   // proc::HOLD_TO_ALTITUDE,
+                                   proc::FIX_TO_ALTITUDE,
+                                   proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                                   proc::HEADING_TO_ALTITUDE_TERMINATION,
+                                   proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                   proc::HEADING_TO_INTERCEPT,
+                                   proc::HEADING_TO_RADIAL_TERMINATION,
+                                   proc::TRACK_FROM_FIX_FROM_DISTANCE,
+                                   proc::FROM_FIX_TO_MANUAL_TERMINATION,
+                                   proc::HEADING_TO_MANUAL_TERMINATION}))
   {
     // Add restrictions from last point to text
     texts.append(proc::altRestrictionTextNarrow(lastLegPoint.altRestriction));
