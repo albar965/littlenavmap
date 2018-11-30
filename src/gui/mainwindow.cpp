@@ -2152,6 +2152,8 @@ void MainWindow::mapSaveImage()
 
     if(!pixmap.save(imageFile))
       atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
+    else
+      setStatusMessage(tr("Map image saved."));
   }
 }
 
@@ -2168,6 +2170,7 @@ void MainWindow::mapCopyToClipboard()
   QMimeData *data = new QMimeData;
   data->setImageData(pixmap);
   QGuiApplication::clipboard()->setMimeData(data);
+  setStatusMessage(tr("Map image copied to clipboard."));
 }
 
 void MainWindow::sunShadingTimeChanged()
