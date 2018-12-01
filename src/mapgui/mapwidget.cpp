@@ -2028,7 +2028,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       searchText = informationText = tr("Online Center %1").arg(onlineCenter->name);
     }
     else
-      informationText = tr("Airspace");
+      informationText = result.airspaces.size() > 1 ? tr("Airspaces") : tr("Airspace");
   }
 
   // Fill texts in reverse order of priority
@@ -2531,6 +2531,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = onlineAircraft->getId();
         type = map::AIRCRAFT_ONLINE;
       }
+      else if(airway != nullptr)
+      {
+        id = airway->id;
+        type = map::AIRWAY;
+      }
       else if(airspace != nullptr)
       {
         id = airspace->id;
@@ -2540,11 +2545,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = onlineCenter->id;
         type = map::AIRSPACE_ONLINE;
-      }
-      else if(airway != nullptr)
-      {
-        id = airway->id;
-        type = map::AIRWAY;
       }
       else
       {
@@ -2614,7 +2614,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         }
         else
           // Display only one map object as shown in the menu item
-          result.clearAllButFirst();
+          result.clearAllButFirst(static_cast<map::MapObjectTypes>(~map::AIRSPACE));
 
         emit showInformation(result, type);
       }
