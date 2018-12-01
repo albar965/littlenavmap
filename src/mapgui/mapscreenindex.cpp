@@ -97,7 +97,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon>
 
           // qDebug() << airspace.name << polygon;
 
-          polygon = polygon.intersected(QPolygon(mapWidget->geometry()));
+          polygon = polygon.intersected(QPolygon(mapWidget->rect()));
 
           // qDebug() << airspace.name << polygon;
 

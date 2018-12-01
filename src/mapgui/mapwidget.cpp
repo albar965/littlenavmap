@@ -3133,7 +3133,10 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
-           << event->source() << "geometry()" << geometry() << "event->pos()" << event->pos();
+           << event->source()
+           << "geometry()" << geometry()
+           << "rect()" << rect()
+           << "event->pos()" << event->pos();
 #endif
 
   if(!rect().contains(event->pos()))
