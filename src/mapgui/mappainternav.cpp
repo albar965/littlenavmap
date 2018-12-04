@@ -299,8 +299,9 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
       // If airways are drawn force display of the respecive waypoints
-      if(context->mapLayer->isWaypointName() ||
-         (context->mapLayer->isAirwayIdent() && (drawAirwayV || drawAirwayJ)))
+      if(context->mapLayer->isWaypointName() || // Draw all waypoint names or ...
+         (context->mapLayer->isAirwayIdent() && // Draw names for specific airway waypoints
+          ((drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways))))
         symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, fill);
     }
   }
