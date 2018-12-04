@@ -188,8 +188,8 @@
     <addaction name="separator"/>
     <addaction name="actionRouteCalcDirect"/>
     <addaction name="actionRouteCalcRadionav"/>
-    <addaction name="actionRouteCalcHighAlt"/>
     <addaction name="actionRouteCalcLowAlt"/>
+    <addaction name="actionRouteCalcHighAlt"/>
     <addaction name="actionRouteCalcSetAlt"/>
     <addaction name="separator"/>
     <addaction name="actionRouteReverse"/>
@@ -4530,8 +4530,8 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <addaction name="separator"/>
    <addaction name="actionRouteCalcDirect"/>
    <addaction name="actionRouteCalcRadionav"/>
-   <addaction name="actionRouteCalcHighAlt"/>
    <addaction name="actionRouteCalcLowAlt"/>
+   <addaction name="actionRouteCalcHighAlt"/>
    <addaction name="actionRouteCalcSetAlt"/>
    <addaction name="actionRouteReverse"/>
    <addaction name="separator"/>
