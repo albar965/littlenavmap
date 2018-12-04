@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+* Fixed wrong display of airspace/airway information when selecting "show information" in map context menu.
+* Now showing all airspaces below cursorr when selecting "Show information for airspace(s)".
+* Fixed issues with airspace selection and tooltip when map window is unfloatable.
+* Fixed display issues on procedure labels: Wrong runway label at departure and redundant restriction at IF legs before others.
+* Missing status messages added for copy map to clipboard and save map as image.
+* Fixed issue where navaids were collapsed to points when using measurement lines.
+* Fixed airway waypoints not recognized when general waypoint display is off.
+* Small display issue with airway waypoints solved where names of unrelated waypoints were shown in some zoom levels.
+
 Version 2.2.2.rc2
 
 * Added option to disable map window undocking in options dialog on tab "Map".
