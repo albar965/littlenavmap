@@ -598,7 +598,8 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isAirwayWaypoint() && types.testFlag(map::WAYPOINT))
+  // Add waypoints that displayed together with airways =================================
+  if(mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ)))
   {
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {
@@ -633,6 +634,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
+  // Get objects from airport diagram =====================================================
   if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
     if(airportDiagram)

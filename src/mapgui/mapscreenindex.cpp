@@ -301,12 +301,11 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox
 
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result)
 {
-  QList<proc::MapProcedurePoint> procPointsDummy;
-  getAllNearest(xs, ys, maxDistance, result, procPointsDummy);
+  getAllNearest(xs, ys, maxDistance, result, nullptr);
 }
 
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                   QList<proc::MapProcedurePoint>& procPoints)
+                                   QList<proc::MapProcedurePoint> *procPoints)
 {
   using maptools::insertSortedByDistance;
 
@@ -392,12 +391,15 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
 
-  if(shown.testFlag(map::FLIGHTPLAN))
-    // Get copies from flight plan if visible
-    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
+  if(procPoints != nullptr)
+  {
+    if(shown.testFlag(map::FLIGHTPLAN))
+      // Get copies from flight plan if visible
+      NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, *procPoints, true /* include procs */);
 
-  // Get points of procedure preview
-  getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);
+    // Get points of procedure preview
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, *procPoints);
+  }
 
   // Get copies from highlightMapObjects
   getNearestHighlights(xs, ys, maxDistance, result);
@@ -411,26 +413,27 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
 
   // Update all incomplete objects, especially from search
   for(map::MapAirport& obj : result.airports)
+  {
     if(!obj.complete())
       airportQuery->getAirportById(obj, obj.getId());
+  }
 }
 
 void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result)
 {
+  using maptools::insertSorted;
   CoordinateConverter conv(mapWidget->viewport());
-  maptools::insertSorted(conv, xs, ys, searchHighlights.airports, result.airports, &result.airportIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.vors, result.vors, &result.vorIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.userpoints, result.userpoints, &result.userpointIds,
-                         maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.airspaces, result.airspaces, nullptr, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.ils, result.ils, nullptr, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.onlineAircraft, result.onlineAircraft,
-                         &result.onlineAircraftIds,
-                         maxDistance);
-  maptools::insertSorted(conv, xs, ys, searchHighlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.airports, result.airports, &result.airportIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.vors, result.vors, &result.vorIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.airspaces, result.airspaces, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.ils, result.ils, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.aiAircraft, result.aiAircraft, nullptr, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
+               maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
@@ -439,20 +442,20 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
 
-  using maptools::insertSortedByDistance;
+  using maptools::insertSorted;
 
   for(int i = 0; i < approachHighlight.size(); i++)
   {
     const proc::MapProcedureLeg& leg = approachHighlight.at(i);
 
-    maptools::insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
-    maptools::insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
+    insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
     if(conv.wToS(leg.line.getPos2(), x, y))
     {

@@ -3678,7 +3678,7 @@ bool MapWidget::event(QEvent *event)
     mapSearchResultTooltip = map::MapSearchResult();
     procPointsTooltip.clear();
     screenIndex->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                               mapSearchResultTooltip, procPointsTooltip);
+                               mapSearchResultTooltip, &procPointsTooltip);
     NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
                                                                   mapSearchResultTooltip.aiAircraft);
 

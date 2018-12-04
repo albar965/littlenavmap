@@ -57,7 +57,7 @@ public:
    */
   void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                     QList<proc::MapProcedurePoint>& procPoints);
+                     QList<proc::MapProcedurePoint>* procPoints);
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
