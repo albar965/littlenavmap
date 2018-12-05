@@ -63,10 +63,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 {
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
-  bool verbose = false;
-#ifdef DEBUG_INFORMATION_WEATHER
-  verbose = true;
-#endif
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
   xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
 
@@ -177,11 +174,6 @@ void WeatherReporter::createFsWatcher()
 {
   if(fsWatcherAsPath == nullptr)
   {
-    bool verbose = false;
-#ifdef DEBUG_INFORMATION_WEATHER
-    verbose = true;
-#endif
-
     // Watch file for changes
     fsWatcherAsPath = new FileSystemWatcher(this, verbose);
     fsWatcherAsPath->setMinFileSize(100000);
@@ -192,11 +184,6 @@ void WeatherReporter::createFsWatcher()
 
   if(fsWatcherAsFlightplanPath == nullptr)
   {
-    bool verbose = false;
-#ifdef DEBUG_INFORMATION_WEATHER
-    verbose = true;
-#endif
-
     // Watch file for changes
     fsWatcherAsFlightplanPath = new FileSystemWatcher(this, verbose);
     fsWatcherAsFlightplanPath->setMinFileSize(50);

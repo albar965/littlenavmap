@@ -9,6 +9,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed issue where navaids were collapsed to points when using measurement lines.
 * Fixed airway waypoints not recognized when general waypoint display is off.
 * Small display issue with airway waypoints solved where names of unrelated waypoints were shown in some zoom levels.
+* Added verbose logging option for weather updates.
 
 Version 2.2.2.rc2
 

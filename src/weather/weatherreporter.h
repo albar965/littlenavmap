@@ -199,6 +199,7 @@ private:
   /* Update online reports if older than 10 minutes */
   int onlineWeatherTimeoutSecs = 600;
 
+  bool verbose = false;
 };
 
 #endif // LITTLENAVMAP_WEATHERREPORTER_H
