@@ -3007,7 +3007,7 @@ void RouteController::updateTableModel()
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
     QVector<map::MapIls> ilsByAirportAndRunway;
-    if((route.getArrivalLegs().isTypeIls() || route.getArrivalLegs().isTypeLoc()) &&
+    if(route.getArrivalLegs().hasIlsGuidance() &&
        leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
       route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
 

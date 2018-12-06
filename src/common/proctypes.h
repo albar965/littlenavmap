@@ -435,6 +435,13 @@ struct MapProcedureLegs
        hasError, /* Unusable due to missing navaid */
        circleToLand; /* Runway is not part of procedure and was added internally */
 
+  /* Anything that needs to display an ILS frequency */
+  bool hasIlsGuidance() const
+  {
+    return approachType == "ILS" || approachType == "LOC" || approachType == "LOCB" || approachType == "LDA" ||
+           approachType == "IGS";
+  }
+
   bool isTypeIls() const
   {
     return approachType == "ILS";
