@@ -10,6 +10,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed airway waypoints not recognized when general waypoint display is off.
 * Small display issue with airway waypoints solved where names of unrelated waypoints were shown in some zoom levels.
 * Added verbose logging option for weather updates.
+* Updated German translation.
 
 Version 2.2.2.rc2
 
