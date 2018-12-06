@@ -827,7 +827,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
         if(!legList.isEmpty())
         {
-          if(legList.first().type == proc::INITIAL_FIX)
+          if(legList.first().type == proc::INITIAL_FIX && legList.first().fixType != "R")
           {
             // Convert IF back into a point
             legList.first().line.setPos1(legList.first().line.getPos2());

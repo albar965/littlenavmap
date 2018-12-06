@@ -11,6 +11,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Small display issue with airway waypoints solved where names of unrelated waypoints were shown in some zoom levels.
 * Added verbose logging option for weather updates.
 * Now showing ILS frequency for all approaches ILS, LOC, LOCB, LDA and IGS.
+* Fixed redundant legs in SID if first leg is IF and RW too.
 * Updated German translation.
 
 Version 2.2.2.rc2
