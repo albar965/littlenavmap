@@ -1720,6 +1720,7 @@ void MainWindow::deleteAircraftTrack()
     mapWidget->deleteAircraftTrack();
     profileWidget->deleteAircraftTrack();
     updateActionStates();
+    setStatusMessage(QString(tr("Aircraft track removed from map.")));
   }
 }
 

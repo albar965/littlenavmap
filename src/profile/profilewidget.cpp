@@ -1743,7 +1743,8 @@ void ProfileWidget::restoreState()
 {
   scrollArea->restoreState();
 
-  loadAircraftTrack();
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
+    loadAircraftTrack();
 }
 
 void ProfileWidget::preRouteCalc()
