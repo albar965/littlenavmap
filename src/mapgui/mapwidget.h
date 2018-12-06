@@ -442,6 +442,8 @@ private:
   void elevationDisplayTimerTimeout();
   void cancelDragUserpoint();
 
+  void zoomInOut(bool directionIn, bool smooth);
+
   bool isCenterLegAndAircraftActive();
 
   /* Remove range rings on index, print message and update map */

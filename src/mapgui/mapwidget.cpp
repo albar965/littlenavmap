@@ -2834,12 +2834,25 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     if(keyEvent != nullptr)
     {
+      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
+         (keyEvent->modifiers() & Qt::ControlModifier))
+      {
+        // Catch Ctrl++ and Ctrl+- and use it only for details
+        // Do not let marble use it for zooming
+        // Keys processed by actions
+
+        e->accept(); // Do not propagate further
+        event(e); // Call own event handler
+        return true; // Do not process further
+      }
+
       if(atools::contains(static_cast<Qt::Key>(keyEvent->key()),
                           {Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down}))
         // Movement starts delay every time
         jumpBackToAircraftStart(true /* save distance too */);
 
-      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}))
+      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus,
+                                                                  Qt::Key_Asterisk, Qt::Key_Slash}))
       {
         if(jumpBack->isActive() || isCenterLegAndAircraftActive())
           // Movement starts delay every time
@@ -2848,14 +2861,8 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
         if(!jumpBackWasActive && !isCenterLegAndAircraftActive())
           // Remember and update zoom factor if jump was not active
           jumpBackToAircraftUpdateDistance();
-      }
 
-      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
-         (keyEvent->modifiers() & Qt::ControlModifier))
-      {
-        // Catch Ctrl++ and Ctrl+- and use it only for details
-        // Do not let marble use it for zooming
-
+        // Pass to key event handler for zooming
         e->accept(); // Do not propagate further
         event(e); // Call own event handler
         return true; // Do not process further
@@ -3162,31 +3169,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       qreal centerLat = centerLatitude();
       qreal centerLon = centerLongitude();
 
-      if(event->modifiers() == Qt::ShiftModifier)
-      {
-        // Smooth zoom
-        if(directionIn)
-          zoomViewBy(zoomStep() / 4);
-        else
-          zoomViewBy(-zoomStep() / 4);
-      }
-      else
-      {
-        if(mainWindow->getMapThemeIndex() == map::PLAIN || mainWindow->getMapThemeIndex() == map::SIMPLE)
-        {
-          if(directionIn)
-            zoomViewBy(zoomStep() * 3);
-          else
-            zoomViewBy(-zoomStep() * 3);
-        }
-        else
-        {
-          if(directionIn)
-            zoomIn();
-          else
-            zoomOut();
-        }
-      }
+      zoomInOut(directionIn, event->modifiers() == Qt::ShiftModifier /* smooth */);
 
       // Get global coordinates of cursor in new zoom level
       qreal lon2, lat2;
@@ -3194,6 +3177,35 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 
       // Correct position and move center back to mouse cursor position
       centerOn(centerLon + (lon - lon2), centerLat + (lat - lat2));
+    }
+  }
+}
+
+void MapWidget::zoomInOut(bool directionIn, bool smooth)
+{
+  if(smooth)
+  {
+    // Smooth zoom
+    if(directionIn)
+      zoomViewBy(zoomStep() / 4);
+    else
+      zoomViewBy(-zoomStep() / 4);
+  }
+  else
+  {
+    if(mainWindow->getMapThemeIndex() == map::PLAIN || mainWindow->getMapThemeIndex() == map::SIMPLE)
+    {
+      if(directionIn)
+        zoomViewBy(zoomStep() * 3);
+      else
+        zoomViewBy(-zoomStep() * 3);
+    }
+    else
+    {
+      if(directionIn)
+        zoomIn();
+      else
+        zoomOut();
     }
   }
 }
@@ -3585,15 +3597,25 @@ void MapWidget::leaveEvent(QEvent *)
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
-  // Does not work for key presses that are consumed by the widget
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << hex << event->key() << dec << event->modifiers();
+#endif
 
+  // Does not work for key presses that are consumed by the widget
   if(event->key() == Qt::Key_Escape)
   {
     cancelDragAll();
     setContextMenuPolicy(Qt::DefaultContextMenu);
   }
-
-  if(event->key() == Qt::Key_Menu && mouseState == mw::NONE)
+  else if(event->key() == Qt::Key_Plus && !(event->modifiers() & Qt::ControlModifier))
+    zoomInOut(true /* in */, event->modifiers() & Qt::ShiftModifier /* smooth */);
+  else if(event->key() == Qt::Key_Minus && !(event->modifiers() & Qt::ControlModifier))
+    zoomInOut(false /* in */, event->modifiers() & Qt::ShiftModifier /* smooth */);
+  else if(event->key() == Qt::Key_Asterisk)
+    zoomInOut(true /* in */, true /* smooth */);
+  else if(event->key() == Qt::Key_Slash)
+    zoomInOut(false /* in */, true /* smooth */);
+  else if(event->key() == Qt::Key_Menu && mouseState == mw::NONE)
     // First menu key press after dragging - enable context menu again
     setContextMenuPolicy(Qt::DefaultContextMenu);
 }
@@ -3665,7 +3687,6 @@ void MapWidget::deleteAircraftTrack()
   aircraftTrack.clearTrack();
   emit updateActionStates();
   update();
-  mainWindow->setStatusMessage(QString(tr("Aircraft track removed from map.")));
 }
 
 bool MapWidget::event(QEvent *event)
