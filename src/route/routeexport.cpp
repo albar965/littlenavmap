@@ -224,7 +224,7 @@ bool RouteExport::routeExportFpr()
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
-      tr("Save Flight Plan as Majestic Dash FPR..."),
+      tr("Save Flight Plan as Majestic Dash FPR"),
       tr("FPR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPR),
       "fpr", "Route/Fpr",
       NavApp::getCurrentSimulatorBasePath() +

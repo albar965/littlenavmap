@@ -376,7 +376,7 @@ bool AircraftPerfController::collectPerformanceDialog()
                          "<p>Note that no performance information like fuel estimates or time to waypoint "
                            "is displayed during this process.</p>"
                            "<p>Top of climb and top of descent will be shown based on "
-                             "a 3 nm per 1000 ft rule of thumb</p>"
+                             "a 3 nm per 1000 ft rule of thumb.</p>"
                              "<ol><li>Connect to the simulator,</li>"
                                "<li>load a flight plan,</li>"
                                  "<li>place your aircraft at the departure airport and</li>"

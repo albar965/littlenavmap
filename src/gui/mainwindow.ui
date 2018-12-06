@@ -3833,7 +3833,7 @@
 Wind speed will be interpolated for climb and descent phases.</string>
              </property>
              <property name="statusTip">
-              <string>Average wind at flight plan cruise level.  Wind speed will be interpolated for climb and descent phases.</string>
+              <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
              </property>
              <property name="suffix">
               <string> %speed%</string>
@@ -8540,10 +8540,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show all &amp;floating Windows</string>
    </property>
    <property name="toolTip">
-    <string>Raise and show the map window if undocked</string>
+    <string>Raise and show all undocked floating windows</string>
    </property>
    <property name="statusTip">
-    <string>Raise and show the map window if undocked</string>
+    <string>Raise and show all undocked floating windows</string>
    </property>
    <property name="shortcut">
     <string>Alt+0</string>

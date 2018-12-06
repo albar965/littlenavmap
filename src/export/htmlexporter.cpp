@@ -403,7 +403,7 @@ void HtmlExporter::writeHtmlNav(QXmlStreamWriter& stream,
   {
     writeHtmlLink(stream, firstLink, tr("First Page"));
     stream.writeCharacters(" - ");
-    writeHtmlLink(stream, prevLink, tr("Previous  Page"));
+    writeHtmlLink(stream, prevLink, tr("Previous Page"));
     stream.writeCharacters(" - ");
     writeHtmlLink(stream, nextLink, tr("Next Page"));
     stream.writeCharacters(" - ");

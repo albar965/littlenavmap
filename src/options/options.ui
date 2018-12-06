@@ -893,7 +893,7 @@ Smaller values will allow a finer selection.</string>
           <item row="2" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsMapTooltipRect">
             <property name="toolTip">
-             <string>Larger values will list more more objects in the tooltip.</string>
+             <string>Larger values will list more objects in the tooltip.</string>
             </property>
             <property name="suffix">
              <string> pixels</string>
@@ -939,8 +939,8 @@ Smaller values will allow a finer selection.</string>
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
             <property name="toolTip">
-             <string>Allows to undock and put the map window into a floating state. 
-This can cause several unwanted effects when arranging dock windows. 
+             <string>Allows to undock and put the map window into a floating state.
+This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</string>
             </property>
@@ -2131,7 +2131,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
           <item row="2" column="0">
            <widget class="QLabel" name="labelDisplayOnlineFir">
             <property name="text">
-             <string>&amp;Center</string>
+             <string>&amp;Center:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxDisplayOnlineFir</cstring>
