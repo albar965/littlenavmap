@@ -105,9 +105,10 @@ bool RouteExport::routeExportRxpGtn()
   {
     QString path;
 
+    // Location depends on trainer version - this is all above 6.41
 #ifdef Q_OS_WIN32
     QString gtnPath(qgetenv("GTNSIMDATA"));
-    path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN\\FPLN" : gtnPath + "\\FPLN";
+    path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
                               "Garmin", "Trainers", "GTN", "FPLN"});
