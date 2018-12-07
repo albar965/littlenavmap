@@ -118,7 +118,7 @@ p, li { white-space: pre-wrap; }
 - Degrees, minutes and seconds : N49° 26' 41.57&quot; E9° 12' 5.49&quot; or 49° 26' 41.57&quot; N 9° 12' 5.49&quot; E
 - Degrees and minutes: N54* 16.82' W008* 35.95', N 52 33.58 E 13 17.26 or 49° 26.69' N 9° 12.09' E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -127,7 +127,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</string>
        </property>
       </widget>
@@ -136,9 +136,6 @@ Formats above have to be given exactly as shown in the examples.</string>
       <widget class="QLineEdit" name="lineEditUserdataIdent">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="statusTip">
-        <string/>
        </property>
        <property name="inputMask">
         <string/>

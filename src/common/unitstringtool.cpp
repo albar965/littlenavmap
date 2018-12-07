@@ -27,6 +27,7 @@
 #include <QTextEdit>
 #include <QWidget>
 #include <QDebug>
+#include <QLabel>
 
 UnitStringTool::UnitStringTool()
 {
@@ -82,6 +83,12 @@ void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume
     // Update all widgets in layout
     for(int i = 0; i < layout->count(); i++)
       update(widgetData, save, fuelAsVolume);
+  }
+  else if(QLabel *l = dynamic_cast<QLabel *>(widget))
+  {
+    if(save)
+      widgetData.texts << l->text();
+    l->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume));
   }
   else if(QLineEdit *le = dynamic_cast<QLineEdit *>(widget))
   {

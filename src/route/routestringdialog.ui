@@ -102,9 +102,6 @@ ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR proce
            <property name="toolTip">
             <string>Update the string from the current flight plan after option changes.</string>
            </property>
-           <property name="statusTip">
-            <string>Update the string from the current flight plan after option changes.</string>
-           </property>
            <property name="text">
             <string>Update from Flight &amp;Plan</string>
            </property>
@@ -131,9 +128,6 @@ ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR proce
            <property name="toolTip">
             <string>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</string>
            </property>
-           <property name="statusTip">
-            <string>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</string>
-           </property>
            <item>
             <property name="text">
              <string>IFR</string>
@@ -149,9 +143,6 @@ ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR proce
          <item>
           <widget class="QToolButton" name="toolButtonRouteStringOptions">
            <property name="toolTip">
-            <string>Options for generated route string</string>
-           </property>
-           <property name="statusTip">
             <string>Options for generated route string</string>
            </property>
            <property name="text">

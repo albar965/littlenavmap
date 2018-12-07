@@ -52,9 +52,6 @@
        <property name="toolTip">
         <string>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</string>
        </property>
-       <property name="statusTip">
-        <string>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</string>
-       </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
        </property>
@@ -85,9 +82,6 @@
        <property name="toolTip">
         <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</string>
        </property>
-       <property name="statusTip">
-        <string>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</string>
-       </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
        </property>
@@ -96,9 +90,6 @@
      <item row="3" column="2" colspan="3">
       <widget class="QPushButton" name="pushButtonDatabaseSceneryFile">
        <property name="toolTip">
-        <string>Select the scenery.cfg file for the given simulator.</string>
-       </property>
-       <property name="statusTip">
         <string>Select the scenery.cfg file for the given simulator.</string>
        </property>
        <property name="text">
@@ -111,9 +102,6 @@
        <property name="toolTip">
         <string>Select the base path for the given simulator.</string>
        </property>
-       <property name="statusTip">
-        <string>Select the base path for the given simulator.</string>
-       </property>
        <property name="text">
         <string>S&amp;elect ...</string>
        </property>
@@ -124,17 +112,11 @@
        <property name="toolTip">
         <string>Choose the simulator which scenery library you want to load.</string>
        </property>
-       <property name="statusTip">
-        <string>Choose the simulator which scenery library you want to load.</string>
-       </property>
       </widget>
      </item>
      <item row="1" column="2" colspan="3">
       <widget class="QPushButton" name="pushButtonDatabaseResetPaths">
        <property name="toolTip">
-        <string>Reset paths to the default values for the given flight simulator.</string>
-       </property>
-       <property name="statusTip">
         <string>Reset paths to the default values for the given flight simulator.</string>
        </property>
        <property name="text">
@@ -162,11 +144,8 @@
      <item>
       <widget class="QCheckBox" name="checkBoxReadInactive">
        <property name="toolTip">
-        <string>Will read also the inactive or disabled scenery entries when checked. 
+        <string>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</string>
-       </property>
-       <property name="statusTip">
-        <string>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</string>
        </property>
        <property name="text">
         <string>Read &amp;inactive or disabled Scenery Entries</string>
@@ -176,9 +155,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
      <item>
       <widget class="QCheckBox" name="checkBoxReadAddOnXml">
        <property name="toolTip">
-        <string>Read add-on.xml scenery packages of Prepar3D v3 and v4.</string>
-       </property>
-       <property name="statusTip">
         <string>Read add-on.xml scenery packages of Prepar3D v3 and v4.</string>
        </property>
        <property name="text">

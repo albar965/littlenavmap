@@ -2591,10 +2591,9 @@ This setting is also used in the elevation profile.</string>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowOnScroll">
             <property name="toolTip">
-             <string>The map will stop following the aircraft for the given time if the user does not do any interaction with the map like scrolling or zooming.
+             <string>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
 This setting is also used in the elevation profile.
-
-Start the timer by moving the map instead of scrolling.</string>
+See notes in the manual for details of this setting and how to move around in the map,</string>
             </property>
             <property name="text">
              <string>&amp;Allow scrolling and zooming in the map</string>
@@ -3529,9 +3528,6 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <property name="toolTip">
              <string>Use a custom web address for the &quot;status.txt&quot; file</string>
             </property>
-            <property name="statusTip">
-             <string/>
-            </property>
             <property name="text">
              <string>Custom with &amp;Status File</string>
             </property>
@@ -3541,9 +3537,6 @@ If this field is empty, the default Active Sky weather file path will be used wh
            <widget class="QRadioButton" name="radioButtonOptionsOnlineCustom">
             <property name="toolTip">
              <string>Use a custom web address for the &quot;whazzup.txt&quot; file</string>
-            </property>
-            <property name="statusTip">
-             <string/>
             </property>
             <property name="text">
              <string>&amp;Custom</string>
