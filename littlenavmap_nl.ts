@@ -1058,54 +1058,50 @@ Will retry.</source>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="28"/>
-        <location filename="src/connect/connectdialog.ui" line="31"/>
-        <location filename="src/connect/connectdialog.ui" line="244"/>
-        <location filename="src/connect/connectdialog.ui" line="247"/>
+        <location filename="src/connect/connectdialog.ui" line="226"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer aircraft</source>
         <translation>Uitvinken om AI of multiplayer vliegtuigen op te halen en weer te geven uit te schakelen</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="34"/>
-        <location filename="src/connect/connectdialog.ui" line="250"/>
+        <location filename="src/connect/connectdialog.ui" line="31"/>
+        <location filename="src/connect/connectdialog.ui" line="229"/>
         <source>Fetch AI or multiplayer &amp;aircraft</source>
         <translation>Ophalen AI of multiplayer &amp;vliegtuigen</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="44"/>
+        <location filename="src/connect/connectdialog.ui" line="41"/>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
         <translation>&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;Hostname&lt;/span&gt; of &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; die LittleNavconnect toont bij het opstarten toevoegen.
 Werk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebruikt.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="48"/>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.\nUse your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation>&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;Hostname&lt;/span&gt; of &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; die LittleNavconnect toont bij het opstarten toevoegen.\nWerk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebruikt.</translation>
+        <translation type="vanished">&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;Hostname&lt;/span&gt; of &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; die LittleNavconnect toont bij het opstarten toevoegen.\nWerk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebruikt.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="67"/>
-        <location filename="src/connect/connectdialog.ui" line="70"/>
+        <location filename="src/connect/connectdialog.ui" line="61"/>
         <source>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</source>
         <translation>Verbind direct met de FSX of Prepar3D simulator op deze computer met Simconnect.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="73"/>
+        <location filename="src/connect/connectdialog.ui" line="64"/>
         <source>Connect directly to a &amp;local FSX or Prepar3D flight simulator</source>
         <translation>Verbind direct met &amp;lokale FSX of Prepar3D simulator</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="86"/>
+        <location filename="src/connect/connectdialog.ui" line="77"/>
         <source>&amp;Port:</source>
         <translation>&amp;Poort:</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="105"/>
+        <location filename="src/connect/connectdialog.ui" line="96"/>
         <source>Delete the current hostname or IP address from the list.</source>
         <translation>Verwijder de hudige hostnaam of IP-adres uit de lijst.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="119"/>
-        <location filename="src/connect/connectdialog.ui" line="260"/>
+        <location filename="src/connect/connectdialog.ui" line="110"/>
+        <location filename="src/connect/connectdialog.ui" line="239"/>
         <source>Allowed range is 50 milliseconds up to 1 second.
 Little Navmap fetches data from the flight simulator using this time interval.
 Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</source>
@@ -1114,69 +1110,65 @@ Little Navmap gebruikt dit tijdsinterval om data van de simulator op te halen.
 Lagere waarden zullen vliegtuigen vloeiender laten bewegen maar kunnen een schokkend beeld voortbrengen.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="124"/>
-        <location filename="src/connect/connectdialog.ui" line="265"/>
+        <location filename="src/connect/connectdialog.ui" line="115"/>
+        <location filename="src/connect/connectdialog.ui" line="244"/>
         <source> ms</source>
         <translation> ms</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="143"/>
+        <location filename="src/connect/connectdialog.ui" line="134"/>
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
         <translation>&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;Poort&lt;/span&gt; die LittleNavconnect toont bij het opstarten toevoegen.
 Werk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebruikt.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="147"/>
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.\nUse your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation>&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;Poort&lt;/span&gt; die LittleNavconnect toont bij het opstarten toevoegen.\nWerk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebruikt.</translation>
+        <translation type="vanished">&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;Poort&lt;/span&gt; die LittleNavconnect toont bij het opstarten toevoegen.\nWerk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebruikt.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="163"/>
-        <location filename="src/connect/connectdialog.ui" line="196"/>
+        <location filename="src/connect/connectdialog.ui" line="151"/>
+        <location filename="src/connect/connectdialog.ui" line="184"/>
         <source>&amp;Update time interval:</source>
         <translation>&amp;Update tijdsinterval:</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="176"/>
+        <location filename="src/connect/connectdialog.ui" line="164"/>
         <source>&amp;Hostname or IP address:</source>
         <translation>&amp;Hostnaam of IP-adres:</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="209"/>
-        <location filename="src/connect/connectdialog.ui" line="212"/>
+        <location filename="src/connect/connectdialog.ui" line="197"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer ships</source>
         <translation>Zet uit of verhinder het ophalen en tonen van AI of multiplayer schepen</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="215"/>
+        <location filename="src/connect/connectdialog.ui" line="200"/>
         <source>Fetch AI or multiplayer &amp;ships</source>
         <translation>Haal AI of multiplayer &amp;schepen op</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="225"/>
-        <location filename="src/connect/connectdialog.ui" line="228"/>
+        <location filename="src/connect/connectdialog.ui" line="210"/>
         <source>Connect directly to X-Plane on the same computer using the Little Xpconnect plugin.</source>
         <translation>Verbind direct met X-Plane op dezelfde computer als je de Litte Xpconnect plugin gebruikt.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="231"/>
+        <location filename="src/connect/connectdialog.ui" line="213"/>
         <source>Connect directly to a local &amp;X-Plane simulator</source>
         <translation>Verbind direct met een lokale &amp;X-Plane simulator</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="291"/>
-        <location filename="src/connect/connectdialog.ui" line="294"/>
+        <location filename="src/connect/connectdialog.ui" line="270"/>
         <source>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</source>
         <translation>Verbinden met FSX, Prepar3D of X-Plane met een computer op afstand met het Little Navconnect programma.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="297"/>
+        <location filename="src/connect/connectdialog.ui" line="273"/>
         <source>Connect to a &amp;remote flight simulator via Little Navconnect</source>
         <translation>Verbinden met een computer op &amp;afstand via Little Navconnect</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="316"/>
+        <location filename="src/connect/connectdialog.ui" line="292"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</source>
@@ -1185,12 +1177,11 @@ Klikken op &quot;Connect&quot; om constant de verbinding te checken.
 Niet-aanklikken zal het automatisch verbinden stoppen.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="321"/>
         <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nUnchecking this will stop all automatic connection attempts immediately.</source>
-        <translation>Automatisch verbinden met een bepaald adres of poort van een computer op afstand of met de lokale vluchtsimulator.\nKlikken op &quot;Connect&quot; om constant de verbinding te checken.\nNiet-aanklikken zal het automatisch verbinden stoppen.</translation>
+        <translation type="vanished">Automatisch verbinden met een bepaald adres of poort van een computer op afstand of met de lokale vluchtsimulator.\nKlikken op &quot;Connect&quot; om constant de verbinding te checken.\nNiet-aanklikken zal het automatisch verbinden stoppen.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectdialog.ui" line="324"/>
+        <location filename="src/connect/connectdialog.ui" line="297"/>
         <source>Connect &amp;automatically</source>
         <translation>Automatisch &amp;verbinden</translation>
     </message>
@@ -1244,94 +1235,91 @@ Zal opnieuw proberen te verbinden als &quot;Automatisch verbinden&quot; is aange
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="53"/>
-        <location filename="src/db/databasedialog.ui" line="56"/>
         <source>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</source>
         <translation>Bestandsnaam van de scenery.cfg invullen. Dit is &lt;b&gt;niet&lt;b&gt; de naam in de basis directory.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="66"/>
+        <location filename="src/db/databasedialog.ui" line="63"/>
         <source>&amp;Flight Simulator Base Path:</source>
         <translation>&amp;Vluchtsimulator Basispad:</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="76"/>
+        <location filename="src/db/databasedialog.ui" line="73"/>
         <source>Scenery &amp;Configuration File:</source>
         <translation>Scenery &amp;Configuratie Bestand:</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="86"/>
-        <location filename="src/db/databasedialog.ui" line="89"/>
+        <location filename="src/db/databasedialog.ui" line="83"/>
         <source>Enter the path to the flight simulator base directory.&lt;br/&gt;This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.&lt;br/&gt;For X-Plane this is the path containing the X-Plane.exe.</source>
         <translation>Vul hier het pad in naar de basisfolder van uw vluchtsimulator.&lt;br/&gt;Dit is degene die de scenery-folder en de fsx.exe of p3d.exe bevat.&lt;br/&gt;Voor X-Plane is dit de X-Plane.exe.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="99"/>
-        <location filename="src/db/databasedialog.ui" line="102"/>
+        <location filename="src/db/databasedialog.ui" line="93"/>
         <source>Select the scenery.cfg file for the given simulator.</source>
         <translation>Selecteer het scenery.cfg bestand voor de gekozen simulator.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="105"/>
-        <location filename="src/db/databasedialog.ui" line="118"/>
+        <location filename="src/db/databasedialog.ui" line="96"/>
+        <location filename="src/db/databasedialog.ui" line="106"/>
         <source>S&amp;elect ...</source>
         <translation>S&amp;electeer ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="112"/>
-        <location filename="src/db/databasedialog.ui" line="115"/>
+        <location filename="src/db/databasedialog.ui" line="103"/>
         <source>Select the base path for the given simulator.</source>
         <translation>Selecteer het basispad voor de gekozen simulator.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="125"/>
-        <location filename="src/db/databasedialog.ui" line="128"/>
+        <location filename="src/db/databasedialog.ui" line="113"/>
         <source>Choose the simulator which scenery library you want to load.</source>
         <translation>Kies de simulator voor wie je de scenery library wil laden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="135"/>
-        <location filename="src/db/databasedialog.ui" line="138"/>
+        <location filename="src/db/databasedialog.ui" line="120"/>
         <source>Reset paths to the default values for the given flight simulator.</source>
         <translation>Reset de paden naar de oorspronkelijke waarden voor de gekozen simulator.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="141"/>
+        <location filename="src/db/databasedialog.ui" line="123"/>
         <source>&amp;Reset Paths</source>
         <translation>&amp;Reset Paden</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="148"/>
+        <location filename="src/db/databasedialog.ui" line="130"/>
         <source>&amp;Simulator:</source>
         <translation>&amp;Simulator:</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="165"/>
+        <location filename="src/db/databasedialog.ui" line="147"/>
+        <source>Will read also the inactive or disabled scenery entries when checked.
+Useful if you use tools to disable and enable certain scenery for each flight.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Will read also the inactive or disabled scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <oldsource>Will read also the inactive scenery entries when checked. 
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
-        <translation type="unfinished">Indien aangevinkt zullen ook de inactieve scenery&apos;s gelezen worden.
+        <translation type="obsolete">Indien aangevinkt zullen ook de inactieve scenery&apos;s gelezen worden.
 Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakelen voor elke vlucht.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="169"/>
         <source>Will read also the inactive scenery entries when checked.  Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation>Indien aangevinkt zullen ook de inactieve scenery&apos;s gelezen worden.  Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakelen voor elke vlucht.</translation>
+        <translation type="vanished">Indien aangevinkt zullen ook de inactieve scenery&apos;s gelezen worden.  Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakelen voor elke vlucht.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="172"/>
+        <location filename="src/db/databasedialog.ui" line="151"/>
         <source>Read &amp;inactive or disabled Scenery Entries</source>
         <oldsource>Read &amp;inactive Scenery Entries</oldsource>
         <translation type="unfinished">Lees ook &amp;inactieve sceneries</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="179"/>
-        <location filename="src/db/databasedialog.ui" line="182"/>
+        <location filename="src/db/databasedialog.ui" line="158"/>
         <source>Read add-on.xml scenery packages of Prepar3D v3 and v4.</source>
         <translation>Lees add-on.xml sceneries voor Prepar3D v3 en v4.</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.ui" line="185"/>
+        <location filename="src/db/databasedialog.ui" line="161"/>
         <source>Read Prepar3D add-on.xml packages</source>
         <translation>Lees Prepar3D add-on.xml paketten</translation>
     </message>
@@ -10786,24 +10774,27 @@ Retrying again in three minutes.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2594"/>
-        <source>The map will stop following the aircraft for the given time if the user does not do any interaction with the map like scrolling or zooming.
+        <source>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
+This setting is also used in the elevation profile.
+See notes in the manual for details of this setting and how to move around in the map,</source>
+        <oldsource>The map will stop following the aircraft for the given time if the user does not do any interaction with the map like scrolling or zooming.
 This setting is also used in the elevation profile.
 
-Start the timer by moving the map instead of scrolling.</source>
+Start the timer by moving the map instead of scrolling.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2855"/>
+        <location filename="src/options/options.ui" line="2854"/>
         <source>Loading, Saving and Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2879"/>
+        <location filename="src/options/options.ui" line="2878"/>
         <source>Center &amp;flight plan on map after loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2889"/>
+        <location filename="src/options/options.ui" line="2888"/>
         <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
         <translation>Deze optie aanvinken om te vermijden dat vluchtplannen overschreven worden met een nieuw vertrek en bestemming nadat deze gewijzigd werden.
@@ -10861,7 +10852,7 @@ Opstarten is nodig om deze instelling van kracht te maken.</translation>
         <location filename="src/options/options.ui" line="1661"/>
         <location filename="src/options/options.ui" line="1726"/>
         <location filename="src/options/options.ui" line="1764"/>
-        <location filename="src/options/options.ui" line="2741"/>
+        <location filename="src/options/options.ui" line="2740"/>
         <source> %</source>
         <translation> %</translation>
     </message>
@@ -10886,7 +10877,7 @@ Opstarten is nodig om deze instelling van kracht te maken.</translation>
         <translation type="unfinished">Herstart is aangewezen na het wijzigen van de weergavestijl.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2876"/>
+        <location filename="src/options/options.ui" line="2875"/>
         <source>Does not apply to the flight plan loaded after startup.</source>
         <translation>Geldt niet voor het vluchtplan dat geladen is na de herstart.</translation>
     </message>
@@ -10915,7 +10906,7 @@ Opstarten is nodig om deze instelling van kracht te maken.</translation>
         <translation>Tekstgrootte voor vliegtuigen informatievenster van &amp;simulator:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2893"/>
+        <location filename="src/options/options.ui" line="2892"/>
         <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
         <translation>&amp;Vermijd overschrijven van het Vluchtplan met niet-passend vertrek en aankomst</translation>
     </message>
@@ -11108,7 +11099,7 @@ Kleinere waarden laten toe om een ruimere selectie te maken.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1081"/>
-        <location filename="src/options/options.ui" line="3743"/>
+        <location filename="src/options/options.ui" line="3736"/>
         <source>Map Display</source>
         <translation>Kaartweergave</translation>
     </message>
@@ -11338,52 +11329,52 @@ airways:</translation>
         <translation>Vliegtuig Simulator</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2636"/>
+        <location filename="src/options/options.ui" line="2635"/>
         <source>Simulator Aircraft Updates</source>
         <translation>Vliegtuig Simulator Updates</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2657"/>
+        <location filename="src/options/options.ui" line="2656"/>
         <source>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</source>
         <translation>&amp;Laag - Positie en label van vliegtuig wordt zelden geupdate, alleen voor grote wijzigingen in koers of hoogte.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2664"/>
+        <location filename="src/options/options.ui" line="2663"/>
         <source>&amp;Medium</source>
         <translation>&amp;Gemiddeld</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2674"/>
+        <location filename="src/options/options.ui" line="2673"/>
         <source>&amp;High - Aircraft position and label is updated often, even for small course or altitude changes.</source>
         <translation>&amp;Hoog - Positie en label van vliegtuig wordt constant up-to-date gehouden, zelfs voor kleine wijzigen van koers of hoogte.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2709"/>
+        <location filename="src/options/options.ui" line="2708"/>
         <source>&amp;Do not use box mode for following the aircraft. Move the map constantly.</source>
         <translation>&amp;Gebruik de venstermode niet. Beweeg de kaart constant.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2726"/>
+        <location filename="src/options/options.ui" line="2725"/>
         <source>&amp;Simulator aircraft scroll box size (percent of map window size):</source>
         <translation>&amp;Vliegtuig beweegvenster (percentage van het kaartvenster):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2807"/>
+        <location filename="src/options/options.ui" line="2806"/>
         <source>The user aircraft trail will be pruned if it contains more than this number of points. Lower this value to avoid too long tracks and save performance.</source>
         <translation>Het spoor van het vliegtuig van de gebruiker zal ingekort worden als het meer dan dit aantal punten heeft. Verlaag deze waarde om een te lang spoor te vermijden en win productiviteit.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2813"/>
+        <location filename="src/options/options.ui" line="2812"/>
         <source> points</source>
         <translation> punten</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2797"/>
+        <location filename="src/options/options.ui" line="2796"/>
         <source>Maximum number of aircraft &amp;track points:</source>
         <translation>Maximum aantal punten voor het &amp;spoor van het vliegtuig:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2849"/>
+        <location filename="src/options/options.ui" line="2848"/>
         <source>Flight Plan</source>
         <translation>Vluchtplan</translation>
     </message>
@@ -11392,7 +11383,7 @@ airways:</translation>
         <translation type="vanished">Bewaren en Exporteren</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2917"/>
+        <location filename="src/options/options.ui" line="2916"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This saves all waypoints as user defined waypoints when exporting flight plans for a Garmin unit. &lt;br/&gt;This avoids locked waypoints due to different AIRAC cycles and affects the export functions below: &lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Export Flight Plan as Garmin GTN GFP ... &lt;/li&gt;
@@ -11410,29 +11401,29 @@ airways:</translation>
 &lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2927"/>
+        <location filename="src/options/options.ui" line="2926"/>
         <source>&amp;Export navaids and airports as user defined waypoints for Garmin GTN and GNS to avoid locked waypoints</source>
         <translation>&amp;Exporteer navaids en waypoints als gebruiker gedefinieerde waypoints voor Garmin GTN en GNS en voorkom geblokkeerde waypoints</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2937"/>
+        <location filename="src/options/options.ui" line="2936"/>
         <source>Flight Plan Calculation</source>
         <translation>Vluchtplan Berekening</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3018"/>
+        <location filename="src/options/options.ui" line="3017"/>
         <source>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
 when transitioning from airport to airway.</source>
         <translation>Voorkeur voor dichtste VOR die deel uitmaakt van een airway in plaats van het dichtste waypoint
 wanneer overgegaan wordt van luchthaven naar airway.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3022"/>
+        <location filename="src/options/options.ui" line="3021"/>
         <source>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </source>
         <translation>Voorkeur voor &amp;VOR stations als overgang naar airway in de berekening van het vluchtplan. </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3059"/>
+        <location filename="src/options/options.ui" line="3058"/>
         <source>&amp;Minimum altitude buffer to ground in elevation profile (red line):</source>
         <translation>&amp;Minimum hoogtebuffer ten opzichte van de grond in het hoogteprofiel (rode lijn):</translation>
     </message>
@@ -11445,12 +11436,12 @@ wanneer overgegaan wordt van luchthaven naar airway.</translation>
         <translation type="vanished">Aanduiden TOD (Top of Descent)-punt op de kaart en in het hoogteprofiel</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3046"/>
+        <location filename="src/options/options.ui" line="3045"/>
         <source>Rounds up flight plan cruise altitude according to selected rule.</source>
         <translation>Afronden cruise hoogte in het vluchtplan rekening houdend met het geselecteerde reglement.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3049"/>
+        <location filename="src/options/options.ui" line="3048"/>
         <source>&amp;Use simplified rule to determine cruise altitude</source>
         <translation>&amp;Gebruik vereenvoudigd reglement om cruise hoogte te bepalen</translation>
     </message>
@@ -11463,31 +11454,31 @@ wanneer overgegaan wordt van luchthaven naar airway.</translation>
         <translation type="vanished">&amp;Vuistregel voor het berekenen van top of descent:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2971"/>
+        <location filename="src/options/options.ui" line="2970"/>
         <source>The red line value is always rounded up to the next 500 ft.
 Note that this value does not affect flight plan calculation or saving of flight plans.</source>
         <translation>De waarde van de rode lijn is altijd afgerond naar de volgende 500 ft.
 Noteer dat deze waarde de berekening van het vluchtplan niet beinvloedt , ook het opslaan van vluchtplannen niet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2978"/>
+        <location filename="src/options/options.ui" line="2977"/>
         <source> %alt%</source>
         <translation> %alt%</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3032"/>
+        <location filename="src/options/options.ui" line="3031"/>
         <source>Prefer nearest NDB that is part of an airway instead the nearest waypoint
 when transitioning from airport to airway.</source>
         <translation>Voorkeur voor dichtste NDB die deel uitmaakt van een airway in plaats van het dichtste waypoint
 wanneer overgegaan wordt van luchthaven naar airway.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3036"/>
+        <location filename="src/options/options.ui" line="3035"/>
         <source>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</source>
         <translation>Voorkeur voor &amp;NDB  als overgang naar airway in de berekening van het vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2994"/>
+        <location filename="src/options/options.ui" line="2993"/>
         <source>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
 North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</source>
@@ -11496,123 +11487,123 @@ Noord / Zuid: Afronden cruise hoogte naar de eerstvolgende ONEVEN-1000 feet voor
 Zuid / Noord: Gelijk aan Noord / Zuid maar verwisselen oneven en even.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3000"/>
+        <location filename="src/options/options.ui" line="2999"/>
         <source>East / West</source>
         <translation>Oost-/ West</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3005"/>
+        <location filename="src/options/options.ui" line="3004"/>
         <source>North / South (e.g. Italy, France and Portugal)</source>
         <translation>Noord / Zuid (bijv. Italië, Frankrijk en Portugal)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3010"/>
+        <location filename="src/options/options.ui" line="3009"/>
         <source>South / North (e.g. New Zealand)</source>
         <translation>Zuid / Noord (bijv. Nieuw Zeeland)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3100"/>
+        <location filename="src/options/options.ui" line="3099"/>
         <source>Weather</source>
         <translation>Weer</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3310"/>
+        <location filename="src/options/options.ui" line="3309"/>
         <source>Complete URL of the NOAA weather service.
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</source>
         <translation>Volledige URL voor de NOAA weerservice.
 &quot;%1% is een plaatsvervanger voor de luchthaven ICAO.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3314"/>
+        <location filename="src/options/options.ui" line="3313"/>
         <source>http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</source>
         <translation>http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3317"/>
+        <location filename="src/options/options.ui" line="3316"/>
         <source>No URL set. NOAA weather reports are disabled.</source>
         <translation>Geen URL ingesteld. NOAA weerrapporten zijn uitgeschakeld.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3327"/>
+        <location filename="src/options/options.ui" line="3326"/>
         <source>Complete URL of the VATSIM network weather service.
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</source>
         <translation>Volledige URL voor de VATSIM netwerk weerservice.
 &quot;%1% is een plaatsvervanger voor de luchthaven ICAO.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3331"/>
+        <location filename="src/options/options.ui" line="3330"/>
         <source>http://metar.vatsim.net/metar.php?id=%1</source>
         <translation>http://metar.vatsim.net/metar.php?id=%1</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3334"/>
+        <location filename="src/options/options.ui" line="3333"/>
         <source>No URL set. VATSIM weather reports are disabled.</source>
         <translation>Geen URL ingesteld. VATSIM weerrapporten zijn uitgeschakeld.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3364"/>
+        <location filename="src/options/options.ui" line="3363"/>
         <source>Send a test request to the NOAA weather service.</source>
         <translation>Stuur een testverzoek naar de NOAA weerservice.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3347"/>
-        <location filename="src/options/options.ui" line="3367"/>
-        <location filename="src/options/options.ui" line="3459"/>
-        <location filename="src/options/options.ui" line="3593"/>
-        <location filename="src/options/options.ui" line="3633"/>
+        <location filename="src/options/options.ui" line="3346"/>
+        <location filename="src/options/options.ui" line="3366"/>
+        <location filename="src/options/options.ui" line="3458"/>
+        <location filename="src/options/options.ui" line="3586"/>
+        <location filename="src/options/options.ui" line="3626"/>
         <source>&amp;Test</source>
         <translation>&amp;Test</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3344"/>
+        <location filename="src/options/options.ui" line="3343"/>
         <source>Send a test request to the VATSIM weather service.</source>
         <translation>Stuur een testverzoek naar de VAIM weerservice.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3374"/>
+        <location filename="src/options/options.ui" line="3373"/>
         <source>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
 If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</source>
         <translation>Dit bestand (gewoonlijk &quot;current_wx_snapshot.txt&quot;) zal gebruikt worden voor alle simulators, indien hier ingesteld.
 Als dit veld leeg is, zal het standaardpad voor het Active Sky weersbestand gebruikt worden, wat verschillend is voor alle simulatoren.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3378"/>
+        <location filename="src/options/options.ui" line="3377"/>
         <source>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</source>
         <translation>Geen &quot;current_wx_snapshot.txt&quot; geselecteerd. Standaard pad gebruiken.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3354"/>
+        <location filename="src/options/options.ui" line="3353"/>
         <source>Select the &quot;current_wx_snapshot.txt&quot; file.</source>
         <translation>Selecteer het &quot;current_wx_snapshot.txt&quot; bestand.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3357"/>
+        <location filename="src/options/options.ui" line="3356"/>
         <source>&amp;Select File ...</source>
         <translation>&amp;Selecteer Bestand ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3388"/>
+        <location filename="src/options/options.ui" line="3387"/>
         <source>Active Sky weather &amp;File:</source>
         <translation>Active Sky weers&amp;bestand:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3414"/>
-        <location filename="src/options/options.ui" line="3934"/>
+        <location filename="src/options/options.ui" line="3413"/>
+        <location filename="src/options/options.ui" line="3927"/>
         <source>Valid</source>
         <translation>Geldig</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3300"/>
+        <location filename="src/options/options.ui" line="3299"/>
         <source>&amp;VATSIM Weather Service URL:</source>
         <translation>&amp;VATSIM Weerservice URL:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3398"/>
+        <location filename="src/options/options.ui" line="3397"/>
         <source>&amp;NOAA Weather Service URL:</source>
         <translation>&amp;NOAA Weerservice URL:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3106"/>
+        <location filename="src/options/options.ui" line="3105"/>
         <source>Define which weather service METARs are to be shown in the map tooltip of an airport.</source>
         <translation>Bepaal welke weerservice METARs getoond moeten worden in de tooltip van de luchthaven op de kaart.</translation>
     </message>
@@ -11812,7 +11803,7 @@ Parking, aprons,taxibanen, brandstof en torenposities worden niet meegerekend in
     </message>
     <message>
         <location filename="src/options/options.ui" line="2568"/>
-        <location filename="src/options/options.ui" line="3651"/>
+        <location filename="src/options/options.ui" line="3644"/>
         <source> seconds</source>
         <translation> seconden</translation>
     </message>
@@ -11826,45 +11817,45 @@ Parking, aprons,taxibanen, brandstof en torenposities worden niet meegerekend in
         <translation type="vanished">De kaart zal het vliegtuig niet volgen voor een bepaalde tijd als de gebruiker zelf de kaart gebruikt doorbijvoorbeeld te scrollen of te zoomen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2600"/>
+        <location filename="src/options/options.ui" line="2599"/>
         <source>&amp;Allow scrolling and zooming in the map</source>
         <translation>&amp;Scrollen en zoomen in de kaart toestaan</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2610"/>
+        <location filename="src/options/options.ui" line="2609"/>
         <source>The active (magenta) leg will be shown on top of the flight plan table when a new leg is activated</source>
         <oldsource>The actiive (magenta) leg will be shown on top of the flight plan table when a new leg is activated</oldsource>
         <translation>Het actieve (magenta) deel wordt bovenaan de vluchtplan-tabelgetoond wanneer een nieuw deel wordt geactiveerd</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2613"/>
+        <location filename="src/options/options.ui" line="2612"/>
         <source>&amp;Keep active leg on top of flight plan table</source>
         <translation>&amp;Houd het actieve deel van het vluchtplan bovenaan de vluchtplan-tabel</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2684"/>
+        <location filename="src/options/options.ui" line="2683"/>
         <source>Map Movement</source>
         <translation>Kaartbeweging</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2705"/>
+        <location filename="src/options/options.ui" line="2704"/>
         <source>Map will follow the aircraft constantly when checked.
 This is als used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</source>
         <translation>Kaart zal constant het vliegtuig volgen wanneer aangevinkt.
 Dit wordt ook gebruikt voor &quot;Centreer kaart opvliegtuig en volgend vluchtplan-waypoint&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2716"/>
+        <location filename="src/options/options.ui" line="2715"/>
         <source>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</source>
         <translation>Houdt het vliegtuig en het volgende vluchtplan-waypoint zichtbaar op de kaart in plaats van simpelweg te centreren op het vliegtuig</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2719"/>
+        <location filename="src/options/options.ui" line="2718"/>
         <source>&amp;Center map on aircraft and next flight plan waypoint</source>
         <translation>&amp;Centreer vliegtuig op de kaart en volgend waypoint van het vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2736"/>
+        <location filename="src/options/options.ui" line="2735"/>
         <source>Smaller values keep the aircraft centered and will move the map often.
 Bigger values will update map only when aircraft reaches map boundary.
 Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is checked and a flight plan is set.</source>
@@ -11873,42 +11864,42 @@ Grotere waarden zullen de kaart enkel updaten wanneer het vliegtuig de rand bere
 Wanneer &quot;Centreer kaart op vliegtuig en volgende waypoint van het vluchtplan&quot; is aangevinkt en er een vluchtplan is ingegeven wordt hier geen rekening mee gehouden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2776"/>
+        <location filename="src/options/options.ui" line="2775"/>
         <source>Aircraft Track</source>
         <translation>Spoor Vliegtuig</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2903"/>
+        <location filename="src/options/options.ui" line="2902"/>
         <source>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX or P3D flight plans instead of the long name</source>
         <translation>Gebruik en &amp;korte &quot;ICAO_ICAO.pln&quot;-naam bij het opslaan van FSX of P3D plannen in plaats van een lange naam</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3109"/>
+        <location filename="src/options/options.ui" line="3108"/>
         <source>Weather Display in Tooltip</source>
         <translation>Weergave WEER in Tooltip</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3130"/>
-        <location filename="src/options/options.ui" line="3210"/>
+        <location filename="src/options/options.ui" line="3129"/>
+        <location filename="src/options/options.ui" line="3209"/>
         <source>&amp;Active Sky</source>
         <translation>&amp;Active Sky</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3140"/>
-        <location filename="src/options/options.ui" line="3220"/>
+        <location filename="src/options/options.ui" line="3139"/>
+        <location filename="src/options/options.ui" line="3219"/>
         <source>&amp;NOAA</source>
         <translation>&amp;NOAA</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3150"/>
-        <location filename="src/options/options.ui" line="3230"/>
-        <location filename="src/options/options.ui" line="3513"/>
+        <location filename="src/options/options.ui" line="3149"/>
+        <location filename="src/options/options.ui" line="3229"/>
+        <location filename="src/options/options.ui" line="3512"/>
         <source>&amp;VATSIM</source>
         <translation>&amp;VATSIM</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3160"/>
-        <location filename="src/options/options.ui" line="3240"/>
+        <location filename="src/options/options.ui" line="3159"/>
+        <location filename="src/options/options.ui" line="3239"/>
         <source>Display current weather from the flight simulator when connected. </source>
         <translation>Toon het huidig weer van de vluchtsimulator, wanneer verbonden. </translation>
     </message>
@@ -11917,19 +11908,19 @@ Wanneer &quot;Centreer kaart op vliegtuig en volgende waypoint van het vluchtpla
         <translation type="vanished">Vluchtsimulator</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3173"/>
-        <location filename="src/options/options.ui" line="3253"/>
-        <location filename="src/options/options.ui" line="3523"/>
+        <location filename="src/options/options.ui" line="3172"/>
+        <location filename="src/options/options.ui" line="3252"/>
+        <location filename="src/options/options.ui" line="3522"/>
         <source>&amp;IVAO</source>
         <translation>&amp;IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3186"/>
+        <location filename="src/options/options.ui" line="3185"/>
         <source>Define which weather service METARs are to be shown in the information dock window for an airport.</source>
         <translation>Bepaal welke weerservice METARs getoond moeten worden in het informatievenster van de luchthaven op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3189"/>
+        <location filename="src/options/options.ui" line="3188"/>
         <source>Weather Display in Information Panels</source>
         <translation>Weergave WEER in Informatievenster</translation>
     </message>
@@ -11946,128 +11937,128 @@ Wanneer &quot;Centreer kaart op vliegtuig en volgende waypoint van het vluchtpla
         <translation type="vanished">VA&amp;TSIM</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3279"/>
+        <location filename="src/options/options.ui" line="3278"/>
         <source>Files and Web Addresses</source>
         <translation>Bestanden en Webadressen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3430"/>
+        <location filename="src/options/options.ui" line="3429"/>
         <source>&amp;IVAO Weather Download URL:</source>
         <translation>&amp;IVAO Weerdowload URL:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3440"/>
+        <location filename="src/options/options.ui" line="3439"/>
         <source>Download URL for the IVAO weather file</source>
         <translation>Download URL voor het IVAO weersbestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3443"/>
+        <location filename="src/options/options.ui" line="3442"/>
         <source>http://wx.ivao.aero/metar.php</source>
         <translation>http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3446"/>
+        <location filename="src/options/options.ui" line="3445"/>
         <source>No URL set. IVAO weather reports are disabled.</source>
         <translation>Geen URL bepaald. IVAO weerrapporten zijn uitgeschakeld.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3456"/>
+        <location filename="src/options/options.ui" line="3455"/>
         <source>Test the IVAO download URL</source>
         <translation>Test de IVAO dowload URL</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3470"/>
+        <location filename="src/options/options.ui" line="3469"/>
         <source>Online Flying</source>
         <translation>Online Vliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3476"/>
+        <location filename="src/options/options.ui" line="3475"/>
         <source>Online Service</source>
         <translation>Online Service</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3497"/>
+        <location filename="src/options/options.ui" line="3496"/>
         <source>Do not use any online flying services</source>
         <translation>Gebruik geen enkele online vluchtservices</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3500"/>
+        <location filename="src/options/options.ui" line="3499"/>
         <source>&amp;None</source>
         <translation>&amp;Geen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3510"/>
+        <location filename="src/options/options.ui" line="3509"/>
         <source>Use the VATSIM network pre-defined configuration for online flying</source>
         <translation>Gebruik de VATSIM voorgedefinieerde netwerk-configuratie voor online vliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3520"/>
+        <location filename="src/options/options.ui" line="3519"/>
         <source>Use the IVAO network pre-defined configuration for online flying</source>
         <translation>Gebruik de IVAO voorgedefinieerde netwerk-configuratie voor online vliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3530"/>
+        <location filename="src/options/options.ui" line="3529"/>
         <source>Use a custom web address for the &quot;status.txt&quot; file</source>
         <translation>Gebruik een zelf ingesteld webadres voor het &quot;status.txt&quot; bestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3536"/>
+        <location filename="src/options/options.ui" line="3532"/>
         <source>Custom with &amp;Status File</source>
         <translation>Zelfbepaald met &amp;Status Bestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3543"/>
+        <location filename="src/options/options.ui" line="3539"/>
         <source>Use a custom web address for the &quot;whazzup.txt&quot; file</source>
         <translation>Gebruik een zelf ingesteld webadres voor het &quot;whazzup.txt&quot; bestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3549"/>
+        <location filename="src/options/options.ui" line="3542"/>
         <source>&amp;Custom</source>
         <translation>&amp;Zelfbepaald</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3559"/>
+        <location filename="src/options/options.ui" line="3552"/>
         <source>Web Addresses</source>
         <oldsource>Web Adresses</oldsource>
         <translation>Webadres</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3580"/>
+        <location filename="src/options/options.ui" line="3573"/>
         <source>Web address of the &quot;whazzup.txt&quot; file</source>
         <translation>Webadres van het &quot;whazzup.txt&quot; bestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3583"/>
+        <location filename="src/options/options.ui" line="3576"/>
         <source>No web address for &quot;whazzup.txt&quot; entered.</source>
         <translation>Geen webadres voor het &quot;whazzup.txt&quot; bestand ingegeven.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3590"/>
+        <location filename="src/options/options.ui" line="3583"/>
         <source>Download &quot;whazzup.txt&quot; file from given URL and check validity</source>
         <translation>Download &quot;whazzup.txt&quot; bestand voor de opgegeven URL en test geldigheid</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3600"/>
+        <location filename="src/options/options.ui" line="3593"/>
         <source>&amp;Whazzup File URL:</source>
         <translation>&amp;Whazzup Bestand URL:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3610"/>
+        <location filename="src/options/options.ui" line="3603"/>
         <source>Web address of the &quot;status.txt&quot; file</source>
         <translation>Webadres van het &quot;status.txt&quot; bestand</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3613"/>
+        <location filename="src/options/options.ui" line="3606"/>
         <source>No web address for &quot;status.txt&quot; entered.</source>
         <translation>Geen webadres voor het &quot;status.txt&quot; bestand ingegeven.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3620"/>
+        <location filename="src/options/options.ui" line="3613"/>
         <source>&amp;Status File URL:</source>
         <translation>&amp;Status Bestand URL:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3630"/>
+        <location filename="src/options/options.ui" line="3623"/>
         <source>Download &quot;status.txt&quot; file from given URL and check validity</source>
         <translation>Download &quot;status.txt&quot; bestand voor de opgegeven URL en test geldigheid</translation>
     </message>
@@ -12080,58 +12071,58 @@ Gebruik nooit waarden kleiner dan 2 minuten voor officiële netwerken zoals VATS
 Gebruik lagere waarden alleen voor private netwerken.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3667"/>
+        <location filename="src/options/options.ui" line="3660"/>
         <source>&amp;Update every:</source>
         <translation>&amp;Update elke:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3684"/>
+        <location filename="src/options/options.ui" line="3677"/>
         <source>VATSIM</source>
         <translation>VATSIM</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3689"/>
+        <location filename="src/options/options.ui" line="3682"/>
         <source>IVAO</source>
         <translation>IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3697"/>
+        <location filename="src/options/options.ui" line="3690"/>
         <source>&amp;Format:</source>
         <translation>&amp;Formaat:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3724"/>
+        <location filename="src/options/options.ui" line="3717"/>
         <source>Cache and Files</source>
         <translation>Cache en Bestanden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3764"/>
+        <location filename="src/options/options.ui" line="3757"/>
         <source>Maximum size of &amp;disk cache:</source>
         <translation>Maximumgrootte van &amp;schijfcache:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3777"/>
-        <location filename="src/options/options.ui" line="3836"/>
+        <location filename="src/options/options.ui" line="3770"/>
+        <location filename="src/options/options.ui" line="3829"/>
         <source> MB</source>
         <translation> MB</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3796"/>
+        <location filename="src/options/options.ui" line="3789"/>
         <source>&amp;Clear Memory Cache</source>
         <translation>&amp;Wis Geheugencache</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3803"/>
+        <location filename="src/options/options.ui" line="3796"/>
         <source>Items in the disk cache expire after two weeks.</source>
         <translation>Gegevens in schijfcache verlopen na twee weken.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3813"/>
+        <location filename="src/options/options.ui" line="3806"/>
         <source>Clears the disk cache. This process will run in background and take some time.</source>
         <translation>Wist het schijfcache. Dit proces draait in de achtergrond en neemt wat tijd in beslag.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3906"/>
+        <location filename="src/options/options.ui" line="3899"/>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
@@ -12140,7 +12131,7 @@ Heeft een hogere resolutie dan de offline data-bron maar updates zijn traag.
 Bron-data bevatten veel fouten.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3921"/>
+        <location filename="src/options/options.ui" line="3914"/>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
@@ -12151,7 +12142,7 @@ Resolutie is lager dan de online bron maar updates zijn zeer snel.
 Heeft een 30 boogsegment grid (ongeveer 900 meter bij de evenaar).</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3816"/>
+        <location filename="src/options/options.ui" line="3809"/>
         <source>C&amp;lear Disk Cache</source>
         <translation>W&amp;is Schijfcache</translation>
     </message>
@@ -12327,97 +12318,97 @@ This setting is also used in the elevation profile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3163"/>
-        <location filename="src/options/options.ui" line="3243"/>
+        <location filename="src/options/options.ui" line="3162"/>
+        <location filename="src/options/options.ui" line="3242"/>
         <source>&amp;Flight Simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3646"/>
+        <location filename="src/options/options.ui" line="3639"/>
         <source>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.&lt;br/&gt;&lt;br/&gt;
 &lt;b&gt;Never use values smaller than two minutes for official networks like VATSIM or IVAO.
 Use lower values only for private networks.&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3823"/>
+        <location filename="src/options/options.ui" line="3816"/>
         <source>Opens the cache directory in a file manager.</source>
         <translation>Opent de cache-folder in bestandsbeheer.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3826"/>
+        <location filename="src/options/options.ui" line="3819"/>
         <source>&amp;Show Disk Cache in File Manager</source>
         <translation>&amp;Toon Schijfcache in Bestandsbeheer</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3855"/>
+        <location filename="src/options/options.ui" line="3848"/>
         <source>&amp;Maximum size of memory cache:</source>
         <translation>&amp;Maximimgrootte van geheugencache:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3868"/>
+        <location filename="src/options/options.ui" line="3861"/>
         <source>Flight Plan Elevation Profile</source>
         <translation>Vluchtplan Hoogteprofiel</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3889"/>
+        <location filename="src/options/options.ui" line="3882"/>
         <source>&amp;Select GLOBE Directory ...</source>
         <translation>&amp;Selecteer GLOBE Folder ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3896"/>
+        <location filename="src/options/options.ui" line="3889"/>
         <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Selecteer de folder die de volgende bestanden bevat: &quot;a10g&quot; tot &quot;p10g&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3899"/>
+        <location filename="src/options/options.ui" line="3892"/>
         <source>No elevation data directory selected.</source>
         <translation>Geen folder met hoogtegegevens geselecteerd.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3911"/>
+        <location filename="src/options/options.ui" line="3904"/>
         <source>Use Online Elevation Data</source>
         <translation>Gebruik Online Hoogte Data</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3927"/>
+        <location filename="src/options/options.ui" line="3920"/>
         <source>Use Offline GLOBE Elevation Data</source>
         <translation>Gebruik GLOBE Hoogte Data</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3941"/>
+        <location filename="src/options/options.ui" line="3934"/>
         <source>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Get the free GLOBE elevation data here.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
 Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; and extract the archive to an arbitrary place.</source>
         <translation>&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;Download de gratis GLOBE hoogte data hier.&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
 Download vanaf deze link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; en pak het archief uit naar een willekeurige folder.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3956"/>
+        <location filename="src/options/options.ui" line="3949"/>
         <source>Scenenery Library Database</source>
         <translation>Scenery Library Database</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3967"/>
+        <location filename="src/options/options.ui" line="3960"/>
         <source>A&amp;dd ...</source>
         <translation>&amp;Toevoegen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3974"/>
+        <location filename="src/options/options.ui" line="3967"/>
         <source>R&amp;emove</source>
         <translation>V&amp;erwijder</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4001"/>
+        <location filename="src/options/options.ui" line="3994"/>
         <source>&amp;Add Directory ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4008"/>
+        <location filename="src/options/options.ui" line="4001"/>
         <source>&amp;Add Files ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4037"/>
+        <location filename="src/options/options.ui" line="4030"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, P3D and X-Plane).
@@ -12429,7 +12420,7 @@ You have to reload the scenery library so that the changes take effect.</source>
         <translation type="vanished">T&amp;oevoegen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4015"/>
+        <location filename="src/options/options.ui" line="4008"/>
         <source>&amp;Remove</source>
         <translation>&amp;Verwijder</translation>
     </message>
@@ -12444,7 +12435,7 @@ Deze paden gelden voor alle vluchtsimulatoren (FSX, P3D en X-Plane).
 Je moet de scenery library herladen zodat de wijzigingen doorgevoerd worden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4056"/>
+        <location filename="src/options/options.ui" line="4049"/>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
@@ -12457,17 +12448,17 @@ Deze paden gelden voor alle vluchtsimulatoren (FSX, P3D en X-Plane).
 Je moet de scenery library herladen zodat de wijzigingen doorgevoerd worden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4076"/>
+        <location filename="src/options/options.ui" line="4069"/>
         <source>&amp;Select paths to exclude from loading:</source>
         <translation>&amp;Selecteer hier de scenery die niet geladen moet worden:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4092"/>
+        <location filename="src/options/options.ui" line="4085"/>
         <source>Select &amp;paths to exclude from add-on recognition:</source>
         <translation>Selecteer &amp;add-ons die niet meegeladen moeten worden:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4112"/>
+        <location filename="src/options/options.ui" line="4105"/>
         <source>Reset all settings back to default.
 Changes only settings that can be done with this dialog.</source>
         <translation>Terugzetten naar standaardinstellingen.
@@ -16954,54 +16945,51 @@ ETD en ETA worden niet meegeteld. ALTERNATES werken niet in combinatie met een S
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="103"/>
-        <location filename="src/route/routestringdialog.ui" line="106"/>
         <source>Update the string from the current flight plan after option changes.</source>
         <translation>Update de lijst van het huidig vluchtplan na veranderingen in de opties.</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="109"/>
+        <location filename="src/route/routestringdialog.ui" line="106"/>
         <source>Update from Flight &amp;Plan</source>
         <translation>Update van Vlucht&amp;Plan</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="122"/>
+        <location filename="src/route/routestringdialog.ui" line="119"/>
         <source>Read the flight plan route description.</source>
         <translation>Lees de routebeschrijving van het vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="125"/>
+        <location filename="src/route/routestringdialog.ui" line="122"/>
         <source>&amp;Read Route Description</source>
         <translation>&amp;Lees Routebeschrijving</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="132"/>
-        <location filename="src/route/routestringdialog.ui" line="135"/>
+        <location filename="src/route/routestringdialog.ui" line="129"/>
         <source>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</source>
         <translation>Creëer een VFR (Visual Flight Rules) of IFR (Instrument Flight Rules) vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="139"/>
+        <location filename="src/route/routestringdialog.ui" line="133"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="144"/>
+        <location filename="src/route/routestringdialog.ui" line="138"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="152"/>
-        <location filename="src/route/routestringdialog.ui" line="155"/>
+        <location filename="src/route/routestringdialog.ui" line="146"/>
         <source>Options for generated route string</source>
         <translation>Opties voor de gegenereerde route</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="181"/>
+        <location filename="src/route/routestringdialog.ui" line="172"/>
         <source>Display messages, warnings or errors when reading the route description.</source>
         <translation>Toon berichten, waarschuwingen en fouten bij het lezen van de routebeschrijving.</translation>
     </message>
     <message>
-        <location filename="src/route/routestringdialog.ui" line="187"/>
+        <location filename="src/route/routestringdialog.ui" line="178"/>
         <source>Flight plan route description not read.</source>
         <translation>Routebeschrijving van vluchtplan niet gelezen.</translation>
     </message>
@@ -18004,7 +17992,7 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Naam:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="218"/>
+        <location filename="src/userdata/userdatadialog.ui" line="215"/>
         <source>Check to change ident for all selected waypoints</source>
         <translation>Vink aan om de ident van alle geselecteerde waypoints te veranderen</translation>
     </message>
@@ -18014,7 +18002,7 @@ p, li { white-space: pre-wrap; }
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -18023,7 +18011,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
         <oldsource>Recognized coordinate formats:
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
@@ -18037,10 +18025,10 @@ Other formats:
 - Degrees only 46N078W
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
-- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</oldsource>
-        <translation>Welke coördinaten worden herkend:
+        <translation type="unfinished">Welke coördinaten worden herkend:
 - Graden, minuten en seconden : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; of 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Graden en minuten: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 of 49° 26.69&apos; N 9° 12.09&apos; E
 - Alleen graden: 49.4449° N 9.2015° E of N 49.4449° E 9:2015°
@@ -18067,109 +18055,109 @@ Bovenstaande formaten moet exact ingevoerd worden zoals in de voorbeelden.</tran
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code van het waypoint. &lt;/p&gt;&lt;p&gt;Een ident tot 5 karakter is nodig voor het exporteren naar andere formaten voor X-Plane &amp;quot;user_fix.dat&amp;quot; of Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="154"/>
+        <location filename="src/userdata/userdatadialog.ui" line="151"/>
         <source>Check to change visibility for all selected waypoints</source>
         <translation>Vink aan om de zichtbaarheid van alle geselecteerde waypoints te veranderen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="164"/>
+        <location filename="src/userdata/userdatadialog.ui" line="161"/>
         <source>Check to change description for all selected waypoints</source>
         <translation>Vink aan om de beschrijving van alle geselecteerde waypoints te veranderen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="177"/>
+        <location filename="src/userdata/userdatadialog.ui" line="174"/>
         <source>&amp;Region:</source>
         <translation>&amp;Regio:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="201"/>
+        <location filename="src/userdata/userdatadialog.ui" line="198"/>
         <source>&amp;Elevation or altitude:</source>
         <translation>&amp;Hoogtepeil of hoogte:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="211"/>
+        <location filename="src/userdata/userdatadialog.ui" line="208"/>
         <source>Imported from file:</source>
         <translation>Geimporteerd van bestand:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="228"/>
+        <location filename="src/userdata/userdatadialog.ui" line="225"/>
         <source>&amp;Type:</source>
         <translation>&amp;Type:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="238"/>
+        <location filename="src/userdata/userdatadialog.ui" line="235"/>
         <source>Elevation or altitude of this waypoint</source>
         <translation>Hoogtepeil of hoogte van dit waypoint</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="241"/>
+        <location filename="src/userdata/userdatadialog.ui" line="238"/>
         <source> %alt%</source>
         <translation> %alt%</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="267"/>
+        <location filename="src/userdata/userdatadialog.ui" line="264"/>
         <source>Check to change tags for all selected waypoints</source>
         <translation>Vink aan om de tags van alle geselecteerde waypoints te veranderen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="277"/>
+        <location filename="src/userdata/userdatadialog.ui" line="274"/>
         <source>Check to change elevation for all selected waypoints</source>
         <translation>Vink aan om het hoogtepeil van alle geselecteerde waypoints te veranderen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="297"/>
+        <location filename="src/userdata/userdatadialog.ui" line="294"/>
         <source>&amp;Visible from:</source>
         <translation>&amp;Zichtbaar van:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="307"/>
+        <location filename="src/userdata/userdatadialog.ui" line="304"/>
         <source>Type which will determine the used icon</source>
         <translation>Type waardoor het gebruikte icoon wordt bepaald</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="333"/>
+        <location filename="src/userdata/userdatadialog.ui" line="330"/>
         <source>&amp;Tags:</source>
         <translation>&amp;Tags:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="343"/>
+        <location filename="src/userdata/userdatadialog.ui" line="340"/>
         <source>List of tags. Simple textfield for various purposes.</source>
         <translation>Taglijst. Simpel tekstveld voor allerhande doelen.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="353"/>
+        <location filename="src/userdata/userdatadialog.ui" line="350"/>
         <source>Last Change:</source>
         <translation>Laatste Wijziging:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="360"/>
+        <location filename="src/userdata/userdatadialog.ui" line="357"/>
         <source>&amp;Description:</source>
         <translation>&amp;Beschrijving:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="370"/>
+        <location filename="src/userdata/userdatadialog.ui" line="367"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bepaal de maximum kijkafstand waar dit waypoint getoond wordt op de kaart.&lt;/p&gt;&lt;p&gt;De kijkafstand wordt in de statusbar getoond.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="373"/>
+        <location filename="src/userdata/userdatadialog.ui" line="370"/>
         <source> %dist%</source>
         <translation> %dist%</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="392"/>
+        <location filename="src/userdata/userdatadialog.ui" line="389"/>
         <source>Two letter ICAO region code.
 Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
         <translation>Tweeletter ICAO regio code.
 Nodig voor het exporteren naar X-Plane &quot;user_fix.dat&quot;.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="409"/>
+        <location filename="src/userdata/userdatadialog.ui" line="406"/>
         <source>Check to change name for all selected waypoints</source>
         <translation>Aanvinken om de naam van alle geselecteerde waypoints te veranderen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="428"/>
+        <location filename="src/userdata/userdatadialog.ui" line="425"/>
         <source>&amp;Temporary userpoint. Delete on next startup.</source>
         <translation>&amp;Tijdelijk gebruikerspunt. Verwijder bij de volgende stap.</translation>
     </message>
