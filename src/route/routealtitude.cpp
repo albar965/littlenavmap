@@ -1037,9 +1037,14 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf, fl
 
     // Calculate ground speed for each phase (climb, cruise, descent) of this leg - 0 is phase is not touched
     float course = route->at(i).getCourseToMag();
-    climbSpeed = atools::geo::windCorrectedGroundSpeed(climbWindAvg, windDir, course, climbSpeed);
-    cruiseSpeed = atools::geo::windCorrectedGroundSpeed(cruiseWind, windDir, course, cruiseSpeed);
-    descentSpeed = atools::geo::windCorrectedGroundSpeed(descentWindAvg, windDir, course, descentSpeed);
+
+    // Skip wind calculation for circular legs which have no course
+    if(course < map::INVALID_COURSE_VALUE)
+    {
+      climbSpeed = atools::geo::windCorrectedGroundSpeed(climbWindAvg, windDir, course, climbSpeed);
+      cruiseSpeed = atools::geo::windCorrectedGroundSpeed(cruiseWind, windDir, course, cruiseSpeed);
+      descentSpeed = atools::geo::windCorrectedGroundSpeed(descentWindAvg, windDir, course, descentSpeed);
+    }
 
     // Check if wind is too strong
     if(!(climbSpeed < map::INVALID_SPEED_VALUE))
