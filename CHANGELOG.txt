@@ -12,7 +12,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Added verbose logging option for weather updates.
 * Now showing ILS frequency for all approaches ILS, LOC, LOCB, LDA and IGS.
 * Fixed redundant legs in SID if first leg is IF and RW too.
-* Updated German translation.
+* Updated German program translation and map legend.
 
 Version 2.2.2.rc2
 
