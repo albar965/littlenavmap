@@ -13,6 +13,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Now showing ILS frequency for all approaches ILS, LOC, LOCB, LDA and IGS.
 * Fixed redundant legs in SID if first leg is IF and RW too.
 * Updated German program translation and map legend.
+* Replaced OpenMapSurfer hillshading with the one used for OpenStreetMap since server is offline.
 
 Version 2.2.2.rc2
 

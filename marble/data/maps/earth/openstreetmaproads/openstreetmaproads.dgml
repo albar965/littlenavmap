@@ -36,7 +36,9 @@
           <downloadPolicy usage="Browse" maximumConnections="2"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
-        <texture name="hillshading" expire="31536000">
+
+        <!-- Original OpenMapSurfer world-wide hillshading which is offline - disabled therefore -->
+        <!-- <texture name="hillshading" expire="31536000">
           <sourcedir format="PNG"> earth/openstreetmaproadshs</sourcedir>
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
@@ -45,8 +47,10 @@
           <blending name="AlphaBlending"/>
           <downloadPolicy usage="Browse" maximumConnections="2"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
-        </texture>
-<!--        <texture name="hillshading" expire="31536000">
+        </texture>-->
+
+        <!-- Same hillshading with limited coveraage as OpenStreetMap and others -->
+        <texture name="hillshading" expire="31536000">
           <sourcedir format="PNG"> earth/hillshading </sourcedir>
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="17" mode="OpenStreetMap"/>
@@ -55,7 +59,8 @@
           <downloadUrl protocol="http" host="b.tiles.wmflabs.org" path="/hillshading/"/>
           <downloadUrl protocol="http" host="c.tiles.wmflabs.org" path="/hillshading/"/>
           <blending name="AlphaBlending"/>
-        </texture>-->
+        </texture>
+
       </layer>
     </map>
     <settings>
