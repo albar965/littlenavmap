@@ -294,6 +294,7 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
   QFile file(path);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    int num = 0;
     activeSkyMetars.clear();
 
     QTextStream weatherSnapshot(&file);
@@ -304,7 +305,10 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
     {
       QStringList list = line.split("::");
       if(list.size() >= 2)
+      {
+        num++;
         activeSkyMetars.insert(list.at(0), list.at(1));
+      }
       else
       {
         qWarning() << "AS file" << file.fileName() << "has invalid entries";
@@ -313,6 +317,8 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
       lineNum++;
     }
     file.close();
+
+    qDebug() << Q_FUNC_INFO << "Loaded" << num << "METARs";
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
@@ -381,6 +387,9 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
       }
     }
     file.close();
+
+    qDebug() << Q_FUNC_INFO << "activeSkyDepartureMetar" << activeSkyDepartureMetar
+             << "activeSkyDestinationMetar" << activeSkyDestinationMetar;
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();

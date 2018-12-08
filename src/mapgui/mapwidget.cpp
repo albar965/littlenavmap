@@ -3356,10 +3356,12 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO
            << "state" << mouseState
            << "modifiers" << event->modifiers()
            << "pos" << event->pos();
+#endif
 
   // Take actions (add/remove range rings, measurement)
   if(mousePressCheckModifierActions(event))
