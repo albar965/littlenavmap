@@ -2788,10 +2788,10 @@ void MainWindow::resetWindowLayout()
   setWindowState(windowState() & ~Qt::WindowMaximized);
   setWindowState(windowState() & ~Qt::WindowFullScreen);
 
-  QRect screenSize = QApplication::desktop()->availableGeometry(this);
   resize(lnm::DEFAULT_MAINWINDOW_SIZE);
-  move((screenSize.width() - lnm::DEFAULT_MAINWINDOW_SIZE.width()) / 2,
-       (screenSize.height() - lnm::DEFAULT_MAINWINDOW_SIZE.height()) / 2);
+  // QRect screenSize = QApplication::desktop()->availableGeometry(this);
+  // move((screenSize.width() - lnm::DEFAULT_MAINWINDOW_SIZE.width()) / 2,
+  // (screenSize.height() - lnm::DEFAULT_MAINWINDOW_SIZE.height()) / 2);
 
   restoreState(lnm::DEFAULT_MAINWINDOW_STATE, lnm::MAINWINDOW_STATE_VERSION);
 
