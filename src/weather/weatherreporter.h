@@ -127,7 +127,8 @@ public:
     MANUAL, /* Snapshot file is manually selected */
     ASN, /* Active Sky Next */
     AS16,
-    ASP4 /* Active Sky for Prepar3D v4 */
+    ASP4, /* Active Sky for Prepar3D v4 */
+    ASXPL /* Active Sky for X-Plane */
   };
 
   /* Get type of active sky weather snapshot that was found */

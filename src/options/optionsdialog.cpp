@@ -1561,33 +1561,33 @@ void OptionsDialog::updateActiveSkyPathStatus()
     WeatherReporter *wr = NavApp::getWeatherReporter();
     QString sim = atools::fs::FsPaths::typeToShortName(wr->getSimType());
 
-    if(wr->getSimType() != atools::fs::FsPaths::XPLANE11)
+    switch(wr->getCurrentActiveSkyType())
     {
-      switch(wr->getCurrentActiveSkyType())
-      {
-        case WeatherReporter::NONE:
-          text = tr("No Active Sky weather snapshot found. Active Sky METARs are not available.");
-          break;
-        case WeatherReporter::MANUAL:
-          text = tr("Will use default weather snapshot after confirming change.");
-          break;
-        case WeatherReporter::ASN:
-          text = tr("No Active Sky weather snapshot file selected. "
-                    "Using default for Active Sky Next for %1.").arg(sim);
-          break;
-        case WeatherReporter::AS16:
-          text = tr("No Active Sky weather snapshot file selected. "
-                    "Using default for AS16 for %1.").arg(sim);
-          break;
+      case WeatherReporter::NONE:
+        text = tr("No Active Sky weather snapshot found. Active Sky METARs are not available.");
+        break;
+      case WeatherReporter::MANUAL:
+        text = tr("Will use default weather snapshot after confirming change.");
+        break;
+      case WeatherReporter::ASN:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for Active Sky Next for %1.").arg(sim);
+        break;
+      case WeatherReporter::AS16:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for AS16 for %1.").arg(sim);
+        break;
 
-        case WeatherReporter::ASP4:
-          text = tr("No Active Sky weather snapshot file selected. "
-                    "Using default for ASP4 for %1.").arg(sim);
-          break;
-      }
+      case WeatherReporter::ASP4:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for ASP4 for %1.").arg(sim);
+        break;
+
+      case WeatherReporter::ASXPL:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for Active Sky XP for %1.").arg(sim);
+        break;
     }
-    else
-      text = tr("X-Plane is selected in the Scenery Library menu. Active Sky weather not available.");
 
     ui->labelOptionsWeatherAsnPathState->setText(text);
   }

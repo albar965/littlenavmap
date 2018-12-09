@@ -3218,7 +3218,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
     }
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11)
+  if(flags & opts::WEATHER_INFO_ACTIVESKY)
   {
     fillActiveSkyType(*currentWeatherContext, airport.ident);
 
@@ -3291,7 +3291,7 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
         NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
-  if(flags & opts::WEATHER_INFO_ACTIVESKY && NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11)
+  if(flags & opts::WEATHER_INFO_ACTIVESKY)
   {
     weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
     fillActiveSkyType(weatherContext, airport.ident);

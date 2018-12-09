@@ -212,67 +212,77 @@ void WeatherReporter::initActiveSkyNext()
   asPath.clear();
   asFlightplanPath.clear();
 
-  if(simType != atools::fs::FsPaths::XPLANE11)
+  QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
+  if(manualActiveSkySnapshotPath.isEmpty())
   {
-    QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
-    if(manualActiveSkySnapshotPath.isEmpty())
+    QString asnSnapshotPath, asnFlightplanSnapshotPath;
+    QString as16SnapshotPath, as16FlightplanSnapshotPath;
+    QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
+    QString asXplSnapshotPath, aspXplFlightplanSnapshotPath;
+
+    findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
+    qInfo() << "ASN snapshot" << asnSnapshotPath << "flight plan weather" << asnFlightplanSnapshotPath;
+
+    findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
+    qInfo() << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
+
+    if(simType == atools::fs::FsPaths::P3D_V4)
     {
-      QString asnSnapshotPath, asnFlightplanSnapshotPath;
-      QString as16SnapshotPath, as16FlightplanSnapshotPath;
-      QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
-
-      findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
-      qInfo() << "ASN snapshot" << asnSnapshotPath << "flight plan weather" << asnFlightplanSnapshotPath;
-
-      findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
-      qInfo() << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
-
-      if(simType == atools::fs::FsPaths::P3D_V4)
-      {
-        // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv4
-        findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv4");
-        qInfo() << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
-      }
-
-      if(!asp4SnapshotPath.isEmpty())
-      {
-        // Prefer AS4 before AS16
-        asPath = asp4SnapshotPath;
-        asFlightplanPath = asp4FlightplanSnapshotPath;
-        activeSkyType = ASP4;
-      }
-      else if(!as16SnapshotPath.isEmpty())
-      {
-        // Prefer AS16 before ASN
-        asPath = as16SnapshotPath;
-        asFlightplanPath = as16FlightplanSnapshotPath;
-        activeSkyType = AS16;
-      }
-      else if(!asnSnapshotPath.isEmpty())
-      {
-        asPath = asnSnapshotPath;
-        asFlightplanPath = asnFlightplanSnapshotPath;
-        activeSkyType = ASN;
-      }
+      // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv4
+      findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv4");
+      qInfo() << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
     }
-    else
+    else if(simType == atools::fs::FsPaths::XPLANE11)
     {
-      // Manual path overrides found path for all simulators
-      asPath = manualActiveSkySnapshotPath;
-      asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() + QDir::separator() + "activeflightplanwx.txt";
-      activeSkyType = MANUAL;
+      // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL
+      findActiveSkyFiles(asXplSnapshotPath, aspXplFlightplanSnapshotPath, "AS_", "XPL");
+      qInfo() << "ASXPL snapshot" << asXplSnapshotPath << "flight plan weather" << aspXplFlightplanSnapshotPath;
     }
 
-    if(!asPath.isEmpty() || !asFlightplanPath.isEmpty())
+    if(!asp4SnapshotPath.isEmpty())
     {
-      qDebug() << "Using Active Sky paths" << asPath << asFlightplanPath;
-      loadActiveSkySnapshot(asPath);
-      loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-      createFsWatcher();
+      // Prefer AS4 before AS16
+      asPath = asp4SnapshotPath;
+      asFlightplanPath = asp4FlightplanSnapshotPath;
+      activeSkyType = ASP4;
     }
-    else
-      qDebug() << "Active Sky path not found";
+    else if(!as16SnapshotPath.isEmpty())
+    {
+      // Prefer AS16 before ASN
+      asPath = as16SnapshotPath;
+      asFlightplanPath = as16FlightplanSnapshotPath;
+      activeSkyType = AS16;
+    }
+    else if(!asnSnapshotPath.isEmpty())
+    {
+      asPath = asnSnapshotPath;
+      asFlightplanPath = asnFlightplanSnapshotPath;
+      activeSkyType = ASN;
+    }
+    else if(!asXplSnapshotPath.isEmpty())
+    {
+      asPath = asXplSnapshotPath;
+      asFlightplanPath = aspXplFlightplanSnapshotPath;
+      activeSkyType = ASXPL;
+    }
   }
+  else
+  {
+    // Manual path overrides found path for all simulators
+    asPath = manualActiveSkySnapshotPath;
+    asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() + QDir::separator() + "activeflightplanwx.txt";
+    activeSkyType = MANUAL;
+  }
+
+  if(!asPath.isEmpty() || !asFlightplanPath.isEmpty())
+  {
+    qDebug() << "Using Active Sky paths" << asPath << asFlightplanPath;
+    loadActiveSkySnapshot(asPath);
+    loadActiveSkyFlightplanSnapshot(asFlightplanPath);
+    createFsWatcher();
+  }
+  else
+    qDebug() << "Active Sky path not found";
 }
 
 /* Loads complete ASN file into a hash map */
@@ -458,6 +468,8 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V4)
       simPathComponent = activeSkyPrefix + "P3D";
+    else if(simType == atools::fs::FsPaths::XPLANE11)
+      simPathComponent = activeSkyPrefix + "XP";
   }
   else
     // Use fixed suffix for AS4
@@ -509,6 +521,8 @@ QString WeatherReporter::getCurrentActiveSkyName() const
     return tr("AS16");
   else if(activeSkyType == WeatherReporter::ASN)
     return tr("ASN");
+  else if(activeSkyType == WeatherReporter::ASXPL)
+    return tr("ASXP");
   else
     // Manually selected
     return tr("Active Sky");
