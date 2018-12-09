@@ -9961,7 +9961,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Saída </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3853"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3855"/>
         <source>Detail %1</source>
         <translation>Detalhe %1</translation>
     </message>
@@ -9976,12 +9976,12 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Heliporto %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3945"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3947"/>
         <source>Jumped back to aircraft.</source>
         <translation>Pulou de volta para a aeronave.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3854"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3856"/>
         <source>Map detail level changed.</source>
         <translation>Nível de detalhe do Mapa mudou.</translation>
     </message>
@@ -10001,7 +10001,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Linha de medição removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3846"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3848"/>
         <source>Normal</source>
         <translation></translation>
     </message>
@@ -10090,12 +10090,12 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Padrão de tráfego removido do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3552"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3554"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Mostrando AI/ aeronaves do multiplayer no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3562"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3564"/>
         <source>Showing airport on map.</source>
         <translation>Mostrando aeroportos no mapa.</translation>
     </message>
@@ -10110,17 +10110,17 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Mostrando posição inicial.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3576"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3578"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation>Mostrando navaid ou userpoint no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3557"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3559"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Mostrando aeronave do cliente no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3547"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3549"/>
         <source>Showing user aircraft on map.</source>
         <translation>Mostrando aeronave do usuário no mapa.</translation>
     </message>
@@ -12656,6 +12656,11 @@ Valores menores aproximarão o zoom de um aeroporto ou navaod.
         <translation>Não é um arquivo de instantâneo meteorológico do Active Sky.</translation>
     </message>
     <message>
+        <location filename="src/options/optionsdialog.cpp" line="1587"/>
+        <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/options/optionsdialog.cpp" line="1625"/>
         <source>Clear the disk cache?
 All files in the directory &quot;%1&quot; will be deleted.
@@ -12729,22 +12734,22 @@ Este processo será executado em segundo plano e pode demorar um pouco.</transla
         <translation>Nome (Ident)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1579"/>
+        <location filename="src/options/optionsdialog.cpp" line="1577"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation>Nenhum arquivo de tempo instatâneio do Active Sky foi selecionado. Usando  o padrão AS16 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1584"/>
+        <location filename="src/options/optionsdialog.cpp" line="1582"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation>Nenhum arquivo de tempo instatâneio do Active Sky foi selecionado. Usando  o padrão ASP4 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1575"/>
+        <location filename="src/options/optionsdialog.cpp" line="1573"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation>Nenhum arquivo de tempo instatâneio do Active Sky foi selecionado. Usando  o padrão Active Sky Next para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1569"/>
+        <location filename="src/options/optionsdialog.cpp" line="1567"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation>Nenhum tempo instantâneo do Active Sky encontrado. Metar do Active Sky não está disponível.</translation>
     </message>
@@ -12879,7 +12884,7 @@ Este processo será executado em segundo plano e pode demorar um pouco.</transla
         <translation>O arquivo instantâneo de tempo é válido. Utilizando este para todos os simuladores</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1572"/>
+        <location filename="src/options/optionsdialog.cpp" line="1570"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation>Usará tempo instatâneo padrão após confirmar a alteração.</translation>
     </message>
@@ -12894,9 +12899,8 @@ Este processo será executado em segundo plano e pode demorar um pouco.</transla
         <translation>Ponteira do vento</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1590"/>
         <source>X-Plane is selected in the Scenery Library menu. Active Sky weather not available.</source>
-        <translation>O X-Plane está selecionado no menu da Biblioteca de Cenários. O clima do Active Sky não está disponível.</translation>
+        <translation type="vanished">O X-Plane está selecionado no menu da Biblioteca de Cenários. O clima do Active Sky não está disponível.</translation>
     </message>
 </context>
 <context>
@@ -18376,32 +18380,37 @@ do Arquivo</translation>
 <context>
     <name>WeatherReporter</name>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="500"/>
+        <location filename="src/weather/weatherreporter.cpp" line="521"/>
         <source>AS16</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="502"/>
+        <location filename="src/weather/weatherreporter.cpp" line="523"/>
         <source>ASN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="498"/>
+        <location filename="src/weather/weatherreporter.cpp" line="519"/>
         <source>ASP4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="505"/>
+        <location filename="src/weather/weatherreporter.cpp" line="525"/>
+        <source>ASXP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/weather/weatherreporter.cpp" line="528"/>
         <source>Active Sky</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="613"/>
+        <location filename="src/weather/weatherreporter.cpp" line="636"/>
         <source>Active Sky weather information updated.</source>
         <translation>Active Sky informação de tempo atualizado.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="620"/>
+        <location filename="src/weather/weatherreporter.cpp" line="643"/>
         <source>X-Plane weather information updated.</source>
         <translation>X-plane  informação de tempo atualizado.</translation>
     </message>

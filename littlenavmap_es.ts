@@ -9976,7 +9976,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3547"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3549"/>
         <source>Showing user aircraft on map.</source>
         <translation>Mostrando aeronave del usuario en el mapa.</translation>
     </message>
@@ -9986,7 +9986,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>La distancia desde centro de bísqueda ha cambiado.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3846"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3848"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
@@ -10020,12 +10020,12 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Todas las líneas de rango de anillos de medición removidas del mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3853"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3855"/>
         <source>Detail %1</source>
         <translation>Detalles %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3552"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3554"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Mostrando naves de multijugadores/IA en el mapa.</translation>
     </message>
@@ -10035,7 +10035,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Mostrando centro de búsqueda de distancia.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3854"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3856"/>
         <source>Map detail level changed.</source>
         <translation>Se cambió el nivel de detalle del mapa.</translation>
     </message>
@@ -10070,7 +10070,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>Anillos de rango removidos del Mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3562"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3564"/>
         <source>Showing airport on map.</source>
         <translation>Mostrando aeropuerto en el mapa.</translation>
     </message>
@@ -10119,17 +10119,17 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>todo </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3557"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3559"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Mostrar en mapa aeronave del cliente en línea.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3576"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3578"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation>Mostrar navaid o punto de usuario en mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3945"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3947"/>
         <source>Jumped back to aircraft.</source>
         <translation>Saltó a la aeronave.</translation>
     </message>
@@ -12476,7 +12476,7 @@ Start the timer by moving the map instead of scrolling.</oldsource>
         <translation>Muestra el largo, el ancho y texto del indicador luminoso.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1575"/>
+        <location filename="src/options/optionsdialog.cpp" line="1573"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation>No seleccionó archivo de instantáneas meteorológicas Active Sky. Usar predeterminado de Active Sky Next para %1.</translation>
     </message>
@@ -12500,12 +12500,12 @@ Start the timer by moving the map instead of scrolling.</oldsource>
         <translation>Frecuencia de torre</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1579"/>
+        <location filename="src/options/optionsdialog.cpp" line="1577"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation>No seleccionó archivo de instantáneas meteorológicas Active Sky. Usar el valor predeterminado para AS16 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1584"/>
+        <location filename="src/options/optionsdialog.cpp" line="1582"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation>No seleccionó archivo de instantáneas meteorológicas Active Sky. Usar el valor predeterminado para ASP4 para %1.</translation>
     </message>
@@ -12537,12 +12537,12 @@ Start the timer by moving the map instead of scrolling.</oldsource>
         <translation>Mostrar el tipo de aeronave, como ser: B738, B350 o M20T.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1569"/>
+        <location filename="src/options/optionsdialog.cpp" line="1567"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation>No se encontró instantánea climática Active Sky, METAR no está disponible.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1572"/>
+        <location filename="src/options/optionsdialog.cpp" line="1570"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation>Puede usar instantánea por defecto para clima luego de confirmar cambio.</translation>
     </message>
@@ -12627,6 +12627,11 @@ Start the timer by moving the map instead of scrolling.</oldsource>
         <translation>Línea de vuelo</translation>
     </message>
     <message>
+        <location filename="src/options/optionsdialog.cpp" line="1587"/>
+        <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/options/optionsdialog.cpp" line="1625"/>
         <source>Clear the disk cache?
 All files in the directory &quot;%1&quot; will be deleted.
@@ -12642,9 +12647,8 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
         <translation>Número de vuelo</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1590"/>
         <source>X-Plane is selected in the Scenery Library menu. Active Sky weather not available.</source>
-        <translation>X-Plane se selecciona en el menú Biblioteca de escenarios. El clima de Active Sky no está disponible.</translation>
+        <translation type="vanished">X-Plane se selecciona en el menú Biblioteca de escenarios. El clima de Active Sky no está disponible.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1648"/>
@@ -18419,32 +18423,37 @@ desde archivo</translation>
 <context>
     <name>WeatherReporter</name>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="502"/>
+        <location filename="src/weather/weatherreporter.cpp" line="523"/>
         <source>ASN</source>
         <translation>ASN</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="500"/>
+        <location filename="src/weather/weatherreporter.cpp" line="521"/>
         <source>AS16</source>
         <translation>AS16</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="498"/>
+        <location filename="src/weather/weatherreporter.cpp" line="519"/>
         <source>ASP4</source>
         <translation>ASP4</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="505"/>
+        <location filename="src/weather/weatherreporter.cpp" line="525"/>
+        <source>ASXP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/weather/weatherreporter.cpp" line="528"/>
         <source>Active Sky</source>
         <translation>Cielo activo</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="620"/>
+        <location filename="src/weather/weatherreporter.cpp" line="643"/>
         <source>X-Plane weather information updated.</source>
         <translation>Actualizada información del clima en X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="613"/>
+        <location filename="src/weather/weatherreporter.cpp" line="636"/>
         <source>Active Sky weather information updated.</source>
         <translation>Información del clima en el cielo activo actualizada.</translation>
     </message>

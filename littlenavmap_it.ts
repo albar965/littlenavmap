@@ -10043,17 +10043,17 @@ Only JPG, PNG and BMP are allowed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3557"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3559"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Visualizzazione aereo client online sulla mappa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3576"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3578"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation>Visualizzazione radioassistenza o punto utente sulla mappa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3945"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3947"/>
         <source>Jumped back to aircraft.</source>
         <translation>Ritornato all&apos;aereo.</translation>
     </message>
@@ -10089,17 +10089,17 @@ Only JPG, PNG and BMP are allowed.</source>
         <translation>Rimossi tutti gli anelli di distanza e linee di misura dalla mappa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3547"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3549"/>
         <source>Showing user aircraft on map.</source>
         <translation>Visualizzazione aereo utente sulla mappa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3552"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3554"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Visualizzazione aereo AI/multigiocatore sulla mappa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3562"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3564"/>
         <source>Showing airport on map.</source>
         <translation>Visualizzazione aeroporto sulla mappa.</translation>
     </message>
@@ -10108,17 +10108,17 @@ Only JPG, PNG and BMP are allowed.</source>
         <translation type="vanished">Traccia dell&apos;aereo rimossa dalla mappa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3846"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3848"/>
         <source>Normal</source>
         <translation>Normale</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3853"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3855"/>
         <source>Detail %1</source>
         <translation>Dettaglio %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3854"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3856"/>
         <source>Map detail level changed.</source>
         <translation>Livello di dettaglio della mappa cambiato.</translation>
     </message>
@@ -12529,6 +12529,11 @@ Changes only settings that can be done with this dialog.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/options/optionsdialog.cpp" line="1587"/>
+        <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP for %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Success. First lines in file:
 %1</source>
         <translation type="vanished">Successo. Prime righe nel file:
@@ -12665,34 +12670,33 @@ Changes only settings that can be done with this dialog.</source>
         <translation>File di Istantanea Meteo valido. Usando questo per tutti i simulatori</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1569"/>
+        <location filename="src/options/optionsdialog.cpp" line="1567"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation>Nessuna istantanea meteo Active Sky trovata. Active Sky METARs non disponibili.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1572"/>
+        <location filename="src/options/optionsdialog.cpp" line="1570"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation>Si utilizzerà l&apos;istantanea meteo predefinita dopo aver confermato la modifica.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1575"/>
+        <location filename="src/options/optionsdialog.cpp" line="1573"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation>Nessun file istantanea meteo Active Sky selezionato. Usando il default di Active Sky Next per %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1579"/>
+        <location filename="src/options/optionsdialog.cpp" line="1577"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation>Nessun file istantanea meteo Active Sky selezionato. Usando il default di AS16 per %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1584"/>
+        <location filename="src/options/optionsdialog.cpp" line="1582"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation>Nessun file istantanea meteo Active Sky selezionato. Usando il default di ASP4 per %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1590"/>
         <source>X-Plane is selected in the Scenery Library menu. Active Sky weather not available.</source>
-        <translation>X-pPlane è selezionato nel menu Libreria Scenario. Meteo Active Sky non disponibile.</translation>
+        <translation type="vanished">X-pPlane è selezionato nel menu Libreria Scenario. Meteo Active Sky non disponibile.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1601"/>
@@ -18256,32 +18260,37 @@ dal file</translation>
 <context>
     <name>WeatherReporter</name>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="498"/>
+        <location filename="src/weather/weatherreporter.cpp" line="519"/>
         <source>ASP4</source>
         <translation>ASP4</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="500"/>
+        <location filename="src/weather/weatherreporter.cpp" line="521"/>
         <source>AS16</source>
         <translation>AS16</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="502"/>
+        <location filename="src/weather/weatherreporter.cpp" line="523"/>
         <source>ASN</source>
         <translation>ASN</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="505"/>
+        <location filename="src/weather/weatherreporter.cpp" line="525"/>
+        <source>ASXP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/weather/weatherreporter.cpp" line="528"/>
         <source>Active Sky</source>
         <translation>Active Sky</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="613"/>
+        <location filename="src/weather/weatherreporter.cpp" line="636"/>
         <source>Active Sky weather information updated.</source>
         <translation>Active Sky informazioni meteo aggiornate.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="620"/>
+        <location filename="src/weather/weatherreporter.cpp" line="643"/>
         <source>X-Plane weather information updated.</source>
         <translation>X-Plane informazioni meteo aggiornate.</translation>
     </message>
