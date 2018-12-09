@@ -263,10 +263,10 @@ bool RouteAltitude::violatesAltitudeRestriction(const RouteAltitudeLeg& leg) con
     switch(leg.restriction.descriptor)
     {
       case proc::MapAltRestriction::NONE:
-        return false;
-
       case proc::MapAltRestriction::ILS_AT:
       case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+        return false;
+
       case proc::MapAltRestriction::AT:
         return atools::almostNotEqual(leg.y2(), leg.restriction.alt1, 10.f);
 
@@ -574,7 +574,15 @@ void RouteAltitude::calculate()
     {
       if(!leg.isMissed())
         violatesRestrictions |= violatesAltitudeRestriction(leg);
+
+      if(violatesRestrictions)
+        qWarning() << Q_FUNC_INFO << "violating leg" << leg;
     }
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "Before cleanup ==================================";
+    qDebug() << Q_FUNC_INFO << *this;
+#endif
 
     if(violatesRestrictions || distanceTopOfClimb > distanceTopOfDescent ||
        (calcTopOfClimb && !(distanceTopOfClimb < map::INVALID_INDEX_VALUE)) ||
@@ -597,6 +605,7 @@ void RouteAltitude::calculate()
     }
 
 #ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "Finished ==================================";
     qDebug() << Q_FUNC_INFO << *this;
 #endif
   }
