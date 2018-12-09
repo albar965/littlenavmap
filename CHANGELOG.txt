@@ -1,6 +1,8 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.2
+
 * Fixed wrong display of airspace/airway information when selecting "show information" in map context menu.
 * Now showing all airspaces below cursorr when selecting "Show information for airspace(s)".
 * Fixed issues with airspace selection and tooltip when map window is unfloatable.
