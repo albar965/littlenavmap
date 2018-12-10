@@ -70,7 +70,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="375"/>
         <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p&gt;A Perfomance da Aeronave vai ser coletado automaticamente durante o voo.&lt;/p&gt;&lt;p&gt;Observe que nenhuma informação de desempenho como estimativas de combustível ou tempo para o waypoint é exibida durante este processo&lt;/p&gt;&lt;p&gt;O ponto de subida e o ponto da descida serão mostrados com base em uma regra geral de 3 nm por 1000 pés&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Conectar com o simulador,&lt;/li&gt;&lt;li&gt;carregar um plano de voo.,&lt;/li&gt;&lt;li&gt;colocar sua aeronave no aeroporto de partida e&lt;/li&gt;&lt;li&gt;voar o plano de voo o mais preciso possível.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;A coleta de perfomance será interrompida ao aterrissar no destino.&lt;/p&gt;&lt;p&gt;Não altere a altitude de cruzeiro do plano de voo enquanto as informações são coletadas.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Clique no link abaixo para mais informações:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Manual Online - Perfomance da Aeronave&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Iniciar coletagem de perfomance agora?&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;A Perfomance da Aeronave vai ser coletado automaticamente durante o voo.&lt;/p&gt;&lt;p&gt;Observe que nenhuma informação de desempenho como estimativas de combustível ou tempo para o waypoint é exibida durante este processo.&lt;/p&gt;&lt;p&gt;O ponto de subida e o ponto da descida serão mostrados com base em uma regra geral de 3 nm por 1000 pés&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Conectar com o simulador,&lt;/li&gt;&lt;li&gt;carregar um plano de voo.,&lt;/li&gt;&lt;li&gt;colocar sua aeronave no aeroporto de partida e&lt;/li&gt;&lt;li&gt;voar o plano de voo o mais preciso possível.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;A coleta de perfomance será interrompida ao aterrissar no destino.&lt;/p&gt;&lt;p&gt;Não altere a altitude de cruzeiro do plano de voo enquanto as informações são coletadas.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Clique no link abaixo para mais informações:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Manual Online - Perfomance da Aeronave&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Iniciar coletagem de perfomance agora?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="459"/>
@@ -267,12 +267,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="698"/>
         <source>Distance:</source>
-        <translation type="unfinished">Distância:</translation>
+        <translation>Distância:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="698"/>
         <source>%1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="702"/>
@@ -1255,7 +1255,8 @@ Vai reconectar automaticamente se a opção &quot;Conectar Automaticamente&quot;
         <location filename="src/db/databasedialog.ui" line="147"/>
         <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leia também as entradas dos cenários inativos ou desativados quando verificado.
+Será útil se você utilizar ferramentas para desabilitar e habilitar determinados cenários para cada voo.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="63"/>
@@ -1707,7 +1708,7 @@ Saindo agora.</translation>
         <location filename="src/export/htmlexporter.cpp" line="406"/>
         <source>Previous Page</source>
         <oldsource>Previous  Page</oldsource>
-        <translation type="unfinished">Página  Anterior</translation>
+        <translation>Página Anterior</translation>
     </message>
 </context>
 <context>
@@ -1855,12 +1856,12 @@ Rede Online:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1415"/>
         <source>Too many objects.</source>
-        <translation type="unfinished"></translation>
+        <translation>Muitos objetos.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1441"/>
         <source>Offline.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1497"/>
@@ -1897,12 +1898,12 @@ O simulador pode não conseguir carregar o plano de voo.</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1713"/>
         <source>Delete aircraft trail?</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseja excluir trilha feita pelas aeronaves?</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1723"/>
         <source>Aircraft track removed from map.</source>
-        <translation type="unfinished">Trilha da Aeronave foi removida do mapa.</translation>
+        <translation>Trilha da aeronave removida do mapa.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1855"/>
@@ -1922,17 +1923,17 @@ O simulador pode não conseguir carregar o plano de voo.</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2142"/>
         <source>Little Navmap Map %1.jpg</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2157"/>
         <source>Map image saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagem do mapa salva.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2174"/>
         <source>Map image copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagem do mapa copiado para a área de transferência.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2241"/>
@@ -3077,7 +3078,7 @@ A velocidade do vento será interpolada para as fases de subida e descida.</tran
         <location filename="src/gui/mainwindow.ui" line="3836"/>
         <source>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</source>
         <oldsource>Average wind at flight plan cruise level.  Wind speed will be interpolated for climb and descent phases.</oldsource>
-        <translation type="unfinished">Média de vento no nível de cruzeiro do plano de voo.  A velocidade do vento será interpolada para as fases de subida e descida.</translation>
+        <translation>Vento médio no nível de cruzeiro do plano de voo. A velocidade do vento será interpolada para as fases de subida e descida.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3839"/>
@@ -3163,7 +3164,8 @@ A velocidade do vento será interpolada para as fases de subida e descida.</tran
         <location filename="src/gui/mainwindow.ui" line="3832"/>
         <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vento médio no nível de cruzeiro do plano de voo.
+A velocidade do vento será interpolada para as fases de subida e descida.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4807"/>
@@ -3238,12 +3240,12 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/gui/mainwindow.ui" line="6703"/>
         <location filename="src/gui/mainwindow.ui" line="6706"/>
         <source>Delete simulator aircraft trail from map and elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Excluir trilha feita pelas aeronaves do mapa e do perfil de elevação</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6709"/>
         <source>Alt+Shift+T</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6753"/>
@@ -3310,7 +3312,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/gui/mainwindow.ui" line="8546"/>
         <source>Raise and show all undocked floating windows</source>
         <oldsource>Raise and show the map window if undocked</oldsource>
-        <translation type="unfinished">Levante e mostre a janela do mapa se estiver fora da dock</translation>
+        <translation>Levante e mostre todas as janelas flutuantes desencaixadas(dock)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8549"/>
@@ -3642,23 +3644,23 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/gui/mainwindow.ui" line="9170"/>
         <location filename="src/gui/mainwindow.ui" line="9173"/>
         <source>Delete simulator aircraft trail from elevation profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Excluir trilha feitas pelas aeronaves do perfil de elevação</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9178"/>
         <source>Copy Map &amp;Image to Clipboard ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar a &amp;imagem do mapa para a área de transferência ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9181"/>
         <location filename="src/gui/mainwindow.ui" line="9184"/>
         <source>Save current map view as an image to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar a visualização atual do mapa como uma imagem para a área de transferência</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9187"/>
         <source>Alt+Shift+P</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8578"/>
@@ -7797,18 +7799,18 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2302"/>
         <source>Endurance hh:mm:</source>
         <oldsource>Endurance hh:mm</oldsource>
-        <translation type="unfinished">Resistência hh:mm</translation>
+        <translation>Duração hh:mm:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2737"/>
         <source>Endurance:</source>
-        <translation>Resistência:</translation>
+        <translation>Duração:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2299"/>
         <source>Estimated Enroute time hh:mm:</source>
         <oldsource>Enroute hh:mm</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>Estimativa de duração da rota hh:mm:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2852"/>
@@ -9209,7 +9211,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2277"/>
         <source>Visual Range:</source>
         <oldsource>Visual Range</oldsource>
-        <translation type="unfinished">Alcance Visual</translation>
+        <translation>Alcance Visual:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="284"/>
@@ -10743,10 +10745,9 @@ See notes in the manual for details of this setting and how to move around in th
 This setting is also used in the elevation profile.
 
 Start the timer by moving the map instead of scrolling.</oldsource>
-        <translation type="unfinished">O mapa deixará de seguir a aeronave pelo tempo determinado se o usuário não fizer qualquer interação com o mapa, como rolagem ou zoom.
+        <translation>O mapa deixará de seguir a aeronave pelo tempo determinado se o usuário não fizer qualquer interação com o mapa, como rolagem ou zoom.
 Essa configuração também é usada no perfil de elevação.
-
-Inicie o cronômetro movendo o mapa em vez de zoom.</translation>
+Veja as notas no manual para detalhes sobre essa configuração e como se movimentar no mapa,</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2708"/>
@@ -11187,12 +11188,15 @@ Restart the program after changing this option. You might also need to reset the
 This can cause several unwanted effects when arranging dock windows. 
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>Permite desencaixar e colocar a janela do mapa em um estado flutuante(dock).
+Isso pode causar vários efeitos indesejados ao organizar as janelas de encaixe.
+Desmarque esta opção se você tiver efeitos estranhos ao redimensionar janelas do Dock.
+Reinicie o programa depois de alterar essa opção. Você também pode precisar redefinir o layout da janela.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="948"/>
         <source>Allow to &amp;undock  the map window (restart required after change)</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir &amp;desencaixar a janela do mapa(dock) (é necessário reiniciar após a alteração)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1087"/>
@@ -11320,7 +11324,7 @@ medição de distância:</translation>
         <location filename="src/options/options.ui" line="2134"/>
         <source>&amp;Center:</source>
         <oldsource>&amp;Center</oldsource>
-        <translation type="unfinished">&amp;Centro</translation>
+        <translation>&amp;Centro:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2247"/>
@@ -11703,7 +11707,7 @@ Valores menores permitirão uma seleção mais ajustada.</translation>
         <location filename="src/options/options.ui" line="896"/>
         <source>Larger values will list more objects in the tooltip.</source>
         <oldsource>Larger values will list more more objects in the tooltip.</oldsource>
-        <translation type="unfinished">Valores maiores irão listar mais objetos na dica de ferramenta.</translation>
+        <translation>Valores maiores irão listar mais objetos nas dicas de ferramentas.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2411"/>
@@ -12608,22 +12612,22 @@ Valores menores aproximarão o zoom de um aeroporto ou navaod.
     <message>
         <location filename="src/options/optionsdialog.cpp" line="523"/>
         <source>&lt;p&gt;Success. First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Sucesso. Primeiras linhas no arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="526"/>
         <source>&lt;p&gt;Downloaded successfully but the file does not look like a whazzup.txt file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;One of the sections &lt;i&gt;!GENERAL&lt;/i&gt; and/or &lt;i&gt;!CLIENTS&lt;/i&gt; is missing.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Baixado com sucesso, mas o arquivo não se parece com um arquivo whazzup.txt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Uma das seções&lt;i&gt;!GERAL&lt;/i&gt; e/ou &lt;i&gt;!CLIENTES&lt;/i&gt; está faltando.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Primeiras linhas no arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="886"/>
         <source>&lt;p&gt;Success. First METARs in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Sucesso. Primeiros METARs no arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="897"/>
         <source>&lt;p&gt;Success. Result:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Sucesso. Resultado:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="926"/>
@@ -12961,7 +12965,7 @@ Este processo será executado em segundo plano e pode demorar um pouco.</transla
         <location filename="src/print/printdialog.ui" line="439"/>
         <source>&amp;Procedures</source>
         <oldsource>&amp;Approaches</oldsource>
-        <translation type="unfinished">&amp;Aproximações</translation>
+        <translation>&amp;Procedimentos</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="326"/>
@@ -15855,17 +15859,17 @@ de Procedimento</translation>
     <message>
         <location filename="src/route/route.cpp" line="1660"/>
         <source>Missed</source>
-        <translation type="unfinished">Perdido</translation>
+        <translation>Perdido</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="1660"/>
         <source>Approach</source>
-        <translation type="unfinished">Aproximação</translation>
+        <translation>Aproximação</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="1663"/>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -15931,7 +15935,7 @@ velocidades de subida / descida na perfomance da aeronave.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3026"/>
         <source>LOC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3500"/>
@@ -16180,7 +16184,7 @@ Tente outro tipo de rota ou crie o plano de voo manualmente.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="3626"/>
         <source>&lt;b&gt;%1&lt;/b&gt;, %2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="1154"/>
@@ -16679,7 +16683,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
     <message>
         <location filename="src/route/routeexport.cpp" line="227"/>
         <source>Save Flight Plan as Majestic Dash FPR</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar Plano de Voo como Majestic Dash FPR</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="638"/>
@@ -17510,7 +17514,7 @@ ETD e ETA podem ser ignorados. ALTERNES não funcionam em combinação com um pr
         <location filename="src/common/updatehandler.cpp" line="155"/>
         <source>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Download in Web Browser &amp;lt;&amp;lt;&lt;/b&gt;</source>
         <oldsource>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Download &amp;lt;&amp;lt;&lt;/b&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;b&gt;&amp;gt;&amp;gt; Download pelo Navegador da Web &amp;lt;&amp;lt;&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/updatehandler.cpp" line="148"/>
@@ -17989,19 +17993,19 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</oldsource>
-        <translation type="unfinished">Formatos de coordenadas reconhecidas:
-- graus, minutos e segundos: N49 ° 26 &apos;41,57 &quot;E9 ° 12&apos; 5,49&quot; ou 49 ° 26 &apos;41,57 &quot;N 9 ° 12&apos; 5,49&quot; E
-- Graus e minutos: N54 * 16,82 &apos;W008 * 35,95&apos;, N 52 33,58 E 13 17,26 ou 49 ° 26,69 &apos;N 9 ° 12,09&apos; E
-- Apenas em graus: 49,4449 ° N 9,2015 ° E ou N 49,4449 ° E 9: 2015 °
+        <translation>Formatos de coordenadas reconhecidas:
+- Graus, minutos e segundos: N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
+- Graus e minutos: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
+- Apenas em graus: 49.4449° N 9.2015° E ou N 49.4449° E 9:2015°
 Sinais de graus, minutos e segundos podem ser omitidos para os formatos acima.
-A latitude deve ser a primeira e os designadores N / S e E / W são obrigatórios.
-Um espaço só é necessário para separar latitude e longitude ou graus / minutos / segundos se nenhum sinal for usado.
+A latitude deve ser a primeira e os designadores N/S e E/W são obrigatórios.
+Um espaço só é necessário para separar latitude e longitude ou graus/minutos/segundos se nenhum sinal for usado.
 Outros formatos:
-- graus e minutos: N44124W122451, N14544W017479 ou S31240E136502
+- Graus e minutos: N44124W122451, N14544W017479 ou S31240E136502
 - Graus apenas 46N078W
-- graus e minutos 4620N07805W
-- graus, minutos e segundos 481200N0112842E (Skyvector)
-- Graus e minutos no par &quot;N6500 W08000&quot; ou &quot;N6500 / W08000
+- Graus e minutos 4620N07805W
+- Graus, minutos e segundos 481200N0112842E (Skyvector)
+- Graus e minutos no par &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot;
 - tipo NAT 5020N
 Os formatos acima devem ser dados exatamente como mostrado nos exemplos.</translation>
     </message>
