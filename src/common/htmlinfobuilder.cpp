@@ -147,7 +147,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
-  if(route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
+  if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
   {
     // Add flight plan information if airport is a part of it
     if(airport.routeIndex == 0)
@@ -1449,7 +1449,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   }
 
   html.table();
-  if(vor.routeIndex >= 0)
+  if(!info && vor.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
 
   // Add bearing/distance to table
@@ -1519,7 +1519,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   }
 
   html.table();
-  if(ndb.routeIndex >= 0)
+  if(!info && ndb.routeIndex >= 0)
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
 
   // Add bearing/distance to table
@@ -1658,7 +1658,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   }
 
   html.table();
-  if(waypoint.routeIndex >= 0)
+  if(!info && waypoint.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));
 
   // Add bearing/distance to table
@@ -2030,7 +2030,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
   head(html, tr("Position: ") + userpoint.name);
-  if(userpoint.routeIndex >= 0)
+  if(!info && userpoint.routeIndex >= 0)
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
 
