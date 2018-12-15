@@ -1440,6 +1440,10 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
 {
   // Get index for leg
   routeIndex = 0;
+
+  if(x > waypointX.last())
+    x = waypointX.last();
+
   QVector<int>::iterator it = std::lower_bound(waypointX.begin(), waypointX.end(), x);
   if(it != waypointX.end())
   {
@@ -1451,12 +1455,8 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
 
   // Calculate distance from screen coordinates
   distance = (x - X0) / horizontalScale;
-  if(distance < 0.f)
-    distance = 0.f;
-
+  distance = atools::minmax(0.f, legList.totalDistance, distance);
   distanceToGo = legList.totalDistance - distance;
-  if(distanceToGo < 0.f)
-    distanceToGo = 0.f;
 
   // Get distance value index for lower and upper bound at cursor position
   int indexLowDist = 0;
@@ -1521,16 +1521,22 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString to = atools::elideTextShort(legList.route.at(index + 1).getIdent(), 20);
 
   float altitude = NavApp::getRoute().getAltitudeForDistance(distanceToGo);
-  float aboveGround = std::max(0.f, altitude - groundElevation);
+  float aboveGround = map::INVALID_ALTITUDE_VALUE;
+
+  if(altitude < map::INVALID_ALTITUDE_VALUE && groundElevation < map::INVALID_ALTITUDE_VALUE)
+    aboveGround = std::max(0.f, altitude - groundElevation);
 
   // Add text to upper dock window label ==========================
   variableLabelText =
     from + tr(" ► ") + to + tr(", ") +
     Unit::distNm(distance) + tr(" ► ") +
     Unit::distNm(distanceToGo) + tr(", ") +
-    tr(" Ground Elevation ") + Unit::altFeet(groundElevation) + tr(", ") +
-    tr(" Above Ground Altitude ") + Unit::altFeet(aboveGround) + tr(", ") +
-    tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev);
+    (groundElevation < map::INVALID_ALTITUDE_VALUE ?
+     tr(" Ground Elevation ") + Unit::altFeet(groundElevation) + tr(", ") : QString()) +
+    (aboveGround < map::INVALID_ALTITUDE_VALUE ?
+     tr(" Above Ground Altitude ") + Unit::altFeet(aboveGround) + tr(", ") : QString()) +
+    (maxElev < map::INVALID_ALTITUDE_VALUE ?
+     tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
 
 #ifdef DEBUG_INFORMATION
   variableLabelText.append(QString(" [%1]").arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)));
