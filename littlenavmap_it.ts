@@ -1278,11 +1278,11 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Will read also the inactive or disabled scenery entries when checked. 
+        <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <oldsource>Will read also the inactive scenery entries when checked. 
+        <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
-        <translation type="obsolete">Quando spuntato leggerà anche gli scenari inattivi, 
+        <translation type="obsolete">Quando spuntato leggerà anche gli scenari inattivi,
 Utile se usi utility che disabilitano o abilitano certi scenari per ogni volo.</translation>
     </message>
     <message>
@@ -1542,7 +1542,7 @@ Uscire ora.</translation>
         <source>Processed files:
 %1
 </source>
-        <translation>Files processati: 
+        <translation>Files processati:
 %1
 </translation>
     </message>
@@ -11613,8 +11613,8 @@ Change color with the &quot;Passed Leg Color&quot;.</source>
 This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</source>
-        <oldsource>Allows to undock and put the map window into a floating state. 
-This can cause several unwanted effects when arranging dock windows. 
+        <oldsource>Allows to undock and put the map window into a floating state.
+This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</oldsource>
         <translation type="unfinished"></translation>
@@ -12201,7 +12201,7 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
     </message>
     <message>
         <location filename="src/options/options.ui" line="3949"/>
-        <source>Scenenery Library Database</source>
+        <source>Scenery Library Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17854,7 +17854,7 @@ Formats above have to be given exactly as shown in the examples.</source>
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -17863,7 +17863,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation type="unfinished">Formati riconosciuti per le coordinate:
 - Gradi, minuti e secondi : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; o 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E

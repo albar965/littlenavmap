@@ -422,7 +422,7 @@
         <location filename="src/perf/aircraftperfdialog.ui" line="99"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <oldsource>Fuel added at the discretion of the 
+        <oldsource>Fuel added at the discretion of the
 captain or the dispatcher</oldsource>
         <translation>Combustível adicionado a critério do
 capitão ou do despachante</translation>
@@ -455,7 +455,7 @@ capitão ou do despachante</translation>
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <oldsource>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if 
+above the alternate or at the destination at holding speed if
 an alternate is not required</oldsource>
         <translation>Combustível mínimo necessário para voar por 30 minutos a 1.500 pés
 acima do alternado ou do destino na velocidade de espera se
@@ -471,8 +471,8 @@ uma alternativa não for necessária</translation>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption 
-caused by wind or routing changes. 
+        <oldsource>This accounts for additional enroute fuel consumption
+caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</oldsource>
         <translation>Isso explica o consumo adicional de combustível em rota
 causada por mudanças de vento ou de rota.
@@ -1123,7 +1123,7 @@ Valores baixos vão resultar em uma aeronave se movimentando mais fluidamente ma
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</source>
-        <translation>Conectar ao endereço dado e uma porta de um simulador remoto ou para o simulador de voo local. 
+        <translation>Conectar ao endereço dado e uma porta de um simulador remoto ou para o simulador de voo local.
 Você tem que clicar em &quot;Conectar&quot; para iniciar a checagem de conexão constante.
 Desmarcando irá parar todas as tentativas de conexão imediatamente.</translation>
     </message>
@@ -1341,11 +1341,11 @@ Será útil se você utilizar ferramentas para desabilitar e habilitar determina
         <translation>Selecione o arquivo scenery.cfg para o simulador escolhido.</translation>
     </message>
     <message>
-        <source>Will read also the inactive or disabled scenery entries when checked. 
+        <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <oldsource>Will read also the inactive scenery entries when checked. 
+        <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
-        <translation type="vanished">Leia também as entradas dos cenários inativos ou desativados quando verificado. 
+        <translation type="vanished">Leia também as entradas dos cenários inativos ou desativados quando verificado.
 Será útil se você utilizar ferramentas para desabilitar e habilitar determinados cenários para cada voo.</translation>
     </message>
     <message>
@@ -3069,9 +3069,9 @@ O simulador pode não conseguir carregar o plano de voo.</translation>
         <translation>&amp;Vento:</translation>
     </message>
     <message>
-        <source>Average wind at flight plan cruise level. 
+        <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="vanished">Média de vento no nível de cruzeiro do plano de voo. 
+        <translation type="vanished">Média de vento no nível de cruzeiro do plano de voo.
 A velocidade do vento será interpolada para as fases de subida e descida.</translation>
     </message>
     <message>
@@ -11184,8 +11184,8 @@ As visualizações de mapa podem ser mostradas com uma distância de zoom maior 
 This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</source>
-        <oldsource>Allows to undock and put the map window into a floating state. 
-This can cause several unwanted effects when arranging dock windows. 
+        <oldsource>Allows to undock and put the map window into a floating state.
+This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
 Restart the program after changing this option. You might also need to reset the window layout.</oldsource>
         <translation>Permite desencaixar e colocar a janela do mapa em um estado flutuante(dock).
@@ -11538,7 +11538,7 @@ Use valores mais baixos somente para redes privadas.</translation>
         <location filename="src/options/options.ui" line="1324"/>
         <source>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</source>
-        <oldsource>Draw airport diagrams. 
+        <oldsource>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</oldsource>
         <translation>Desenhe diagramas dos aeroportos.
 Parking, aprons taxiways, combustível e a posição da torre serão omitidos se não forem selecionados.</translation>
@@ -11982,7 +11982,7 @@ Muda apenas as configurações que podem ser feitas com esta caixa de diálogo.<
     </message>
     <message>
         <location filename="src/options/options.ui" line="3949"/>
-        <source>Scenenery Library Database</source>
+        <source>Scenery Library Database</source>
         <translation>Banco de Dados da Biblioteca de Cenários</translation>
     </message>
     <message>
@@ -12319,7 +12319,7 @@ Se este campo estiver vazio, será utilizado o caminho padrão do arquivo do cli
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
-        <translation>Use dados de elevação on-line para exibir o perfil do solo no plano de voo. 
+        <translation>Use dados de elevação on-line para exibir o perfil do solo no plano de voo.
 Tem uma resolução maior do que a fonte de dados offline, mas as atualizações são lentas.
 Os dados originais têm muitos erros.</translation>
     </message>
@@ -15327,7 +15327,7 @@ de Procedimento</translation>
         <location filename="src/route/routecontroller.cpp" line="126"/>
         <source>Fuel Rem.
 %volume%</source>
-        <translation>Combustível Rest 
+        <translation>Combustível Rest
 %volume%</translation>
     </message>
     <message>
@@ -17982,7 +17982,7 @@ Formats above have to be given exactly as shown in the examples.</source>
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -17991,7 +17991,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation>Formatos de coordenadas reconhecidas:
 - Graus, minutos e segundos: N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E

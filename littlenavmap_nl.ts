@@ -422,7 +422,7 @@
         <location filename="src/perf/aircraftperfdialog.ui" line="99"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <oldsource>Fuel added at the discretion of the 
+        <oldsource>Fuel added at the discretion of the
 captain or the dispatcher</oldsource>
         <translation>Brandstof toegevoegd door de
 kapitein of de dispatcher</translation>
@@ -455,7 +455,7 @@ kapitein of de dispatcher</translation>
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <oldsource>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if 
+above the alternate or at the destination at holding speed if
 an alternate is not required</oldsource>
         <translation>Minimum brandstof nodig voor een vlucht van 30 minuten op 1500 voet
 bij de bestemming op de holding snelheid als
@@ -471,8 +471,8 @@ een alternate luchthaven niet nodig is</translation>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption 
-caused by wind or routing changes. 
+        <oldsource>This accounts for additional enroute fuel consumption
+caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</oldsource>
         <translation>Dit omvat bijkomend brandstof verbruik
 veroorzaakt door wind- of route-veranderingen.
@@ -1303,9 +1303,9 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakelen voor elke vlucht.</translation>
     </message>
     <message>
-        <source>Will read also the inactive or disabled scenery entries when checked. 
+        <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <oldsource>Will read also the inactive scenery entries when checked. 
+        <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
         <translation type="vanished">Indien aangevinkt zullen ook de inactieve scenery&apos;s gelezen worden.
 Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakelen voor elke vlucht.</translation>
@@ -4907,7 +4907,7 @@ Nu verlaten.</translation>
         <translation>&amp;Wind:</translation>
     </message>
     <message>
-        <source>Average wind at flight plan cruise level. 
+        <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
         <translation type="vanished">Gemiddelde windsnelheid op cruise level van vluchtplan.
 Windsnelheid wordt geinterpoleerd uit de klim-en daalfases.</translation>
@@ -11721,7 +11721,7 @@ provide a toolbar button for disabling them if this checkbox is enabled
 together will &quot;Treat empty airports special&quot;.</oldsource>
         <translation>Alle X-Plane luchthavens die geen 3D en geen add-on zijn
 zullen getoond worden onder alle andere luchthavens, zullen een grijs symbool hebben en
-hebben een toolbar-knop om deze uit te schakelen als dit is aangevinkt. 
+hebben een toolbar-knop om deze uit te schakelen als dit is aangevinkt.
 Als dit samen gebeurt dan worden ze beschouwd op de volgende manier:
 &quot;Behandel lege luchthavens speciaal&quot;.</translation>
     </message>
@@ -11822,7 +11822,7 @@ Verander kleur naar de &quot;Reeds gepasseerde Delen Kleur&quot;.</translation>
         <location filename="src/options/options.ui" line="1324"/>
         <source>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</source>
-        <oldsource>Draw airport diagrams. 
+        <oldsource>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</oldsource>
         <translation>Teken luchthaven diagrammen.
 Parking, aprons,taxibanen, brandstof en torenposities worden niet meegerekend indien niet geselecteerd.</translation>
@@ -12453,7 +12453,7 @@ Download vanaf deze link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt
     </message>
     <message>
         <location filename="src/options/options.ui" line="3949"/>
-        <source>Scenenery Library Database</source>
+        <source>Scenery Library Database</source>
         <translation>Scenery Library Database</translation>
     </message>
     <message>
@@ -18108,7 +18108,7 @@ Formats above have to be given exactly as shown in the examples.</source>
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -18117,7 +18117,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation>Welke coördinaten worden herkend:
 - Graden, minuten en seconden : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; of 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E

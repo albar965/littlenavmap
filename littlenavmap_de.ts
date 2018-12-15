@@ -12429,7 +12429,7 @@ Von der Verknüpfung oben &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&l
     </message>
     <message>
         <location filename="src/options/options.ui" line="3949"/>
-        <source>Scenenery Library Database</source>
+        <source>Scenery Library Database</source>
         <translation>Szeneriebibliothek</translation>
     </message>
     <message>

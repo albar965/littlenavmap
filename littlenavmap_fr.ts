@@ -426,9 +426,9 @@
         <location filename="src/perf/aircraftperfdialog.ui" line="99"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <oldsource>Fuel added at the discretion of the 
+        <oldsource>Fuel added at the discretion of the
 captain or the dispatcher</oldsource>
-        <translation type="unfinished">Carburant ajouté à la discrétion du 
+        <translation type="unfinished">Carburant ajouté à la discrétion du
 capitaine ou du répartiteur</translation>
     </message>
     <message>
@@ -459,10 +459,10 @@ capitaine ou du répartiteur</translation>
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <oldsource>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if 
+above the alternate or at the destination at holding speed if
 an alternate is not required</oldsource>
         <translation type="unfinished">Carburant minimum requis pour voler pendant 30 minutes à 1 500 pieds
-au-dessus du dégagement ou à destination à la vitesse d&apos;attente si 
+au-dessus du dégagement ou à destination à la vitesse d&apos;attente si
 un remplaçant n&apos;est pas nécessaire</translation>
     </message>
     <message>
@@ -475,11 +475,11 @@ un remplaçant n&apos;est pas nécessaire</translation>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption 
-caused by wind or routing changes. 
+        <oldsource>This accounts for additional enroute fuel consumption
+caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</oldsource>
-        <translation type="unfinished">Cela explique la consommation supplémentaire de carburant en route 
-causés par le vent ou les changements de route. 
+        <translation type="unfinished">Cela explique la consommation supplémentaire de carburant en route
+causés par le vent ou les changements de route.
 Ceci augmentera le carburant du trajet par le pourcentage donné.</translation>
     </message>
     <message>
@@ -589,9 +589,9 @@ the given descent speeds</source>
 données de vitesse de descente</translation>
     </message>
     <message>
-        <source>Equivalent rule of thumb for 
+        <source>Equivalent rule of thumb for
 the given descent speeds</source>
-        <translation type="obsolete">Règle empirique équivalente pour les 
+        <translation type="obsolete">Règle empirique équivalente pour les
 les vitesses de descente données</translation>
     </message>
     <message>
@@ -1316,9 +1316,9 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
     </message>
     <message>
-        <source>Will read also the inactive or disabled scenery entries when checked. 
+        <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <oldsource>Will read also the inactive scenery entries when checked. 
+        <oldsource>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
         <translation type="obsolete">Lit également les entrées de scènes inactives lorsqu&apos;elles sont cochées.
 Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
@@ -2958,9 +2958,9 @@ Je quitte maintenant.</translation>
         <translation type="unfinished">&amp;Vent:</translation>
     </message>
     <message>
-        <source>Average wind at flight plan cruise level. 
+        <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="obsolete">Vent moyen au niveau croisière du plan de vol. 
+        <translation type="obsolete">Vent moyen au niveau croisière du plan de vol.
 La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
     </message>
     <message>
@@ -10446,7 +10446,7 @@ d&apos;appel</translation>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="51"/>
         <source>Prefile</source>
-        <translation type="unfinished">Soumis à 
+        <translation type="unfinished">Soumis à
 l&apos;avance</translation>
     </message>
     <message>
@@ -12032,9 +12032,9 @@ Changez de couleur avec la &quot;Couleur du Segment Passé&quot;.</translation>
         <location filename="src/options/options.ui" line="1324"/>
         <source>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</source>
-        <oldsource>Draw airport diagrams. 
+        <oldsource>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</oldsource>
-        <translation>Dessiner des diagrammes d&apos;aérodrome. 
+        <translation>Dessiner des diagrammes d&apos;aérodrome.
 Le parking, aprons, les voies de circulation, le carburant et les positions de la tour de controle seront omis s&apos;ils ne sont pas sélectionnés.</translation>
     </message>
     <message>
@@ -12492,7 +12492,7 @@ Télécharger à partir du lien &lt;b&gt;&lt;i&gt;Toutes les tuiles en un. zip (
     </message>
     <message>
         <location filename="src/options/options.ui" line="3949"/>
-        <source>Scenenery Library Database</source>
+        <source>Scenery Library Database</source>
         <translation>Base de données de la bibliothèque de scènes</translation>
     </message>
     <message>
@@ -18131,7 +18131,7 @@ Formats above have to be given exactly as shown in the examples.</source>
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -18140,13 +18140,13 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation type="unfinished">Formats de coordonnées reconnus :
 Degrés, minutes et secondes : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; ou 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 Degrés et minutes : N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 ou 49° 26.69&apos; N 9° 12.09&apos; E
 Degrés seulement : 49,4449° N 9,2015° E ou N 49,4449° E 9:2015° E.
-Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus. 
+Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus.
 Latitude doit être la première et les indicatifs N/S et E/W sont requis.
 Un espace n&apos;est nécessaire que pour séparer la latitude et la longitude ou les degrés/minutes/secondes si aucun signe n&apos;est utilisé.
 Autres formats :
@@ -18155,7 +18155,7 @@ Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
 Degrés, minutes et secondes 481200N0112842E (Skyvector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
-NAT type 5020N 
+NAT type 5020N
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
     </message>
     <message>

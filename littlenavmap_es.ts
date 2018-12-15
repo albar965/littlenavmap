@@ -1333,7 +1333,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation>Ingrese la ruta al directorio base del simulador de vuelo. &lt;br/&gt; Este es el que contiene el directorio &quot;scenery&quot; y el fsx.exe o el p3d.exe. &lt;br/&gt; Para X-Plane esta es la ruta que contiene la X -Plane.exe.</translation>
     </message>
     <message>
-        <source>Will read also the inactive scenery entries when checked. 
+        <source>Will read also the inactive scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <translation type="vanished">Leerá también las entradas de escenarios inactivos cuando esté marcada.
 Útil si usa herramientas para desactivar y habilitar ciertos escenarios para cada vuelo.</translation>
@@ -10745,7 +10745,7 @@ Descárguela del enlace &lt;b&gt;&lt;i&gt;Todos los mosaicos en uno solo (all10g
     </message>
     <message>
         <location filename="src/options/options.ui" line="3949"/>
-        <source>Scenenery Library Database</source>
+        <source>Scenery Library Database</source>
         <translation>Base de datos Librería de Escenarios</translation>
     </message>
     <message>
@@ -18163,7 +18163,7 @@ Formats above have to be given exactly as shown in the examples.</source>
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats. 
+Degree, minute and second signs can be omitted for above formats.
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -18172,7 +18172,7 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N 
+- NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation type="unfinished">Formatos de coordenadas reconocidos:
 - Grados, minutos y segundos: N49 ° 26 &apos;41.57 &quot;E9 ° 12&apos; 5.49&quot; o 49 ° 26 &apos;41.57 &quot;N 9 ° 12&apos; 5.49&quot; E
