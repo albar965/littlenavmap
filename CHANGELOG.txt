@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+* Fixed crash when reading unexpected value in "activeflightplanwx.txt" of Active Sky.
+* Problem solved where altitude restrictions in procedures caused an invalid "cannot comply to altitude restrictions" error.
+* Fixed issue where flight plan airports or navaids were not detected when airport display is off.
+* Elevation profile showed wrong values for altitude on rightmost position in some cases.
+* Updated French legend.
+* X-Plane scenery_packs.ini now read case insensitive to avoid errors.
+* Little Xpconnect: Fixed issue where X-Plane "acf" files was not read for the user aircraft causing display of wrong aircraft type.
+* Disabled display of flight plan position in information window since it needs too many updates to function correctly.
+
 Version 2.2.2
 
 * Fixed wrong display of airspace/airway information when selecting "show information" in map context menu.
