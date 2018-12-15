@@ -3946,7 +3946,7 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
      </widget>
      <widget class="QWidget" name="tabOptionsDatabase">
       <attribute name="title">
-       <string>Scenenery Library Database</string>
+       <string>Scenery Library Database</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
        <item row="3" column="3">

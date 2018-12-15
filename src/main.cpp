@@ -103,6 +103,12 @@ int main(int argc, char *argv[])
   qRegisterMetaType<atools::fs::sc::SimConnectReply>();
   qRegisterMetaType<atools::fs::sc::WeatherRequest>();
 
+  // The loading mechanism can be configured through the QT_OPENGL environment variable and the following application attributes:
+  // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.
+  // Qt::AA_UseOpenGLES Equivalent to setting QT_OPENGL to angle.
+  // Qt::AA_UseSoftwareOpenGL Equivalent to setting QT_OPENGL to software.
+  // QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+
   // Set application information
   int retval = 0;
   NavApp app(argc, argv);
