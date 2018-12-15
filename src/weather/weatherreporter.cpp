@@ -373,8 +373,8 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
           activeSkyDepartureIdent = match.captured(2);
           activeSkyDepartureMetar = activeSkyDepartureIdent + match.captured(3);
 
-          if(MetarParser(activeSkyDepartureMetar).getDateTime() <
-             MetarParser(activeSkyMetars.value(activeSkyDepartureIdent, QString())).getDateTime())
+          if(MetarParser::extractDateTime(activeSkyDepartureMetar) <
+             MetarParser::extractDateTime(activeSkyMetars.value(activeSkyDepartureIdent, QString())))
           {
             // Do not use activeflightplanwx.txt if values are older
             activeSkyDepartureMetar.clear();
@@ -386,8 +386,8 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
           activeSkyDestinationIdent = match.captured(2);
           activeSkyDestinationMetar = activeSkyDestinationIdent + match.captured(3);
 
-          if(MetarParser(activeSkyDestinationMetar).getDateTime() <
-             MetarParser(activeSkyMetars.value(activeSkyDestinationIdent, QString())).getDateTime())
+          if(MetarParser::extractDateTime(activeSkyDestinationMetar) <
+             MetarParser::extractDateTime(activeSkyMetars.value(activeSkyDestinationIdent, QString())))
           {
             // Do not use activeflightplanwx.txt if values are older
             activeSkyDestinationMetar.clear();
