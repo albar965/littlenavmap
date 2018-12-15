@@ -225,7 +225,7 @@ private:
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result);
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result);
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                     QList<proc::MapProcedurePoint>& procPoints);
+                                     QList<proc::MapProcedurePoint>* procPoints);
   void updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
                                     const Marble::GeoDataLatLonAltBox& curBox);
 

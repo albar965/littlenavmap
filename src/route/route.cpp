@@ -658,7 +658,7 @@ int Route::getDepartureLegIndex() const
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                       map::MapSearchResult& mapobjects, QList<proc::MapProcedurePoint>& procPoints,
+                       map::MapSearchResult& mapobjects, QList<proc::MapProcedurePoint> *procPoints,
                        bool includeProcedure) const
 {
   using maptools::insertSortedByDistance;
@@ -723,8 +723,8 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         mapobjects.userPointsRoute.append(up);
       }
 
-      if(leg.isAnyProcedure())
-        procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+      if(procPoints != nullptr && leg.isAnyProcedure())
+        procPoints->append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
     }
   }
 }

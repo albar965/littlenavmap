@@ -391,14 +391,13 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
 
-  if(procPoints != nullptr)
+  if(shown.testFlag(map::FLIGHTPLAN))
   {
-    if(shown.testFlag(map::FLIGHTPLAN))
-      // Get copies from flight plan if visible
-      NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, *procPoints, true /* include procs */);
+    // Get copies from flight plan if visible
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, procPoints, true /* include procs */);
 
     // Get points of procedure preview
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, *procPoints);
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, procPoints);
   }
 
   // Get copies from highlightMapObjects
@@ -415,7 +414,11 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   for(map::MapAirport& obj : result.airports)
   {
     if(!obj.complete())
+    {
+      int routeIndex = obj.routeIndex;
       airportQuery->getAirportById(obj, obj.getId());
+      obj.routeIndex = routeIndex;
+    }
   }
 }
 
@@ -437,7 +440,7 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                                   QList<proc::MapProcedurePoint>& procPoints)
+                                                   QList<proc::MapProcedurePoint> *procPoints)
 {
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
@@ -457,10 +460,10 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
     insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
     insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
-    if(conv.wToS(leg.line.getPos2(), x, y))
+    if(procPoints != nullptr && conv.wToS(leg.line.getPos2(), x, y))
     {
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-        procPoints.append(proc::MapProcedurePoint(leg, true /* preview */));
+        procPoints->append(proc::MapProcedurePoint(leg, true /* preview */));
     }
   }
 }
