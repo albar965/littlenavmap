@@ -1,795 +1,975 @@
-<html dir="ltr" lang="Fr">
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta content="text/html; charset=x-user-defined" http-equiv="content-type">
-    <title>L&#233;gende</title>
-    <meta content="Aviabest" name="author">
+    <meta charset="utf-8" />
+    <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0" />
+    <title> Legend </title>
+    <style type="text/css" media="screen">
+    code { background: #33808080; }
+    </style>
   </head>
   <body>
-    <p>
-      <a href="lnm://legend">Ouvrir dans le navigateur</a>
-    </p>
+    <p> <a href="lnm://legend">Ouvrir dans le Navigateur</a> </p>
+    <p> <b>Utilisez "Ctrl+Molette" de la souris pour modifier la taille du
+        texte.</b> </p>
+    <h2 id="legende-little-navmap-legend"> Légende </h2>
+    <p> Toutes les vitesses sont par défaut en nœuds, les distances en milles
+      nautiques, l'altitude en pieds. Les unités peuvent être changées en unités
+      impériales ou métriques dans la boîte de dialogue <code>Options</code> de
+      l'onglet <code>Unités</code>. </p>
+    <p> Les couleurs, la taille et les libellés de certains éléments de la carte
+      peuvent être modifiés dans la boîte de dialogue <code>Options</code> de
+      l'onglet <code>Affichage de la Carte</code>. Cette légende montre les
+      valeurs par défaut. </p>
+    <p> Le cap et la route sont suffixes avec <code>°T</code> pour le cap vrai
+      ou <code>°M</code> pour le cap magnétique. </p>
 
-    <h2 id="legend-{#little-navmap-legend}"><a name="legend-{#little-navmap-legend}"
-        href="#legend-%7B#little-navmap-legend%7D"></a>L&#233;gende</h2>
-    Toutes les vitesses sont par d&#233;faut en n&#339;uds, distances en milles nautiques,
-    altitude en pieds. Les unit&#233;s peuvent &#234;tre chang&#233;es en unit&#233;s imp&#233;riales ou
-    m&#233;triques dans la bo&#238;te de dialogue Options de l'onglet "Unit&#233;s".<br>
-    <br>
-    Les couleurs, la taille et les libell&#233;s de texte de certains &#233;l&#233;ments de la
-    carte peuvent &#234;tre modifi&#233;s dans la bo&#238;te de dialogue Options de l'onglet
-    "Affichage de la Carte". Cette l&#233;gende affiche les valeurs par d&#233;faut.<br>
-    <br>
-    Le cap et la direction sont suffix&#233;s avec &#176;T pour le cap vrai ou &#176;M pour le
-    cap magn&#233;tique.
-    <h3 id="map-marks-{#map-marks}"><a name="map-marks-{#map-marks}" href="#map-marks-%7B#map-marks%7D"></a>Marques
-      Cartographiques</h3>
-    <table border="1" cellpadding="2" cellspacing="0">
+
+
+    <p> Un clic dans la carte sur l'emplacement actif d'une caractéristique
+      comme un anneau de portée l'enlève. Le curseur se transforme en symbole de
+      main pour indiquer un point actif qui permet de supprimer une
+      caractéristique en cliquant dessus ou de la supprimer/éditer dans le menu
+      contextuel. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Cliquer </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/legend/home.png" alt="Home" title="Home"></td>
-          <td>Centre de la position initiale. (Maison)</td>
+          <td> <code>Clic</code> </td>
+          <td> Afficher des informations sur toutes les caractéristiques autour
+            de la position du curseur. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/mark.png" alt="Mark" title="Mark"></td>
-          <td>Point central qui sera utilis&#233; pour les recherches &#224; distance. </td>
+          <td> <code>Double Clic</code> </td>
+          <td> Zoome sur la fonction cliquée et affiche des informations. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/route_leg.png" alt="Flight Plan" title="Flight Plan"></td>
-          <td>Plan de vol avec distance, direction et parcours magn&#233;tique &#224;
-            chaque &#233;tape.</td>
+          <td> <code>Shift+Clic</code> </td>
+          <td> Ajoutez ou enlevez les anneaux de portée ou les anneaux de
+            navaid. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/route_procedure_leg.png" alt="Flight Plan Procedure"
-              title="Flight Plan Procedure"></td>
-          <td>Proc&#233;dure du plan de vol avec les m&#234;mes informations que
-            ci-dessus.</td>
+          <td> <code>Ctrl+Clic</code> </td>
+          <td> Démarrer la mesure de la ligne de rhumb ou effacer une ligne de
+            mesure. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/activesegment.png" alt="Active Leg" title="Active Leg"></td>
-          <td>&#201;tape active du plan de vol</td>
+          <td> <code>Alt+Clic</code> </td>
+          <td> Démarrer la mesure de la ligne du grand cercle ou effacer la
+            ligne de mesure. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/route_start.png" alt="Flight Plan Departure Position"
-              title="Flight Plan Departure Position"></td>
-          <td>Plan de vol au d&#233;part de l'a&#233;rodome. Stationnement, r&#233;servoir de
-            carburant, h&#233;liport, eau ou piste.</td>
+          <td> <code>Ctrl+Shift+Clic</code> </td>
+          <td> Ajouter ou modifier un point utilisateur. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/routetod.png" alt="Top of Descent" title="Top of Descent"></td>
-          <td>Point de descente en haut de la descente avec la distance jusqu' &#224;
-            la destination.</td>
+          <td> <code>Ctrl+Alt+Clic</code> </td>
+          <td> Insérez l'aérodrome, le navaid, le point d'utilisateur ou la
+            position dans le segment du plan de vol le plus proche. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/range_rings.png" alt="Range" title="Range"></td>
-          <td>Anneaux de port&#233;e marqu&#233;s de la distance.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/range_vor.png" alt="Range VOR" title="Range VOR">
-            <img src="images/legend/range_ndb.png" alt="Range NDB" title="Range NDB"></td>
-          <td>Anneaux de gamme VOR ou NDB avec identification et fr&#233;quence. La
-            couleur indique le type de Navaid.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/distance_gc.png" alt="Distance GC" title="Distance GC"></td>
-          <td><a title="Grand cercle" href="https://en.wikipedia.org/wiki/Great-circle_distance">Grande
-              distance de cercle</a> et ligne de mesure de parcours indiquant la
-            longueur et le cap r&#233;el au d&#233;part et &#224; destination. Les deux valeurs
-            de cap seront &#233;gales pour les petites distances. Pour des distances
-            plus courtes, la longueur est &#233;galement indiqu&#233;e en pieds ou en
-            m&#232;tres.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/distance_rhumb.png" alt="Distance Rhumb" title="Distance Rhumb"></td>
-          <td><a href="https://en.wikipedia.org/wiki/Rhumb_line">Ligne Rhumb</a>
-            de mesure de la distance &#233;quivalente indiquant la distance et le cap
-            vrai. Les lignes de Rhumb sont utilis&#233;es pour s'approcher d'un VOR
-            ou d'un NDB ou pour se d&#233;placer le long des voies a&#233;riennes. Pour
-            des distances plus courtes, la longueur est &#233;galement indiqu&#233;e en
-            pieds.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/distance_vor.png" alt="Distance VOR"></td>
-          <td>Les lignes de mesure &#224; partir d'un a&#233;rodrome ou d'une navaid ont
-            la m&#234;me couleur et des &#233;tiquettes d'identification et de fr&#233;quence
-            suppl&#233;mentaires. Le parcours pour les lignes de rhumb sera indiqu&#233;
-            en magn&#233;tique si l'aide &#224; la navigation a un attribut de variation
-            magn&#233;tique.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/highlight_search.png" alt="Search Highlight"></td>
-          <td>A&#233;rodrome ou navaid s&#233;lectionn&#233; dans le tableau des r&#233;sultats de
-            recherche.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/highlight_route.png" alt="Flight Plan Highlight"></td>
-          <td>A&#233;rodrome ou navaid s&#233;lectionn&#233; dans le tableau des plans de vol.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/highlightprocfrom.png" alt="Procedure Highlight From">
-            <img src="images/legend/highlightprocto.png" alt="Procedure Highlight From"></td>
-          <td>Les positions en surbrillance d'un segment de proc&#233;dure dans
-            l'aper&#231;u. Petit cercle et grand cercle &#224; la position.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/highlightprocrec.png" alt="Procedure Highlight Related"></td>
-          <td>Le cercle fin montre l'aide recommand&#233;e ou apparent&#233;e d'une &#233;tape
-            de proc&#233;dure. Ceci peut &#234;tre un VORDME pour une &#233;tape d'approche
-            d'arc DME par exemple.</td>
+          <td> <code>Shift+Alt+Clic</code> </td>
+          <td> Joindre l'aérodrome, le navaid, le point utilisateur ou la
+            position au plan de vol. </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="aircraft-and-ships-{#vehicles}"><a name="aircraft-and-ships-{#vehicles}"
-        href="#aircraft-and-ships-%7B#vehicles%7D"></a>A&#233;ronefs et Navires</h3>
-    <table border="1" cellpadding="2" cellspacing="0">
+    <h3 id="marques-cartographiques-map-marks"> Marques Cartographiques </h3>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Symbole </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/icons/aircraft_small_user.png" alt="Small GA"> <img
-              src="images/icons/aircraft_jet_user.png" alt="Jet"> <img src="images/icons/aircraft_helicopter_user.png"
-              alt="Helicopter"></td>
-          <td>A&#233;ronef de l'utilisateur actuel s'il est connect&#233; au simulateur de
-            vol. Les &#233;tiquettes varient et peuvent &#234;tre personnalis&#233;es dans
-            Options de l'onglet "Affichage de la Carte". L'a&#233;ronef de
-            l'utilisateur d&#233;pend de l'a&#233;ronef choisi (jet,
-            piston/turbopropulseur ou h&#233;licopt&#232;re). En option, une aiguille
-            noire qui d&#233;passe du nez peut indiquer le trac&#233; actuel.</td>
+          <td> <img src="images/legend/home.png" title="Home" alt="Home" /> </td>
+          <td> Position d'origine. </td>
         </tr>
         <tr>
-          <td><img src="images/icons/aircraft_small_ground_user.png" alt="Small GA on Ground">
-            <img src="images/icons/aircraft_jet_ground_user.png" alt="Jet on Ground">
-            <img src="images/icons/aircraft_helicopter_ground_user.png" alt="Helicopter on Ground">
-            <img src="images/icons/aircraft_boat_ground_user.png" alt="Ship on Ground"></td>
-          <td>A&#233;ronef ou navire de l'utilisateur au sol</td>
+          <td> <img src="images/legend/mark.png" title="Mark" alt="Mark" /> </td>
+          <td> Point central qui sera utilisé pour les recherches à distance. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/aircraft_trackneedle.png" alt="Aircraft Track"></td>
-          <td>Aiguille montrant la trajectoire actuelle de l'a&#233;ronef. Le nez de
-            l'a&#233;ronef montre le cap.</td>
+          <td> <img src="images/legend/route_leg.png" title="Flight Plan" alt="Flight Plan" />
+          </td>
+          <td> Plan de vol avec la distance, direction et cap magnétique à
+            chaque segment. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/aircraft_track.png" alt="Trail"></td>
-          <td>Itin&#233;raire de l'utilisateur de l'a&#233;ronef s'il est connect&#233; au
-            simulateur de vol.</td>
+          <td> <img src="images/legend/route_procedure_leg.png" title="Flight Plan Procedure"
+              alt="Flight Plan Procedure" /> </td>
+          <td> Segment de procédure du plan de vol avec les mêmes informations
+            que ci-dessus. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/windpointer.png" alt="Wind"></td>
-          <td>Vent autour de l'a&#233;ronef de l'utilisateur avec direction en degr&#233;s
-            magn&#233;tique et vitesse.</td>
+          <td> <img src="images/legend/activesegment.png" title="Active Leg" alt="Active Leg" />
+          </td>
+          <td> Segment du plan de vol actif.</td>
         </tr>
         <tr>
-          <td><img src="images/icons/aircraft_small.png" alt="Small GA"> <img src="images/icons/aircraft_jet.png"
-              alt="Jet"> <img src="images/icons/aircraft_helicopter.png" alt="Helicopter">
-            <img src="images/icons/aircraft_small_ground.png" alt="Small GA"> <img
-              src="images/icons/aircraft_jet_ground.png" alt="Jet"> <img src="images/icons/aircraft_helicopter_ground.png"
-              alt="Helicopter"> <img src="images/icons/aircraft_boat_ground.png"
-              alt="Ship"></td>
-          <td>A&#233;ronef AI ou multijoueurs. Les &#233;tiquettes varient et peuvent &#234;tre
-            personnalis&#233;es dans Options de l'onglet "Affichage de la Carte". Le
-            symbole d&#233;pend du type d'a&#233;ronef (jet, piston/turbopropulseur,
-            h&#233;licopt&#232;re ou navire).</td>
+          <td> <img src="images/legend/route_start.png" title="Flight Plan Departure Position"
+              alt="Flight Plan Departure Position" /> </td>
+          <td> Position de départ du plan de vol sur l'aérodrome. parking,
+            réservoir de carburant, hélisurface, eau ou piste d'atterrissage. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/routetod.png" title="Top of Descent" alt="Top of Descent" />
+          </td>
+          <td> Sommet du point de descente avec distance jusqu'à la destination.
+          </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/range_rings.png" title="Range" alt="Range" />
+          </td>
+          <td> Anneaux de portée avec indication de la distance. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/range_vor.png" title="Range VOR" alt="Range VOR" />
+            <img src="images/legend/range_ndb.png" title="Range NDB" alt="Range NDB" />
+          </td>
+          <td> Anneaux de portée VOR ou NDB étiquetés avec identification et
+            fréquence. La couleur indique le type de Navaid. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/distance_gc.png" title="Distance GC" alt="Distance GC" />
+          </td>
+          <td> <a href="https://en.wikipedia.org/wiki/Great-circle_distance" title="Great circle">Grand
+              cercle</a> ligne de mesure de distance et de cap indiquant la
+            longueur et le cap vrai au départ et à destination. Les deux valeurs
+            de cap seront égales pour de petites distances. Pour les distances
+            plus courtes, la longueur est également indiquée en pieds ou en
+            mètres.. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/distance_rhumb.png" title="Distance Rhumb"
+              alt="Distance Rhumb" /> </td>
+          <td> <a href="https://en.wikipedia.org/wiki/Rhumb_line">Ligne rhumb</a>
+            d'une mesure de distance de relèvement égale indiquant la distance
+            et le cap vrai. Les lignes de rhumb sont utilisées pour s'approcher
+            d'un VOR ou d'un NDB ou pour voyager le long des voies aériennes.
+            Pour des distances plus courtes, la longueur est également indiquée
+            en pieds.</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/distance_vor.png" alt="Distance VOR" />
+          </td>
+          <td> Les lignes de mesure partant d'un aérodrome ou d'une navaid ont
+            la même couleur et des étiquettes d'identification et de fréquence
+            supplémentaires. Le parcours des lignes de rhumb sera indiqué en
+            magnétique si l'aide à la navigation possède un attribut de
+            variation magnétique.</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/highlight_search.png" alt="Search Highlight" />
+          </td>
+          <td> Un aérodrome ou un navaid sélectionné dans le tableau des
+            résultats de la recherche. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/highlight_route.png" alt="Flight Plan Hightlight" />
+          </td>
+          <td> Un aérodrome ou un navaid sélectionné dans le tableau du plan de
+            vol. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/highlightprocfrom.png" alt="Procedure Highlight From" />
+            <img src="images/legend/highlightprocto.png" alt="Procedure Highlight From" />
+          </td>
+          <td> Positions en surbrillance d'un segment de procédure dans
+            l'aperçu. Représentation en petit cercle <em>de</em> et en grand
+            cercle <em>à</em> position. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/highlightprocrec.png" alt="Procedure Highlight Related" />
+          </td>
+          <td> Le cercle mince montre le navaid recommandé ou apparenté à un
+            segment d'intervention. Il peut s'agir d'un VORDME pour un segment
+            d'approche en arc DME, par exemple. </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="airports-{#airports}">A&#233;rodromes</h3>
-    Les a&#233;rodromes ayant des tours de contr&#244;le sont repr&#233;sent&#233;s en bleu fonc&#233;,
-    les autres en magenta. Les noms et les identifiants d'a&#233;rodromes
-    suppl&#233;mentaires sont indiqu&#233;s en italique et soulign&#233;s. Les a&#233;rodromes qui
-    font partie du plan de vol ont un fond jaune clair.<br>
-    <br>
-    Le symbole est plus petit si un a&#233;rodrome n' a pas de pistes. C'est le cas
-    de certains a&#233;rodrome compl&#233;mentaires qui utilisent une autre technique,
-    comme le d&#233;cor photographique, pour afficher les pistes d'atterrissage.
-    <table border="1" cellpadding="2" cellspacing="0">
+    <h3 id="compas-rose-compass-rose"> Compas Rose </h3>
+    <p> L'épaisseur des lignes peut être modifiée dans la boîte de dialogue <code>Options</code>
+      de l'onglet <code>Affichage de la Carte</code>. </p>
+    <p> Les couleurs de l'indicateur de cap et d'angle de crabe dépendent des
+      réglages pour le plan de vol actif qui peuvent être modifiés dans la boîte
+      de dialogue <code>Options</code> de l'onglet <code>Carte</code>. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Symbole </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/legend/airport_tower_8000.png" alt="Large Airport">
-            <img src="images/legend/airport_8000.png" alt="Large Airport"></td>
-          <td>A&#233;rodromes dont les pistes d'atterrissage pour a&#233;ronefs lourds ont
-            une longueur sup&#233;rieure &#224; 8 000 pieds ou 2 400 m&#232;tres. Toutes les
-            pistes d'une longueur sup&#233;rieure &#224; 4 000 pieds ou environ 1 200
-            m&#232;tres sont repr&#233;sent&#233;es. Uniquement pour les distances de zoom
-            r&#233;duites.</td>
+          <td> <img src="images/legend/compass_rose_true_north.png" title="True North"
+              alt="True North" /> </td>
+          <td> Vrai Nord. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/airport_tower.png" alt="Airport with Tower">
-            <img src="images/legend/airport.png" alt="Airport"></td>
-          <td>A&#233;rodromes avec pistes &#224; surface pour a&#233;ronefs lourds. La ligne
-            blanche indique le cap de la piste la plus longue.</td>
+          <td> <img src="images/legend/compass_rose_mag_north.png" title="Magnetic North"
+              alt="Magnetic North" /> </td>
+          <td> Nord magnétique. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/airport_tower_soft.png" alt="Airport with soft runways and Tower">
-            <img src="images/legend/airport_soft.png" alt="Airport with soft Runways"></td>
-          <td>A&#233;rodromes avec pistes &#224; surface pour a&#233;ronefs l&#233;gers.</td>
+          <td> <img src="images/legend/compass_rose_dist.png" title="Distance Circles"
+              alt="Distance Circles" /> </td>
+          <td> Cercles et marques de distance par rapport à l'aéronef de
+            l'utilisateur s'il est connecté. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/airport_empty.png" alt="Airport Empty"> <img
-              src="images/legend/airport_empty_soft.png" alt="Airport Empty Soft"></td>
-          <td>A&#233;rodromes vides repr&#233;sent&#233;s en gris. Pas de voies de circulation,
-            pas de places de stationnement et pas d'aires de parking.</td>
+          <td> <img src="images/legend/compass_rose_track.png" title="Aircraft Track"
+              alt="Aircraft Track" /> </td>
+          <td> La ligne continue indique la trajectoire de l'aéronef en degrés
+            magnétiques si l'aéronef est connecté.</td>
         </tr>
         <tr>
-          <td><img src="images/legend/airport_tower_water.png" alt="Seaplane Base with Tower">
-            <img src="images/legend/airport_water.png" alt="Seaplane Base"></td>
-          <td>La base de l'hydravion n'ayant que des pistes sur plan d'eau.</td>
+          <td> <img src="images/legend/compass_rose_heading.png" title="Aircraft Heading"
+              alt="Aircraft Heading" /> </td>
+          <td> La ligne en pointillés indique le cap de l'aéronef s'il est
+            connecté.</td>
         </tr>
         <tr>
-          <td><img src="images/legend/airport_tower_mil.png" alt="Military Airport with Tower">
-            <img src="images/legend/airport_mil.png" alt="Military Airport"></td>
-          <td>A&#233;rodrome militaire.</td>
+          <td> <img src="images/legend/compass_rose_leg.png" title="Flight Plan Leg Course"
+              alt="Flight Plan Leg Course" /> </td>
+          <td> Le segment de ligne magenta indique la route jusqu'au prochain
+            waypoint du segment actif du plan de vol. Caché si aucun plan de vol
+            n'est chargé.</td>
         </tr>
         <tr>
-          <td><img src="images/legend/heliport.png" alt="Heliport"></td>
-          <td>H&#233;liport n'ayant que des h&#233;liports et aucune piste.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/airport_tower_closed.png" alt="Closed Airport with Tower">
-            <img src="images/legend/airport_closed.png" alt="Closed Airport"></td>
-          <td>A&#233;rodrome abandonn&#233;. Toutes les pistes sont ferm&#233;es.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/airport_tower_fuel.png" alt="Airport with Fuel">
-            <img src="images/legend/airport_soft_fuel.png" alt="Airport with soft Runways and Fuel"></td>
-          <td>A&#233;rodromes qui ont du carburant disponible.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/airportlabel.png" alt="Airport Text"></td>
-          <td>&#201;tiquette d'a&#233;rodrome indiquant le nom, l'identification, la
-            fr&#233;quence ATIS, l'altitude, les pistes &#233;clair&#233;es (L) et la longueur
-            de la piste la plus longue. Les libell&#233;s de texte d'un a&#233;rodrome
-            peuvent &#234;tre modifi&#233;s dans la bo&#238;te de dialogue Options de l'onglet
-            "Affichage de la Carte".</td>
+          <td> <img src="images/legend/compass_rose_crab.png" title="Crab Angle"
+              alt="Crab Angle" /> </td>
+          <td> Indicateur d'angle de crabe. Indique le cap qui doit être suivi
+            vers le prochain waypoint du segment du plan de vol actif en tenant
+            compte du vent de travers. Caché si aucun plan de vol n'est chargé.</td>
         </tr>
       </tbody>
     </table>
-    <h3 id="navaids-{#navaids}"><a name="navaids-{#navaids}" href="#navaids-%7B#navaids%7D"></a>Navaids</h3>
-    <p>Les aides &#224; la navigation qui font partie du plan de vol ont un fond
-      jaune clair.</p>
-    <table border="1" cellpadding="2" cellspacing="0">
+    <h3 id="aeronefs-et-navires-vehicles"> Aéronefs et Navires </h3>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Symbole </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/legend/vordme_small.png" alt="VORDME"> <img src="images/legend/vordme_large.png"
-              alt="VORDME"></td>
-          <td>VOR DME comprenant l'identification, le type (Haut, Bas ou
-            Terminal) et la fr&#233;quence. Le compas montre une variation magn&#233;tique
-            sur des distances de zoom plus faibles.</td>
+          <td> <img src="images/icons/aircraft_small_user.png" alt="Small GA" />
+            <img src="images/icons/aircraft_jet_user.png" alt="Jet" /> <img src="images/icons/aircraft_helicopter_user.png"
+              alt="Helicopter" /> </td>
+          <td> Véhicule utilisateur actuel s'il est connecté au simulateur de
+            vol. Les étiquettes varient et peuvent être personnalisées dans <code>Options</code>
+            sur l'onglet <code>Affichage de la Carte</code>. L'aéronef
+            utilisateur dépend de l'aéronef sélectionné (jet,
+            piston/turbopropulseur ou hélicoptère). En option, une aiguille
+            noire dépassant du nez peut indiquer la trace au sol actuelle. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/vor_small.png" alt="VOR"> <img src="images/legend/vor_large.png"
-              alt="VOR"></td>
-          <td>VOR comprenant l'identification, le type et la fr&#233;quence.</td>
+          <td> <img src="images/icons/aircraft_small_ground_user.png" alt="Small GA on Ground" />
+            <img src="images/icons/aircraft_jet_ground_user.png" alt="Jet on Ground" />
+            <img src="images/icons/aircraft_helicopter_ground_user.png" alt="Helicopter on Ground" />
+            <img src="images/icons/aircraft_boat_ground_user.png" alt="Ship on Ground" />
+          </td>
+          <td> Aéronef ou navire utilisateur au sol.</td>
         </tr>
         <tr>
-          <td><img src="images/legend/dme.png" alt="DME"></td>
-          <td>DME comprenant l'identification, le type et la fr&#233;quence.</td>
+          <td> <img src="images/legend/aircraft_trackneedle.png" alt="Aircraft Track" />
+          </td>
+          <td> Aiguille indiquant la trajectoire actuelle de l'aéronef au sol.
+            Le nez de l'aéronef montre le cap. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/tacan_small.png" alt="TACAN"> <img src="images/legend/tacan_large.png"
-              alt="TACAN"></td>
-          <td>TACAN comprenant l'identification, le type (Haut, Bas ou Terminal)
-            et le canal. Le compas montre une variation magn&#233;tique sur des
-            distances de zoom plus faibles.</td>
+          <td> <img src="images/legend/aircraft_track.png" alt="Trail" /> </td>
+          <td> Trajectoire de l'aéronef utilisateur s'il est connecté au
+            simulateur de vol. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/vortac_small.png" alt="VORTAC"> <img src="images/legend/vortac_large.png"
-              alt="VORTAC"></td>
-          <td>VORTAC comprenant l'identification, le type (Haut, Bas ou
-            Terminal) et la fr&#233;quence. Le compas montre une variation magn&#233;tique
-            sur des distances de zoom plus faibles.</td>
+          <td> <img src="images/legend/windpointer.png" alt="Wind" /> </td>
+          <td> Vent autour de l'aéronef utilisateur avec direction en degrés
+            magnétique et vitesse. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/ndb_small.png" alt="NDB"> <img src="images/legend/ndb_large.png"
-              alt="NDB"></td>
-          <td>NDB comprenant l'identification, le type (HH, H, MH ou CL -
-            localisateur de boussole) et la fr&#233;quence.</td>
+          <td> <img src="images/icons/aircraft_small.png" alt="Small GA" /> <img
+              src="images/icons/aircraft_jet.png" alt="Jet" /> <img src="images/icons/aircraft_helicopter.png"
+              alt="Helicopter" /> <img src="images/icons/aircraft_small_ground.png"
+              alt="Small GA" /> <img src="images/icons/aircraft_jet_ground.png"
+              alt="Jet" /> <img src="images/icons/aircraft_helicopter_ground.png"
+              alt="Helicopter" /> <img src="images/icons/aircraft_boat_ground.png"
+              alt="Ship" /> </td>
+          <td> Aéronef AI ou multijoueur. Les étiquettes varient et peuvent être
+            personnalisées dans <code>Options</code> sur l'onglet <code>Affichage
+              de la Carte</code>. Le symbole dépend du type d'aéronef (jet,
+            piston/turbopropulseur, hélicoptère ou navire). </td>
         </tr>
         <tr>
-          <td><img src="images/legend/waypoint.png" alt="Waypoint"></td>
-          <td>Waypoint avec nom.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/userwaypoint.png" alt="User defined Waypoint"></td>
-          <td>Waypoint d&#233;fini par l'utilisateur avec nom.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/waypoint_invalid.png" alt="Waypoint"></td>
-          <td>A&#233;rodrome, waypoint, VOR ou NDB invalide qui fait partie du plan
-            de vol mais qui n' a pu &#234;tre trouv&#233; dans la base de donn&#233;es des
-            Sc&#232;nes.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/marker_outer.png" alt="Marker"> <img src="images/legend/marker_middle.png"
-              alt="Marker"> <img src="images/legend/marker_inner.png" alt="Marker"></td>
-          <td>Marqueur avec type et cap indiqu&#233; par la forme de la lentille.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/airway_jet.png" alt="Jet Airway"></td>
-          <td>Voies a&#233;riennes des jets avec une &#233;tiquette indiquant le nom, le
-            type (Jet ou Both), l'altitude minimale et maximale. Le texte d&#233;pend
-            de la distance de zoom. Une fl&#232;che pr&#233;c&#233;dente indique la direction
-            permise si la voie a&#233;rienne est &#224; sens unique.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/airway_victor.png" alt="Victor Airway"></td>
-          <td>Voies a&#233;riennes Victor avec &#233;tiquette indiquant le nom, le type
-            (Victor ou Both), l'altitude minimale et maximale. Le texte d&#233;pend
-            de la distance de zoom. Une fl&#232;che pr&#233;c&#233;dente indique la direction
-            permise si la voie a&#233;rienne est &#224; sens unique.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/ils_gs_small.png" alt="ILS"> <img src="images/legend/ils_gs.png"
-              alt="ILS"></td>
-          <td>ILS avec alignement de descente. L'&#233;tiquette indique
-            l'identification, la fr&#233;quence, le cap magn&#233;tique, la pente de
-            descente et l'indication DME si disponible.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/ils_small.png" alt="Localizer"> <img src="images/legend/ils_large.png"
-              alt="Localizer"></td>
-          <td>Localisateur. L'&#233;tiquette indique l'identification, la fr&#233;quence,
-            le cap magn&#233;tique et l'indication DME si disponible.</td>
+          <td> <img src="images/icons/aircraft_online.png" alt="Online on in Flight" />
+            <img src="images/icons/aircraft_online_ground.png" alt="Online on Ground" />
+          </td>
+          <td> Aéronef / client réseau connecté. Les étiquettes varient et
+            peuvent être personnalisées comme ci-dessus. </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="procedures-{#procedures}"><a name="procedures-{#procedures}" href="#procedures-%7B#procedures%7D"></a>Proc&#233;dures</h3>
-    <p>Voir le chapitre Proc&#233;dures dans le manuel pour des informations plus
-      d&#233;taill&#233;es sur tous les &#233;tapes.</p>
-    <table border="1" cellpadding="2" cellspacing="0">
+    <h3 id="aerodromes-airports"> Aérodromes </h3>
+    <p> Les aérodromes ayant des tours de contrôle sont représentés en bleu
+      foncé, les autres en magenta. Les noms et identités d'aérodrome
+      supplémentaires sont indiqués en italique et soulignés. Les aérodromes qui
+      font partie du plan de vol ont un fond de texte jaune pâle. </p>
+    <p> Le symbole est plus petit si un aérodrome n'a pas de piste. C'est le cas
+      de certains aérodromes complémentaires qui utilisent une autre technique
+      comme les scènes photographiques pour afficher les pistes d'atterrissage.
+    </p>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Symbole </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/legend/proc_preview.png" alt="Procedure Leg Preview"></td>
-          <td>SID, STAR, &#233;tape d'approche ou de transition en pr&#233;visualisation
-            avec la distance, la direction et le cap magn&#233;tique &#224; chaque &#233;tape.</td>
+          <td> <img src="images/legend/airport_tower_8000.png" alt="Large Airport" />
+            <img src="images/legend/airport_8000.png" alt="Large Airport" /> </td>
+          <td> Aérodromes avec des pistes en surface dure d'une longueur
+            supérieure à 2 400 mètres (8 000 pieds). Toutes les pistes d'une
+            longueur supérieure à 4 000 pieds ou environ 1 200 mètres sont
+            indiquées. Uniquement pour des distances de zoom inférieures. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/proc_flightplan.png" alt="Procedure Leg Flight Plan"></td>
-          <td>SID, STAR, approche ou &#233;tape de transition faisant partie du plan
-            de vol.</td>
+          <td> <img src="images/legend/airport_tower.png" alt="Airport with Tower" />
+            <img src="images/legend/airport.png" alt="Airport" /> </td>
+          <td> Aérodromes avec pistes à surface dure. La ligne blanche indique
+            le cap de la piste la plus longue. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/proc_missed_preview.png" alt="Missed Leg Preview"></td>
-          <td>&#201;tape d'approche rat&#233;e en avant-premi&#232;re.</td>
+          <td> <img src="images/legend/airport_tower_soft.png" alt="Airport with soft runways and Tower" />
+            <img src="images/legend/airport_soft.png" alt="Airport with soft Runways" />
+          </td>
+          <td> Aérodromes avec pistes à surface souple. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/proc_missed_flightplan.png" alt="Missed Leg Flight Plan"></td>
-          <td>&#201;tape d'approche interrompue qui fait partie du plan de vol.</td>
+          <td> <img src="images/legend/airport_empty.png" alt="Airport Empty" />
+            <img src="images/legend/airport_empty_soft.png" alt="Airport Empty Soft" />
+          </td>
+          <td> Les aérodromes inoccupés sont affichés en gris. Pas de taxiways,
+            pas de parking et pas d'aprons. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/proc_point.png" alt="Procedure Point"></td>
-          <td>Le cercle gris jaune rempli indique un point de proc&#233;dure qui
-            n'est pas une aide &#224; la navigation mais qui est d&#233;fini par le cap
-            et/ou la distance d'une aide &#224; la navigation, une limitation
-            d'altitude ou une terminaison manuelle.</td>
+          <td> <img src="images/legend/airport_tower_water.png" alt="Seaplane Base with Tower" />
+            <img src="images/legend/airport_water.png" alt="Seaplane Base" /> </td>
+          <td> Base d'hydravion n'ayant que des pistes d'atterrissage sur l'eau.
+          </td>
         </tr>
         <tr>
-          <td><img src="images/legend/proc_flyover.png" alt="Procedure Overfly"></td>
-          <td>Un cercle noir indique un rep&#232;re de balisage de survol. Peut &#234;tre
-            un point d'intervention ou une aide &#224; la navigation.</td>
+          <td> <img src="images/legend/airport_tower_mil.png" alt="Military Airport with Tower" />
+            <img src="images/legend/airport_mil.png" alt="Military Airport" /> </td>
+          <td> Aérodrome militaire. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/proclegmanual.png" alt="Procedure Manual"></td>
-          <td>Faites voler un cap, une trajectoire ou une attente jusqu' &#224; ce
-            que l'ATC termine manuellement.</td>
+          <td> <img src="images/legend/heliport.png" alt="Heliport" /> </td>
+          <td> Héliport n'ayant que des héliports et pas de pistes
+            d'atterrissage. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/procinterceptleg.png" alt="Procedure Intercept Leg"></td>
-          <td>Interceptez la prochaine &#233;tape d'approche &#224; environ 45 degr&#233;s.</td>
+          <td> <img src="images/legend/airport_tower_closed.png" alt="Closed Airport with Tower" />
+            <img src="images/legend/airport_closed.png" alt="Closed Airport" />
+          </td>
+          <td> Aérodrome inoccupé. Toutes les pistes sont fermées. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/procinterceptalt.png" alt="Procedure Altitude"></td>
-          <td>&#201;tape de proc&#233;dure qui se termine lorsque l'on atteint l'altitude
-            donn&#233;e.</td>
+          <td> <img src="images/legend/airport_tower_fuel.png" alt="Airport with Fuel" />
+            <img src="images/legend/airport_soft_fuel.png" alt="Airport with soft Runways and Fuel" />
+          </td>
+          <td> Aérodromes qui ont des réserves carburant disponible. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/procinterceptcd.png" alt="Procedure Intercept Distance"></td>
-          <td>Un rep&#232;re d&#233;fini par un cap ou un cap et une distance par rapport
-            &#224; une aide d'urgence.</td>
+          <td> <img src="images/legend/airportlabel.png" alt="Airport Text" />
+          </td>
+          <td> Étiquette de l'aérodrome indiquant le nom, le numéro
+            d'identification, la fréquence ATIS, l'altitude, l'éclairage des
+            pistes (<code>L</code>) et la longueur de la piste la plus longue.
+            Les libellés des textes d'un aérodrome peuvent être modifiés dans la
+            boîte de dialogue <code>Options</code> dans l'onglet <code>Affichage
+              de la Carte</code>. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/procinterceptd.png" alt="Procedure Intercept Course Distance"></td>
-          <td>Ce rep&#232;re est d&#233;fini par un cap ou une piste qui se termine en
-            atteignant une distance DME.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/procinterceptcoursetofix.png" alt="Procedure Intercept Course to Fix"></td>
-          <td>Interceptez une trajectoire jusqu'au prochain rep&#232;re &#224; un angle
-            d'environ 45 degr&#233;s.</td>
+          <td> <img src="images/legend/airport_overview.png" alt="Airport Overview" />
+          </td>
+          <td> Vue d'ensemble de la piste de l'aérodrome montrée avant le
+            diagramme complet de l'aérodrome lors d'un zoom avant. </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="airport-diagram-{#airport-diagram}"><a name="airport-diagram-{#airport-diagram}"
-        href="#airport-diagram-%7B#airport-diagram%7D"></a>Diagramme de
-      l'A&#233;rodrome</h3>
-    <p>Les couleurs des pistes, des voies de circulation, de l'h&#233;liport et des
-      tabliers indiquent le type de surface. Le blanc est utilis&#233; pour un type
-      de surface inconnu ou invalide donn&#233; par un d&#233;veloppeur <span>additionnel</span>.</p>
-    <table border="1" cellpadding="2" cellspacing="0">
+    <h3 id="navaids-navaids"> Navaids </h3>
+    <p> Les navaids qui font partie du plan de vol ont un fond de texte jaune
+      pâle. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Symbole </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/legend/runway.png" alt="Runway"></td>
-          <td>Piste de d&#233;collage avec longueur, largeur, indicateur lumineux (L)
-            et type de surface.</td>
+          <td> <img src="images/legend/vordme_small.png" alt="VORDME" /> <img
+              src="images/legend/vordme_large.png" alt="VORDME" /> </td>
+          <td> VOR DME incluant l'identifiant, le type ( Haut, Bas ou Terminal)
+            et la fréquence. Le compas rose montre une variation magnétique sur
+            des distances de zoom plus faibles. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/runway_end.png" alt="Runway End"></td>
-          <td>Extr&#233;mit&#233; de la piste avec identification et direction magn&#233;tique.</td>
+          <td> <img src="images/legend/vor_small.png" alt="VOR" /> <img src="images/legend/vor_large.png"
+              alt="VOR" /> </td>
+          <td> VOR incluant l'identifiant, le type et la fréquence. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/runway_threshold.png" alt="Runway Threshold"></td>
-          <td>Seuil d&#233;plac&#233;. Ne pas utiliser pour l'atterrissage.</td>
+          <td> <img src="images/legend/dme.png" alt="DME" /> </td>
+          <td> DME incluant l'identifiant, le type et la fréquence. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/runway_overrun.png" alt="Runway Overrun"></td>
-          <td>Zone de d&#233;passement. Ne pas utiliser pour le taxi, le d&#233;collage ou
-            l'atterrissage.</td>
+          <td> <img src="images/legend/tacan_small.png" alt="TACAN" /> <img src="images/legend/tacan_large.png"
+              alt="TACAN" /> </td>
+          <td> TACAN incluant l'identifiant, le type (Haut, Bas ou Terminal) et
+            le canal. Le compas rose montre une variation magnétique sur des
+            distances de zoom plus faibles. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/runway_blastpad.png" alt="Runway Blastpad"></td>
-          <td>Zone anti souffle. Ne pas utiliser pour le taxi, le d&#233;collage ou
-            l'atterrissage.</td>
+          <td> <img src="images/legend/vortac_small.png" alt="VORTAC" /> <img
+              src="images/legend/vortac_large.png" alt="VORTAC" /> </td>
+          <td> VORTAC incluant l'identifiant, le type (Haut, Bas ou Terminal) et
+            la fréquence. Le compas rose montre une variation magnétique sur des
+            distances de zoom plus faibles. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/taxiway.png" alt="Taxiway"></td>
-          <td>Voie de circulation avec nom et ligne m&#233;diane.</td>
+          <td> <img src="images/legend/ndb_small.png" alt="NDB" /> <img src="images/legend/ndb_large.png"
+              alt="NDB" /> </td>
+          <td> NDB incluant l'identifiant, le type (HH, H, MH ou CL -
+            localisateur de boussole) et la fréquence. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/closedtaxi.png" alt="Closed Taxiway"></td>
-          <td>Voie de circulation ferm&#233;e.</td>
+          <td> <img src="images/legend/waypoint.png" alt="Waypoint" /> </td>
+          <td> Waypoint avec un nom. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/apron_transparent.png" alt="Taxiway"></td>
-          <td>Les tabliers et les voies de circulation en pointill&#233;s
-            semi-transparents indiquent qu'aucune surface n'est dessin&#233;e. Il
-            peut utiliser une texture photo ou simplement le fond par d&#233;faut.</td>
+          <td> <img src="images/legend/userwaypoint.png" alt="User-defined Waypoint" />
+          </td>
+          <td> Waypoint défini par l'utilisateur avec un nom. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/tower_active.png" alt="Tower"> <img src="images/legend/tower_inactive.png"
-              alt="Tower"></td>
-          <td>Tour de contr&#244;le. Rouge si une fr&#233;quence tour est disponible.
-            Sinon, il suffit de visualiser la position.</td>
+          <td> <img src="images/legend/waypoint_invalid.png" alt="Waypoint" />
+          </td>
+          <td> Aérodrome, waypoint, VOR ou NDB invalides qui font partie du plan
+            de vol mais qui n'ont pu être trouvés dans la base de données des
+            scènes. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/parking_fuel.png" alt="Fuel"></td>
-          <td>Carburant</td>
+          <td> <img src="images/legend/marker_outer.png" alt="Marker" /> <img
+              src="images/legend/marker_middle.png" alt="Marker" /> <img src="images/legend/marker_inner.png"
+              alt="Marker" /> </td>
+          <td> Marqueur dont le type et le titre sont indiqués par la forme de
+            la lentille. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/parking_ga_ramp.png" alt="Parking"></td>
-          <td>Rampe GA avec num&#233;ro de parking et marque d'en-t&#234;te.</td>
+          <td> <img src="images/legend/airway_jet.png" alt="Jet Airway" /> </td>
+          <td> Voies aériennes à réaction avec étiquette indiquant le nom, le
+            type (Jet ou les deux), l'altitude minimale et maximale. Le texte
+            dépend de la distance de zoom. Une flèche précédente indique la
+            direction autorisée si les voies aériennes sont à sens unique. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/parking_gate_no_jetway.png" alt="Parking">
-            <img src="images/legend/parking_gate.png" alt="Parking"></td>
-          <td>Porte avec num&#233;ro et en-t&#234;te de la marque de coche. Le deuxi&#232;me
-            anneau indique la disponibilit&#233; de la voie d'atterrissage.</td>
+          <td> <img src="images/legend/airway_victor.png" alt="Victor Airway" />
+          </td>
+          <td> Voies aériennes Victor avec étiquette indiquant le nom, le type
+            (Victor ou les deux), l'altitude minimale et maximale. Le texte
+            dépend de la distance de zoom. Une flèche précédente indique la
+            direction autorisée si les voies aériennes sont à sens unique. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/parking_ramp_cargo.png" alt="Parking"></td>
-          <td>Rampe de chargement</td>
+          <td> <img src="images/legend/ils_gs.png" alt="ILS" /> </td>
+          <td> ILS avec alignement de descente et marqueurs. L'étiquette indique
+            l'identification, la fréquence, le cap magnétique, le pas de
+            l'alignement de descente et l'indication DME si disponible. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/parking_mil.png" alt="Parking"></td>
-          <td>Parking militaire de combat ou rampe de chargement.</td>
-        </tr>
-        <tr>
-          <td><img src="images/legend/helipad.png" alt="Helipad"> <img src="images/legend/helipadmedical.png"
-              alt="Helipad"> <img src="images/legend/helipadsquare.png" alt="Helipad"></td>
-          <td>Heliports. Le texte rouge indique l'h&#233;liport m&#233;dical. La couleur
-            indique la surface.</td>
+          <td> <img src="images/legend/ils_large.png" alt="Localizer" /> </td>
+          <td> Localisateur. L'étiquette indique l'identification, la fréquence,
+            le cap magnétique et l'indication DME si disponible. </td>
         </tr>
       </tbody>
     </table>
-    <h3 id="elevation-profile-legend-{#elevation-profile-legend}"><a name="elevation-profile-legend-{#elevation-profile-legend}"
-        href="#elevation-profile-legend-%7B#elevation-profile-legend%7D"></a>L&#233;gende
-      du Profil d'&#201;l&#233;vation</h3>
-    <table style="width: 1647px; height: 456px;" border="1" cellpadding="2" cellspacing="0">
+    <h3 id="procedures-procedures"> Procédures </h3>
+    <p> Voir le chapitre <a href="APPROACHES.md">Procédures</a> pour des
+      informations plus détaillées sur toutes les segments. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
       <thead>
         <tr>
-          <th>Symbole</th>
-          <th>Description</th>
+          <th> Symbole </th>
+          <th> Description </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><img src="images/legend/profile_start.png" alt="Profile Start"> <img
-              src="images/legend/profile_end.png" alt="Profile End"></td>
-          <td>Terrain avec altitude de d&#233;part &#224; gauche et altitude de l'a&#233;roport
-            de destination &#224; droite.</td>
+          <td> <img src="images/legend/proc_preview.png" alt="Procedure Leg Preview" />
+          </td>
+          <td> SID, STAR, segment d'approche ou de transition en
+            prévisualisation avec distance, direction et cap magnétique à chaque
+            segment.</td>
         </tr>
         <tr>
-          <td><img src="images/legend/profile_route.png" alt="Flight Plan Profile"></td>
-          <td>Altitude du plan de vol.</td>
+          <td> <img src="images/legend/proc_flightplan.png" alt="Procedure Leg Flight Plan" />
+          </td>
+          <td> SID, STAR, segment d'approche ou de transition faisant partie du
+            plan de vol. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/profiletod.png" alt="Top of Descent"></td>
-          <td>Haut de la descente avec la distance jusqu' &#224; destination.</td>
+          <td> <img src="images/legend/proc_missed_preview.png" alt="Missed Leg Preview" />
+          </td>
+          <td> Aperçu du segment d'approche manqué. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/profile_safe_alt.png" alt="Profile Safe Alt"></td>
-          <td>Altitude minimale de s&#233;curit&#233; pour le plan de vol. Il s'agit de
-            l'altitude plus 1 000 pieds arrondie &#224; 500 pieds. Le tampon de 1000
-            pieds peut &#234;tre modifi&#233; dans la bo&#238;te de dialogue Options de
-            l'onglet "Plan de Vol"</td>
+          <td> <img src="images/legend/proc_missed_flightplan.png" alt="Missed Leg Flight Plan" />
+          </td>
+          <td> Le segment d'approche interrompu qui fait partie du plan de vol.
+          </td>
         </tr>
         <tr>
-          <td><img src="images/legend/profilesegminalt.png" alt="Profile Segment Safe Alt"></td>
-          <td>Altitude minimale de s&#233;curit&#233; pour un segment de plan de vol. </td>
+          <td> <img src="images/legend/proc_ctl.png" alt="Circle to Land or Straight in" />
+          </td>
+          <td> La ligne en pointillé indique un cercle à l'atterrissage ou une
+            partie en ligne droite d'une procédure menant à l'extrémité d'une
+            piste. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/profile_aircraft.png" alt="Aircraft"></td>
-          <td>A&#233;ronef utilisateur si connect&#233; au simulateur. Les &#233;tiquettes
-            indiquent l'altitude r&#233;elle et le taux de mont&#233;e et de descente.</td>
+          <td> <img src="images/legend/proc_point.png" alt="Procedure Point" />
+          </td>
+          <td> Le cercle rempli de jaune gris indique un point de procédure qui
+            n'est pas un navaid, mais qui est défini par le cap et/ou la
+            distance d'un navaid, une restriction d'altitude ou une terminaison
+            manuelle. </td>
         </tr>
         <tr>
-          <td><img src="images/legend/profile_track.png" alt="Trail"></td>
-          <td>Trajectoire de l'a&#233;ronef de l'utilisateur si connect&#233; au
-            simulateur de vol.</td>
+          <td> <img src="images/legend/proc_flyover.png" alt="Procedure Overfly" />
+          </td>
+          <td> Un cercle noir indique un waypoint de survol. Peut être un point
+            d'intervention ou un navaid. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/proc_faf.png" alt="Procedure FAF" /> </td>
+          <td> La croix de Malte met en évidence le repère d'approche finale ou
+            le repère de cap d'approche finale. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/proclegmanual.png" alt="Procedure Manual" />
+          </td>
+          <td> Effectuer un cap, une route ou une mise en attente jusqu'à ce que
+            l'ATC mette fin manuellement à l'écoute. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/procinterceptleg.png" alt="Procedure Intercept Leg" />
+          </td>
+          <td> Intercepter le prochain segment d'approche à un cap d'environ 45
+            degrés.</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/procinterceptalt.png" alt="Procedure Altitude" />
+          </td>
+          <td> Segment de la procédure qui se termine lorsque l'altitude donnée
+            est atteinte. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/procinterceptcd.png" alt="Procedure Intercept Distance" />
+          </td>
+          <td> Un repère défini par un cap ou un cap et une distance par rapport
+            à un navaid. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/procinterceptd.png" alt="Procedure Intercept Course Distance" />
+          </td>
+          <td> Ce repère est défini par un cap ou une route qui se termine en
+            atteignant une distance DME. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/procinterceptcoursetofix.png" alt="Procedure Intercept Course to Fix" />
+          </td>
+          <td> Intercepter un cap vers le prochain repère à un angle d'environ
+            45 degrés.</td>
         </tr>
       </tbody>
     </table>
-    <h2><span class="mw-headline" id="Espace_contr.C3.B4l.C3.A9">Espace contr&#244;l&#233;</span><br>
-      <span class="mw-headline" id="Classe_A"></span></h2>
-    <span class="mw-headline">Classe A</span>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a></li>
-      <li>Service d'information de vol</li>
-      <li>Service d'alerte</li>
-    </ul>
-    <p>Le vol VFR est interdit en classe A sauf d&#233;rogation expresse accord&#233;e par
-      l'autorit&#233; comp&#233;tente.</p>
-    <p>Le contact radio et la d&#233;livrance d'une <a href="https://fr.wikipedia.org/wiki/Clairance_%28a%C3%A9ronef%29"
-        title="Clairance (a&#233;ronef)">clairance</a> pour entrer dans l'espace sont
-      obligatoires.</p>
-    <p>La vitesse n'est pas limit&#233;e (tous les vols sont s&#233;par&#233;s entre eux).</p>
-    <p>Elle est utilis&#233;e dans les espaces avec un tr&#232;s fort trafic <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-        title="Vol aux instruments">IFR</a>, par exemple les espaces associ&#233;s
-      aux a&#233;roports de la r&#233;gion parisienne&nbsp;: <a href="https://fr.wikipedia.org/wiki/A%C3%A9roport_Paris-Charles-de-Gaulle"
-        class="mw-redirect" title="A&#233;roport Paris-Charles-de-Gaulle">Roissy-Charles
-        de Gaulle</a>, <a href="https://fr.wikipedia.org/wiki/A%C3%A9roport_Paris-Orly"
-        class="mw-redirect" title="A&#233;roport Paris-Orly">Orly</a> et <a href="https://fr.wikipedia.org/wiki/Base_a%C3%A9rienne_107_Villacoublay"
-        title="Base a&#233;rienne 107 Villacoublay">Base a&#233;rienne 107 Villacoublay</a>.
-      L'EGA est l'espace g&#233;r&#233; approches de classe A au-dessus de la r&#233;gion
-      parisienne. Ses contours ont &#233;t&#233; substantiellement modifi&#233;s le 11 novembre
-      2011 lors de la mise en &#339;uvre du &#171;&nbsp;Grenelle de l'environnement
-      2&nbsp;&#187; dont l'objectif &#233;tait une division par deux du bruit pour les
-      populations survol&#233;es (soit -3dB) en rehaussant de 1000ft (environ 300
-      m&#232;tres) les altitudes d'interception de l'axe final d'approche des
-      a&#233;roports parisiens<sup id="cite_ref-3" class="reference"><a href="https://fr.wikipedia.org/wiki/Classe_d%27espace_a%C3%A9rien#cite_note-3">3</a></sup>.</p>
-    <h3><span class="mw-headline" id="Classe_B">Classe B</span></h3>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a> et <a href="https://fr.wikipedia.org/wiki/VFR"
-          class="mw-disambig" title="VFR">VFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/VFR"
-          class="mw-disambig" title="VFR">VFR</a></li>
-      <li>Service d'alerte</li>
-    </ul>
-    <p>Le contact radio et la d&#233;livrance d'une <a href="https://fr.wikipedia.org/wiki/Clairance_%28a%C3%A9ronef%29"
-        title="Clairance (a&#233;ronef)">clairance</a> pour entrer dans l'espace sont
-      obligatoires.</p>
-    <p>Les conditions m&#233;t&#233;orologiques de vol &#224; vue (<a href="https://fr.wikipedia.org/wiki/Visual_Meteorological_Conditions"
-        class="mw-redirect" title="Visual Meteorological Conditions">VMC</a>)
-      sont&nbsp;:</p>
-    <ul>
-      <li>distance par rapport aux nuages&nbsp;: 1500 m&#232;tres horizontalement et
-        300 m&#232;tres (1000 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-          title="Unit&#233; en aviation">ft</a>) verticalement&nbsp;;</li>
-      <li>visibilit&#233; <span class="nowrap">8 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessus du <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol" title="Niveau de vol">FL</a>
-        100 et <span class="nowrap">5 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessous du FL 100.</li>
-    </ul>
-    <p>La vitesse n'est pas limit&#233;e (tous les vols sont s&#233;par&#233;s entre eux).</p>
-    <p>La classe B n'est plus utilis&#233;e en espace a&#233;rien fran&#231;ais (elle l'avait
-      &#233;t&#233; pour la <a href="https://fr.wikipedia.org/wiki/Terminal_Manoeuvring_Area"
-        class="mw-redirect" title="Terminal Manoeuvring Area">TMA</a> de
-      Koksijde dont une partie se trouve &#224; l'extr&#234;me nord de la France et qui
-      d&#233;sormais est la TMA d'Oostende de classe C).</p>
-    <h3><span class="mw-headline" id="Classe_C">Classe C</span></h3>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a> et <a href="https://fr.wikipedia.org/wiki/VFR"
-          class="mw-disambig" title="VFR">VFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/Information_de_trafic" title="Information de trafic">Information
-          de trafic</a> entre <a href="https://fr.wikipedia.org/wiki/VFR" class="mw-disambig"
-          title="VFR">VFR</a></li>
-      <li>Service d'information de vol</li>
-      <li>Service d'alerte</li>
-    </ul>
-    <p>Le contact radio et la d&#233;livrance d'une <a href="https://fr.wikipedia.org/wiki/Clairance_%28a%C3%A9ronef%29"
-        title="Clairance (a&#233;ronef)">clairance</a> pour entrer dans l'espace sont
-      obligatoires. Les TMA des grands a&#233;roports tr&#232;s fr&#233;quent&#233;s par les IFR
-      sont g&#233;n&#233;ralement de classe C, comme Bordeaux, Toulouse, Marseille, Nice
-      et Lyon.</p>
-    <p>Les conditions m&#233;t&#233;orologiques de vol &#224; vue (VMC) sont&nbsp;:</p>
-    <ul>
-      <li>distance par rapport aux nuages&nbsp;: 1500 m&#232;tres horizontalement et
-        300 m&#232;tres (1000 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-          title="Unit&#233; en aviation">ft</a>) verticalement&nbsp;;</li>
-      <li>visibilit&#233; <span class="nowrap">8 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessus du <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol" title="Niveau de vol">FL</a>
-        100 et <span class="nowrap">5 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessous du FL 100.</li>
-    </ul>
-    <p>La vitesse est limit&#233;e &#224; 250 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-        title="Unit&#233; en aviation">kt</a> pour les VFR sous le <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol"
-        title="Niveau de vol">niveau de vol</a> (FL) 100, ou 10 000 ft si
-      l'altitude de transition (TA) est sup&#233;rieure &#224; 10 000 ft, sauf clairance.</p>
-    <h3><span class="mw-headline" id="Classe_D">Classe D</span></h3>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a> et <a href="https://fr.wikipedia.org/wiki/VFR_sp%C3%A9cial"
-          title="VFR sp&#233;cial">VFR sp&#233;cial</a> ou VFR de nuit</li>
-      <li><a href="https://fr.wikipedia.org/wiki/Information_de_trafic" title="Information de trafic">Information
-          de trafic</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a> et <a href="https://fr.wikipedia.org/wiki/VFR"
-          class="mw-disambig" title="VFR">VFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/Information_de_trafic" title="Information de trafic">Information
-          de trafic</a> entre <a href="https://fr.wikipedia.org/wiki/VFR" class="mw-disambig"
-          title="VFR">VFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/Information_de_trafic" title="Information de trafic">Information
-          de trafic</a> entre <a href="https://fr.wikipedia.org/wiki/VFR_sp%C3%A9cial"
-          title="VFR sp&#233;cial">VFR sp&#233;cial</a></li>
-      <li>Service d'information de vol</li>
-      <li>Service d'alerte</li>
-    </ul>
-    <p>Le contact radio et la d&#233;livrance d'une <a href="https://fr.wikipedia.org/wiki/Clairance_%28a%C3%A9ronef%29"
-        title="Clairance (a&#233;ronef)">clairance</a> pour entrer dans l'espace sont
-      obligatoires.</p>
-    <p>Les conditions m&#233;t&#233;orologiques de vol &#224; vue (VMC) sont&nbsp;:</p>
-    <ul>
-      <li>distance par rapport aux nuages&nbsp;: 1500 m&#232;tres horizontalement et
-        300 m&#232;tres (1000 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-          title="Unit&#233; en aviation">ft</a>) verticalement&nbsp;;</li>
-      <li>visibilit&#233; <span class="nowrap">8 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessus du <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol" title="Niveau de vol">FL</a>
-        100 et <span class="nowrap">5 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessous du FL 100.</li>
-    </ul>
-    <p>La vitesse est limit&#233;e &#224; 250 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-        title="Unit&#233; en aviation">kt</a> (<span class="nowrap"><span title="128,611&nbsp;214 m/s">463</span>
-        <abbr class="abbr" title="kilom&#232;tre par heure">km/h</abbr></span>) sous
-      le <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol" title="Niveau de vol">niveau
-        de vol</a> 100, ou 10 000 ft si l'altitude de transition (TA) est
-      sup&#233;rieure &#224; 10 000 ft, sauf clairance.</p>
-    <h3><span class="mw-headline" id="Classe_E">Classe E</span></h3>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9paration_%28contr%C3%B4le_a%C3%A9rien%29"
-          title="S&#233;paration (contr&#244;le a&#233;rien)">s&#233;paration</a> entre <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-          title="Vol aux instruments">IFR</a> et VFR de nuit</li>
-      <li><a href="https://fr.wikipedia.org/wiki/Information_de_trafic" title="Information de trafic">Information
-          de trafic</a> entre <a href="https://fr.wikipedia.org/wiki/VFR" class="mw-disambig"
-          title="VFR">VFR</a></li>
-      <li><a href="https://fr.wikipedia.org/wiki/Information_de_trafic" title="Information de trafic">Information
-          de trafic</a> entre <a href="https://fr.wikipedia.org/w/index.php?title=VFR_de_nuit&amp;action=edit&amp;redlink=1"
-          class="new" title="VFR de nuit (page inexistante)">VFR de nuit</a></li>
-      <li>Service d'information de vol</li>
-      <li>Service d'alerte</li>
-    </ul>
-    <p>En classe E, le vol VFR n'est pas soumis &#224; <a href="https://fr.wikipedia.org/wiki/Clairance_%28a%C3%A9ronef%29"
-        title="Clairance (a&#233;ronef)">clairance</a> et le contact radio n'est pas
-      obligatoire dans cette classe d'espace. Un vol <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments"
-        title="Vol aux instruments">IFR</a> est lui un vol contr&#244;l&#233;, et a
-      obligation de contact radio et de <a href="https://fr.wikipedia.org/wiki/Clairance_%28a%C3%A9ronef%29"
-        title="Clairance (a&#233;ronef)">clairance</a> pour p&#233;n&#233;trer un espace de
-      classe E. La seule condition de p&#233;n&#233;tration pour les VFR est d'avoir les
-      conditions m&#233;t&#233;orologiques de vol &#224; vue (VMC).</p>
-    <p>Les conditions m&#233;t&#233;orologiques de vol &#224; vue (VMC) sont&nbsp;:</p>
-    <ul>
-      <li>distance par rapport aux nuages&nbsp;: 1500 m&#232;tres horizontalement et
-        300 m&#232;tres (1000 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-          title="Unit&#233; en aviation">ft</a>) verticalement&nbsp;;</li>
-      <li>visibilit&#233; <span class="nowrap">8 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessus du <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol" title="Niveau de vol">FL</a>
-        100 et <span class="nowrap">5 <abbr class="abbr" title="kilom&#232;tre">km</abbr></span>
-        au-dessous du FL 100.</li>
-    </ul>
-    <p>La vitesse est limit&#233;e &#224; 250 <a href="https://fr.wikipedia.org/wiki/Unit%C3%A9_en_aviation"
-        title="Unit&#233; en aviation">kt</a> sous le <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol"
-        title="Niveau de vol">niveau de vol</a> 100, ou 10 000 ft si l'altitude
-      de transition (TA) est sup&#233;rieure &#224; 10 000 ft, sauf clairance.</p>
-    <p>En France, apr&#232;s une courte exp&#233;rimentation du concept "E+R" (espace de
-      classe E + zone r&#233;glement&#233;e), les espaces de classe E ont &#233;t&#233; remplac&#233;s
-      par des espaces de classe D pour les <a href="https://fr.wikipedia.org/wiki/Control_terminal_region"
-        class="mw-redirect" title="Control terminal region">CTR</a> (espaces
-      a&#233;riens dont la limite inf&#233;rieure est le sol, &#233;tablis autour d'un
-      a&#233;roport).</p>
-    <h2><span id="Espace_non_contr&#244;l&#233;"></span><span class="mw-headline" id="Espace_non_contr.C3.B4l.C3.A9">Espace
-        non contr&#244;l&#233;</span></h2>
-    <h3><span class="mw-headline" id="Classe_F">Classe F</span></h3>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li>Services d'information et d'alerte, ainsi que le service consultatif
-        de la circulation a&#233;rienne. Pas de service de contr&#244;le.</li>
-    </ul>
-    <p>Le service consultatif de la circulation a&#233;rienne est un service
-      permettant d'assurer autant que possible l'espacement entre les vols en
-      r&#233;gime <a href="https://fr.wikipedia.org/wiki/Vol_aux_instruments" title="Vol aux instruments">IFR</a>
-      d&#233;cidant d'utiliser ce service.</p>
-    <p>Cette classe n'est pas utilis&#233;e en France.</p>
-    <p>En dessous du plus haut des 2 niveaux 3 000 ft QNH ou 1 000 ft ASFC en
-      espace a&#233;rien non contr&#244;l&#233; (classe F et G) les conditions m&#233;t&#233;orologiques
-      minimales requises d&#233;pendent maintenant de la vitesse indiqu&#233;e de
-      l&#8217;a&#233;ronef depuis les nouvelles r&#232;gles SERA 2014.</p>
-    <ul>
-      <li>Visibilit&#233; horizontale minimale requise 1,5 km pour une vitesse
-        indiqu&#233;e inf&#233;rieur &#224; 140 kt (800 m pour les h&#233;licopt&#232;res)</li>
-      <li>Visibilit&#233; horizontale minimale requise 5 km pour une vitesse indiqu&#233;e
-        sup&#233;rieur &#224; 140 kt, limit&#233;e a 250 kt</li>
-    </ul>
-    <p>La vitesse est limit&#233;e &#224; 250 n&#339;uds sous le <a href="https://fr.wikipedia.org/wiki/Niveau_de_vol"
-        title="Niveau de vol">niveau de vol</a> 100, ou 10000 ft si l'altitude
-      de transition (TA) est sup&#233;rieure &#224; 10000 ft.</p>
-    <h3><span class="mw-headline" id="Classe_G">Classe G</span></h3>
-    <p>Services rendus&nbsp;:</p>
-    <ul>
-      <li>Service d'information de vol et d'alerte seulement, pas de service de
-        contr&#244;le.</li>
-    </ul>
-    <p>Il s'agit de la classe d'espace la plus r&#233;pandue. Quand aucun espace
-      a&#233;rien n'est d&#233;fini, l'espace est de classe G. Des SIV assurent de fa&#231;on
-      facultative les services d'information et d'alerte dans ces zones.</p>
-    <p>Les conditions m&#233;t&#233;orologiques de vol &#224; vue (VMC) sont les m&#234;mes qu'en
-      classe F.</p>
-    <p>La vitesse est limit&#233;e &#224; 250 n&#339;uds sous le niveau de vol 100, ou 10000 ft
-      si l'altitude de transition (TA) est sup&#233;rieure &#224; 10000 ft.</p>
-    <h5>*Les Classes informations de Wikip&#233;dia...</h5>
-    <p></p>
+    <h3 id="diagramme-de-laerodrome-airport-diagram"> Diagramme de l'Aérodrome </h3>
+    <p> Les couleurs de la piste, du taxiway, de l'héliport de l'apron et le
+      type de surface. Le blanc est utilisé pour un type de surface inconnu ou
+      invalide donné par un développeur add-on. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Symbole </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/runway.png" alt="Runway" /> </td>
+          <td> Piste avec longueur, largeur, indicateur lumineux (<code>L</code>)
+            et type de surface. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/runway_end.png" alt="Runway End" /> </td>
+          <td> Extrémité de piste avec identification et cap magnétique. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/runway_threshold.png" alt="Runway Threshold" />
+          </td>
+          <td> Seuil déplacé. Ne pas utiliser pour l'atterrissage. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/runway_overrun.png" alt="Runway Overrun" />
+          </td>
+          <td> Zone de dépassement. Ne pas utiliser pour le taxi, le décollage
+            ou l'atterrissage. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/runway_blastpad.png" alt="Runway Blastpad" />
+          </td>
+          <td> Zone anti-souffle. Ne pas utiliser pour le taxi, le décollage ou
+            l'atterrissage. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/taxiway.png" alt="Taxiway" /> </td>
+          <td> Taxiway avec nom et ligne centrale. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/closedtaxi.png" alt="Closed Taxiway" />
+          </td>
+          <td> Taxiway fermé. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/apron_transparent.png" alt="Taxiway" />
+          </td>
+          <td> Les aprons et les taxiways en pointillés semi-transparents
+            indiquent qu'aucune surface n'est dessinée. Il peut utiliser une
+            texture de photo ou simplement le fond d'écran par défaut. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/tower_active.png" alt="Tower" /> <img src="images/legend/tower_inactive.png"
+              alt="Tower" /> </td>
+          <td> Tour de contrôle. Rouge si une fréquence tour est disponible.
+            Sinon, il suffit de voir la position. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/parking_fuel.png" alt="Fuel" /> </td>
+          <td> Zone carburant.</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/parking_ga_ramp.png" alt="Parking" /> </td>
+          <td> Rampe GA avec numéro de parking et repère de titre à cocher. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/parking_gate_no_jetway.png" alt="Parking" />
+            <img src="images/legend/parking_gate.png" alt="Parking" /> </td>
+          <td> Porte avec un numéro et une marque d'orientation. Le deuxième
+            anneau indique la disponibilité de la passerelle d'embarquement. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/parking_ramp_cargo.png" alt="Parking" />
+          </td>
+          <td> Rampe cargo.</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/parking_mil.png" alt="Parking" /> </td>
+          <td> Parking militaire de combat ou rampe de chargement. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/helipad.png" alt="Helipad" /> <img src="images/legend/helipadmedical.png"
+              alt="Helipad" /> <img src="images/legend/helipadsquare.png" alt="Helipad" />
+          </td>
+          <td> Les héliports. Le texte en rouge indique l'héliport médical. La
+            couleur indique la surface. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="legende-du-profil-delevation-elevation-profile-legend"> Légende du
+      Profil d'Élévation </h3>
+    <p> Les couleurs et les symboles du profil d'élévation suivent le style de
+      la carte principale tel que défini dans la boîte de dialogue des options
+      de l'onglet <code>Affichage des cartes</code>. Les couleurs, les modèles
+      et les symboles pour les aérodromes, les navaids, les procédures, les
+      segments du plan de vol actif et passif sont les mêmes. L'affichage du
+      profil suit également d'autres paramètres de la carte comme la visibilité
+      de la ligne du plan de vol, de l'aéronef et de la traînée de l'aéronef. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Symbole </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/profile_start.png" alt="Profile Start" />
+            <img src="images/legend/profile_end.png" alt="Profile End" /> </td>
+          <td> Sol avec élévation de départ à gauche et élévation de l'aérodrome
+            de destination à droite. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profile_route.png" alt="Flight Plan Profile" />
+          </td>
+          <td> Altitude du plan de vol. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profiletoc.png" alt="Top of Climb" /> </td>
+          <td> Le sommet de la montée avec la distance du départ. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profiletod.png" alt="Top of Descent" />
+          </td>
+          <td> Le sommet de la descente avec la distance jusqu'à la destination.
+          </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/proc_at.png" alt="At" /> </td>
+          <td> Limitation en altitude d'une procédure avec nom de waypoint. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/proc_atabove.png" alt="At or above" /> </td>
+          <td> Limitation d'une procédure à une altitude égale ou supérieure à
+            l'altitude. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/proc_atbelow.png" alt="At or below" /> </td>
+          <td> Limitation d'une procédure à une altitude inférieure ou égale à
+            l'altitude autorisée. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/proc_between.png" alt="Between" /> </td>
+          <td> Au-dessus ou en dessous (entre) la restriction d'altitude d'une
+            procédure. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profile_safe_alt.png" alt="Profile Safe Alt" />
+          </td>
+          <td> Altitude minimale de sécurité pour le plan de vol. Il s'agit de
+            l'altitude plus 1000 pieds arrondie au 500 pieds supérieur suivant <code>Options</code>
+            dans l'onglet <code>Plan de Vol.</code> </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profilesegminalt.png" alt="Profile Segment Safe Alt" />
+          </td>
+          <td> Altitude minimale de sécurité pour un segment de plan de vol. Les
+            mêmes règles s'appliquent en ce qui concerne l'altitude minimale de
+            sécurité pour le plan de vol. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profile_aircraft.png" alt="Aircraft" />
+          </td>
+          <td> Aéronef utilisateur s'il est connecté au simulateur. Les
+            étiquettes indiquent l'altitude et le taux de montée et de descente
+            réels. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profile_track.png" alt="Trail" /> </td>
+          <td> Trajectoire de l'aéronef utilisateur s'il est connecté au
+            simulateur de vol. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profile_ils.png" alt="ILS" /> </td>
+          <td> Pente ILS. L'étiquette indique l'identification, la fréquence, le
+            cap magnétique, le pas de l'alignement de descente et l'indication
+            DME si disponible. Affiché seulement si une approche est
+            sélectionnée et que l'extrémité de piste est équipée d'un ILS.
+            L'angle d'ouverture n'a aucun rapport avec la précision réelle de la
+            pente. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/profile_vasi.png" alt="VASI" /> </td>
+          <td> Indicateur visuel de pente d'approche. L'étiquette indique le pas
+            de la pente et le type VASI. Affiché uniquement si une approche est
+            sélectionnée et que l'extrémité de piste est équipée d'un VASI.
+            L'angle d'ouverture n'a aucun rapport avec la précision réelle de la
+            pente. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="circulation-du-trafic-aerien-airport-traffic-pattern"> Circulation
+      du Trafic Aérien </h3>
+    <p> La couleur et les indicateurs dépendent du choix de l'utilisateur dans
+      la boîte de dialogue de configuration de la circulation du trafic. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Symbole </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/pattern_downwind.png" alt="Downwind" />
+          </td>
+          <td> Trajectoire du trafic aérien en aval avec altitude et cap
+            magnétique.</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/pattern_runway.png" alt="Final" /> </td>
+          <td> Dernier segment de la circulation aérienne avec piste et piste
+            magnétique. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/pattern_entry.png" alt="Entry Indicator" />
+          </td>
+          <td> La flèche et la ligne en pointillés indiquent le chemin pour
+            l'entrée de la circulation.</td>
+        </tr>
+        <tr>
+          <td><img src="images/legend/pattern_exit.png" alt="Exit Indicator" />
+          </td>
+          <td> La ligne en pointillés et les flèches indiquent le chemin pour la
+            sortie de la circulation. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="mora-airport-mora"> MORA </h3>
+    <p> La grille d'altitude minimale hors route fournit une altitude de
+      franchissement d'obstacles à l'intérieur d'une grille d'un degré. Les
+      altitudes franchissent tous les terrains et obstacles de 1000 pieds dans
+      les régions où les altitudes les plus élevées sont de 5000 pieds MSL ou
+      moins. Là où les altitudes les plus élevées sont au-dessus de 5000 pieds,
+      le terrain MSL est dégagé de 2000 pieds. </p>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Symbole </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/map_mora.png" alt="MORA Grid" /> </td>
+          <td> Grille MORA. Le grand nombre est de 1000 pieds et le petit nombre
+            de 100 pieds. Exemple ici : 3300, 4400, 6000, 9900 et 10500 pieds. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="meteo-airport-weather"> Météo </h3>
+    <h4 id="regles-de-vol-airport-weather-flightrules"> Règles de Vol </h4>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Couleur des Symboles </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/weather_vfr.png" alt="VFR" /> </td>
+          <td> VFR. Règles de vol à vue. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_mvfr.png" alt="MVFR" /> </td>
+          <td> VFR marginal. Visibilité égale ou inférieure à 5 milles statues
+            ou plafond le plus bas à 3000 pieds ou moins. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_ifr.png" alt="IFR" /> </td>
+          <td> IFR. Règles de vol aux instruments. Visibilité inférieure à 3
+            milles statutaires ou plafond le plus bas au-dessous de 1000 pieds.
+          </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_lifr.png" alt="LIFR" /> </td>
+          <td> LIFR. IFR limité. Visibilité inférieure à 1 mille statue ou
+            plafond inférieur à 500 pieds. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h4 id="couverture-nuageuse-airport-weather-cloud"> Couverture Nuageuse </h4>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Symbole </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/weather_vfr_clear.png" alt="Clear" /> </td>
+          <td> Aucun nuages </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_vfr_few.png" alt="Few" /> </td>
+          <td> Peu nuageux </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_vfr_sct.png" alt="Scattered" />
+          </td>
+          <td> Dispersés </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_vfr_bkn.png" alt="Broken" /> </td>
+          <td>Ciel fragmenté</td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_vfr_ovc.png" alt="Overcast" /> </td>
+          <td> Ciel couvert </td>
+        </tr>
+      </tbody>
+    </table>
+    <h4 id="vent-airport-weather-wind"> Vent </h4>
+    <table cellspacing="0" cellpadding="2" border="1">
+      <thead>
+        <tr>
+          <th> Symbole </th>
+          <th> Description </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <img src="images/legend/weather_vfr_clear.png" alt="No Wind" />
+          </td>
+          <td> Aucun pointeur indique un vent inférieur à 2 nœuds. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_wind4.png" alt="4 Knots Wind" />
+          </td>
+          <td> Le pointeur sans barre de vent indique un vent inférieur à 5
+            nœuds. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_wind5.png" alt="5 Knots Wind" />
+          </td>
+          <td> La pointe courte indique 5 nœuds de vent. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_wind10.png" alt="10 Knots Wind" />
+          </td>
+          <td> La pointe longue indique 10 nœuds de vent. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_wind50.png" alt="50 Knots Wind" />
+          </td>
+          <td> 50 nœuds de vent. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_wind25.png" alt="25 Knots Wind" />
+          </td>
+          <td> Exemple: 25 nœuds. </td>
+        </tr>
+        <tr>
+          <td> <img src="images/legend/weather_wind65.png" alt="65 Knots Wind" />
+          </td>
+          <td> Exemple: 65 nœuds. </td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 </html>
