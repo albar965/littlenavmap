@@ -915,10 +915,10 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
             int insertPosition = i + 1 - legs.transitionLegs.size();
 
-            if(insertPosition > 1)
+            if(atools::inRange(legs.approachLegs, insertPosition - 1))
             {
               // Fix threshold altitude since it might be above the last altitude restriction
-              const proc::MapAltRestriction& lastAltRestr = legs.at(insertPosition - 1).altRestriction;
+              const proc::MapAltRestriction& lastAltRestr = legs.approachLegs.at(insertPosition - 1).altRestriction;
               if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
                 rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
             }
