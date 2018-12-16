@@ -1,6 +1,8 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+* Fixed several display issues in profile (e.g. LPPR ADNOV I17).
+* Fixed drawing issues with overlapping procedure leg points (e.g. LPPR ADNOV I17).
 * Fixed crash when reading unexpected value in "activeflightplanwx.txt" of Active Sky.
 * Problem solved where altitude restrictions in procedures caused an invalid "cannot comply to altitude restrictions" error.
 * Fixed issue where flight plan airports or navaids were not detected when airport display is off.
