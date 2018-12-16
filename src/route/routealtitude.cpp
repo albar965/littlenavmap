@@ -213,17 +213,13 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
     case proc::MapAltRestriction::NONE:
       break;
 
-    case proc::MapAltRestriction::ILS_AT:
-    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      // Force to lowest altitude for ILS
-      altitude = restriction.alt1;
-      break;
-
     case proc::MapAltRestriction::AT:
+    case proc::MapAltRestriction::ILS_AT:
       altitude = restriction.alt1;
       break;
 
     case proc::MapAltRestriction::AT_OR_ABOVE:
+    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
       if(restriction.forceFinal)
         // Stick to lowest altitude on FAF and FACF
         altitude = restriction.alt1;
@@ -444,7 +440,7 @@ void RouteAltitude::simplyfyRouteAltitudes()
 void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << index;
 #endif
 
   if(index <= 0 || index >= size() - 1)
@@ -485,7 +481,13 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
   }
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << leftAlt->ident << midAlt->ident << rightAlt->ident << "departure" << departure;
+  qDebug() << Q_FUNC_INFO
+           << leftAlt->ident
+           << QString("(%1)").arg(leftSkippedAlt != nullptr ? leftSkippedAlt->ident : QString("-"))
+           << midAlt->ident
+           << QString("(%1)").arg(rightSkippedAlt != nullptr ? rightSkippedAlt->ident : QString("-"))
+           << rightAlt->ident
+           << "departure" << departure;
 #endif
 
   // Avoid dummy legs (e.g. missed approach)
@@ -531,12 +533,12 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     if(leftSkippedAlt != nullptr)
       newAlt = adjustAltitudeForRestriction(newAlt, leftSkippedAlt->restriction);
 
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "after adjust" << newAlt;
+#endif
+
     // Change middle leg and adjust altitude
-    if(midAlt->isPoint())
-      // Middle leg is point
-      midAlt->setAlt(newAlt);
-    else
-      midAlt->setY2(newAlt);
+    midAlt->setY2(newAlt);
 
     // Also change skipped right neighbor
     if(rightSkippedAlt != nullptr)
@@ -628,7 +630,10 @@ void RouteAltitude::calculateDistances()
     const RouteLeg& leg = route->at(i);
 
     RouteAltitudeLeg alt;
-    alt.ident = leg.getIdent();
+
+#ifdef DEBUG_INFORMATION
+    alt.ident = leg.getIdent() + "." + proc::procedureTypeText(leg.getProcedureType());
+#endif
 
     if(i <= destinationLegIdx)
     {
@@ -649,6 +654,15 @@ void RouteAltitude::calculateDistances()
     const RouteLeg& leg = route->at(i);
     const RouteLeg& last = route->at(i - 1);
     RouteAltitudeLeg& altLeg = (*this)[i];
+    const RouteAltitudeLeg& lastAltLeg = at(i - 1);
+
+    if(leg.getProcedureLeg().isAnyArrival() && altLeg.isPoint() && lastAltLeg.restriction.isValid())
+    {
+      // If this is a point like an IF leg copy restriction from last leg but save force flag
+      bool force = altLeg.restriction.forceFinal;
+      altLeg.restriction = lastAltLeg.restriction;
+      altLeg.restriction.forceFinal = force;
+    }
 
     altLeg.missed = leg.isAnyProcedure() && leg.getProcedureLeg().isMissed();
 
@@ -764,9 +778,9 @@ void RouteAltitude::calculateArrival()
     return;
   }
 
-  if(desentRateFtPerNm < 1.f)
+  if(descentRateFtPerNm < 1.f)
   {
-    qWarning() << Q_FUNC_INFO << "climbRateFtPerNm " << desentRateFtPerNm;
+    qWarning() << Q_FUNC_INFO << "climbRateFtPerNm " << descentRateFtPerNm;
     return;
   }
 
@@ -787,7 +801,7 @@ void RouteAltitude::calculateArrival()
 
       // Point of this leg
       // Use a default value of 3 nm per 1000 ft if performance is not available
-      newAltitude = lastAlt + distFromRight * desentRateFtPerNm;
+      newAltitude = lastAlt + distFromRight * descentRateFtPerNm;
     }
 
     if(!alt.isEmpty())

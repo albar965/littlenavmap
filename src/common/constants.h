@@ -229,6 +229,7 @@ const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
 const QLatin1Literal OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1Literal OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
+const QLatin1Literal OPTIONS_PROFILE_SIMPLYFY("Options/SimplifyProfile");
 
 /* Used to override  default URL */
 const QLatin1Literal OPTIONS_UPDATE_URL("Update/Url");

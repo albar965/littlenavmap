@@ -198,7 +198,7 @@ public:
 
   void setDesentRateFtPerNm(float value)
   {
-    desentRateFtPerNm = value;
+    descentRateFtPerNm = value;
   }
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
@@ -270,7 +270,7 @@ private:
   /* Set by calculate */
   bool violatesRestrictions = false;
 
-  float climbRateFtPerNm = 333.f, desentRateFtPerNm = 333.f;
+  float climbRateFtPerNm = 333.f, descentRateFtPerNm = 333.f;
   float cruiseAltitide = 0.f;
 
   QVector<map::MapIls> destRunwayIls;

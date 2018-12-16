@@ -93,6 +93,11 @@ struct MapAltRestriction
     return descriptor != NONE;
   }
 
+  bool isIls() const
+  {
+    return descriptor == ILS_AT || descriptor == ILS_AT_OR_ABOVE;
+  }
+
 };
 
 struct MapSpeedRestriction

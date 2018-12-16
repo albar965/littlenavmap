@@ -21,6 +21,7 @@
 #include "common/maptools.h"
 #include "query/mapquery.h"
 #include "common/unit.h"
+#include "common/constants.h"
 #include "route/flightplanentrybuilder.h"
 #include "query/procedurequery.h"
 #include "query/airportquery.h"
@@ -29,6 +30,7 @@
 #include "route/routealtitude.h"
 #include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
+#include "settings/settings.h"
 
 #include <QRegularExpression>
 
@@ -1128,6 +1130,9 @@ void Route::updateLegAltitudes()
   const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
   altitude->setClimbRateFtPerNm(collecting ? 333.f : perf.getClimbRateFtPerNm());
   altitude->setDesentRateFtPerNm(collecting ? 333.f : perf.getDescentRateFtPerNm());
+
+  altitude->setSimplify(
+    atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
 
   altitude->setCruiseAltitude(getCruisingAltitudeFeet());
   altitude->calculate();
