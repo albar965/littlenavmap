@@ -894,14 +894,4 @@ QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)
 
 }
 
-void mergeRestrictions(MapAltRestriction& curAltRestr, MapSpeedRestriction& curSpeedRestr,
-                       const MapProcedureLeg& lastLeg)
-{
-  if(!curAltRestr.isValid())
-    curAltRestr = lastLeg.altRestriction;
-
-  if(!curSpeedRestr.isValid())
-    curSpeedRestr = lastLeg.speedRestriction;
-}
-
 } // namespace types

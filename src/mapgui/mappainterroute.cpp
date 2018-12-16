@@ -1011,10 +1011,6 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     // But draw the intercept and hold text
     lastInTransition = leg.isTransition() && legs.at(index + 1).isApproach();
 
-  if(index > 0 && legs.at(index - 1).isTransition() && leg.isApproach())
-    // Merge restrictions from last transition and this approach leg
-    mergeRestrictions(altRestr, speedRestr, legs.at(index - 1));
-
   if(index < legs.size() - 1 && leg.isTransition() && legs.at(index + 1).isApproach())
   {
     // Do not draw transtitions from this last transition leg - merge and draw them for the first approach leg
@@ -1143,7 +1139,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     texts.append(proc::speedRestrictionTextNarrow(speedRestr));
   }
 
-  // Merge restricions between overlapping fixes across procedures
+  // Merge restricions between overlapping fixes across different procedures
   if(lastLegPoint.isValid() && lastLegPoint.fixPos.almostEqual(leg.fixPos) &&
      lastLegPoint.fixIdent == leg.fixIdent && lastLegPoint.fixRegion == leg.fixRegion &&
      // Do not merge text from legs which are labeled at calculated end position
@@ -1167,6 +1163,20 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     // Add restrictions from last point to text
     texts.append(proc::altRestrictionTextNarrow(lastLegPoint.altRestriction));
     texts.append(proc::speedRestrictionTextNarrow(lastLegPoint.speedRestriction));
+  }
+
+  // Merge texts between approach and transition fixes ========================================
+  if(index > 0)
+  {
+    const proc::MapProcedureLeg& nextLeg = legs.at(index - 1);
+
+    if(nextLeg.isTransition() && leg.isApproach() && nextLeg.fixPos.almostEqual(leg.fixPos) &&
+       nextLeg.fixIdent == leg.fixIdent && nextLeg.fixRegion == leg.fixRegion)
+    {
+      // Merge restriction texts from last transition and this approach leg
+      texts.append(proc::altRestrictionTextNarrow(nextLeg.altRestriction));
+      texts.append(proc::speedRestrictionTextNarrow(nextLeg.speedRestriction));
+    }
   }
 
   // Remove duplicates and empty strings
