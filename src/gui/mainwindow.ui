@@ -3940,10 +3940,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Load Aircraft Performance File</string>
+              <string>Open Aircraft Performance File</string>
              </property>
              <property name="statusTip">
-              <string>Load Aircraft Performance File</string>
+              <string>Open Aircraft Performance File</string>
              </property>
              <property name="text">
               <string/>
@@ -8980,16 +8980,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Load Aircraft Performance ...</string>
-   </property>
-   <property name="iconText">
-    <string>Load Aircraft Performance File</string>
+    <string>&amp;Open Aircraft Performance ...</string>
    </property>
    <property name="toolTip">
-    <string>Load Aircraft Performance File</string>
+    <string>Open Aircraft Performance File</string>
    </property>
    <property name="statusTip">
-    <string>Load Aircraft Performance File</string>
+    <string>Open Aircraft Performance File</string>
    </property>
   </action>
   <action name="actionAircraftPerformanceEdit">

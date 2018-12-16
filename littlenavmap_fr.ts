@@ -589,12 +589,6 @@ the given descent speeds</source>
 données de vitesse de descente</translation>
     </message>
     <message>
-        <source>Equivalent rule of thumb for
-the given descent speeds</source>
-        <translation type="obsolete">Règle empirique équivalente pour les
-les vitesses de descente données</translation>
-    </message>
-    <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="509"/>
         <source>Average fuel flow for &amp;descent:</source>
         <translation type="unfinished">Débit moyen de carburant en &amp;descente:</translation>
@@ -1313,14 +1307,6 @@ Réessayera de se connecter si &quot;Connexion automatique&quot; est coché.</tr
         <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <translation type="unfinished">Lit également les entrées de scènes inactives ou désactivées lorsqu&apos;elle est cochée.
-Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
-    </message>
-    <message>
-        <source>Will read also the inactive or disabled scenery entries when checked.
-Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <oldsource>Will read also the inactive scenery entries when checked.
-Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
-        <translation type="obsolete">Lit également les entrées de scènes inactives lorsqu&apos;elles sont cochées.
 Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
     </message>
     <message>
@@ -2958,9 +2944,10 @@ Je quitte maintenant.</translation>
         <translation type="unfinished">&amp;Vent:</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="3832"/>
         <source>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="obsolete">Vent moyen au niveau croisière du plan de vol.
+        <translation type="unfinished">Vent moyen au niveau croisière du plan de vol.
 La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
     </message>
     <message>
@@ -2988,16 +2975,16 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="3890"/>
         <location filename="src/gui/mainwindow.ui" line="3893"/>
+        <location filename="src/gui/mainwindow.ui" line="9001"/>
         <location filename="src/gui/mainwindow.ui" line="9004"/>
-        <location filename="src/gui/mainwindow.ui" line="9007"/>
         <source>Edit Aircraft Performance</source>
         <translation type="unfinished">Modifier les paramètres de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3920"/>
         <location filename="src/gui/mainwindow.ui" line="3923"/>
+        <location filename="src/gui/mainwindow.ui" line="9083"/>
         <location filename="src/gui/mainwindow.ui" line="9086"/>
-        <location filename="src/gui/mainwindow.ui" line="9089"/>
         <source>Add new aircraft performance data</source>
         <translation type="unfinished">Ajouter de nouvelles données sur les paramètres de l&apos;aéronef</translation>
     </message>
@@ -3006,23 +2993,23 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="3946"/>
         <location filename="src/gui/mainwindow.ui" line="8986"/>
         <location filename="src/gui/mainwindow.ui" line="8989"/>
-        <location filename="src/gui/mainwindow.ui" line="8992"/>
-        <source>Load Aircraft Performance File</source>
+        <source>Open Aircraft Performance File</source>
+        <oldsource>Load Aircraft Performance File</oldsource>
         <translation type="unfinished">Charger le fichier de paramètres de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3973"/>
         <location filename="src/gui/mainwindow.ui" line="3976"/>
+        <location filename="src/gui/mainwindow.ui" line="9047"/>
         <location filename="src/gui/mainwindow.ui" line="9050"/>
-        <location filename="src/gui/mainwindow.ui" line="9053"/>
         <source>Save Aircraft Performance File</source>
         <translation type="unfinished">Sauvegarder le fichier des paramètres de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3996"/>
         <location filename="src/gui/mainwindow.ui" line="3999"/>
+        <location filename="src/gui/mainwindow.ui" line="9068"/>
         <location filename="src/gui/mainwindow.ui" line="9071"/>
-        <location filename="src/gui/mainwindow.ui" line="9074"/>
         <source>Save Aircraft Performance File as</source>
         <translation type="unfinished">Sauvegarder le fichier de paramètres de l&apos;aéronef sous</translation>
     </message>
@@ -3048,13 +3035,6 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="4691"/>
         <source>Zoom vertically into the elevation profile</source>
         <translation type="unfinished">Zoom vertical sur le profil d&apos;élévation</translation>
-    </message>
-    <message>
-        <location filename="src/gui/mainwindow.ui" line="3832"/>
-        <source>Average wind at flight plan cruise level.
-Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished">Vent moyen au palier de croisière du plan de vol.
-La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4807"/>
@@ -3534,7 +3514,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5719"/>
-        <location filename="src/gui/mainwindow.ui" line="9131"/>
+        <location filename="src/gui/mainwindow.ui" line="9128"/>
         <source>Show %1 in Search</source>
         <translation>Afficher %1 dans la recherche</translation>
     </message>
@@ -4042,118 +4022,119 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8983"/>
-        <source>&amp;Load Aircraft Performance ...</source>
+        <source>&amp;Open Aircraft Performance ...</source>
+        <oldsource>&amp;Load Aircraft Performance ...</oldsource>
         <translation type="unfinished">Charger &amp;les performances de l&apos;aéronef ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9001"/>
+        <location filename="src/gui/mainwindow.ui" line="8998"/>
         <source>&amp;Edit Aircraft Performance ...</source>
         <translation type="unfinished">Modifier l&amp;es performances de l&apos;aéronef ....</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9010"/>
+        <location filename="src/gui/mainwindow.ui" line="9007"/>
         <source>Alt+Shift+E</source>
         <translation type="unfinished">Alt+Shift+E</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9015"/>
         <location filename="src/gui/mainwindow.ui" line="9018"/>
-        <location filename="src/gui/mainwindow.ui" line="9021"/>
         <source>Remove all recent aircraft performance files from menu</source>
         <translation type="unfinished">Supprimer tous les fichiers des performances récentes de l&apos;aéronef du menu</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9029"/>
+        <location filename="src/gui/mainwindow.ui" line="9026"/>
         <source>&amp;Collect Performance for Flight</source>
         <translation type="unfinished">&amp;Collecter les performances pour le vol</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9029"/>
         <location filename="src/gui/mainwindow.ui" line="9032"/>
-        <location filename="src/gui/mainwindow.ui" line="9035"/>
         <source>Collect Performance for Flight</source>
         <translation type="unfinished">Collecter les performances pour le vol</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9044"/>
+        <location filename="src/gui/mainwindow.ui" line="9041"/>
         <source>&amp;Save Aircraft Performance</source>
         <translation type="unfinished">&amp;Sauvegarder les performances de l&apos;aéronef</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9047"/>
+        <location filename="src/gui/mainwindow.ui" line="9044"/>
         <source>Save Aircraft Performance</source>
         <translation type="unfinished">Sauvegarder les performances de l&apos;aéronef</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9056"/>
+        <location filename="src/gui/mainwindow.ui" line="9053"/>
         <source>Alt+Shift+S</source>
         <translation type="unfinished">Alt+Shift+S</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9065"/>
+        <location filename="src/gui/mainwindow.ui" line="9062"/>
         <source>Save Aircraft Performance &amp;as ...</source>
         <translation type="unfinished">Sauvegarder les performances de l&apos;aéronef en t&amp;ant que ....</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9068"/>
+        <location filename="src/gui/mainwindow.ui" line="9065"/>
         <source>Save Aircraft Performance as</source>
         <translation type="unfinished">Sauvegarder les performances de l&apos;aéronef sous</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9083"/>
+        <location filename="src/gui/mainwindow.ui" line="9080"/>
         <source>&amp;New Aircraft Performance</source>
         <translation type="unfinished">&amp;Performances du nouvel aéronef</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9098"/>
+        <location filename="src/gui/mainwindow.ui" line="9095"/>
         <source>&amp;Frequently asked Questions (Online)</source>
         <translation type="unfinished">&amp;Foire aux questions (en ligne)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9101"/>
+        <location filename="src/gui/mainwindow.ui" line="9098"/>
         <source>Show the online frequently asked questions in a browser</source>
         <translation type="unfinished">Afficher la foire aux questions en ligne dans un navigateur</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9113"/>
         <location filename="src/gui/mainwindow.ui" line="9116"/>
-        <location filename="src/gui/mainwindow.ui" line="9119"/>
         <source>Show Information for airport</source>
         <translation type="unfinished">Afficher les informations de l&apos;aérodrome</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9131"/>
         <location filename="src/gui/mainwindow.ui" line="9134"/>
-        <location filename="src/gui/mainwindow.ui" line="9137"/>
         <source>Show airport in search window</source>
         <translation type="unfinished">Afficher l&apos;aérodrome dans la fenêtre de recherche</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9146"/>
+        <location filename="src/gui/mainwindow.ui" line="9143"/>
         <source>Show %1 on Map</source>
         <translation type="unfinished">Afficher %1 sur la carte</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9146"/>
         <location filename="src/gui/mainwindow.ui" line="9149"/>
-        <location filename="src/gui/mainwindow.ui" line="9152"/>
         <source>Show the airport on the map</source>
         <translation type="unfinished">Afficher l&apos;aérodrome sur la carte</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9167"/>
         <location filename="src/gui/mainwindow.ui" line="9170"/>
-        <location filename="src/gui/mainwindow.ui" line="9173"/>
         <source>Delete simulator aircraft trail from elevation profile</source>
         <translation type="unfinished">Supprimer le tracé de l&apos;aéronef simulateur du profil d&apos;élévation</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9178"/>
+        <location filename="src/gui/mainwindow.ui" line="9175"/>
         <source>Copy Map &amp;Image to Clipboard ...</source>
         <translation type="unfinished">Copier l&apos;&amp;image de la carte dans le presse-papiers ....</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9178"/>
         <location filename="src/gui/mainwindow.ui" line="9181"/>
-        <location filename="src/gui/mainwindow.ui" line="9184"/>
         <source>Save current map view as an image to the clipboard</source>
         <translation type="unfinished">Sauvegarder la vue actuelle de la carte sous forme d&apos;image dans le presse-papiers</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9187"/>
+        <location filename="src/gui/mainwindow.ui" line="9184"/>
         <source>Alt+Shift+P</source>
         <translation type="unfinished">Alt+Shift+P</translation>
     </message>
@@ -5494,7 +5475,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6700"/>
-        <location filename="src/gui/mainwindow.ui" line="9167"/>
+        <location filename="src/gui/mainwindow.ui" line="9164"/>
         <source>Delete Aircraft &amp;Trail</source>
         <translation>Supprimer le &amp;tracé de l&apos;aéronef</translation>
     </message>
@@ -5504,7 +5485,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6718"/>
-        <location filename="src/gui/mainwindow.ui" line="9113"/>
+        <location filename="src/gui/mainwindow.ui" line="9110"/>
         <source>Show Information for %1</source>
         <translation>Afficher les informations sur %1</translation>
     </message>
@@ -5564,7 +5545,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6753"/>
-        <location filename="src/gui/mainwindow.ui" line="9015"/>
+        <location filename="src/gui/mainwindow.ui" line="9012"/>
         <source>&amp;Clear Menu</source>
         <translation type="unfinished">&amp;Effacer le menu</translation>
     </message>
@@ -5660,7 +5641,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6894"/>
         <location filename="src/gui/mainwindow.ui" line="6948"/>
-        <location filename="src/gui/mainwindow.ui" line="9155"/>
+        <location filename="src/gui/mainwindow.ui" line="9152"/>
         <source>Ctrl+M</source>
         <translation>Ctrl+M</translation>
     </message>
@@ -5679,7 +5660,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6912"/>
         <location filename="src/gui/mainwindow.ui" line="6930"/>
-        <location filename="src/gui/mainwindow.ui" line="9122"/>
+        <location filename="src/gui/mainwindow.ui" line="9119"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
@@ -6254,7 +6235,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="7833"/>
         <location filename="src/gui/mainwindow.ui" line="7836"/>
-        <location filename="src/gui/mainwindow.ui" line="9104"/>
+        <location filename="src/gui/mainwindow.ui" line="9101"/>
         <source>Show the online tutorials in a browser</source>
         <translation>Afficher les tutoriels sur internet dans un navigateur</translation>
     </message>
@@ -13405,7 +13386,7 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
         <translation type="unfinished">Transition STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2453"/>
+        <location filename="src/query/procedurequery.cpp" line="2455"/>
         <source>Start</source>
         <translation>Début</translation>
     </message>
@@ -13630,51 +13611,51 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1528"/>
-        <location filename="src/profile/profilewidget.cpp" line="1529"/>
+        <location filename="src/profile/profilewidget.cpp" line="1531"/>
+        <location filename="src/profile/profilewidget.cpp" line="1532"/>
         <source> ► </source>
         <translation> ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1528"/>
-        <location filename="src/profile/profilewidget.cpp" line="1530"/>
         <location filename="src/profile/profilewidget.cpp" line="1531"/>
-        <location filename="src/profile/profilewidget.cpp" line="1532"/>
+        <location filename="src/profile/profilewidget.cpp" line="1533"/>
+        <location filename="src/profile/profilewidget.cpp" line="1535"/>
+        <location filename="src/profile/profilewidget.cpp" line="1537"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1531"/>
+        <location filename="src/profile/profilewidget.cpp" line="1535"/>
         <source> Ground Elevation </source>
         <translation> Élévation du sol </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1532"/>
+        <location filename="src/profile/profilewidget.cpp" line="1537"/>
         <source> Above Ground Altitude </source>
         <translation> Altitude au-dessus du sol </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1533"/>
+        <location filename="src/profile/profilewidget.cpp" line="1539"/>
         <source> Leg Safe Altitude </source>
         <translation> Altitude minimale de sécurité (MSA) est à </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1649"/>
+        <location filename="src/profile/profilewidget.cpp" line="1655"/>
         <source>&lt;b&gt;To Destination: %1, to Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation>&lt;b&gt;À DESTINATION: %1, jusqu&apos;au sommet de la descente: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1651"/>
+        <location filename="src/profile/profilewidget.cpp" line="1657"/>
         <source>Passed</source>
         <translation>Adopté</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1654"/>
+        <location filename="src/profile/profilewidget.cpp" line="1660"/>
         <source>&lt;b&gt;To Destination: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation>&lt;b&gt;A DESTINATION: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1818"/>
+        <location filename="src/profile/profilewidget.cpp" line="1824"/>
         <source>Jumped back to aircraft.</source>
         <translation type="unfinished">Je suis retourné à l&apos;aéronef.</translation>
     </message>
@@ -15726,43 +15707,43 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
         <translation>&lt;b&gt;Scène:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;Fichier:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Heure:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Erreur(s):&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Trouvé:&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="130"/>
+        <location filename="src/main.cpp" line="136"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation>Utilisez &lt;settings-directory&gt; au lieu de &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="132"/>
+        <location filename="src/main.cpp" line="138"/>
         <source>settings-directory</source>
         <translation>répertoire des paramètres</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="190"/>
+        <location filename="src/main.cpp" line="196"/>
         <source>Log files:</source>
         <translation>Fichiers Log:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="192"/>
+        <location filename="src/main.cpp" line="198"/>
         <source>Database directory:</source>
         <translation>Répertoire de la base de données:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="194"/>
+        <location filename="src/main.cpp" line="200"/>
         <source>Configuration:</source>
         <translation>Configuration:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="209"/>
-        <location filename="src/main.cpp" line="222"/>
+        <location filename="src/main.cpp" line="215"/>
+        <location filename="src/main.cpp" line="228"/>
         <source>%1 - Error</source>
         <translation>%1 - Erreur</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="210"/>
+        <location filename="src/main.cpp" line="216"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 nécessite au moins MacOS Yosemite version 10.10 ou plus récent.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="223"/>
+        <location filename="src/main.cpp" line="229"/>
         <source>%1 is already running.</source>
         <translation>%1 est déjà en cours d&apos;exécution.</translation>
     </message>
@@ -15898,32 +15879,32 @@ en %volume%</translation>
         <translation>Remarques</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1659"/>
+        <location filename="src/route/route.cpp" line="1664"/>
         <source>%1 %2 %3%4</source>
         <translation type="unfinished">%1 %2 %3%4</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1666"/>
+        <location filename="src/route/route.cpp" line="1671"/>
         <source>Transition %1</source>
         <translation type="unfinished">Transition %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1668"/>
+        <location filename="src/route/route.cpp" line="1673"/>
         <source>STAR %1</source>
         <translation type="unfinished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1670"/>
+        <location filename="src/route/route.cpp" line="1675"/>
         <source>SID %1</source>
         <translation type="unfinished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1672"/>
+        <location filename="src/route/route.cpp" line="1677"/>
         <source>SID Transition %1</source>
         <translation type="unfinished">Transition SID %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1674"/>
+        <location filename="src/route/route.cpp" line="1679"/>
         <source>STAR Transition %1</source>
         <translation type="unfinished">Transition STAR %1</translation>
     </message>
@@ -15985,17 +15966,17 @@ en %volume%</translation>
 <context>
     <name>Route</name>
     <message>
-        <location filename="src/route/route.cpp" line="1660"/>
+        <location filename="src/route/route.cpp" line="1665"/>
         <source>Missed</source>
         <translation type="unfinished">Manqué</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1660"/>
+        <location filename="src/route/route.cpp" line="1665"/>
         <source>Approach</source>
         <translation type="unfinished">Approche</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1663"/>
+        <location filename="src/route/route.cpp" line="1668"/>
         <source>-</source>
         <translation type="unfinished">-</translation>
     </message>

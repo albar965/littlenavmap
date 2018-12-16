@@ -2403,7 +2403,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6718"/>
-        <location filename="src/gui/mainwindow.ui" line="9113"/>
+        <location filename="src/gui/mainwindow.ui" line="9110"/>
         <source>Show Information for %1</source>
         <translation>Mostrar información para %1</translation>
     </message>
@@ -2987,7 +2987,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6912"/>
         <location filename="src/gui/mainwindow.ui" line="6930"/>
-        <location filename="src/gui/mainwindow.ui" line="9122"/>
+        <location filename="src/gui/mainwindow.ui" line="9119"/>
         <source>Ctrl+I</source>
         <translation>Ctrl+I</translation>
     </message>
@@ -2999,7 +2999,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6894"/>
         <location filename="src/gui/mainwindow.ui" line="6948"/>
-        <location filename="src/gui/mainwindow.ui" line="9155"/>
+        <location filename="src/gui/mainwindow.ui" line="9152"/>
         <source>Ctrl+M</source>
         <translation>Ctrl+M</translation>
     </message>
@@ -3310,7 +3310,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7833"/>
         <location filename="src/gui/mainwindow.ui" line="7836"/>
-        <location filename="src/gui/mainwindow.ui" line="9104"/>
+        <location filename="src/gui/mainwindow.ui" line="9101"/>
         <source>Show the online tutorials in a browser</source>
         <translation>Mostrar tutorial en línea desde el navegador</translation>
     </message>
@@ -3493,7 +3493,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6700"/>
-        <location filename="src/gui/mainwindow.ui" line="9167"/>
+        <location filename="src/gui/mainwindow.ui" line="9164"/>
         <source>Delete Aircraft &amp;Trail</source>
         <translation>Borrar &amp;trazos de trayectoria de aeronave</translation>
     </message>
@@ -3603,7 +3603,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5719"/>
-        <location filename="src/gui/mainwindow.ui" line="9131"/>
+        <location filename="src/gui/mainwindow.ui" line="9128"/>
         <source>Show %1 in Search</source>
         <translation>Mostrar %1 en la búsqueda</translation>
     </message>
@@ -6344,16 +6344,16 @@ Simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3890"/>
         <location filename="src/gui/mainwindow.ui" line="3893"/>
+        <location filename="src/gui/mainwindow.ui" line="9001"/>
         <location filename="src/gui/mainwindow.ui" line="9004"/>
-        <location filename="src/gui/mainwindow.ui" line="9007"/>
         <source>Edit Aircraft Performance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3920"/>
         <location filename="src/gui/mainwindow.ui" line="3923"/>
+        <location filename="src/gui/mainwindow.ui" line="9083"/>
         <location filename="src/gui/mainwindow.ui" line="9086"/>
-        <location filename="src/gui/mainwindow.ui" line="9089"/>
         <source>Add new aircraft performance data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6362,23 +6362,23 @@ Simulator might not be able to load the flight plan.</source>
         <location filename="src/gui/mainwindow.ui" line="3946"/>
         <location filename="src/gui/mainwindow.ui" line="8986"/>
         <location filename="src/gui/mainwindow.ui" line="8989"/>
-        <location filename="src/gui/mainwindow.ui" line="8992"/>
-        <source>Load Aircraft Performance File</source>
+        <source>Open Aircraft Performance File</source>
+        <oldsource>Load Aircraft Performance File</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3973"/>
         <location filename="src/gui/mainwindow.ui" line="3976"/>
+        <location filename="src/gui/mainwindow.ui" line="9047"/>
         <location filename="src/gui/mainwindow.ui" line="9050"/>
-        <location filename="src/gui/mainwindow.ui" line="9053"/>
         <source>Save Aircraft Performance File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3996"/>
         <location filename="src/gui/mainwindow.ui" line="3999"/>
+        <location filename="src/gui/mainwindow.ui" line="9068"/>
         <location filename="src/gui/mainwindow.ui" line="9071"/>
-        <location filename="src/gui/mainwindow.ui" line="9074"/>
         <source>Save Aircraft Performance File as</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6452,7 +6452,7 @@ Simulator might not be able to load the flight plan.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6753"/>
-        <location filename="src/gui/mainwindow.ui" line="9015"/>
+        <location filename="src/gui/mainwindow.ui" line="9012"/>
         <source>&amp;Clear Menu</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6699,73 +6699,74 @@ Simulator might not be able to load the flight plan.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8983"/>
-        <source>&amp;Load Aircraft Performance ...</source>
+        <source>&amp;Open Aircraft Performance ...</source>
+        <oldsource>&amp;Load Aircraft Performance ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9001"/>
+        <location filename="src/gui/mainwindow.ui" line="8998"/>
         <source>&amp;Edit Aircraft Performance ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9010"/>
+        <location filename="src/gui/mainwindow.ui" line="9007"/>
         <source>Alt+Shift+E</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9015"/>
         <location filename="src/gui/mainwindow.ui" line="9018"/>
-        <location filename="src/gui/mainwindow.ui" line="9021"/>
         <source>Remove all recent aircraft performance files from menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9029"/>
+        <location filename="src/gui/mainwindow.ui" line="9026"/>
         <source>&amp;Collect Performance for Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9029"/>
         <location filename="src/gui/mainwindow.ui" line="9032"/>
-        <location filename="src/gui/mainwindow.ui" line="9035"/>
         <source>Collect Performance for Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9044"/>
+        <location filename="src/gui/mainwindow.ui" line="9041"/>
         <source>&amp;Save Aircraft Performance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9047"/>
+        <location filename="src/gui/mainwindow.ui" line="9044"/>
         <source>Save Aircraft Performance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9056"/>
+        <location filename="src/gui/mainwindow.ui" line="9053"/>
         <source>Alt+Shift+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9065"/>
+        <location filename="src/gui/mainwindow.ui" line="9062"/>
         <source>Save Aircraft Performance &amp;as ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9068"/>
+        <location filename="src/gui/mainwindow.ui" line="9065"/>
         <source>Save Aircraft Performance as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9083"/>
+        <location filename="src/gui/mainwindow.ui" line="9080"/>
         <source>&amp;New Aircraft Performance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9098"/>
+        <location filename="src/gui/mainwindow.ui" line="9095"/>
         <source>&amp;Frequently asked Questions (Online)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9101"/>
+        <location filename="src/gui/mainwindow.ui" line="9098"/>
         <source>Show the online frequently asked questions in a browser</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6815,25 +6816,25 @@ Simulator might not be able to load the flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9113"/>
         <location filename="src/gui/mainwindow.ui" line="9116"/>
-        <location filename="src/gui/mainwindow.ui" line="9119"/>
         <source>Show Information for airport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9131"/>
         <location filename="src/gui/mainwindow.ui" line="9134"/>
-        <location filename="src/gui/mainwindow.ui" line="9137"/>
         <source>Show airport in search window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9146"/>
+        <location filename="src/gui/mainwindow.ui" line="9143"/>
         <source>Show %1 on Map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9146"/>
         <location filename="src/gui/mainwindow.ui" line="9149"/>
-        <location filename="src/gui/mainwindow.ui" line="9152"/>
         <source>Show the airport on the map</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6865,24 +6866,24 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9167"/>
         <location filename="src/gui/mainwindow.ui" line="9170"/>
-        <location filename="src/gui/mainwindow.ui" line="9173"/>
         <source>Delete simulator aircraft trail from elevation profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9178"/>
+        <location filename="src/gui/mainwindow.ui" line="9175"/>
         <source>Copy Map &amp;Image to Clipboard ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.ui" line="9178"/>
         <location filename="src/gui/mainwindow.ui" line="9181"/>
-        <location filename="src/gui/mainwindow.ui" line="9184"/>
         <source>Save current map view as an image to the clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="9187"/>
+        <location filename="src/gui/mainwindow.ui" line="9184"/>
         <source>Alt+Shift+P</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13239,7 +13240,7 @@ Este proceso se ejecutará en segundo plano y puede tomar un tiempo.</translatio
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2453"/>
+        <location filename="src/query/procedurequery.cpp" line="2455"/>
         <source>Start</source>
         <translation>Inicio</translation>
     </message>
@@ -13481,10 +13482,10 @@ Really use it?</source>
 <context>
     <name>ProfileWidget</name>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1528"/>
-        <location filename="src/profile/profilewidget.cpp" line="1530"/>
         <location filename="src/profile/profilewidget.cpp" line="1531"/>
-        <location filename="src/profile/profilewidget.cpp" line="1532"/>
+        <location filename="src/profile/profilewidget.cpp" line="1533"/>
+        <location filename="src/profile/profilewidget.cpp" line="1535"/>
+        <location filename="src/profile/profilewidget.cpp" line="1537"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -13504,38 +13505,38 @@ Really use it?</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1528"/>
-        <location filename="src/profile/profilewidget.cpp" line="1529"/>
+        <location filename="src/profile/profilewidget.cpp" line="1531"/>
+        <location filename="src/profile/profilewidget.cpp" line="1532"/>
         <source> ► </source>
         <translation> ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1532"/>
+        <location filename="src/profile/profilewidget.cpp" line="1537"/>
         <source> Above Ground Altitude </source>
         <translation> Altitud sobre el tierra </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1651"/>
+        <location filename="src/profile/profilewidget.cpp" line="1657"/>
         <source>Passed</source>
         <translation>Pasado</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1654"/>
+        <location filename="src/profile/profilewidget.cpp" line="1660"/>
         <source>&lt;b&gt;To Destination: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation>&lt;b&gt;A Destino: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1533"/>
+        <location filename="src/profile/profilewidget.cpp" line="1539"/>
         <source> Leg Safe Altitude </source>
         <translation> Altitud mínima de seguridad para tramo (MSA) </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1531"/>
+        <location filename="src/profile/profilewidget.cpp" line="1535"/>
         <source> Ground Elevation </source>
         <translation> Elevación de tierra </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1649"/>
+        <location filename="src/profile/profilewidget.cpp" line="1655"/>
         <source>&lt;b&gt;To Destination: %1, to Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
         <translation>&lt;b&gt;Destino: %1, a tope de Descenso: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
@@ -13574,7 +13575,7 @@ Really use it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1818"/>
+        <location filename="src/profile/profilewidget.cpp" line="1824"/>
         <source>Jumped back to aircraft.</source>
         <translation type="unfinished">Saltó a la aeronave.</translation>
     </message>
@@ -14424,7 +14425,7 @@ Tipo</translation>
         <translation>DME (%1)</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="223"/>
+        <location filename="src/main.cpp" line="229"/>
         <source>%1 is already running.</source>
         <translation>%1 ya está en ejecución.</translation>
     </message>
@@ -14497,7 +14498,7 @@ hh:mm</translation>
         <translation>Todas las altitudes</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="210"/>
+        <location filename="src/main.cpp" line="216"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 necesita al menos macOS Yosemite Vers. 10.10 o mayor.</translation>
     </message>
@@ -14869,7 +14870,7 @@ Restante</translation>
         <translation>Mantener altitud</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="130"/>
+        <location filename="src/main.cpp" line="136"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation>Utilizar &lt;settings-directory&gt; en lugar de &quot;%1&quot;.</translation>
     </message>
@@ -14968,7 +14969,7 @@ Restante</translation>
         <translation>&lt;b&gt;Escenario:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;Archivo:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Hora:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Error(es):&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Encontrados:&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="190"/>
+        <location filename="src/main.cpp" line="196"/>
         <source>Log files:</source>
         <translation>Archivo Log:</translation>
     </message>
@@ -15112,7 +15113,7 @@ Restante</translation>
         <translation>Relacionado: %1 / %2 / %3</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="192"/>
+        <location filename="src/main.cpp" line="198"/>
         <source>Database directory:</source>
         <translation>Directorio de Base de Datos:</translation>
     </message>
@@ -15390,7 +15391,7 @@ Procedimiento</translation>
         <translation>Solo bajo los 18,000 ft únicamente</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="132"/>
+        <location filename="src/main.cpp" line="138"/>
         <source>settings-directory</source>
         <translation>configuración-directorio</translation>
     </message>
@@ -15566,7 +15567,7 @@ Procedimiento</translation>
         <translation>Helipuerto</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="194"/>
+        <location filename="src/main.cpp" line="200"/>
         <source>Configuration:</source>
         <translation>Configuración:</translation>
     </message>
@@ -15596,8 +15597,8 @@ Procedimiento</translation>
         <translation>Fijación inicial (IAF)</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="209"/>
-        <location filename="src/main.cpp" line="222"/>
+        <location filename="src/main.cpp" line="215"/>
+        <location filename="src/main.cpp" line="228"/>
         <source>%1 - Error</source>
         <translation>%1 - Error</translation>
     </message>
@@ -15810,32 +15811,32 @@ hh:mm</translation>
         <translation type="unfinished">Procedimiento</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1659"/>
+        <location filename="src/route/route.cpp" line="1664"/>
         <source>%1 %2 %3%4</source>
         <translation type="unfinished">%1 %2 %3%4</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1666"/>
+        <location filename="src/route/route.cpp" line="1671"/>
         <source>Transition %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1668"/>
+        <location filename="src/route/route.cpp" line="1673"/>
         <source>STAR %1</source>
         <translation type="unfinished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1670"/>
+        <location filename="src/route/route.cpp" line="1675"/>
         <source>SID %1</source>
         <translation type="unfinished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1672"/>
+        <location filename="src/route/route.cpp" line="1677"/>
         <source>SID Transition %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1674"/>
+        <location filename="src/route/route.cpp" line="1679"/>
         <source>STAR Transition %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15875,17 +15876,17 @@ hh:mm</translation>
 <context>
     <name>Route</name>
     <message>
-        <location filename="src/route/route.cpp" line="1660"/>
+        <location filename="src/route/route.cpp" line="1665"/>
         <source>Missed</source>
         <translation type="unfinished">Perdido</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1660"/>
+        <location filename="src/route/route.cpp" line="1665"/>
         <source>Approach</source>
         <translation type="unfinished">Aproximación</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="1663"/>
+        <location filename="src/route/route.cpp" line="1668"/>
         <source>-</source>
         <translation type="unfinished">-</translation>
     </message>
