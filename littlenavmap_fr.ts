@@ -39,7 +39,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="238"/>
         <source>Save Aircraft Performance File</source>
-        <translation type="unfinished">Sauvegarder le fichier des performances de l&apos;aéronef</translation>
+        <translation type="unfinished">Sauver le fichier des performances de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="303"/>
@@ -59,7 +59,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="345"/>
         <source>Save changes?</source>
-        <translation type="unfinished">Sauvegarder les modifications?</translation>
+        <translation type="unfinished">Sauver les modifications?</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="374"/>
@@ -70,7 +70,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="375"/>
         <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p&gt;Les performances de l&apos;aéronef seront collectées automatiquement pendant le vol.&lt;/p&gt;&lt;p&gt;Notez qu&apos;aucune information sur les performances, comme les estimations de carburant ou le temps nécessaire pour se rendre au waypoint, n&apos;est affichée au cours de ce processus.&lt;/p&gt;&lt;p&gt;Le sommet de la montée et le sommet de la descente seront affichés en fonction d&apos;une règle empirique de 3 nm par 1000 pieds.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Se connecter au simulateur,&lt;/li&gt;&lt;li&gt;charger un plan de vol,&lt;/li&gt;&lt;li&gt;placer votre aéronef à l&apos;aérodrome de départ et&lt;/li&gt;&lt;li&gt; suivez le plan de vol avec la plus grande précision possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;La collecte des performances s&apos;arrêtera à l&apos;atterrissage à destination.&lt;/p&gt;&lt;p&gt;Ne modifiez pas l&apos;altitude de croisière du plan de vol lors de la collecte d&apos;informations.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Cliquez sur le lien ci-dessous pour plus d&apos;informations:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Manuel en ligne - Performances de l&apos;aéronef&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Démarrer la collecte des performances maintenant?&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation type="unfinished">&lt;p&gt;Les performances de l&apos;aéronef seront collectées automatiquement pendant le vol.&lt;/p&gt;&lt;p&gt;Notez qu&apos;aucune information sur les performances, comme les estimations de carburant ou le temps nécessaire pour se rendre au waypoint, n&apos;est affichée au cours de ce processus.&lt;/p&gt;&lt;p&gt;Le sommet de la montée et le sommet de la descente seront affichés en fonction d&apos;une règle empirique de 3 nm par 1000 pieds.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Se connecter au simulateur,&lt;/li&gt;&lt;li&gt;charger un plan de vol,&lt;/li&gt;&lt;li&gt;placer votre aéronef à l&apos;aérodrome de départ et&lt;/li&gt;&lt;li&gt; suiver le plan de vol avec la plus grande précision possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;La collecte des performances s&apos;arrêtera à l&apos;atterrissage à destination.&lt;/p&gt;&lt;p&gt;Ne modifier pas l&apos;altitude de croisière du plan de vol lors de la collecte d&apos;informations.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Cliquer sur le lien ci-dessous pour plus d&apos;informations:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Manuel en ligne - Performances Aéronef&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Démarrer la collecte des performances maintenant?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="459"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="566"/>
         <source>Total Fuel Consumed:</source>
-        <translation type="unfinished">Carburant total consomé:</translation>
+        <translation type="unfinished">Carburant total consommé:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="567"/>
@@ -197,17 +197,17 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="623"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="770"/>
         <source>Performance File Description</source>
-        <translation type="unfinished">Description du fichier des performances</translation>
+        <translation type="unfinished">Description du fichier de performance</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="642"/>
         <source>Performance File</source>
-        <translation type="unfinished">Fichier des performances</translation>
+        <translation type="unfinished">Fichier de performance</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="657"/>
         <source>Performance File:</source>
-        <translation type="unfinished">Fichier des performances:</translation>
+        <translation type="unfinished">Fichier de performance:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="665"/>
@@ -385,7 +385,7 @@
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="14"/>
         <source>Little Navmap - Aircraft Performance</source>
-        <translation type="unfinished">Little Navmap - Performances de l&apos;aéronef</translation>
+        <translation type="unfinished">Little Navmap - Performances Aéronef</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="22"/>
@@ -426,9 +426,9 @@
         <location filename="src/perf/aircraftperfdialog.ui" line="99"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <oldsource>Fuel added at the discretion of the
+        <oldsource>Fuel added at the discretion of the 
 captain or the dispatcher</oldsource>
-        <translation type="unfinished">Carburant ajouté à la discrétion du
+        <translation type="unfinished">Carburant ajouté à la discrétion du 
 capitaine ou du répartiteur</translation>
     </message>
     <message>
@@ -451,7 +451,7 @@ capitaine ou du répartiteur</translation>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="136"/>
         <source>&amp;Taxi fuel:</source>
-        <translation type="unfinished">Carburant pour &amp;Taxi:</translation>
+        <translation type="unfinished">Carburant pour &amp;taxi:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="146"/>
@@ -459,10 +459,10 @@ capitaine ou du répartiteur</translation>
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <oldsource>Minimum fuel required to fly for 30 minutes at 1,500 feet
-above the alternate or at the destination at holding speed if
+above the alternate or at the destination at holding speed if 
 an alternate is not required</oldsource>
         <translation type="unfinished">Carburant minimum requis pour voler pendant 30 minutes à 1 500 pieds
-au-dessus du dégagement ou à destination à la vitesse d&apos;attente si
+au-dessus du dégagement ou à destination à la vitesse d&apos;attente si 
 un remplaçant n&apos;est pas nécessaire</translation>
     </message>
     <message>
@@ -475,11 +475,11 @@ un remplaçant n&apos;est pas nécessaire</translation>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption
-caused by wind or routing changes.
+        <oldsource>This accounts for additional enroute fuel consumption 
+caused by wind or routing changes. 
 This will increase the trip fuel by the given percentage.</oldsource>
-        <translation type="unfinished">Cela explique la consommation supplémentaire de carburant en route
-causés par le vent ou les changements de route.
+        <translation type="unfinished">Cela explique la consommation supplémentaire de carburant en route 
+causés par le vent ou les changements de route. 
 Ceci augmentera le carburant du trajet par le pourcentage donné.</translation>
     </message>
     <message>
@@ -587,6 +587,12 @@ Ceci augmentera le carburant du trajet par le pourcentage donné.</translation>
 the given descent speeds</source>
         <translation type="unfinished">Règle empirique équivalente pour les
 données de vitesse de descente</translation>
+    </message>
+    <message>
+        <source>Equivalent rule of thumb for 
+the given descent speeds</source>
+        <translation type="obsolete">Règle empirique équivalente pour les 
+les vitesses de descente données</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="509"/>
@@ -874,17 +880,17 @@ de la scène</translation>
     <message>
         <location filename="src/gui/airspacetoolbarhandler.cpp" line="176"/>
         <source>Select ICAO airspaces</source>
-        <translation>Sélectionnez des espaces aériens OACI</translation>
+        <translation type="unfinished">Sélectionner des espaces aériens OACI</translation>
     </message>
     <message>
         <location filename="src/gui/airspacetoolbarhandler.cpp" line="180"/>
         <source>Select FIR airspaces</source>
-        <translation>Sélectionnez des espaces aériens FIR</translation>
+        <translation type="unfinished">Sélectionner des espaces aériens FIR</translation>
     </message>
     <message>
         <location filename="src/gui/airspacetoolbarhandler.cpp" line="184"/>
         <source>Select MOA, restricted, prohibited and danger airspaces</source>
-        <translation>Sélectionnez MOA, espaces aériens restreints, interdits et dangereux</translation>
+        <translation type="unfinished">Sélectionner MOA, espaces aériens restreints, interdits et dangereux</translation>
     </message>
     <message>
         <location filename="src/gui/airspacetoolbarhandler.cpp" line="188"/>
@@ -974,7 +980,7 @@ de la scène</translation>
     <message>
         <location filename="src/connect/connectclient.cpp" line="426"/>
         <source>Autoconnect switched off.</source>
-        <translation>Autoconnect désactivé.</translation>
+        <translation type="unfinished">Autoconnexion désactivée.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="461"/>
@@ -1000,7 +1006,7 @@ de la scène</translation>
     <message>
         <location filename="src/connect/connectclient.cpp" line="516"/>
         <source>Remote end closed connection.</source>
-        <translation>Connexion à distance fermée à l&apos;autre bout.</translation>
+        <translation type="unfinished">Connexion à distance fermée.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="517"/>
@@ -1269,7 +1275,7 @@ Réessayera de se connecter si &quot;Connexion automatique&quot; est coché.</tr
     <message>
         <location filename="src/db/databasedialog.ui" line="93"/>
         <source>Select the scenery.cfg file for the given simulator.</source>
-        <translation>Sélectionnez le fichier scenery.cfg pour le simulateur donné.</translation>
+        <translation type="unfinished">Sélectionner le fichier scenery.cfg pour le simulateur donné.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="96"/>
@@ -1280,7 +1286,7 @@ Réessayera de se connecter si &quot;Connexion automatique&quot; est coché.</tr
     <message>
         <location filename="src/db/databasedialog.ui" line="103"/>
         <source>Select the base path for the given simulator.</source>
-        <translation>Sélectionnez le chemin de base pour le simulateur donné.</translation>
+        <translation type="unfinished">Sélectionner le chemin de base pour le simulateur donné.</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="113"/>
@@ -1307,6 +1313,14 @@ Réessayera de se connecter si &quot;Connexion automatique&quot; est coché.</tr
         <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
         <translation type="unfinished">Lit également les entrées de scènes inactives ou désactivées lorsqu&apos;elle est cochée.
+Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
+    </message>
+    <message>
+        <source>Will read also the inactive or disabled scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</source>
+        <oldsource>Will read also the inactive scenery entries when checked. 
+Useful if you use tools to disable and enable certain scenery for each flight.</oldsource>
+        <translation type="obsolete">Lit également les entrées de scènes inactives lorsqu&apos;elles sont cochées.
 Utile si vous utilisez des outils pour désactiver et activer certaines scènes pour chaque vol.</translation>
     </message>
     <message>
@@ -1342,7 +1356,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     <message>
         <location filename="src/db/databasedialog.cpp" line="124"/>
         <source>Select Flight Simulator Basepath</source>
-        <translation>Sélectionnez l&apos;Emplacement du Simulateur de Vol</translation>
+        <translation type="unfinished">Sélectionner Emplacement du Simulateur de Vol</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="136"/>
@@ -1747,7 +1761,7 @@ Je quitte maintenant.</translation>
         <location filename="src/info/infocontroller.cpp" line="558"/>
         <location filename="src/info/infocontroller.cpp" line="598"/>
         <source>Remove Highlights from Map</source>
-        <translation type="unfinished">Supprimer les points mis en évidences de la carte</translation>
+        <translation type="unfinished">Supprimer les points mis en surbrillance de la carte</translation>
     </message>
     <message>
         <location filename="src/info/infocontroller.cpp" line="854"/>
@@ -1764,7 +1778,7 @@ Je quitte maintenant.</translation>
     <message>
         <location filename="src/info/infocontroller.cpp" line="926"/>
         <source>No AI or multiplayer aircraft selected.&lt;br/&gt;Found %1 AI or multiplayer aircraft.</source>
-        <translation>Aucun AI ou aéronef multijoueur sélectionné.&lt;br/&gt;Trouvé %1 AI ou aéronef multijoueur.</translation>
+        <translation type="unfinished">Aucun AI ou Aéronef multijoueur sélectionné.&lt;br/&gt;Trouvé %1 AI ou Aéronef multijoueur.</translation>
     </message>
     <message>
         <location filename="src/info/infocontroller.cpp" line="928"/>
@@ -1787,7 +1801,7 @@ Je quitte maintenant.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="40"/>
         <source>&amp;Recent Flight Plans</source>
-        <translation>Plans de vol &amp;récents</translation>
+        <translation type="unfinished">Plans de vol &amp;récents</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="47"/>
@@ -2656,7 +2670,7 @@ Je quitte maintenant.</translation>
         <location filename="src/gui/mainwindow.ui" line="2345"/>
         <location filename="src/gui/mainwindow.ui" line="4230"/>
         <source>Procedures</source>
-        <translation>Procédures de Vol</translation>
+        <translation type="unfinished">Procédures</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2387"/>
@@ -2921,7 +2935,7 @@ Je quitte maintenant.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="352"/>
         <source>&amp;Recent Performance Files</source>
-        <translation type="unfinished">Fichiers des performances &amp;récentes</translation>
+        <translation type="unfinished">Fichiers de performance &amp;récents</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3560"/>
@@ -2944,10 +2958,9 @@ Je quitte maintenant.</translation>
         <translation type="unfinished">&amp;Vent:</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="3832"/>
-        <source>Average wind at flight plan cruise level.
+        <source>Average wind at flight plan cruise level. 
 Wind speed will be interpolated for climb and descent phases.</source>
-        <translation type="unfinished">Vent moyen au niveau croisière du plan de vol.
+        <translation type="obsolete">Vent moyen au niveau croisière du plan de vol. 
 La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
     </message>
     <message>
@@ -2978,7 +2991,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="9001"/>
         <location filename="src/gui/mainwindow.ui" line="9004"/>
         <source>Edit Aircraft Performance</source>
-        <translation type="unfinished">Modifier les paramètres de l&apos;aéronef</translation>
+        <translation type="unfinished">Modifier les performances de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3920"/>
@@ -3003,7 +3016,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="9047"/>
         <location filename="src/gui/mainwindow.ui" line="9050"/>
         <source>Save Aircraft Performance File</source>
-        <translation type="unfinished">Sauvegarder le fichier des paramètres de l&apos;aéronef</translation>
+        <translation type="unfinished">Sauver le fichier de performance de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3996"/>
@@ -3011,7 +3024,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="9068"/>
         <location filename="src/gui/mainwindow.ui" line="9071"/>
         <source>Save Aircraft Performance File as</source>
-        <translation type="unfinished">Sauvegarder le fichier de paramètres de l&apos;aéronef sous</translation>
+        <translation type="unfinished">Sauver le fichier de performance de l&apos;aéronef sous</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4019"/>
@@ -3035,6 +3048,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="4691"/>
         <source>Zoom vertically into the elevation profile</source>
         <translation type="unfinished">Zoom vertical sur le profil d&apos;élévation</translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="3832"/>
+        <source>Average wind at flight plan cruise level.
+Wind speed will be interpolated for climb and descent phases.</source>
+        <translation type="unfinished">Vent moyen au palier de croisière du plan de vol.
+La vitesse du vent sera interpolée pour les phases de montée et de descente.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4807"/>
@@ -3156,7 +3176,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="8482"/>
         <location filename="src/gui/mainwindow.ui" line="8485"/>
         <source>Select all entries in the table</source>
-        <translation>Sélectionnez toutes les entrées dans le tableau</translation>
+        <translation type="unfinished">Sélectionner toutes les entrées dans le tableau</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5224"/>
@@ -3273,7 +3293,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="5355"/>
         <location filename="src/gui/mainwindow.ui" line="5358"/>
         <source>Open flight plan</source>
-        <translation>Ouvrir plan de vol</translation>
+        <translation type="unfinished">Ouvrir Plan de Vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5361"/>
@@ -3747,7 +3767,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6016"/>
         <source>Measure GC Distance from %1</source>
-        <translation>Mesurez la distance GC à partir de %1</translation>
+        <translation type="unfinished">Mesurer la distance GC à partir de %1</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6019"/>
@@ -3897,13 +3917,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="8765"/>
         <source>Remove Airport Traffic Pattern</source>
-        <translation type="unfinished">Enlever la circulation du trafic aérien</translation>
+        <translation type="unfinished">Supprimer la circulation du trafic aérien</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8768"/>
         <location filename="src/gui/mainwindow.ui" line="8771"/>
         <source>Remove this airport traffic pattern</source>
-        <translation type="unfinished">Enlever cette circulation du trafic aérien</translation>
+        <translation type="unfinished">Supprimer cette circulation du trafic aérien</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8780"/>
@@ -4056,12 +4076,12 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="9041"/>
         <source>&amp;Save Aircraft Performance</source>
-        <translation type="unfinished">&amp;Sauvegarder les performances de l&apos;aéronef</translation>
+        <translation type="unfinished">&amp;Sauver les performances de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9044"/>
         <source>Save Aircraft Performance</source>
-        <translation type="unfinished">Sauvegarder les performances de l&apos;aéronef</translation>
+        <translation type="unfinished">Sauver les performances de l&apos;aéronef</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9053"/>
@@ -4071,12 +4091,12 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="9062"/>
         <source>Save Aircraft Performance &amp;as ...</source>
-        <translation type="unfinished">Sauvegarder les performances de l&apos;aéronef en t&amp;ant que ....</translation>
+        <translation type="unfinished">Sauver les performances de l&apos;&amp;aéronef vers ....</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9065"/>
         <source>Save Aircraft Performance as</source>
-        <translation type="unfinished">Sauvegarder les performances de l&apos;aéronef sous</translation>
+        <translation type="unfinished">Sauver les performances de l&apos;aéronef vers</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9080"/>
@@ -4131,7 +4151,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="9178"/>
         <location filename="src/gui/mainwindow.ui" line="9181"/>
         <source>Save current map view as an image to the clipboard</source>
-        <translation type="unfinished">Sauvegarder la vue actuelle de la carte sous forme d&apos;image dans le presse-papiers</translation>
+        <translation type="unfinished">Sauver la vue actuelle de la carte sous forme d&apos;image dans le presse-papiers</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9184"/>
@@ -4246,13 +4266,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6208"/>
         <source>Center &amp;Flight Plan</source>
-        <translation>Centrer le &amp;plan de vol</translation>
+        <translation type="unfinished">Centrer &amp;plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6211"/>
         <location filename="src/gui/mainwindow.ui" line="6214"/>
         <source>Center flight plan on map</source>
-        <translation>Centrer le plan de vol sur la carte</translation>
+        <translation type="unfinished">Centrer plan de vol sur la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6217"/>
@@ -4301,7 +4321,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="6292"/>
         <location filename="src/gui/mainwindow.ui" line="6481"/>
         <source>Set %1 as Flight Plan Departure</source>
-        <translation type="unfinished">Définir l&apos;%1 comme départ du plan de vol</translation>
+        <translation type="unfinished">Définir l&apos;%1 comme DÉPART du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6295"/>
@@ -4312,7 +4332,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6307"/>
         <source>Set %1 as Flight Plan Destination</source>
-        <translation type="unfinished">Définir l&apos;%1 comme destination du plan de vol</translation>
+        <translation type="unfinished">Définir l&apos;%1 comme DESTINATION du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6310"/>
@@ -4438,13 +4458,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="8005"/>
         <source>Show Compass Rose</source>
-        <translation type="unfinished">Afficher la rose des vents</translation>
+        <translation type="unfinished">Afficher le compas rose</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8008"/>
         <location filename="src/gui/mainwindow.ui" line="8011"/>
         <source>Show compass rose around user aircraft</source>
-        <translation>Afficher la rose des vents autour de l&apos;aéronef utilisateur</translation>
+        <translation type="unfinished">Afficher le compas rose autour de l&apos;aéronef utilisateur</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8014"/>
@@ -4759,7 +4779,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="8322"/>
         <source>Save Waypoints for &amp;Approaches</source>
-        <translation>Sauvegarder les waypoints pour &amp;approches</translation>
+        <translation type="unfinished">Sauver les waypoints pour &amp;approches</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8325"/>
@@ -4770,13 +4790,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="8336"/>
         <source>Save Waypoints for &amp;SID and STAR</source>
-        <translation>Sauvegarder les waypoints pour &amp;SID et STAR</translation>
+        <translation type="unfinished">Sauver les waypoints pour &amp;SID et STAR</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8339"/>
         <location filename="src/gui/mainwindow.ui" line="8342"/>
         <source>Save procedure waypoints instead of SID/STAR information</source>
-        <translation>Sauvegarder les waypoints des procédures au lieu de l&apos;information SID/STAR</translation>
+        <translation type="unfinished">Sauver les waypoints des procédures au lieu de l&apos;information SID/STAR</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8350"/>
@@ -5221,7 +5241,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="6406"/>
         <location filename="src/gui/mainwindow.ui" line="7770"/>
         <source>Calculate &amp;high Altitude</source>
-        <translation>Calculer la &amp;haute altitude</translation>
+        <translation type="unfinished">Calculer &amp;haute altitude</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6409"/>
@@ -5233,7 +5253,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="6421"/>
         <location filename="src/gui/mainwindow.ui" line="7785"/>
         <source>Calculate &amp;low Altitude</source>
-        <translation>Calculer &amp;la basse altitude</translation>
+        <translation type="unfinished">Calculer basse a&amp;ltitude</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6424"/>
@@ -5245,7 +5265,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="6436"/>
         <location filename="src/gui/mainwindow.ui" line="7800"/>
         <source>Calculate Radio&amp;nav</source>
-        <translation>Calculer Radio&amp;nav</translation>
+        <translation type="unfinished">Calculer radio&amp;nav</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6439"/>
@@ -5267,7 +5287,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6466"/>
         <source>&amp;Reverse Flight Plan</source>
-        <translation type="unfinished">Inve&amp;rser le plan de vol</translation>
+        <translation type="unfinished">Inve&amp;rser plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6469"/>
@@ -5278,13 +5298,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6484"/>
         <source>Set as Flight Plan Departure</source>
-        <translation>Définir comme départ du plan de vol</translation>
+        <translation type="unfinished">Définir comme départ du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6487"/>
         <location filename="src/gui/mainwindow.ui" line="6490"/>
         <source>Set parking position as flight plan departure</source>
-        <translation>Définir la position de parking en point de départ du plan de vol</translation>
+        <translation type="unfinished">Définir la position de parking comme point de départ du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6499"/>
@@ -5328,7 +5348,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="6556"/>
         <location filename="src/gui/mainwindow.ui" line="7815"/>
         <source>Calculate based on given &amp;Altitude</source>
-        <translation>Calculer en fonction de l&apos;&amp;altitude donnée</translation>
+        <translation type="unfinished">Calculer en fonction d&apos;une &amp;altitude donnée</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6559"/>
@@ -5498,7 +5518,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6739"/>
         <source>&amp;Edit Flight Plan on Map</source>
-        <translation>&amp;Éditer le plan de vol sur la carte</translation>
+        <translation type="unfinished">&amp;Modifier plan de vol sur la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6742"/>
@@ -5514,7 +5534,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6819"/>
         <source>Clear Menu</source>
-        <translation type="unfinished">Effacer le menu</translation>
+        <translation type="unfinished">Effacer la liste</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6756"/>
@@ -5525,13 +5545,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6061"/>
         <source>&amp;Remove all Ranges, Measurements and Patterns</source>
-        <translation type="unfinished">Supprime&amp;r toutes les portées, mesures et motifs</translation>
+        <translation type="unfinished">Supprime&amp;r toutes les portées, mesures et circulations</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6064"/>
         <location filename="src/gui/mainwindow.ui" line="6067"/>
         <source>Remove all range rings, distance measurement lines and airport traffic patterns from map</source>
-        <translation type="unfinished">Supprimer de la carte tous les anneaux de distance, les lignes de mesure de distance et les tracés du trafic aérien</translation>
+        <translation type="unfinished">Supprimer de la carte tous les anneaux de distance, les lignes de mesure de distance et les circulations du trafic aérien</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6238"/>
@@ -5547,7 +5567,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="6753"/>
         <location filename="src/gui/mainwindow.ui" line="9012"/>
         <source>&amp;Clear Menu</source>
-        <translation type="unfinished">&amp;Effacer le menu</translation>
+        <translation type="unfinished">&amp;Effacer la liste</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6768"/>
@@ -5800,7 +5820,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
         <location filename="src/gui/mainwindow.ui" line="7132"/>
         <location filename="src/gui/mainwindow.ui" line="8795"/>
         <source>&amp;Append Flight Plan ...</source>
-        <translation type="unfinished">&amp;Joindre un plan de vol ...</translation>
+        <translation type="unfinished">&amp;Joindre plan de vol ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7135"/>
@@ -5818,7 +5838,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="7168"/>
         <source>Print &amp;Map ...</source>
-        <translation>Impri&amp;mer la carte ...</translation>
+        <translation type="unfinished">Impri&amp;mer carte ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7171"/>
@@ -5834,7 +5854,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="7186"/>
         <source>Print &amp;Flight Plan ...</source>
-        <translation>Imprimer le &amp;plan de vol ...</translation>
+        <translation type="unfinished">Imprimer &amp;plan de vol ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7189"/>
@@ -5888,13 +5908,13 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="7263"/>
         <source>Adjust Flight Plan Altitude</source>
-        <translation>Ajuster l&apos;altitude du plan de vol</translation>
+        <translation type="unfinished">Ajuster altitude du plan de vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7266"/>
         <location filename="src/gui/mainwindow.ui" line="7269"/>
         <source>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</source>
-        <translation>Ajuster l&apos;altitude du plan de vol en utilisant les règles simplifiées Est/Ouest et IFR/VFR</translation>
+        <translation type="unfinished">Ajuster altitude du plan de vol en utilisant les règles simplifiées Est/Ouest et IFR/VFR</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7272"/>
@@ -6306,7 +6326,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.cpp" line="530"/>
         <source>Select map projection</source>
-        <translation>Sélectionnez la projection cartographique</translation>
+        <translation type="unfinished">Sélectionner la projection cartographique</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="533"/>
@@ -6321,7 +6341,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.cpp" line="545"/>
         <source>Select map theme</source>
-        <translation>Sélectionnez le thème de la carte</translation>
+        <translation type="unfinished">Sélectionner le thème de la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="549"/>
@@ -6479,7 +6499,7 @@ Réseau en ligne:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1713"/>
         <source>Delete aircraft trail?</source>
-        <translation type="unfinished">Supprimer un tracé d&apos;aéronef?</translation>
+        <translation type="unfinished">Supprimer le tracé de l&apos;aéronef?</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1723"/>
@@ -6502,7 +6522,7 @@ Réseau en ligne:
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1446"/>
         <source>Done.</source>
-        <translation>Chargement terminé.</translation>
+        <translation type="unfinished">..Collecte stoppé.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1449"/>
@@ -6634,7 +6654,7 @@ Le simulateur pourrait ne pas être capable de charger le plan de vol.</translat
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1737"/>
         <source>Save changes?</source>
-        <translation>Sauvegarder les modifications?</translation>
+        <translation type="unfinished">Sauver les modifications?</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1778"/>
@@ -6777,7 +6797,7 @@ Local: %2</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1810"/>
         <source>Open Flight Plan</source>
-        <translation>Ouvrir plan de vol</translation>
+        <translation type="unfinished">Ouvrir Plan de Vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1811"/>
@@ -6791,7 +6811,7 @@ Local: %2</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1833"/>
         <source>Append Flight Plan</source>
-        <translation type="unfinished">Joindre un Plan de Vol</translation>
+        <translation type="unfinished">Joindre Plan de Vol</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="1855"/>
@@ -7188,17 +7208,17 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1128"/>
         <source>%1Station Weather</source>
-        <translation>%1Station météo</translation>
+        <translation type="unfinished">Station météo %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1138"/>
         <source>%2Nearest Weather - %1</source>
-        <translation type="unfinished">%2Météo à proximité - %1</translation>
+        <translation type="unfinished">%2 Météo à proximité - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1158"/>
         <source>%2Interpolated Weather - %1</source>
-        <translation type="unfinished">%2Météo interpolée - %1</translation>
+        <translation type="unfinished">%2 Météo interpolée - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1193"/>
@@ -7208,7 +7228,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1204"/>
         <source>%1 Station Weather</source>
-        <translation type="unfinished">%1 Station météo</translation>
+        <translation type="unfinished">Station météo %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1214"/>
@@ -7352,7 +7372,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="318"/>
         <source>%1Station</source>
-        <translation>%1Station</translation>
+        <translation type="unfinished">Station %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="320"/>
@@ -7895,12 +7915,12 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="795"/>
         <source>Localizer Heading:</source>
-        <translation type="unfinished">Direction de l&apos;alignement de piste:</translation>
+        <translation type="unfinished">Trajectoire de l&apos;alignement de piste:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="797"/>
         <source>Localizer Heading and Width:</source>
-        <translation type="unfinished">Direction et largeur de l&apos;alignement de piste:</translation>
+        <translation type="unfinished">Trajectoire et Largeur de l&apos;alignement de piste:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="798"/>
@@ -7911,7 +7931,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="801"/>
         <source>Glideslope Pitch:</source>
-        <translation type="unfinished">Angle de trajectoire de descente:</translation>
+        <translation type="unfinished">Angle d&apos;inclinaison de descente:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="812"/>
@@ -7966,7 +7986,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="938"/>
         <source>ILS data runway not found</source>
-        <translation>La piste de données ILS n&apos;a pas été trouvée</translation>
+        <translation type="unfinished">Piste de données ILS introuvable</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="953"/>
@@ -8160,7 +8180,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1187"/>
         <source>VATSIM Weather</source>
-        <translation>Météo VATSIM</translation>
+        <translation type="unfinished">Station météo VATSIM</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1249"/>
@@ -8392,7 +8412,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1736"/>
         <source>Bearing and distance:</source>
-        <translation type="unfinished">Position et distance:</translation>
+        <translation type="unfinished">Position et Distance:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1740"/>
@@ -9345,7 +9365,7 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2971"/>
         <source>Online Client (%1)</source>
-        <translation>Client connecté (%1)</translation>
+        <translation type="unfinished">Client (%1) connecté</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2973"/>
@@ -10427,7 +10447,7 @@ d&apos;appel</translation>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="51"/>
         <source>Prefile</source>
-        <translation type="unfinished">Soumis à
+        <translation type="unfinished">Soumis à 
 l&apos;avance</translation>
     </message>
     <message>
@@ -10710,7 +10730,7 @@ Je réessaie dans trois minutes.</translation>
     <message>
         <location filename="src/options/options.ui" line="136"/>
         <source>Select the update channels to check.</source>
-        <translation>Sélectionnez les canaux de mise à jour à vérifier.</translation>
+        <translation type="unfinished">Sélectionner les canaux de mise à jour à vérifier.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="140"/>
@@ -10790,7 +10810,7 @@ Je réessaie dans trois minutes.</translation>
     <message>
         <location filename="src/options/options.ui" line="545"/>
         <source>Text size for &amp;aircraft performance report:</source>
-        <translation type="unfinished">Taille du texte du rapport des paramètres de l&apos;&amp;aéronef :</translation>
+        <translation type="unfinished">Taille du texte du rapport des performances de l&apos;&amp;aéronef :</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="621"/>
@@ -10938,7 +10958,7 @@ fournissent un bouton de la barre d&apos;outils pour les désactiver si cette ca
     <message>
         <location filename="src/options/options.ui" line="804"/>
         <source>&amp;Zoom distance for double click on object:</source>
-        <translation type="unfinished">Distance de &amp;zoom pour double-cliquer sur un objet:</translation>
+        <translation type="unfinished">Distance de &amp;zoom pour un double-clic sur l&apos;objet:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="781"/>
@@ -10974,7 +10994,7 @@ Des valeurs plus petites permettent de zoomer plus près d&apos;un aérodrome ou
     <message>
         <location filename="src/options/options.ui" line="876"/>
         <source>Tool tip &amp;sensitivity on map:</source>
-        <translation>Sen&amp;sibilité de la pointe de l&apos;outil sur la carte:</translation>
+        <translation type="unfinished">Info-bulle et &amp;sensibilité sur la carte:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="896"/>
@@ -10991,7 +11011,7 @@ Des valeurs plus petites permettent de zoomer plus près d&apos;un aérodrome ou
     <message>
         <location filename="src/options/options.ui" line="886"/>
         <source>&amp;Click sensitivity when selecting objects on map:</source>
-        <translation>&amp;Cliquez sur sensibilité lorsque vous sélectionnez des objets sur la carte:</translation>
+        <translation type="unfinished">&amp;Cliquer sur la sensibilité lors de la sélection d&apos;objets sur la carte:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="853"/>
@@ -11204,7 +11224,7 @@ voies aériennes:</translation>
     <message>
         <location filename="src/options/options.ui" line="2482"/>
         <source>Statue Miles (mi)</source>
-        <translation>Statue Miles (mid)</translation>
+        <translation type="unfinished">Milles terrestres (mi)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2342"/>
@@ -11224,7 +11244,7 @@ voies aériennes:</translation>
     <message>
         <location filename="src/options/options.ui" line="2463"/>
         <source>Statue Miles per Hour (mph)</source>
-        <translation>Statue Miles par heure (mph)</translation>
+        <translation type="unfinished">Milles terrestres par heure (mph)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2385"/>
@@ -11538,12 +11558,12 @@ mesure de distance:</translation>
     <message>
         <location filename="src/options/options.ui" line="1751"/>
         <source>&amp;Compass rose:</source>
-        <translation type="unfinished">&amp;Rose des vents:</translation>
+        <translation type="unfinished">&amp;Compas rose:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1761"/>
         <source>Text size of the compass rose line labels</source>
-        <translation type="unfinished">Taille du texte des étiquettes des lignes de la rose des vents</translation>
+        <translation type="unfinished">Taille du texte des étiquettes des lignes du compas rose</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1786"/>
@@ -11568,12 +11588,12 @@ mesure de distance:</translation>
     <message>
         <location filename="src/options/options.ui" line="1920"/>
         <source>Map Display Online</source>
-        <translation type="unfinished">Affichage de la carte en ligne</translation>
+        <translation type="unfinished">Affichage de la Carte Connectée</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1939"/>
         <source>Display Size for Online Airspaces / Centers</source>
-        <translation type="unfinished">Taille d&apos;affichage pour les espaces aériens en ligne / Centres</translation>
+        <translation type="unfinished">Taille d&apos;affichage pour les espaces aériens connectés / Centres</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1945"/>
@@ -11590,7 +11610,7 @@ mesure de distance:</translation>
         <location filename="src/options/options.ui" line="2221"/>
         <location filename="src/options/options.ui" line="2234"/>
         <source>Use visual range provided from online network</source>
-        <translation type="unfinished">Utiliser la portée visuelle fournie par le réseau en ligne</translation>
+        <translation type="unfinished">Utiliser la portée visuelle fournie par le réseau connecté</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1968"/>
@@ -11605,7 +11625,7 @@ mesure de distance:</translation>
     <message>
         <location filename="src/options/options.ui" line="2046"/>
         <source>&amp;Clearance Delivery:</source>
-        <translation type="unfinished">&amp;Livraison et autorisation:</translation>
+        <translation type="unfinished">&amp;Livraison et Autorisation:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2072"/>
@@ -11624,7 +11644,7 @@ mesure de distance:</translation>
     <message>
         <location filename="src/options/options.ui" line="2247"/>
         <source>&amp;Online Observer:</source>
-        <translation type="unfinished">&amp;Observateur en ligne:</translation>
+        <translation type="unfinished">&amp;Observateur connecté:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2257"/>
@@ -11745,7 +11765,7 @@ Ce réglage est également utilisé dans le profil d&apos;élévation.</translat
     <message>
         <location filename="src/options/options.ui" line="3333"/>
         <source>No URL set. VATSIM weather reports are disabled.</source>
-        <translation>Pas d&apos;URL définie. Les bulletins météorologiques VATSIM sont désactivés.</translation>
+        <translation type="unfinished">Aucune URL définie. Les bulletins météorologiques VATSIM sont désactivés.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3363"/>
@@ -11802,7 +11822,7 @@ Si ce champ est vide, le chemin par défaut du fichier Active Sky weather sera u
     <message>
         <location filename="src/options/options.ui" line="3353"/>
         <source>Select the &quot;current_wx_snapshot.txt&quot; file.</source>
-        <translation>Sélectionnez le fichier &quot;current_wx_snapshot. txt&quot;.</translation>
+        <translation type="unfinished">Sélectionner le fichier &quot;current_wx_snapshot. txt&quot;.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3356"/>
@@ -11823,7 +11843,7 @@ Si ce champ est vide, le chemin par défaut du fichier Active Sky weather sera u
     <message>
         <location filename="src/options/options.ui" line="3299"/>
         <source>&amp;VATSIM Weather Service URL:</source>
-        <translation>Service météo URL &amp;VATSIM Weather:</translation>
+        <translation type="unfinished">URL du service météo &amp;VATSIM:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3397"/>
@@ -11979,7 +11999,7 @@ Changez de couleur avec la &quot;Couleur du Segment Passé&quot;.</translation>
     <message>
         <location filename="src/options/options.ui" line="1864"/>
         <source>&amp;Dim passed Legs</source>
-        <translation>&amp;Dim des Segments Passés</translation>
+        <translation type="unfinished">&amp;Dim des Segments passés</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1645"/>
@@ -12003,7 +12023,7 @@ Changez de couleur avec la &quot;Couleur du Segment Passé&quot;.</translation>
         <location filename="src/options/options.ui" line="1723"/>
         <location filename="src/options/options.ui" line="1748"/>
         <source>Thickness of the compass rose lines</source>
-        <translation>Epaisseur des lignes de la rose des vents</translation>
+        <translation type="unfinished">Epaisseur des lignes du compas rose</translation>
     </message>
     <message>
         <source>&amp;Compass rose line thickness:</source>
@@ -12013,10 +12033,10 @@ Changez de couleur avec la &quot;Couleur du Segment Passé&quot;.</translation>
         <location filename="src/options/options.ui" line="1324"/>
         <source>Draw airport diagrams.
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</source>
-        <oldsource>Draw airport diagrams.
+        <oldsource>Draw airport diagrams. 
 Parking, aprons, taxiways, fuel and tower positions will be omitted if not selected.</oldsource>
-        <translation>Dessiner des diagrammes d&apos;aérodrome.
-Le parking, aprons, les voies de circulation, le carburant et les positions de la tour de controle seront omis s&apos;ils ne sont pas sélectionnés.</translation>
+        <translation type="unfinished">Dessiner des diagrammes d&apos;aérodrome. 
+Le parking, aprons, les taxiways, le carburant et les tour de controle seront omis s&apos;ils ne sont pas sélectionnés.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1171"/>
@@ -12055,7 +12075,7 @@ Le parking, aprons, les voies de circulation, le carburant et les positions de l
     <message>
         <location filename="src/options/options.ui" line="2584"/>
         <source>&amp;Jump back to aircraft and resume aircraft following after this time:</source>
-        <translation type="unfinished">&amp;Retournez à l&apos;aéronef et recommencez à suivre l&apos;aéronef après ce temps:</translation>
+        <translation type="unfinished">&amp;Retournez à l&apos;aéronef et reprendre le suivi de l&apos;aéronef après ce temps:</translation>
     </message>
     <message>
         <source>The map will stop following the aircraft for a certain time if the user does any interaction with the map like scrolling or zooming</source>
@@ -12116,7 +12136,7 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;aéronef et le prochain waypoi
     <message>
         <location filename="src/options/options.ui" line="2878"/>
         <source>Center &amp;flight plan on map after loading</source>
-        <translation type="unfinished">Centrer le plan de &amp;vol sur la carte après le chargement</translation>
+        <translation type="unfinished">Centrer plan de &amp;vol sur la carte après le chargement</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2902"/>
@@ -12219,17 +12239,17 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;aéronef et le prochain waypoi
     <message>
         <location filename="src/options/options.ui" line="3469"/>
         <source>Online Flying</source>
-        <translation type="unfinished">Voler en ligne</translation>
+        <translation type="unfinished">Vol Connecté</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3475"/>
         <source>Online Service</source>
-        <translation type="unfinished">Service en ligne</translation>
+        <translation type="unfinished">Service connecté</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3496"/>
         <source>Do not use any online flying services</source>
-        <translation type="unfinished">N&apos;utilisez pas de services de vol en ligne</translation>
+        <translation type="unfinished">N&apos;utilisez pas de service de vol connecté</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3499"/>
@@ -12239,7 +12259,7 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;aéronef et le prochain waypoi
     <message>
         <location filename="src/options/options.ui" line="3509"/>
         <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation>Utiliser la configuration prédéfinie du réseau VATSIM pour le vol sur internet</translation>
+        <translation type="unfinished">Utiliser la configuration prédéfinie du réseau VATSIM pour le vol connecté</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3519"/>
@@ -12254,7 +12274,7 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;aéronef et le prochain waypoi
     <message>
         <location filename="src/options/options.ui" line="3532"/>
         <source>Custom with &amp;Status File</source>
-        <translation>Personnalisé avec le fichier &amp;Status</translation>
+        <translation type="unfinished">Personnalisé avec le fichier &amp;Statut</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3539"/>
@@ -12290,7 +12310,7 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;aéronef et le prochain waypoi
     <message>
         <location filename="src/options/options.ui" line="3593"/>
         <source>&amp;Whazzup File URL:</source>
-        <translation>URL fichier &amp;Whazzup:</translation>
+        <translation type="unfinished">URL du fichier &amp;Whazzup:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3603"/>
@@ -12323,7 +12343,7 @@ N&apos;utilisez des valeurs inférieures que pour les réseaux privés.</transla
     <message>
         <location filename="src/options/options.ui" line="3660"/>
         <source>&amp;Update every:</source>
-        <translation type="unfinished">&amp;Mise à jour toute les:</translation>
+        <translation type="unfinished">&amp;Mettre à jour chaque:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3677"/>
@@ -12442,12 +12462,12 @@ N&apos;utilisez des valeurs inférieures que pour les réseaux privés.&lt;/b&gt
     <message>
         <location filename="src/options/options.ui" line="3882"/>
         <source>&amp;Select GLOBE Directory ...</source>
-        <translation>&amp;Sélectionnez le répertoire des fichiers GLOBE ...</translation>
+        <translation type="unfinished">&amp;Sélectionner le répertoire des fichiers GLOBE ...</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3889"/>
         <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
-        <translation>Sélectionnez le répertoire qui contient les fichiers &quot;a10g&quot; à &quot;p10g&quot;.</translation>
+        <translation type="unfinished">Sélectionner le répertoire qui contient les fichiers &quot;a10g&quot; à &quot;p10g&quot;.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3892"/>
@@ -12474,7 +12494,8 @@ Télécharger à partir du lien &lt;b&gt;&lt;i&gt;Toutes les tuiles en un. zip (
     <message>
         <location filename="src/options/options.ui" line="3949"/>
         <source>Scenery Library Database</source>
-        <translation>Base de données de la bibliothèque de scènes</translation>
+        <oldsource>Scenenery Library Database</oldsource>
+        <translation type="unfinished">Base de données de la bibliothèque de scènes</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3960"/>
@@ -12546,7 +12567,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="151"/>
         <source>Select airport labels to display on the map.</source>
-        <translation>Sélectionnez les étiquettes des aérodromes à afficher sur la carte.</translation>
+        <translation type="unfinished">Sélectionner les étiquettes des aérodromes à afficher sur la carte.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="152"/>
@@ -12581,7 +12602,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="158"/>
         <source>Select text labels and other options for the user aircraft.</source>
-        <translation>Sélectionnez des libellés de texte et d&apos;autres options pour l&apos;aéronef utilisateur.</translation>
+        <translation type="unfinished">Sélectionner des libellés de texte et d&apos;autres options pour l&apos;aéronef utilisateur.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="159"/>
@@ -12682,7 +12703,7 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <location filename="src/options/optionsdialog.cpp" line="170"/>
         <source>Select text labels for the AI, multiplayer and online client aircraft.</source>
         <oldsource>Select text labels for the AI and multiplayer aircraft.</oldsource>
-        <translation>Sélectionnez des libellés de texte pour les aéronefs AI et multijoueurs.</translation>
+        <translation type="unfinished">Sélectionner des libellés de texte pour les aéronefs AI et multijoueurs.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="180"/>
@@ -12692,12 +12713,12 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
     <message>
         <location filename="src/options/optionsdialog.cpp" line="182"/>
         <source>Compass Rose</source>
-        <translation type="unfinished">Rose des vents</translation>
+        <translation type="unfinished">Compas rose</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="182"/>
         <source>Select display options for the compass rose.</source>
-        <translation type="unfinished">Sélectionner les options d&apos;affichage de la rose des vents.</translation>
+        <translation type="unfinished">Sélectionner les options d&apos;affichage du compas rose.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="183"/>
@@ -13044,7 +13065,7 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     <message>
         <location filename="src/print/printdialog.ui" line="14"/>
         <source>Little Navmap - Print Flight Plan</source>
-        <translation type="unfinished">Little Navmap - Imprimer le plan de vol</translation>
+        <translation type="unfinished">Little Navmap - Imprimer Plan de Vol</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="20"/>
@@ -13104,7 +13125,7 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     <message>
         <location filename="src/print/printdialog.ui" line="223"/>
         <source>Select Flight Plan &amp;Columns to Print:</source>
-        <translation type="unfinished">Sélectionnez les &amp;colonnes du plan de vol à imprimer:</translation>
+        <translation type="unfinished">Sélectionner les &amp;colonnes du plan de vol à imprimer:</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="233"/>
@@ -16015,22 +16036,22 @@ les vitesses de montée et de descente et des paramètres de l&apos;aéronef.</t
     <message>
         <location filename="src/route/routecontroller.cpp" line="163"/>
         <source>&amp;Undo Flight Plan</source>
-        <translation>&amp;Défaire plan de vol</translation>
+        <translation type="unfinished">&amp;Défaire plan de vol</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="167"/>
         <source>&amp;Redo Flight Plan</source>
-        <translation>&amp;Refaire plan de vol</translation>
+        <translation type="unfinished">&amp;Refaire plan de vol</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="269"/>
         <source>Undo flight plan change.</source>
-        <translation>Défaire le changement de plan de vol.</translation>
+        <translation type="unfinished">Défaire changement du plan de vol.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="274"/>
         <source>Redo flight plan change.</source>
-        <translation>Refaire le changement de plan de vol.</translation>
+        <translation type="unfinished">Refaire changement du plan de vol.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="294"/>
@@ -16040,7 +16061,7 @@ les vitesses de montée et de descente et des paramètres de l&apos;aéronef.</t
     <message>
         <location filename="src/route/routecontroller.cpp" line="482"/>
         <source>Flight plan string to clipboard.</source>
-        <translation>Chaîne de plan de vol dans le presse-papiers.</translation>
+        <translation type="unfinished">Chaîne du plan de vol dans le presse-papiers.</translation>
     </message>
     <message>
         <source>Change Speed</source>
@@ -16049,12 +16070,12 @@ les vitesses de montée et de descente et des paramètres de l&apos;aéronef.</t
     <message>
         <location filename="src/route/routecontroller.cpp" line="514"/>
         <source>Change Altitude</source>
-        <translation>Changer d&apos;Altitude</translation>
+        <translation type="unfinished">Changer altitude</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="547"/>
         <source>Change Type</source>
-        <translation>Changer de Type</translation>
+        <translation type="unfinished">Changer type</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="560"/>
@@ -16789,7 +16810,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
         <location filename="src/route/routeexport.cpp" line="492"/>
         <location filename="src/route/routeexport.cpp" line="522"/>
         <source>Select Start &amp;Position</source>
-        <translation>Sélectionner la &amp;Position de Départ</translation>
+        <translation type="unfinished">Sélectionner la &amp;Position de Départ</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="496"/>
@@ -16805,7 +16826,7 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routeexport.cpp" line="523"/>
         <source>Show &amp;Departure on Map</source>
-        <translation type="unfinished">Afficher &amp;départ sur la carte</translation>
+        <translation type="unfinished">Afficher &amp;Départ sur la Carte</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="529"/>
@@ -16928,12 +16949,12 @@ Essayez un autre type de routage ou créez le plan de vol manuellement.</transla
     <message>
         <location filename="src/route/routestring.cpp" line="792"/>
         <source>Mandatory departure airport %1 not found.</source>
-        <translation>L&apos;aérodrome de départ obligatoire, soit %1 n&apos;a pas été trouvé.</translation>
+        <translation type="unfinished">L&apos;aérodrome de départ obligatoire, soit %1 n&apos;a pas été trouvé.</translation>
     </message>
     <message>
         <location filename="src/route/routestring.cpp" line="873"/>
         <source>Mandatory destination airport %1 not found.</source>
-        <translation>L&apos;aérodrome de destination obligatoire, soit %1 n&apos;a pas été trouvé.</translation>
+        <translation type="unfinished">L&apos;aérodrome de destination obligatoire, soit %1 n&apos;a pas été trouvé.</translation>
     </message>
     <message>
         <location filename="src/route/routestring.cpp" line="1052"/>
@@ -18112,7 +18133,7 @@ Formats above have to be given exactly as shown in the examples.</source>
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
 - Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9:2015°
-Degree, minute and second signs can be omitted for above formats.
+Degree, minute and second signs can be omitted for above formats. 
 Latitude has to be first and N/S and E/W designators are required.
 A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
 Other formats:
@@ -18121,13 +18142,13 @@ Other formats:
 - Degrees and minutes 4620N07805W
 - Degrees, minutes and seconds 481200N0112842E (Skyvector)
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
-- NAT type 5020N
+- NAT type 5020N 
 Formats above have to be given exactly as shown in the examples.</oldsource>
         <translation type="unfinished">Formats de coordonnées reconnus :
 Degrés, minutes et secondes : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; ou 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 Degrés et minutes : N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 ou 49° 26.69&apos; N 9° 12.09&apos; E
 Degrés seulement : 49,4449° N 9,2015° E ou N 49,4449° E 9:2015° E.
-Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus.
+Les signes de degré, de minute et de seconde peuvent être omis pour les formats ci-dessus. 
 Latitude doit être la première et les indicatifs N/S et E/W sont requis.
 Un espace n&apos;est nécessaire que pour séparer la latitude et la longitude ou les degrés/minutes/secondes si aucun signe n&apos;est utilisé.
 Autres formats :
@@ -18136,7 +18157,7 @@ Degrés seulement 46N078W
 Degrés et minutes 4620N07805W
 Degrés, minutes et secondes 481200N0112842E (Skyvector)
 Degrés et minutes par paire &quot;N6500 W08000&quot; ou &quot;N6500/W08000&quot; ou &quot;N6500/W08000&quot;
-NAT type 5020N
+NAT type 5020N 
 Les formats ci-dessus doivent être donnés exactement comme dans les exemples.</translation>
     </message>
     <message>
