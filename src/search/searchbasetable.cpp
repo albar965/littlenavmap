@@ -452,7 +452,6 @@ void SearchBaseTable::updateFromMinSpinBox(int value, const Column *col)
   controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin),
                                     atools::roundToInt(valMax));
   col->getMaxSpinBoxWidget()->setMinimum(value);
-
 }
 
 void SearchBaseTable::updateFromMaxSpinBox(int value, const Column *col)
@@ -700,8 +699,17 @@ void SearchBaseTable::loadAllRowsIntoView()
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
+    // bool allSelected = getSelectedRowCount() == getVisibleRowCount();
+
+    // Clear selection since it can get invalid
+    view->clearSelection();
+
     controller->loadAllRows();
     updatePushButtons();
+
+    // if(allSelected)
+    // view->selectAll();
+
     NavApp::setStatusMessage(tr("All entries read."));
   }
 }

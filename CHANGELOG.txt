@@ -4,6 +4,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 Version 2.2.3
 
 * Fixed crash when reading unexpected value in "activeflightplanwx.txt" of Active Sky.
+* Fixed crash when doing "Show all" after "Select all" in search result table while using a spatial query.
 * Problem solved where altitude restrictions in procedures caused an invalid "cannot comply to altitude restrictions" error.
 * Fixed several display issues in profile (e.g. LPPR ADNOV I17 at CI17).
 * Fixed drawing issues with overlapping procedure leg points having different altitude restrictions (e.g. LPPR ADNOV I17 at CI17).

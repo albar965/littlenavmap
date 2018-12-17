@@ -513,20 +513,32 @@ void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
+  int range = 0;
   for(const QItemSelectionRange& rng :  selection)
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
       map::MapAirport ap;
-      rec.setValue(0, controller->getRawData(row, idColumnName));
-      rec.setValue(1, controller->getRawData(row, "lonx"));
-      rec.setValue(2, controller->getRawData(row, "laty"));
+      QVariant idVar = controller->getRawData(row, idColumnName);
+      if(idVar.isValid())
+      {
+        rec.setValue(0, idVar);
+        rec.setValue(1, controller->getRawData(row, "lonx"));
+        rec.setValue(2, controller->getRawData(row, "laty"));
 
-      // Not fully populated
-      factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
-                          NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
-      result.airports.append(ap);
+#ifdef DEBUG_INFORMATION_SELECTION
+        qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
+#endif
+        // Not fully populated
+        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
+                            NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+        result.airports.append(ap);
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range
+                   << "row" << row << "col" << idColumnName << idVar;
     }
+    range++;
   }
 }
 
