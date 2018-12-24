@@ -937,7 +937,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         // Added before departure airport
         route.getFlightplan().setDepartureAiportName(flightplan.getDepartureAiportName());
         route.getFlightplan().setDepartureIdent(flightplan.getDepartureIdent());
-        route.getFlightplan().setDeparturePosition(flightplan.getDeparturePosition());
+        route.getFlightplan().setDeparturePosition(flightplan.getDeparturePosition(),
+                                                   flightplan.getEntries().first().getPosition().getAltitude());
 
         // Copy SID properties from source
         atools::fs::pln::copySidProcedureProperties(route.getFlightplan().getProperties(),
@@ -2378,7 +2379,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 
   // Update the current airport which is new or the same as the one used by the parking spot
   route.getFlightplan().setDepartureParkingName(map::parkingNameForFlightplan(parking));
-  route.getFlightplan().setDeparturePosition(parking.position);
+  route.getFlightplan().setDeparturePosition(parking.position, route.first().getPosition().getAltitude());
   route.first().setDepartureParking(parking);
 
   route.updateAll();
@@ -2418,7 +2419,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   // Use helipad number or runway name
   route.getFlightplan().setDepartureParkingName(start.runwayName);
 
-  route.getFlightplan().setDeparturePosition(start.position);
+  route.getFlightplan().setDeparturePosition(start.position, route.first().getPosition().getAltitude());
   route.first().setDepartureStart(start);
 
   route.updateAll();
@@ -2849,13 +2850,13 @@ void RouteController::routeToFlightPlan()
       if(route.hasDepartureParking())
       {
         flightplan.setDepartureParkingName(map::parkingNameForFlightplan(firstLeg.getDepartureParking()));
-        flightplan.setDeparturePosition(firstLeg.getDepartureParking().position);
+        flightplan.setDeparturePosition(firstLeg.getDepartureParking().position, firstLeg.getPosition().getAltitude());
       }
       else if(route.hasDepartureStart())
       {
         // Use runway name or helipad number
         flightplan.setDepartureParkingName(firstLeg.getDepartureStart().runwayName);
-        flightplan.setDeparturePosition(firstLeg.getDepartureStart().position);
+        flightplan.setDeparturePosition(firstLeg.getDepartureStart().position, firstLeg.getPosition().getAltitude());
       }
       else
         // No start position and no parking - use airport/navaid position
@@ -2867,7 +2868,7 @@ void RouteController::routeToFlightPlan()
       flightplan.setDepartureAiportName(QString());
       flightplan.setDepartureIdent(QString());
       flightplan.setDepartureParkingName(QString());
-      flightplan.setDeparturePosition(Pos());
+      flightplan.setDeparturePosition(Pos(), 0.f);
     }
 
     const RouteLeg& lastLeg = route.last();
