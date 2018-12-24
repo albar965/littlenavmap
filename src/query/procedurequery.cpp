@@ -944,7 +944,10 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
       proc::MapProcedureLeg& nextLeg = legs[i + 1];
 
       if(nextLeg.type == proc::INITIAL_FIX &&
-         (prevLeg.type == proc::FROM_FIX_TO_MANUAL_TERMINATION ||
+         (prevLeg.type == proc::COURSE_TO_ALTITUDE ||
+          prevLeg.type == proc::FIX_TO_ALTITUDE ||
+          prevLeg.type == proc::HEADING_TO_ALTITUDE_TERMINATION ||
+          prevLeg.type == proc::FROM_FIX_TO_MANUAL_TERMINATION ||
           prevLeg.type == proc::HEADING_TO_MANUAL_TERMINATION))
       {
         qDebug() << Q_FUNC_INFO << prevLeg;
