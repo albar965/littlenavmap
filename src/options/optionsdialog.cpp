@@ -499,15 +499,15 @@ void OptionsDialog::onlineDisplayRangeClicked()
 
 void OptionsDialog::onlineTestStatusUrlClicked()
 {
-  onlineTestUrl(ui->lineEditOptionsOnlineStatusUrl->text());
+  onlineTestUrl(ui->lineEditOptionsOnlineStatusUrl->text(), true);
 }
 
 void OptionsDialog::onlineTestWhazzupUrlClicked()
 {
-  onlineTestUrl(ui->lineEditOptionsOnlineWhazzupUrl->text());
+  onlineTestUrl(ui->lineEditOptionsOnlineWhazzupUrl->text(), false);
 }
 
-void OptionsDialog::onlineTestUrl(const QString& url)
+void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
 {
   qDebug() << Q_FUNC_INFO << url;
   QStringList result;
@@ -516,7 +516,12 @@ void OptionsDialog::onlineTestUrl(const QString& url)
   {
     bool ok = false;
     for(const QString& str : result)
-      ok |= str.simplified().startsWith("!GENERAL") || str.simplified().startsWith("!CLIENTS");
+    {
+      if(statusFile)
+        ok |= str.simplified().startsWith("url0");
+      else
+        ok |= str.simplified().startsWith("!GENERAL") || str.simplified().startsWith("!CLIENTS");
+    }
 
     if(ok)
       QMessageBox::information(this, QApplication::applicationName(),

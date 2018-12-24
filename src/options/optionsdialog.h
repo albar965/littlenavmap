@@ -137,7 +137,7 @@ private:
   void updateOnlineWidgetStatus();
   void onlineTestStatusUrlClicked();
   void onlineTestWhazzupUrlClicked();
-  void onlineTestUrl(const QString& url);
+  void onlineTestUrl(const QString& url, bool statusFile);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
   void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
 
