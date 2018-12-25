@@ -22,7 +22,6 @@
 #include "fs/weather/metar.h"
 
 #include <QCoreApplication>
-#include <QDateTime>
 #include <QLocale>
 
 class RouteLeg;
@@ -32,6 +31,8 @@ class InfoQuery;
 class WeatherReporter;
 class Route;
 class MainWindow;
+
+class QFileInfo;
 
 namespace map {
 struct MapAirport;
@@ -101,6 +102,7 @@ namespace proc {
 struct MapProcedurePoint;
 
 }
+
 /*
  * Builds HTML snippets (no <html> and no <body> tags) for QTextEdits or tooltips.
  */
@@ -230,7 +232,7 @@ public:
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html, const Route* route) const;
+  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.
@@ -278,6 +280,7 @@ private:
   /* Add scenery entries and links into table */
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /* Add coordinates into table */
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
@@ -328,7 +331,10 @@ private:
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
-  QString filepathText(const QString& filepath) const;
+
+  QString filepathTextShow(const QString& filepath) const;
+  QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
+
   QString airplaneType(const atools::fs::sc::SimConnectAircraft& aircraft) const;
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
@@ -351,7 +357,6 @@ private:
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
-
 };
 
 #endif // MAPHTMLINFOBUILDER

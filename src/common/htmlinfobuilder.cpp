@@ -20,6 +20,7 @@
 #include "options/optiondata.h"
 #include "navapp.h"
 #include "atools.h"
+#include "common/airportfiles.h"
 #include "fs/online/onlinetypes.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
@@ -437,8 +438,13 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     html.tableEnd();
   }
 
+  // Add apt.dat or BGL file links
   if(info && !print)
     addAirportScenery(airport, html);
+
+  // Add links to airport files directory "Documents/Airports/ICAO"
+  if(info && !print)
+    addAirportFolder(airport, html);
 
 #ifdef DEBUG_INFORMATION
   html.p().small(QString("Database: airport_id = %1").arg(airport.getId())).pEnd();
@@ -1608,7 +1614,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     {
       head(html, tr("File"));
       html.table();
-      html.row2(tr("Imported from:"), filepathText(rec.valueStr("import_file_path")),
+      html.row2(tr("Imported from:"), filepathTextShow(rec.valueStr("import_file_path")),
                 atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
       html.tableEnd();
     }
@@ -3044,9 +3050,29 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
   head(html, tr("Scenery"));
   html.table();
 
-  html.row2(rec->valueStr("title"), filepathText(rec->valueStr("filepath")),
+  html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")),
             atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
   html.tableEnd();
+}
+
+void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& html) const
+{
+  QFileInfoList airportFiles = AirportFiles::getAirportFiles(airport.ident);
+
+  if(!airportFiles.isEmpty())
+  {
+    head(html, tr("Files"));
+    html.table();
+
+    html.row2(tr("Path:"), filepathTextOpen(AirportFiles::getAirportFilesBase(airport.ident), true),
+              atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+
+    int i = 0;
+    for(const QFileInfo& file : airportFiles)
+      html.row2(i++ > 0 ? QString() : tr("Files:"), filepathTextOpen(file, false),
+                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+    html.tableEnd();
+  }
 }
 
 void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& html) const
@@ -3059,14 +3085,14 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
   if(sceneryInfo != nullptr)
   {
     for(const SqlRecord& rec : *sceneryInfo)
-      html.row2(rec.valueStr("title"), filepathText(rec.valueStr("filepath")),
+      html.row2(rec.valueStr("title"), filepathTextShow(rec.valueStr("filepath")),
                 atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
   }
 
   html.tableEnd();
 }
 
-QString HtmlInfoBuilder::filepathText(const QString& filepath) const
+QString HtmlInfoBuilder::filepathTextShow(const QString& filepath) const
 {
   HtmlBuilder link(true);
 
@@ -3074,6 +3100,16 @@ QString HtmlInfoBuilder::filepathText(const QString& filepath) const
     link.a(filepath, QString("lnm://show?filepath=%1").arg(filepath), atools::util::html::LINK_NO_UL);
   else
     link.text(filepath);
+  return link.getHtml();
+}
+
+QString HtmlInfoBuilder::filepathTextOpen(const QFileInfo& filepath, bool showPath) const
+{
+  HtmlBuilder link(true);
+
+  if(filepath.exists())
+    link.a(showPath ? filepath.filePath() : filepath.fileName(),
+           QUrl::fromLocalFile(filepath.filePath()).toString(QUrl::EncodeSpaces), atools::util::html::LINK_NO_UL);
   return link.getHtml();
 }
 
