@@ -846,7 +846,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
     if(columnCanFilter)
       // Disabled menu items don't need any content
-      fieldData = controller->getFieldDataAt(index);
+      fieldData = atools::elideTextShort(controller->getFieldDataAt(index), 30);
 
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
       // Get position to display range rings
