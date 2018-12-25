@@ -625,6 +625,11 @@ map::MapWeatherSource NavApp::getMapWeatherSource()
   return mainWindow->getMapWidget()->getMapWeatherSource();
 }
 
+bool NavApp::isMapWeatherShown()
+{
+  return getMainUi()->actionMapShowAirportWeather->isChecked();
+}
+
 RouteController *NavApp::getRouteController()
 {
   return mainWindow->getRouteController();

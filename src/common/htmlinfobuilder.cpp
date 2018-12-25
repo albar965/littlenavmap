@@ -1109,7 +1109,6 @@ static const Flags WEATHER_TITLE_FLAGS = atools::util::html::BOLD | atools::util
 void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport,
                                   atools::util::HtmlBuilder& html) const
 {
-
   if(info)
   {
     if(!print)
@@ -1117,6 +1116,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
     // Source for map icon display
     MapWeatherSource src = NavApp::getMapWeatherSource();
+    bool weatherShown = NavApp::isMapWeatherShown();
 
     // Simconnect or X-Plane weather file metar ===========================
     if(context.fsMetar.isValid())
@@ -1133,7 +1133,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         html.p(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
         decodedMetar(html, airport, map::MapAirport(), met, false /* interpolated */, fsxP3d,
-                     src == WEATHER_SOURCE_SIMULATOR);
+                     src == WEATHER_SOURCE_SIMULATOR && weatherShown);
       }
 
       if(!metar.metarForNearest.isEmpty())
@@ -1155,7 +1155,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         }
 
         decodedMetar(html, airport, reportAirport, met, false /* interpolated */, fsxP3d,
-                     src == WEATHER_SOURCE_SIMULATOR);
+                     src == WEATHER_SOURCE_SIMULATOR && weatherShown);
       }
 
       if(!metar.metarForInterpolated.isEmpty())
@@ -1181,22 +1181,22 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         html.p(context.asType, WEATHER_TITLE_FLAGS);
 
       decodedMetar(html, airport, map::MapAirport(), Metar(context.asMetar), false /* interpolated */,
-                   false /* FSX/P3D */, src == WEATHER_SOURCE_ACTIVE_SKY);
+                   false /* FSX/P3D */, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown);
     }
 
     // NOAA or nearest
-    decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA);
+    decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
 
     // Vatsim metar ===========================
     if(!context.vatsimMetar.isEmpty())
     {
       html.p(tr("VATSIM Weather"), WEATHER_TITLE_FLAGS);
       decodedMetar(html, airport, map::MapAirport(), Metar(context.vatsimMetar),
-                   false /* interpolated */, false /* FSX/P3D */, src == WEATHER_SOURCE_VATSIM);
+                   false /* interpolated */, false /* FSX/P3D */, src == WEATHER_SOURCE_VATSIM && weatherShown);
     }
 
     // IVAO or nearest
-    decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO);
+    decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
   }
 }
 

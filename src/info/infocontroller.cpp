@@ -140,7 +140,8 @@ void InfoController::currentInfoTabChanged(int index)
   switch(static_cast<ic::TabIndex>(index))
   {
     case ic::INFO_AIRPORT:
-      updateAirportInternal(false /* new */, true /* bearing changed */, false /* scroll to top */);
+      updateAirportInternal(false /* new */, true /* bearing changed */, false /* scroll to top */,
+                            false /* force weather update */);
       break;
     case ic::INFO_NAVAID:
       updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);
@@ -324,7 +325,14 @@ void InfoController::restoreState()
 
 void InfoController::updateAirport()
 {
-  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */);
+  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */,
+                        false /* force weather update */);
+}
+
+void InfoController::updateAirportWeather()
+{
+  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */,
+                        true /* force weather update */);
 }
 
 void InfoController::updateProgress()
@@ -343,7 +351,8 @@ void InfoController::updateProgress()
   }
 }
 
-void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop)
+void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop,
+                                           bool forceWeatherUpdate)
 {
   if(databaseLoadStatus)
     return;
@@ -357,7 +366,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
     // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
     // << "ident" << currentWeatherContext.ident;
 
-    if(newAirport || weatherChanged || bearingChange)
+    if(newAirport || weatherChanged || bearingChange || forceWeatherUpdate)
     {
       HtmlBuilder html(true);
       map::MapAirport airport;
@@ -372,7 +381,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
       atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml(),
                                         scrollToTop, !scrollToTop /* keep selection */);
 
-      if(newAirport || weatherChanged)
+      if(newAirport || weatherChanged || forceWeatherUpdate)
       {
         html.clear();
         infoBuilder->weatherText(currentWeatherContext, airport, html);
@@ -518,7 +527,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Remember one airport
     currentSearchResult.airports.append(airport);
 
-    updateAirportInternal(true /* new */, false /* bearing change*/, scrollToTop);
+    updateAirportInternal(true /* new */, false /* bearing change*/, scrollToTop, false /* force weather update */);
 
     html.clear();
     infoBuilder->runwayText(airport, html);
@@ -973,7 +982,8 @@ void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
     if(data.getUserAircraftConst().isValid() && ui->dockWidgetInformation->isVisible())
     {
       if(ui->tabWidgetInformation->currentIndex() == ic::INFO_AIRPORT)
-        updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */);
+        updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */,
+                              false /* force weather update */);
 
       if(ui->tabWidgetInformation->currentIndex() == ic::INFO_NAVAID)
         updateNavaidInternal(currentSearchResult, true /* bearing changed */, false /* scroll to top */);

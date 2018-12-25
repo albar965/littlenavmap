@@ -1116,6 +1116,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapHideRangeRings, &QAction::triggered, mapWidget, &MapWidget::clearRangeRingsAndDistanceMarkers);
 
+  connect(ui->actionMapShowAirportWeather, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
+
   // Clear selection and highlights
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, searchController, &SearchController::clearSelection);
@@ -1145,11 +1147,11 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   // Update map weather source hightlights
-  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirport);
-  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirport);
-  connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, infoController, &InfoController::updateAirport);
-  connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, infoController, &InfoController::updateAirport);
-  connect(ui->actionMapShowWeatherIvao, &QAction::toggled, infoController, &InfoController::updateAirport);
+  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
+  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
+  connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
+  connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
+  connect(ui->actionMapShowWeatherIvao, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 
   // Sun shading
   connect(ui->actionMapShowSunShading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1245,12 +1247,12 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
-  connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirport);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
-  connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirport);
+  connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirportWeather);
 
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
@@ -1264,7 +1266,7 @@ void MainWindow::connectAllSlots()
 void MainWindow::weatherUpdateTimeout()
 {
   // if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
-  infoController->updateAirport();
+  infoController->updateAirportWeather();
 }
 
 void MainWindow::themeMenuTriggered(bool checked)

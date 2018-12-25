@@ -74,6 +74,7 @@ public:
   /* Update the currently shown airport information if weather data or connection status has changed.
    * Does not raise windows and does not scroll to top. */
   void updateAirport();
+  void updateAirportWeather();
 
   /* Updates aircraft progress only. */
   void updateProgress();
@@ -120,7 +121,7 @@ private:
   /* Bearing update in information window time limit */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
-  void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop);
+  void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
   bool updateNavaidInternal(const map::MapSearchResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();

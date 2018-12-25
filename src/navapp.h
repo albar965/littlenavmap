@@ -262,6 +262,7 @@ public:
   static StyleHandler *getStyleHandler();
 
   static map::MapWeatherSource getMapWeatherSource();
+  static bool isMapWeatherShown();
 
   static const QString& getCurrentRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
