@@ -113,7 +113,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
 
-  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseNav());
+  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseMora());
   moraReader->readFromTable();
 
   vehicleIcons = new VehicleIcons();
@@ -302,7 +302,7 @@ void NavApp::postDatabaseLoad()
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
   magDecReader->readFromTable(*getDatabaseSim());
-  moraReader->readFromTable(*getDatabaseNav());
+  moraReader->readFromTable(*getDatabaseMora());
 
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
@@ -472,6 +472,11 @@ atools::sql::SqlDatabase *NavApp::getDatabaseSim()
 atools::sql::SqlDatabase *NavApp::getDatabaseNav()
 {
   return getDatabaseManager()->getDatabaseNav();
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseMora()
+{
+  return getDatabaseManager()->getDatabaseMora();
 }
 
 atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()

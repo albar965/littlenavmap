@@ -177,11 +177,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_MORA);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
 
   databaseSim = new SqlDatabase(DATABASE_NAME);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
+  databaseMora = new SqlDatabase(DATABASE_NAME_MORA);
 
   if(mainWindow != nullptr)
   {
@@ -226,11 +228,13 @@ DatabaseManager::~DatabaseManager()
 
   delete databaseSim;
   delete databaseNav;
+  delete databaseMora;
   delete databaseUser;
   delete databaseOnline;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
+  SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
@@ -823,6 +827,7 @@ void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
   QString navDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString moraDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
 
   if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     simDbFile = navDbFile;
@@ -832,6 +837,7 @@ void DatabaseManager::openAllDatabases()
 
   openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
+  openDatabaseFile(databaseMora, moraDbFile, true /* readonly */, true /* createSchema */);
 }
 
 void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
@@ -931,6 +937,7 @@ void DatabaseManager::closeDatabases()
 {
   closeDatabaseFile(databaseSim);
   closeDatabaseFile(databaseNav);
+  closeDatabaseFile(databaseMora);
 }
 
 void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
@@ -961,6 +968,11 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabaseSim()
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseNav()
 {
   return databaseNav;
+}
+
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseMora()
+{
+  return databaseMora;
 }
 
 void DatabaseManager::run()

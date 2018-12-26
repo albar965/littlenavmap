@@ -97,7 +97,8 @@ public:
   void openAllDatabases();
 
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
-  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName, bool backup);
+  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
+                             bool backup);
   void closeUserDatabase();
   void closeOnlineDatabase();
 
@@ -110,6 +111,9 @@ public:
 
   /* Get navaid database or same as above if it does not exist */
   atools::sql::SqlDatabase *getDatabaseNav();
+
+  /* Get nav database for MORA data */
+  atools::sql::SqlDatabase *getDatabaseMora();
 
   /*
    * Insert actions for switching between installed flight simulators.
@@ -230,6 +234,9 @@ private:
   /* Navaid database e.g. from Navigraph */
   const QString DATABASE_NAME_NAV = "LNMDBNAV";
 
+  /* MORA database e.g. from Navigraph */
+  const QString DATABASE_NAME_MORA = "LNMDBMORA";
+
   /* Userpoint database */
   const QString DATABASE_NAME_USER = "LNMDBUSER";
 
@@ -247,6 +254,7 @@ private:
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *databaseSim = nullptr /* Database for simulator content */,
                            *databaseNav = nullptr /* Database for third party navigation data */,
+                           *databaseMora = nullptr /* Database for MORA data - always nav */,
                            *databaseUser = nullptr /* Database for user data */,
                            *databaseOnline = nullptr /* Database for network online data */;
 
