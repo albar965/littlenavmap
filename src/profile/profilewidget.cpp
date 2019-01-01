@@ -1591,6 +1591,9 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   if(!rectArea.contains(pointArea) && !rectLabel.contains(pointLabel))
     menuPos = scrollArea->getScrollArea()->mapToGlobal(rectArea.center());
 
+  // Move menu position off the cursor to avoid accidental selection on touchpads
+  menuPos += QPoint(3, 3);
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->actionProfileShowOnMap->setEnabled(hasPosition && !routeEmpty);
   ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());

@@ -1833,6 +1833,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     point = QPoint();
   }
 
+  if(event->reason() != QContextMenuEvent::Keyboard)
+    // Move menu position off the cursor to avoid accidental selection on touchpads
+    menuPos += QPoint(3, 3);
+
   hideTooltip();
 
   Ui::MainWindow *ui = mainWindow->getUi();

@@ -24,6 +24,7 @@
 #include "gui/helphandler.h"
 #include "query/procedurequery.h"
 #include "common/constants.h"
+#include "common/tabindexes.h"
 #include "fs/db/databasemeta.h"
 #include "common/formatter.h"
 #include "fs/perf/aircraftperf.h"
@@ -1647,6 +1648,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Use widget center if position is not inside widget
   if(!ui->tableViewRoute->rect().contains(ui->tableViewRoute->mapFromGlobal(QCursor::pos())))
     menuPos = ui->tableViewRoute->mapToGlobal(ui->tableViewRoute->rect().center());
+
+  // Move menu position off the cursor to avoid accidental selection on touchpads
+  menuPos += QPoint(3, 3);
 
   qDebug() << "tableContextMenu";
 

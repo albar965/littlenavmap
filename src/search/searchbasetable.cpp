@@ -808,6 +808,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   if(!view->rect().contains(view->mapFromGlobal(QCursor::pos())))
     menuPos = view->mapToGlobal(view->rect().center());
 
+  // Move menu position off the cursor to avoid accidental selection on touchpads
+  menuPos += QPoint(3, 3);
+
   QString fieldData = "Data";
 
   // Save and restore action texts on return

@@ -806,6 +806,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   if(!treeWidget->rect().contains(treeWidget->mapFromGlobal(QCursor::pos())))
     menuPos = treeWidget->mapToGlobal(treeWidget->rect().center());
 
+  // Move menu position off the cursor to avoid accidental selection on touchpads
+  menuPos += QPoint(3, 3);
+
   // Save text which will be changed below
   Ui::MainWindow *ui = NavApp::getMainUi();
   ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach,
