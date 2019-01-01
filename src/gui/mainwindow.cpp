@@ -1260,6 +1260,96 @@ void MainWindow::connectAllSlots()
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
+
+  // Shortcut menu
+  connect(ui->actionShortcutAirportSearch, &QAction::triggered,
+          this, &MainWindow::actionShortcutAirportSearchTriggered);
+  connect(ui->actionShortcutNavaidSearch, &QAction::triggered,
+          this, &MainWindow::actionShortcutNavaidSearchTriggered);
+  connect(ui->actionShortcutUserpointSearch, &QAction::triggered,
+          this, &MainWindow::actionShortcutUserpointSearchTriggered);
+  connect(ui->actionShortcutFlightPlan, &QAction::triggered,
+          this, &MainWindow::actionShortcutFlightPlanTriggered);
+  connect(ui->actionShortcutAircraftPerformance, &QAction::triggered,
+          this, &MainWindow::actionShortcutAircraftPerformanceTriggered);
+  connect(ui->actionShortcutAirportInformation, &QAction::triggered,
+          this, &MainWindow::actionShortcutAirportInformationTriggered);
+  connect(ui->actionShortcutAirportWeather, &QAction::triggered,
+          this, &MainWindow::actionShortcutAirportWeatherTriggered);
+  connect(ui->actionShortcutNavaidInformation, &QAction::triggered,
+          this, &MainWindow::actionShortcutNavaidInformationTriggered);
+}
+
+void MainWindow::actionShortcutAirportSearchTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->raise();
+  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
+  ui->lineEditAirportIcaoSearch->setFocus();
+}
+
+void MainWindow::actionShortcutNavaidSearchTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->raise();
+  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
+  ui->lineEditNavIcaoSearch->setFocus();
+}
+
+void MainWindow::actionShortcutUserpointSearchTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->raise();
+  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
+  ui->lineEditUserdataIdent->setFocus();
+}
+
+void MainWindow::actionShortcutFlightPlanTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetRoute->show();
+  ui->dockWidgetRoute->raise();
+  ui->tabWidgetRoute->setCurrentIndex(rc::ROUTE);
+  ui->tableViewRoute->setFocus();
+}
+
+void MainWindow::actionShortcutAircraftPerformanceTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetRoute->show();
+  ui->dockWidgetRoute->raise();
+  ui->tabWidgetRoute->setCurrentIndex(rc::AIRCRAFT);
+  ui->textBrowserAircraftPerformanceReport->setFocus();
+}
+
+void MainWindow::actionShortcutAirportInformationTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetInformation->show();
+  ui->dockWidgetInformation->raise();
+  ui->tabWidgetInformation->setCurrentIndex(ic::INFO_AIRPORT);
+  ui->textBrowserAirportInfo->setFocus();
+}
+
+void MainWindow::actionShortcutAirportWeatherTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetInformation->show();
+  ui->dockWidgetInformation->raise();
+  ui->tabWidgetInformation->setCurrentIndex(ic::INFO_WEATHER);
+  ui->textBrowserWeatherInfo->setFocus();
+}
+
+void MainWindow::actionShortcutNavaidInformationTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetInformation->show();
+  ui->dockWidgetInformation->raise();
+  ui->tabWidgetInformation->setCurrentIndex(ic::INFO_NAVAID);
+  ui->textBrowserNavaidInfo->setFocus();
 }
 
 /* Update the info weather */
@@ -1699,11 +1789,11 @@ void MainWindow::updateWindowTitle()
   // Add a star to the flight plan tab if changed
   if(routeController->hasChanged())
   {
-    if(!ui->tabWidgetRoute->tabText(0).endsWith(tr(" *")))
-      ui->tabWidgetRoute->setTabText(0, ui->tabWidgetRoute->tabText(0) + tr(" *"));
+    if(!ui->tabWidgetRoute->tabText(rc::ROUTE).endsWith(tr(" *")))
+      ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE) + tr(" *"));
   }
   else
-    ui->tabWidgetRoute->setTabText(0, ui->tabWidgetRoute->tabText(0).replace(tr(" *"), QString()));
+    ui->tabWidgetRoute->setTabText(rc::ROUTE, ui->tabWidgetRoute->tabText(rc::ROUTE).replace(tr(" *"), QString()));
 
   setWindowTitle(newTitle);
 }

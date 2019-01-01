@@ -290,6 +290,16 @@ private:
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
 
+  /* Action from shortcut menu triggered */
+  void actionShortcutAirportSearchTriggered();
+  void actionShortcutNavaidSearchTriggered();
+  void actionShortcutUserpointSearchTriggered();
+  void actionShortcutFlightPlanTriggered();
+  void actionShortcutAircraftPerformanceTriggered();
+  void actionShortcutAirportInformationTriggered();
+  void actionShortcutAirportWeatherTriggered();
+  void actionShortcutNavaidInformationTriggered();
+
   /* Get all file extensions accepted by the drag and drop handler */
   QStringList getAcceptedFileExtensions();
 
@@ -357,6 +367,7 @@ private:
 
   QString aboutMessage;
   QTimer clockTimer;
+
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

@@ -121,9 +121,26 @@
       <string>&amp;Style</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuShortcuts">
+     <property name="title">
+      <string>Short&amp;cuts</string>
+     </property>
+     <addaction name="actionShortcutAirportSearch"/>
+     <addaction name="actionShortcutNavaidSearch"/>
+     <addaction name="actionShortcutUserpointSearch"/>
+     <addaction name="separator"/>
+     <addaction name="actionShortcutFlightPlan"/>
+     <addaction name="actionShortcutAircraftPerformance"/>
+     <addaction name="separator"/>
+     <addaction name="actionShortcutAirportInformation"/>
+     <addaction name="actionShortcutAirportWeather"/>
+     <addaction name="actionShortcutNavaidInformation"/>
+    </widget>
     <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
     <addaction name="menuWindowStyle"/>
+    <addaction name="separator"/>
+    <addaction name="menuShortcuts"/>
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowStatusbar"/>
@@ -9182,6 +9199,118 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionShortcutAirportSearch">
+   <property name="text">
+    <string>&amp;Airport Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Airport Search Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Airport Search Window</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionShortcutNavaidSearch">
+   <property name="text">
+    <string>&amp;Navaid Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Navaid Search Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Navaid Search Window</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionShortcutUserpointSearch">
+   <property name="text">
+    <string>&amp;Userpoint Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Userpoint Search Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Userpoint Search Window</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionShortcutFlightPlan">
+   <property name="text">
+    <string>&amp;Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Flight Plan table</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Flight Plan table</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
+   </property>
+  </action>
+  <action name="actionShortcutAirportInformation">
+   <property name="text">
+    <string>Airport &amp;Information</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Airport Information</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Airport Information</string>
+   </property>
+   <property name="shortcut">
+    <string>F8</string>
+   </property>
+  </action>
+  <action name="actionShortcutAirportWeather">
+   <property name="text">
+    <string>Airport &amp;Weather Information</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Airport Weather Information</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Airport Weather Information</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
+   </property>
+  </action>
+  <action name="actionShortcutNavaidInformation">
+   <property name="text">
+    <string>Navaid &amp;Information</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Navaid Information</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Navaid Information</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
+   </property>
+  </action>
+  <action name="actionShortcutAircraftPerformance">
+   <property name="text">
+    <string>Aircraft &amp;Performance</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Aircraft Performance and Fuel Planning</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Aircraft Performance and Fuel Planning</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
    </property>
   </action>
  </widget>

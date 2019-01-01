@@ -31,29 +31,6 @@ class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
 
-namespace ic {
-enum TabIndex
-{
-  INFO_AIRPORT = 0,
-  INFO_RUNWAYS = 1,
-  INFO_COM = 2,
-  INFO_APPROACHES = 3,
-  INFO_WEATHER = 4,
-  INFO_NAVAID = 5,
-  INFO_AIRSPACE = 6,
-  INFO_ONLINE_CLIENT = 7,
-  INFO_ONLINE_CENTER = 8
-};
-
-enum TabIndexAircraft
-{
-  AIRCRAFT_USER = 0,
-  AIRCRAFT_USER_PROGRESS = 1,
-  AIRCRAFT_AI = 2
-};
-
-}
-
 /*
  * Takes care of the information and simulator aircraft dock windows and tabs
  */

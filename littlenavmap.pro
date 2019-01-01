@@ -250,7 +250,8 @@ SOURCES += src/main.cpp\
     src/perf/aircraftperfcontroller.cpp \
     src/common/unitstringtool.cpp \
     src/mapgui/mappainterweather.cpp \
-    src/common/airportfiles.cpp
+    src/common/airportfiles.cpp \
+    src/common/tabindexes.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -367,7 +368,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/perf/aircraftperfcontroller.h \
     src/common/unitstringtool.h \
     src/mapgui/mappainterweather.h \
-    src/common/airportfiles.h
+    src/common/airportfiles.h \
+    src/common/tabindexes.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

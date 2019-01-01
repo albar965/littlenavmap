@@ -22,6 +22,7 @@
 #include "common/constants.h"
 #include "common/maptools.h"
 #include "common/htmlinfobuilder.h"
+#include "common/tabindexes.h"
 #include "online/onlinedatacontroller.h"
 #include "gui/tools.h"
 #include "gui/mainwindow.h"

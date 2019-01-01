@@ -32,6 +32,7 @@
 #include "gui/dialog.h"
 #include "ui_mainwindow.h"
 #include "common/unit.h"
+#include "common/tabindexes.h"
 #include "util/htmlbuilder.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/errorhandler.h"
@@ -368,8 +369,9 @@ bool AircraftPerfController::checkForChanges()
 
 bool AircraftPerfController::collectPerformanceDialog()
 {
-  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_URL + "AIRCRAFTPERF.html#aircraft-performance-collect",
-                                                     lnm::helpLanguageOnline());
+  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(
+    lnm::HELP_ONLINE_URL + "AIRCRAFTPERF.html#aircraft-performance-collect",
+    lnm::helpLanguageOnline());
 
   QString doNotShow = tr("Do not &show this dialog again.");
   QString message = tr("<p>Aircraft Performance will be collected automtically during flight.</p>"
@@ -531,11 +533,12 @@ void AircraftPerfController::updateReport()
   // Update tab title to indicate change ========================================
   if(changed)
   {
-    if(!ui->tabWidgetRoute->tabText(1).endsWith(tr(" *")))
-      ui->tabWidgetRoute->setTabText(1, ui->tabWidgetRoute->tabText(1) + tr(" *"));
+    if(!ui->tabWidgetRoute->tabText(rc::AIRCRAFT).endsWith(tr(" *")))
+      ui->tabWidgetRoute->setTabText(rc::AIRCRAFT, ui->tabWidgetRoute->tabText(rc::AIRCRAFT) + tr(" *"));
   }
   else
-    ui->tabWidgetRoute->setTabText(1, ui->tabWidgetRoute->tabText(1).replace(tr(" *"), QString()));
+    ui->tabWidgetRoute->setTabText(rc::AIRCRAFT,
+                                   ui->tabWidgetRoute->tabText(rc::AIRCRAFT).replace(tr(" *"), QString()));
 
   // Write HTML report ================================================================
   HtmlBuilder html(true /* background color */);
