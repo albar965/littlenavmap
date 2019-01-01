@@ -1670,9 +1670,12 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   // Add bearing/distance to table
   bearingText(waypoint.position, waypoint.magvar, html);
 
-  html.row2(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
-  if(rec != nullptr && !rec->isNull("airport_id"))
-    airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
+  if(info)
+  {
+    html.row2(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
+    if(rec != nullptr && !rec->isNull("airport_id"))
+      airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
+  }
   html.row2(tr("Region:"), waypoint.region);
   html.row2(tr("Magnetic declination:"), map::magvarText(waypoint.magvar));
   addCoordinates(rec, html);

@@ -678,9 +678,9 @@ void MainWindow::setupUi()
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->toolBarMain->toggleViewAction(),
                                ui->toolBarMap->toggleViewAction(),
-                               ui->toolBarAirspaces->toggleViewAction(),
                                ui->toolbarMapOptions->toggleViewAction(),
                                ui->toolBarRoute->toggleViewAction(),
+                               ui->toolBarAirspaces->toggleViewAction(),
                                ui->toolBarView->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
