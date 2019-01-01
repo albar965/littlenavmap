@@ -299,6 +299,7 @@ private:
   void actionShortcutAirportInformationTriggered();
   void actionShortcutAirportWeatherTriggered();
   void actionShortcutNavaidInformationTriggered();
+  void actionShortcutAircraftProgressTriggered();
 
   /* Get all file extensions accepted by the drag and drop handler */
   QStringList getAcceptedFileExtensions();

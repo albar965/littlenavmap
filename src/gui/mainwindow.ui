@@ -135,6 +135,8 @@
      <addaction name="actionShortcutAirportInformation"/>
      <addaction name="actionShortcutAirportWeather"/>
      <addaction name="actionShortcutNavaidInformation"/>
+     <addaction name="separator"/>
+     <addaction name="actionShortcutAircraftProgress"/>
     </widget>
     <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
@@ -9311,6 +9313,20 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F7</string>
+   </property>
+  </action>
+  <action name="actionShortcutAircraftProgress">
+   <property name="text">
+    <string>&amp;Simulator Aircraft Progress</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Simulator Aircraft Progress</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Simulator Aircraft Progress</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
    </property>
   </action>
  </widget>

@@ -1278,12 +1278,15 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutAirportWeatherTriggered);
   connect(ui->actionShortcutNavaidInformation, &QAction::triggered,
           this, &MainWindow::actionShortcutNavaidInformationTriggered);
+  connect(ui->actionShortcutAircraftProgress, &QAction::triggered,
+          this, &MainWindow::actionShortcutAircraftProgressTriggered);
 }
 
 void MainWindow::actionShortcutAirportSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
   ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
   ui->lineEditAirportIcaoSearch->setFocus();
@@ -1293,6 +1296,7 @@ void MainWindow::actionShortcutNavaidSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
   ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
   ui->lineEditNavIcaoSearch->setFocus();
@@ -1302,6 +1306,7 @@ void MainWindow::actionShortcutUserpointSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->activateWindow();
   ui->dockWidgetSearch->raise();
   ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
   ui->lineEditUserdataIdent->setFocus();
@@ -1311,6 +1316,7 @@ void MainWindow::actionShortcutFlightPlanTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetRoute->show();
+  ui->dockWidgetRoute->activateWindow();
   ui->dockWidgetRoute->raise();
   ui->tabWidgetRoute->setCurrentIndex(rc::ROUTE);
   ui->tableViewRoute->setFocus();
@@ -1320,6 +1326,7 @@ void MainWindow::actionShortcutAircraftPerformanceTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetRoute->show();
+  ui->dockWidgetRoute->activateWindow();
   ui->dockWidgetRoute->raise();
   ui->tabWidgetRoute->setCurrentIndex(rc::AIRCRAFT);
   ui->textBrowserAircraftPerformanceReport->setFocus();
@@ -1329,6 +1336,7 @@ void MainWindow::actionShortcutAirportInformationTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetInformation->show();
+  ui->dockWidgetInformation->activateWindow();
   ui->dockWidgetInformation->raise();
   ui->tabWidgetInformation->setCurrentIndex(ic::INFO_AIRPORT);
   ui->textBrowserAirportInfo->setFocus();
@@ -1338,6 +1346,7 @@ void MainWindow::actionShortcutAirportWeatherTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetInformation->show();
+  ui->dockWidgetInformation->activateWindow();
   ui->dockWidgetInformation->raise();
   ui->tabWidgetInformation->setCurrentIndex(ic::INFO_WEATHER);
   ui->textBrowserWeatherInfo->setFocus();
@@ -1347,9 +1356,20 @@ void MainWindow::actionShortcutNavaidInformationTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   ui->dockWidgetInformation->show();
+  ui->dockWidgetInformation->activateWindow();
   ui->dockWidgetInformation->raise();
   ui->tabWidgetInformation->setCurrentIndex(ic::INFO_NAVAID);
   ui->textBrowserNavaidInfo->setFocus();
+}
+
+void MainWindow::actionShortcutAircraftProgressTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetAircraft->show();
+  ui->dockWidgetAircraft->activateWindow();
+  ui->dockWidgetAircraft->raise();
+  ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_USER_PROGRESS);
+  ui->textBrowserAircraftProgressInfo->setFocus();
 }
 
 /* Update the info weather */
