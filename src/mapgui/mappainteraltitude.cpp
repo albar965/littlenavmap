@@ -126,11 +126,11 @@ void MapPainterAltitude::render(PaintContext *context)
       } // for(int laty = south; laty <= north + 1; laty++)
 
       // Adjust minmum and maximum font height based on rectangle width
-      minWidth = std::max(minWidth * 0.6f, 25.f);
+      // minWidth = std::max(minWidth * 0.6f, 25.f);
       minWidth = std::min(minWidth * 0.6f, 150.f);
 
       // Draw texts =================================================================
-      if(!context->drawFast)
+      if(!context->drawFast && minWidth > 7.f)
       {
         context->painter->setPen(QPen(mapcolors::minimumAltitudeNumberColor, 1.f));
         QFont font = context->painter->font();
