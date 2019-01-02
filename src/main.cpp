@@ -172,6 +172,14 @@ int main(int argc, char *argv[])
 
     atools::fs::FsPaths::logAllPaths();
 
+    qInfo() << "QT_OPENGL" << QString::fromLocal8Bit(qgetenv("QT_OPENGL").constData());
+    if(app.testAttribute(Qt::AA_UseDesktopOpenGL))
+      qInfo() << "Using Qt desktop renderer";
+    if(app.testAttribute(Qt::AA_UseOpenGLES))
+      qInfo() << "Using Qt angle renderer";
+    if(app.testAttribute(Qt::AA_UseSoftwareOpenGL))
+      qInfo() << "Using Qt software renderer";
+
     migrate::checkAndMigrateSettings();
 
     Settings& settings = Settings::instance();
