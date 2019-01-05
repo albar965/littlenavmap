@@ -141,6 +141,9 @@ public:
   void fuelReport(atools::util::HtmlBuilder& html, bool print = false);
   void fuelReportFilepath(atools::util::HtmlBuilder& html, bool print);
 
+  /* Detect format by reading the first few lines */
+  static bool isPerformanceFile(const QString& file);
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);

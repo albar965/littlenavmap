@@ -81,6 +81,7 @@
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
     <addaction name="actionRouteSaveAsFms11"/>
+    <addaction name="actionRouteSaveAsFlightGear"/>
     <addaction name="actionRouteSaveAsFlp"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveAsClean"/>
@@ -9327,6 +9328,24 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F11</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsFlightGear">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveasfg.svg</normaloff>:/littlenavmap/resources/icons/saveasfg.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Flight Plan as Flight&amp;Gear FGFP ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FGFP file for the FlightGear simulator</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FGFP file for the FlightGear simulator</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+G</string>
    </property>
   </action>
  </widget>

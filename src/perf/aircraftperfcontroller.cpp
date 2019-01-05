@@ -661,6 +661,13 @@ void AircraftPerfController::fuelReportFilepath(atools::util::HtmlBuilder& html,
   }
 }
 
+bool AircraftPerfController::isPerformanceFile(const QString& file)
+{
+  QStringList lines = atools::probeFile(file);
+  return file.endsWith(".lnmperf", Qt::CaseInsensitive) ||
+         lines.at(0).startsWith("[options]") || lines.at(0).startsWith("[perf]");
+}
+
 void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool print)
 {
   if(print)

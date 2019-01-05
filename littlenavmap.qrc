@@ -220,5 +220,6 @@
         <file>resources/icons/aircraftperfsaveas.svg</file>
         <file>resources/icons/aircraftperfsave.svg</file>
         <file>resources/icons/aircraftperf.svg</file>
+        <file>resources/icons/saveasfg.svg</file>
     </qresource>
 </RCC>

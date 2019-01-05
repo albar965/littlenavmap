@@ -15,7 +15,7 @@
    width="24"
    version="1.0"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="saveasflp.svg">
+   sodipodi:docname="saveasfg.svg">
   <metadata
      id="metadata87">
     <rdf:RDF>
@@ -41,9 +41,9 @@
      inkscape:window-height="1056"
      id="namedview85"
      showgrid="false"
-     inkscape:zoom="13.906433"
-     inkscape:cx="-4.8645482"
-     inkscape:cy="4.9159799"
+     inkscape:zoom="27.812866"
+     inkscape:cx="4.5083014"
+     inkscape:cy="5.7632693"
      inkscape:window-x="38"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -630,22 +630,83 @@
        x="-25.952" />
   </g>
   <rect
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#3f3d41;stroke-width:1.05066025;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#3f3d41;stroke-width:1.05066013;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3386"
-     width="21.622307"
-     height="12.044938"
-     x="1.1676402"
-     y="10.570887" />
+     width="18.206621"
+     height="12.943802"
+     x="4.5833254"
+     y="10.175385" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:11.25004768px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.89617676px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     x="1.5771031"
-     y="18.940617"
+     style="font-style:normal;font-weight:normal;font-size:11.25004768px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#3a80bd;fill-opacity:1;stroke:none;stroke-width:0.89617676px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+     x="15.538852"
+     y="18.876173"
      id="text3303"
-     transform="scale(0.89617674,1.1158513)"><tspan
+     transform="scale(0.89617675,1.1158513)"><tspan
        sodipodi:role="line"
        id="tspan3305"
-       x="1.5771031"
-       y="18.940617"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.89617676px">FLP</tspan></text>
+       x="15.538852"
+       y="18.876173"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.89617676px;fill:#3a80bd;fill-opacity:1;">F</tspan></text>
+  <g
+     id="g1050"
+     transform="matrix(0.94863631,0,0,0.88764195,0.51317045,1.2035835)"
+     style="stroke-width:1.0897609">
+    <rect
+       y="11.672035"
+       x="7.1909189"
+       height="2.8000002"
+       width="2.8"
+       id="rect933"
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="11.672035"
+       x="9.9909191"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3"
+       style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="14.472035"
+       x="7.1909189"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3-6"
+       style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="14.472035"
+       x="9.9909191"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3-6-7"
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="17.272036"
+       x="7.1909189"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3-6-7-5"
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="20.072037"
+       x="7.1909189"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3-6-7-5-3"
+       style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="20.072037"
+       x="9.9909191"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3-6-7-5-5"
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       y="17.272038"
+       x="9.9909191"
+       height="2.8000002"
+       width="2.8"
+       id="rect933-3-6-7-5-3-6"
+       style="opacity:1;fill:#ffff00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:3.26928306;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  </g>
 </svg>

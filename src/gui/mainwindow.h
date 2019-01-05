@@ -232,6 +232,7 @@ private:
   bool routeSave();
   bool routeSaveAsPln();
   bool routeSaveAsFlp();
+  bool routeSaveAsFlightGear();
   bool routeSaveAsFms(atools::fs::pln::FileFormat format);
   bool routeSaveAsFms3();
   bool routeSaveAsFms11();
@@ -300,9 +301,6 @@ private:
   void actionShortcutAirportWeatherTriggered();
   void actionShortcutNavaidInformationTriggered();
   void actionShortcutAircraftProgressTriggered();
-
-  /* Get all file extensions accepted by the drag and drop handler */
-  QStringList getAcceptedFileExtensions();
 
   /* Original unchanged window title */
   QString mainWindowTitle;

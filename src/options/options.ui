@@ -2899,7 +2899,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
           <item>
            <widget class="QCheckBox" name="checkBoxOptionsRouteShortName">
             <property name="text">
-             <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX or P3D flight plans instead of the long name</string>
+             <string>Use a &amp;short name &quot;ICAO_ICAO.pln&quot; when saving FSX, P3D or FlightGear flight plans instead of the long name</string>
             </property>
            </widget>
           </item>
