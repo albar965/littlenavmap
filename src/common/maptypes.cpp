@@ -857,7 +857,7 @@ bool MapAirport::empty() const
 {
   if(rating == -1)
     // Not calculated
-    return !parking() && !taxiway() && !apron() && !addon();
+    return !parking() && !taxiway() && !apron() && !addon() && !helipad();
   else
     return rating == 0;
 }
