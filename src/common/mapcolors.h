@@ -118,14 +118,11 @@ extern QColor mapPrintRowColorAlt;
 extern QColor mapPrintHeaderColor;
 
 // ==========================================================================
-/* General text pens */
-const QPen textBackgroundPen = QPen(QBrush(QColor(Qt::lightGray)), 1, Qt::SolidLine, Qt::FlatCap);
-const QPen textPen = QPen(QBrush(QColor(0, 0, 0)), 1, Qt::SolidLine, Qt::FlatCap);
 
-/* Airport diagram background */
+extern QPen taxiwayLinePen;
+extern QColor taxiwayNameColor;
+extern QColor taxiwayNameBackgroundColor;
 
-const QColor taxiwayNameColor = QColor(Qt::black);
-const QColor taxiwayNameBackgroundColor = QColor(255, 255, 120);
 const QBrush taxiwayClosedBrush = QBrush(QColor(255, 255, 0), Qt::BDiagPattern);
 
 const QColor runwayOutlineColor = QColor(Qt::black);

@@ -405,7 +405,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
         for(int i = 0; i < taxipaths->size(); i++)
         {
-          painter->setPen(QPen(mapcolors::taxiwayNameBackgroundColor, 1, Qt::DashLine, Qt::RoundCap));
+          painter->setPen(mapcolors::taxiwayLinePen);
           painter->drawLine(startPts.at(i), endPts.at(i));
         }
       }

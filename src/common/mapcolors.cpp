@@ -32,7 +32,13 @@
 
 namespace mapcolors {
 
-// Colors that are updated from confguration file
+/* Colors that are updated from confguration file */
+
+QPen taxiwayLinePen(QColor(200, 200, 0), 1.5, Qt::DashLine, Qt::FlatCap);
+QColor taxiwayNameColor(Qt::black);
+
+QColor taxiwayNameBackgroundColor(255, 255, 120);
+
 QColor airportDetailBackColor(255, 255, 255);
 QColor airportEmptyColor(110, 110, 110);
 QColor toweredAirportColor(15, 70, 130);
@@ -531,6 +537,10 @@ void syncColors()
   syncColor(colorSettings, "EmptyColor", airportEmptyColor);
   syncColor(colorSettings, "ToweredColor", toweredAirportColor);
   syncColor(colorSettings, "UnToweredColor", unToweredAirportColor);
+  syncPen(colorSettings, "TaxiwayLinePen", taxiwayLinePen);
+  syncColor(colorSettings, "TaxiwayNameColor", taxiwayNameColor);
+  syncColor(colorSettings, "TaxiwayNameBackgroundColor", taxiwayNameBackgroundColor);
+
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Navaid");
