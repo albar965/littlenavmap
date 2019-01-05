@@ -81,7 +81,14 @@ void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserp
 
       if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
+
         float size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getUserPointSymbolSize());
+        if(userpoint.type == "Logbook")
+        {
+          x += size / 2.f;
+          y += size / 2.f;
+        }
+
         context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f),
                                      *icons->getIconPixmap(userpoint.type, atools::roundToInt(size)));
 
