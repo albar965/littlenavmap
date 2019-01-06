@@ -747,8 +747,10 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
     adjustAltitude = true; // Change altitude based on airways later
     adjustRouteType = true;
   }
-  else if(flightplan.getFileFormat() == atools::fs::pln::FMS11 || flightplan.getFileFormat() == atools::fs::pln::FMS3 ||
-          flightplan.getFileFormat() == atools::fs::pln::PLN_FSC)
+  else if(flightplan.getFileFormat() == atools::fs::pln::FMS11 ||
+          flightplan.getFileFormat() == atools::fs::pln::FMS3 ||
+          flightplan.getFileFormat() == atools::fs::pln::PLN_FSC ||
+          flightplan.getFileFormat() == atools::fs::pln::FLIGHTGEAR)
   {
     // Save altitude
     int cruiseAlt = flightplan.getCruisingAltitude();

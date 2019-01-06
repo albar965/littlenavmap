@@ -2152,7 +2152,7 @@ bool MainWindow::routeSaveAsFlightGear()
       tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
       "fgfp", "Route/FlightGear", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".fgfp") : routeExport->buildDefaultFilename());
+      routeExport->buildDefaultFilenameShort("_", ".fgfp") : routeExport->buildDefaultFilename(QString(), ".fgfp"));
 
     if(!routeFile.isEmpty())
     {
