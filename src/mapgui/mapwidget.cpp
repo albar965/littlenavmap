@@ -2021,8 +2021,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Collect information from the search result - build text only for one object for several menu items
   bool isAircraft = false;
   QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
-          destinationText,
-          addRouteText, searchText, editUserpointText;
+          destinationText, addRouteText, searchText, editUserpointText, patternText;
 
   if(airspace != nullptr)
   {
@@ -2053,9 +2052,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText = measureText = rangeRingText = addRouteText = searchText = map::vorText(*vor);
 
   if(airport != nullptr)
-    procedureText = informationText = measureText = departureText
-                                                      = destinationText = addRouteText =
-                                                                            searchText = map::airportText(*airport);
+    procedureText = informationText =
+                      measureText = departureText =
+                                      destinationText = addRouteText =
+                                                          searchText = patternText = map::airportText(*airport);
 
   // Userpoints are drawn on top of all features
   if(userpoint != nullptr)
@@ -2307,7 +2307,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(airport != nullptr && !airport->noRunways())
   {
     ui->actionMapTrafficPattern->setEnabled(true);
-    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(informationText));
+    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(patternText));
   }
   else
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(QString()));
