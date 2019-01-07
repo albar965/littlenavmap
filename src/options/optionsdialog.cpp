@@ -913,7 +913,7 @@ void OptionsDialog::addDatabaseExcludeDirClicked()
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Scenery Loading"),
     lnm::OPTIONS_DIALOG_DB_DIR_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
+    atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()));
 
   if(!path.isEmpty())
   {
@@ -931,7 +931,7 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
     tr("Open Files to exclude from Scenery Loading"),
     QString(), // filter
     lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
+    atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()));
 
   if(!paths.isEmpty())
   {
@@ -962,7 +962,7 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Open Directory to exclude from Add-On Recognition"),
     lnm::OPTIONS_DIALOG_DB_DIR_DLG,
-    atools::fs::FsPaths::getSceneryLibraryPath(NavApp::getCurrentSimulatorDb()));
+    atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()));
 
   if(!path.isEmpty())
     ui->listWidgetOptionsDatabaseAddon->addItem(QDir::toNativeSeparators(path));
