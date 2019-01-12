@@ -55,6 +55,7 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
   restoreState();
 
+  // Saves original texts and restores them on deletion
   units = new UnitStringTool();
   units->init({
     ui->doubleSpinBoxTrafficPatternBaseDistance,
@@ -74,8 +75,8 @@ void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Ok))
   {
-    QDialog::accept();
     saveState();
+    QDialog::accept();
   }
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrlWeb(

@@ -1263,6 +1263,10 @@ void MainWindow::connectAllSlots()
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
 
   // Shortcut menu
+  connect(ui->actionShortcutMap, &QAction::triggered,
+          this, &MainWindow::actionShortcutMapTriggered);
+  connect(ui->actionShortcutProfile, &QAction::triggered,
+          this, &MainWindow::actionShortcutProfileTriggered);
   connect(ui->actionShortcutAirportSearch, &QAction::triggered,
           this, &MainWindow::actionShortcutAirportSearchTriggered);
   connect(ui->actionShortcutNavaidSearch, &QAction::triggered,
@@ -1281,6 +1285,27 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutNavaidInformationTriggered);
   connect(ui->actionShortcutAircraftProgress, &QAction::triggered,
           this, &MainWindow::actionShortcutAircraftProgressTriggered);
+}
+
+void MainWindow::actionShortcutMapTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
+  {
+    ui->dockWidgetMap->show();
+    ui->dockWidgetMap->activateWindow();
+    raiseFloatingWindow(ui->dockWidgetMap);
+  }
+  mapWidget->setFocus();
+}
+
+void MainWindow::actionShortcutProfileTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetProfile->show();
+  ui->dockWidgetProfile->activateWindow();
+  ui->dockWidgetProfile->raise();
+  profileWidget->setFocus();
 }
 
 void MainWindow::actionShortcutAirportSearchTriggered()

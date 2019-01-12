@@ -292,6 +292,8 @@ private:
   void sunShadingTimeSet();
 
   /* Action from shortcut menu triggered */
+  void actionShortcutMapTriggered();
+  void actionShortcutProfileTriggered();
   void actionShortcutAirportSearchTriggered();
   void actionShortcutNavaidSearchTriggered();
   void actionShortcutUserpointSearchTriggered();

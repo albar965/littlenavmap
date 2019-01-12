@@ -48,6 +48,8 @@ class JumpBack;
  * Loads and displays the flight plan elevation profile. The elevation data is
  * calculated in a background thread that is triggered when new elevation data
  * arrives from the Marble widget.
+ *
+ * This widget is the full drawing area that is covered by the scroll view.
  */
 class ProfileWidget :
   public QWidget

@@ -95,7 +95,9 @@ OnlinedataController::~OnlinedataController()
   delete downloader;
 
   // Remove all from the database to avoid confusion on startup
+#ifndef DEBUG_INFORMATION
   manager->clearData();
+#endif
 }
 
 void OnlinedataController::updateAtcSizes()

@@ -126,6 +126,9 @@
      <property name="title">
       <string>Short&amp;cuts</string>
      </property>
+     <addaction name="actionShortcutMap"/>
+     <addaction name="actionShortcutProfile"/>
+     <addaction name="separator"/>
      <addaction name="actionShortcutAirportSearch"/>
      <addaction name="actionShortcutNavaidSearch"/>
      <addaction name="actionShortcutUserpointSearch"/>
@@ -9215,7 +9218,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show and activate Airport Search Window</string>
    </property>
    <property name="shortcut">
-    <string>F3</string>
+    <string>F4</string>
    </property>
   </action>
   <action name="actionShortcutNavaidSearch">
@@ -9229,7 +9232,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show and activate Navaid Search Window</string>
    </property>
    <property name="shortcut">
-    <string>F4</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actionShortcutUserpointSearch">
@@ -9243,7 +9246,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show and activate Userpoint Search Window</string>
    </property>
    <property name="shortcut">
-    <string>F5</string>
+    <string>F6</string>
    </property>
   </action>
   <action name="actionShortcutFlightPlan">
@@ -9257,7 +9260,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show and activate Flight Plan table</string>
    </property>
    <property name="shortcut">
-    <string>F6</string>
+    <string>F7</string>
    </property>
   </action>
   <action name="actionShortcutAirportInformation">
@@ -9271,7 +9274,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show Airport Information</string>
    </property>
    <property name="shortcut">
-    <string>F8</string>
+    <string>F9</string>
    </property>
   </action>
   <action name="actionShortcutAirportWeather">
@@ -9285,7 +9288,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show Airport Weather Information</string>
    </property>
    <property name="shortcut">
-    <string>F9</string>
+    <string>F10</string>
    </property>
   </action>
   <action name="actionShortcutNavaidInformation">
@@ -9299,7 +9302,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show Navaid Information</string>
    </property>
    <property name="shortcut">
-    <string>F10</string>
+    <string>F11</string>
    </property>
   </action>
   <action name="actionShortcutAircraftPerformance">
@@ -9313,7 +9316,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show Aircraft Performance and Fuel Planning</string>
    </property>
    <property name="shortcut">
-    <string>F7</string>
+    <string>F8</string>
    </property>
   </action>
   <action name="actionShortcutAircraftProgress">
@@ -9327,7 +9330,7 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Show Simulator Aircraft Progress</string>
    </property>
    <property name="shortcut">
-    <string>F11</string>
+    <string>F12</string>
    </property>
   </action>
   <action name="actionRouteSaveAsFlightGear">
