@@ -2248,10 +2248,8 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
       html.row2If(tr("Software:"), tr("%1 %2").
                   arg(onlineRec.valueStr("software_name")).
                   arg(onlineRec.valueStr("software_version")));
+    html.row2If(tr("Simulator:"), atools::fs::online::simulatorText(onlineRec.valueInt("simulator")));
     html.tableEnd();
-
-    // Always unknown
-    // html.row2If(tr("Simulator:"), atools::fs::online::simulatorText(onlineRec.valueInt("simulator")));
 
     // Flight plan information =================================================================
     head(html, tr("Flight Plan"));
