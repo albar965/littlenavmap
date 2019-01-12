@@ -279,7 +279,7 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   else if(col->getColumnName() == "last_edit_timestamp")
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
   else if(col->getColumnName() == "description")
-    return displayRoleValue.toString().simplified();
+    return atools::elideTextShort(displayRoleValue.toString().simplified(), 80);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
     return QLocale().toString(displayRoleValue.toInt());
   else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
