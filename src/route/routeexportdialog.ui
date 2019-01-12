@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RouteExportDialog</class>
+ <widget class="QDialog" name="RouteExportDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>531</width>
+    <height>569</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Little Navmap - Online Network Flightplan Export</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="8" column="1">
+      <widget class="QCheckBox" name="checkBoxHeavy">
+       <property name="text">
+        <string>&amp;Heavy</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="lineEditEquipment"/>
+     </item>
+     <item row="11" column="2">
+      <widget class="QLabel" name="labelAlternate2">
+       <property name="text">
+        <string>&amp;Second Alternate:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditAlternate2</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QLabel" name="labelPassengers">
+       <property name="text">
+        <string>&amp;Passengers:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxPassengers</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="3">
+      <widget class="QTimeEdit" name="timeEditDepartureActual">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="timeSpec">
+        <enum>Qt::UTC</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="3">
+      <widget class="QLineEdit" name="lineEditTransponder"/>
+     </item>
+     <item row="10" column="2">
+      <widget class="QLabel" name="labelDestination">
+       <property name="text">
+        <string>&amp;Destination:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditDestination</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="2">
+      <widget class="QLabel" name="labelTrueAirspeed">
+       <property name="text">
+        <string>&amp;True Airspeed:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxTrueAirspeed</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="labelCallsign">
+       <property name="text">
+        <string>&amp;Callsign:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditCallsign</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="3">
+      <widget class="QLineEdit" name="lineEditAlternate2"/>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="lineEditCallsign"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelAirline">
+       <property name="text">
+        <string>&amp;Airline:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditAirline</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="lineEditFlightRules"/>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="labelCruiseAltitude">
+       <property name="text">
+        <string>&amp;Cruise altitude:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxCruiseAltitude</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelFlightRules">
+       <property name="text">
+        <string>Flight &amp;rules:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditFlightRules</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="4">
+      <widget class="Line" name="line_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="3">
+      <widget class="QLineEdit" name="lineEditDestination"/>
+     </item>
+     <item row="20" column="1">
+      <widget class="QLineEdit" name="lineEditVoiceType"/>
+     </item>
+     <item row="20" column="2">
+      <widget class="QLabel" name="labelTransponder">
+       <property name="text">
+        <string>&amp;Transponder:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditTransponder</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="21" column="0">
+      <widget class="QLabel" name="labelRemarks">
+       <property name="text">
+        <string>&amp;Remarks:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditRemarks</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QLineEdit" name="lineEditWakeCategory"/>
+     </item>
+     <item row="21" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEditRemarks"/>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="labelLivery">
+       <property name="text">
+        <string>&amp;Livery:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditLivery</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="4">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEditFlightType"/>
+     </item>
+     <item row="16" column="1">
+      <widget class="QTimeEdit" name="timeEditDeparture">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentSectionIndex">
+        <number>0</number>
+       </property>
+       <property name="timeSpec">
+        <enum>Qt::UTC</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0">
+      <widget class="QLabel" name="labelRoute">
+       <property name="text">
+        <string>&amp;Route:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditRoute</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="2">
+      <widget class="QLabel" name="labelTimeDepartureActual">
+       <property name="text">
+        <string>&amp;Actual:</string>
+       </property>
+       <property name="buddy">
+        <cstring>timeEditDepartureActual</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QSpinBox" name="spinBoxCruiseAltitude">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="suffix">
+        <string> ft</string>
+       </property>
+       <property name="prefix">
+        <string/>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="singleStep">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEditAirline"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelFlightType">
+       <property name="text">
+        <string>&amp;Flight type:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditFlightType</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="labelDeparture">
+       <property name="text">
+        <string>&amp;Departure:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditDeparture</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0" colspan="4">
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLabel" name="labelWakeCategory">
+       <property name="text">
+        <string>&amp;Wake category:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditWakeCategory</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="lineEditAircraftType"/>
+     </item>
+     <item row="8" column="3">
+      <widget class="QSpinBox" name="spinBoxPassengers">
+       <property name="maximum">
+        <number>10000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="3">
+      <widget class="QSpinBox" name="spinBoxTrueAirspeed">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="suffix">
+        <string> kts</string>
+       </property>
+       <property name="maximum">
+        <number>5000</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="labelEquipment">
+       <property name="text">
+        <string>&amp;Equipment:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditEquipment</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="labelAlternate">
+       <property name="text">
+        <string>A&amp;lternate:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditAlternate</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <widget class="QLineEdit" name="lineEditAlternate"/>
+     </item>
+     <item row="19" column="0" colspan="4">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0" colspan="4">
+      <widget class="Line" name="line_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0">
+      <widget class="QLabel" name="labelTimeDeparture">
+       <property name="text">
+        <string>Departure &amp;time:</string>
+       </property>
+       <property name="buddy">
+        <cstring>timeEditDeparture</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="lineEditLivery"/>
+     </item>
+     <item row="0" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEditPilotInCommand"/>
+     </item>
+     <item row="20" column="0">
+      <widget class="QLabel" name="labelVoiceType">
+       <property name="text">
+        <string>&amp;Voice type:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditVoiceType</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelAircraftType">
+       <property name="text">
+        <string>Aircraft &amp;type:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditAircraftType</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelPilotInCommand">
+       <property name="text">
+        <string>&amp;Pilot in command:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditPilotInCommand</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1" colspan="3">
+      <widget class="QLineEdit" name="lineEditRoute"/>
+     </item>
+     <item row="10" column="1">
+      <widget class="QLineEdit" name="lineEditDeparture"/>
+     </item>
+     <item row="17" column="0">
+      <widget class="QLabel" name="labelTimeEnroute">
+       <property name="text">
+        <string>E&amp;nroute:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxEnrouteHour</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item alignment="Qt::AlignLeft">
+        <widget class="QSpinBox" name="spinBoxEnrouteHour">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="suffix">
+          <string> h</string>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignLeft">
+        <widget class="QSpinBox" name="spinBoxEnrouteMin">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="suffix">
+          <string> min</string>
+         </property>
+         <property name="maximum">
+          <number>59</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="17" column="2">
+      <widget class="QLabel" name="labelTimeEndurance">
+       <property name="text">
+        <string>En&amp;durance:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxEnduranceHour</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="3">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item alignment="Qt::AlignLeft">
+        <widget class="QSpinBox" name="spinBoxEnduranceHour">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="suffix">
+          <string> h</string>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignLeft">
+        <widget class="QSpinBox" name="spinBoxEnduranceMin">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="suffix">
+          <string> min</string>
+         </property>
+         <property name="maximum">
+          <number>59</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="6" column="3">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="lineEditEquipmentPrefix"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEditEquipmentSuffix"/>
+       </item>
+      </layout>
+     </item>
+     <item row="6" column="2">
+      <widget class="QLabel" name="labelEquipmentPrefixSuffix">
+       <property name="text">
+        <string>Prefix/Suffix:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditEquipmentPrefix</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEditPilotInCommand</tabstop>
+  <tabstop>lineEditFlightType</tabstop>
+  <tabstop>lineEditCallsign</tabstop>
+  <tabstop>lineEditAirline</tabstop>
+  <tabstop>lineEditLivery</tabstop>
+  <tabstop>lineEditFlightRules</tabstop>
+  <tabstop>lineEditAircraftType</tabstop>
+  <tabstop>lineEditWakeCategory</tabstop>
+  <tabstop>lineEditEquipment</tabstop>
+  <tabstop>lineEditEquipmentPrefix</tabstop>
+  <tabstop>lineEditEquipmentSuffix</tabstop>
+  <tabstop>checkBoxHeavy</tabstop>
+  <tabstop>spinBoxPassengers</tabstop>
+  <tabstop>lineEditDeparture</tabstop>
+  <tabstop>lineEditDestination</tabstop>
+  <tabstop>lineEditAlternate</tabstop>
+  <tabstop>lineEditAlternate2</tabstop>
+  <tabstop>lineEditRoute</tabstop>
+  <tabstop>spinBoxCruiseAltitude</tabstop>
+  <tabstop>spinBoxTrueAirspeed</tabstop>
+  <tabstop>timeEditDeparture</tabstop>
+  <tabstop>timeEditDepartureActual</tabstop>
+  <tabstop>spinBoxEnrouteHour</tabstop>
+  <tabstop>spinBoxEnrouteMin</tabstop>
+  <tabstop>spinBoxEnduranceHour</tabstop>
+  <tabstop>spinBoxEnduranceMin</tabstop>
+  <tabstop>lineEditVoiceType</tabstop>
+  <tabstop>lineEditTransponder</tabstop>
+  <tabstop>lineEditRemarks</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -18,6 +18,8 @@
 #ifndef LNM_ROUTEEXPORT_H
 #define LNM_ROUTEEXPORT_H
 
+#include "route/routeexportdialog.h"
+
 #include <QObject>
 #include <functional>
 
@@ -39,6 +41,7 @@ class Dialog;
 
 class MainWindow;
 class Route;
+class RouteExportData;
 
 /*
  * Covers all flight plan export and export related functions including validation and warning dialogs.
@@ -96,6 +99,12 @@ public:
   /* BlackBox Simulations Airbus */
   bool routeExportBbs();
 
+  /* vPilot VATSIM */
+  bool routeExportVfp();
+
+  /* IVAP or X-IVAP for IVAO */
+  bool routeExportIvap();
+
   /* Check if route has valid departure  and destination and departure parking.
    *  @return true if route can be saved anyway */
   bool routeValidate(bool validateParking, bool validateDepartureAndDestination);
@@ -130,6 +139,19 @@ private:
 
   bool exportFlighplan(const QString& filename, std::function<void(const atools::fs::pln::Flightplan&,
                                                                    const QString&)> exportFunc);
+
+  /* Show online network dialog which allows the user to enter needed data */
+  bool routeExportDialog(RouteExportData& exportData, re::RouteExportType flightplanType);
+
+  /* Prefill online data with speed, cruise, etc.  */
+  RouteExportData createRouteExportData(re::RouteExportType flightplanType);
+
+  /* Export vRoute */
+  bool exportFlighplanAsVfp(const RouteExportData& exportData, const QString& filename);
+
+  /* Export IVAP or X-IVAP */
+  bool exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename);
+  QString minToHourMinStr(int minutes);
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

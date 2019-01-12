@@ -1006,6 +1006,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsProSim, &QAction::triggered, routeExport, &RouteExport::routeExportProSim);
   connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBbs);
 
+  // Online export options
+  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, routeExport, &RouteExport::routeExportVfp);
+  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, routeExport, &RouteExport::routeExportIvap);
+
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
@@ -1750,20 +1754,20 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
     // Ask before saving file
     result =
-        dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING,
-                                   tr("The FlightGear format does not allow saving of:"
-                                      "<ul>"
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING,
+                                 tr("The FlightGear format does not allow saving of:"
+                                    "<ul>"
                                       "<li>Procedures (only SID, STAR and the respective transitions)</li>"
-                                      "<li>Position names</li>"
-                                      "<li>Cruise Altitude</li>"
-                                      "<li>Ground Speed</li>"
-                                      "<li>Departure parking position</li>"
-                                      "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                      "</ul>"
-                                      "This information will be lost when reloading the file.<br/><br/>"
-                                      "Really save as FGFP file?<br/>"),
-                                   tr("Do not show this dialog again and save the Flight Plan in the future as FGFP."),
-                                   buttonList, QMessageBox::Cancel, QMessageBox::Save);
+                                        "<li>Position names</li>"
+                                          "<li>Cruise Altitude</li>"
+                                            "<li>Ground Speed</li>"
+                                              "<li>Departure parking position</li>"
+                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                                "</ul>"
+                                                "This information will be lost when reloading the file.<br/><br/>"
+                                                "Really save as FGFP file?<br/>"),
+                                 tr("Do not show this dialog again and save the Flight Plan in the future as FGFP."),
+                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
 
   if(result == QMessageBox::SaveAll)
@@ -2899,6 +2903,10 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsUfmc->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsProSim->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsBbsAirbus->setEnabled(hasFlightplan);
+
+  ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);
+  ui->actionRouteShowSkyVector->setEnabled(hasFlightplan);
 
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(NavApp::getRouteConst().hasValidDeparture());

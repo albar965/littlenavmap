@@ -20,6 +20,7 @@
 #include "gui/mainwindow.h"
 #include "common/constants.h"
 #include "common/aircrafttrack.h"
+#include "fs/perf/aircraftperf.h"
 #include "route/route.h"
 #include "io/fileroller.h"
 #include "options/optiondata.h"
@@ -32,6 +33,8 @@
 #include "gui/errorhandler.h"
 #include "options/optiondata.h"
 #include "gui/dialog.h"
+#include "route/routeexportdata.h"
+#include "route/routealtitude.h"
 #include "ui_mainwindow.h"
 #include "fs/pln/flightplanio.h"
 
@@ -448,6 +451,95 @@ bool RouteExport::routeExportBbs()
   return false;
 }
 
+bool RouteExport::routeExportVfp()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    RouteExportData exportData = createRouteExportData(re::VFP);
+    if(routeExportDialog(exportData, re::VFP))
+    {
+      QString routeFile = dialog->saveFileDialog(
+        tr("Export Flight Plan as vPilot VFP"),
+        tr("VFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_VFP), "vfp", "Route/Vfp",
+        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+        buildDefaultFilenameShort(QString(), ".vfp"));
+
+      if(!routeFile.isEmpty())
+      {
+        if(exportFlighplanAsVfp(exportData, routeFile))
+        {
+          mainWindow->setStatusMessage(tr("Flight plan saved for vPilot."));
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportIvap()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    RouteExportData exportData = createRouteExportData(re::IVAP);
+    if(routeExportDialog(exportData, re::IVAP))
+    {
+      QString routeFile = dialog->saveFileDialog(
+        tr("Export Flight Plan as IVAP/X-IVAP FPL"),
+        tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
+        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+        buildDefaultFilenameShort(QString(), ".fpl"));
+
+      if(!routeFile.isEmpty())
+      {
+        if(exportFlighplanAsIvap(exportData, routeFile))
+        {
+          mainWindow->setStatusMessage(tr("Flight plan saved for IVAP/X-IVAP."));
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+RouteExportData RouteExport::createRouteExportData(re::RouteExportType flightplanType)
+{
+  Q_UNUSED(flightplanType);
+
+  RouteExportData exportData;
+  const Route& route = NavApp::getRouteConst();
+  exportData.setRoute(RouteString::createStringForRoute(route, 0.f, rs::SID_STAR));
+  exportData.setDeparture(route.getFlightplan().getDepartureIdent());
+  exportData.setDestination(route.getFlightplan().getDestinationIdent());
+  exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
+  exportData.setDepartureTimeActual(QDateTime::currentDateTimeUtc().time());
+  exportData.setCruiseAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
+
+  const RouteAltitude& routeAlt = NavApp::getAltitudeLegs();
+  exportData.setAircraftType(NavApp::getAircraftPerformance().getAircraftType());
+  exportData.setSpeed(atools::roundToInt(NavApp::getRouteCruiseSpeedKts()));
+  exportData.setEnrouteMinutes(atools::roundToInt(routeAlt.getTravelTimeHours() * 60.f));
+  exportData.setEnduranceMinutes(atools::roundToInt(routeAlt.getTravelTimeHours() * 60.f) + 60);
+
+  return exportData;
+}
+
+bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExportType flightplanType)
+{
+  RouteExportDialog exportDialog(mainWindow, flightplanType);
+  exportDialog.setExportData(exportData);
+  if(exportDialog.exec() == QDialog::Accepted)
+  {
+    exportData = exportDialog.getExportData();
+    return true;
+  }
+  return false;
+}
+
 bool RouteExport::routeExportGpx()
 {
   qDebug() << Q_FUNC_INFO;
@@ -733,6 +825,150 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
   }
 }
 
+bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const QString& filename)
+{
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    // <?xml version="1.0" encoding="utf-8"?>
+    // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    // FlightType="IFR"
+    // Equipment="/L"
+    // CruiseAltitude="23000"
+    // CruiseSpeed="275"
+    // DepartureAirport="KBZN"
+    // DestinationAirport="KJAC"
+    // AlternateAirport="KSLC"
+    // Route="DCT 4529N11116W 4527N11114W 4524N11112W 4522N11110W DCT 4520N11110W 4519N11111W/N0276F220 4517N11113W 4516N11115W 4514N11115W/N0275F230 4509N11114W 4505N11113W 4504N11111W 4502N11107W 4500N11105W 4458N11104W 4452N11103W 4450N11105W/N0276F220 4449N11108W 4449N11111W 4449N11113W 4450N11116W 4451N11119W 4450N11119W/N0275F230 4448N11117W 4446N11116W DCT KWYS DCT 4440N11104W 4440N11059W 4439N11055W 4439N11052W 4435N11050W 4430N11050W 4428N11050W 4426N11044W 4427N11041W 4425N11035W 4429N11032W 4428N11031W 4429N11027W 4429N11025W 4432N11024W 4432N11022W 4432N11018W 4428N11017W 4424N11017W 4415N11027W/N0276F220 DCT 4409N11040W 4403N11043W DCT 4352N11039W DCT"
+    // Remarks="PBN/D2 DOF/181102 REG/N012SB PER/B RMK/TCAS SIMBRIEF"
+    // IsHeavy="false"
+    // EquipmentPrefix=""
+    // EquipmentSuffix="L"
+    // DepartureTime="2035"
+    // DepartureTimeAct="0"
+    // EnrouteHours="0"
+    // EnrouteMinutes="53"
+    // FuelHours="2"
+    // FuelMinutes="44"
+    // VoiceType="Full" />
+    QXmlStreamWriter writer(&file);
+    writer.setCodec("UTF-8");
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(2);
+
+    writer.writeStartDocument("1.0");
+    writer.writeStartElement("FlightPlan");
+
+    writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    writer.writeAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+
+    writer.writeAttribute("FlightType", exportData.getFlightType());
+    writer.writeAttribute("Equipment", exportData.getEquipment());
+    writer.writeAttribute("CruiseAltitude", QString::number(exportData.getCruiseAltitude()));
+    writer.writeAttribute("CruiseSpeed", QString::number(exportData.getSpeed()));
+    writer.writeAttribute("DepartureAirport", exportData.getDeparture());
+    writer.writeAttribute("DestinationAirport", exportData.getDestination());
+    writer.writeAttribute("AlternateAirport", exportData.getAlternate());
+    writer.writeAttribute("Route", exportData.getRoute());
+    writer.writeAttribute("Remarks", exportData.getRemarks());
+    writer.writeAttribute("IsHeavy", exportData.isHeavy() ? "true" : "false");
+    writer.writeAttribute("EquipmentPrefix", exportData.getEquipmentPrefix());
+    writer.writeAttribute("EquipmentSuffix", exportData.getEquipmentSuffix());
+
+    writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("hhmm"));
+    writer.writeAttribute("DepartureTimeAct", exportData.getDepartureTimeActual().isNull() ?
+                          "0" : exportData.getDepartureTimeActual().toString("hhmm"));
+    int enrouteHours = exportData.getEnrouteMinutes() / 60;
+    writer.writeAttribute("EnrouteHours", QString::number(enrouteHours));
+    writer.writeAttribute("EnrouteMinutes", QString::number(exportData.getEnrouteMinutes() - enrouteHours * 60));
+    int enduranceHours = exportData.getEnduranceMinutes() / 60;
+    writer.writeAttribute("FuelHours", QString::number(enduranceHours));
+    writer.writeAttribute("FuelMinutes", QString::number(exportData.getEnduranceMinutes() - enduranceHours * 60));
+    writer.writeAttribute("VoiceType", exportData.getVoiceType());
+
+    writer.writeEndElement(); // FlightPlan
+    writer.writeEndDocument();
+
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving VFP file:"));
+    return false;
+  }
+}
+
+bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const QString& filename)
+{
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    // [FLIGHTPLAN]
+    // CALLSIGN=VPI333
+    // PIC=NAME
+    // FMCROUTE=
+    // LIVERY=
+    // AIRLINE=VPI
+    // SPEEDTYPE=N
+    // POB=83
+    // ENDURANCE=0215
+    // OTHER=X-IvAp CREW OF 2 PILOT VPI07/COPILOT VPI007
+    // ALT2ICAO=
+    // ALTICAO=LFMP
+    // EET=0115
+    // DESTICAO=LFBO
+    // ROUTE=TINOT UY268 DIVKO UM731 FJR
+    // LEVEL=330
+    // LEVELTYPE=F
+    // SPEED=300
+    // DEPTIME=2110
+    // DEPICAO=LFKJ
+    // TRANSPONDER=S
+    // EQUIPMENT=SDFGW
+    // WAKECAT=M
+    // ACTYPE=B733
+    // NUMBER=1
+    // FLIGHTTYPE=N
+    // RULES=I
+    QTextStream stream(&file);
+    stream << "[FLIGHTPLAN]" << endl;
+    stream << "CALLSIGN=" << exportData.getCallsign() << endl;
+    stream << "PIC=" << exportData.getPilotInCommand() << endl;
+    stream << "LIVERY=" << exportData.getLivery() << endl;
+    stream << "AIRLINE=" << exportData.getAirline() << endl;
+    stream << "SPEEDTYPE=N" << endl;
+    stream << "POB=" << exportData.getPassengers() << endl;
+    stream << "ENDURANCE=" << minToHourMinStr(exportData.getEnduranceMinutes()) << endl;
+    stream << "OTHER=" << exportData.getRemarks() << endl;
+    stream << "ALT2ICAO=" << exportData.getAlternate2() << endl;
+    stream << "ALTICAO=" << exportData.getAlternate() << endl;
+    stream << "EET=" << minToHourMinStr(exportData.getEnrouteMinutes()) << endl;
+    stream << "DESTICAO=" << exportData.getDestination() << endl;
+    stream << "ROUTE=" << exportData.getRoute() << endl;
+    stream << "LEVEL=" << exportData.getCruiseAltitude() / 100 << endl;
+    stream << "LEVELTYPE=F" << endl;
+    stream << "SPEED=" << exportData.getSpeed() << endl;
+    stream << "DEPTIME=" << exportData.getDepartureTime().toString("hhmm") << endl;
+    stream << "DEPICAO=" << exportData.getDeparture() << endl;
+    stream << "TRANSPONDER=" << exportData.getTransponder() << endl;
+    stream << "EQUIPMENT=" << exportData.getEquipment() << endl;
+    stream << "WAKECAT=" << exportData.getWakeCategory() << endl;
+    stream << "ACTYPE=" << exportData.getAircraftType() << endl;
+    stream << "NUMBER=1" << endl;
+    stream << "FLIGHTTYPE=" << exportData.getFlightType() << endl;
+    stream << "RULES=" << exportData.getFlightRules() << endl;
+
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving FPL file:"));
+    return false;
+  }
+}
+
 bool RouteExport::exportFlighplan(const QString& filename,
                                   std::function<void(const atools::fs::pln::Flightplan& plan,
                                                      const QString& file)> exportFunc)
@@ -965,4 +1201,10 @@ Route RouteExport::routeAdjustedToProcedureOptions(const Route& route)
   rt.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
 
   return rt;
+}
+
+QString RouteExport::minToHourMinStr(int minutes)
+{
+  int enrouteHours = minutes / 60;
+  return QString("%1%2").arg(enrouteHours, 2, 10, QChar('0')).arg(minutes - enrouteHours * 60, 2, 10, QChar('0'));
 }

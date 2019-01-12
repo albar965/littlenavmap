@@ -69,9 +69,10 @@
      <addaction name="actionRouteSaveAsUfmc"/>
      <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
-     <addaction name="actionRouteSaveAsGpx"/>
+     <addaction name="actionRouteSaveAsVfp"/>
+     <addaction name="actionRouteSaveAsIvap"/>
      <addaction name="separator"/>
-     <addaction name="actionRouteShowSkyVector"/>
+     <addaction name="actionRouteSaveAsGpx"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -86,6 +87,8 @@
     <addaction name="separator"/>
     <addaction name="actionRouteSaveAsClean"/>
     <addaction name="menuEXport"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteShowSkyVector"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveApprWaypoints"/>
     <addaction name="actionRouteSaveSidStarWaypoints"/>
@@ -9349,6 +9352,56 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+G</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsVfp">
+   <property name="text">
+    <string>Export Flight Plan as &amp;vPilot VFP ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as VFP file for VATSIM vPilot</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as VFP file for VATSIM vPilot</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsIvap">
+   <property name="text">
+    <string>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file for IVAP or X-IVAP</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file for IVAP or X-IVAP</string>
+   </property>
+  </action>
+  <action name="actionShortcutMap">
+   <property name="text">
+    <string>&amp;Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Map Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Map Window</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionShortcutProfile">
+   <property name="text">
+    <string>&amp;Elevation Profile</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Elevation Profile Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Elevation Profile Window</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
    </property>
   </action>
  </widget>

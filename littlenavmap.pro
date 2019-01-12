@@ -251,7 +251,9 @@ SOURCES += src/main.cpp\
     src/common/unitstringtool.cpp \
     src/mapgui/mappainterweather.cpp \
     src/common/airportfiles.cpp \
-    src/common/tabindexes.cpp
+    src/common/tabindexes.cpp \
+    src/route/routeexportdata.cpp \
+    src/route/routeexportdialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -369,7 +371,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/unitstringtool.h \
     src/mapgui/mappainterweather.h \
     src/common/airportfiles.h \
-    src/common/tabindexes.h
+    src/common/tabindexes.h \
+    src/route/routeexportdata.h \
+    src/route/routeexportdialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -385,7 +389,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/userdata/userdataexportdialog.ui \
     src/gui/timedialog.ui \
     src/gui/trafficpatterndialog.ui \
-    src/perf/aircraftperfdialog.ui
+    src/perf/aircraftperfdialog.ui \
+    src/route/routeexportdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

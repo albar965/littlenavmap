@@ -202,6 +202,9 @@ const QLatin1Literal USERDATA_EXPORT_DIALOG("UserdataExport/Widget");
 /* Edit dialog */
 const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
 
+/* Flightplan export dialog for online formats */
+const QLatin1Literal FLIGHTPLAN_ONLINE_EXPORT("Route/FlightplanOnlineExport");
+
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1Literal OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
@@ -264,6 +267,7 @@ const QLatin1Literal FILE_PATTERN_UFMC("(*.ufmc)");
 const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml)");
 const QLatin1Literal FILE_PATTERN_FLTPLAN("(*.fltplan)");
 const QLatin1Literal FILE_PATTERN_BBS_PLN("(*.pln)");
+const QLatin1Literal FILE_PATTERN_VFP("(*.vfp)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
@@ -276,7 +280,8 @@ const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
 #else
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
-const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD("(*.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS *.fgfp *.Fgfp *.FGFP)");
+const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_LOAD(
+  "(*.pln *.Pln *.PLN *.flp *.Flp *.FLP *.fms *.Fms *.FMS *.fgfp *.Fgfp *.FGFP)");
 const QLatin1Literal FILE_PATTERN_FLIGHTPLAN_SAVE("(*.pln *.Pln *.PLN)");
 const QLatin1Literal FILE_PATTERN_GFP("(*.gfp *.Gfp *.GFP)");
 const QLatin1Literal FILE_PATTERN_TXT("(*.txt *.Txt *.TXT)");
@@ -285,12 +290,13 @@ const QLatin1Literal FILE_PATTERN_FPR("(*.fpr *.Fpr *.FPR)");
 const QLatin1Literal FILE_PATTERN_FPL("(*.fpl *.Fpl *.FPL)");
 const QLatin1Literal FILE_PATTERN_CORTEIN("(corte.in Corte.in CORTE.IN)");
 const QLatin1Literal FILE_PATTERN_FLP("(*.flp *.Flp *.FLP)");
-const QLatin1Literal FILE_PATTERN_FLIGHTGEAR("(*.fgfp *.Fgfp *.FGFP)");
+const QLatin1Literal FILE_PATTERN_FLIGHTGEAR("(*.fgfp *.Fgfp *.FgFp *.FGFP)");
 const QLatin1Literal FILE_PATTERN_FMS("(*.fms *.Fms *.FMS)");
 const QLatin1Literal FILE_PATTERN_UFMC("(*.ufmc *.Ufmc *.UFMC)");
 const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml Companyroutes.xml COMPANYROUTES.XML)");
 const QLatin1Literal FILE_PATTERN_FLTPLAN("(*.fltplan *.Fltplan *.FLTPLAN)");
 const QLatin1Literal FILE_PATTERN_BBS_PLN("(*.pln *.Pln *.PLN)");
+const QLatin1Literal FILE_PATTERN_VFP("(*.vfp *.Vfp *.VFP)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");
