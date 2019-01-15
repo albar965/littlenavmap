@@ -243,7 +243,10 @@ private:
   void showMapLegend();
   void resetMessages();
   void showDatabaseFiles();
+
   void mapSaveImage();
+  void mapSaveImageAviTab();
+
   void mapCopyToClipboard();
   void distanceChanged();
   void showDonationPage();

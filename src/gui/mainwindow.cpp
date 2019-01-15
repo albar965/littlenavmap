@@ -1015,6 +1015,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
   connect(ui->actionPrintFlightplan, &QAction::triggered, printSupport, &PrintSupport::printFlightplan);
   connect(ui->actionSaveMapAsImage, &QAction::triggered, this, &MainWindow::mapSaveImage);
+  connect(ui->actionSaveMapAsImageAviTab, &QAction::triggered, this, &MainWindow::mapSaveImageAviTab);
   connect(ui->actionMapCopyClipboard, &QAction::triggered, this, &MainWindow::mapCopyToClipboard);
 
   // KML actions
@@ -2120,7 +2121,8 @@ bool MainWindow::routeSaveAsPln()
       "pln", "Route/" + NavApp::getCurrentSimulatorShortName(),
       NavApp::getCurrentSimulatorFilesPath(),
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename());
+      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -2151,7 +2153,8 @@ bool MainWindow::routeSaveAsFlp()
       tr("Save Flight Plan as FLP Format"),
       tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
       "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      routeExport->buildDefaultFilenameShort(QString(), ".flp"));
+      routeExport->buildDefaultFilenameShort(QString(), ".flp"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -2181,7 +2184,8 @@ bool MainWindow::routeSaveAsFlightGear()
       tr("FlightGear Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTGEAR),
       "fgfp", "Route/FlightGear", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".fgfp") : routeExport->buildDefaultFilename(QString(), ".fgfp"));
+      routeExport->buildDefaultFilenameShort("_", ".fgfp") : routeExport->buildDefaultFilename(QString(), ".fgfp"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -2231,7 +2235,8 @@ bool MainWindow::routeSaveAsFms(atools::fs::pln::FileFormat format)
       tr("Save Flight Plan as X-Plane FMS Format"),
       tr("FMS Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FMS),
       "fms", "Route/Fms", xpBasePath,
-      routeExport->buildDefaultFilenameShort(QString(), ".fms"));
+      routeExport->buildDefaultFilenameShort(QString(), ".fms"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -2256,9 +2261,9 @@ bool MainWindow::routeExportClean()
       tr("Save Clean Flight Plan without Annotations"),
       tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_SAVE),
       "pln", "Route/Clean" + NavApp::getCurrentSimulatorShortName(), NavApp::getCurrentSimulatorFilesPath(),
-
       (OptionData::instance().getFlags2() & opts::ROUTE_SAVE_SHORT_NAME) ?
-      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(tr(" Clean")));
+      routeExport->buildDefaultFilenameShort("_", ".pln") : routeExport->buildDefaultFilename(tr(" Clean")),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -2341,9 +2346,9 @@ void MainWindow::mapSaveImage()
   if(!imageFile.isEmpty())
   {
     QPixmap pixmap;
-    mapWidget->showOverlays(false);
+    mapWidget->showOverlays(false, false /* hide scale */);
     pixmap = mapWidget->mapScreenShot();
-    mapWidget->showOverlays(true);
+    mapWidget->showOverlays(true, false /* hide scale */);
 
     PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
 
@@ -2354,12 +2359,66 @@ void MainWindow::mapSaveImage()
   }
 }
 
+void MainWindow::mapSaveImageAviTab()
+{
+  if(mapWidget->projection() == Marble::Mercator)
+  {
+    QString json = mapWidget->createAvitabJson();
+
+    if(!json.isEmpty())
+    {
+      QString defaultFileName;
+
+      if(routeController->getRoute().isEmpty())
+        defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
+      else
+        defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
+
+      QString imageFile = dialog->saveFileDialog(
+        tr("Save Map as Image for AviTab"),
+        tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
+        "png", "MainWindow/AviTab",
+        atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
+        QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
+        QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
+        false /* confirm overwrite */, true /* autonumber file */);
+
+      if(!imageFile.isEmpty())
+      {
+        QPixmap pixmap;
+        mapWidget->showOverlays(false, true /* hide scale */);
+        pixmap = mapWidget->mapScreenShot();
+        mapWidget->showOverlays(true, true /* hide scale */);
+
+        if(!pixmap.save(imageFile))
+          atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
+        else
+        {
+          QFile jsonFile(imageFile + ".json");
+          if(jsonFile.open(QIODevice::WriteOnly | QIODevice::Text))
+          {
+            QTextStream stream(&jsonFile);
+            stream << json.toUtf8();
+
+            setStatusMessage(tr("Map image saved."));
+          }
+          else
+            atools::gui::ErrorHandler(this).handleIOError(jsonFile, tr("Error saving JSON."));
+        }
+      }
+    }
+  }
+  else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         tr("You have to switch to the Mercator map projection before saving the image."));
+}
+
 void MainWindow::mapCopyToClipboard()
 {
   QPixmap pixmap;
-  mapWidget->showOverlays(false);
+  mapWidget->showOverlays(false, false /* hide scale */);
   pixmap = mapWidget->mapScreenShot();
-  mapWidget->showOverlays(true);
+  mapWidget->showOverlays(true, false /* hide scale */);
 
   PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
 

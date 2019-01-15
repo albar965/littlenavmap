@@ -84,7 +84,8 @@ bool RouteExport::routeExportRxpGns()
       tr("Save Flight Plan as FPL for Reality XP GNS"),
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL),
       "fpl", "Route/RxpGns", path,
-      buildDefaultFilenameShort("", ".fpl"));
+      buildDefaultFilenameShort("", ".fpl"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -153,7 +154,8 @@ bool RouteExport::routeExportGfp()
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
-      buildDefaultFilenameShort("-", ".gfp"));
+      buildDefaultFilenameShort("-", ".gfp"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -178,7 +180,8 @@ bool RouteExport::routeExportTxt()
       tr("Save Flight Plan as TXT Format"),
       tr("Text Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_TXT), "txt", "Route/Txt",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Aircraft",
-      buildDefaultFilenameShort(QString(), ".txt"));
+      buildDefaultFilenameShort(QString(), ".txt"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -203,7 +206,8 @@ bool RouteExport::routeExportRte()
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
       "rte", "Route/Rte",
       NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
-      buildDefaultFilenameShort(QString(), ".rte"));
+      buildDefaultFilenameShort(QString(), ".rte"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -267,7 +271,8 @@ bool RouteExport::routeExportFpl()
       QDir::separator() + "X-Aviation" +
       QDir::separator() + "IXEG 737 Classic" +
       QDir::separator() + "coroutes",
-      buildDefaultFilenameShort(QString(), ".fpl"));
+      buildDefaultFilenameShort(QString(), ".fpl"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -324,7 +329,8 @@ bool RouteExport::routeExportFltplan()
       QDir::separator() + "737NG" +
       QDir::separator() + "navdata" +
       QDir::separator() + "FLTPLAN",
-      buildDefaultFilenameShort(QString(), ".fltplan"));
+      buildDefaultFilenameShort(QString(), ".fltplan"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -357,7 +363,8 @@ bool RouteExport::routeExportXFmc()
       QDir::separator() + "plugins" +
       QDir::separator() + "XFMC" +
       QDir::separator() + "FlightPlans",
-      buildDefaultFilenameShort(QString(), ".fpl"));
+      buildDefaultFilenameShort(QString(), ".fpl"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -381,7 +388,8 @@ bool RouteExport::routeExportUFmc()
       tr("Save Flight Plan for UFMC"),
       tr("UFMC Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_UFMC), "ufmc", "Route/UFmc",
       NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort(QString(), ".ufmc"));
+      buildDefaultFilenameShort(QString(), ".ufmc"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -436,7 +444,8 @@ bool RouteExport::routeExportBbs()
       NavApp::getCurrentSimulatorBasePath() +
       QDir::separator() + "Blackbox Simulation" +
       QDir::separator() + "Company Routes",
-      buildDefaultFilenameShort(QString(), ".pln"));
+      buildDefaultFilenameShort(QString(), ".pln"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
@@ -463,7 +472,8 @@ bool RouteExport::routeExportVfp()
         tr("Export Flight Plan as vPilot VFP"),
         tr("VFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_VFP), "vfp", "Route/Vfp",
         QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-        buildDefaultFilenameShort(QString(), ".vfp"));
+        buildDefaultFilenameShort(QString(), ".vfp"),
+        false /* confirm overwrite */, true /* autonumber */);
 
       if(!routeFile.isEmpty())
       {
@@ -491,7 +501,8 @@ bool RouteExport::routeExportIvap()
         tr("Export Flight Plan as IVAP/X-IVAP FPL"),
         tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
         QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-        buildDefaultFilenameShort(QString(), ".fpl"));
+        buildDefaultFilenameShort(QString(), ".fpl"),
+        false /* confirm overwrite */, true /* autonumber */);
 
       if(!routeFile.isEmpty())
       {
@@ -553,7 +564,8 @@ bool RouteExport::routeExportGpx()
       title,
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
       "gpx", "Route/Gpx", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      buildDefaultFilename(QString(), ".gpx"));
+      buildDefaultFilename(QString(), ".gpx"),
+      false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {

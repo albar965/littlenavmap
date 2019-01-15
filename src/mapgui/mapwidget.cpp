@@ -57,6 +57,7 @@
 #include <QToolTip>
 #include <QMessageBox>
 #include <QPainter>
+#include <QJsonDocument>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleWidgetInputHandler.h>
@@ -806,14 +807,14 @@ void MapWidget::restoreHistoryState()
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
 }
 
-void MapWidget::showOverlays(bool show)
+void MapWidget::showOverlays(bool show, bool hideScalebar)
 {
   for(const QString& name : mapOverlays.keys())
   {
     AbstractFloatItem *overlay = floatItem(name);
     if(overlay != nullptr)
     {
-      if(overlay->nameId() == "scalebar")
+      if(hideScalebar && overlay->nameId() == "scalebar")
         continue;
 
       bool showConfig = mapOverlays.value(name)->isChecked();
@@ -854,6 +855,50 @@ void MapWidget::overlayStateToMenu()
       }
     }
   }
+}
+
+// {
+// "calibration": {
+// "latitude1": 51.8425,
+// "latitude2": 44.831,
+// "longitude1": -8.4895,
+// "longitude2": -0.7134,
+// "x1": 0.1722338204592902,
+// "x2": 0.541660487940095,
+// "y1": 0.11333186101295643,
+// "y2": 0.9629301675667267
+// }
+// }
+QString MapWidget::createAvitabJson()
+{
+  CoordinateConverter conv(viewport());
+  Pos topLeft = conv.sToW(rect().topLeft());
+  Pos bottomRight = conv.sToW(rect().bottomRight());
+
+  if(topLeft.isValid() && bottomRight.isValid())
+  {
+    QJsonObject calibration;
+    calibration.insert("latitude1", topLeft.getLatY());
+    calibration.insert("latitude2", bottomRight.getLatY());
+    calibration.insert("longitude1", topLeft.getLonX());
+    calibration.insert("longitude2", bottomRight.getLonX());
+    calibration.insert("x1", 0.);
+    calibration.insert("x2", 1.);
+    calibration.insert("y1", 0.);
+    calibration.insert("y2", 1.);
+
+    QJsonObject top;
+    top.insert("calibration", calibration);
+
+    QJsonDocument doc;
+    doc.setObject(top);
+    return doc.toJson();
+  }
+  else
+    QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                         tr("Map does not cover window.\n"
+                            "Ensure that the map fills the window completely."));
+  return QString();
 }
 
 void MapWidget::overlayStateFromMenu()

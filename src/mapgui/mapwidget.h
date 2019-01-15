@@ -298,7 +298,7 @@ public:
   /* End all distance line and route dragging modes */
   void cancelDragAll();
 
-  void showOverlays(bool show);
+  void showOverlays(bool show, bool hideScalebar);
 
   /* Stores delta values depending on fast or slow update. User aircraft is only updated if
    * delta values are exceeded. */
@@ -349,6 +349,9 @@ public:
   {
     return printing;
   }
+
+  /* Create json document with coordinates for AviTab configuration */
+  QString createAvitabJson();
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */

@@ -310,6 +310,7 @@ const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf *.LNMPERF *.Lnmperf 
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 
 const QString FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
+const QString FILE_PATTERN_IMAGE_AVITAB("(*.png *.jpeg)");
 
 /* Sqlite database names */
 const QLatin1Literal DATABASE_DIR("little_navmap_db");
