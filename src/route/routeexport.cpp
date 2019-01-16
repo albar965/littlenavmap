@@ -460,6 +460,62 @@ bool RouteExport::routeExportBbs()
   return false;
 }
 
+bool RouteExport::routeExportFeelthereFpl()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for FeelThere Aircraft"),
+      tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/FeelThereFpl",
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      buildDefaultFilenameShort("_", ".fpl"),
+      false /* confirm overwrite */, true /* autonumber */);
+
+    if(!routeFile.isEmpty())
+    {
+      int groundSpeed = atools::roundToInt(NavApp::getAltitudeLegs().getAverageGroundSpeed());
+      if(groundSpeed < 5)
+        groundSpeed = atools::roundToInt(NavApp::getAircraftPerformance().getCruiseSpeed());
+
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile,
+                         std::bind(&atools::fs::pln::FlightplanIO::saveFeelthereFpl, flightplanIO,
+                                   _1, _2, groundSpeed)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for FeelThere."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportLeveldRte()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for Level-D Aircraft"),
+      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/LeveldRte",
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      buildDefaultFilenameShort("_", ".rte"),
+      false /* confirm overwrite */, true /* autonumber */);
+
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for Level-D."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportVfp()
 {
   qDebug() << Q_FUNC_INFO;

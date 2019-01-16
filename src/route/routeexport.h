@@ -105,6 +105,12 @@ public:
   /* IVAP or X-IVAP for IVAO */
   bool routeExportIvap();
 
+  /* FeelThere or Wilco aircraft */
+  bool routeExportFeelthereFpl();
+
+  /* Level-D */
+  bool routeExportLeveldRte();
+
   /* Check if route has valid departure  and destination and departure parking.
    *  @return true if route can be saved anyway */
   bool routeValidate(bool validateParking, bool validateDepartureAndDestination);

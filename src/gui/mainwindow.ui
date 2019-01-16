@@ -50,12 +50,16 @@
     </widget>
     <widget class="QMenu" name="menuEXport">
      <property name="title">
-      <string>E&amp;xport Flight Plan to other Formats</string>
+      <string>E&amp;xport Flight Plan to Garmin Formats</string>
      </property>
      <addaction name="actionRouteSaveAsGfp"/>
      <addaction name="actionRouteSaveAsRxpGtn"/>
      <addaction name="actionRouteSaveAsRxpGns"/>
-     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuE_xport_Flight_Plan_to_Aircraft_Formats">
+     <property name="title">
+      <string>E&amp;xport Flight Plan to Aircraft Formats</string>
+     </property>
      <addaction name="actionRouteSaveAsFms3"/>
      <addaction name="actionRouteSaveAsRte"/>
      <addaction name="actionRouteSaveAsTxt"/>
@@ -65,14 +69,25 @@
      <addaction name="actionRouteSaveAsIFly"/>
      <addaction name="actionRouteSaveAsProSim"/>
      <addaction name="actionRouteSaveAsBbsAirbus"/>
+     <addaction name="actionRouteSaveAsLeveldRte"/>
+     <addaction name="actionRouteSaveAsFeelthereFpl"/>
+    </widget>
+    <widget class="QMenu" name="menuE_xport_Flight_Plan_to_other_Formats">
+     <property name="title">
+      <string>E&amp;xport Flight Plan to other Formats</string>
+     </property>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsUfmc"/>
      <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsGpx"/>
+    </widget>
+    <widget class="QMenu" name="menuE_xport_Flight_Plan_to_Online_Formats">
+     <property name="title">
+      <string>E&amp;xport Flight Plan to Online Formats</string>
+     </property>
      <addaction name="actionRouteSaveAsVfp"/>
      <addaction name="actionRouteSaveAsIvap"/>
-     <addaction name="separator"/>
-     <addaction name="actionRouteSaveAsGpx"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -86,7 +101,10 @@
     <addaction name="actionRouteSaveAsFlp"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveAsClean"/>
+    <addaction name="menuE_xport_Flight_Plan_to_Aircraft_Formats"/>
     <addaction name="menuEXport"/>
+    <addaction name="menuE_xport_Flight_Plan_to_Online_Formats"/>
+    <addaction name="menuE_xport_Flight_Plan_to_other_Formats"/>
     <addaction name="separator"/>
     <addaction name="actionRouteShowSkyVector"/>
     <addaction name="separator"/>
@@ -9418,6 +9436,28 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Save current map view as an image for AviTab</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsLeveldRte">
+   <property name="text">
+    <string>Export Flight Plan as Level-D &amp;RTE ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as RTE file usable by Level-D aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as RTE file usable by Level-D aircraft</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsFeelthereFpl">
+   <property name="text">
+    <string>Export Flight Plan as FeelThere &amp;FPL ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FPL file usable by FeelThere aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FPL file usable by FeelThere aircraft</string>
    </property>
   </action>
  </widget>

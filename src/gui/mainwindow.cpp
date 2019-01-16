@@ -1005,6 +1005,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAsUfmc, &QAction::triggered, routeExport, &RouteExport::routeExportUFmc);
   connect(ui->actionRouteSaveAsProSim, &QAction::triggered, routeExport, &RouteExport::routeExportProSim);
   connect(ui->actionRouteSaveAsBbsAirbus, &QAction::triggered, routeExport, &RouteExport::routeExportBbs);
+  connect(ui->actionRouteSaveAsLeveldRte, &QAction::triggered, routeExport, &RouteExport::routeExportLeveldRte);
+  connect(ui->actionRouteSaveAsFeelthereFpl, &QAction::triggered, routeExport, &RouteExport::routeExportFeelthereFpl);
 
   // Online export options
   connect(ui->actionRouteSaveAsVfp, &QAction::triggered, routeExport, &RouteExport::routeExportVfp);
@@ -2962,6 +2964,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsUfmc->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsProSim->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsBbsAirbus->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFeelthereFpl->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsLeveldRte->setEnabled(hasFlightplan);
 
   ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);
