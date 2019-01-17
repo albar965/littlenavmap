@@ -545,6 +545,31 @@ bool RouteExport::routeExportEfbr()
   return false;
 }
 
+bool RouteExport::routeExportQwRte()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for QualityWings Aircraft"),
+      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/QwRte",
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      buildDefaultFilenameShort(QString(), ".rte"),
+      false /* confirm overwrite */, true /* autonumber */);
+
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for QualityWings."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportVfp()
 {
   qDebug() << Q_FUNC_INFO;

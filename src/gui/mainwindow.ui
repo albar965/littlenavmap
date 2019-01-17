@@ -71,6 +71,7 @@
      <addaction name="actionRouteSaveAsBbsAirbus"/>
      <addaction name="actionRouteSaveAsLeveldRte"/>
      <addaction name="actionRouteSaveAsFeelthereFpl"/>
+     <addaction name="actionRouteSaveAsQwRte"/>
     </widget>
     <widget class="QMenu" name="menuE_xport_Flight_Plan_to_other_Formats">
      <property name="title">
@@ -9471,6 +9472,17 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Save flight plan as EFBR file usable by the AivlaSoft EFB</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsQwRte">
+   <property name="text">
+    <string>Export Flight Plan as QualityWings &amp;RTE ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as RTE file usable by QualityWings Aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as RTE file usable by QualityWings Aircraft</string>
    </property>
   </action>
  </widget>
