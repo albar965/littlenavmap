@@ -751,6 +751,7 @@ void RouteLeg::assignVor(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setWaypointType(atools::fs::pln::entry::VOR);
   flightplanEntry->setName(vor.name);
   flightplanEntry->setMagvar(vor.magvar);
+  flightplanEntry->setFrequency(vor.frequency);
 }
 
 void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
@@ -765,6 +766,7 @@ void RouteLeg::assignNdb(const map::MapSearchResult& mapobjectResult, atools::fs
   flightplanEntry->setWaypointType(atools::fs::pln::entry::NDB);
   flightplanEntry->setName(ndb.name);
   flightplanEntry->setMagvar(ndb.magvar);
+  flightplanEntry->setFrequency(ndb.frequency);
 }
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)

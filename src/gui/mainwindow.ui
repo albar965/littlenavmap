@@ -80,6 +80,8 @@
      <addaction name="actionRouteSaveAsUfmc"/>
      <addaction name="actionRouteSaveAsXFmc"/>
      <addaction name="separator"/>
+     <addaction name="actionRouteSaveAsEfbr"/>
+     <addaction name="separator"/>
      <addaction name="actionRouteSaveAsGpx"/>
     </widget>
     <widget class="QMenu" name="menuE_xport_Flight_Plan_to_Online_Formats">
@@ -9458,6 +9460,17 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Save flight plan as FPL file usable by FeelThere aircraft</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsEfbr">
+   <property name="text">
+    <string>Export Flight Plan as &amp;EFBR ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as EFBR file usable by the AivlaSoft EFB</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as EFBR file usable by the AivlaSoft EFB</string>
    </property>
   </action>
  </widget>

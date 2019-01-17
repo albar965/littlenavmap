@@ -516,6 +516,35 @@ bool RouteExport::routeExportLeveldRte()
   return false;
 }
 
+bool RouteExport::routeExportEfbr()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for the AivlaSoft EFB"),
+      tr("EFBR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_EFBR), "efbr", "Route/Efb",
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      buildDefaultFilenameShort("_", ".efbr"),
+      false /* confirm overwrite */, true /* autonumber */);
+
+    if(!routeFile.isEmpty())
+    {
+      QString route = RouteString::createStringForRoute(NavApp::getRouteConst(), 0.f, rs::NONE);
+      QString cycle = NavApp::getDatabaseAiracCycleNav();
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile,
+                         std::bind(&atools::fs::pln::FlightplanIO::saveEfbr, flightplanIO, _1, _2,
+                                   route, cycle, QString(), QString())))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for EFB."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportVfp()
 {
   qDebug() << Q_FUNC_INFO;
@@ -943,9 +972,9 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
     writer.writeAttribute("EquipmentPrefix", exportData.getEquipmentPrefix());
     writer.writeAttribute("EquipmentSuffix", exportData.getEquipmentSuffix());
 
-    writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("hhmm"));
+    writer.writeAttribute("DepartureTime", exportData.getDepartureTime().toString("HHmm"));
     writer.writeAttribute("DepartureTimeAct", exportData.getDepartureTimeActual().isNull() ?
-                          "0" : exportData.getDepartureTimeActual().toString("hhmm"));
+                          "0" : exportData.getDepartureTimeActual().toString("HHmm"));
     int enrouteHours = exportData.getEnrouteMinutes() / 60;
     writer.writeAttribute("EnrouteHours", QString::number(enrouteHours));
     writer.writeAttribute("EnrouteMinutes", QString::number(exportData.getEnrouteMinutes() - enrouteHours * 60));
@@ -1017,7 +1046,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
     stream << "LEVEL=" << exportData.getCruiseAltitude() / 100 << endl;
     stream << "LEVELTYPE=F" << endl;
     stream << "SPEED=" << exportData.getSpeed() << endl;
-    stream << "DEPTIME=" << exportData.getDepartureTime().toString("hhmm") << endl;
+    stream << "DEPTIME=" << exportData.getDepartureTime().toString("HHmm") << endl;
     stream << "DEPICAO=" << exportData.getDeparture() << endl;
     stream << "TRANSPONDER=" << exportData.getTransponder() << endl;
     stream << "EQUIPMENT=" << exportData.getEquipment() << endl;

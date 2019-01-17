@@ -268,6 +268,7 @@ const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml)");
 const QLatin1Literal FILE_PATTERN_FLTPLAN("(*.fltplan)");
 const QLatin1Literal FILE_PATTERN_BBS_PLN("(*.pln)");
 const QLatin1Literal FILE_PATTERN_VFP("(*.vfp)");
+const QLatin1Literal FILE_PATTERN_EFBR("(*.efbr)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.kmz)");
@@ -297,6 +298,7 @@ const QLatin1Literal FILE_PATTERN_COMPANYROUTES_XML("(companyroutes.xml Companyr
 const QLatin1Literal FILE_PATTERN_FLTPLAN("(*.fltplan *.Fltplan *.FLTPLAN)");
 const QLatin1Literal FILE_PATTERN_BBS_PLN("(*.pln *.Pln *.PLN)");
 const QLatin1Literal FILE_PATTERN_VFP("(*.vfp *.Vfp *.VFP)");
+const QLatin1Literal FILE_PATTERN_EFBR("(*.efbr *.Efbr *.EFBR)");
 
 const QLatin1Literal FILE_PATTERN_GPX("(*.gpx *.Gpx *.GPX)");
 const QLatin1Literal FILE_PATTERN_KML("(*.kml *.KML *.kmz *.KMZ)");

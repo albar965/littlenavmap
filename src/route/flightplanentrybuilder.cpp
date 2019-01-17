@@ -85,6 +85,7 @@ void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntr
   entry.setWaypointId(entry.getIcaoIdent());
   entry.setName(ndb.name);
   entry.setMagvar(ndb.magvar);
+  entry.setFrequency(ndb.frequency);
 }
 
 void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntry& entry) const
@@ -96,6 +97,7 @@ void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntr
   entry.setWaypointId(entry.getIcaoIdent());
   entry.setName(vor.name);
   entry.setMagvar(vor.magvar);
+  entry.setFrequency(vor.frequency);
 }
 
 void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, FlightplanEntry& entry) const
