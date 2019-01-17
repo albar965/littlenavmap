@@ -2289,16 +2289,16 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     QString departureTime = onlineRec.valueStr("flightplan_departure_time");
     QTime depTime = atools::timeFromHourMinStr(departureTime);
     html.row2If(tr("Departure Time:"),
-                depTime.isValid() ? depTime.toString("hh:mm UTC") : departureTime);
+                depTime.isValid() ? depTime.toString("HH:mm UTC") : departureTime);
 
     QString actualDepartureTime = onlineRec.valueStr("flightplan_actual_departure_time");
     QTime actDepTime = atools::timeFromHourMinStr(actualDepartureTime);
     html.row2If(tr("Actual Departure Time:"),
-                actDepTime.isValid() ? actDepTime.toString("hh:mm UTC") : actualDepartureTime);
+                actDepTime.isValid() ? actDepTime.toString("HH:mm UTC") : actualDepartureTime);
 
     QTime estArrTime = atools::timeFromHourMinStr(onlineRec.valueStr("flightplan_estimated_arrival_time"));
     if(estArrTime.isValid())
-      html.row2If(tr("Estimated Arrival Time:"), estArrTime.toString("hh:mm UTC"));
+      html.row2If(tr("Estimated Arrival Time:"), estArrTime.toString("HH:mm UTC"));
 
     double enrouteMin = onlineRec.valueDouble("flightplan_enroute_minutes");
 

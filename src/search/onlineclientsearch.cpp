@@ -224,7 +224,7 @@ QString OnlineClientSearch::formatModelData(const Column *col, const QVariant& d
     else if(col->getColumnName() == "flightplan_departure_time" ||
             col->getColumnName() == "flightplan_actual_departure_time" ||
             col->getColumnName() == "flightplan_estimated_arrival_time")
-      return atools::timeFromHourMinStr(displayRoleValue.toString()).toString("hh:mm");
+      return atools::timeFromHourMinStr(displayRoleValue.toString()).toString("HH:mm");
 
     return SearchBaseTable::formatModelData(col, displayRoleValue);
   }
