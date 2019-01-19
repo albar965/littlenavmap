@@ -570,6 +570,31 @@ bool RouteExport::routeExportQwRte()
   return false;
 }
 
+bool RouteExport::routeExportMdx()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flight Plan for Maddog X Aircraft"),
+      tr("MDX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDX), "mdx", "Route/Mdx",
+      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      buildDefaultFilenameShort(QString(), ".mdx"),
+      false /* confirm overwrite */, true /* autonumber */);
+
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveMdx, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for Maddog X."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportVfp()
 {
   qDebug() << Q_FUNC_INFO;
