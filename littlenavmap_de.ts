@@ -10381,32 +10381,32 @@ Nur JPG und PNG sind erlaubt.</translation>
 <context>
     <name>MapWidget</name>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="527"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="528"/>
         <source>Map position history next.</source>
         <translation>Nächste Position in der Kartenhistorie.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="543"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="544"/>
         <source>Map position history back.</source>
         <translation>Vorherige Position in der Kartenhistorie.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1172"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1173"/>
         <source>Showing distance search center.</source>
         <translation>Zeige Distanz zum Suchzentrum.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1214"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1215"/>
         <source>Showing home position.</source>
         <translation>Zeige Heimposition.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1225"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1226"/>
         <source>Distance search center position changed.</source>
         <translation>Distanz zur Suchzentrumsposition wurde geändert.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1233"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1234"/>
         <source>Changed home position.</source>
         <translation>Heimposition wurde geändert.</translation>
     </message>
@@ -10419,32 +10419,32 @@ Nur JPG und PNG sind erlaubt.</translation>
         <translation type="vanished"> zum Flugplan</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1836"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1837"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2076"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2089"/>
         <source>Online Center %1</source>
         <translation>Online Center %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2079"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2092"/>
         <source>Airspace</source>
         <translation>Luftraum</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2120"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2133"/>
         <source>Helipad %1</source>
         <translation>Hubschrauberlandeplatz %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2163"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2176"/>
         <source>Online Client Aircraft %1</source>
         <translation>Online Client Flugzeug %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2169"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2182"/>
         <source>User Aircraft</source>
         <translation>Nutzerflugzeug</translation>
     </message>
@@ -10453,154 +10453,154 @@ Nur JPG und PNG sind erlaubt.</translation>
         <translation type="vanished"> und mehr</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1828"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2295"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2296"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2367"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2376"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1829"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2308"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2309"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2380"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2389"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1726"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1727"/>
         <source>Add %1 to Flight Plan</source>
         <translation>%1 zum Flugplan hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="899"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="900"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
         <translation>Die Karte deckt nicht das ganze Fenster ab.
 Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1728"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1729"/>
         <source>Insert %1 to Flight Plan</source>
         <translation>%1 in den Flugplan einfügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1730"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1731"/>
         <source>Append %1 to Flight Plan</source>
         <translation>%1 an den Flugplan anhängen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2320"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2333"/>
         <source>Departure </source>
         <translation>Abflug </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2324"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2337"/>
         <source>Show procedures (%1 has no departure procedure)</source>
         <translation>Zeige Prozeduren (%1 hat keine Abflugprozedur)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2331"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2344"/>
         <source>Arrival </source>
         <translation>Ankunft </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2335"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2348"/>
         <source>Show procedures (%1 has no arrival procedure)</source>
         <translation>Zeige Prozeduren (%1 hat keine Anflugprozedur)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2340"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2353"/>
         <source>all </source>
         <translation>alle </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2344"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2357"/>
         <source>Show procedures (%1 has no procedure)</source>
         <translation>Zeige Prozeduren (%1 hat keine Prozeduren)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2714"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2727"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Platzrunde für %1 hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2723"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2736"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Platzrunde von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3608"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3621"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Zeige Online Clientflugzeug auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3627"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3640"/>
         <source>Showing navaid or userpoint on map.</source>
         <translation>Zeige Navigationshilfe oder Nutzerpunkt auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3996"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="4009"/>
         <source>Jumped back to aircraft.</source>
         <translation>Zurück zum Flugzeug gesprungen.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2396"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="2397"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2409"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2410"/>
         <source>here</source>
         <translation>hier</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1809"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1810"/>
         <source>More ...</source>
         <translation>Mehr ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2155"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2168"/>
         <source>AI / Multiplayer</source>
         <translation>KI / Mehrspieler</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2155"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2168"/>
         <source> %1</source>
         <translation> %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2157"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2170"/>
         <source> / </source>
         <translation> / </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3267"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3280"/>
         <source>Range ring removed from map.</source>
         <translation>Entfernungsringe wurden von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3275"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3288"/>
         <source>Measurement line removed from map.</source>
         <translation>Messlinie wurde von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2748"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2761"/>
         <source>Added range rings for %1.</source>
         <translation>Entfernungsringe für %1 wurden hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2766"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2779"/>
         <source>Added range rings for position.</source>
         <translation>Entfernungsringe für Position wurden hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2844"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2857"/>
         <source>All range rings and measurement lines removed from map.</source>
         <translation>Alle Entfernungsringe und Messungen wurden von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3598"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3611"/>
         <source>Showing user aircraft on map.</source>
         <translation>Zeige Nutzerflugzeug auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3603"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3616"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Zeige KI- / Mehrspielerflugzeuge auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3613"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3626"/>
         <source>Showing airport on map.</source>
         <translation>Zeige Flugplatz auf der Karte.</translation>
     </message>
@@ -10609,22 +10609,22 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation type="vanished">Flugzeugpfad wurde von der Karte entfernt.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3897"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3910"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3904"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3917"/>
         <source>Detail %1</source>
         <translation>Detail %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3905"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3918"/>
         <source>Map detail level changed.</source>
         <translation>Detailgrad der Karte wurde geändert.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2079"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2092"/>
         <source>Airspaces</source>
         <translation>Lufträume</translation>
     </message>
