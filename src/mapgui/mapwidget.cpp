@@ -52,6 +52,7 @@
 #include "gui/trafficpatterndialog.h"
 #include "common/jumpback.h"
 #include "route/routealtitude.h"
+#include "gui/actionstatesaver.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -1897,6 +1898,18 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                           ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
+  Q_UNUSED(textSaver);
+
+  // Re-enable actions on exit to allow keystrokes
+  atools::gui::ActionStateSaver stateSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
+                                            ui->actionMapRangeRings, ui->actionMapNavaidRange,
+                                            ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
+                                            ui->actionMapShowInformation, ui->actionMapShowApproaches,
+                                            ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
+                                            ui->actionRouteAirportDest,
+                                            ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
+                                            ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
+                                            ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
   Q_UNUSED(textSaver);
 
   // ===================================================================================

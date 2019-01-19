@@ -1659,7 +1659,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
                                       ui->actionRouteShowApproaches, ui->actionRouteDeleteLeg,
-                                      ui->actionRouteInsert});
+                                      ui->actionRouteInsert, ui->actionMapTrafficPattern});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
