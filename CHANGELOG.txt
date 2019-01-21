@@ -1,6 +1,62 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.4.rc1
+
+* Added saving and loading of FlightGear XML flight plans (.fgfp) also covering SID and STAR. #361
+* Added MDX flight plan export for Leonardo Maddog X. #232
+* Added RTE flight plan export for QualityWings aircraft. #335
+* Added export for AivlaSoft EFB (.efbr version 1 - no SID and STAR). #226
+* Added saving of PNG or JPG map images for AviTab (https://github.com/fpw/avitab) to file menu.
+  Includes JSON calibration file. #310
+* Added flight plan export for online networks including dialog for additional data. #317 (vPilot) and #176 (IVAP)
+* Added FPL flight plan export for FeelThere aircraft. #206
+* Added flight plan export for Level-D (.rte). #206
+* Added function key shortcuts in menu "Window" -> "Shortcuts" to have quick access to search, flight plan, map and more. #364
+* Adapted flight plan file type detection to new formats and improved it for drag and drop of flight plans.
+  Files are now accepted for drop independent of file extension.
+* Now automatically suggesting a numbered filename if file already exists when exporting or using "Save as".
+* Reorganized export flight plan menu items for better overview.
+
+* Added links to well known directory "Documents/Little Navmap Files/ICAO" for airport information.
+  Links to all included files are shown if the path exists for an airport with the given ICAO ident.
+  The path is locale sensitive, e.g. in German "Dokumente/Little Navmap Dateien/ICAO". This depends on
+  completeness of the translation. Try both variants ("Files" vs. your system language) if in doubt.
+  Clicking on a link opens the file in the default editor or viewer of the system.
+
+* Changed taxiway color for better visibility against light backgrounds.
+* Added taxiway colors and pens to "little_navmap_mapstyle.ini" to allow configuration.
+* Logbook userpoint icon now displayed using an offset from airport icon to avoid covering airport.
+  Hotspot of logbook userpoint is now top left of the symbol. #366
+* Fixed issue where MORA data was displayed only with Navigraph data enabled.
+  Now always shown independent of selection. #331
+* Now disabling text in MORA display if it gets too small to avoid garbled up display.
+* Fixed display issue with empty procedure leg before initial fix after altitude terminated legs.
+
+* Fixed issue where selecting a parking position as departure resulted in zero altitude in flight plan.
+* Airports with open helipads and closed runways are now considered open.
+* Now considering helipads for rating calculation for airports.
+* Now displaying simulator type in information window for online network clients.
+
+* Fixed wrong test in options dialog for online "status.txt" file. Now looking for the correct values to verify the file.
+* Default folder is now the simulator base path when selecting exclusions in the options dialog.
+* Fixed issue where date display used 12 hour time without AM/PM indicator in several places.
+  Now always using 24 hour time in these cases.
+  * Moving all context menus a few pixels off the cursor to avoid accidental selection on touchpads or some mice.
+* Fixed issues with missing weather updates when switching airport weather.
+* Options/Language override in settings file now fixed for online help and legend loading.
+
+related from atools version 3.2.4.rc1
+
+* Fixed issue with error messages when loading OpenAIR files with missing airspace class.
+  Now omitting only the invalid airspaces.
+* Made METAR parser more tolerant for invalid temperature values not separated by /.
+* Fixed issue in whazzup parser which could result in invalid dates on systems with AM/PM data locale setting.
+* Avoiding access to invalid empty paths when detecting simulators to
+* Now looking for registry keys in a case insensitive manner to avoid problems where FSX or P3D could not be found.
+
+===============================================================================
+
 Version 2.2.3
 
 * Fixed crash when reading unexpected value in "activeflightplanwx.txt" of Active Sky.
@@ -16,6 +72,8 @@ Version 2.2.3
 * Disabled display of flight plan position in information window since it needs too many updates to function correctly.
 * Full French and Spanish translated PDF manual included and online help is now complete.
 * Updated French legend.
+
+===============================================================================
 
 Version 2.2.2
 
@@ -33,6 +91,8 @@ Version 2.2.2
 * Updated German program translation and map legend.
 * Replaced OpenMapSurfer hillshading with the one used for OpenStreetMap since server is offline.
 * Enabled weather support for ActiveSky XP.
+
+===============================================================================
 
 Version 2.2.2.rc2
 
