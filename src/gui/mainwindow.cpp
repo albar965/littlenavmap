@@ -3666,7 +3666,7 @@ void MainWindow::dropEvent(QDropEvent *event)
     QString filepath = event->mimeData()->urls().first().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
-    if(QFileInfo(filepath).suffix().toLower() == "lnmperf")
+    if(AircraftPerfController::isPerformanceFile(filepath))
       // Load aircraft performance file
       NavApp::getAircraftPerfController()->loadFile(filepath);
     else

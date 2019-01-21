@@ -85,6 +85,8 @@
      <addaction name="actionRouteSaveAsEfbr"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsGpx"/>
+     <addaction name="separator"/>
+     <addaction name="actionRouteShowSkyVector"/>
     </widget>
     <widget class="QMenu" name="menuE_xport_Flight_Plan_to_Online_Formats">
      <property name="title">
@@ -109,8 +111,6 @@
     <addaction name="menuEXport"/>
     <addaction name="menuE_xport_Flight_Plan_to_Online_Formats"/>
     <addaction name="menuE_xport_Flight_Plan_to_other_Formats"/>
-    <addaction name="separator"/>
-    <addaction name="actionRouteShowSkyVector"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSaveApprWaypoints"/>
     <addaction name="actionRouteSaveSidStarWaypoints"/>
