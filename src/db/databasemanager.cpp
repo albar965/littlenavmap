@@ -40,6 +40,7 @@
 #include "fs/userdata/userdatamanager.h"
 #include "fs/online/onlinedatamanager.h"
 #include "io/fileroller.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -68,6 +69,7 @@ using atools::fs::db::DatabaseMeta;
 
 const int MAX_ERROR_BGL_MESSAGES = 400;
 const int MAX_ERROR_SCENERY_MESSAGES = 400;
+const int MAX_TEXT_LENGTH = 120;
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -1416,7 +1418,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
       // Run script etc.
       progressDialog->setLabelText(
-        databaseTimeText.arg(progress.getOtherAction()).
+        databaseTimeText.arg(atools::elideTextShortMiddle(progress.getOtherAction(), MAX_TEXT_LENGTH)).
         arg(formatter::formatElapsed(timer)).
         arg(QString()).
         arg(QString()).
@@ -1436,9 +1438,9 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
       // Switched to a new scenery area
       progressDialog->setLabelText(
-        databaseLoadingText.arg(progress.getSceneryTitle()).
-        arg(progress.getSceneryPath()).
-        arg(progress.getBglFileName()).
+        databaseLoadingText.arg(atools::elideTextShortMiddle(progress.getSceneryTitle(), MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(progress.getSceneryPath(), MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(progress.getBglFileName(), MAX_TEXT_LENGTH)).
         arg(formatter::formatElapsed(timer)).
         arg(progress.getNumErrors()).
         arg(progress.getNumFiles()).
