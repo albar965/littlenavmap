@@ -4,14 +4,15 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 Version 2.2.4.rc1
 
 * Added saving and loading of FlightGear XML flight plans (.fgfp) also covering SID and STAR. #361
-* Added MDX flight plan export for Leonardo Maddog X. #232
+* MDX flight plan export for Leonardo Maddog X added. #232
 * Added RTE flight plan export for QualityWings aircraft. #335
-* Added export for AivlaSoft EFB (.efbr version 1 - no SID and STAR). #226
+* Export for AivlaSoft EFB (.efbr version 1 - no SID and STAR). #226
 * Added saving of PNG or JPG map images for AviTab (https://github.com/fpw/avitab) to file menu.
   Includes JSON calibration file. #310
 * Added flight plan export for online networks including dialog for additional data. #317 (vPilot) and #176 (IVAP)
 * Added FPL flight plan export for FeelThere aircraft. #206
-* Added flight plan export for Level-D (.rte). #206
+* New flight plan export for Level-D (.rte). #206
+
 * Added function key shortcuts in menu "Window" -> "Shortcuts" to have quick access to search, flight plan, map and more. #364
 * Adapted flight plan file type detection to new formats and improved it for drag and drop of flight plans.
   Files are now accepted for drop independent of file extension.
@@ -32,6 +33,7 @@ Version 2.2.4.rc1
   Now always shown independent of selection. #331
 * Now disabling text in MORA display if it gets too small to avoid garbled up display.
 * Fixed display issue with empty procedure leg before initial fix after altitude terminated legs.
+* Fixed drawing issue with intercept legs in procedures.
 
 * Fixed issue where selecting a parking position as departure resulted in zero altitude in flight plan.
 * Airports with open helipads and closed runways are now considered open.
@@ -42,9 +44,10 @@ Version 2.2.4.rc1
 * Default folder is now the simulator base path when selecting exclusions in the options dialog.
 * Fixed issue where date display used 12 hour time without AM/PM indicator in several places.
   Now always using 24 hour time in these cases.
-  * Moving all context menus a few pixels off the cursor to avoid accidental selection on touchpads or some mice.
+* Moved all context menus a few pixels off the cursor to avoid accidental selection on touchpads or some mice.
 * Fixed issues with missing weather updates when switching airport weather.
 * Options/Language override in settings file now fixed for online help and legend loading.
+* Limited text length when loading database to avoid growing the progress dialog.
 
 related from atools version 3.2.4.rc1
 
