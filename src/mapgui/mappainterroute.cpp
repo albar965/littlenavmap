@@ -659,6 +659,7 @@ void MapPainterRoute::paintProcedureSegment(const PaintContext *context, const p
         // Lines are connected but a turn direction is given
         // Draw a small arc if a turn direction is given
 
+        // lastLines gets the full line added and nextLine is the line for text
         QLineF nextLine = paintProcedureTurn(lastLines, line, leg, painter, intersectPoint, draw);
 
         Pos p1 = sToW(nextLine.p1());
@@ -928,8 +929,10 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
       drawLine(painter, endPos, line.p2());
   }
 
-  lastLines.append(nextLine.toLine());
+  // Full line for drawing
+  lastLines.append(line);
 
+  // Line for text
   return nextLine;
 }
 

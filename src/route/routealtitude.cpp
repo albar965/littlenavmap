@@ -410,9 +410,6 @@ void RouteAltitude::simplyfyRouteAltitudes()
     // Use several iterations
     for(int i = 0; i < 16; i++)
     {
-#ifdef DEBUG_INFORMATION
-      qDebug() << Q_FUNC_INFO << "=================================================";
-#endif
       for(int j = legIndexTopOfDescent; j < size() - 1; j++)
         simplifyRouteAltitude(j, false /* departure */);
     }
@@ -426,9 +423,6 @@ void RouteAltitude::simplyfyRouteAltitudes()
     // Use several iterations
     for(int i = 0; i < 8; i++)
     {
-   #ifdef DEBUG_INFORMATION
-      qDebug() << Q_FUNC_INFO << "=================================================";
-   #endif
       for(int j = 1; j < legIndexTopOfClimb; j++)
         simplifyRouteAltitude(j, true /* departure */);
     }
