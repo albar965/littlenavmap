@@ -49,6 +49,11 @@ Version 2.2.4.rc1
 * Options/Language override in settings file now fixed for online help and legend loading.
 * Limited text length when loading database to avoid growing the progress dialog.
 
+related from Little Xpconnect version 1.0.13
+
+* Fixed issue with AI detection where aircraft remained on map moving along with the user aircraft
+  after deleting AI in simulator.
+
 related from atools version 3.2.4.rc1
 
 * Fixed issue with error messages when loading OpenAIR files with missing airspace class.
