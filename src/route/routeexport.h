@@ -171,6 +171,7 @@ private:
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;
   atools::fs::pln::FlightplanIO *flightplanIO;
+  QString documentsLocation;
 };
 
 #endif // LNM_ROUTEEXPORT_H

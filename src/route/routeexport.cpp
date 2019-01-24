@@ -47,6 +47,7 @@
 RouteExport::RouteExport(MainWindow *parent)
   : mainWindow(parent)
 {
+  documentsLocation = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
   dialog = new atools::gui::Dialog(mainWindow);
   flightplanIO = new atools::fs::pln::FlightplanIO;
 }
@@ -71,10 +72,9 @@ bool RouteExport::routeExportRxpGns()
     QString gnsPath(qgetenv("GNSAPPDATA"));
     path = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
 #elif DEBUG_INFORMATION
-    path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-                              "Garmin", "GNS Trainer Data", "GNS", "FPL"});
+    path = atools::buildPath({documentsLocation, "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
-    path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+    path = documentsLocation;
 #endif
 
     bool mkdir = QDir(path).mkpath(path);
@@ -114,10 +114,9 @@ bool RouteExport::routeExportRxpGtn()
     QString gtnPath(qgetenv("GTNSIMDATA"));
     path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
-    path = atools::buildPath({QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-                              "Garmin", "Trainers", "GTN", "FPLN"});
+    path = atools::buildPath({documentsLocation, "Garmin", "Trainers", "GTN", "FPLN"});
 #else
-    path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+    path = documentsLocation;
 #endif
 
     bool mkdir = QDir(path).mkpath(path);
@@ -414,7 +413,7 @@ bool RouteExport::routeExportProSim()
       tr("Save Flight Plan to companyroutes.xml for ProSim"),
       tr("companyroutes.xml Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_COMPANYROUTES_XML),
       ".xml", "Route/CompanyRoutesXml",
-      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(), "companyroutes.xml",
+      documentsLocation, "companyroutes.xml",
       true /* dont confirm overwrite */);
 
     if(!routeFile.isEmpty())
@@ -468,7 +467,7 @@ bool RouteExport::routeExportFeelthereFpl()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for FeelThere Aircraft"),
       tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/FeelThereFpl",
-      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort("_", ".fpl"),
       false /* confirm overwrite */, true /* autonumber */);
 
@@ -499,7 +498,7 @@ bool RouteExport::routeExportLeveldRte()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for Level-D Aircraft"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/LeveldRte",
-      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort("_", ".rte"),
       false /* confirm overwrite */, true /* autonumber */);
 
@@ -524,7 +523,7 @@ bool RouteExport::routeExportEfbr()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for the AivlaSoft EFB"),
       tr("EFBR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_EFBR), "efbr", "Route/Efb",
-      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      documentsLocation,
       buildDefaultFilenameShort("_", ".efbr"),
       false /* confirm overwrite */, true /* autonumber */);
 
@@ -553,7 +552,7 @@ bool RouteExport::routeExportQwRte()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for QualityWings Aircraft"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/QwRte",
-      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".rte"),
       false /* confirm overwrite */, true /* autonumber */);
 
@@ -578,7 +577,7 @@ bool RouteExport::routeExportMdx()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for Maddog X Aircraft"),
       tr("MDX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDX), "mdx", "Route/Mdx",
-      QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      NavApp::getCurrentSimulatorBasePath(),
       buildDefaultFilenameShort(QString(), ".mdx"),
       false /* confirm overwrite */, true /* autonumber */);
 
@@ -606,7 +605,7 @@ bool RouteExport::routeExportVfp()
       QString routeFile = dialog->saveFileDialog(
         tr("Export Flight Plan as vPilot VFP"),
         tr("VFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_VFP), "vfp", "Route/Vfp",
-        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+        documentsLocation,
         buildDefaultFilenameShort(QString(), ".vfp"),
         false /* confirm overwrite */, true /* autonumber */);
 
@@ -635,7 +634,7 @@ bool RouteExport::routeExportIvap()
       QString routeFile = dialog->saveFileDialog(
         tr("Export Flight Plan as IVAP/X-IVAP FPL"),
         tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
-        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+        documentsLocation,
         buildDefaultFilenameShort(QString(), ".fpl"),
         false /* confirm overwrite */, true /* autonumber */);
 
@@ -698,8 +697,7 @@ bool RouteExport::routeExportGpx()
     QString routeFile = dialog->saveFileDialog(
       title,
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
-      "gpx", "Route/Gpx", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-      buildDefaultFilename(QString(), ".gpx"),
+      "gpx", "Route/Gpx", documentsLocation, buildDefaultFilename(QString(), ".gpx"),
       false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
