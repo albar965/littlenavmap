@@ -105,7 +105,7 @@
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="570"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="736"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="735"/>
         <source>Taxi Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -171,7 +171,7 @@
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="626"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="780"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="779"/>
         <source>Performance File Description</source>
         <translation type="unfinished"></translation>
     </message>
@@ -186,119 +186,119 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="675"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="674"/>
         <source>Aircraft Performance %1 - %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="703"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="702"/>
         <source>Distance and Time:</source>
         <translation type="unfinished">Distancia y Tiempo:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="703"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="702"/>
         <source>%1, %2</source>
         <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="712"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="711"/>
         <source>Average Ground Speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="713"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="712"/>
         <source>True Airspeed at Cruise:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="718"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="717"/>
         <source>Mach at cruise:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="726"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="725"/>
         <source>Trip Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="729"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="728"/>
         <source>Block Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="734"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="733"/>
         <source>Fuel at Destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="735"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="734"/>
         <source>Reserve Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="737"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="736"/>
         <source>Extra Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="740"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="739"/>
         <source>Contingency Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="740"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="739"/>
         <source>%1 %, %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="746"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="745"/>
         <source>Climb and Descent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="749"/>
         <source>Climb:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="765"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="749"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="764"/>
         <source>%1 at %2, %3° Flight Path Angle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="756"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="755"/>
         <source>Time to Climb:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="761"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="760"/>
         <source>Climb not valid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="765"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="764"/>
         <source>Descent:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="769"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="768"/>
         <source>Descent Rule of Thumb:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="769"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="768"/>
         <source>%1 per %2 %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="775"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="774"/>
         <source>Descent not valid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="568"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
         <source>Fuel Type:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -309,68 +309,68 @@
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="568"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
         <source>Avgas</source>
         <translation type="unfinished">Avgas</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="568"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
         <source>Jetfuel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="684"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="683"/>
         <source>reserve fuel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="686"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="685"/>
         <source>climb fuel flow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="688"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="687"/>
         <source>cruise fuel flow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="690"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="689"/>
         <source>descent fuel flow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="692"/>
         <source>Invalid value for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="692"/>
         <source>Invalid values for %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="694"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="699"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="698"/>
         <source>Flight Plan</source>
         <translation type="unfinished">Plan de Vuelo</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="722"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="721"/>
         <source>Fuel Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="708"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="707"/>
         <source>Distance:</source>
         <translation type="unfinished">Distancia:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="708"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="707"/>
         <source>%1</source>
         <translation type="unfinished">%1</translation>
     </message>
@@ -418,123 +418,123 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="103"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="151"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="167"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="106"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="154"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="173"/>
         <source> %fuel%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="116"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="119"/>
         <source>&amp;Extra fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="126"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="129"/>
         <source>&amp;Reserve Fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="136"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="139"/>
         <source>&amp;Taxi fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="164"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="167"/>
         <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="185"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="191"/>
         <source> percent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="198"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="204"/>
         <source>&amp;Contingency fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="235"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="241"/>
         <source>Climb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="256"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="371"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="479"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="265"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="389"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="506"/>
         <source> %speed% true airspeed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="275"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="284"/>
         <source>Average &amp;climb speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="285"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="294"/>
         <source>Average vertical &amp;climb speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="295"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="307"/>
         <source> %vspeed% ▲</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="314"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="326"/>
         <source>Average fuel flow for &amp;climb:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="324"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="400"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="519"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="339"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="421"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="549"/>
         <source> %fuel% per hour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="340"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="355"/>
         <source>Cruise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="361"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="376"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="390"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="408"/>
         <source>Fuel flow in c&amp;ruise:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="416"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="437"/>
         <source>Descent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="437"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="458"/>
         <source>Average vertical &amp;descent speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="447"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="471"/>
         <source> %vspeed% ▼</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="469"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="493"/>
         <source>Average &amp;descent speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="509"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="536"/>
         <source>Average fuel flow for &amp;descent:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="551"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="581"/>
         <source>Description or Comments</source>
         <translation type="unfinished"></translation>
     </message>
@@ -550,36 +550,36 @@ captain or the dispatcher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="146"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="149"/>
         <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="180"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="186"/>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="209"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="215"/>
         <source>Avgas</source>
         <translation type="unfinished">Avgas</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="214"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="220"/>
         <source>Jetfuel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="222"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="228"/>
         <source>&amp;Fuel Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="498"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="525"/>
         <source>Equivalent rule of thumb for
 the given descent speeds</source>
         <translation type="unfinished"></translation>
@@ -1369,224 +1369,224 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 <context>
     <name>DatabaseManager</name>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1375"/>
+        <location filename="src/db/databasemanager.cpp" line="1377"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1603"/>
-        <location filename="src/db/databasemanager.cpp" line="1612"/>
-        <location filename="src/db/databasemanager.cpp" line="1621"/>
+        <location filename="src/db/databasemanager.cpp" line="1605"/>
+        <location filename="src/db/databasemanager.cpp" line="1614"/>
+        <location filename="src/db/databasemanager.cpp" line="1623"/>
         <source>None</source>
         <translation>Ninguno</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1354"/>
+        <location filename="src/db/databasemanager.cpp" line="1356"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Más archivos ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="504"/>
+        <location filename="src/db/databasemanager.cpp" line="506"/>
         <source>Cannot copy database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</source>
         <translation>No puedo copiar base de datos&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;a&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="308"/>
+        <location filename="src/db/databasemanager.cpp" line="310"/>
         <source>You can reload these Scenery Library Databases again after erasing.</source>
         <translation>Puede volver a cargar estas bases de datos de la biblioteca de escenario una vez borrado.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="601"/>
+        <location filename="src/db/databasemanager.cpp" line="603"/>
         <source>Use %1 for &amp;all Features</source>
         <translation>Usar %1 para tod&amp;as las características</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="591"/>
-        <location filename="src/db/databasemanager.cpp" line="640"/>
+        <location filename="src/db/databasemanager.cpp" line="593"/>
+        <location filename="src/db/databasemanager.cpp" line="642"/>
         <source> - AIRAC Cycle %1</source>
         <translation> - Ciclo %1 AIRAC</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="298"/>
+        <location filename="src/db/databasemanager.cpp" line="300"/>
         <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>La base de datos del simulador mostrada no es compatible con esta versión del programa o está cargada de manera incompleta: &lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;¿Borrar?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="319"/>
+        <location filename="src/db/databasemanager.cpp" line="321"/>
         <source>&amp;Erase</source>
         <translation>Borrar &amp;B</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1340"/>
+        <location filename="src/db/databasemanager.cpp" line="1342"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Mas entradas de escenarios ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="604"/>
+        <location filename="src/db/databasemanager.cpp" line="606"/>
         <source>Use all of %1 database features</source>
         <translation>Usar todas las características de base de datos %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1062"/>
+        <location filename="src/db/databasemanager.cpp" line="1064"/>
         <source>X-Plane database has no airspace boundary table.</source>
         <translation>La base de datos de X-Plane parece no tener table de límites de espacio aéreo.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="699"/>
+        <location filename="src/db/databasemanager.cpp" line="701"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation>Habilitar navaids, aerovías, espacios aéreos y procedimientos para %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="353"/>
-        <location filename="src/db/databasemanager.cpp" line="499"/>
+        <location filename="src/db/databasemanager.cpp" line="355"/>
+        <location filename="src/db/databasemanager.cpp" line="501"/>
         <source>Deleting of database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</source>
         <translation>El borrado de la base de datos &lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;falló. &lt;br/&gt; &lt;br/&gt; Eliminar a mano la base de datos y reiniciar programa.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="461"/>
-        <location filename="src/db/databasemanager.cpp" line="513"/>
+        <location filename="src/db/databasemanager.cpp" line="463"/>
+        <location filename="src/db/databasemanager.cpp" line="515"/>
         <source>Preparing %1 Database ...</source>
         <translation>Preparando %1 base de datos ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="704"/>
+        <location filename="src/db/databasemanager.cpp" line="706"/>
         <source>Disabled %1.</source>
         <translation>Deshabilitado %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1182"/>
-        <location filename="src/db/databasemanager.cpp" line="1186"/>
+        <location filename="src/db/databasemanager.cpp" line="1184"/>
+        <location filename="src/db/databasemanager.cpp" line="1188"/>
         <source>Cannot read &quot;%1&quot;. Reason: %2.</source>
         <translation>No legible &quot;%1&quot;. Motivo: %2.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1067"/>
+        <location filename="src/db/databasemanager.cpp" line="1069"/>
         <source>X-Plane database &quot;%1&quot; does not exist.</source>
         <translation>No existe esa Base de datos &quot;%1&quot; de X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1359"/>
+        <location filename="src/db/databasemanager.cpp" line="1361"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation>&lt;b&gt;Archivo:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="474"/>
+        <location filename="src/db/databasemanager.cpp" line="476"/>
         <source>Preparing %1 Database: Copying file ...</source>
         <translation>Preparando %1 copiado de archivos de base de datos...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="436"/>
+        <location filename="src/db/databasemanager.cpp" line="438"/>
         <source>Your current navdata is older than the navdata included in the Little Navmap download archive.&lt;br/&gt;&lt;br/&gt;Overwrite your current navdata file with the new one?&lt;hr/&gt;Current file to overwrite:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, cycle %3, compiled on %4&lt;/i&gt;&lt;hr/&gt;New file:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, cycle %7, compiled on %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>Su navdata actual es anterior a la navdata incluida en el archivo de descarga Little Navmap.&lt;br/&gt;&lt;br/&gt; ¿Sobrescribir archivo navdata actual con el nuevo?&lt;hr/&gt;Archivo actual para sobrescribir:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, ciclo %3, compilado en %4&lt;/i&gt;&lt;hr/&gt;Nuevo archivo:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6,ciclo %7, compilado el %8 &lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="743"/>
+        <location filename="src/db/databasemanager.cpp" line="745"/>
         <source>Switched to %1.</source>
         <translation>Cambiado a %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1057"/>
+        <location filename="src/db/databasemanager.cpp" line="1059"/>
         <source>Copied %1 airspaces to the X-Plane scenery database.</source>
         <translation>Copiado %1 del espacio aéreo a base de datos escenario X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1345"/>
+        <location filename="src/db/databasemanager.cpp" line="1347"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Título de escenario: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1071"/>
+        <location filename="src/db/databasemanager.cpp" line="1073"/>
         <source>Airspace boundary table not found in currently selected database</source>
         <translation>La tabla de límites de espacio aéreo no está en base de datos actualmente</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1255"/>
+        <location filename="src/db/databasemanager.cpp" line="1257"/>
         <source>%1 - Loading %2</source>
         <translation>%1 - Cargando %2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1642"/>
+        <location filename="src/db/databasemanager.cpp" line="1644"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Actualmente cargados:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="453"/>
+        <location filename="src/db/databasemanager.cpp" line="455"/>
         <source>Do not &amp;show this dialog again and skip copying in the future.</source>
         <translation>No mo&amp;strar este diálogo de nuevo y evitar la copia en el futuro.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="301"/>
+        <location filename="src/db/databasemanager.cpp" line="303"/>
         <source>You can reload the Scenery Library Database again after erasing.</source>
         <translation>Puede recargar la base de datos librería de escenario de nuevo después de borrar.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="644"/>
+        <location filename="src/db/databasemanager.cpp" line="646"/>
         <source>Switch to %1 database</source>
         <translation>Cambiar a base de datos %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1323"/>
+        <location filename="src/db/databasemanager.cpp" line="1325"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <translation>&lt;b&gt; Si desea informar este error, adjunte los archivos de registro y configuración a su informe, agregue toda la información disponible y envíela a alguno de estos mails.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="333"/>
+        <location filename="src/db/databasemanager.cpp" line="335"/>
         <source>Erasing database for %1 ...</source>
         <translation>Borando base de datos para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="616"/>
+        <location filename="src/db/databasemanager.cpp" line="618"/>
         <source>Do &amp;not use %1 database</source>
         <translation>&amp;No usar la base de datos %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1460"/>
+        <location filename="src/db/databasemanager.cpp" line="1462"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
         <translation>&lt;big&gt;Hecho.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="485"/>
+        <location filename="src/db/databasemanager.cpp" line="487"/>
         <source>Preparing %1 Database: Creating indexes ...</source>
         <translation>Preparando base de datos %1  Creando índices...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="619"/>
+        <location filename="src/db/databasemanager.cpp" line="621"/>
         <source>Do not use %1 database</source>
         <translation>No usar base de datos %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1331"/>
+        <location filename="src/db/databasemanager.cpp" line="1333"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Algunos archivos o directorios de escenarios no se pudieron leer.&lt;br/&gt;Verifique si los aeropuertos de los escenarios afectados y su info se muestran correctamente. &lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="608"/>
+        <location filename="src/db/databasemanager.cpp" line="610"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
         <translation>Usar %1 para las &amp;Navaids y procedimientos</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="328"/>
+        <location filename="src/db/databasemanager.cpp" line="330"/>
         <source>Deleting ...</source>
         <translation>Borrando ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="611"/>
+        <location filename="src/db/databasemanager.cpp" line="613"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
         <translation>Usar solo navaids, aerovías, espacios y procedimientos de la base de datos %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="694"/>
+        <location filename="src/db/databasemanager.cpp" line="696"/>
         <source>Enabled all features for %1.</source>
         <translation>Activando características para %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="489"/>
+        <location filename="src/db/databasemanager.cpp" line="491"/>
         <source>Preparing %1 Database: Analyzing ...</source>
         <translation>Preparando %1 Base de datos: Analizando...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1303"/>
-        <location filename="src/db/databasemanager.cpp" line="1310"/>
+        <location filename="src/db/databasemanager.cpp" line="1305"/>
+        <location filename="src/db/databasemanager.cpp" line="1312"/>
         <source>Processed files:
 %1
 </source>
@@ -1595,22 +1595,22 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="305"/>
+        <location filename="src/db/databasemanager.cpp" line="307"/>
         <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Las bases de datos para estos simuladores no son compatibles con esta versión del programa o estaban mal cargadas:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;¿Borrarlas?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="318"/>
+        <location filename="src/db/databasemanager.cpp" line="320"/>
         <source>&amp;No and Exit Application</source>
         <translation>&amp;No y salir de la aplicación</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1320"/>
+        <location filename="src/db/databasemanager.cpp" line="1322"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Encontrados %1 errores en %2 entradas de escenario cuando se cargaba esa base de datos&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="796"/>
+        <location filename="src/db/databasemanager.cpp" line="798"/>
         <source>Cannot open %1 database. Reason:
 
 %2
@@ -1626,7 +1626,7 @@ Hay otro %3 ejecutándose?
 Saliendo ahora.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="671"/>
+        <location filename="src/db/databasemanager.cpp" line="673"/>
         <source>&lt;p&gt;Note that airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;/p&gt;&lt;p&gt;Additionally, smaller airports might be missing.&lt;/p&gt;&lt;p&gt;Runway layout might not match the runway layout in the simulator if you use stock or older airport scenery.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5366,7 +5366,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="91"/>
+        <location filename="src/gui/mainwindow.ui" line="93"/>
         <source>E&amp;xport Flight Plan to Online Formats</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9819,7 +9819,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>TOD</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mappainterroute.cpp" line="754"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="755"/>
         <source>min</source>
         <translation>min</translation>
     </message>
@@ -9829,8 +9829,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/mapgui/mappaintermark.cpp" line="829"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="119"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="483"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="746"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="781"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="747"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="782"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
@@ -9838,8 +9838,8 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <location filename="src/mapgui/mappaintermark.cpp" line="762"/>
         <location filename="src/mapgui/mappaintermark.cpp" line="764"/>
         <location filename="src/mapgui/mappaintermark.cpp" line="829"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="746"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="781"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="747"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="782"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
@@ -9854,9 +9854,9 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation> ▲</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mappainterroute.cpp" line="749"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="763"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="783"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="750"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="764"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="784"/>
         <source> ►</source>
         <translation> ►</translation>
     </message>
@@ -9866,7 +9866,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mappainterroute.cpp" line="758"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="759"/>
         <source>1min</source>
         <translation>1min</translation>
     </message>
@@ -9877,9 +9877,9 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/mapgui/mappainternav.cpp" line="261"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="751"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="761"/>
-        <location filename="src/mapgui/mappainterroute.cpp" line="785"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="752"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="762"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="786"/>
         <source>◄ </source>
         <translation>◄ </translation>
     </message>
@@ -9891,7 +9891,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
         <translation>► </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mappainterroute.cpp" line="781"/>
+        <location filename="src/mapgui/mappainterroute.cpp" line="782"/>
         <source>/1min</source>
         <translation>/1min</translation>
     </message>
@@ -14714,7 +14714,7 @@ Really use it?</source>
         <translation>Agua</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="78"/>
+        <location filename="src/db/databasemanager.cpp" line="80"/>
         <source> AIRAC Cycle %1.</source>
         <translation> Ciclo AIRAC %1.</translation>
     </message>
@@ -14829,7 +14829,7 @@ Tipo</translation>
         <translation>DME (%1)</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="237"/>
+        <location filename="src/main.cpp" line="250"/>
         <source>%1 is already running.</source>
         <translation>%1 ya está en ejecución.</translation>
     </message>
@@ -14902,7 +14902,7 @@ hh:mm</translation>
         <translation>Todas las altitudes</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="224"/>
+        <location filename="src/main.cpp" line="237"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 necesita al menos macOS Yosemite Vers. 10.10 o mayor.</translation>
     </message>
@@ -15274,7 +15274,7 @@ Restante</translation>
         <translation>Mantener altitud</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="136"/>
+        <location filename="src/main.cpp" line="137"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation>Utilizar &lt;settings-directory&gt; en lugar de &quot;%1&quot;.</translation>
     </message>
@@ -15368,12 +15368,12 @@ Restante</translation>
         <translation>%1 h %2 m</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="135"/>
+        <location filename="src/db/databasemanager.cpp" line="137"/>
         <source>&lt;b&gt;Scenery:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;File:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Time:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Errors:&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Found:&lt;/big&gt;&lt;/br&gt;</source>
         <translation>&lt;b&gt;Escenario:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;Archivo:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Hora:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Error(es):&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Encontrados:&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="204"/>
+        <location filename="src/main.cpp" line="217"/>
         <source>Log files:</source>
         <translation>Archivo Log:</translation>
     </message>
@@ -15517,7 +15517,7 @@ Restante</translation>
         <translation>Relacionado: %1 / %2 / %3</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="206"/>
+        <location filename="src/main.cpp" line="219"/>
         <source>Database directory:</source>
         <translation>Directorio de Base de Datos:</translation>
     </message>
@@ -15692,7 +15692,7 @@ Restante</translation>
         <translation>Transparente</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="80"/>
+        <location filename="src/db/databasemanager.cpp" line="82"/>
         <source>&lt;table&gt;&lt;tbody&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Files:&lt;/b&gt;&lt;/td&gt;    &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L6&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;VOR:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L8&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Markers:&lt;/b&gt;&lt;/td&gt;     &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L11&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Airports:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L7&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;ILS:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L9&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Waypoints:&lt;/b&gt;&lt;/td&gt;  &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L12&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;/td&gt;&lt;td width=&quot;60&quot;&gt;&lt;/td&gt;&lt;td width=&quot;60&quot;&gt;&lt;b&gt;NDB:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L10&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;  &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L13&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</source>
         <translation>&lt;table&gt;&lt;tbody&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Archivos:&lt;/b&gt;&lt;/td&gt;    &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L6&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;VOR:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L8&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Marcadores:&lt;/b&gt;&lt;/td&gt;     &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L11&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Aeródromos:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L7&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;ILS:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L9&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Waypoints:&lt;/b&gt;&lt;/td&gt;  &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L12&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt; &lt;td width=&quot;60&quot;&gt;&lt;/td&gt;&lt;td width=&quot;60&quot;&gt;&lt;/td&gt;&lt;td width=&quot;60&quot;&gt;&lt;b&gt;NDB:&lt;/b&gt;&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L10&lt;/td&gt; &lt;td width=&quot;60&quot;&gt;&lt;b&gt;Espacios Aéreos:&lt;/b&gt;&lt;/td&gt;  &lt;td width=&quot;60&quot;&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;%L13&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</translation>
     </message>
@@ -15795,7 +15795,7 @@ Procedimiento</translation>
         <translation>Solo bajo los 18,000 ft únicamente</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="138"/>
+        <location filename="src/main.cpp" line="139"/>
         <source>settings-directory</source>
         <translation>configuración-directorio</translation>
     </message>
@@ -15839,7 +15839,7 @@ Procedimiento</translation>
         <translation>Seguimiento desde punto de distancia fija</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="128"/>
+        <location filename="src/db/databasemanager.cpp" line="130"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Time:&lt;/b&gt; %2&lt;br/&gt;%3%4&lt;b&gt;Errors:&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Found:&lt;/big&gt;&lt;/br&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Tiempo:&lt;/b&gt; %2&lt;br/&gt;%3%4&lt;b&gt;Errores:&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Encontrados:&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
@@ -15868,7 +15868,7 @@ Procedimiento</translation>
         <translation>Sin nombre</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="75"/>
+        <location filename="src/db/databasemanager.cpp" line="77"/>
         <source>&lt;p&gt;&lt;big&gt;Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6&lt;/big&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Última actualización: %1. Versión de la base de datos: %2.%3. Versión del programa: %4.%5.%6&lt;/big&gt;&lt;/p&gt;</translation>
     </message>
@@ -15971,7 +15971,7 @@ Procedimiento</translation>
         <translation>Helipuerto</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="208"/>
+        <location filename="src/main.cpp" line="221"/>
         <source>Configuration:</source>
         <translation>Configuración:</translation>
     </message>
@@ -16001,8 +16001,8 @@ Procedimiento</translation>
         <translation>Fijación inicial (IAF)</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="223"/>
         <location filename="src/main.cpp" line="236"/>
+        <location filename="src/main.cpp" line="249"/>
         <source>%1 - Error</source>
         <translation>%1 - Error</translation>
     </message>
@@ -16108,7 +16108,7 @@ hh:mm</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="680"/>
+        <location filename="src/db/databasemanager.cpp" line="682"/>
         <location filename="src/gui/mainwindow.cpp" line="1648"/>
         <location filename="src/gui/mainwindow.cpp" line="2735"/>
         <location filename="src/gui/mainwindow.cpp" line="2752"/>
@@ -16895,69 +16895,69 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="85"/>
-        <location filename="src/route/routeexport.cpp" line="267"/>
-        <location filename="src/route/routeexport.cpp" line="470"/>
-        <location filename="src/route/routeexport.cpp" line="637"/>
+        <location filename="src/route/routeexport.cpp" line="266"/>
+        <location filename="src/route/routeexport.cpp" line="469"/>
+        <location filename="src/route/routeexport.cpp" line="636"/>
         <source>FPL Files %1;;All Files (*)</source>
         <translation>Archivos FPL %1;;Todos los archivos (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="94"/>
-        <location filename="src/route/routeexport.cpp" line="282"/>
+        <location filename="src/route/routeexport.cpp" line="281"/>
         <source>Flight plan saved as FPL.</source>
         <translation>Plan de Vuelo grabado como FPL.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="127"/>
+        <location filename="src/route/routeexport.cpp" line="126"/>
         <source>Save Flight Plan as GFP for Reality XP GTN</source>
         <translation>Grabar Plan de Vuelo como GFP para Reality XP GTN</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="128"/>
-        <location filename="src/route/routeexport.cpp" line="154"/>
+        <location filename="src/route/routeexport.cpp" line="127"/>
+        <location filename="src/route/routeexport.cpp" line="153"/>
         <source>Garmin GFP Files %1;;All Files (*)</source>
         <translation>Archivos Garmin GFP %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="136"/>
-        <location filename="src/route/routeexport.cpp" line="164"/>
+        <location filename="src/route/routeexport.cpp" line="135"/>
+        <location filename="src/route/routeexport.cpp" line="163"/>
         <source>Flight plan saved as GFP.</source>
         <translation>Plan de Vuelo grabado como GFP.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="153"/>
+        <location filename="src/route/routeexport.cpp" line="152"/>
         <source>Save Flight Plan as Garmin GFP Format</source>
         <translation>Grabar Plan de Vuelo en formato GFP Garmin</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="180"/>
+        <location filename="src/route/routeexport.cpp" line="179"/>
         <source>Save Flight Plan as TXT Format</source>
         <translation>Grabar Plan de Vuelo en formato TXT</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="181"/>
+        <location filename="src/route/routeexport.cpp" line="180"/>
         <source>Text Files %1;;All Files (*)</source>
         <translation>Archivos de texto %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="190"/>
+        <location filename="src/route/routeexport.cpp" line="189"/>
         <source>Flight plan saved as TXT.</source>
         <translation>Plan de Vuelo grabado como TXT.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="205"/>
+        <location filename="src/route/routeexport.cpp" line="204"/>
         <source>Save Flight Plan as PMDG RTE Format</source>
         <translation>Grabar Plan de Vuelo como PMDG RTE</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="206"/>
-        <location filename="src/route/routeexport.cpp" line="501"/>
-        <location filename="src/route/routeexport.cpp" line="555"/>
+        <location filename="src/route/routeexport.cpp" line="205"/>
+        <location filename="src/route/routeexport.cpp" line="500"/>
+        <location filename="src/route/routeexport.cpp" line="554"/>
         <source>RTE Files %1;;All Files (*)</source>
         <translation>Archivos RTE %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="217"/>
+        <location filename="src/route/routeexport.cpp" line="216"/>
         <source>Flight plan saved as RTE.</source>
         <translation>Plan de Vuelo grabado como RTE.</translation>
     </message>
@@ -16966,295 +16966,295 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
         <translation type="vanished">Grabar Plan de Vuelo como Majestic Dash FPR...</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="234"/>
+        <location filename="src/route/routeexport.cpp" line="233"/>
         <source>Save Flight Plan as Majestic Dash FPR</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="235"/>
+        <location filename="src/route/routeexport.cpp" line="234"/>
         <source>FPR Files %1;;All Files (*)</source>
         <translation>Archivos RPF %1;; Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="250"/>
+        <location filename="src/route/routeexport.cpp" line="249"/>
         <source>Flight plan saved as FPR.</source>
         <translation>Plan de Vuelo grabado como FPR.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="266"/>
+        <location filename="src/route/routeexport.cpp" line="265"/>
         <source>Save Flight Plan as IXEG FPL Format</source>
         <translation>Grabar Plan de Vuelo con formato IXEG FPL</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="297"/>
+        <location filename="src/route/routeexport.cpp" line="296"/>
         <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
         <translation>Grabar Plan de Vuelo a &quot;corte.in&quot; para Flight Factor Airbus</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="298"/>
+        <location filename="src/route/routeexport.cpp" line="297"/>
         <source>corte.in Files %1;;All Files (*)</source>
         <translation>Archivo &quot;corte.in&quot; %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="307"/>
+        <location filename="src/route/routeexport.cpp" line="306"/>
         <source>Flight plan added to corte.in.</source>
         <translation>Plan de Vuelo agregado a corte.in.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="325"/>
+        <location filename="src/route/routeexport.cpp" line="324"/>
         <source>Save Flight Plan as FLTPLAN for iFly</source>
         <translation>Grabar Plan de Vuelo como FLTPLAN para iFly</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="326"/>
+        <location filename="src/route/routeexport.cpp" line="325"/>
         <source>iFly FLTPLAN Files %1;;All Files (*)</source>
         <translation>Archivos iFly FLPLAN %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="340"/>
+        <location filename="src/route/routeexport.cpp" line="339"/>
         <source>Flight plan saved as FLTPLAN for iFly.</source>
         <translation>Plan de vuelo grabado como FLTPLAN para iFly.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="359"/>
+        <location filename="src/route/routeexport.cpp" line="358"/>
         <source>Save Flight Plan as FPL for X-FMC</source>
         <translation>Grabar Plan de Vuelo como FPL para X-FMC</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="360"/>
+        <location filename="src/route/routeexport.cpp" line="359"/>
         <source>X-FMC Files %1;;All Files (*)</source>
         <translation>Archivos X-FMC %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="373"/>
+        <location filename="src/route/routeexport.cpp" line="372"/>
         <source>Flight plan saved as FPL for X-FMC.</source>
         <translation>Plan de vuelo grabado como FPL para X-FMC.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="388"/>
+        <location filename="src/route/routeexport.cpp" line="387"/>
         <source>Save Flight Plan for UFMC</source>
         <translation>Grabar Plan de Vuelo para UFMC</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="389"/>
+        <location filename="src/route/routeexport.cpp" line="388"/>
         <source>UFMC Files %1;;All Files (*)</source>
         <translation>Archivos UMFC %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="398"/>
+        <location filename="src/route/routeexport.cpp" line="397"/>
         <source>Flight plan saved for UFMC.</source>
         <translation>Plan de Vuelo grabado para UFMC.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="414"/>
+        <location filename="src/route/routeexport.cpp" line="413"/>
         <source>Save Flight Plan to companyroutes.xml for ProSim</source>
         <translation>Grabar Plan de vuelo a companyroutes.xml para ProSim</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="415"/>
+        <location filename="src/route/routeexport.cpp" line="414"/>
         <source>companyroutes.xml Files %1;;All Files (*)</source>
         <translation>Archivos companyroutes.xml %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="424"/>
+        <location filename="src/route/routeexport.cpp" line="423"/>
         <source>Flight plan added to companyroutes.xml.</source>
         <translation>Plan de Vuelo agregado a companyroutes.xml.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="442"/>
+        <location filename="src/route/routeexport.cpp" line="441"/>
         <source>Save Flight Plan for BBS Airbus</source>
         <translation>Grabar Plan de Vuelo para BBS Airbus</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="443"/>
+        <location filename="src/route/routeexport.cpp" line="442"/>
         <source>PLN Files %1;;All Files (*)</source>
         <translation>Archivos PLN %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="455"/>
+        <location filename="src/route/routeexport.cpp" line="454"/>
         <source>Flight plan saved for BBS.</source>
         <translation>Plan de Vuelo grabado para BBS.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="469"/>
+        <location filename="src/route/routeexport.cpp" line="468"/>
         <source>Save Flight Plan for FeelThere Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="486"/>
+        <location filename="src/route/routeexport.cpp" line="485"/>
         <source>Flight plan saved for FeelThere.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="500"/>
+        <location filename="src/route/routeexport.cpp" line="499"/>
         <source>Save Flight Plan for Level-D Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="511"/>
+        <location filename="src/route/routeexport.cpp" line="510"/>
         <source>Flight plan saved for Level-D.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="525"/>
+        <location filename="src/route/routeexport.cpp" line="524"/>
         <source>Save Flight Plan for the AivlaSoft EFB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="526"/>
+        <location filename="src/route/routeexport.cpp" line="525"/>
         <source>EFBR Files %1;;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="540"/>
+        <location filename="src/route/routeexport.cpp" line="539"/>
         <source>Flight plan saved for EFB.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="554"/>
+        <location filename="src/route/routeexport.cpp" line="553"/>
         <source>Save Flight Plan for QualityWings Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="565"/>
+        <location filename="src/route/routeexport.cpp" line="564"/>
         <source>Flight plan saved for QualityWings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="579"/>
+        <location filename="src/route/routeexport.cpp" line="578"/>
         <source>Save Flight Plan for Maddog X Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="580"/>
+        <location filename="src/route/routeexport.cpp" line="579"/>
         <source>MDX Files %1;;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="590"/>
+        <location filename="src/route/routeexport.cpp" line="589"/>
         <source>Flight plan saved for Maddog X.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="607"/>
+        <location filename="src/route/routeexport.cpp" line="606"/>
         <source>Export Flight Plan as vPilot VFP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="608"/>
+        <location filename="src/route/routeexport.cpp" line="607"/>
         <source>VFP Files %1;;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="617"/>
+        <location filename="src/route/routeexport.cpp" line="616"/>
         <source>Flight plan saved for vPilot.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="636"/>
+        <location filename="src/route/routeexport.cpp" line="635"/>
         <source>Export Flight Plan as IVAP/X-IVAP FPL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="646"/>
+        <location filename="src/route/routeexport.cpp" line="645"/>
         <source>Flight plan saved for IVAP/X-IVAP.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="696"/>
+        <location filename="src/route/routeexport.cpp" line="695"/>
         <source>Save Flight Plan as GPX Format</source>
         <translation>Grabar Plan de Vuelo en formato GPX</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="696"/>
+        <location filename="src/route/routeexport.cpp" line="695"/>
         <source>Save Flightplan and Track as GPX Format</source>
         <translation>Grabar Plan de Vuelo y traza en formato GPX</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="700"/>
+        <location filename="src/route/routeexport.cpp" line="699"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>Archivos GPX %1;;Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="710"/>
+        <location filename="src/route/routeexport.cpp" line="708"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Plan de Vuelo grabado como GPX.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="712"/>
+        <location filename="src/route/routeexport.cpp" line="710"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Plan de Vuelo y traza grabada como GPX.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="731"/>
-        <location filename="src/route/routeexport.cpp" line="761"/>
+        <location filename="src/route/routeexport.cpp" line="729"/>
+        <location filename="src/route/routeexport.cpp" line="759"/>
         <source>Select Start &amp;Position</source>
         <translation>Seleccione &amp;Posición de inicio</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="735"/>
+        <location filename="src/route/routeexport.cpp" line="733"/>
         <source>Flight Plan must have a valid airport as start and destination and will not be usable by the Simulator.</source>
         <translation>El Plan de Vuelo debe debe tener aeropuertos válidos de inicio y destino, o el simulador no podrá usarlo.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="738"/>
-        <location filename="src/route/routeexport.cpp" line="769"/>
+        <location filename="src/route/routeexport.cpp" line="736"/>
+        <location filename="src/route/routeexport.cpp" line="767"/>
         <source>Do not show this dialog again and save Flight Plan in the future.</source>
         <translation>No vuelva a mostrar este cuadro de diálogo y guarde Plan de Vuelo en el futuro.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="762"/>
+        <location filename="src/route/routeexport.cpp" line="760"/>
         <source>Show &amp;Departure on Map</source>
         <translation>Mostrar Partida en el mapa &amp;D</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="768"/>
+        <location filename="src/route/routeexport.cpp" line="766"/>
         <source>The start airport has parking spots but no parking was selected for this Flight Plan</source>
         <translation>El aeropuerto de salida tiene estacionamiento pero no seleccionó uno para este Plan de Vuelo</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="856"/>
-        <location filename="src/route/routeexport.cpp" line="970"/>
+        <location filename="src/route/routeexport.cpp" line="854"/>
+        <location filename="src/route/routeexport.cpp" line="968"/>
         <source>While saving GFP file:</source>
         <translation>Mientras graba en archivo GFP:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="877"/>
+        <location filename="src/route/routeexport.cpp" line="875"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Mientras graba archivo TXT o FPL:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="920"/>
+        <location filename="src/route/routeexport.cpp" line="918"/>
         <source>While saving UFMC file:</source>
         <translation>Mientras graba archivo UFMC:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1044"/>
+        <location filename="src/route/routeexport.cpp" line="1042"/>
         <source>While saving VFP file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1114"/>
+        <location filename="src/route/routeexport.cpp" line="1112"/>
         <source>While saving FPL file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1200"/>
+        <location filename="src/route/routeexport.cpp" line="1198"/>
         <source>While saving to corte.in file:</source>
         <translation>Mientras graba en archivo &quot;corte.in&quot;:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1246"/>
+        <location filename="src/route/routeexport.cpp" line="1244"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Mientras lee el archivo companyroutes.xml:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1299"/>
+        <location filename="src/route/routeexport.cpp" line="1297"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Mientras graba al archivo companyroutes.xml:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1168"/>
+        <location filename="src/route/routeexport.cpp" line="1166"/>
         <source>While reading corte.in file:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17328,32 +17328,32 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="238"/>
+        <location filename="src/route/routeexportdialog.ui" line="241"/>
         <source> ft</source>
         <translation type="unfinished"> pies</translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="257"/>
+        <location filename="src/route/routeexportdialog.ui" line="260"/>
         <source>&amp;Flight type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="267"/>
+        <location filename="src/route/routeexportdialog.ui" line="270"/>
         <source>&amp;Departure:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="284"/>
+        <location filename="src/route/routeexportdialog.ui" line="287"/>
         <source>&amp;Wake category:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="310"/>
+        <location filename="src/route/routeexportdialog.ui" line="316"/>
         <source> kts</source>
         <translation type="unfinished"> nudos</translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="333"/>
+        <location filename="src/route/routeexportdialog.ui" line="339"/>
         <source>A&amp;lternate:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17368,54 +17368,54 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="323"/>
+        <location filename="src/route/routeexportdialog.ui" line="329"/>
         <source>&amp;Equipment:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="360"/>
+        <location filename="src/route/routeexportdialog.ui" line="366"/>
         <source>Departure &amp;time:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="376"/>
+        <location filename="src/route/routeexportdialog.ui" line="382"/>
         <source>&amp;Voice type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="386"/>
+        <location filename="src/route/routeexportdialog.ui" line="392"/>
         <source>Aircraft &amp;type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="396"/>
+        <location filename="src/route/routeexportdialog.ui" line="402"/>
         <source>&amp;Pilot in command:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="412"/>
+        <location filename="src/route/routeexportdialog.ui" line="418"/>
         <source>E&amp;nroute:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="433"/>
-        <location filename="src/route/routeexportdialog.ui" line="479"/>
+        <location filename="src/route/routeexportdialog.ui" line="439"/>
+        <location filename="src/route/routeexportdialog.ui" line="485"/>
         <source> h</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="446"/>
-        <location filename="src/route/routeexportdialog.ui" line="492"/>
+        <location filename="src/route/routeexportdialog.ui" line="452"/>
+        <location filename="src/route/routeexportdialog.ui" line="498"/>
         <source> min</source>
         <translation type="unfinished"> min</translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="458"/>
+        <location filename="src/route/routeexportdialog.ui" line="464"/>
         <source>En&amp;durance:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routeexportdialog.ui" line="517"/>
+        <location filename="src/route/routeexportdialog.ui" line="523"/>
         <source>Prefix/Suffix:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -18712,74 +18712,74 @@ p, li { white-space: pre-wrap; }
         <translation>Elevación o Altitud de este waypoint</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="238"/>
+        <location filename="src/userdata/userdatadialog.ui" line="241"/>
         <source> %alt%</source>
         <translation> %alt%</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="264"/>
+        <location filename="src/userdata/userdatadialog.ui" line="267"/>
         <source>Check to change tags for all selected waypoints</source>
         <translation>Marcar para cambiar etiquetas para todos los waypoints seleccionados</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="274"/>
+        <location filename="src/userdata/userdatadialog.ui" line="277"/>
         <source>Check to change elevation for all selected waypoints</source>
         <translation>Marcar para cambiar elevación para todos los waypoints seleccionados</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="294"/>
+        <location filename="src/userdata/userdatadialog.ui" line="297"/>
         <source>&amp;Visible from:</source>
         <translation>&amp;Visible desde:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="304"/>
+        <location filename="src/userdata/userdatadialog.ui" line="307"/>
         <source>Type which will determine the used icon</source>
         <translation>Tipo que determinará el ícono usado</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="330"/>
+        <location filename="src/userdata/userdatadialog.ui" line="333"/>
         <source>&amp;Tags:</source>
         <translation>E&amp;Tiquetas:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="340"/>
+        <location filename="src/userdata/userdatadialog.ui" line="343"/>
         <source>List of tags. Simple textfield for various purposes.</source>
         <translation>Lista de etiquetas. Campo de texto simple para varios fines.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="350"/>
+        <location filename="src/userdata/userdatadialog.ui" line="353"/>
         <source>Last Change:</source>
         <translation>Último Cambio:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="357"/>
+        <location filename="src/userdata/userdatadialog.ui" line="360"/>
         <source>&amp;Description:</source>
         <translation>&amp;Descripción:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="367"/>
+        <location filename="src/userdata/userdatadialog.ui" line="370"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define la máxima distancia de vista que este waypoint mostrará en el mapa.&lt;/p&gt;&lt;p&gt;La distancia de vista se muestra en la barra de estado.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="370"/>
+        <location filename="src/userdata/userdatadialog.ui" line="376"/>
         <source> %dist%</source>
         <translation> %dist%</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="389"/>
+        <location filename="src/userdata/userdatadialog.ui" line="395"/>
         <source>Two letter ICAO region code.
 Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
         <translation>Precisa código ICAO de 2 letras.
 Requerido para exportar a &quot;user_fix.dat&quot; de X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="406"/>
+        <location filename="src/userdata/userdatadialog.ui" line="412"/>
         <source>Check to change name for all selected waypoints</source>
         <translation>Marcar para cambiar nombre de todos los waypoints seleccionados</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="425"/>
+        <location filename="src/userdata/userdatadialog.ui" line="431"/>
         <source>&amp;Temporary userpoint. Delete on next startup.</source>
         <translation>Punto de Usuario &amp;Temporal. Borrado en próximo arranque.</translation>
     </message>
