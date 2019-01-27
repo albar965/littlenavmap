@@ -48,6 +48,7 @@
 #include <QSharedMemory>
 #include <QMessageBox>
 #include <QLibrary>
+#include <QPixmapCache>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -192,10 +193,22 @@ int main(int argc, char *argv[])
     }
 
     // Load local and Qt system translations from various places
+    int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
+    qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
+    if(pixmapCache != -1)
+    {
+      qInfo() << "Overriding pixmap cache" << pixmapCache << "KB";
+      QPixmapCache::setCacheLimit(pixmapCache);
+    }
+
+    // Load local and Qt system translations from various places
     QString lang = settings.valueStr(lnm::OPTIONS_LANGUAGE, QString());
     if(lang.isEmpty())
+    {
+      qInfo() << "Overriding language";
       // Checkbox in options dialog
       lang = OptionsDialog::isOverrideLanguage() ? "en" : lang;
+    }
 
     qInfo() << "Loading translations for" << lang;
     Translator::load(lang);

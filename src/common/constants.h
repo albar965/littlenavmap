@@ -225,6 +225,7 @@ const QLatin1Literal OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 
 /* Other options that are only accessible in the configuration file */
 const QLatin1Literal OPTIONS_LANGUAGE("Options/Language");
+const QLatin1Literal OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
 const QLatin1Literal OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
