@@ -234,6 +234,9 @@ Formats above have to be given exactly as shown in the examples.</string>
        <property name="toolTip">
         <string>Elevation or altitude of this waypoint</string>
        </property>
+       <property name="showGroupSeparator" stdset="0">
+        <bool>true</bool>
+       </property>
        <property name="suffix">
         <string> %alt%</string>
        </property>
@@ -365,6 +368,9 @@ Formats above have to be given exactly as shown in the examples.</string>
       <widget class="QSpinBox" name="spinBoxUserdataVisible">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="showGroupSeparator" stdset="0">
+        <bool>true</bool>
        </property>
        <property name="suffix">
         <string> %dist%</string>

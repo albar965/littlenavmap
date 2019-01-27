@@ -99,6 +99,9 @@
          <string>Fuel added at the discretion of the
 captain or the dispatcher</string>
         </property>
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %fuel%</string>
         </property>
@@ -162,6 +165,9 @@ an alternate is not required</string>
        <widget class="QSpinBox" name="spinBoxTaxiFuel">
         <property name="toolTip">
          <string>Fuel used prior to takeoff by APU, engine start and taxi</string>
+        </property>
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
         </property>
         <property name="suffix">
          <string> %fuel%</string>
@@ -252,6 +258,9 @@ This will increase the trip fuel by the given percentage.</string>
       </property>
       <item row="0" column="1">
        <widget class="QSpinBox" name="spinBoxClimbSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %speed% true airspeed</string>
         </property>
@@ -291,6 +300,9 @@ This will increase the trip fuel by the given percentage.</string>
       </item>
       <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxClimbVertSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %vspeed% ▲</string>
         </property>
@@ -320,6 +332,9 @@ This will increase the trip fuel by the given percentage.</string>
       </item>
       <item row="4" column="1">
        <widget class="QSpinBox" name="spinBoxClimbFuelFlow">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %fuel% per hour</string>
         </property>
@@ -367,6 +382,9 @@ This will increase the trip fuel by the given percentage.</string>
       </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="spinBoxCruiseSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %speed% true airspeed</string>
         </property>
@@ -396,6 +414,9 @@ This will increase the trip fuel by the given percentage.</string>
       </item>
       <item row="1" column="1">
        <widget class="QSpinBox" name="spinBoxCruiseFuelFlow">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %fuel% per hour</string>
         </property>
@@ -443,6 +464,9 @@ This will increase the trip fuel by the given percentage.</string>
       </item>
       <item row="3" column="1">
        <widget class="QSpinBox" name="spinBoxDescentVertSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %vspeed% ▼</string>
         </property>
@@ -475,6 +499,9 @@ This will increase the trip fuel by the given percentage.</string>
       </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="spinBoxDescentSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %speed% true airspeed</string>
         </property>
@@ -515,6 +542,9 @@ the given descent speeds</string>
       </item>
       <item row="4" column="1">
        <widget class="QSpinBox" name="spinBoxDescentFuelFlow">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
         <property name="suffix">
          <string> %fuel% per hour</string>
         </property>
