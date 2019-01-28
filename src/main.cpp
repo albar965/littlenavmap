@@ -182,6 +182,8 @@ int main(int argc, char *argv[])
     if(app.testAttribute(Qt::AA_UseSoftwareOpenGL))
       qInfo() << "Using Qt software renderer";
 
+    qInfo() << "UI default font" << app.font();
+
     migrate::checkAndMigrateSettings();
 
     Settings& settings = Settings::instance();
