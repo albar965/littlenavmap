@@ -49,6 +49,7 @@
 #include <QMessageBox>
 #include <QLibrary>
 #include <QPixmapCache>
+#include <QFontDatabase>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -199,6 +200,33 @@ int main(int argc, char *argv[])
     {
       qInfo() << "Overriding pixmap cache" << pixmapCache << "KB";
       QPixmapCache::setCacheLimit(pixmapCache);
+    }
+
+    // Load font file from the configuration if desired
+    QString fontfile = settings.valueStr(lnm::OPTIONS_FONT_FILE, QString());
+    if(!fontfile.isEmpty())
+    {
+      int id = QFontDatabase::addApplicationFont(fontfile);
+      qInfo() << "Loaded font" << fontfile << "result" << id;
+    }
+
+    // Set font family from configuration if given
+    QString fontfamily = settings.valueStr(lnm::OPTIONS_FONT_FAMILY, QString());
+    if(!fontfamily.isEmpty())
+    {
+      QFont font(fontfamily);
+      app.setFont(font);
+      qInfo() << "Set font" << font.family();
+    }
+
+    // Set default font size since manually selected families are too large
+    int fontSize = settings.valueInt(lnm::OPTIONS_FONT_PIXEL_SIZE, 0);
+    if(fontSize > 0)
+    {
+      QFont font = app.font();
+      font.setPixelSize(fontSize);
+      app.setFont(font);
+      qInfo() << "Set font size" << fontSize;
     }
 
     // Load local and Qt system translations from various places
