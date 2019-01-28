@@ -498,7 +498,10 @@ bool RouteExport::routeExportLeveldRte()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for Level-D Aircraft"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE), "rte", "Route/LeveldRte",
-      NavApp::getCurrentSimulatorBasePath(),
+      NavApp::getCurrentSimulatorBasePath() +
+      QDir::separator() + "Level-D Simulations" +
+      QDir::separator() + "navdata" +
+      QDir::separator() + "Flightplans",
       buildDefaultFilenameShort("_", ".rte"),
       false /* confirm overwrite */, true /* autonumber */);
 
