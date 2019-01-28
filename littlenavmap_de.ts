@@ -16982,7 +16982,7 @@ Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</
         <location filename="src/route/routeexport.cpp" line="85"/>
         <location filename="src/route/routeexport.cpp" line="266"/>
         <location filename="src/route/routeexport.cpp" line="469"/>
-        <location filename="src/route/routeexport.cpp" line="636"/>
+        <location filename="src/route/routeexport.cpp" line="639"/>
         <source>FPL Files %1;;All Files (*)</source>
         <translation>FPL-Dateien %1;;Alle Dateien (*)</translation>
     </message>
@@ -17037,7 +17037,7 @@ Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</
     <message>
         <location filename="src/route/routeexport.cpp" line="205"/>
         <location filename="src/route/routeexport.cpp" line="500"/>
-        <location filename="src/route/routeexport.cpp" line="554"/>
+        <location filename="src/route/routeexport.cpp" line="557"/>
         <source>RTE Files %1;;All Files (*)</source>
         <translation>RTE-Dateien %1;;Alle Dateien (*)</translation>
     </message>
@@ -17173,170 +17173,170 @@ Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</
         <translation>Flugplan für Level-D Flugzeuge exportieren</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="510"/>
+        <location filename="src/route/routeexport.cpp" line="513"/>
         <source>Flight plan saved for Level-D.</source>
         <translation>Flugplan für Level-D gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="524"/>
+        <location filename="src/route/routeexport.cpp" line="527"/>
         <source>Save Flight Plan for the AivlaSoft EFB</source>
         <translation>Flugplan für den AivlaSoft EFB exportieren</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="525"/>
+        <location filename="src/route/routeexport.cpp" line="528"/>
         <source>EFBR Files %1;;All Files (*)</source>
         <translation>EFBR-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="539"/>
+        <location filename="src/route/routeexport.cpp" line="542"/>
         <source>Flight plan saved for EFB.</source>
         <translation>Flugplan für EFB gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="553"/>
+        <location filename="src/route/routeexport.cpp" line="556"/>
         <source>Save Flight Plan for QualityWings Aircraft</source>
         <translation>Flugplan für QualityWings Flugzeuge exportieren</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="564"/>
+        <location filename="src/route/routeexport.cpp" line="567"/>
         <source>Flight plan saved for QualityWings.</source>
         <translation>Flugplan für QualityWings gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="578"/>
+        <location filename="src/route/routeexport.cpp" line="581"/>
         <source>Save Flight Plan for Maddog X Aircraft</source>
         <translation>Flugplan für den Maddog X exportieren</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="579"/>
+        <location filename="src/route/routeexport.cpp" line="582"/>
         <source>MDX Files %1;;All Files (*)</source>
         <translation>MDX-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="589"/>
+        <location filename="src/route/routeexport.cpp" line="592"/>
         <source>Flight plan saved for Maddog X.</source>
         <translation>Flugplan für Maddog X gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="606"/>
+        <location filename="src/route/routeexport.cpp" line="609"/>
         <source>Export Flight Plan as vPilot VFP</source>
         <translation>Exportiere Flugplan als vPilot VFP ...</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="607"/>
+        <location filename="src/route/routeexport.cpp" line="610"/>
         <source>VFP Files %1;;All Files (*)</source>
         <translation>VFP-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="616"/>
+        <location filename="src/route/routeexport.cpp" line="619"/>
         <source>Flight plan saved for vPilot.</source>
         <translation>Flugplan für vPilot gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="635"/>
+        <location filename="src/route/routeexport.cpp" line="638"/>
         <source>Export Flight Plan as IVAP/X-IVAP FPL</source>
         <translation>Exportiere Flugplan als IVAP/X-IVAP FPL</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="645"/>
+        <location filename="src/route/routeexport.cpp" line="648"/>
         <source>Flight plan saved for IVAP/X-IVAP.</source>
         <translation>Flugplan für IVAP/X-IVAP gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="695"/>
+        <location filename="src/route/routeexport.cpp" line="698"/>
         <source>Save Flight Plan as GPX Format</source>
         <translation>Flugplan im GPX Format speichern</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="695"/>
+        <location filename="src/route/routeexport.cpp" line="698"/>
         <source>Save Flightplan and Track as GPX Format</source>
         <translation>Flugplan und Pfad im GPX Format speichern</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="699"/>
+        <location filename="src/route/routeexport.cpp" line="702"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>GPX-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="708"/>
+        <location filename="src/route/routeexport.cpp" line="711"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Flugplan wurde als GPX gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="710"/>
+        <location filename="src/route/routeexport.cpp" line="713"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Flugplan und Kurs wurden als GPX gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="729"/>
-        <location filename="src/route/routeexport.cpp" line="759"/>
+        <location filename="src/route/routeexport.cpp" line="732"/>
+        <location filename="src/route/routeexport.cpp" line="762"/>
         <source>Select Start &amp;Position</source>
         <translation>Start&amp;position auswählen</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="733"/>
+        <location filename="src/route/routeexport.cpp" line="736"/>
         <source>Flight Plan must have a valid airport as start and destination and will not be usable by the Simulator.</source>
         <translation>Der Flugplan muss einen gültigen Flugplatz als Start und Ziel haben, sonst ist er im Simulator nicht nutzbar.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="736"/>
-        <location filename="src/route/routeexport.cpp" line="767"/>
+        <location filename="src/route/routeexport.cpp" line="739"/>
+        <location filename="src/route/routeexport.cpp" line="770"/>
         <source>Do not show this dialog again and save Flight Plan in the future.</source>
         <translation>Diesen Dialog nicht mehr anzeigen und den Flugplan zukünftig speichern.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="760"/>
+        <location filename="src/route/routeexport.cpp" line="763"/>
         <source>Show &amp;Departure on Map</source>
         <translation>Zeige &amp;Abflug auf Karte</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="766"/>
+        <location filename="src/route/routeexport.cpp" line="769"/>
         <source>The start airport has parking spots but no parking was selected for this Flight Plan</source>
         <translation>Der Startflugplatz hat Parkpositionen, aber es wurde keine für diesen Flugplan ausgewählt</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="854"/>
-        <location filename="src/route/routeexport.cpp" line="968"/>
+        <location filename="src/route/routeexport.cpp" line="857"/>
+        <location filename="src/route/routeexport.cpp" line="971"/>
         <source>While saving GFP file:</source>
         <translation>Während des Speicherns der GFP-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="875"/>
+        <location filename="src/route/routeexport.cpp" line="878"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Während des Speicherns der TXT- oder FPL-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="918"/>
+        <location filename="src/route/routeexport.cpp" line="921"/>
         <source>While saving UFMC file:</source>
         <translation>Während des Speicherns der UFMC-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1042"/>
+        <location filename="src/route/routeexport.cpp" line="1045"/>
         <source>While saving VFP file:</source>
         <translation>Während des Speicherns der VFP-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1112"/>
+        <location filename="src/route/routeexport.cpp" line="1115"/>
         <source>While saving FPL file:</source>
         <translation>Während des Speicherns der FPL-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1166"/>
+        <location filename="src/route/routeexport.cpp" line="1169"/>
         <source>While reading corte.in file:</source>
         <translation>Während des Lesens der corte.in-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1198"/>
+        <location filename="src/route/routeexport.cpp" line="1201"/>
         <source>While saving to corte.in file:</source>
         <translation>Während des Speicherns der corte.in-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1244"/>
+        <location filename="src/route/routeexport.cpp" line="1247"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Während des Lesens der companyroutes.xml-Datei:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1297"/>
+        <location filename="src/route/routeexport.cpp" line="1300"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Während des Speicherns der companyroutes.xml-Datei:</translation>
     </message>
