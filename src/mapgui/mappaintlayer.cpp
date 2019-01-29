@@ -236,7 +236,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(10.f).airportDiagramRunway().airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).waypointName().
-         aiAircraftGround(false).aiAircraftGroundText(false).
+         aiAircraftGroundText(false).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
@@ -248,7 +248,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(25.f).airportDiagramRunway().airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).
-         aiAircraftGround(false).aiAircraftGroundText(false).
+         aiAircraftGroundText(false).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
