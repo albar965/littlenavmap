@@ -63,13 +63,13 @@ void PrintSupport::printMap()
 
   buildPrinter();
 
-  NavApp::getMapWidget()->showOverlays(false, false /* hide scale */);
+  NavApp::getMapWidget()->showOverlays(false, true /* show scale */);
   QPrintPreviewDialog *print = buildPreviewDialog();
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
 
-  NavApp::getMapWidget()->showOverlays(true, false /* hide scale */);
+  NavApp::getMapWidget()->showOverlays(true, true /* show scale */);
   deletePreviewDialog(print);
 }
 

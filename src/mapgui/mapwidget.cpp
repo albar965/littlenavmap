@@ -808,14 +808,14 @@ void MapWidget::restoreHistoryState()
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
 }
 
-void MapWidget::showOverlays(bool show, bool hideScalebar)
+void MapWidget::showOverlays(bool show, bool showScalebar)
 {
   for(const QString& name : mapOverlays.keys())
   {
     AbstractFloatItem *overlay = floatItem(name);
     if(overlay != nullptr)
     {
-      if(hideScalebar && overlay->nameId() == "scalebar")
+      if(showScalebar && overlay->nameId() == "scalebar")
         continue;
 
       bool showConfig = mapOverlays.value(name)->isChecked();

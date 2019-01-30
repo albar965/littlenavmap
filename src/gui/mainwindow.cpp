@@ -2351,9 +2351,9 @@ void MainWindow::mapSaveImage()
   if(!imageFile.isEmpty())
   {
     QPixmap pixmap;
-    mapWidget->showOverlays(false, false /* hide scale */);
+    mapWidget->showOverlays(false, false /* show scale */);
     pixmap = mapWidget->mapScreenShot();
-    mapWidget->showOverlays(true, false /* hide scale */);
+    mapWidget->showOverlays(true, false /* show scale */);
 
     PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
 
@@ -2391,9 +2391,9 @@ void MainWindow::mapSaveImageAviTab()
       if(!imageFile.isEmpty())
       {
         QPixmap pixmap;
-        mapWidget->showOverlays(false, true /* hide scale */);
+        mapWidget->showOverlays(false, false /* show scale */);
         pixmap = mapWidget->mapScreenShot();
-        mapWidget->showOverlays(true, true /* hide scale */);
+        mapWidget->showOverlays(true, false /* show scale */);
 
         if(!pixmap.save(imageFile))
           atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
@@ -2421,9 +2421,9 @@ void MainWindow::mapSaveImageAviTab()
 void MainWindow::mapCopyToClipboard()
 {
   QPixmap pixmap;
-  mapWidget->showOverlays(false, false /* hide scale */);
+  mapWidget->showOverlays(false, false /* show scale */);
   pixmap = mapWidget->mapScreenShot();
-  mapWidget->showOverlays(true, false /* hide scale */);
+  mapWidget->showOverlays(true, false /* show scale */);
 
   PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
 
