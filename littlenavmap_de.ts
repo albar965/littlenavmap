@@ -4494,14 +4494,16 @@ Die Windgeschwindigkeit wird für Steig- und Sinkflug interpoliert.</translation
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9393"/>
-        <source>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</source>
-        <translation>Exportiere Flugplan als FPL für &amp;IVAP oder X-IVAP ...</translation>
+        <source>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</source>
+        <oldsource>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</oldsource>
+        <translation>Exportiere Flugplan als FPL für &amp;IvAp oder X-IvAp ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9396"/>
         <location filename="src/gui/mainwindow.ui" line="9399"/>
-        <source>Save flight plan as FPL file for IVAP or X-IVAP</source>
-        <translation>Speichere Flugplan als FPL-Datei für IVAP oder X-IVAP</translation>
+        <source>Save flight plan as FPL file for IvAp or X-IvAp</source>
+        <oldsource>Save flight plan as FPL file for IVAP or X-IVAP</oldsource>
+        <translation>Speichere Flugplan als FPL-Datei für IvAp oder X-IvAp</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9407"/>
@@ -16110,43 +16112,43 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation>&lt;b&gt;Szenerie:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;Datei:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Zeit:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Fehler:&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Geladen:&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="137"/>
+        <location filename="src/main.cpp" line="138"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation>&lt;settings-directory&gt; anstatt von &quot;%1&quot; benutzen.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="139"/>
+        <location filename="src/main.cpp" line="140"/>
         <source>settings-directory</source>
         <translation>Einstellungsverzeichnis</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="217"/>
+        <location filename="src/main.cpp" line="247"/>
         <source>Log files:</source>
         <translation>Logdateien:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="219"/>
+        <location filename="src/main.cpp" line="249"/>
         <source>Database directory:</source>
         <translation>Datenbankverzeichnis:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="221"/>
+        <location filename="src/main.cpp" line="251"/>
         <source>Configuration:</source>
         <translation>Konfiguration:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="236"/>
-        <location filename="src/main.cpp" line="249"/>
+        <location filename="src/main.cpp" line="266"/>
+        <location filename="src/main.cpp" line="279"/>
         <source>%1 - Error</source>
         <translation>%1 - Fehler</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="237"/>
+        <location filename="src/main.cpp" line="267"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 benötigt mindestens macOS Yosemite Version 10.10 or neuer.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="250"/>
+        <location filename="src/main.cpp" line="280"/>
         <source>%1 is already running.</source>
         <translation>%1 läuft bereits.</translation>
     </message>
@@ -17234,13 +17236,15 @@ Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="638"/>
-        <source>Export Flight Plan as IVAP/X-IVAP FPL</source>
-        <translation>Exportiere Flugplan als IVAP/X-IVAP FPL</translation>
+        <source>Export Flight Plan as IvAp/X-IvAp FPL</source>
+        <oldsource>Export Flight Plan as IVAP/X-IVAP FPL</oldsource>
+        <translation>Exportiere Flugplan als IvAp/X-IvAp FPL</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="648"/>
-        <source>Flight plan saved for IVAP/X-IVAP.</source>
-        <translation>Flugplan für IVAP/X-IVAP gespeichert.</translation>
+        <source>Flight plan saved for IvAp/X-IvAp.</source>
+        <oldsource>Flight plan saved for IVAP/X-IVAP.</oldsource>
+        <translation>Flugplan für IvAp/X-IvAp gespeichert.</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="698"/>

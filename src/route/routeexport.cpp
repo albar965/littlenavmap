@@ -635,7 +635,7 @@ bool RouteExport::routeExportIvap()
     if(routeExportDialog(exportData, re::IVAP))
     {
       QString routeFile = dialog->saveFileDialog(
-        tr("Export Flight Plan as IVAP/X-IVAP FPL"),
+        tr("Export Flight Plan as IvAp/X-IvAp FPL"),
         tr("FPL Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FPL), "fpl", "Route/Ivap",
         documentsLocation,
         buildDefaultFilenameShort(QString(), ".fpl"),
@@ -645,7 +645,7 @@ bool RouteExport::routeExportIvap()
       {
         if(exportFlighplanAsIvap(exportData, routeFile))
         {
-          mainWindow->setStatusMessage(tr("Flight plan saved for IVAP/X-IVAP."));
+          mainWindow->setStatusMessage(tr("Flight plan saved for IvAp/X-IvAp."));
           return true;
         }
       }

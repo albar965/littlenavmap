@@ -3781,14 +3781,16 @@ A velocidade do vento será interpolada para as fases de subida e descida.</tran
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9393"/>
-        <source>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</source>
-        <translation>Exportar Plano de Voo como &amp;IVAP ou X-IVAP FPL ...</translation>
+        <source>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</source>
+        <oldsource>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</oldsource>
+        <translation>Exportar Plano de Voo como &amp;IvAp ou X-IvAp FPL ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9396"/>
         <location filename="src/gui/mainwindow.ui" line="9399"/>
-        <source>Save flight plan as FPL file for IVAP or X-IVAP</source>
-        <translation>Salvar plano de voo como arquivo FPL utilizável por IVAP ou X-IVAP</translation>
+        <source>Save flight plan as FPL file for IvAp or X-IvAp</source>
+        <oldsource>Save flight plan as FPL file for IVAP or X-IVAP</oldsource>
+        <translation>Salvar plano de voo como arquivo FPL utilizável por IvAp ou X-IvAp</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9407"/>
@@ -14012,8 +14014,8 @@ Deseja realmente usá-lo?</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="236"/>
-        <location filename="src/main.cpp" line="249"/>
+        <location filename="src/main.cpp" line="266"/>
+        <location filename="src/main.cpp" line="279"/>
         <source>%1 - Error</source>
         <translation>%1 - Erro</translation>
     </message>
@@ -14033,7 +14035,7 @@ Deseja realmente usá-lo?</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="250"/>
+        <location filename="src/main.cpp" line="280"/>
         <source>%1 is already running.</source>
         <translation>%1 já está em execução.</translation>
     </message>
@@ -14043,7 +14045,7 @@ Deseja realmente usá-lo?</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="237"/>
+        <location filename="src/main.cpp" line="267"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 precisa pelo menos, do MacOS Yosemite versão 10.10 ou superior.</translation>
     </message>
@@ -14474,7 +14476,7 @@ Procedimento</translation>
         <translation>Concreto</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="221"/>
+        <location filename="src/main.cpp" line="251"/>
         <source>Configuration:</source>
         <translation>Configuração:</translation>
     </message>
@@ -14656,7 +14658,7 @@ Procedimento</translation>
         <translation>Perigoso</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="219"/>
+        <location filename="src/main.cpp" line="249"/>
         <source>Database directory:</source>
         <translation>Diretório do Banco de Dados:</translation>
     </message>
@@ -15335,7 +15337,7 @@ hh:mm</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="217"/>
+        <location filename="src/main.cpp" line="247"/>
         <source>Log files:</source>
         <translation>Arquivos de LOG:</translation>
     </message>
@@ -16081,7 +16083,7 @@ de Procedimento</translation>
         <translation>Controle de Área Superior</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="137"/>
+        <location filename="src/main.cpp" line="138"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation>Use &lt;settings-directory&gt; em vez de &quot;%1&quot;.</translation>
     </message>
@@ -16220,7 +16222,7 @@ de Procedimento</translation>
         <translation>segundos</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="139"/>
+        <location filename="src/main.cpp" line="140"/>
         <source>settings-directory</source>
         <translation></translation>
     </message>
@@ -17168,13 +17170,15 @@ A posição inicial está agora configurada para a pista principal mais longa do
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="638"/>
-        <source>Export Flight Plan as IVAP/X-IVAP FPL</source>
-        <translation>Plano de Voo Exportado como IVAP/X-IVAP FPL</translation>
+        <source>Export Flight Plan as IvAp/X-IvAp FPL</source>
+        <oldsource>Export Flight Plan as IVAP/X-IVAP FPL</oldsource>
+        <translation>Plano de Voo Exportado como IvAp/X-IvAp FPL</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="648"/>
-        <source>Flight plan saved for IVAP/X-IVAP.</source>
-        <translation>Plano de voo salvo para IVAP/X-IVAP.</translation>
+        <source>Flight plan saved for IvAp/X-IvAp.</source>
+        <oldsource>Flight plan saved for IVAP/X-IVAP.</oldsource>
+        <translation>Plano de voo salvo para IvAp/X-IvAp.</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="878"/>

@@ -9390,13 +9390,13 @@ Wind speed will be interpolated for climb and descent phases.</string>
   </action>
   <action name="actionRouteSaveAsIvap">
    <property name="text">
-    <string>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</string>
+    <string>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as FPL file for IVAP or X-IVAP</string>
+    <string>Save flight plan as FPL file for IvAp or X-IvAp</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as FPL file for IVAP or X-IVAP</string>
+    <string>Save flight plan as FPL file for IvAp or X-IvAp</string>
    </property>
   </action>
   <action name="actionShortcutMap">

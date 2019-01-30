@@ -6147,13 +6147,15 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9393"/>
-        <source>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</source>
+        <source>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</source>
+        <oldsource>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9396"/>
         <location filename="src/gui/mainwindow.ui" line="9399"/>
-        <source>Save flight plan as FPL file for IVAP or X-IVAP</source>
+        <source>Save flight plan as FPL file for IvAp or X-IvAp</source>
+        <oldsource>Save flight plan as FPL file for IVAP or X-IVAP</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14829,7 +14831,7 @@ Tipo</translation>
         <translation>DME (%1)</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="250"/>
+        <location filename="src/main.cpp" line="280"/>
         <source>%1 is already running.</source>
         <translation>%1 ya está en ejecución.</translation>
     </message>
@@ -14902,7 +14904,7 @@ hh:mm</translation>
         <translation>Todas las altitudes</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="237"/>
+        <location filename="src/main.cpp" line="267"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 necesita al menos macOS Yosemite Vers. 10.10 o mayor.</translation>
     </message>
@@ -15274,7 +15276,7 @@ Restante</translation>
         <translation>Mantener altitud</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="137"/>
+        <location filename="src/main.cpp" line="138"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation>Utilizar &lt;settings-directory&gt; en lugar de &quot;%1&quot;.</translation>
     </message>
@@ -15373,7 +15375,7 @@ Restante</translation>
         <translation>&lt;b&gt;Escenario:&lt;/b&gt; %1 (%2)&lt;br/&gt;&lt;b&gt;Archivo:&lt;/b&gt; %3&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Hora:&lt;/b&gt; %4&lt;br/&gt;&lt;b&gt;Error(es):&lt;/b&gt; %5&lt;br/&gt;&lt;br/&gt;&lt;big&gt;Encontrados:&lt;/big&gt;&lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="217"/>
+        <location filename="src/main.cpp" line="247"/>
         <source>Log files:</source>
         <translation>Archivo Log:</translation>
     </message>
@@ -15517,7 +15519,7 @@ Restante</translation>
         <translation>Relacionado: %1 / %2 / %3</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="219"/>
+        <location filename="src/main.cpp" line="249"/>
         <source>Database directory:</source>
         <translation>Directorio de Base de Datos:</translation>
     </message>
@@ -15795,7 +15797,7 @@ Procedimiento</translation>
         <translation>Solo bajo los 18,000 ft únicamente</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="139"/>
+        <location filename="src/main.cpp" line="140"/>
         <source>settings-directory</source>
         <translation>configuración-directorio</translation>
     </message>
@@ -15971,7 +15973,7 @@ Procedimiento</translation>
         <translation>Helipuerto</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="221"/>
+        <location filename="src/main.cpp" line="251"/>
         <source>Configuration:</source>
         <translation>Configuración:</translation>
     </message>
@@ -16001,8 +16003,8 @@ Procedimiento</translation>
         <translation>Fijación inicial (IAF)</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="236"/>
-        <location filename="src/main.cpp" line="249"/>
+        <location filename="src/main.cpp" line="266"/>
+        <location filename="src/main.cpp" line="279"/>
         <source>%1 - Error</source>
         <translation>%1 - Error</translation>
     </message>
@@ -17152,12 +17154,14 @@ Pruebe con otro tipo de enrutamiento o cree el plan de vuelo manualmente.</trans
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="638"/>
-        <source>Export Flight Plan as IVAP/X-IVAP FPL</source>
+        <source>Export Flight Plan as IvAp/X-IvAp FPL</source>
+        <oldsource>Export Flight Plan as IVAP/X-IVAP FPL</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="648"/>
-        <source>Flight plan saved for IVAP/X-IVAP.</source>
+        <source>Flight plan saved for IvAp/X-IvAp.</source>
+        <oldsource>Flight plan saved for IVAP/X-IVAP.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

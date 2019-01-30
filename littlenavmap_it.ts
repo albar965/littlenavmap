@@ -4307,13 +4307,15 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9393"/>
-        <source>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</source>
+        <source>Export Flight Plan as &amp;IvAp or X-IvAp FPL ...</source>
+        <oldsource>Export Flight Plan as &amp;IVAP or X-IVAP FPL ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9396"/>
         <location filename="src/gui/mainwindow.ui" line="9399"/>
-        <source>Save flight plan as FPL file for IVAP or X-IVAP</source>
+        <source>Save flight plan as FPL file for IvAp or X-IvAp</source>
+        <oldsource>Save flight plan as FPL file for IVAP or X-IVAP</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -15864,43 +15866,43 @@ Usare veramente?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="137"/>
+        <location filename="src/main.cpp" line="138"/>
         <source>Use &lt;settings-directory&gt; instead of &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="139"/>
+        <location filename="src/main.cpp" line="140"/>
         <source>settings-directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="217"/>
+        <location filename="src/main.cpp" line="247"/>
         <source>Log files:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="219"/>
+        <location filename="src/main.cpp" line="249"/>
         <source>Database directory:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="221"/>
+        <location filename="src/main.cpp" line="251"/>
         <source>Configuration:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="236"/>
-        <location filename="src/main.cpp" line="249"/>
+        <location filename="src/main.cpp" line="266"/>
+        <location filename="src/main.cpp" line="279"/>
         <source>%1 - Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="237"/>
+        <location filename="src/main.cpp" line="267"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="250"/>
+        <location filename="src/main.cpp" line="280"/>
         <source>%1 is already running.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16935,12 +16937,14 @@ Try another routing type or create the flight plan manually.</source>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="638"/>
-        <source>Export Flight Plan as IVAP/X-IVAP FPL</source>
+        <source>Export Flight Plan as IvAp/X-IvAp FPL</source>
+        <oldsource>Export Flight Plan as IVAP/X-IVAP FPL</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="648"/>
-        <source>Flight plan saved for IVAP/X-IVAP.</source>
+        <source>Flight plan saved for IvAp/X-IvAp.</source>
+        <oldsource>Flight plan saved for IVAP/X-IVAP.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
