@@ -190,12 +190,12 @@ void RouteExportDialog::buttonBoxClicked(QAbstractButton *button)
     dataToDialog(*exportData);
     restoreState();
   }
-  else if(standardButton == QDialogButtonBox::RestoreDefaults)
-  {
-    *exportData = *exportDataSaved;
-    dataToDialog(*exportData);
-    clearDialog();
-  }
+  // else if(standardButton == QDialogButtonBox::RestoreDefaults)
+  // {
+  // *exportData = *exportDataSaved;
+  // dataToDialog(*exportData);
+  // clearDialog();
+  // }
 }
 
 void RouteExportDialog::dataToDialog(const RouteExportData& data)
