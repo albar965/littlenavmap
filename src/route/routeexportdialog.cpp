@@ -181,7 +181,7 @@ void RouteExportDialog::buttonBoxClicked(QAbstractButton *button)
   else if(standardButton == QDialogButtonBox::Help)
   {
     atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::HELP_ONLINE_URL + "ROUTEEXPORT.html", lnm::helpLanguageOnline());
+      parentWidget(), lnm::helpOnlineUrl + "ROUTEEXPORT.html", lnm::helpLanguageOnline());
   }
   else if(standardButton == QDialogButtonBox::Reset)
   {

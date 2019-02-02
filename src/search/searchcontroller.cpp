@@ -90,29 +90,29 @@ void SearchController::styleChanged()
 
 void SearchController::helpPressed()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "SEARCH.html", lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "SEARCH.html", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedProcedure()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "SEARCHPROCS.html", lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "SEARCHPROCS.html", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedUserdata()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "USERPOINT.html#userpoints-search",
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-search",
                               lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineClient()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-client",
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-client",
                               lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineCenter()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "ONLINENETWORKS.html#search-center",
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-center",
                               lnm::helpLanguageOnline());
 }
 

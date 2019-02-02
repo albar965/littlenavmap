@@ -49,40 +49,20 @@
 namespace lnm {
 
 // ======== URLs ================================================================
-#ifdef DEBUG_HELP
-// For local testing - do not use trailing slash which confuses Gitbook
-const QLatin1Literal HELP_BASE_URL("http://localhost:4000");
-const QLatin1Literal HELP_BRANCH("");
-#else
-// Gitbook base URL
-const QLatin1Literal HELP_BASE_URL("https://albar965.gitbooks.io/little-navmap-user-manual/content/v/");
+extern QString helpOnlineUrl;
+extern QString helpOnlineTutorialsUrl;
+extern QString helpOnlineLegendUrl;
+extern QString helpOnlineInstallRedistUrl;
+extern QString helpOnlineInstallGlobeUrl;
+extern QString helpOnlineNavdatabasesUrl;
+extern QString helpLegendLocalFile;
+extern QString helpOfflineFile;
+extern QString helpDonateUrl;
+extern QString helpFaqUrl;
+extern QString updateDefaultUrl;
 
-// "master" or "release/1.4"
-const QLatin1Literal HELP_BRANCH("release/2.2"); // VERSION_NUMBER
-#endif
-
-/* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
-const QString HELP_ONLINE_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/");
-
-const QString HELP_ONLINE_TUTORIALS_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/TUTORIALS.html");
-
-const QString HELP_ONLINE_LEGEND_URL(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/LEGEND.html");
-
-const QString HELP_ONLINE_INSTALL_REDIST(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/INSTALLATION.html#windows");
-
-const QString HELP_ONLINE_INSTALL_GLOBE(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/OPTIONS.html#cache-elevation");
-
-const QString HELP_ONLINE_NAVDATABASES(HELP_BASE_URL + HELP_BRANCH + "/${LANG}/NAVDATA.html");
-
-const QLatin1Literal HELP_LEGEND_INLINE_FILE("help/legend-${LANG}.html");
-
-const QLatin1Literal HELP_OFFLINE_FILE("help/little-navmap-user-manual-${LANG}.pdf");
-
-const QLatin1Literal HELP_DONATE_URL("https://albar965.github.io/donate.html");
-
-const QLatin1Literal HELP_FAQ_URL("https://albar965.github.io/littlenavmap-faq.html");
-
-const QLatin1Literal OPTIONS_UPDATE_DEFAULT_URL("https://albar965.github.io/littlenavmap-version");
+/* Load help URLs for above variables from file urls.cfg */
+void loadHelpUrls();
 
 // ======== Options ================================================================
 
@@ -330,6 +310,12 @@ const QLatin1Literal DATABASE_BACKUP_SUFFIX("-backup");
  * It can be overridden by placing a  file with the same name into
  * the configuration directory. */
 const QString DATABASE_NAVDATAREADER_CONFIG = ":/littlenavmap/resources/config/navdatareader.cfg";
+
+/* Configuration for online networks */
+const QString NETWORKS_CONFIG = ":/littlenavmap/resources/config/networks.cfg";
+
+/* Configuration for online networks */
+const QString URLS_CONFIG = ":/littlenavmap/resources/config/urls.cfg";
 
 const int MAINWINDOW_STATE_VERSION = 0;
 

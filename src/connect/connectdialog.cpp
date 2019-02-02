@@ -127,7 +127,7 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
     emit disconnectClicked();
   }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "CONNECT.html", lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "CONNECT.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
     QDialog::reject();
 }

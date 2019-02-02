@@ -136,7 +136,7 @@ MainWindow::MainWindow()
                   "<p>"
                     "<b>Copyright 2015-2019 Alexander Barthel"
                     "</b>"
-                  "</p>").arg(lnm::HELP_DONATE_URL);
+                  "</p>").arg(lnm::helpDonateUrl);
 
   // Show a dialog on fatal log events like asserts
   atools::logging::LoggingGuiAbortHandler::setGuiAbortFunction(this);
@@ -416,7 +416,7 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openHelpUrlWeb(this, lnm::HELP_ONLINE_LEGEND_URL, lnm::helpLanguageOnline());
+    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
@@ -426,7 +426,7 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendFile = HelpHandler::getHelpFile(lnm::HELP_LEGEND_INLINE_FILE,
+  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile,
                                         OptionData::instance().getFlags() & opts::GUI_OVERRIDE_LANGUAGE);
   qDebug() << "legendUrl" << legendFile;
 
@@ -457,27 +457,27 @@ void MainWindow::checkForUpdates()
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL, lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showOnlineTutorials()
 {
-  HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_TUTORIALS_URL, lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineTutorialsUrl, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showDonationPage()
 {
-  HelpHandler::openUrlWeb(this, lnm::HELP_DONATE_URL);
+  HelpHandler::openUrlWeb(this, lnm::helpDonateUrl);
 }
 
 void MainWindow::showFaqPage()
 {
-  HelpHandler::openUrlWeb(this, lnm::HELP_FAQ_URL);
+  HelpHandler::openUrlWeb(this, lnm::helpFaqUrl);
 }
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::HELP_OFFLINE_FILE,
+  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile,
                                                        OptionData::instance().getFlags() &
                                                        opts::GUI_OVERRIDE_LANGUAGE));
 }
@@ -495,7 +495,7 @@ void MainWindow::showMapLegend()
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "LEGEND.html", lnm::helpLanguageOnline());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1787,7 +1787,7 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     return true;
   }
   else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "FLIGHTPLANFMT.html",
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html",
                                              lnm::helpLanguageOnline());
   // else cancel
 
@@ -2718,7 +2718,7 @@ void MainWindow::mainWindowShown()
   {
     NavApp::deleteSplashScreen();
 
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_INSTALL_REDIST, lnm::helpLanguageOnline());
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
                                     "<p>The program will not be able to use encrypted network connections<br/>"
                                     "(i.e. HTTPS) that are needed to check for updates or<br/>"
@@ -2739,7 +2739,7 @@ void MainWindow::mainWindowShown()
   {
     NavApp::deleteSplashScreen();
 
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_INSTALL_GLOBE, lnm::helpLanguageOnline());
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = QObject::tr("<p>The online elevation data which is used by default for the elevation profile "
                                     "is limited and has a lot of errors.<br/>"
                                     "Therefore, it is recommended to download and use the offline GLOBE elevation data "

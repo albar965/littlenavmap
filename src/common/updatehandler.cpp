@@ -43,7 +43,7 @@ UpdateHandler::UpdateHandler(MainWindow *parent)
 #endif
 
   // Get URL from options for debugging otherwise use default
-  updateCheck->setUrl(Settings::instance().valueStr(lnm::OPTIONS_UPDATE_URL, lnm::OPTIONS_UPDATE_DEFAULT_URL));
+  updateCheck->setUrl(Settings::instance().valueStr(lnm::OPTIONS_UPDATE_URL, lnm::updateDefaultUrl));
 
   connect(updateCheck, &UpdateCheck::updateFound, this, &UpdateHandler::updateFound);
   connect(updateCheck, &UpdateCheck::updateFailed, this, &UpdateHandler::updateFailed);

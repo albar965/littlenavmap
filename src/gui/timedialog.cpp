@@ -69,7 +69,7 @@ void TimeDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::HELP_ONLINE_URL + "SUNSHADOW.html", lnm::helpLanguageOnline());
+      parentWidget(), lnm::helpOnlineUrl + "SUNSHADOW.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }

@@ -331,7 +331,7 @@ void AircraftPerfController::helpClicked() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "AIRCRAFTPERF.html",
+  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "AIRCRAFTPERF.html",
                                            lnm::helpLanguageOnline());
 }
 
@@ -370,7 +370,7 @@ bool AircraftPerfController::checkForChanges()
 bool AircraftPerfController::collectPerformanceDialog()
 {
   QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(
-    lnm::HELP_ONLINE_URL + "AIRCRAFTPERF.html#aircraft-performance-collect",
+    lnm::helpOnlineUrl + "AIRCRAFTPERF.html#aircraft-performance-collect",
     lnm::helpLanguageOnline());
 
   QString doNotShow = tr("Do not &show this dialog again.");

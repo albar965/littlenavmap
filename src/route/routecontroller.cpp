@@ -1633,7 +1633,7 @@ void RouteController::activateLegTriggered()
 
 void RouteController::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::HELP_ONLINE_URL + "FLIGHTPLAN.html",
+  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "FLIGHTPLAN.html",
                                            lnm::helpLanguageOnline());
 }
 

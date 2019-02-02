@@ -251,6 +251,9 @@ int main(int argc, char *argv[])
     Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
     Application::setEmailAddresses({"albar965@mailbox.org"});
 
+    // Load help URLs from urls.cfg
+    lnm::loadHelpUrls();
+
     /* Avoid static translations and load these dynamically now */
     Unit::initTranslateableTexts();
     UserdataIcons::initTranslateableTexts();

@@ -80,7 +80,7 @@ void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::HELP_ONLINE_URL + "TRAFFICPATTERN.html", lnm::helpLanguageOnline());
+      parentWidget(), lnm::helpOnlineUrl + "TRAFFICPATTERN.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }

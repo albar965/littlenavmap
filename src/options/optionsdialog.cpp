@@ -612,7 +612,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     accept();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "OPTIONS.html", lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
     reject();
 
@@ -680,7 +680,9 @@ void OptionsDialog::restoreState()
 
   // Reload online network settings from configuration file which can be overloaded by placing a copy
   // in the settings file
-  QString networksPath = settings.getOverloadedPath(":/littlenavmap/resources/config/networks.cfg");
+  QString networksPath = settings.getOverloadedPath(lnm::NETWORKS_CONFIG);
+  qInfo() << Q_FUNC_INFO << "Loading networks.cfg from" << networksPath;
+
   QSettings networkSettings(networksPath, QSettings::IniFormat);
   OptionData& od = OptionData::instanceInternal();
   od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();

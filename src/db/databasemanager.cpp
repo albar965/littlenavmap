@@ -669,7 +669,7 @@ void DatabaseManager::switchNavFromMainMenu()
 
   if(navDbActionAll->isChecked())
   {
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::HELP_ONLINE_NAVDATABASES, lnm::helpLanguageOnline());
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineNavdatabasesUrl, lnm::helpLanguageOnline());
     QString message = tr(
       "<p>Note that airport information is limited in this mode.<br/>"
       "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.</p>"

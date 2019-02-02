@@ -94,7 +94,7 @@ ProfileScrollArea::~ProfileScrollArea()
 
 void ProfileScrollArea::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrlWeb(scrollArea, lnm::HELP_ONLINE_URL + "PROFILE.html",
+  atools::gui::HelpHandler::openHelpUrlWeb(scrollArea, lnm::helpOnlineUrl + "PROFILE.html",
                                            lnm::helpLanguageOnline());
 }
 

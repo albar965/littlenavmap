@@ -141,7 +141,7 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
     toDialog(perf);
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "AIRCRAFTPERFEDIT.html",
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "AIRCRAFTPERFEDIT.html",
                                              lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
     QDialog::reject();
