@@ -1370,9 +1370,11 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
                             proc::HEADING_TO_DME_DISTANCE_TERMINATION}))
     {
       Pos start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
-
       Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
-      Line line(start, start.endpoint(nmToMeter(leg.distance * 2), leg.legTrueCourse()).normalize());
+
+      float distMeter = start.distanceMeterTo(center);
+
+      Line line(start, start.endpoint(distMeter * 2, leg.legTrueCourse()).normalize());
 
       if(!lastPos.isValid())
         lastPos = start;
