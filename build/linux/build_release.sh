@@ -38,11 +38,21 @@ make deploy
 
 # ===========================================================================
 # ========================== littlexpconnect
+# ===========================================================================
+# ========================== atools
+rm -rf ${APROJECTS}/build-atools-release
+mkdir -p ${APROJECTS}/build-atools-release
+cd ${APROJECTS}/build-atools-release
+
+/mnt/disk/build-qt-5.12-release/bin/qmake ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=release
+make -j4
+
+# ========================== xpconnect
 rm -rf ${APROJECTS}/build-littlexpconnect-release
 mkdir -p ${APROJECTS}/build-littlexpconnect-release
 cd ${APROJECTS}/build-littlexpconnect-release
 
-~/Qt/5.9.5/gcc_64/bin/qmake ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec linux-g++ CONFIG+=release
+/mnt/disk/build-qt-5.12-release/bin/qmake ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec linux-g++ CONFIG+=release
 make -j4
 
 make deploy

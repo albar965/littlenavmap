@@ -53,6 +53,7 @@ related from Little Xpconnect version 1.0.13
 
 * Fixed issue with AI detection where aircraft remained on map moving along with the user aircraft
   after deleting AI in simulator.
+* Now linking Xpconnect statically to Qt to avoid plugin conflicts with libaries in Linux.
 
 related from atools version 3.2.4.rc1
 
