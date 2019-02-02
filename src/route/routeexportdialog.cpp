@@ -42,7 +42,6 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
   widgets.append(ui->lineEditEquipmentPrefix);
   widgets.append(ui->lineEditEquipmentSuffix);
   widgets.append(ui->lineEditFlightType);
-  widgets.append(ui->lineEditFlightRules);
   widgets.append(ui->lineEditLivery);
   widgets.append(ui->spinBoxPassengers);
   widgets.append(ui->lineEditPilotInCommand);
@@ -62,8 +61,8 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
 
     case re::VFP:
 
-      ui->lineEditFlightRules->setVisible(false);
-      ui->labelFlightRules->setVisible(false);
+      ui->lineEditFlightType->setVisible(false);
+      ui->labelFlightType->setVisible(false);
       ui->lineEditAircraftType->setVisible(false);
       ui->labelAircraftType->setVisible(false);
       ui->lineEditAirline->setVisible(false);

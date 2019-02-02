@@ -654,10 +654,8 @@ bool RouteExport::routeExportIvap()
   return false;
 }
 
-RouteExportData RouteExport::createRouteExportData(re::RouteExportType flightplanType)
+RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExportType)
 {
-  Q_UNUSED(flightplanType);
-
   RouteExportData exportData;
   const Route& route = NavApp::getRouteConst();
   exportData.setRoute(RouteString::createStringForRoute(route, 0.f, rs::SID_STAR));
@@ -666,6 +664,29 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType flightpla
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
   exportData.setDepartureTimeActual(QDateTime::currentDateTimeUtc().time());
   exportData.setCruiseAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
+
+  atools::fs::pln::FlightplanType flightplanType = route.getFlightplan().getFlightplanType();
+  switch(routeExportType)
+  {
+    case re::UNKNOWN:
+      break;
+
+    case re::VFP:
+      // <?xml version="1.0" encoding="utf-8"?>
+      // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      // FlightType="IFR"
+      exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "IFR" : "VFR");
+      break;
+
+    case re::IVAP:
+
+      // [FLIGHTPLAN]
+      // FLIGHTTYPE=N
+      // RULES=I
+      exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "I" : "V");
+      break;
+
+  }
 
   const RouteAltitude& routeAlt = NavApp::getAltitudeLegs();
   exportData.setAircraftType(NavApp::getAircraftPerformance().getAircraftType());
@@ -1010,7 +1031,7 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
     writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
     writer.writeAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
 
-    writer.writeAttribute("FlightType", exportData.getFlightType());
+    writer.writeAttribute("FlightType", exportData.getFlightRules());
     writer.writeAttribute("Equipment", exportData.getEquipment());
     writer.writeAttribute("CruiseAltitude", QString::number(exportData.getCruiseAltitude()));
     writer.writeAttribute("CruiseSpeed", QString::number(exportData.getSpeed()));
