@@ -2789,7 +2789,7 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrlWeb(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguageOnline());
+          HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "RUNNOSIM.html", lnm::helpLanguageOnline());
         else if(result == QMessageBox::Open)
           databaseManager->run();
       }
