@@ -36,6 +36,11 @@ QString formatMinutesHours(double time)
 {
   int hours = static_cast<int>(time);
   int minutes = atools::roundToInt((time - hours) * 60.);
+  if(minutes == 60)
+  {
+    hours++;
+    minutes = 0;
+  }
   return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)).
          arg(minutes, 2, 10, QChar('0'));
 }
@@ -44,6 +49,12 @@ QString formatMinutesHoursLong(double time)
 {
   int hours = static_cast<int>(time);
   int minutes = atools::roundToInt((time - hours) * 60);
+  if(minutes == 60)
+  {
+    hours++;
+    minutes = 0;
+  }
+
   return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)).
          arg(minutes, 2, 10, QChar('0'));
 }
