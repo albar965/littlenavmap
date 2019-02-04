@@ -71,6 +71,26 @@ void checkAndMigrateSettings()
       qInfo().nospace().noquote() << "Found settings version mismatch. Settings file: " <<
         optionsVersion << ". Program " << appVersion << ".";
 
+      // http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT to
+      // https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
+      // in widget Widget_lineEditOptionsWeatherNoaaUrl
+      if(optionsVersion < Version("2.2.4"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting NOAA URL";
+
+        // Widget_lineEditOptionsWeatherNoaaUrl=http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
+        QString noaaUrl = settings.valueStr("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl");
+
+        if(noaaUrl.isEmpty() ||
+           noaaUrl.toLower() == "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.txt")
+        {
+          qInfo() << Q_FUNC_INFO << "Changing NOAA URL to HTTPS";
+          settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl",
+                            QString("https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT"));
+          settings.syncSettings();
+        }
+      }
+
       // CenterRadiusACC=60 and CenterRadiusFIR=60
       if(optionsVersion <= Version(2, 0, 2))
       {
