@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
     Application::addReportPath(QObject::tr("Database directory:"),
                                {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
     Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
-    Application::setEmailAddresses({"albar965@mailbox.org"});
+    Application::setEmailAddresses({"alex@littlenavmap.org"});
 
     // Load help URLs from urls.cfg
     lnm::loadHelpUrls();

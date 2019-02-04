@@ -32,7 +32,7 @@
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="212"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="253"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="254"/>
         <source>Aircraft performance saved.</source>
         <translation type="unfinished">Performances de l&apos;aéronef sauvées.</translation>
     </message>
@@ -42,215 +42,215 @@
         <translation type="unfinished">Sauver le fichier des performances de l&apos;aéronef</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="304"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="305"/>
         <source>Performance data collection started.</source>
         <translation type="unfinished">La collecte de données sur les performances a commencée.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="320"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="321"/>
         <source>Performance data collection stopped.</source>
         <translation type="unfinished">La collecte des données sur les performances a été interrompue.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="345"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="346"/>
         <source>Aircraft Performance has been changed.</source>
         <translation type="unfinished">Les performances de l&apos;aéronef ont été modifiées.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="346"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="347"/>
         <source>Save changes?</source>
         <translation type="unfinished">Sauver les modifications?</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="376"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="377"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished">N&apos;afficher plu&amp;s cette boîte de dialogue.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="377"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="378"/>
         <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translation type="unfinished">&lt;p&gt;Les performances de l&apos;aéronef seront collectées automatiquement pendant le vol.&lt;/p&gt;&lt;p&gt;Notez qu&apos;aucune information sur les performances, comme les estimations de carburant ou le temps nécessaire pour se rendre au waypoint, n&apos;est affichée au cours de ce processus.&lt;/p&gt;&lt;p&gt;Le sommet de la montée et le sommet de la descente seront affichés en fonction d&apos;une règle empirique de 3 nm par 1000 pieds.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Se connecter au simulateur,&lt;/li&gt;&lt;li&gt;charger un plan de vol,&lt;/li&gt;&lt;li&gt;placer votre aéronef à l&apos;aérodrome de départ et&lt;/li&gt;&lt;li&gt; suiver le plan de vol avec la plus grande précision possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;La collecte des performances s&apos;arrêtera à l&apos;atterrissage à destination.&lt;/p&gt;&lt;p&gt;Ne modifier pas l&apos;altitude de croisière du plan de vol lors de la collecte d&apos;informations.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Cliquer sur le lien ci-dessous pour plus d&apos;informations:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Manuel en ligne - Performances Aéronef&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Démarrer la collecte des performances maintenant?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="461"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="462"/>
         <source>Flight segment %1.</source>
         <translation type="unfinished">Segment de vol %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="536"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="537"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="541"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="538"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="542"/>
         <source> *</source>
         <translation type="unfinished"> *</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="551"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="552"/>
         <source>%1 - %2</source>
         <translation type="unfinished">%1 - %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="558"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="559"/>
         <source>Collecting performance information.</source>
         <translation type="unfinished">Collecte d&apos;informations sur les performances de l&apos;aéronef.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="559"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="560"/>
         <source>Current flight segment: %1.</source>
         <translation type="unfinished">Segment du vol en cours: %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="566"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="567"/>
         <source>Fuel</source>
         <translation type="unfinished">Carburant</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="568"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Fuel Type:</source>
         <translation type="unfinished">Type de carburant:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="568"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Avgas</source>
         <translation type="unfinished">Avgas</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="568"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="723"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Jetfuel</source>
         <translation type="unfinished">Kérosène</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="570"/>
         <source>Total Fuel Consumed:</source>
         <translation type="unfinished">Carburant total consommé:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="570"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="735"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="571"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="736"/>
         <source>Taxi Fuel:</source>
         <translation type="unfinished">Carburant pour taxi:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="576"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="577"/>
         <source>Average Performance</source>
         <translation type="unfinished">Performances Moyennes</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="576"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="577"/>
         <source>Climb</source>
         <translation type="unfinished">Montée</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="578"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="589"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="597"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="579"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="590"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="598"/>
         <source>True Airspeed:</source>
         <translation type="unfinished">Vitesse réelle:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="579"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="599"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="580"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="600"/>
         <source>Vertical Speed:</source>
         <translation type="unfinished">Vitesse verticale:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="579"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="580"/>
         <source> &lt;b&gt;▲&lt;/b&gt;</source>
         <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="581"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="590"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="601"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="582"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="591"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="602"/>
         <source>Fuel Flow:</source>
         <translation type="unfinished">Débit du carburant:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="587"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="588"/>
         <source>Cruise</source>
         <translation type="unfinished">Croisière</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="595"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="596"/>
         <source>Descent</source>
         <translation type="unfinished">Descente</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="599"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="600"/>
         <source> &lt;b&gt;▼&lt;/b&gt;</source>
         <translation type="unfinished"> &lt;b&gt;▼&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="610"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="611"/>
         <source>Flight plan has unflyable legs where head wind is larger than cruise speed.</source>
         <translation type="unfinished">Le plan de vol comporte des segments non pilotables où le vent de face est plus fort que la vitesse de croisière.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="616"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="617"/>
         <source>No Flight Plan loaded.</source>
         <translation type="unfinished">Aucun plan de vol chargé.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="626"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="779"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="627"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="780"/>
         <source>Performance File Description</source>
         <translation type="unfinished">Description du fichier de performance</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="645"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="646"/>
         <source>Performance File</source>
         <translation type="unfinished">Fichier de performance</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="660"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="661"/>
         <source>Performance File:</source>
         <translation type="unfinished">Fichier de performance:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="674"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="675"/>
         <source>Aircraft Performance %1 - %2</source>
         <translation type="unfinished">Performances de l&apos;aéronef %1 - %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="683"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="684"/>
         <source>reserve fuel</source>
         <translation type="unfinished">carburant de réserve</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="685"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="686"/>
         <source>climb fuel flow</source>
         <translation type="unfinished">débit de carburant en montée</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="687"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="688"/>
         <source>cruise fuel flow</source>
         <translation type="unfinished">débit de carburant en croisière</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="689"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="690"/>
         <source>descent fuel flow</source>
         <translation type="unfinished">débit de carburant en descente</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="692"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
         <source>Invalid value for %1.</source>
         <translation type="unfinished">Valeur invalide pour %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="692"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
         <source>Invalid values for %1.</source>
         <translation type="unfinished">Valeurs invalides du %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="694"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="698"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="699"/>
         <source>Flight Plan</source>
         <translation type="unfinished">Plan de Vol</translation>
     </message>
@@ -259,123 +259,123 @@
         <translation type="obsolete">Vol</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="702"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="703"/>
         <source>Distance and Time:</source>
         <translation type="unfinished">Distance et Durée:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="702"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="703"/>
         <source>%1, %2</source>
         <translation type="unfinished">%1, %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="707"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="708"/>
         <source>Distance:</source>
         <translation type="unfinished">Distance:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="707"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="708"/>
         <source>%1</source>
         <translation type="unfinished">%1</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="711"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="712"/>
         <source>Average Ground Speed:</source>
         <translation type="unfinished">Vitesse moyenne au sol:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="712"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="713"/>
         <source>True Airspeed at Cruise:</source>
         <translation type="unfinished">Vitesse de croisière réelle:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="717"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="718"/>
         <source>Mach at cruise:</source>
         <translation type="unfinished">Vitesse de croisère en Mach:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="721"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="722"/>
         <source>Fuel Plan</source>
         <translation type="unfinished">Détail Carburant</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="725"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="726"/>
         <source>Trip Fuel:</source>
         <translation type="unfinished">Carburant pour trajet (TIF):</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="728"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="729"/>
         <source>Block Fuel:</source>
         <translation type="unfinished">Carburant en bloc:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="733"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="734"/>
         <source>Fuel at Destination:</source>
         <translation type="unfinished">Carburant à destination:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="734"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="735"/>
         <source>Reserve Fuel:</source>
         <translation type="unfinished">Carburant de réserve:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="736"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="737"/>
         <source>Extra Fuel:</source>
         <translation type="unfinished">Carburant supplémentaire:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="739"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="740"/>
         <source>Contingency Fuel:</source>
         <translation type="unfinished">Carburant de secours:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="739"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="740"/>
         <source>%1 %, %2</source>
         <translation type="unfinished">%1 %, %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="745"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="746"/>
         <source>Climb and Descent</source>
         <translation type="unfinished">Montée et Descente</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="749"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
         <source>Climb:</source>
         <translation type="unfinished">Montée:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="749"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="764"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="765"/>
         <source>%1 at %2, %3° Flight Path Angle</source>
         <translation type="unfinished">%1 à %2, %3° Angle de trajectoire de vol</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="755"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="756"/>
         <source>Time to Climb:</source>
         <translation type="unfinished">Durée de la montée:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="760"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="761"/>
         <source>Climb not valid</source>
         <translation type="unfinished">Montée non valide</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="764"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="765"/>
         <source>Descent:</source>
         <translation type="unfinished">Descente:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="768"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="769"/>
         <source>Descent Rule of Thumb:</source>
         <translation type="unfinished">Règle empirique de descente:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="768"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="769"/>
         <source>%1 per %2 %3</source>
         <translation type="unfinished">%1 par %2 %3</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="774"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="775"/>
         <source>Descent not valid</source>
         <translation type="unfinished">Descente non valide</translation>
     </message>
@@ -13232,17 +13232,17 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <translation>Réinitialiser toutes les options par défaut?</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="891"/>
+        <location filename="src/options/optionsdialog.cpp" line="893"/>
         <source>&lt;p&gt;Success. First METARs in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation type="unfinished">&lt;p&gt;Succès. Premiers METAR dans le fichier:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="902"/>
+        <location filename="src/options/optionsdialog.cpp" line="904"/>
         <source>&lt;p&gt;Success. Result:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation type="unfinished">&lt;p&gt;Succès. Résultat:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1592"/>
+        <location filename="src/options/optionsdialog.cpp" line="1594"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP for %1.</source>
         <translation type="unfinished">Aucun fichier d&apos;instantané de la météo Active Sky n&apos;est sélectionné. Utiliser la valeur par défaut pour Active Sky XP pour %1.</translation>
     </message>
@@ -13253,34 +13253,34 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
 %1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1513"/>
+        <location filename="src/options/optionsdialog.cpp" line="1515"/>
         <source>Directory does not exist.</source>
         <translation type="unfinished">Le répertoire n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1517"/>
+        <location filename="src/options/optionsdialog.cpp" line="1519"/>
         <source>No valid GLOBE data found.</source>
         <translation type="unfinished">Aucune donnée valide de GLOBE n&apos;a été trouvée.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1551"/>
+        <location filename="src/options/optionsdialog.cpp" line="1553"/>
         <source>File does not exist.</source>
         <translation type="unfinished">Le fichier n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1554"/>
+        <location filename="src/options/optionsdialog.cpp" line="1556"/>
         <source>Is not a file.</source>
         <translation type="unfinished">N&apos;est pas un fichier.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1557"/>
+        <location filename="src/options/optionsdialog.cpp" line="1559"/>
         <source>Is not an Active Sky weather snapshot file.</source>
         <translation type="unfinished">N&apos;est pas un fichier de capture d&apos;écran Active Sky weather.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="537"/>
-        <location filename="src/options/optionsdialog.cpp" line="894"/>
-        <location filename="src/options/optionsdialog.cpp" line="905"/>
+        <location filename="src/options/optionsdialog.cpp" line="896"/>
+        <location filename="src/options/optionsdialog.cpp" line="907"/>
         <source>Failed. Reason:
 %1</source>
         <translation>Echoué. Motif:
@@ -13315,22 +13315,22 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
 %1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="914"/>
+        <location filename="src/options/optionsdialog.cpp" line="916"/>
         <source>Open Directory to exclude from Scenery Loading</source>
         <translation>Ouvrir le répertoire pour exclure du chargement des scènes</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="931"/>
+        <location filename="src/options/optionsdialog.cpp" line="933"/>
         <source>Open Files to exclude from Scenery Loading</source>
         <translation type="unfinished">Ouvrir les fichiers à exclure du chargement de scènes</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="963"/>
+        <location filename="src/options/optionsdialog.cpp" line="965"/>
         <source>Open Directory to exclude from Add-On Recognition</source>
         <translation>Répertoire ouvert à exclure de la reconnaissance des modules complémentaires</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1492"/>
+        <location filename="src/options/optionsdialog.cpp" line="1494"/>
         <source>Open GLOBE data directory</source>
         <translation>Ouvrir le répertoire de données GLOBE</translation>
     </message>
@@ -13347,12 +13347,12 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Aucune donnée GLOBE valide trouvée.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1519"/>
+        <location filename="src/options/optionsdialog.cpp" line="1521"/>
         <source>Directory and files are valid.</source>
         <translation>Le répertoire et les fichiers sont valides.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1522"/>
+        <location filename="src/options/optionsdialog.cpp" line="1524"/>
         <source>No directory selected.</source>
         <translation>Aucun répertoire sélectionné.</translation>
     </message>
@@ -13369,32 +13369,32 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;N&apos;est pas un fichier de capture Sky weather actif.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1560"/>
+        <location filename="src/options/optionsdialog.cpp" line="1562"/>
         <source>Weather snapshot file is valid. Using this one for all simulators</source>
         <translation>Le fichier capture météo est valide. Utilisation de celui-ci pour tous les simulateurs</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1572"/>
+        <location filename="src/options/optionsdialog.cpp" line="1574"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation type="unfinished">Aucune capture Active Sky weather trouvée. Les Active Sky METAR ne sont pas disponibles.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1575"/>
+        <location filename="src/options/optionsdialog.cpp" line="1577"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation>Utiliser une capture météo par défaut après confirmation du changement.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1578"/>
+        <location filename="src/options/optionsdialog.cpp" line="1580"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation>Aucun fichier de capture Active Sky weather sélectionné. Utiliser la valeur par défaut pour Active Sky Next pour %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1582"/>
+        <location filename="src/options/optionsdialog.cpp" line="1584"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation>Aucun fichier de capture Active Sky weather sélectionné. Utiliser la valeur par défaut pour AS16 pour %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1587"/>
+        <location filename="src/options/optionsdialog.cpp" line="1589"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation>Aucun fichier de capture Active Sky weather sélectionné. Utiliser la valeur par défaut pour ASP4 pour %1.</translation>
     </message>
@@ -13403,22 +13403,22 @@ Modifie uniquement les paramètres qui peuvent être effectués avec cette boît
         <translation type="obsolete">X-Plane est sélectionné dans le menu &quot;Bibliothèque de Scènes&quot;. Active Sky weather n&apos;est pas disponible.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1606"/>
+        <location filename="src/options/optionsdialog.cpp" line="1608"/>
         <source>Open Active Sky Weather Snapshot File</source>
         <translation type="unfinished">Ouvrir le fichier Active Sky Weather Snapshot</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1607"/>
+        <location filename="src/options/optionsdialog.cpp" line="1609"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
         <translation type="unfinished">Fichiers Active Sky Weather Snapshot %1;; Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1621"/>
+        <location filename="src/options/optionsdialog.cpp" line="1623"/>
         <source>Memory cache cleared.</source>
         <translation>Cache mémoire effacé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1630"/>
+        <location filename="src/options/optionsdialog.cpp" line="1632"/>
         <source>Clear the disk cache?
 All files in the directory &quot;%1&quot; will be deleted.
 This process will run in background and can take a while.</source>
@@ -13427,12 +13427,12 @@ Tous les fichiers du répertoire &quot;%1&quot; seront supprimés.
 Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1640"/>
+        <location filename="src/options/optionsdialog.cpp" line="1642"/>
         <source>Disk cache cleared.</source>
         <translation>Cache disque effacé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1653"/>
+        <location filename="src/options/optionsdialog.cpp" line="1655"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <translation>Erreur lors de l&apos;ouverture de l&apos;URL d&apos;aide &quot;%1&quot;</translation>
     </message>
@@ -13734,7 +13734,7 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     <message>
         <location filename="src/query/procedurequery.cpp" line="1216"/>
         <location filename="src/query/procedurequery.cpp" line="1366"/>
-        <location filename="src/query/procedurequery.cpp" line="1391"/>
+        <location filename="src/query/procedurequery.cpp" line="1393"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
@@ -13745,9 +13745,9 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1293"/>
-        <location filename="src/query/procedurequery.cpp" line="1491"/>
-        <location filename="src/query/procedurequery.cpp" line="1510"/>
-        <location filename="src/query/procedurequery.cpp" line="1524"/>
+        <location filename="src/query/procedurequery.cpp" line="1493"/>
+        <location filename="src/query/procedurequery.cpp" line="1512"/>
+        <location filename="src/query/procedurequery.cpp" line="1526"/>
         <source>Intercept</source>
         <translation>Intercepter</translation>
     </message>
@@ -13758,66 +13758,66 @@ Ce processus se déroulera en arrière-plan et peut prendre un certain temps.</t
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1334"/>
-        <location filename="src/query/procedurequery.cpp" line="1410"/>
+        <location filename="src/query/procedurequery.cpp" line="1412"/>
         <source>Altitude</source>
         <translation>Altitude</translation>
     </message>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1366"/>
-        <location filename="src/query/procedurequery.cpp" line="1391"/>
+        <location filename="src/query/procedurequery.cpp" line="1393"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1404"/>
-        <location filename="src/query/procedurequery.cpp" line="1422"/>
+        <location filename="src/query/procedurequery.cpp" line="1406"/>
+        <location filename="src/query/procedurequery.cpp" line="1424"/>
         <source>Manual</source>
         <translation>manuel</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1416"/>
+        <location filename="src/query/procedurequery.cpp" line="1418"/>
         <source>Single</source>
         <translation>Unique</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1496"/>
-        <location filename="src/query/procedurequery.cpp" line="1524"/>
+        <location filename="src/query/procedurequery.cpp" line="1498"/>
+        <location filename="src/query/procedurequery.cpp" line="1526"/>
         <source>Leg</source>
         <translation>segment</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1877"/>
+        <location filename="src/query/procedurequery.cpp" line="1879"/>
         <source>SID %1</source>
         <translation type="unfinished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1892"/>
+        <location filename="src/query/procedurequery.cpp" line="1894"/>
         <source>SID transition %1</source>
         <translation type="unfinished">Transition SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1937"/>
-        <location filename="src/query/procedurequery.cpp" line="1958"/>
+        <location filename="src/query/procedurequery.cpp" line="1939"/>
+        <location filename="src/query/procedurequery.cpp" line="1960"/>
         <source>Approach %1</source>
         <translation type="unfinished">Approche %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1978"/>
+        <location filename="src/query/procedurequery.cpp" line="1980"/>
         <source>Transition %1</source>
         <translation type="unfinished">Transition %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1993"/>
+        <location filename="src/query/procedurequery.cpp" line="1995"/>
         <source>STAR %1</source>
         <translation type="unfinished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2008"/>
+        <location filename="src/query/procedurequery.cpp" line="2010"/>
         <source>STAR transition %1</source>
         <translation type="unfinished">Transition STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2458"/>
+        <location filename="src/query/procedurequery.cpp" line="2460"/>
         <source>Start</source>
         <translation>Début</translation>
     </message>
@@ -14094,108 +14094,108 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="src/common/formatter.cpp" line="39"/>
+        <location filename="src/common/formatter.cpp" line="44"/>
         <source>%1:%2</source>
         <translation>%1:%2</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="47"/>
+        <location filename="src/common/formatter.cpp" line="58"/>
         <source>%1 h %2 m</source>
         <translation>%1 h %2 m</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="56"/>
+        <location filename="src/common/formatter.cpp" line="67"/>
         <source>%1:%2:%3</source>
         <translation>%1:%2:%3</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="69"/>
+        <location filename="src/common/formatter.cpp" line="80"/>
         <source>%1 d</source>
         <translation>%1 d</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="74"/>
+        <location filename="src/common/formatter.cpp" line="85"/>
         <source> %1 h</source>
         <translation> %1 h</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="76"/>
+        <location filename="src/common/formatter.cpp" line="87"/>
         <source>%1 h</source>
         <translation>%1 h</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="80"/>
+        <location filename="src/common/formatter.cpp" line="91"/>
         <source> %1 m</source>
         <translation> %1 m</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="82"/>
+        <location filename="src/common/formatter.cpp" line="93"/>
         <source>%1 m</source>
         <translation>%1 m</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="90"/>
-        <location filename="src/common/formatter.cpp" line="98"/>
+        <location filename="src/common/formatter.cpp" line="101"/>
+        <location filename="src/common/formatter.cpp" line="109"/>
         <source>%L1</source>
         <translation>%L1</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="92"/>
-        <location filename="src/common/formatter.cpp" line="100"/>
-        <location filename="src/common/formatter.cpp" line="130"/>
+        <location filename="src/common/formatter.cpp" line="103"/>
+        <location filename="src/common/formatter.cpp" line="111"/>
+        <location filename="src/common/formatter.cpp" line="141"/>
         <source>%L1 %2</source>
         <translation>%L1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="111"/>
-        <location filename="src/common/formatter.cpp" line="123"/>
+        <location filename="src/common/formatter.cpp" line="122"/>
+        <location filename="src/common/formatter.cpp" line="134"/>
         <source>Invalid date</source>
         <translation>Date invalide</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="121"/>
+        <location filename="src/common/formatter.cpp" line="132"/>
         <source>UTC</source>
         <translation>UTC</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="130"/>
-        <location filename="src/common/formatter.cpp" line="138"/>
+        <location filename="src/common/formatter.cpp" line="141"/>
+        <location filename="src/common/formatter.cpp" line="149"/>
         <source>second</source>
         <translation>seconde</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="130"/>
-        <location filename="src/common/formatter.cpp" line="138"/>
+        <location filename="src/common/formatter.cpp" line="141"/>
+        <location filename="src/common/formatter.cpp" line="149"/>
         <source>seconds</source>
         <translation>secondes</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="136"/>
+        <location filename="src/common/formatter.cpp" line="147"/>
         <source>%L1 %2 %L3 %4</source>
         <translation>%L1 %2 %L3 %4</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="137"/>
+        <location filename="src/common/formatter.cpp" line="148"/>
         <source>minute</source>
         <translation>minute</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="137"/>
+        <location filename="src/common/formatter.cpp" line="148"/>
         <source>minutes</source>
         <translation>minutes</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="157"/>
+        <location filename="src/common/formatter.cpp" line="168"/>
         <source>Coordinates are valid: %1</source>
         <translation>Les coordonnées sont valides: %1</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="160"/>
+        <location filename="src/common/formatter.cpp" line="171"/>
         <source>Coordinates are valid.</source>
         <translation>Les coordonnées sont valides.</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="165"/>
+        <location filename="src/common/formatter.cpp" line="176"/>
         <source>Coordinates are not valid.</source>
         <translation type="unfinished">Les coordonnées ne sont pas valides.</translation>
     </message>
@@ -16163,18 +16163,18 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
         <translation>Configuration:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="266"/>
-        <location filename="src/main.cpp" line="279"/>
+        <location filename="src/main.cpp" line="269"/>
+        <location filename="src/main.cpp" line="282"/>
         <source>%1 - Error</source>
         <translation>%1 - Erreur</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="267"/>
+        <location filename="src/main.cpp" line="270"/>
         <source>%1 needs at least macOS Yosemite version 10.10 or newer.</source>
         <translation>%1 nécessite au moins MacOS Yosemite version 10.10 ou plus récent.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="280"/>
+        <location filename="src/main.cpp" line="283"/>
         <source>%1 is already running.</source>
         <translation>%1 est déjà en cours d&apos;exécution.</translation>
     </message>
@@ -16341,9 +16341,9 @@ en %volume%</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="115"/>
-        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2019 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
-        <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aérodrome et un système d&apos;information d&apos;aérodrome pour X-Plane 11, Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2018 Alexander Barthel &lt;/a&gt;.&lt;/p&gt;&lt;p&gt;© 2017-2018 Traduction Française par Patrick JUNG aka Patbest&lt;/b&gt;&lt;/p&gt;</translation>
+        <source>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2019 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;is a free open source flight planner, navigation tool, moving map, airport search and airport information system for X-Plane 11, Flight Simulator X and Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://albar965.github.io&quot;&gt;albar965.github.io&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2019 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
+        <translation>&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aérodrome et un système d&apos;information d&apos;aérodrome pour X-Plane 11, Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2019 Alexander Barthel &lt;/a&gt;.&lt;/p&gt;&lt;p&gt;© 2017-2019 Traduction Française par Patrick JUNG aka Patbest&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2722"/>
@@ -17289,100 +17289,100 @@ Essayer un autre type de routage ou créez le plan de vol manuellement.</transla
         <translation type="obsolete">Plan de vol sauvé au format IVAP/X-IVAP.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="698"/>
+        <location filename="src/route/routeexport.cpp" line="719"/>
         <source>Save Flight Plan as GPX Format</source>
         <translation>Sauver plan de vol au format GPX</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="698"/>
+        <location filename="src/route/routeexport.cpp" line="719"/>
         <source>Save Flightplan and Track as GPX Format</source>
         <translation>Sauver plan de vol et piste au format GPX</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="702"/>
+        <location filename="src/route/routeexport.cpp" line="723"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>Fichiers GPX %1;;Tous les Fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="711"/>
+        <location filename="src/route/routeexport.cpp" line="732"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Plan de vol sauvé vers GPX.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="713"/>
+        <location filename="src/route/routeexport.cpp" line="734"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Sauver plan de vol et piste au format GPX.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="732"/>
-        <location filename="src/route/routeexport.cpp" line="762"/>
+        <location filename="src/route/routeexport.cpp" line="753"/>
+        <location filename="src/route/routeexport.cpp" line="783"/>
         <source>Select Start &amp;Position</source>
         <translation type="unfinished">Sélectionner la &amp;Position de Départ</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="736"/>
+        <location filename="src/route/routeexport.cpp" line="757"/>
         <source>Flight Plan must have a valid airport as start and destination and will not be usable by the Simulator.</source>
         <translation>Le plan de vol doit avoir un aérodrome valide comme point de départ et de destination et ne sera pas utilisable par le simulateur.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="739"/>
-        <location filename="src/route/routeexport.cpp" line="770"/>
+        <location filename="src/route/routeexport.cpp" line="760"/>
+        <location filename="src/route/routeexport.cpp" line="791"/>
         <source>Do not show this dialog again and save Flight Plan in the future.</source>
         <translation>Ne plus afficher cette boîte de dialogue et enregistrer le plan de vol dans le futur.</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="763"/>
+        <location filename="src/route/routeexport.cpp" line="784"/>
         <source>Show &amp;Departure on Map</source>
         <translation type="unfinished">Afficher &amp;Départ sur la Carte</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="769"/>
+        <location filename="src/route/routeexport.cpp" line="790"/>
         <source>The start airport has parking spots but no parking was selected for this Flight Plan</source>
         <translation>L&apos;aérodrome de départ a des parkings mais aucun n&apos;a été sélectionné pour ce plan de vol</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="857"/>
-        <location filename="src/route/routeexport.cpp" line="971"/>
+        <location filename="src/route/routeexport.cpp" line="878"/>
+        <location filename="src/route/routeexport.cpp" line="992"/>
         <source>While saving GFP file:</source>
         <translation>Lors de l&apos;enregistrement du fichier GFP:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="878"/>
+        <location filename="src/route/routeexport.cpp" line="899"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Lors de l&apos;enregistrement d&apos;un fichier TXT ou FPL:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="921"/>
+        <location filename="src/route/routeexport.cpp" line="942"/>
         <source>While saving UFMC file:</source>
         <translation>Lors de l&apos;enregistrement du fichier UFMC:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1045"/>
+        <location filename="src/route/routeexport.cpp" line="1066"/>
         <source>While saving VFP file:</source>
         <translation type="unfinished">Lors de l&apos;enregistrement du fichier VFP:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1115"/>
+        <location filename="src/route/routeexport.cpp" line="1136"/>
         <source>While saving FPL file:</source>
         <translation type="unfinished">Lors de l&apos;enregistrement du fichier FPL :</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1169"/>
+        <location filename="src/route/routeexport.cpp" line="1190"/>
         <source>While reading corte.in file:</source>
         <translation>Pendant la lecture du fichier corte.in:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1201"/>
+        <location filename="src/route/routeexport.cpp" line="1222"/>
         <source>While saving to corte.in file:</source>
         <translation>Pendant l&apos;enregistrement dans le fichier &quot;corte.in&quot;:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1247"/>
+        <location filename="src/route/routeexport.cpp" line="1268"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>En lisant à partir du fichier &quot;companyroutes.xml&quot;:</translation>
     </message>
     <message>
-        <location filename="src/route/routeexport.cpp" line="1300"/>
+        <location filename="src/route/routeexport.cpp" line="1321"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Lors de l&apos;enregistrement dans le fichier &quot;companyroutes.xml&quot;:</translation>
     </message>

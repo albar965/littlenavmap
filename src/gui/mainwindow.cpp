@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ MainWindow::MainWindow()
                     "</a>."
                   "</p>"
                   "<p>More about my projects at "
-                    "<a href=\"https://albar965.github.io\">albar965.github.io"
+                    "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
                     "</a>."
                   "</p>"
                   "<p>"

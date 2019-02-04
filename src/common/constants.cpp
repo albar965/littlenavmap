@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ void loadHelpUrls()
   QSettings settings(urlsPath, QSettings::IniFormat);
 
   // [help] - Online help URLs
-  QLatin1Literal base("https://albar965.gitbooks.io/little-navmap-user-manual/content/v/master/${LANG}/");
+  QLatin1Literal base("https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/${LANG}/");
   helpOnlineUrl = settings.value("help/base", base).toString();
   helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
   helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();

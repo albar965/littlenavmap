@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ NavApp::NavApp(int& argc, char **argv, int flags)
   setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
-  setOrganizationDomain("abarthel.org");
+  setOrganizationDomain("littlenavmap.org");
 
   setApplicationVersion("2.2.4.rc1"); // VERSION_NUMBER - Little Navmap
 }
