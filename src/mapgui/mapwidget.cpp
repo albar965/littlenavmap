@@ -1924,13 +1924,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapHideDistanceMarker);
   menu.addSeparator();
 
-  menu.addAction(ui->actionMapTrafficPattern);
-  menu.addAction(ui->actionMapHideTrafficPattern);
-  menu.addSeparator();
-
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideOneRangeRing);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionMapTrafficPattern);
+  menu.addAction(ui->actionMapHideTrafficPattern);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteAirportStart);

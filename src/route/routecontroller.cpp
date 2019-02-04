@@ -1875,6 +1875,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
+  menu.addSeparator();
   menu.addAction(ui->actionMapTrafficPattern);
   menu.addSeparator();
 
