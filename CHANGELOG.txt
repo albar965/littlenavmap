@@ -1,6 +1,57 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.4
+
+* Changed default email, manual and help link URLs from Gitbook to https://www.littlenavmap.org #238
+  Manuals in all formats and languages can be found here: https://albar965.github.io/manuals.html
+* Moved hardcoded help URLs into configuration file "urls.cfg" which can be overloaded in settings directory. #238
+
+* Changed default weather URLs (except IVAO) to use HTTPS/SSL.
+* Added migration code to convert NOAA weather URL to use SSL/HTTPS if user left URL unchanged.
+
+* Enabled IVAO support based on mirror on (https://www.littlenavmap.org) #244.
+
+* Now pre-filling flight plan type (VFR and IFR) in online network export. #176 and #317
+* Removed "RestoreDefaults" button from online network export since it has limited use.
+* Now hiding the scalebar when saving map images. Scale bar is now only included when printing.
+* Changed AI/multiplayer aircraft on ground to appear earlier when zooming in.
+
+* Changed Level-D default export path to correct location. #206
+* Changed default export folder for aircraft flight plan formats to simulator base folder.
+
+* Fixed issue where leg "From fix to DME distance" in procedures was calculated incorrectly.
+  Case: EDVK Via LUXUX and ILS ABLIB (I09) to runway 09.
+* Fixed drawing issue with intercept procedure legs.
+
+* Now reading environment variable "LNM_RENDERER" for potential fixes on crashes or graphic problems.
+  To use desktop OpenGL renderer set it to "desktop". Use Angle to DirectX adapter for rendering: "angle".
+  To use the software renderer set it to "software".
+* Added "[Options]" "PixmapCache" allowing to change pixmap cache size as a potential fix for disappearing icons.
+* Added preliminary options for manual application font configuration in settings. #373. Example:
+  [Options]
+  GuiFontFamily=FONTNAME
+  GuiFontFile=TTFFILE
+  GuiFontPixelSize=12
+
+* Changed lengthy prefix for custom map themes to "*".
+* Limited text length when loading database to avoid growing the progress dialog.
+* Added automatic numbering of performance files on save as.
+* Small fix to avoid wrong time display.
+* Small reordering in context menus for consistency.
+
+related from atools version 3.2.4
+
+* Fixed issue with wrong waypoint numbering in FlightGear export causing the simulator to crash.
+  This happens only when using SID and/or STAR. #361
+* Now disabling aircraft performance collection when sim is paused or replaying.
+
+related from Little Xpconnect version 1.0.14
+
+* Now linking Xpconnect statically to Qt to avoid plugin conflicts with libaries in Linux.
+
+===============================================================================
+
 Version 2.2.4.rc1
 
 * Added saving and loading of FlightGear XML flight plans (.fgfp) also covering SID and STAR. #361
