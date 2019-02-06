@@ -109,7 +109,31 @@ int main(int argc, char *argv[])
   // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.
   // Qt::AA_UseOpenGLES Equivalent to setting QT_OPENGL to angle.
   // Qt::AA_UseSoftwareOpenGL Equivalent to setting QT_OPENGL to software.
-  // QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+  QString renderOpt = QString::fromLocal8Bit(qgetenv("LNM_RENDERER").constData());
+  if(!renderOpt.isEmpty())
+  {
+    // QT_OPENGL does not work - so do this ourselves
+    if(renderOpt == "desktop")
+    {
+      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
+      QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+    }
+    else if(renderOpt == "angle")
+    {
+      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
+      QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+    }
+    else if(renderOpt == "software")
+    {
+      QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, false);
+      QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
+      QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
+    }
+    else
+      qWarning() << "Wrong renderer" << renderOpt;
+  }
 
   // Set application information
   int retval = 0;
