@@ -3310,7 +3310,7 @@ when transitioning from airport to airway.</string>
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
             </property>
             <property name="text">
-             <string>http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</string>
+             <string>https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</string>
             </property>
             <property name="placeholderText">
              <string>No URL set. NOAA weather reports are disabled.</string>
@@ -3327,7 +3327,7 @@ when transitioning from airport to airway.</string>
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
             </property>
             <property name="text">
-             <string>http://metar.vatsim.net/metar.php?id=%1</string>
+             <string>https://metar.vatsim.net/metar.php?id=%1</string>
             </property>
             <property name="placeholderText">
              <string>No URL set. VATSIM weather reports are disabled.</string>

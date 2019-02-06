@@ -880,8 +880,8 @@ private:
 
   // ui->lineEditOptionsWeatherAsnPath
   QString weatherActiveSkyPath,
-          weatherNoaaUrl = "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
-          weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1",
+          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
+          weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=%1",
           weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
   QString cacheOfflineElevationPath;
