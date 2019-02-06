@@ -604,16 +604,20 @@ void MainWindow::setupUi()
   QFileInfoList customDgmlFiles;
   findCustomMaps(customDgmlFiles);
 
+  if(!customDgmlFiles.isEmpty())
+    ui->menuViewTheme->addSeparator();
+
   for(int i = 0; i < customDgmlFiles.size(); i++)
   {
     const QFileInfo& dgmlFile = customDgmlFiles.at(i);
-    QString name = tr("Custom (%1)").arg(dgmlFile.baseName());
-    QString helptext = tr("Custom map theme (%1)").arg(dgmlFile.baseName());
+    QString nameShort = tr("* %1").arg(dgmlFile.baseName());
 
     // Add item to combo box in toolbar
-    mapThemeComboBox->addItem(name, dgmlFile.filePath());
+    mapThemeComboBox->addItem(nameShort, dgmlFile.filePath());
 
     // Create action for map/theme submenu
+    QString name = tr("Custom (%1)").arg(dgmlFile.baseName());
+    QString helptext = tr("Custom map theme (%1)").arg(dgmlFile.baseName());
     QAction *action = ui->menuViewTheme->addAction(name);
     action->setCheckable(true);
     action->setToolTip(helptext);
