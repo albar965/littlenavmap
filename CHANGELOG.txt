@@ -16,6 +16,8 @@ Version 2.2.4
 * Removed "RestoreDefaults" button from online network export since it has limited use.
 * Now hiding the scalebar when saving map images. Scale bar is now only included when printing.
 * Changed AI/multiplayer aircraft on ground to appear earlier when zooming in.
+* Relaxed maximum distance requirements for waypoints in route string parser. Airports are now always used
+  independent of distance to previous waypoint. #376
 
 * Changed Level-D default export path to correct location. #206
 * Changed default export folder for aircraft flight plan formats to simulator base folder.
