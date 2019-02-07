@@ -37,7 +37,8 @@ using map::MapSearchResult;
 using atools::geo::Pos;
 namespace coords = atools::fs::util;
 
-const static float MAX_WAYPOINT_DISTANCE_NM = 1000.f;
+// Maximum distance to previous waypoint - everything above will be sorted out
+const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
 
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
 const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
@@ -496,7 +497,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
                   arg(Unit::speedKts(speedKts)).arg(Unit::altFeet(altitude)));
 
   // Do not get any navaids that are too far away
-  float maxDistance = atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, flightplan.getDistanceNm() * 1.5f));
+  float maxDistance = atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, flightplan.getDistanceNm() * 2.0f));
 
   // Collect all navaids, airports and coordinates
   Pos lastPos(flightplan.getDeparturePosition());
@@ -944,7 +945,7 @@ void RouteString::filterWaypoints(MapSearchResult& result, atools::geo::Pos& las
                                   float maxDistance)
 {
   maptools::sortByDistance(result.airports, lastPos);
-  maptools::removeByDistance(result.airports, lastPos, maxDistance);
+  // maptools::removeByDistance(result.airports, lastPos, maxDistance);
 
   maptools::sortByDistance(result.waypoints, lastPos);
   maptools::removeByDistance(result.waypoints, lastPos, maxDistance);
