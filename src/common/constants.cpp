@@ -140,15 +140,15 @@ void loadHelpUrls()
   helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
 
   // [help] - Other URLs
-  helpDonateUrl = settings.value("help/donate", "https://albar965.github.io/donate.html").toString();
-  helpFaqUrl = settings.value("help/faq", "https://albar965.github.io/littlenavmap-faq.html").toString();
+  helpDonateUrl = settings.value("help/donate", "https://www.littlenavmap.org/donate.html").toString();
+  helpFaqUrl = settings.value("help/faq", "https://www.littlenavmap.org/littlenavmap-faq.html").toString();
 
   // [local] - local files
   helpLegendLocalFile = settings.value("local/legend", "help/legend-${LANG}.html").toString();
   helpOfflineFile = settings.value("local/help", "help/little-navmap-user-manual-${LANG}.pdf").toString();
 
   // [update] - Update control file
-  updateDefaultUrl = settings.value("update/url", "https://albar965.github.io/littlenavmap-version").toString();
+  updateDefaultUrl = settings.value("update/url", "https://www.littlenavmap.org/littlenavmap-version").toString();
 }
 
 } // namespace lnm
