@@ -195,8 +195,20 @@ void WeatherReporter::createFsWatcher()
 
 void WeatherReporter::initXplane()
 {
-  if(simType == atools::fs::FsPaths::XPLANE11)
-    xpWeatherReader->readWeatherFile(NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx");
+  if(simType == atools::fs::FsPaths::XPLANE11 && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+  {
+    QFileInfo base(NavApp::getCurrentSimulatorBasePath());
+
+    if(base.exists() && base.isDir())
+      xpWeatherReader->readWeatherFile(NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx");
+    else
+    {
+      qWarning() << Q_FUNC_INFO << "Base path not valid" << base.filePath();
+      xpWeatherReader->clear();
+    }
+  }
+  else
+    xpWeatherReader->clear();
 }
 
 void WeatherReporter::initActiveSkyNext()
