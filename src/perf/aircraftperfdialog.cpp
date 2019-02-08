@@ -42,6 +42,32 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
 
   restoreState();
 
+  // Adjust vertical speed spin boxes for units
+  if(Unit::getUnitVertSpeed() == opts::VERT_SPEED_MS)
+  {
+    ui->doubleSpinBoxClimbVertSpeed->setDecimals(2);
+    ui->doubleSpinBoxClimbVertSpeed->setMinimum(1.);
+    ui->doubleSpinBoxClimbVertSpeed->setMaximum(100.);
+    ui->doubleSpinBoxClimbVertSpeed->setSingleStep(1.);
+
+    ui->doubleSpinBoxDescentVertSpeed->setDecimals(2);
+    ui->doubleSpinBoxDescentVertSpeed->setMinimum(-100.);
+    ui->doubleSpinBoxDescentVertSpeed->setMaximum(-1.);
+    ui->doubleSpinBoxDescentVertSpeed->setSingleStep(1.);
+  }
+  else if(Unit::getUnitVertSpeed() == opts::VERT_SPEED_FPM)
+  {
+    ui->doubleSpinBoxClimbVertSpeed->setDecimals(0);
+    ui->doubleSpinBoxClimbVertSpeed->setMinimum(100.);
+    ui->doubleSpinBoxClimbVertSpeed->setMaximum(10000.);
+    ui->doubleSpinBoxClimbVertSpeed->setSingleStep(100.);
+
+    ui->doubleSpinBoxDescentVertSpeed->setDecimals(0);
+    ui->doubleSpinBoxDescentVertSpeed->setMinimum(-10000.);
+    ui->doubleSpinBoxDescentVertSpeed->setMaximum(-100.);
+    ui->doubleSpinBoxDescentVertSpeed->setSingleStep(100.);
+  }
+
   // Update units
   units = new UnitStringTool();
   units->init({
@@ -57,9 +83,9 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
     ui->spinBoxDescentSpeed,
     ui->spinBoxTaxiFuel,
     ui->spinBoxReserveFuel,
-    ui->spinBoxClimbVertSpeed,
+    ui->doubleSpinBoxClimbVertSpeed,
     ui->spinBoxDescentSpeed,
-    ui->spinBoxDescentVertSpeed
+    ui->doubleSpinBoxDescentVertSpeed
   }, aircraftPerformance.useFuelAsVolume());
 
   // Copy performance object
@@ -81,7 +107,11 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
           this, &AircraftPerfDialog::fuelUnitChanged);
 
   // Update descent rule
-  connect(ui->spinBoxDescentVertSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+  connect(ui->doubleSpinBoxDescentVertSpeed,
+          static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+          this, &AircraftPerfDialog::vertSpeedChanged);
+  connect(ui->spinBoxDescentSpeed,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &AircraftPerfDialog::vertSpeedChanged);
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AircraftPerfDialog::buttonBoxClicked);
@@ -149,10 +179,14 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 
 void AircraftPerfDialog::vertSpeedChanged()
 {
-  float descentRateFtPerNm = ui->spinBoxDescentVertSpeed->value() * 60.f / ui->spinBoxDescentSpeed->value();
+  float descentRateFtPerNm =
+    Unit::rev(static_cast<float>(ui->doubleSpinBoxDescentVertSpeed->value()), Unit::speedVertFpmF) * 60.f /
+    Unit::rev(ui->spinBoxDescentSpeed->value(), Unit::speedKtsF);
+
+  // 2,3 NM per 1000 ft
 
   QString txt = tr("Descent Rule of Thumb: %1 per %2 %3").
-                arg(Unit::distNm(1.f / -descentRateFtPerNm * 1000.f)).
+                arg(Unit::distNm(1.f / -descentRateFtPerNm * Unit::rev(1000.f, Unit::altFeetF))).
                 arg(QLocale().toString(1000.f, 'f', 0)).
                 arg(Unit::getUnitAltStr());
 
@@ -194,15 +228,15 @@ void AircraftPerfDialog::toDialog(const atools::fs::perf::AircraftPerf *aircraft
   ui->spinBoxTaxiFuel->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getTaxiFuel(), vol)));
 
   ui->spinBoxClimbSpeed->setValue(roundToInt(Unit::speedKtsF(aircraftPerf->getClimbSpeed())));
-  ui->spinBoxClimbVertSpeed->setValue(roundToInt(Unit::speedVertFpmF(aircraftPerf->getClimbVertSpeed())));
+  ui->doubleSpinBoxClimbVertSpeed->setValue(Unit::speedVertFpmF(aircraftPerf->getClimbVertSpeed()));
   ui->spinBoxClimbFuelFlow->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getClimbFuelFlow(), vol)));
 
   ui->spinBoxCruiseSpeed->setValue(roundToInt(Unit::speedKtsF(aircraftPerf->getCruiseSpeed())));
   ui->spinBoxCruiseFuelFlow->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getCruiseFuelFlow(), vol)));
   ui->spinBoxContingencyFuel->setValue(roundToInt(aircraftPerf->getContingencyFuel()));
 
-  ui->spinBoxDescentSpeed->setValue(roundToInt(Unit::speedVertFpmF(aircraftPerf->getDescentSpeed())));
-  ui->spinBoxDescentVertSpeed->setValue(-roundToInt(Unit::speedVertFpmF(aircraftPerf->getDescentVertSpeed())));
+  ui->spinBoxDescentSpeed->setValue(roundToInt(Unit::speedKtsF(aircraftPerf->getDescentSpeed())));
+  ui->doubleSpinBoxDescentVertSpeed->setValue(-Unit::speedVertFpmF(aircraftPerf->getDescentVertSpeed()));
   ui->spinBoxDescentFuelFlow->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getDescentFuelFlow(), vol)));
 }
 
@@ -221,7 +255,8 @@ void AircraftPerfDialog::fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf
   aircraftPerf->setTaxiFuel(Unit::rev(ui->spinBoxTaxiFuel->value(), Unit::fuelLbsGallonF, vol));
 
   aircraftPerf->setClimbSpeed(Unit::rev(ui->spinBoxClimbSpeed->value(), Unit::speedKtsF));
-  aircraftPerf->setClimbVertSpeed(Unit::rev(ui->spinBoxClimbVertSpeed->value(), Unit::speedVertFpmF));
+  aircraftPerf->setClimbVertSpeed(Unit::rev(static_cast<float>(ui->doubleSpinBoxClimbVertSpeed->value()),
+                                            Unit::speedVertFpmF));
   aircraftPerf->setClimbFuelFlow(Unit::rev(ui->spinBoxClimbFuelFlow->value(), Unit::fuelLbsGallonF, vol));
 
   aircraftPerf->setCruiseSpeed(Unit::rev(ui->spinBoxCruiseSpeed->value(), Unit::speedKtsF));
@@ -229,6 +264,7 @@ void AircraftPerfDialog::fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf
   aircraftPerf->setContingencyFuel(ui->spinBoxContingencyFuel->value());
 
   aircraftPerf->setDescentSpeed(Unit::rev(ui->spinBoxDescentSpeed->value(), Unit::speedKtsF));
-  aircraftPerf->setDescentVertSpeed(-Unit::rev(ui->spinBoxDescentVertSpeed->value(), Unit::speedVertFpmF));
+  aircraftPerf->setDescentVertSpeed(-Unit::rev(static_cast<float>(ui->doubleSpinBoxDescentVertSpeed->value()),
+                                               Unit::speedVertFpmF));
   aircraftPerf->setDescentFuelFlow(Unit::rev(ui->spinBoxDescentFuelFlow->value(), Unit::fuelLbsGallonF, vol));
 }

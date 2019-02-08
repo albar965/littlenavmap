@@ -294,29 +294,7 @@ This will increase the trip fuel by the given percentage.</string>
          <string>Average vertical &amp;climb speed:</string>
         </property>
         <property name="buddy">
-         <cstring>spinBoxClimbVertSpeed</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="spinBoxClimbVertSpeed">
-        <property name="showGroupSeparator" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="suffix">
-         <string> %vspeed% ▲</string>
-        </property>
-        <property name="minimum">
-         <number>100</number>
-        </property>
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-        <property name="value">
-         <number>550</number>
+         <cstring>doubleSpinBoxClimbVertSpeed</cstring>
         </property>
        </widget>
       </item>
@@ -343,6 +321,31 @@ This will increase the trip fuel by the given percentage.</string>
         </property>
         <property name="singleStep">
          <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxClimbVertSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
+        <property name="suffix">
+         <string> %vspeed% ▲</string>
+        </property>
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>10000.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>550.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -458,32 +461,7 @@ This will increase the trip fuel by the given percentage.</string>
          <string>Average vertical &amp;descent speed:</string>
         </property>
         <property name="buddy">
-         <cstring>spinBoxDescentVertSpeed</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="spinBoxDescentVertSpeed">
-        <property name="showGroupSeparator" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="suffix">
-         <string> %vspeed% ▼</string>
-        </property>
-        <property name="prefix">
-         <string/>
-        </property>
-        <property name="minimum">
-         <number>-10000</number>
-        </property>
-        <property name="maximum">
-         <number>-100</number>
-        </property>
-        <property name="singleStep">
-         <number>100</number>
-        </property>
-        <property name="value">
-         <number>-550</number>
+         <cstring>doubleSpinBoxDescentVertSpeed</cstring>
         </property>
        </widget>
       </item>
@@ -556,6 +534,31 @@ the given descent speeds</string>
         </property>
        </widget>
       </item>
+      <item row="3" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxDescentVertSpeed">
+        <property name="showGroupSeparator" stdset="0">
+         <bool>true</bool>
+        </property>
+        <property name="suffix">
+         <string> %vspeed% ▼</string>
+        </property>
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>-10000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>-100.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>-550.000000000000000</double>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -607,12 +610,12 @@ the given descent speeds</string>
   <tabstop>spinBoxExtraFuel</tabstop>
   <tabstop>spinBoxContingencyFuel</tabstop>
   <tabstop>spinBoxClimbSpeed</tabstop>
-  <tabstop>spinBoxClimbVertSpeed</tabstop>
+  <tabstop>doubleSpinBoxClimbVertSpeed</tabstop>
   <tabstop>spinBoxClimbFuelFlow</tabstop>
   <tabstop>spinBoxCruiseSpeed</tabstop>
   <tabstop>spinBoxCruiseFuelFlow</tabstop>
   <tabstop>spinBoxDescentSpeed</tabstop>
-  <tabstop>spinBoxDescentVertSpeed</tabstop>
+  <tabstop>doubleSpinBoxDescentVertSpeed</tabstop>
   <tabstop>spinBoxDescentFuelFlow</tabstop>
   <tabstop>textBrowserDescription</tabstop>
  </tabstops>

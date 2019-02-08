@@ -767,7 +767,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
               arg(Unit::speedKts(perf->getDescentSpeed())).
               arg(QLocale().toString(-perf->getDescentFlightPathAngle(), 'f', 1)));
     html.row2(tr("Descent Rule of Thumb:"), tr("%1 per %2 %3").
-              arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm() * 1000.f)).
+              arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm() * Unit::rev(1000.f, Unit::altFeetF))).
               arg(QLocale().toString(1000.f, 'f', 0)).
               arg(Unit::getUnitAltStr()));
   }

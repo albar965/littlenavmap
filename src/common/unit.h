@@ -183,6 +183,11 @@ public:
     return unitShortDist;
   }
 
+  static opts::UnitVertSpeed getUnitVertSpeed()
+  {
+    return unitVertSpeed;
+  }
+
 private:
   Unit();
   static QString u(const QString& num, const QString& un, bool addUnit, bool narrow);

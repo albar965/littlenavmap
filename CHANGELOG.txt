@@ -19,6 +19,9 @@ Version 2.2.4
 * Relaxed maximum distance requirements for waypoints in route string parser. Airports are now always used
   independent of distance to previous waypoint. #376
 
+* Fixed display and conversion issues in aircraft performance when using metric units.
+* Wrong vertical descent speed, descent speed and descent rule of thumb now displayed correctly.
+
 * Changed Level-D default export path to correct location. #206
 * Changed default export folder for aircraft flight plan formats to simulator base folder.
 
