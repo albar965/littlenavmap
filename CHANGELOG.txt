@@ -42,7 +42,7 @@ Version 2.2.4
   GuiFontFile=TTFFILE
   GuiFontPixelSize=12
 
-* Added shortcuts to switch between styles Fusion (Shift+F3) and Night (Shift+F2).
+* Added shortcuts to switch between styles Fusion (Shift+F2) and Night (Shift+F3).
 * Shortcuts (Window -> Shortcuts) are now enabled on all windows.
 * Changed lengthy prefix for custom map themes to "*".
 * Limited text length when loading database to avoid growing the progress dialog.
