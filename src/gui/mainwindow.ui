@@ -9246,6 +9246,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="shortcut">
     <string>F4</string>
    </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
   </action>
   <action name="actionShortcutNavaidSearch">
    <property name="text">
@@ -9259,6 +9262,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutUserpointSearch">
@@ -9274,6 +9280,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="shortcut">
     <string>F6</string>
    </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
   </action>
   <action name="actionShortcutFlightPlan">
    <property name="text">
@@ -9287,6 +9296,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F7</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutAirportInformation">
@@ -9302,6 +9314,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="shortcut">
     <string>F9</string>
    </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
   </action>
   <action name="actionShortcutAirportWeather">
    <property name="text">
@@ -9315,6 +9330,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F10</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutNavaidInformation">
@@ -9330,6 +9348,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="shortcut">
     <string>F11</string>
    </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
   </action>
   <action name="actionShortcutAircraftPerformance">
    <property name="text">
@@ -9344,6 +9365,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="shortcut">
     <string>F8</string>
    </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
   </action>
   <action name="actionShortcutAircraftProgress">
    <property name="text">
@@ -9357,6 +9381,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F12</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionRouteSaveAsFlightGear">
@@ -9412,6 +9439,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    <property name="shortcut">
     <string>F2</string>
    </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
   </action>
   <action name="actionShortcutProfile">
    <property name="text">
@@ -9425,6 +9455,9 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="shortcut">
     <string>F3</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionSaveMapAsImageAviTab">

@@ -104,6 +104,18 @@ void StyleHandler::insertMenuItems(QMenu *menu)
     action->setChecked(index == currentStyleIndex);
     action->setStatusTip(tr("Switch user interface style to \"%1\"").arg(style.displayName));
     action->setActionGroup(styleActionGroup);
+
+    if(style.displayName == "Fusion")
+    {
+      action->setShortcut(QKeySequence(tr("Shift+F2")));
+      action->setShortcutContext(Qt::ApplicationShortcut);
+    }
+    else if(style.displayName == "Night")
+    {
+      action->setShortcut(QKeySequence(tr("Shift+F3")));
+      action->setShortcutContext(Qt::ApplicationShortcut);
+    }
+
     menu->addAction(action);
     menuItems.append(action);
 
