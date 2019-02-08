@@ -41,8 +41,12 @@ namespace coords = atools::fs::util;
 const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
 
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
-const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
-const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,6})(\\.([A-Z0-9]{1,6}))?$");
+
+// Time specification directly after airport - ignored
+// Runway specification directly after airport - ignored. Example: USSS/08R ... ZMUB1200/33
+const static QRegularExpression AIRPORT_TIME_RUNWAY("^([A-Z0-9]{3,4})(\\d{4})?(/[LCR0-9]{2,3})?$");
+
+const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,7})(\\.([A-Z0-9]{1,6}))?$");
 
 const static map::MapObjectTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT |
                                                         map::VOR | map::NDB | map::USERPOINTROUTE |
@@ -714,15 +718,24 @@ void RouteString::appendError(const QString& message)
   qWarning() << "Error:" << message;
 }
 
-bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems)
+QString RouteString::extractAirportIdent(QString ident)
 {
-  QString ident = cleanItems.takeFirst();
-  QRegularExpressionMatch match = AIRPORT_TIME.match(ident);
+  QRegularExpressionMatch match = AIRPORT_TIME_RUNWAY.match(ident);
   if(match.hasMatch())
   {
     ident = match.captured(1);
-    appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
+
+    if(!match.captured(2).isEmpty())
+      appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
+    if(!match.captured(3).isEmpty())
+      appendWarning(tr("Ignoring runway specification for airport %1.").arg(ident));
   }
+  return ident;
+}
+
+bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems)
+{
+  QString ident = extractAirportIdent(cleanItems.takeFirst());
 
   map::MapAirport departure;
   airportQuerySim->getAirportByIdent(departure, ident);
@@ -747,6 +760,10 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
       if(sidMatch.hasMatch())
       {
         QString sid = sidMatch.captured(1);
+        if(sid.size() == 7)
+          // Convert to abbreviated SID: ENVA UTUNA1A -> ENVA UTUN1A
+          sid.remove(4, 1);
+
         QString trans = sidMatch.captured(3);
 
         int sidTransId = -1;
@@ -797,13 +814,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
 
 bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems)
 {
-  QString ident = cleanItems.takeLast();
-  QRegularExpressionMatch match = AIRPORT_TIME.match(ident);
-  if(match.hasMatch())
-  {
-    ident = match.captured(1);
-    appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
-  }
+  QString ident = extractAirportIdent(cleanItems.takeLast());
 
   map::MapAirport destination;
   airportQuerySim->getAirportByIdent(destination, ident);
@@ -829,6 +840,10 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
       {
         QString star = starMatch.captured(1);
         QString trans = starMatch.captured(3);
+
+        if(star.size() == 7)
+          // Convert to abbreviated STAR: BELGU3L ENGM -> BELG3L ENGM
+          star.remove(4, 1);
 
         int starTransId = -1;
         int starId = procQuery->getStarId(destination, star);
@@ -1219,12 +1234,7 @@ QStringList RouteString::cleanItemList(const QStringList& items, float& speedKno
       appendWarning(tr("Ignoring speed and altitude at waypoint %1.").arg(item));
     }
 
-    match = AIRPORT_TIME.match(item);
-    if(match.hasMatch())
-    {
-      item = match.captured(1);
-      appendWarning(tr("Ignoring time for airport %1.").arg(item));
-    }
+    item = extractAirportIdent(item);
 
     if(i < items.size() - 1)
     {

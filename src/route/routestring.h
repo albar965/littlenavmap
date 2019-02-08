@@ -158,6 +158,9 @@ private:
   void removeEmptyResults(QList<ParseEntry>& resultList);
   bool addDestination(atools::fs::pln::Flightplan& flightplan, QStringList& cleanItems);
 
+  /* Remove time and runways from ident and return airport ident only. Also add warning messages */
+  QString extractAirportIdent(QString ident);
+
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr;
   ProcedureQuery *procQuery = nullptr;
