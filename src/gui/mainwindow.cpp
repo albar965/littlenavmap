@@ -1310,6 +1310,7 @@ void MainWindow::actionShortcutMapTriggered()
     ui->dockWidgetMap->activateWindow();
     raiseFloatingWindow(ui->dockWidgetMap);
   }
+  mapWidget->activateWindow();
   mapWidget->setFocus();
 }
 
@@ -1319,6 +1320,7 @@ void MainWindow::actionShortcutProfileTriggered()
   ui->dockWidgetProfile->show();
   ui->dockWidgetProfile->activateWindow();
   ui->dockWidgetProfile->raise();
+  profileWidget->activateWindow();
   profileWidget->setFocus();
 }
 
