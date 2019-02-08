@@ -22,6 +22,9 @@ Version 2.2.4
 * Fixed display and conversion issues in aircraft performance when using metric units.
 * Wrong vertical descent speed, descent speed and descent rule of thumb now displayed correctly.
 
+* Fixed route description parser to ignore runway designations attached to airport like USSS/08R ... ZMUB1200/33.
+* Route description parser can now read long SID and STAR names like ENVA UTUNA1A vs. ENVA UTUN1A.
+
 * Changed Level-D default export path to correct location. #206
 * Changed default export folder for aircraft flight plan formats to simulator base folder.
 
