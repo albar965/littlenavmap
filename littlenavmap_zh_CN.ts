@@ -69,7 +69,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="378"/>
         <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished" variants="yes">
+        <translation variants="yes">
             <lengthvariant>&lt;p&gt;航空器性能数据会在飞行中自动收集。&lt;/p&gt;&lt;p&gt;注意在这个过程中类似油量消耗或到达航路点时间等性能信息不会显示出来。&lt;/p&gt;&lt;p&gt;爬升顶点和下降顶点会基于每 1000 英尺 3 海里的速率计算。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;连接到模拟器，&lt;/li&gt;&lt;li&gt;载入一个飞行计划，&lt;/li&gt;&lt;li&gt;将你的航空器放在离场机场并且&lt;/li&gt;&lt;li&gt;尽可能按飞行计划精确飞行。&lt;/li&gt;&lt;ol&gt;&lt;p&gt;性能数据收集将会在目的地机场落地时停止。&lt;/p&gt;&lt;p&gt;数据收集时不要修改飞行计划的巡航高度。&lt;/p&gt;&lt;p&gt;&lt;b&gt;点击下面的链接了解更多信息：&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;在线手册——航空器性能&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;是否现在开始收集性能数据？&lt;/b&gt;&lt;/p&gt;</lengthvariant>
             <lengthvariant></lengthvariant>
         </translation>
@@ -13304,162 +13304,166 @@ This process will run in background and can take a while.</source>
         <location filename="src/search/proceduresearch.cpp" line="142"/>
         <location filename="src/search/proceduresearch.cpp" line="294"/>
         <source>No Airport selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有选择机场。</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="342"/>
         <source>All Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>所有跑道</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="373"/>
         <source>No Runway</source>
-        <translation type="unfinished"></translation>
+        <translation>没有跑道</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="375"/>
         <source>Runway %1</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道 %1</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="427"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="596"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>描述</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="597"/>
         <source>Ident</source>
-        <translation type="unfinished"></translation>
+        <translation>标识</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="598"/>
         <source>Restriction
 %1/%2</source>
-        <translation type="unfinished"></translation>
+        <translation>限制
+%1/%2</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="599"/>
         <source>Course
 °M</source>
-        <translation type="unfinished"></translation>
+        <translation>磁航迹
+°M</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="600"/>
         <source>Dist./Time
 %1/min</source>
-        <translation type="unfinished"></translation>
+        <translation>距离/时间
+%1/分钟</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="601"/>
         <source>Remarks</source>
-        <translation type="unfinished"></translation>
+        <translation>注记</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="867"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>未知</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="877"/>
         <source>&amp;Insert %1 into Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>插入 %1 到飞机计划(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="881"/>
         <source>&amp;Use %1 and %2 as Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>用 %1 和 %2 作为目的地(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="885"/>
         <source>&amp;Use %1 and %2 as Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>用 %1 和 %2 作为离场点(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="894"/>
         <location filename="src/search/proceduresearch.cpp" line="895"/>
         <source>Procedure</source>
-        <translation type="unfinished"></translation>
+        <translation>程序</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="955"/>
         <source>Tree view reset to defaults.</source>
-        <translation type="unfinished"></translation>
+        <translation>树形图重置到默认。</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="971"/>
         <source>Procedure has errors and will not display correctly.
 Really use it?</source>
-        <translation type="unfinished"></translation>
+        <translation>程序有错并且不能正确显示。
+真的使用此程序？</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="973"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>不再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1027"/>
         <source>Departure from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>从 %1 离场</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1028"/>
         <source>Select departure runway for this SID</source>
-        <translation type="unfinished"></translation>
+        <translation>为此 SID 选择离场跑道</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1032"/>
         <source>Arrival at %1</source>
-        <translation type="unfinished"></translation>
+        <translation>到达 %1</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1033"/>
         <source>Select arrival runway for this STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>为此 STAR 选择进场跑道</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1106"/>
         <source>SID</source>
-        <translation type="unfinished"></translation>
+        <translation>SID</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1108"/>
         <source>STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>STAR</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1111"/>
         <source>Approach </source>
-        <translation type="unfinished"></translation>
+        <translation>进近</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1114"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1117"/>
         <source> (GPS Overlay)</source>
-        <translation type="unfinished"></translation>
+        <translation>（GPS 覆盖）</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1152"/>
         <source>Transition</source>
-        <translation type="unfinished"></translation>
+        <translation>过渡</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1157"/>
         <source> (Full)</source>
-        <translation type="unfinished"></translation>
+        <translation>（完整）</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1159"/>
         <source> (DME)</source>
-        <translation type="unfinished"></translation>
+        <translation> (DME)</translation>
     </message>
 </context>
 <context>
@@ -16779,159 +16783,159 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="14"/>
         <source>Little Navmap - Online Network Flightplan Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 在线网络飞行计划导出</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="22"/>
         <source>&amp;Heavy</source>
-        <translation type="unfinished"></translation>
+        <translation>重型(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="32"/>
         <source>&amp;Second Alternate:</source>
-        <translation type="unfinished"></translation>
+        <translation>第二备降场(&amp;S)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="42"/>
         <source>&amp;Passengers:</source>
-        <translation type="unfinished"></translation>
+        <translation>旅客数(&amp;P)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="68"/>
         <source>&amp;Destination:</source>
-        <translation type="unfinished"></translation>
+        <translation>目的地(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="78"/>
         <source>&amp;True Airspeed:</source>
-        <translation type="unfinished"></translation>
+        <translation>真空速(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="88"/>
         <source>&amp;Callsign:</source>
-        <translation type="unfinished"></translation>
+        <translation>呼号(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="104"/>
         <source>&amp;Airline:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空公司(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="117"/>
         <source>&amp;Cruise altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航高度(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="127"/>
         <source>Flight &amp;rules:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行规则(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="150"/>
         <source>&amp;Transponder:</source>
-        <translation type="unfinished"></translation>
+        <translation>应答机编码(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="160"/>
         <source>&amp;Remarks:</source>
-        <translation type="unfinished"></translation>
+        <translation>备注(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="176"/>
         <source>&amp;Livery:</source>
-        <translation type="unfinished"></translation>
+        <translation>涂装(&amp;L)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="212"/>
         <source>&amp;Route:</source>
-        <translation type="unfinished"></translation>
+        <translation>航路(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="222"/>
         <source>&amp;Actual:</source>
-        <translation type="unfinished"></translation>
+        <translation>实际离场(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="241"/>
         <source> ft</source>
-        <translation type="unfinished"></translation>
+        <translation>英尺</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="260"/>
         <source>&amp;Flight type:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行类型(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="270"/>
         <source>&amp;Departure:</source>
-        <translation type="unfinished"></translation>
+        <translation>离场(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="287"/>
         <source>&amp;Wake category:</source>
-        <translation type="unfinished"></translation>
+        <translation>尾流类型(&amp;W)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="316"/>
         <source> kts</source>
-        <translation type="unfinished"></translation>
+        <translation>节</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="329"/>
         <source>&amp;Equipment:</source>
-        <translation type="unfinished"></translation>
+        <translation>机载设备(&amp;E)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="339"/>
         <source>A&amp;lternate:</source>
-        <translation type="unfinished"></translation>
+        <translation>备降场(&amp;L)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="366"/>
         <source>Departure &amp;time:</source>
-        <translation type="unfinished"></translation>
+        <translation>离场时间(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="382"/>
         <source>&amp;Voice type:</source>
-        <translation type="unfinished"></translation>
+        <translation>语音类型(&amp;V)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="392"/>
         <source>Aircraft &amp;type:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器类型(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="402"/>
         <source>&amp;Pilot in command:</source>
-        <translation type="unfinished"></translation>
+        <translation>当值飞行员(&amp;P)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="418"/>
         <source>E&amp;nroute:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行时间(&amp;N)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="439"/>
         <location filename="src/route/routeexportdialog.ui" line="485"/>
         <source> h</source>
-        <translation type="unfinished"></translation>
+        <translation>时</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="452"/>
         <location filename="src/route/routeexportdialog.ui" line="498"/>
         <source> min</source>
-        <translation type="unfinished"></translation>
+        <translation>分</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="464"/>
         <source>En&amp;durance:</source>
-        <translation type="unfinished"></translation>
+        <translation>续航时间(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/route/routeexportdialog.ui" line="523"/>
         <source>Prefix/Suffix:</source>
-        <translation type="unfinished"></translation>
+        <translation>前缀/后缀：</translation>
     </message>
 </context>
 <context>
@@ -17226,142 +17230,142 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/search/searchbasetable.cpp" line="212"/>
         <source>Copied %1 entries to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>已复制 %1 条目到粘贴板。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="629"/>
         <source>Table view reset to defaults.</source>
-        <translation type="unfinished"></translation>
+        <translation>表格视图重置到默认值。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="692"/>
         <source>Search filters cleared.</source>
-        <translation type="unfinished"></translation>
+        <translation>已清除搜索过滤。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="713"/>
         <source>All entries read.</source>
-        <translation type="unfinished"></translation>
+        <translation>已读取所有条目。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="901"/>
         <source>Departure </source>
-        <translation type="unfinished"></translation>
+        <translation>离场</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="904"/>
         <source>Show procedures (airport has no departure procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序（机场没有离场程序）</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="911"/>
         <source>Arrival </source>
-        <translation type="unfinished"></translation>
+        <translation>到达</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="914"/>
         <source>Show procedures (airport has no arrival procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序（机场没有进场程序）</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="919"/>
         <source>all </source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="923"/>
         <source>Show procedures (airport has no procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序（机场没有程序）</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="926"/>
         <source>Show procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="931"/>
         <source>Show Navaid Range</source>
-        <translation type="unfinished"></translation>
+        <translation>显示导航点范围</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="932"/>
         <source>Add to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到飞行计划</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="933"/>
         <source>Append to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>追加到飞行计划</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="934"/>
         <source>Set as Flight Plan Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>设置为飞行计划离场点</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="935"/>
         <source>Set as Flight Plan Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>设置为飞行计划目的地</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="936"/>
         <source>Display Airport Traffic Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>显示机场起落航线</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="963"/>
         <source>&amp;Edit Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑用户导航点(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="964"/>
         <source>&amp;Delete Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>删除用户导航点(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="968"/>
         <source>&amp;Edit Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑用户导航点(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="969"/>
         <source>&amp;Delete Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>删除用户导航点(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1158"/>
         <source>Showing airport on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示机场。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1163"/>
         <source>Showing airspace on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示空域。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1168"/>
         <source>Showing VOR on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 VOR。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1173"/>
         <source>Showing NDB on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 NDB。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1178"/>
         <source>Showing waypoint on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示航路点。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1183"/>
         <source>Showing userpoint on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示用户导航点。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1188"/>
         <source>Showing online client/aircraft on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示在线客户端/航空器。</translation>
     </message>
 </context>
 <context>
