@@ -70,7 +70,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="378"/>
         <source>&lt;p&gt;Aircraft Performance will be collected automtically during flight.&lt;/p&gt;&lt;p&gt;Note that no performance information like fuel estimates or time to waypoint is displayed during this process.&lt;/p&gt;&lt;p&gt;Top of climb and top of descent will be shown based on a 3 nm per 1000 ft rule of thumb.&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Connect to the simulator,&lt;/li&gt;&lt;li&gt;load a flight plan,&lt;/li&gt;&lt;li&gt;place your aircraft at the departure airport and&lt;/li&gt;&lt;li&gt;fly the flight plan as precise as possible.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Performance collection will stop on touch down at destination.&lt;/p&gt;&lt;p&gt;Do not change the flight plan cruise altitude while collecting information.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Aircraft Performance&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Start performance collection now?&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished" variants="yes">
-            <lengthvariant>&lt;p&gt;航空器性能会在飞行中自动获取。&lt;/p&gt;&lt;p&gt;注意在这个过程中类似油量消耗或到达航路点时间等性能信息不会显示出来。&lt;/p&gt;&lt;p&gt;爬升顶点和下降顶点会基于每 1000 英尺 3 海里的速率计算。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;连接到模拟器</lengthvariant>
+            <lengthvariant>&lt;p&gt;航空器性能数据会在飞行中自动收集。&lt;/p&gt;&lt;p&gt;注意在这个过程中类似油量消耗或到达航路点时间等性能信息不会显示出来。&lt;/p&gt;&lt;p&gt;爬升顶点和下降顶点会基于每 1000 英尺 3 海里的速率计算。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;连接到模拟器，&lt;/li&gt;&lt;li&gt;载入一个飞行计划，&lt;/li&gt;&lt;li&gt;将你的航空器放在离场机场并且&lt;/li&gt;&lt;li&gt;尽可能按飞行计划精确飞行。&lt;/li&gt;&lt;ol&gt;&lt;p&gt;性能数据收集将会在目的地机场落地时停止。&lt;/p&gt;&lt;p&gt;数据收集时不要修改飞行计划的巡航高度。&lt;/p&gt;&lt;p&gt;&lt;b&gt;点击下面的链接了解更多信息：&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;在线手册——航空器性能&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;是否现在开始收集性能数据？&lt;/b&gt;&lt;/p&gt;</lengthvariant>
             <lengthvariant></lengthvariant>
         </translation>
     </message>
@@ -902,137 +902,138 @@ Runway Surface</source>
     <message>
         <location filename="src/connect/connectclient.cpp" line="159"/>
         <source>X-Plane</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Plane</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="161"/>
         <source>FSX or Prepar3D</source>
-        <translation type="unfinished"></translation>
+        <translation>FSX 或 Prepar3D</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="171"/>
         <source>XP</source>
-        <translation type="unfinished"></translation>
+        <translation>XP</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="173"/>
         <source>FSX/P3D</source>
-        <translation type="unfinished"></translation>
+        <translation>FSX/P3D</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="182"/>
         <source>Connected (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>已连接（%1）</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="183"/>
         <source>Connected to local flight simulator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>已连接到本地飞行模拟器（%1）。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="197"/>
         <location filename="src/connect/connectclient.cpp" line="426"/>
         <location filename="src/connect/connectclient.cpp" line="559"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>已断开</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="197"/>
         <source>Disconnected from local flight simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从本地飞行模拟器断开。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="273"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>警告</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="426"/>
         <source>Autoconnect switched off.</source>
-        <translation type="unfinished"></translation>
+        <translation>自动连接已关闭</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="461"/>
         <source>Connecting (%1)...</source>
-        <translation type="unfinished"></translation>
+        <translation>连接中（%1）…</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="462"/>
         <source>Trying to connect to local flight simulator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>尝试连接到本地飞行模拟器（%1）。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="480"/>
         <location filename="src/connect/connectclient.cpp" line="566"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在连接…</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="481"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>尝试连接到远程飞行模拟器“%1”。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="516"/>
         <source>Remote end closed connection.</source>
-        <translation type="unfinished"></translation>
+        <translation>远程关闭了连接。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="517"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>不再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="521"/>
         <source>Error in server connection: %1 (%2).%3</source>
-        <translation type="unfinished"></translation>
+        <translation>连接到服务器错误：%1 (%2).%3</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="524"/>
         <source>
 Will retry to connect.</source>
-        <translation type="unfinished"></translation>
+        <translation>将会尝试连接。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="560"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从远程飞行模拟器“%1”断开。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="567"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
-        <translation type="unfinished"></translation>
+        <translation>尝试连接到“%1”错误：%2 (%3)。
+将会重试。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="572"/>
         <source>Connect Error</source>
-        <translation type="unfinished"></translation>
+        <translation>连接错误</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="573"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>连接服务器“%1”错误：%2 (%3)</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="618"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>写入回复 Little Navconnect 时错误：%1。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="636"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>已连接</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="637"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>已连接到远程飞行模拟器“%1”。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="667"/>
         <source>Error reading data from Little Navconnect: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>从 Little Navconnect 读取数据错误：%1。</translation>
     </message>
 </context>
 <context>
@@ -1040,45 +1041,46 @@ Will retry.</source>
     <message>
         <location filename="src/connect/connectdialog.ui" line="14"/>
         <source>Little Navmap - Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 连接</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="28"/>
         <location filename="src/connect/connectdialog.ui" line="226"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>不勾选以禁用获取并发送 AI 或多人游戏航空器</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="31"/>
         <location filename="src/connect/connectdialog.ui" line="229"/>
         <source>Fetch AI or multiplayer &amp;aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>获取 AI 或 多人游戏航空器(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="41"/>
         <source>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>启动时添加 Little Navconnect 上显示的&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;主机名&lt;/span&gt;或&lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP 地址&lt;/span&gt;。
+如果使用 Little Xpconnect 的 X-Plane 插件，使用你的 X-Plane 计算机名。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="61"/>
         <source>Connect directly to a FSX or a Prepar3D flight simulator on the same computer using SimConnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到运行 SimConnect 同一台机器上的 FSX 或 Prepar3D 飞行模拟器。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="64"/>
         <source>Connect directly to a &amp;local FSX or Prepar3D flight simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到本地的 FSX 或 Prepar3D 飞行模拟器(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="77"/>
         <source>&amp;Port:</source>
-        <translation type="unfinished"></translation>
+        <translation>端口(&amp;L)：</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="96"/>
         <source>Delete the current hostname or IP address from the list.</source>
-        <translation type="unfinished"></translation>
+        <translation>从列表中删去当前的主机名或 IP 地址。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="110"/>
@@ -1086,98 +1088,104 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
         <source>Allowed range is 50 milliseconds up to 1 second.
 Little Navmap fetches data from the flight simulator using this time interval.
 Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</source>
-        <translation type="unfinished"></translation>
+        <translation>允许范围从 50 毫秒到 1 秒。
+Little Navmap 从飞行模拟器获取数据使用此时间间隔。
+更小的值可以让航空器的移动更平滑但也会导致潜在的卡顿。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="115"/>
         <location filename="src/connect/connectdialog.ui" line="244"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation>毫秒</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="134"/>
         <source>Add the &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>启动时添加 Little Navconnect 上显示的&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;端口&lt;/span&gt;。
+如果使用 Little Xpconnect 的 X-Plane 插件，使用你的 X-Plane 计算机名。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="151"/>
         <location filename="src/connect/connectdialog.ui" line="184"/>
         <source>&amp;Update time interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>更新时间间隔(&amp;U)：</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="164"/>
         <source>&amp;Hostname or IP address:</source>
-        <translation type="unfinished"></translation>
+        <translation>主机名或 IP 地址(&amp;H)：</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="197"/>
         <source>Deselect to disable fetching and transmission of AI or multiplayer ships</source>
-        <translation type="unfinished"></translation>
+        <translation>不勾选以禁用获取并发送 AI 或多人游戏的航船</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="200"/>
         <source>Fetch AI or multiplayer &amp;ships</source>
-        <translation type="unfinished"></translation>
+        <translation>获取 AI 或 多人游戏的航船(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="210"/>
         <source>Connect directly to X-Plane on the same computer using the Little Xpconnect plugin.</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到运行着 Xpconnect 插件的同一台机器上的 X-Plane 飞行模拟器。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="213"/>
         <source>Connect directly to a local &amp;X-Plane simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>直接连接到本地的 X-Plane 飞行模拟器(&amp;X)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="270"/>
         <source>Connect to FSX, Prepar3D or X-Plane on a remote computer running the Little Navconnect program.</source>
-        <translation type="unfinished"></translation>
+        <translation>连接到远程运行着 Little Navconnect 程序的 FSX、Prepar3D 或 X-Plane。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="273"/>
         <source>Connect to a &amp;remote flight simulator via Little Navconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 Little Navconnect 连接到远程的飞行模拟器(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="292"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>自动连接到此地址和端口的远程飞行模拟器或本地飞行模拟器。
+你必须点击“连接”按钮才能开启连续连接检查。
+不勾选此项将会立即停止自动连接尝试。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="297"/>
         <source>Connect &amp;automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>自动连接(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="57"/>
         <source>&amp;Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>连接(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="59"/>
         <source>Connect to a local or remote simulator.
 Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
-        <translation type="unfinished"></translation>
+        <translation>连接到本地或远程的模拟器。
+若勾选“自动连接”将会尝试重试连接。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="63"/>
         <source>&amp;Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>断开连接(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="65"/>
         <source>Disconnect from a local or remote simulator and stop all reconnect attempts.</source>
-        <translation type="unfinished"></translation>
+        <translation>从本地或远程模拟器断开连接并停止所有连接尝试。</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="68"/>
         <source>Close the dialog without changing the current connection status.</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭此对话框而不改变当前的连接状态。</translation>
     </message>
 </context>
 <context>
@@ -10578,12 +10586,12 @@ Time</source>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="46"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名字</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="47"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="48"/>
@@ -10598,12 +10606,12 @@ Time</source>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="51"/>
         <source>Prefile</source>
-        <translation type="unfinished"></translation>
+        <translation>档案</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="52"/>
         <source>On Ground</source>
-        <translation type="unfinished"></translation>
+        <translation>在地面</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="53"/>
@@ -10628,7 +10636,7 @@ Time</source>
         <location filename="src/search/onlineclientsearch.cpp" line="56"/>
         <source>Planned
 Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>计划离场</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="57"/>
@@ -10646,31 +10654,31 @@ Arrival</source>
         <location filename="src/search/onlineclientsearch.cpp" line="59"/>
         <source>Planned
 Cruising Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>计划巡航速度</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="60"/>
         <source>Planned
 Cruising Level</source>
-        <translation type="unfinished"></translation>
+        <translation>计划巡航高度</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="61"/>
         <source>Transponder
 Code</source>
-        <translation type="unfinished"></translation>
+        <translation>应答机编码</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="62"/>
         <source>ICAO Flight
 Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO 飞行规则</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="63"/>
         <source>ICAO Flight
 Type</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO 飞行类型</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="64"/>
@@ -10704,7 +10712,8 @@ Rating</source>
         <location filename="src/search/onlineclientsearch.cpp" line="68"/>
         <source>Pilot
 Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行员
+等级</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="69"/>
@@ -10715,7 +10724,7 @@ Time</source>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="207"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>是的</translation>
     </message>
 </context>
 <context>
@@ -17071,7 +17080,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routestringdialog.ui" line="20"/>
         <source>Little Navmap - New Flight Plan from Route Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 从航路描述中新建飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="45"/>
@@ -17080,132 +17089,136 @@ FROM and TO airports are required, everything else is optional.
 ENROUTE is a space separated list of navaids, airway/navaid combinations or user defined waypoints.
 ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR procedure.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>格式是：FROM[ETD] [SPEEDALT] [SID][.TRANS] [ENROUTE] [STAR][.TRANS] TO[ETA] [ALTERNATES]
+FROM 和 TO 机场是必须的，其他均为可选项。
+ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路点的组合。
+会忽略 ETD 和 ETA。如果混合了 STAR 程序 ALTERNATES 将失效。
+</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="55"/>
         <source>Enter flight plan route description.</source>
-        <translation type="unfinished"></translation>
+        <translation>输入飞行计划航路描述。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="77"/>
         <source>Copy the flight plan route description to the clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>复制飞行计划航路描述到粘贴板。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="80"/>
         <source>&amp;To Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>复制到粘贴板(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="93"/>
         <source>Paste flight plan route description from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>从粘贴板粘贴飞行计划航路描述。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="96"/>
         <source>&amp;From Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>粘贴自粘贴板(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="103"/>
         <source>Update the string from the current flight plan after option changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>选项修改后从当前飞行计划更新字符串。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="106"/>
         <source>Update from Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>从飞行计划更新(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="119"/>
         <source>Read the flight plan route description.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取飞行计划航路描述。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="122"/>
         <source>&amp;Read Route Description</source>
-        <translation type="unfinished"></translation>
+        <translation>读取航路描述(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="129"/>
         <source>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>创建 VFR（目视飞行规则）或 IFR（仪表飞行规则）飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="133"/>
         <source>IFR</source>
-        <translation type="unfinished"></translation>
+        <translation>IFR</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="138"/>
         <source>VFR</source>
-        <translation type="unfinished"></translation>
+        <translation>VFR</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="146"/>
         <source>Options for generated route string</source>
-        <translation type="unfinished"></translation>
+        <translation>生成的航路字符串选项</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="172"/>
         <source>Display messages, warnings or errors when reading the route description.</source>
-        <translation type="unfinished"></translation>
+        <translation>读取航路描述时显示信息，警告或错误。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.ui" line="178"/>
         <source>Flight plan route description not read.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有读取飞行计划航路描述。</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="60"/>
         <source>Create Flight &amp;Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>创建飞行计划(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="67"/>
         <source>Add departure and destination airport</source>
-        <translation type="unfinished"></translation>
+        <translation>添加离场和目的地机场</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="72"/>
         <source>Add DCT (direct) instructions</source>
-        <translation type="unfinished"></translation>
+        <translation>添加 DCT（直飞）指令</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="77"/>
         <source>Add cruise speed and altitude instruction</source>
-        <translation type="unfinished"></translation>
+        <translation>添加巡航速度和高度指令</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="84"/>
         <source>Add SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>添加 SID 和 STAR</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="90"/>
         <source>Add generic SID and STAR</source>
-        <translation type="unfinished"></translation>
+        <translation>添加通用的 SID 和 STAR</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="95"/>
         <source>Add Waypoints instead of Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>添加航路点而不是航路</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="197"/>
         <source>Found %1 waypoints. Flight plan from &lt;b&gt;%3 (%4)&lt;/b&gt; to &lt;b&gt;%5 (%6)&lt;/b&gt;.&lt;br/&gt;Distance is %2.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>已发现 %1 个航路点。从 &lt;b&gt;%3 (%4)&lt;/b&gt; 到 &lt;b&gt;%5 (%6)&lt;/b&gt; 的飞行计划。&lt;br/&gt;距离是 %2。&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="207"/>
         <source>Found SID &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>已发现 SID &lt;b&gt;%1&lt;/b&gt;。&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routestringdialog.cpp" line="211"/>
         <source>Found STAR &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>已发现 STAR &lt;b&gt;%1&lt;/b&gt;。&lt;br/&gt;</translation>
     </message>
 </context>
 <context>
@@ -17428,140 +17441,140 @@ ETD and ETA are ignored. ALTERNATES do not work in combination with a STAR proce
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="14"/>
         <source>Little Navmap - Airport Traffic Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 机场起落航线</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="20"/>
         <source>Distance from runway to downwind leg</source>
-        <translation type="unfinished"></translation>
+        <translation>从机场到下风边的距离</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="26"/>
         <location filename="src/gui/trafficpatterndialog.ui" line="92"/>
         <source> %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation> %dist%</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="48"/>
         <source>&amp;Downwind to runway:</source>
-        <translation type="unfinished"></translation>
+        <translation>下风边距跑道(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="58"/>
         <source>Pattern altitude above airport elevation</source>
-        <translation type="unfinished"></translation>
+        <translation>起落航线高于机场标高的高度</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="64"/>
         <source> %alt%</source>
-        <translation type="unfinished"></translation>
+        <translation> %alt%</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="86"/>
         <source>Distance from turn to final to runway end</source>
-        <translation type="unfinished"></translation>
+        <translation>四转弯（基线边转最后进近）到跑道头的距离</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="114"/>
         <source>Ignore base leg to runway distance and calculate it using 45° from runway end to downwind leg</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略基线边到跑道的距离并使用跑道头到下风边 45° 角</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="117"/>
         <source>&amp;Base 45° after threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>于基线边 45° 时(&amp;B)</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="127"/>
         <source>&amp;Runway:</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="138"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="143"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="151"/>
         <source>&amp;Turn direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>转弯方向(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="161"/>
         <source>&amp;Base leg to runway treshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>基线边到跑道入口(&amp;B)：</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="181"/>
         <source>Pattern &amp;altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>起落航线高度(&amp;A)：</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="211"/>
         <source>Show arrows indicating recommended entry end exit paths</source>
-        <translation type="unfinished"></translation>
+        <translation>显示箭头指示推荐的进入和退出路径</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="214"/>
         <source>&amp;Entry and exit indicators</source>
-        <translation type="unfinished"></translation>
+        <translation>进入和退出指示器(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="238"/>
         <source>&amp;Line Color</source>
-        <translation type="unfinished"></translation>
+        <translation>线颜色(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="90"/>
         <source>%1, elevation %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1，标高 %2</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="110"/>
         <source>Hard</source>
-        <translation type="unfinished"></translation>
+        <translation>硬</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="112"/>
         <source>Soft</source>
-        <translation type="unfinished"></translation>
+        <translation>软</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="114"/>
         <source>Water</source>
-        <translation type="unfinished"></translation>
+        <translation>水面</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="116"/>
         <location filename="src/gui/trafficpatterndialog.cpp" line="120"/>
         <source>%1, %2, %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2, %3</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="195"/>
         <source>Lighted</source>
-        <translation type="unfinished"></translation>
+        <translation>轻量的</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="198"/>
         <location filename="src/gui/trafficpatterndialog.cpp" line="200"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="202"/>
         <source>&lt;b&gt;%1&lt;/b&gt;, %2 x %3, %4°M, %5%6</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;，%2 x %3，磁航向%4°，%5%6</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.cpp" line="212"/>
         <source>, Pattern Altitude %1</source>
-        <translation type="unfinished"></translation>
+        <translation>，起落航线高度 %1</translation>
     </message>
 </context>
 <context>
