@@ -384,209 +384,213 @@
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="14"/>
         <source>Little Navmap - Aircraft Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 航空器性能</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="22"/>
         <source>&amp;Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>名字(&amp;N)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="35"/>
         <source>Aircraft &amp;Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器类型(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="45"/>
         <source>Aircraft type like B732 or C172</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器类型，如 B732 或 C172</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="54"/>
         <source>Fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="76"/>
         <source>Weight (%weight%)</source>
-        <translation type="unfinished"></translation>
+        <translation>重量（%weight%）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="81"/>
         <source>Volume (%volume%)</source>
-        <translation type="unfinished"></translation>
+        <translation>体积（%volume%）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="89"/>
         <source>&amp;Fuel Units:</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油单位(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="99"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
-        <translation type="unfinished"></translation>
+        <translation>由机长或签派员
+酌情增加的燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="106"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="154"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="173"/>
         <source> %fuel%</source>
-        <translation type="unfinished"></translation>
+        <translation> %fuel%</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="119"/>
         <source>&amp;Extra fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>额外燃油(&amp;E)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="129"/>
         <source>&amp;Reserve Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>备用燃油(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="139"/>
         <source>&amp;Taxi fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>滑行燃油(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="149"/>
         <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
-        <translation type="unfinished"></translation>
+        <translation>最少需要在高于备降机场 1500 英尺飞行 30 分钟的燃油
+或者如果不需要备降机场时以等待速度飞行同样时间的燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="167"/>
         <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
-        <translation type="unfinished"></translation>
+        <translation>起飞前使用的燃油，比如 APU、发动机启动和滑行</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="186"/>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <translation type="unfinished"></translation>
+        <translation>这可以解决额外的航路燃油消耗
+比如由于风或航路改变。
+这会增加航路给定燃油消耗的百分比。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="191"/>
         <source> percent</source>
-        <translation type="unfinished"></translation>
+        <translation> %</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="204"/>
         <source>&amp;Contingency fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>应急燃油(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="215"/>
         <source>Avgas</source>
-        <translation type="unfinished"></translation>
+        <translation>航空汽油（Avgas）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="220"/>
         <source>Jetfuel</source>
-        <translation type="unfinished"></translation>
+        <translation>航油（Jet）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="228"/>
         <source>&amp;Fuel Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油类型(&amp;F)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="241"/>
         <source>Climb</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升段</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="265"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="392"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="484"/>
         <source> %speed% true airspeed</source>
-        <translation type="unfinished"></translation>
+        <translation> %speed% 真空速</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="284"/>
         <source>Average &amp;climb speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均爬升速度(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="294"/>
         <source>Average vertical &amp;climb speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均垂直爬升率(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="304"/>
         <source>Average fuel flow for &amp;climb:</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升时平均燃油流量(&amp;C)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="317"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="424"/>
         <location filename="src/perf/aircraftperfdialog.ui" line="527"/>
         <source> %fuel% per hour</source>
-        <translation type="unfinished"></translation>
+        <translation> %fuel% 每小时</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="333"/>
         <source> %vspeed% ▲</source>
-        <translation type="unfinished"></translation>
+        <translation> %vspeed% ▲</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="358"/>
         <source>Cruise</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航段</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="379"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>典型巡航高度的巡航速度(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="411"/>
         <source>Fuel flow in c&amp;ruise:</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航时燃油流量(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="440"/>
         <source>Descent</source>
-        <translation type="unfinished"></translation>
+        <translation>下降段</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="461"/>
         <source>Average vertical &amp;descent speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均垂直下降率(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="471"/>
         <source>Average &amp;descent speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均下降速度(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="503"/>
         <source>Equivalent rule of thumb for
 the given descent speeds</source>
-        <translation type="unfinished"></translation>
+        <translation>与给定下降率等效的经验法则</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="514"/>
         <source>Average fuel flow for &amp;descent:</source>
-        <translation type="unfinished"></translation>
+        <translation>下降时平均燃油流量(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="543"/>
         <source> %vspeed% ▼</source>
-        <translation type="unfinished"></translation>
+        <translation> %vspeed% ▼</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="584"/>
         <source>Description or Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>描述或评论</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="188"/>
         <source>Descent Rule of Thumb: %1 per %2 %3</source>
-        <translation type="unfinished"></translation>
+        <translation>下降经验法则：%1 每 %2 %3</translation>
     </message>
 </context>
 <context>
