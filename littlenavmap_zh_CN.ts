@@ -12957,193 +12957,193 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/print/printdialog.ui" line="14"/>
         <source>Little Navmap - Print Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 打印飞行计划</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="20"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>选项</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="41"/>
         <source>Include estimated fuel consumption, trip and block fuel if aircraft performance is loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>包括预计的燃油消耗，行程，如果航已载入空器性能也会包括配载燃油。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="44"/>
         <source>Print fuel &amp;report</source>
-        <translation type="unfinished"></translation>
+        <translation>打印燃油报告(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="54"/>
         <source>Start a new page after each chapter.</source>
-        <translation type="unfinished"></translation>
+        <translation>每章创建一个新页面。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="57"/>
         <source>&amp;New page after each chapter</source>
-        <translation type="unfinished"></translation>
+        <translation>每章创建一个新页面(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="67"/>
         <source>Include a header which shows total distance, flight time and procedures.</source>
-        <translation type="unfinished"></translation>
+        <translation>包含表头可以显示总距离、飞行时间和飞行程序。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="70"/>
         <source>Print table &amp;header</source>
-        <translation type="unfinished"></translation>
+        <translation>打印表头(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="86"/>
         <source>Overall text size in the document</source>
-        <translation type="unfinished"></translation>
+        <translation>文档使用的全局文本尺寸</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="89"/>
         <location filename="src/print/printdialog.ui" line="181"/>
         <source> %</source>
-        <translation type="unfinished"></translation>
+        <translation> %</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="92"/>
         <location filename="src/print/printdialog.ui" line="184"/>
         <source>Text size </source>
-        <translation type="unfinished"></translation>
+        <translation>文本尺寸 </translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="133"/>
         <source>Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="159"/>
         <source>Include the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>包括飞行计划</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="162"/>
         <source>Print &amp;flight plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>打印飞行计划表格(&amp;F)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="178"/>
         <source>Text size for the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划的文本尺寸</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="223"/>
         <source>Select Flight Plan &amp;Columns to Print:</source>
-        <translation type="unfinished"></translation>
+        <translation>选择要打印的飞行计划列(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="233"/>
         <source>Select columns from the flight plan table to include in the print</source>
-        <translation type="unfinished"></translation>
+        <translation>从飞行计划表格中选择要打印的列</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="262"/>
         <source>Departure Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="283"/>
         <source>Print the departure airport information as shown in the dock window &quot;Information&quot; on tab &quot;Airport&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“机场”标签页里出现的离场机场信息。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="286"/>
         <location filename="src/print/printdialog.ui" line="386"/>
         <source>&amp;Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>概要(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="296"/>
         <source>Print runway information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Runways&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“跑道”标签页里出现的离场机场跑道信息。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="299"/>
         <location filename="src/print/printdialog.ui" line="399"/>
         <source>&amp;Runways / Helipads</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道或直升机坪(&amp;R)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="309"/>
         <location filename="src/print/printdialog.ui" line="409"/>
         <source>&amp;Include runways with soft surface</source>
-        <translation type="unfinished"></translation>
+        <translation>包括柔软道面跑道(&amp;I)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="316"/>
         <location filename="src/print/printdialog.ui" line="416"/>
         <source>&amp;Detailed runway information</source>
-        <translation type="unfinished"></translation>
+        <translation>详细的跑道信息(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="323"/>
         <location filename="src/print/printdialog.ui" line="423"/>
         <source>Print airport communication frequencies as shown in the dock window &quot;Information&quot; on tab &quot;Com&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“通讯”标签页里出现的机场频率信息。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="326"/>
         <location filename="src/print/printdialog.ui" line="426"/>
         <source>&amp;COM frequencies</source>
-        <translation type="unfinished"></translation>
+        <translation>COM 频率(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="336"/>
         <location filename="src/print/printdialog.ui" line="436"/>
         <source>Include procedure information as shown in the dock window &quot;Information&quot; on tab &quot;Procedures&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“程序”标签页里出现的机场程序信息。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="339"/>
         <location filename="src/print/printdialog.ui" line="439"/>
         <source>&amp;Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="346"/>
         <source>Print decoded weather information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“天气”标签页里出现的解码的天气信息。也包括“天气”标签页里相同的气象站。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="349"/>
         <location filename="src/print/printdialog.ui" line="449"/>
         <source>&amp;Weather</source>
-        <translation type="unfinished"></translation>
+        <translation>天气(&amp;W)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="362"/>
         <source>Destination Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>目的地机场</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="383"/>
         <source>Print the destination airport information as shown in the dock window &quot;Information&quot; on tab &quot;Airport&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“机场”标签页里出现的目的地机场信息。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="396"/>
         <source>Print runway information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Runways&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“跑道”标签页里出现的目的地机场跑道信息。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="446"/>
         <source>Print decoded weather information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>打印“信息”窗口里“天气”标签页里出现的解码的天气信息。也包括“天气”标签页里相同的气象站。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.cpp" line="39"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>打印(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.cpp" line="40"/>
         <source>Print Pre&amp;view</source>
-        <translation type="unfinished"></translation>
+        <translation>打印预览(&amp;V)</translation>
     </message>
 </context>
 <context>
