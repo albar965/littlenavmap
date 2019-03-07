@@ -345,7 +345,7 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="765"/>
         <source>%1 at %2, %3° Flight Path Angle</source>
-        <translation>%1 在 %2, %3° 的飞行路径角度</translation>
+        <translation>%1 在 %2, %3° 的航迹角</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="756"/>
