@@ -1345,150 +1345,150 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/db/databasemanager.cpp" line="300"/>
         <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
-        <translation type="unfinished"></translation>
+        <translation>下面列出的此模拟器数据库不能适配此程序或载入不全：&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;是否要擦除？&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="303"/>
         <source>You can reload the Scenery Library Database again after erasing.</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除以后您可以重新载入此地景库数据库。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="307"/>
         <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
-        <translation type="unfinished"></translation>
+        <translation>下面列出的此模拟器数据库不能适配此程序或载入不全：&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;是否要全部擦除？&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="310"/>
         <source>You can reload these Scenery Library Databases again after erasing.</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除以后您可以重新载入这些地景库数据库。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="320"/>
         <source>&amp;No and Exit Application</source>
-        <translation type="unfinished"></translation>
+        <translation>否并退出程序(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="321"/>
         <source>&amp;Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="330"/>
         <source>Deleting ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在删除…</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="335"/>
         <source>Erasing database for %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在为 %1 擦除数据库…</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="355"/>
         <location filename="src/db/databasemanager.cpp" line="501"/>
         <source>Deleting of database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</source>
-        <translation type="unfinished"></translation>
+        <translation>删除数据库&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;失败。&lt;br/&gt;&lt;br/&gt;手工移除数据库文件并重启此程序。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="438"/>
         <source>Your current navdata is older than the navdata included in the Little Navmap download archive.&lt;br/&gt;&lt;br/&gt;Overwrite your current navdata file with the new one?&lt;hr/&gt;Current file to overwrite:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, cycle %3, compiled on %4&lt;/i&gt;&lt;hr/&gt;New file:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, cycle %7, compiled on %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>您当前的导航数据比 Little Navmap 下载包中的导航数据库更老旧。&lt;br/&gt;&lt;br/&gt;是否使用新的导航数据覆盖当前导航数据文件？&lt;hr/&gt;要覆盖的文件：&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2，周期 %3，编译时间 %4&lt;/i&gt;&lt;hr/&gt;新文件：&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6，周期 %7，编译时间 %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="455"/>
         <source>Do not &amp;show this dialog again and skip copying in the future.</source>
-        <translation type="unfinished"></translation>
+        <translation>以后不要再显示此对话框并跳过复制(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="463"/>
         <location filename="src/db/databasemanager.cpp" line="515"/>
         <source>Preparing %1 Database ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在准备 %1 个数据库…</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="476"/>
         <source>Preparing %1 Database: Copying file ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在准备 %1 个数据库：正在复制文件…</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="487"/>
         <source>Preparing %1 Database: Creating indexes ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在准备 %1 个数据库：正在创建索引…</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="491"/>
         <source>Preparing %1 Database: Analyzing ...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在准备 %1 个数据库：分析中…</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="506"/>
         <source>Cannot copy database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能复制数据库&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;到&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="593"/>
         <location filename="src/db/databasemanager.cpp" line="642"/>
         <source> - AIRAC Cycle %1</source>
-        <translation type="unfinished"></translation>
+        <translation> - AIRAC 周期 %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="603"/>
         <source>Use %1 for &amp;all Features</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 启用所有特性(&amp;A)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="606"/>
         <source>Use all of %1 database features</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 启用所有数据库特性</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="610"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 启用所有导航点和程序(&amp;N)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="613"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
-        <translation type="unfinished"></translation>
+        <translation>只为数据库 %1 启用导航点、航路、空域和程序。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="618"/>
         <source>Do &amp;not use %1 database</source>
-        <translation type="unfinished"></translation>
+        <translation>不要使用数据库 %1 (&amp;N)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="621"/>
         <source>Do not use %1 database</source>
-        <translation type="unfinished"></translation>
+        <translation>不要使用数据库 %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="646"/>
         <source>Switch to %1 database</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到数据库 %1</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="673"/>
         <source>&lt;p&gt;Note that airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;/p&gt;&lt;p&gt;Additionally, smaller airports might be missing.&lt;/p&gt;&lt;p&gt;Runway layout might not match the runway layout in the simulator if you use stock or older airport scenery.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;注意机场信息在此模式中是受限的。&lt;br/&gt;这意味着停机坪、滑行道、停机位、跑道道面信息以及其他信息不可用。&lt;/p&gt;&lt;p&gt;另外小机场也许会丢失。&lt;/p&gt;&lt;p&gt;跑道形状也许与模拟器自带的或者更老的地景不符。&lt;/p&gt;&lt;p&gt;&lt;b&gt;检查下面的链接以获得更多信息：&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;在线手册——导航数据库&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="696"/>
         <source>Enabled all features for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 启用所有特性。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="701"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 启用所有导航点、航路、空域和程序。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="706"/>
         <source>Disabled %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>已禁用 %1。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="745"/>
         <source>Switched to %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>已切换到数据库 %1。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="798"/>
@@ -1499,38 +1499,44 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
 Is another %3 running?
 
 Exiting now.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能打开数据库 %1。原因：
+
+%2
+
+是否有其他的 %3 正在运行？
+
+正在退出。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1059"/>
         <source>Copied %1 airspaces to the X-Plane scenery database.</source>
-        <translation type="unfinished"></translation>
+        <translation>已复制 %1 个空域信息到 X-Plane 地景数据库。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1064"/>
         <source>X-Plane database has no airspace boundary table.</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Plane 数据库没有空域边界表格。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1069"/>
         <source>X-Plane database &quot;%1&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Plane 数据库“%1”不存在。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1073"/>
         <source>Airspace boundary table not found in currently selected database</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前选定的数据库里没找到空域边界表格</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1184"/>
         <location filename="src/db/databasemanager.cpp" line="1188"/>
         <source>Cannot read &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能读取 “%1”。原因 %2。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1257"/>
         <source>%1 - Loading %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - 载入中 %2</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1305"/>
@@ -1538,64 +1544,66 @@ Exiting now.</source>
         <source>Processed files:
 %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation>已处理的文件：
+%1
+</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1322"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h3&gt;载入地景数据库时，在 %2 个地景条目里找到 %1 个错误&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1325"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;如果您想回报此错误请在回报里附上此日志和配置文件；并加入其他必要的信息发送到以下任一联系地址。&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1333"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;hr/&gt;一些文件或地景目录不能读取。&lt;br/&gt;您需要检查受影响地景文件里的机场信息是否显示正确。&lt;hr/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1342"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更多地景条目…&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1347"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;地景标题：%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1356"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;更多文件…&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1361"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;文件:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;错误:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1377"/>
         <source>&amp;OK</source>
-        <translation type="unfinished"></translation>
+        <translation>好的(&amp;O)</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1462"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;big&gt;已完成。&lt;/big&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1605"/>
         <location filename="src/db/databasemanager.cpp" line="1614"/>
         <location filename="src/db/databasemanager.cpp" line="1623"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1644"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;big&gt;当前已载入：&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
