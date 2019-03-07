@@ -9875,309 +9875,309 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="45"/>
         <source>&lt;b style=&quot;color:red&quot;&gt;Database empty.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b style=&quot;color:red&quot;&gt;数据库条目。&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="46"/>
         <source>The currently selected Scenery Database is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前所选地景数据库是空的。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="59"/>
         <source>Currently shown on map:</source>
-        <translation type="unfinished"></translation>
+        <translation>地图当前显示：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="77"/>
         <source> soft runways (S)</source>
-        <translation type="unfinished"></translation>
+        <translation>软道面跑道（S）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="78"/>
         <source>,S</source>
-        <translation type="unfinished"></translation>
+        <translation>,S</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="82"/>
         <source> hard runways (H)</source>
-        <translation type="unfinished"></translation>
+        <translation>硬道面跑道（H）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="83"/>
         <source>,H</source>
-        <translation type="unfinished"></translation>
+        <translation>,H</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="87"/>
         <source> all runway types (H,S)</source>
-        <translation type="unfinished"></translation>
+        <translation>所有跑道类型（H，S）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="88"/>
         <source>,H,S</source>
-        <translation type="unfinished"></translation>
+        <translation>,H,S</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="98"/>
         <source>AP,A,E</source>
-        <translation type="unfinished"></translation>
+        <translation>AP,A,E</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="98"/>
         <source>AP,A</source>
-        <translation type="unfinished"></translation>
+        <translation>AP,A</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="100"/>
         <source>AP,E</source>
-        <translation type="unfinished"></translation>
+        <translation>AP,E</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="100"/>
         <source>AP</source>
-        <translation type="unfinished"></translation>
+        <translation>AP</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="111"/>
         <location filename="src/mapgui/mapvisible.cpp" line="137"/>
         <source>Airports (AP) with runway length &gt; %1 and%2</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道长度大于 %1 和 %2 的机场（AP）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="116"/>
         <source>Add-on airports with runway length &gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道长度大于 %1 的插件机场</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="124"/>
         <source>Airports (AP) with%1</source>
-        <translation type="unfinished"></translation>
+        <translation>带有 %1 的机场（AP）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="127"/>
         <source>Add-on airports (A)</source>
-        <translation type="unfinished"></translation>
+        <translation>插件机场（A）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="133"/>
         <source>&gt;%1%2</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;%1%2</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="142"/>
         <location filename="src/mapgui/mapvisible.cpp" line="157"/>
         <source>Add-on airports (A) with runway length &gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道长度大于 %1 的插件机场（A）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="148"/>
         <source>&gt;%1,H</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;%1,H</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="153"/>
         <source>Airports (AP) with runway length &gt; %1 and hard runways (H)</source>
-        <translation type="unfinished"></translation>
+        <translation>跑道长度大于 %1 且硬道面跑道（H）的机场（AP）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="170"/>
         <source>Empty airports (E) with zero rating</source>
-        <translation type="unfinished"></translation>
+        <translation>没有评级的空机场（E）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="177"/>
         <source>V</source>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="178"/>
         <source>VOR (V)</source>
-        <translation type="unfinished"></translation>
+        <translation>VOR (V)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="182"/>
         <source>N</source>
-        <translation type="unfinished"></translation>
+        <translation>N</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="183"/>
         <source>NDB (N)</source>
-        <translation type="unfinished"></translation>
+        <translation>NDB (N)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="187"/>
         <source>I</source>
-        <translation type="unfinished"></translation>
+        <translation>I</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="188"/>
         <source>ILS (I)</source>
-        <translation type="unfinished"></translation>
+        <translation>ILS (I)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="192"/>
         <source>W</source>
-        <translation type="unfinished"></translation>
+        <translation>W</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="193"/>
         <source>Waypoints (W)</source>
-        <translation type="unfinished"></translation>
+        <translation>导航点（W）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="197"/>
         <source>JA</source>
-        <translation type="unfinished"></translation>
+        <translation>JA</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="198"/>
         <source>Jet Airways (JA)</source>
-        <translation type="unfinished"></translation>
+        <translation>高空航路（JA）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="202"/>
         <source>VA</source>
-        <translation type="unfinished"></translation>
+        <translation>VA</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="203"/>
         <source>Victor Airways (VA)</source>
-        <translation type="unfinished"></translation>
+        <translation>低空航路（VA）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="221"/>
         <source>ICAO</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="222"/>
         <source>Class A-E (ICAO)</source>
-        <translation type="unfinished"></translation>
+        <translation>A 到 E 类空域 (ICAO)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="227"/>
         <source>FIR</source>
-        <translation type="unfinished"></translation>
+        <translation>FIR</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="228"/>
         <source>Flight Information Region, class F and/or G (FIR)</source>
-        <translation type="unfinished"></translation>
+        <translation>飞航情报区，F 和/或 G 类空域（FIR）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="233"/>
         <source>RSTR</source>
-        <translation type="unfinished"></translation>
+        <translation>RSTR</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="234"/>
         <source>Restricted (RSTR)</source>
-        <translation type="unfinished"></translation>
+        <translation>限制空域（RSTR）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="239"/>
         <source>SPEC</source>
-        <translation type="unfinished"></translation>
+        <translation>SPEC</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="240"/>
         <source>Special (SPEC)</source>
-        <translation type="unfinished"></translation>
+        <translation>特殊空域（SPEC）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="245"/>
         <source>OTR</source>
-        <translation type="unfinished"></translation>
+        <translation>OTR</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="246"/>
         <source>Centers and others (OTR)</source>
-        <translation type="unfinished"></translation>
+        <translation>中心和其他 (OTR)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="251"/>
         <source>Navaids: </source>
-        <translation type="unfinished"></translation>
+        <translation>导航点：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="253"/>
         <source>No navaids</source>
-        <translation type="unfinished"></translation>
+        <translation>没有导航点</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="258"/>
         <source>Airspaces and Online Centers: </source>
-        <translation type="unfinished"></translation>
+        <translation>空域和在线中心：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="259"/>
         <source>Airspace and Online Center Groups: </source>
-        <translation type="unfinished"></translation>
+        <translation>空域和在线中心组：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="263"/>
         <source>Online Centers: </source>
-        <translation type="unfinished"></translation>
+        <translation>在线中心</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="264"/>
         <source>Online Center Groups: </source>
-        <translation type="unfinished"></translation>
+        <translation>在线中心组：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="268"/>
         <source>Airspaces: </source>
-        <translation type="unfinished"></translation>
+        <translation>空域：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="269"/>
         <source>Airspace Groups: </source>
-        <translation type="unfinished"></translation>
+        <translation>空域组：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="278"/>
         <source>No airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>没有空域</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="290"/>
         <source>Aircraft &gt; %1 ft</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器大于 %1 英尺</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="295"/>
         <source>Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="301"/>
         <source> on ground</source>
-        <translation type="unfinished"></translation>
+        <translation>在地面</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="311"/>
         <source>Ships &gt; %1 ft</source>
-        <translation type="unfinished"></translation>
+        <translation>航船大于 %1 英尺</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="316"/>
         <source>Ships</source>
-        <translation type="unfinished"></translation>
+        <translation>航船</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="322"/>
         <source>%1 Clients / Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 个客户端 / 航空器</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="325"/>
         <source>AI / Multiplayer / online client: </source>
-        <translation type="unfinished"></translation>
+        <translation>AI / 多人游戏 / 在线客户端：</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="327"/>
         <source>No AI / Multiplayer / online client</source>
-        <translation type="unfinished"></translation>
+        <translation>没有 AI / 多人游戏 / 在线客户端</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="332"/>
@@ -10185,7 +10185,7 @@ Only JPG and PNG are allowed.</source>
         <location filename="src/mapgui/mapvisible.cpp" line="336"/>
         <location filename="src/mapgui/mapvisible.cpp" line="338"/>
         <source>,</source>
-        <translation type="unfinished"></translation>
+        <translation>，</translation>
     </message>
 </context>
 <context>
