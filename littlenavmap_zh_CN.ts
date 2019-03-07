@@ -1288,7 +1288,8 @@ Will retry to connect if &quot;Connect automatically&quot; is checked.</source>
         <location filename="src/db/databasedialog.ui" line="147"/>
         <source>Will read also the inactive or disabled scenery entries when checked.
 Useful if you use tools to disable and enable certain scenery for each flight.</source>
-        <translation>勾选将会读取不启用或禁用的地景项。某一次飞行时您可能使用工具禁用或启用了相应的地景项。</translation>
+        <translation>勾选将会读取不启用或禁用的地景项。
+某一次飞行时您可能使用工具禁用或启用了相应的地景项。</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="151"/>
@@ -1303,7 +1304,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/db/databasedialog.ui" line="161"/>
         <source>Read Prepar3D add-on.xml packages</source>
-        <translation>读取 Prepar3D add-on.xml 包</translation>
+        <translation>读取 Prepar3D 的 add-on.xml 包</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="43"/>
@@ -1313,8 +1314,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <message>
         <location filename="src/db/databasedialog.cpp" line="63"/>
         <source>&lt;b&gt;No Simulator Found and no database found.&lt;/b&gt;</source>
-        <translatorcomment>&lt;b&gt;找不到模拟器也找不到数据库。&lt;/b&gt;</translatorcomment>
-        <translation></translation>
+        <translation>&lt;b&gt;找不到模拟器也找不到数据库。&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="124"/>
@@ -12996,7 +12996,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/print/printdialog.ui" line="41"/>
         <source>Include estimated fuel consumption, trip and block fuel if aircraft performance is loaded.</source>
-        <translation>包括预计的燃油消耗，行程，如果航已载入空器性能也会包括配载燃油。</translation>
+        <translation>包括预计的燃油消耗，航程，如果航已载入空器性能也会包括配载燃油。</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="44"/>
@@ -17344,22 +17344,22 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/search/searchbasetable.cpp" line="963"/>
         <source>&amp;Edit Userpoints</source>
-        <translation>编辑用户导航点(&amp;E)</translation>
+        <translation>编辑用户航路点(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="964"/>
         <source>&amp;Delete Userpoints</source>
-        <translation>删除用户导航点(&amp;D)</translation>
+        <translation>删除用户航路点(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="968"/>
         <source>&amp;Edit Userpoint</source>
-        <translation>编辑用户导航点(&amp;E)</translation>
+        <translation>编辑用户航路点(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="969"/>
         <source>&amp;Delete Userpoint</source>
-        <translation>删除用户导航点(&amp;D)</translation>
+        <translation>删除用户航路点(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1158"/>
@@ -17389,7 +17389,7 @@ ENROUTE 是一系列用空格分开的航路点、航路或用户定义的航路
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1183"/>
         <source>Showing userpoint on map.</source>
-        <translation>在地图上显示用户导航点。</translation>
+        <translation>在地图上显示用户航路点。</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1188"/>
@@ -17861,262 +17861,264 @@ Formats above have to be given exactly as shown in the examples.</source>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="89"/>
         <source>Select userpoints for display</source>
-        <translation type="unfinished"></translation>
+        <translation>选择要显示的用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="99"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="100"/>
         <source>Enable all userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>启用所有用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="106"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="107"/>
         <source>Disable all userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用所有用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="113"/>
         <source>Unknown Types</source>
-        <translation type="unfinished"></translation>
+        <translation>未知类型</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="114"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="115"/>
         <source>Enable or disable unknown userpoint types</source>
-        <translation type="unfinished"></translation>
+        <translation>导出或禁用未知用户航路点类型</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="305"/>
         <source>Userpoint moved.</source>
-        <translation type="unfinished"></translation>
+        <translation>已移除用户航路点。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="350"/>
         <source>Departure</source>
-        <translation type="unfinished"></translation>
+        <translation>离场</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="350"/>
         <source>Arrival</source>
-        <translation type="unfinished"></translation>
+        <translation>到达 </translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="351"/>
         <source> runway %1</source>
-        <translation type="unfinished"></translation>
+        <translation> 跑道 %1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="370"/>
         <source>%1 at %2%3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 在 %2%3</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="372"/>
         <source>Simulator Date and Time: %1 %2, %3 %4</source>
-        <translation type="unfinished"></translation>
+        <translation>模拟器日期和时间：%1 %2, %3 %4</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="378"/>
         <source>Date and Time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>日期和时间：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="383"/>
         <source>Flight Plan:</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="387"/>
         <source>Aircraft Performance:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="404"/>
         <source>From: %2 to %3</source>
-        <translation type="unfinished"></translation>
+        <translation>从：%2 到 %3</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="405"/>
         <source>Cruising altitude: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航高度：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="409"/>
         <source>Aircraft:</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="412"/>
         <source>Title: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>标题：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="415"/>
         <source>Airline: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>航空公司：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="418"/>
         <source>Flight Number: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>航班号：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="421"/>
         <source>Model: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>机模：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="424"/>
         <source>Registration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>注册号：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="434"/>
         <source>Type: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>类型：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="441"/>
         <source>Trip:</source>
-        <translation type="unfinished"></translation>
+        <translation>航程：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="445"/>
         <source>Time: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>时间：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="448"/>
         <source>Flight Plan Distance: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划距离：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="452"/>
         <source>Flown Distance: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已飞距离：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="454"/>
         <source>Average Groundspeed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>平均地速：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="458"/>
         <source>Average True Airspeed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>平均真空速：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="460"/>
         <source>Fuel consumed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油消耗：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="461"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="464"/>
         <source>, </source>
-        <translation type="unfinished"></translation>
+        <translation>，</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="463"/>
         <source>Average fuel flow: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>平均燃油流量：%1</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="475"/>
         <source>Logbook Entry for %1 at %2%3 added.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 %1 添加在 %2%3 的飞行日志条目。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="553"/>
         <source>Userpoint added.</source>
-        <translation type="unfinished"></translation>
+        <translation>已添加用户航路点。</translation>
     </message>
     <message numerus="yes">
         <location filename="src/userdata/userdatacontroller.cpp" line="579"/>
         <source>%n userpoint(s) updated.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已经更新 %n 个用户航路点。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="593"/>
         <source>Delete userpoint?</source>
-        <translation type="unfinished"></translation>
+        <translation>删除用户航路点？</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="593"/>
         <source>Delete %1 userpoints?</source>
-        <translation type="unfinished"></translation>
+        <translation>删除 %1 个用户点？</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="594"/>
         <source>
 
 This cannot be undone.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+
+这不能撤销。</translation>
     </message>
     <message numerus="yes">
         <location filename="src/userdata/userdatacontroller.cpp" line="604"/>
         <source>%n userpoint(s) deleted.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已经删除 %n 个用户航路点。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="615"/>
         <source>Open Userpoint CSV File(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>打开用户航路点 CSV 文件</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="616"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="706"/>
         <source>CSV Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV 文件 %1;;所有文件 (*)</translation>
     </message>
     <message numerus="yes">
         <location filename="src/userdata/userdatacontroller.cpp" line="627"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="655"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="682"/>
         <source>%n userpoint(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已经导入 %n 个用户航路点。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="648"/>
         <source>Open X-Plane user_fix.dat File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 X-Plane 的 user_fix.dat 文件</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="649"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="741"/>
         <source>X-Plane User Fix Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Plane 用户航点文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="675"/>
         <source>Open Garmin User Waypoint File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 Garmin 用户航路点文件</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="676"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="777"/>
         <source>Garmin User Waypoint Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Garmin 用户航路点文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="705"/>
         <source>Export Userpoint CSV File</source>
-        <translation type="unfinished"></translation>
+        <translation>导出用户航路点为 CSV 文件</translation>
     </message>
     <message numerus="yes">
         <location filename="src/userdata/userdatacontroller.cpp" line="717"/>
@@ -18124,29 +18126,29 @@ This cannot be undone.</source>
         <location filename="src/userdata/userdatacontroller.cpp" line="789"/>
         <location filename="src/userdata/userdatacontroller.cpp" line="824"/>
         <source>%n userpoint(s) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已经导出 %n 个用户航路点。</numerusform>
         </translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="740"/>
         <source>Export X-Plane user_fix.dat File</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 X-Plane 的 user_fix.dat 文件</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="776"/>
         <source>Export Garmin User Waypoint File</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 Garmin 用户航路点文件</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="812"/>
         <source>Export XML File for FSX/P3D BGL Compiler</source>
-        <translation type="unfinished"></translation>
+        <translation>导出为 FSX/P3D BGL 编译器的 XML 文件</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="813"/>
         <source>XML Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>XML 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="844"/>
@@ -18155,7 +18157,11 @@ This cannot be undone.</source>
 A backup will be created in
 &quot;%1&quot;
 before deleting.</source>
-        <translation type="unfinished"></translation>
+        <translation>确定要删除所有用户航路点？
+
+一个备份文件将会于删除前在
+&quot;%1&quot;
+处创建.</translation>
     </message>
 </context>
 <context>
