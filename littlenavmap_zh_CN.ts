@@ -6,65 +6,65 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="101"/>
         <source>Aircraft performance created.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能已创建。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="115"/>
         <source>Aircraft performance changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能已改变。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="136"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="179"/>
         <source>Aircraft performance loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能已载入。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="168"/>
         <source>Open Aircraft Performance File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开航空器性能文件</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="169"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="240"/>
         <source>Aircraft Performance Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="212"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="254"/>
         <source>Aircraft performance saved.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能已保存。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="239"/>
         <source>Save Aircraft Performance File</source>
-        <translation type="unfinished"></translation>
+        <translation>保存航空器性能文件</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="305"/>
         <source>Performance data collection started.</source>
-        <translation type="unfinished"></translation>
+        <translation>收集性能数据已经开始。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="321"/>
         <source>Performance data collection stopped.</source>
-        <translation type="unfinished"></translation>
+        <translation>收集性能数据已经结束。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="346"/>
         <source>Aircraft Performance has been changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能已改变。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="347"/>
         <source>Save changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>保存修改？</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="377"/>
         <source>Do not &amp;show this dialog again.</source>
-        <translation type="unfinished"></translation>
+        <translation>不要再显示此对话框(&amp;S)。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="378"/>
@@ -77,7 +77,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="462"/>
         <source>Flight segment %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>航段 %1。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="537"/>
@@ -94,69 +94,69 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="559"/>
         <source>Collecting performance information.</source>
-        <translation type="unfinished"></translation>
+        <translation>正在收集性能信息。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="560"/>
         <source>Current flight segment: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前航段：%1。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="567"/>
         <source>Fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Fuel Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油类型：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Avgas</source>
-        <translation type="unfinished"></translation>
+        <translation>航空汽油（Avgas）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="569"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="724"/>
         <source>Jetfuel</source>
-        <translation type="unfinished"></translation>
+        <translation>航油（Jet）</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="570"/>
         <source>Total Fuel Consumed:</source>
-        <translation type="unfinished"></translation>
+        <translation>总燃油消耗：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="571"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="736"/>
         <source>Taxi Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>滑行燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="577"/>
         <source>Average Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>平均性能</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="577"/>
         <source>Climb</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="579"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="590"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="598"/>
         <source>True Airspeed:</source>
-        <translation type="unfinished"></translation>
+        <translation>真空速：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="580"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="600"/>
         <source>Vertical Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直速度：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="580"/>
@@ -168,17 +168,17 @@
         <location filename="src/perf/aircraftperfcontroller.cpp" line="591"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="602"/>
         <source>Fuel Flow:</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油流量：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="588"/>
         <source>Cruise</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="596"/>
         <source>Descent</source>
-        <translation type="unfinished"></translation>
+        <translation>下降</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="600"/>
@@ -188,63 +188,63 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="611"/>
         <source>Flight plan has unflyable legs where head wind is larger than cruise speed.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划包括不能飞行的航段，因为顶风风速大于巡航速度。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="617"/>
         <source>No Flight Plan loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有载入飞行计划。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="627"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="780"/>
         <source>Performance File Description</source>
-        <translation type="unfinished"></translation>
+        <translation>性能文件描述</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="646"/>
         <source>Performance File</source>
-        <translation type="unfinished"></translation>
+        <translation>性能文件</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="661"/>
         <source>Performance File:</source>
-        <translation type="unfinished"></translation>
+        <translation>性能文件：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="675"/>
         <source>Aircraft Performance %1 - %2</source>
-        <translation type="unfinished"></translation>
+        <translation>航空器性能 %1 - %2</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="684"/>
         <source>reserve fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>备用燃油</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="686"/>
         <source>climb fuel flow</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升燃油流量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="688"/>
         <source>cruise fuel flow</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航燃油流量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="690"/>
         <source>descent fuel flow</source>
-        <translation type="unfinished"></translation>
+        <translation>下降燃油流量</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
         <source>Invalid value for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 的值无效。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="693"/>
         <source>Invalid values for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 的值无效。</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="694"/>
@@ -254,12 +254,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="699"/>
         <source>Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="703"/>
         <source>Distance and Time:</source>
-        <translation type="unfinished"></translation>
+        <translation>距离和时间：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="703"/>
@@ -269,7 +269,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="708"/>
         <source>Distance:</source>
-        <translation type="unfinished"></translation>
+        <translation>距离：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="708"/>
@@ -279,52 +279,52 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="712"/>
         <source>Average Ground Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>平均地速：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="713"/>
         <source>True Airspeed at Cruise:</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航时真空速：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="718"/>
         <source>Mach at cruise:</source>
-        <translation type="unfinished"></translation>
+        <translation>巡航马赫数：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="722"/>
         <source>Fuel Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油计划</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="726"/>
         <source>Trip Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>航路燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="729"/>
         <source>Block Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>机载燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="734"/>
         <source>Fuel at Destination:</source>
-        <translation type="unfinished"></translation>
+        <translation>目的地时的燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="735"/>
         <source>Reserve Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>备用燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="737"/>
         <source>Extra Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>额外燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="740"/>
         <source>Contingency Fuel:</source>
-        <translation type="unfinished"></translation>
+        <translation>应急燃油：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="740"/>
@@ -334,12 +334,12 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="746"/>
         <source>Climb and Descent</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升和下降</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
         <source>Climb:</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="750"/>
@@ -350,22 +350,22 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="756"/>
         <source>Time to Climb:</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升时间：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="761"/>
         <source>Climb not valid</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升无效</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="765"/>
         <source>Descent:</source>
-        <translation type="unfinished"></translation>
+        <translation>下降：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="769"/>
         <source>Descent Rule of Thumb:</source>
-        <translation type="unfinished"></translation>
+        <translation>下降的经验法则：</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="769"/>
@@ -376,7 +376,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="775"/>
         <source>Descent not valid</source>
-        <translation type="unfinished"></translation>
+        <translation>下降无效</translation>
     </message>
 </context>
 <context>
