@@ -16443,7 +16443,7 @@ Try another routing type or create the flight plan manually.</source>
     <message>
         <location filename="src/route/routeexport.cpp" line="84"/>
         <source>Save Flight Plan as FPL for Reality XP GNS</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 Reality XP GNS 的 FPL 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="85"/>
@@ -16451,360 +16451,360 @@ Try another routing type or create the flight plan manually.</source>
         <location filename="src/route/routeexport.cpp" line="469"/>
         <location filename="src/route/routeexport.cpp" line="639"/>
         <source>FPL Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>FPL 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="94"/>
         <location filename="src/route/routeexport.cpp" line="281"/>
         <source>Flight plan saved as FPL.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 FPL 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="126"/>
         <source>Save Flight Plan as GFP for Reality XP GTN</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 Reality XP GTN 的 GFP 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="127"/>
         <location filename="src/route/routeexport.cpp" line="153"/>
         <source>Garmin GFP Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Garmin GFP 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="135"/>
         <location filename="src/route/routeexport.cpp" line="163"/>
         <source>Flight plan saved as GFP.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 GFP 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="152"/>
         <source>Save Flight Plan as Garmin GFP Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 Garmin GFP 格式</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="179"/>
         <source>Save Flight Plan as TXT Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 TXT 格式</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="180"/>
         <source>Text Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>文本文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="189"/>
         <source>Flight plan saved as TXT.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 TXT 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="204"/>
         <source>Save Flight Plan as PMDG RTE Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 PMDG RTE 格式</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="205"/>
         <location filename="src/route/routeexport.cpp" line="500"/>
         <location filename="src/route/routeexport.cpp" line="557"/>
         <source>RTE Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>RTE 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="216"/>
         <source>Flight plan saved as RTE.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 RTE 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="233"/>
         <source>Save Flight Plan as Majestic Dash FPR</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 Majestic Dash 的 FPR 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="234"/>
         <source>FPR Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>FPR 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="249"/>
         <source>Flight plan saved as FPR.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 FPR 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="265"/>
         <source>Save Flight Plan as IXEG FPL Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 IXEG 的 FPL 格式</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="296"/>
         <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="unfinished"></translation>
+        <translation>为 Flight Factor Airbus 保存飞行计划到 corte.in 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="297"/>
         <source>corte.in Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>corte.in 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="306"/>
         <source>Flight plan added to corte.in.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已加入到 corte.in 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="324"/>
         <source>Save Flight Plan as FLTPLAN for iFly</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 iFly 的 FLTPLAN 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="325"/>
         <source>iFly FLTPLAN Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>iFly FLTPLAN 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="339"/>
         <source>Flight plan saved as FLTPLAN for iFly.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 iFly 的 FLTPLAN 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="358"/>
         <source>Save Flight Plan as FPL for X-FMC</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 X-FMC 的 FPL 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="359"/>
         <source>X-FMC Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>X-FMC 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="372"/>
         <source>Flight plan saved as FPL for X-FMC.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 X-FMC 的 FPL 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="387"/>
         <source>Save Flight Plan for UFMC</source>
-        <translation type="unfinished"></translation>
+        <translation>为 UFMC 保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="388"/>
         <source>UFMC Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>UFMC 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="397"/>
         <source>Flight plan saved for UFMC.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 UFMC 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="413"/>
         <source>Save Flight Plan to companyroutes.xml for ProSim</source>
-        <translation type="unfinished"></translation>
+        <translation>为 ProSim 保存飞行计划到 companyroutes.xml 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="414"/>
         <source>companyroutes.xml Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>companyroutes.xml 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="423"/>
         <source>Flight plan added to companyroutes.xml.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已加入到 companyroutes.xml 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="441"/>
         <source>Save Flight Plan for BBS Airbus</source>
-        <translation type="unfinished"></translation>
+        <translation>为 BBS 空客保存飞计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="442"/>
         <source>PLN Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>PLN 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="454"/>
         <source>Flight plan saved for BBS.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 BBS 使用保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="468"/>
         <source>Save Flight Plan for FeelThere Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>为 FeelThere 航空器保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="485"/>
         <source>Flight plan saved for FeelThere.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 FeelThere 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="499"/>
         <source>Save Flight Plan for Level-D Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>为 Level-D 航空器保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="513"/>
         <source>Flight plan saved for Level-D.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 Level-D 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="527"/>
         <source>Save Flight Plan for the AivlaSoft EFB</source>
-        <translation type="unfinished"></translation>
+        <translation>为 AivlaSoft EFB 保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="528"/>
         <source>EFBR Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>EFBR 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="542"/>
         <source>Flight plan saved for EFB.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 EFB 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="556"/>
         <source>Save Flight Plan for QualityWings Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>为 QualityWings 航空器保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="567"/>
         <source>Flight plan saved for QualityWings.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 QualityWings 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="581"/>
         <source>Save Flight Plan for Maddog X Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>为 Maddog X 航空器保存飞行计划</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="582"/>
         <source>MDX Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>MDX 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="592"/>
         <source>Flight plan saved for Maddog X.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 Maddog X 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="609"/>
         <source>Export Flight Plan as vPilot VFP</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 vPilot VFP 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="610"/>
         <source>VFP Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>VFP 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="619"/>
         <source>Flight plan saved for vPilot.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 vPilot 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="638"/>
         <source>Export Flight Plan as IvAp/X-IvAp FPL</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 IvAp/X-IvAp FPL 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="648"/>
         <source>Flight plan saved for IvAp/X-IvAp.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 IvAp/X-IvAp 保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="719"/>
         <source>Save Flight Plan as GPX Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划为 GPX 文件</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="719"/>
         <source>Save Flightplan and Track as GPX Format</source>
-        <translation type="unfinished"></translation>
+        <translation>保存飞行计划和踪迹为 GPX 格式</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="723"/>
         <source>GPX Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>GPX 文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="732"/>
         <source>Flight plan saved as GPX.</source>
-        <translation type="unfinished"></translation>
+        <translation>已保存飞行计划为 GPX 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="734"/>
         <source>Flight plan and track saved as GPX.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划及追踪数据已保存为 GPX 文件。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="753"/>
         <location filename="src/route/routeexport.cpp" line="783"/>
         <source>Select Start &amp;Position</source>
-        <translation type="unfinished"></translation>
+        <translation>选择起始位置(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="757"/>
         <source>Flight Plan must have a valid airport as start and destination and will not be usable by the Simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划必须包含有效的起始机场并没有在模拟器里使用。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="760"/>
         <location filename="src/route/routeexport.cpp" line="791"/>
         <source>Do not show this dialog again and save Flight Plan in the future.</source>
-        <translation type="unfinished"></translation>
+        <translation>以后不要再显示此对话框并保存飞行计划。</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="784"/>
         <source>Show &amp;Departure on Map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示离场(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="790"/>
         <source>The start airport has parking spots but no parking was selected for this Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>此起始机场有停机坪但是此飞行计划并没有选择任何停机位</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="878"/>
         <location filename="src/route/routeexport.cpp" line="992"/>
         <source>While saving GFP file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存 GFP 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="899"/>
         <source>While saving TXT or FPL file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存到 TXT 或 FPL 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="942"/>
         <source>While saving UFMC file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存到 UFMC 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="1066"/>
         <source>While saving VFP file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存到 VFP 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="1136"/>
         <source>While saving FPL file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存 FPL 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="1190"/>
         <source>While reading corte.in file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在读取 corte.in 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="1222"/>
         <source>While saving to corte.in file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存到 corte.in 文件：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="1268"/>
         <source>While reading from companyroutes.xml file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在从 companyroutes.xml 文件读取：</translation>
     </message>
     <message>
         <location filename="src/route/routeexport.cpp" line="1321"/>
         <source>While saving to companyroutes.xml file:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在保存到 companyroutes.xml 文件：</translation>
     </message>
 </context>
 <context>
