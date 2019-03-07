@@ -613,239 +613,255 @@ the given descent speeds</source>
         <location filename="src/search/airportsearch.cpp" line="152"/>
         <source>Distance
 %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation>距离
+%dist%</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="153"/>
         <source>Heading
 °T</source>
-        <translation type="unfinished"></translation>
+        <translation>航向
+°真航向</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="154"/>
         <source>ICAO</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="156"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名字</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="158"/>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation>城市</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="159"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>州</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="160"/>
         <source>Country or
 Area Code</source>
-        <translation type="unfinished"></translation>
+        <translation>国家或
+地区码</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="162"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>评级</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="164"/>
         <source>Elevation
 %alt%</source>
-        <translation type="unfinished"></translation>
+        <translation>标高
+%alt%</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="166"/>
         <source>Mag.
 Decl.°</source>
-        <translation type="unfinished"></translation>
+        <translation>磁航向
+Decl.°</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="167"/>
         <source>Avgas</source>
-        <translation type="unfinished"></translation>
+        <translation>航空汽油（Avgas）</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="168"/>
         <source>Jetfuel</source>
-        <translation type="unfinished"></translation>
+        <translation>航油（Jet）</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="170"/>
         <source>Tower
 MHz</source>
-        <translation type="unfinished"></translation>
+        <translation>塔台
+MHz</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="173"/>
         <source>ATIS
 MHz</source>
-        <translation type="unfinished"></translation>
+        <translation>ATIS
+MHz</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="174"/>
         <source>AWOS
 MHz</source>
-        <translation type="unfinished"></translation>
+        <translation>AWOS
+MHz</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="175"/>
         <source>ASOS
 MHz</source>
-        <translation type="unfinished"></translation>
+        <translation>ASOS
+MHz</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="176"/>
         <source>UNICOM
 MHz</source>
-        <translation type="unfinished"></translation>
+        <translation>UNICOM
+MHz</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="178"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="179"/>
         <source>Military</source>
-        <translation type="unfinished"></translation>
+        <translation>军用</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="180"/>
         <source>Addon</source>
-        <translation type="unfinished"></translation>
+        <translation>插件</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="181"/>
         <source>3D</source>
-        <translation type="unfinished"></translation>
+        <translation>3D</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="183"/>
         <source>Soft
 Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>软道面
+跑道</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="186"/>
         <source>Hard
 Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>硬道面跑道</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="187"/>
         <source>Water
 Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>水路
+跑道</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="189"/>
         <source>Lighted
 Runways</source>
-        <translation type="unfinished"></translation>
+        <translation>有灯光的
+跑道</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="191"/>
         <source>ILS</source>
-        <translation type="unfinished"></translation>
+        <translation>ILS</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="193"/>
         <source>Procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>程序</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="196"/>
         <source>Largest
 Ramp</source>
-        <translation type="unfinished"></translation>
+        <translation>最大的停机坪</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="198"/>
         <source>Largest
 Gate</source>
-        <translation type="unfinished"></translation>
+        <translation>最大的闸口</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="200"/>
         <source>Helipads</source>
-        <translation type="unfinished"></translation>
+        <translation>直升机坪</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="203"/>
         <source>Gates</source>
-        <translation type="unfinished"></translation>
+        <translation>闸口</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="204"/>
         <source>Ramps
 GA</source>
-        <translation type="unfinished"></translation>
+        <translation>通用航空停机坪</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="205"/>
         <source>Ramps
 Cargo</source>
-        <translation type="unfinished"></translation>
+        <translation>货机停机坪</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="206"/>
         <source>Ramps
 Mil Cargo</source>
-        <translation type="unfinished"></translation>
+        <translation>军用货机停机坪</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="207"/>
         <source>Ramps
 Mil Combat</source>
-        <translation type="unfinished"></translation>
+        <translation>军用战斗机停机坪</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="209"/>
         <source>Longest
 Runway Length %distshort%</source>
-        <translation type="unfinished"></translation>
+        <translation>最长的跑道长度
+%distshort%</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="211"/>
         <source>Longest
 Runway Width ft</source>
-        <translation type="unfinished"></translation>
+        <translation>最长的跑道
+宽度（英尺）</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="212"/>
         <source>Longest
 Runway Surface</source>
-        <translation type="unfinished"></translation>
+        <translation>最长的跑道
+道面</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="216"/>
         <source>Scenery Paths</source>
-        <translation type="unfinished"></translation>
+        <translation>地景路径</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="217"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="234"/>
         <source>Longitude</source>
-        <translation type="unfinished"></translation>
+        <translation>经度</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="235"/>
         <source>Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation>纬度</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="267"/>
         <source>%1 overriding all other search options.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 覆盖所有其他搜索选项。</translation>
     </message>
 </context>
 <context>
