@@ -9613,32 +9613,32 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="730"/>
         <source>Fuel</source>
-        <translation type="unfinished"></translation>
+        <translation>燃油</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="730"/>
         <source>F</source>
-        <translation type="unfinished"></translation>
+        <translation>F</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="780"/>
         <source>Tower</source>
-        <translation type="unfinished"></translation>
+        <translation>塔台</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="780"/>
         <source>T</source>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="813"/>
         <source> x </source>
-        <translation type="unfinished"></translation>
+        <translation> x </translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="818"/>
         <source> / L</source>
-        <translation type="unfinished"></translation>
+        <translation> / L</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="826"/>
@@ -9648,14 +9648,14 @@ Only JPG and PNG are allowed.</source>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="364"/>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="374"/>
         <source> / </source>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="872"/>
         <location filename="src/mapgui/mappainterairport.cpp" line="879"/>
         <location filename="src/mapgui/mappainternav.cpp" line="261"/>
         <source>► </source>
-        <translation type="unfinished"></translation>
+        <translation>► </translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="873"/>
@@ -9666,47 +9666,47 @@ Only JPG and PNG are allowed.</source>
         <location filename="src/mapgui/mappainterroute.cpp" line="747"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="782"/>
         <source>°M</source>
-        <translation type="unfinished"></translation>
+        <translation>°磁航向</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterairport.cpp" line="874"/>
         <location filename="src/mapgui/mappainterairport.cpp" line="881"/>
         <source>°M ◄</source>
-        <translation type="unfinished"></translation>
+        <translation>°磁航向 ◄</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="587"/>
         <source>N</source>
         <comment>North</comment>
-        <translation type="unfinished"></translation>
+        <translation>北</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="589"/>
         <source>E</source>
         <comment>East</comment>
-        <translation type="unfinished"></translation>
+        <translation>东</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="591"/>
         <source>S</source>
         <comment>South</comment>
-        <translation type="unfinished"></translation>
+        <translation>南</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="593"/>
         <source>W</source>
         <comment>West</comment>
-        <translation type="unfinished"></translation>
+        <translation>西</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="699"/>
         <source>%1°M</source>
-        <translation type="unfinished"></translation>
+        <translation>%1°磁航向</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="700"/>
         <source>TRK</source>
-        <translation type="unfinished"></translation>
+        <translation>航迹</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="762"/>
@@ -9715,24 +9715,24 @@ Only JPG and PNG are allowed.</source>
         <location filename="src/mapgui/mappainterroute.cpp" line="747"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="782"/>
         <source>°T</source>
-        <translation type="unfinished"></translation>
+        <translation>°真航向</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="764"/>
         <source>°T ► </source>
-        <translation type="unfinished"></translation>
+        <translation>°真航向 ► </translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintermark.cpp" line="827"/>
         <source>°M/T</source>
-        <translation type="unfinished"></translation>
+        <translation>°磁/真航向</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainternav.cpp" line="247"/>
         <location filename="src/mapgui/mappainternav.cpp" line="263"/>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="388"/>
         <source>, </source>
-        <translation type="unfinished"></translation>
+        <translation>，</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainternav.cpp" line="261"/>
@@ -9740,97 +9740,97 @@ Only JPG and PNG are allowed.</source>
         <location filename="src/mapgui/mappainterroute.cpp" line="762"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="786"/>
         <source>◄ </source>
-        <translation type="unfinished"></translation>
+        <translation>◄ </translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="318"/>
         <source>TOC</source>
-        <translation type="unfinished"></translation>
+        <translation>爬升顶点</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="342"/>
         <source>TOD</source>
-        <translation type="unfinished"></translation>
+        <translation>下降顶点</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="480"/>
         <source>/</source>
-        <translation type="unfinished"></translation>
+        <translation>/</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="750"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="764"/>
         <location filename="src/mapgui/mappainterroute.cpp" line="784"/>
         <source> ►</source>
-        <translation type="unfinished"></translation>
+        <translation> ►</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="755"/>
         <source>min</source>
-        <translation type="unfinished"></translation>
+        <translation>分</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="759"/>
         <source>1min</source>
-        <translation type="unfinished"></translation>
+        <translation>1 分钟</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappainterroute.cpp" line="782"/>
         <source>/1min</source>
-        <translation type="unfinished"></translation>
+        <translation>/ 1 分钟</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="247"/>
         <source>%1 to %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 到 %2</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="248"/>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="249"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="263"/>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="301"/>
         <source>HDG %3°M</source>
-        <translation type="unfinished"></translation>
+        <translation>航向 %3°磁航向</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="274"/>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="312"/>
         <source>ALT %1%2</source>
-        <translation type="unfinished"></translation>
+        <translation>高度 %1%2</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="327"/>
         <source> ▲</source>
-        <translation type="unfinished"></translation>
+        <translation> ▲</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="329"/>
         <source> ▼</source>
-        <translation type="unfinished"></translation>
+        <translation> ▼</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="382"/>
         <source>IAS %1</source>
-        <translation type="unfinished"></translation>
+        <translation>表速 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="385"/>
         <source>GS %2</source>
-        <translation type="unfinished"></translation>
+        <translation>地速 %2</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="412"/>
         <source>%1 °M</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 °磁航向</translation>
     </message>
     <message>
         <location filename="src/mapgui/mappaintervehicle.cpp" line="416"/>
         <source>%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%2</translation>
     </message>
 </context>
 <context>
@@ -18134,12 +18134,12 @@ before deleting.</source>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="14"/>
         <source>Little Navmap - Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - 用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="40"/>
         <source>Check to change type for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的类型</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="63"/>
@@ -18148,27 +18148,31 @@ before deleting.</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="77"/>
         <source>&amp;Ident:</source>
-        <translation type="unfinished"></translation>
+        <translation>识别码(&amp;I)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="87"/>
         <source>&amp;Latitude and Longitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>纬度和经度(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="97"/>
         <source>&amp;Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>名字(&amp;N)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="107"/>
         <source>Check to change region for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的地区</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="117"/>
@@ -18187,148 +18191,163 @@ Other formats:
 - Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</source>
-        <translation type="unfinished"></translation>
+        <translation>可以识别的格式：
+- 度、分和秒：N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot;或49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
+- 度和分：N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 或 49° 26.69&apos; N 9° 12.09&apos; E
+- 只有度：49.4449° N 9.2015° E 或 N 49.4449° E 9:2015°
+带符号的度分秒可以是以上任何一种格式。
+必须纬度在前并用 N/S 和 E/W 标识。
+如果不使用符号，只许在纬度和经度之间或者度分秒之间加空格。
+其他格式：
+- 度和分：N44124W122451, N14544W017479 or S31240E136502
+- 只有度 46N078W
+- 度和分 4620N07805W
+- 度分秒 481200N0112842E (Skyvector)
+- 度和分成对 &quot;N6500 W08000&quot; 或 &quot;N6500/W08000&quot;
+- NAT 形式 5020N
+以上格式需要严格按照例子的样式。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="138"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;航路点识别码。&lt;/p&gt;&lt;p&gt;要导出到 X-Plane &amp;quot;user_fix.dat&amp;quot;或 Garmin &amp;quot;user.wpt&amp;quot;文件需要最多五个字符。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="151"/>
         <source>Check to change visibility for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的可见性</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="161"/>
         <source>Check to change description for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的描述</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="174"/>
         <source>&amp;Region:</source>
-        <translation type="unfinished"></translation>
+        <translation>地域(&amp;R)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="198"/>
         <source>&amp;Elevation or altitude:</source>
-        <translation type="unfinished"></translation>
+        <translation>标高或高度(&amp;E)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="208"/>
         <source>Imported from file:</source>
-        <translation type="unfinished"></translation>
+        <translation>导入的源文件：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="215"/>
         <source>Check to change ident for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的识别码</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="225"/>
         <source>&amp;Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>类型(&amp;T)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="235"/>
         <source>Elevation or altitude of this waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>此航路点的标高或高度</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="241"/>
         <source> %alt%</source>
-        <translation type="unfinished"></translation>
+        <translation> %alt%</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="267"/>
         <source>Check to change tags for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的标签</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="277"/>
         <source>Check to change elevation for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的标高</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="297"/>
         <source>&amp;Visible from:</source>
-        <translation type="unfinished"></translation>
+        <translation>可见于(&amp;V)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="307"/>
         <source>Type which will determine the used icon</source>
-        <translation type="unfinished"></translation>
+        <translation>用来确定使用图标的类型</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="333"/>
         <source>&amp;Tags:</source>
-        <translation type="unfinished"></translation>
+        <translation>标签(&amp;T)</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="343"/>
         <source>List of tags. Simple textfield for various purposes.</source>
-        <translation type="unfinished"></translation>
+        <translation>标签列表，可用于多种目的的简单的文本域</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="353"/>
         <source>Last Change:</source>
-        <translation type="unfinished"></translation>
+        <translation>最后修改：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="360"/>
         <source>&amp;Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>描述(&amp;D)：</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="370"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;定义此航路点在地图上可见的最大距离。&lt;/p&gt;&lt;p&gt;可见距离显示在状态栏上。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="376"/>
         <source> %dist%</source>
-        <translation type="unfinished"></translation>
+        <translation> %dist%</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="395"/>
         <source>Two letter ICAO region code.
 Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>两个字符的 ICAO 地域码。
+导出到 X-Plane “user_fix.dat”文件需要。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="412"/>
         <source>Check to change name for all selected waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>勾选可以改变所有已选航路点的名字</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="431"/>
         <source>&amp;Temporary userpoint. Delete on next startup.</source>
-        <translation type="unfinished"></translation>
+        <translation>临时航路点，下次启动时删除(&amp;T)。</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="57"/>
         <source> - Edit Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation> - 编辑用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="60"/>
         <source> - Add Userpoint</source>
-        <translation type="unfinished"></translation>
+        <translation> - 添加用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="66"/>
         <source> - Edit Userpoints</source>
-        <translation type="unfinished"></translation>
+        <translation> - 编辑用户航路点</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="263"/>
         <source>Temporary userpoint - will be deleted on next startup</source>
-        <translation type="unfinished"></translation>
+        <translation>临时航路点 - 下次启动时删除</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.cpp" line="271"/>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
 </context>
 <context>
