@@ -475,7 +475,7 @@ This will increase the trip fuel by the given percentage.</source>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="191"/>
         <source> percent</source>
-        <translation> %</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="204"/>
@@ -10185,58 +10185,59 @@ Only JPG and PNG are allowed.</source>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="528"/>
         <source>Map position history next.</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个地图历史位置。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="544"/>
         <source>Map position history back.</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个地图历史位置。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="900"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图不会覆盖窗口。
+确保地图完全填满窗口。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1173"/>
         <source>Showing distance search center.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示距搜索中心的距离。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1215"/>
         <source>Showing home position.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示主位置。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1226"/>
         <source>Distance search center position changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>距搜索中心的距离已修改。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1234"/>
         <source>Changed home position.</source>
-        <translation type="unfinished"></translation>
+        <translation>改变主位置。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1727"/>
         <source>Add %1 to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>添加 %1 到飞行计划</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1729"/>
         <source>Insert %1 to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>插入 %1 到飞机计划</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1731"/>
         <source>Append %1 to Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>追加 %1 到飞行计划</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1810"/>
         <source>More ...</source>
-        <translation type="unfinished"></translation>
+        <translation>更多…</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1829"/>
@@ -10245,173 +10246,173 @@ Ensure that the map fills the window completely.</source>
         <location filename="src/mapgui/mapwidget.cpp" line="2380"/>
         <location filename="src/mapgui/mapwidget.cpp" line="2389"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="1837"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2089"/>
         <source>Online Center %1</source>
-        <translation type="unfinished"></translation>
+        <translation>在线中心 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2092"/>
         <source>Airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>空域</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2092"/>
         <source>Airspace</source>
-        <translation type="unfinished"></translation>
+        <translation>空域</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2133"/>
         <source>Helipad %1</source>
-        <translation type="unfinished"></translation>
+        <translation>直升机坪 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2168"/>
         <source>AI / Multiplayer</source>
-        <translation type="unfinished"></translation>
+        <translation>AI / 多人游戏</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2168"/>
         <source> %1</source>
-        <translation type="unfinished"></translation>
+        <translation> %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2170"/>
         <source> / </source>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2176"/>
         <source>Online Client Aircraft %1</source>
-        <translation type="unfinished"></translation>
+        <translation>在线的航空器客户端 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2182"/>
         <source>User Aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>用户航空器</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2333"/>
         <source>Departure </source>
-        <translation type="unfinished"></translation>
+        <translation>离场 </translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2337"/>
         <source>Show procedures (%1 has no departure procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序（%1 没有离场程序）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2344"/>
         <source>Arrival </source>
-        <translation type="unfinished"></translation>
+        <translation>到达 </translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2348"/>
         <source>Show procedures (%1 has no arrival procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序（%1 没有进场程序）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2353"/>
         <source>all </source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2357"/>
         <source>Show procedures (%1 has no procedure)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示程序（%1 没有任何程序）</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2409"/>
         <location filename="src/mapgui/mapwidget.cpp" line="2410"/>
         <source>here</source>
-        <translation type="unfinished"></translation>
+        <translation>此处</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2727"/>
         <source>Added airport traffic pattern for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>已为 %1 添加机场起落航线。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2736"/>
         <source>Traffic pattern removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从地图上移除起落航线。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2761"/>
         <source>Added range rings for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>为 %1 添加的范围弧。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2779"/>
         <source>Added range rings for position.</source>
-        <translation type="unfinished"></translation>
+        <translation>为位置添加的范围弧。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="2857"/>
         <source>All range rings and measurement lines removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从地图上移除所有范围弧和度量线。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3280"/>
         <source>Range ring removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从地图上移除范围弧。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3288"/>
         <source>Measurement line removed from map.</source>
-        <translation type="unfinished"></translation>
+        <translation>已从地图上移除度量线。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3611"/>
         <source>Showing user aircraft on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示用户航空器。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3616"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示 AI / 多人游戏航空器。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3621"/>
         <source>Showing online client aircraft on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示在线客户端航空器。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3626"/>
         <source>Showing airport on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示机场。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3640"/>
         <source>Showing navaid or userpoint on map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示导航点或用户航路点。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3910"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>正常</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3917"/>
         <source>Detail %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 详情</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="3918"/>
         <source>Map detail level changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图详情程度已改变。</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="4009"/>
         <source>Jumped back to aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>跳回到航空器。</translation>
     </message>
 </context>
 <context>
@@ -13385,7 +13386,7 @@ This process will run in background and can take a while.</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="867"/>
         <source>Position</source>
-        <translation>未知</translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="877"/>
