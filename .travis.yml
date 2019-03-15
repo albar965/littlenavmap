@@ -3,6 +3,15 @@ os: linux
 compiler: gcc
 dist: trusty
 
+addons:
+  apt:
+    # Get new gcc
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-7
+      - g++-7
+
 before_install:
     # Add repository for Qt
     - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
@@ -17,13 +26,17 @@ install:
     - PATH="$QTDIR/bin:$PATH"
     - source /opt/qt510/bin/qt510-env.sh
     
+    # Set used gcc version
+    - export CC=gcc-7
+    - export CXX=g++-7
+    
     # Build & install custom marble
     - git clone --branch=lnm/1.1 https://github.com/albar965/marble.git ../marble
     - mkdir ../build-marble-release
     - cd ../build-marble-release
     - cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC_BUILD=TRUE -DQTONLY=TRUE -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_INHIBIT_SCREENSAVER_PLUGIN=NO -DBUILD_MARBLE_APPS=NO -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_MARBLE_TESTS=NO -DBUILD_MARBLE_TOOLS=NO -DBUILD_TESTING=NO -DBUILD_WITH_DBUS=NO -DMARBLE_EMPTY_MAPTHEME=YES -DMOBILE=NO -DWITH_DESIGNER_PLUGIN=NO -DWITH_Phonon=NO -DWITH_Qt5Location=NO -DWITH_Qt5Positioning=NO -DWITH_Qt5SerialPort=NO -DWITH_ZLIB=NO -DWITH_libgps=NO -DWITH_libshp=NO -DWITH_libwlocate=NO -DCMAKE_INSTALL_PREFIX=/home/alex/Programme/Marble-release -DEXEC_INSTALL_PREFIX=/home/alex/Programme/Marble-release -DCMAKE_PREFIX_PATH=$QTDIR/ ../marble/
     - make -j2
-    - sudo make install    
+    - sudo make install
     
 before_script:    
     # Clone atools
