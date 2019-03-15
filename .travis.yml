@@ -10,7 +10,7 @@ before_install:
     
 install:
     # Install needed Qt modules
-    - sudo apt-get --yes install qt510base qt510svg qt510script
+    - sudo apt-get --yes install qt510base qt510svg qt510script qt510declarative
     
     # Set Qt variables
     - QTDIR="/opt/qt510"
