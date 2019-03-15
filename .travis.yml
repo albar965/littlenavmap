@@ -9,16 +9,27 @@ before_install:
     - sudo apt-get -qq update
     
 install:
+    # Install needed Qt modules
     - sudo apt-get --yes install qt510base qt510svg
     
 before_script:
-    # Qt variables
+    # Set Qt variables
     - QTDIR="/opt/qt510"
     - PATH="$QTDIR/bin:$PATH"
     - source /opt/qt510/bin/qt510-env.sh
     
+    # Clone atools
+    - git clone --branch=master https://github.com/albar965/atools.git ../atools
+    
 script:
-    - mkdir build-littlenavmap-release
-    - cd build-littlenavmap-release
-    - qmake ../littlenavmap.pro CONFIG+=release
+    # Build atools
+    - mkdir ../build-atools-release
+    - cd ../build-atools-release
+    - qmake ../atools/atools.pro CONFIG+=release
+    - make
+    
+    # Build littlenavmap
+    - mkdir ../build-littlenavmap-release
+    - cd ../build-littlenavmap-release
+    - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
     - make
