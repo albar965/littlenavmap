@@ -12,12 +12,20 @@ install:
     # Install needed Qt modules
     - sudo apt-get --yes install qt510base qt510svg
     
-before_script:
     # Set Qt variables
     - QTDIR="/opt/qt510"
     - PATH="$QTDIR/bin:$PATH"
     - source /opt/qt510/bin/qt510-env.sh
     
+    # Build & install custom marble
+    - git clone --branch=lnm/1.1 https://github.com/albar965/marble.git ../marble
+    - mkdir ../build-marble-release
+    - cd ../build-marble-release
+    - cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC_BUILD=TRUE -DQTONLY=TRUE -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_INHIBIT_SCREENSAVER_PLUGIN=NO -DBUILD_MARBLE_APPS=NO -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_MARBLE_TESTS=NO -DBUILD_MARBLE_TOOLS=NO -DBUILD_TESTING=NO -DBUILD_WITH_DBUS=NO -DMARBLE_EMPTY_MAPTHEME=YES -DMOBILE=NO -DWITH_DESIGNER_PLUGIN=NO -DWITH_Phonon=NO -DWITH_Qt5Location=NO -DWITH_Qt5Positioning=NO -DWITH_Qt5SerialPort=NO -DWITH_ZLIB=NO -DWITH_libgps=NO -DWITH_libshp=NO -DWITH_libwlocate=NO -DCMAKE_INSTALL_PREFIX=~/Programme/Marble-release -DEXEC_INSTALL_PREFIX=~/Programme/Marble-release -DCMAKE_PREFIX_PATH=$QTDIR/gcc_64 ../marble/
+    - make -j2
+    - make install    
+    
+before_script:    
     # Clone atools
     - git clone --branch=feature/ci https://github.com/prinz7/atools.git ../atools
     
