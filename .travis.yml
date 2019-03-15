@@ -27,6 +27,8 @@ install:
     - source /opt/qt510/bin/qt510-env.sh
     
     # Set used gcc version
+    - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
+    - sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
     - export CC=gcc-7
     - export CXX=g++-7
     
