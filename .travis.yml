@@ -1,4 +1,25 @@
 language: cpp
+os: linux
+compiler: gcc
+dist: trusty
 
-compiler:
-- gcc
+before_install:
+    # Add repository for Qt
+    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
+    - sudo apt-get -qq update
+    
+install:
+    - sudo apt-get --yes install qt510base
+    
+before_script:
+    # Qt variables
+    - QTDIR="/opt/qt510"
+    - PATH="$QTDIR/bin:$PATH"
+    - source /opt/qt510/bin/qt510-env.sh
+    
+script:
+    - mkdir build-littlenavmap-release
+    - ls
+    - cd build-littlenavmap-release
+    - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
+    - make
