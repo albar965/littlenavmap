@@ -21,5 +21,6 @@ script:
     - mkdir build-littlenavmap-release
     - ls
     - cd build-littlenavmap-release
-    - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
+    - ls ../
+    - qmake ../littlenavmap.pro CONFIG+=release
     - make
