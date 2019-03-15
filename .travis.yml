@@ -19,7 +19,7 @@ before_script:
     - source /opt/qt510/bin/qt510-env.sh
     
     # Clone atools
-    - git clone --branch=master https://github.com/albar965/atools.git ../atools
+    - git clone --branch=feature/ci https://github.com/prinz7/atools.git ../atools
     
 script:
     # Build atools
