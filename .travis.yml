@@ -9,7 +9,7 @@ before_install:
     - sudo apt-get -qq update
     
 install:
-    - sudo apt-get --yes install qt510base
+    - sudo apt-get --yes install qt510base qt510svg
     
 before_script:
     # Qt variables
@@ -19,8 +19,6 @@ before_script:
     
 script:
     - mkdir build-littlenavmap-release
-    - ls
     - cd build-littlenavmap-release
-    - ls ../
     - qmake ../littlenavmap.pro CONFIG+=release
     - make
