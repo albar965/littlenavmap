@@ -250,6 +250,7 @@ public:
 
   /* Resizes the widget if width and height are bigger than 0 and returns map content as pixmap. */
   QPixmap getPixmap(int width = -1, int height = -1);
+  QPixmap getPixmap(const QSize& size);
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */

@@ -72,6 +72,7 @@
 #include "util/version.h"
 #include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
+#include "mapgui/imageexportdialog.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -2342,27 +2343,64 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   }
 }
 
+bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json)
+{
+  ImageExportDialog exportDialog(this, dialogTitle, optionPrefx, mapWidget->width(), mapWidget->height());
+  int retval = exportDialog.exec();
+  if(retval == QDialog::Accepted)
+  {
+    if(exportDialog.isCurrentView())
+    {
+      // Copy image as is from current view
+      mapWidget->showOverlays(false, false /* show scale */);
+      pixmap = mapWidget->mapScreenShot();
+      mapWidget->showOverlays(true, false /* show scale */);
+
+      if(json != nullptr)
+        *json = mapWidget->createAvitabJson();
+    }
+    else
+    {
+      // Create a map widget clone with the desired resolution
+      MapPaintWidget paintWidget(this, false /* no real widget - hidden */);
+      paintWidget.setActive(); // Activate painting
+      paintWidget.setKeepWorldRect(); // Center world rectangle when resizing
+
+      // Copy all map settings
+      paintWidget.copySettings(*mapWidget);
+
+      // Copy visible rectangle
+      paintWidget.copyView(*mapWidget);
+
+      pixmap = paintWidget.getPixmap(exportDialog.getSize());
+
+      if(json != nullptr)
+        *json = paintWidget.createAvitabJson();
+    }
+    PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
+    return true;
+  }
+  return false;
+}
+
 void MainWindow::mapSaveImage()
 {
-  QString imageFile = dialog->saveFileDialog(
-    tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
-    "jpg", "MainWindow/",
-    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
-    arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
-
-  if(!imageFile.isEmpty())
+  QPixmap pixmap;
+  if(createMapImage(pixmap, tr(" - Save Map as Image"), lnm::IMAGE_EXPORT_DIALOG))
   {
-    QPixmap pixmap;
-    mapWidget->showOverlays(false, false /* show scale */);
-    pixmap = mapWidget->mapScreenShot();
-    mapWidget->showOverlays(true, false /* show scale */);
+    QString imageFile = dialog->saveFileDialog(
+      tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
+      "jpg", "MainWindow/",
+      atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
+      arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
 
-    PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
-
-    if(!pixmap.save(imageFile))
-      atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
-    else
-      setStatusMessage(tr("Map image saved."));
+    if(!imageFile.isEmpty())
+    {
+      if(!pixmap.save(imageFile))
+        atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
+      else
+        setStatusMessage(tr("Map image saved."));
+    }
   }
 }
 
@@ -2370,49 +2408,52 @@ void MainWindow::mapSaveImageAviTab()
 {
   if(mapWidget->projection() == Marble::Mercator)
   {
-    QString json = mapWidget->createAvitabJson();
-
-    if(!json.isEmpty())
+    QPixmap pixmap;
+    QString json;
+    if(createMapImage(pixmap, tr(" - Save Map as Image for AviTab"), lnm::IMAGE_EXPORT_AVITAB_DIALOG, &json))
     {
-      QString defaultFileName;
-
-      if(routeController->getRoute().isEmpty())
-        defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
-      else
-        defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
-
-      QString imageFile = dialog->saveFileDialog(
-        tr("Save Map as Image for AviTab"),
-        tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
-        "png", "MainWindow/AviTab",
-        atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
-        QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
-        QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-        false /* confirm overwrite */, true /* autonumber file */);
-
-      if(!imageFile.isEmpty())
+      if(!json.isEmpty())
       {
-        QPixmap pixmap;
-        mapWidget->showOverlays(false, false /* show scale */);
-        pixmap = mapWidget->mapScreenShot();
-        mapWidget->showOverlays(true, false /* show scale */);
+        QString defaultFileName;
 
-        if(!pixmap.save(imageFile))
-          atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
+        if(routeController->getRoute().isEmpty())
+          defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
-        {
-          QFile jsonFile(imageFile + ".json");
-          if(jsonFile.open(QIODevice::WriteOnly | QIODevice::Text))
-          {
-            QTextStream stream(&jsonFile);
-            stream << json.toUtf8();
+          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
 
-            setStatusMessage(tr("Map image saved."));
-          }
+        QString imageFile = dialog->saveFileDialog(
+          tr("Save Map as Image for AviTab"),
+          tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
+          "png", "MainWindow/AviTab",
+          atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
+          QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
+          QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
+          false /* confirm overwrite */, true /* autonumber file */);
+
+        if(!imageFile.isEmpty())
+        {
+
+          if(!pixmap.save(imageFile))
+            atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
           else
-            atools::gui::ErrorHandler(this).handleIOError(jsonFile, tr("Error saving JSON."));
+          {
+            QFile jsonFile(imageFile + ".json");
+            if(jsonFile.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+              QTextStream stream(&jsonFile);
+              stream << json.toUtf8();
+
+              setStatusMessage(tr("Map image saved."));
+            }
+            else
+              atools::gui::ErrorHandler(this).handleIOError(jsonFile, tr("Error saving JSON."));
+          }
         }
       }
+      else
+        QMessageBox::warning(this, QApplication::applicationName(),
+                             tr("Map does not cover window.\n"
+                                "Ensure that the map fills the window completely."));
     }
   }
   else
@@ -2423,17 +2464,14 @@ void MainWindow::mapSaveImageAviTab()
 void MainWindow::mapCopyToClipboard()
 {
   QPixmap pixmap;
-  mapWidget->showOverlays(false, false /* show scale */);
-  pixmap = mapWidget->mapScreenShot();
-  mapWidget->showOverlays(true, false /* show scale */);
-
-  PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
-
-  // Copy formatted and plain text to clipboard
-  QMimeData *data = new QMimeData;
-  data->setImageData(pixmap);
-  QGuiApplication::clipboard()->setMimeData(data);
-  setStatusMessage(tr("Map image copied to clipboard."));
+  if(createMapImage(pixmap, tr(" - Copy Map Image to Clipboard"), lnm::IMAGE_EXPORT_DIALOG))
+  {
+    // Copy formatted and plain text to clipboard
+    QMimeData *data = new QMimeData;
+    data->setImageData(pixmap);
+    QGuiApplication::clipboard()->setMimeData(data);
+    setStatusMessage(tr("Map image copied to clipboard."));
+  }
 }
 
 void MainWindow::sunShadingTimeChanged()

@@ -119,7 +119,7 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
 
   // Copy own/internal settings
   currentThemeIndex = other.currentThemeIndex;
-  aircraftTrack = other.aircraftTrack;
+  *aircraftTrack = *other.aircraftTrack;
   searchMarkPos = other.searchMarkPos;
   homePos = other.homePos;
   homeDistance = other.homeDistance;
@@ -382,8 +382,9 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   // Now zoom out step by step until all points are visible - max 100 iterations
   qreal x, y;
   int step = 1;
-  while((!screenCoordinates(west, north, x, y) || !screenCoordinates(east, south, x, y)) &&
-        (zoomIterations < 100) && (zoom() < maximumZoom()))
+  while((!screenCoordinates(west, north, x, y) || !screenCoordinates(east, north, x, y) ||
+         !screenCoordinates(east, south, x, y) || !screenCoordinates(west, south, x, y)) &&
+        (zoomIterations < 500) && (zoom() < maximumZoom()))
   {
     if(!visibleWidget)
       qDebug() << Q_FUNC_INFO << "zoom" << zoom()
@@ -408,6 +409,11 @@ QPixmap MapPaintWidget::getPixmap(int width, int height)
     // Resize if needed - resizeEvent will be called in grab
     resize(width, height);
   return grab();
+}
+
+QPixmap MapPaintWidget::getPixmap(const QSize& size)
+{
+  return getPixmap(size.width(), size.height());
 }
 
 void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)

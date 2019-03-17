@@ -244,10 +244,14 @@ private:
   void resetMessages();
   void showDatabaseFiles();
 
+  /* Save map as images */
   void mapSaveImage();
   void mapSaveImageAviTab();
-
   void mapCopyToClipboard();
+
+  /* Opens dialog for image resolution and returns pixmap and optionally AviTab JSON */
+  bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json = nullptr);
+
   void distanceChanged();
   void showDonationPage();
   void showFaqPage();

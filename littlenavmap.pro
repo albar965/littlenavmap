@@ -254,7 +254,8 @@ SOURCES += src/main.cpp\
     src/route/routeexportdata.cpp \
     src/route/routeexportdialog.cpp \
     src/mapgui/mappaintwidget.cpp \
-    src/mappainter/mappaintlayer.cpp
+    src/mappainter/mappaintlayer.cpp \
+    src/mapgui/imageexportdialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -375,7 +376,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routeexportdata.h \
     src/route/routeexportdialog.h \
     src/mapgui/mappaintwidget.h \
-    src/mappainter/mappaintlayer.h
+    src/mappainter/mappaintlayer.h \
+    src/mapgui/imageexportdialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -392,7 +394,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/gui/timedialog.ui \
     src/gui/trafficpatterndialog.ui \
     src/perf/aircraftperfdialog.ui \
-    src/route/routeexportdialog.ui
+    src/route/routeexportdialog.ui \
+    src/mapgui/imageexportdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \
