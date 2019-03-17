@@ -96,9 +96,8 @@
 static const int WEATHER_UPDATE_MS = 15000;
 
 // All known map themes
-static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
-                                           "openstreetmaproadshs", "opentopomap", "plain", "political",
-                                           "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
+static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
+                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -547,7 +546,6 @@ void MainWindow::setupUi()
   mapThemeComboBox->setStatusTip(helpText);
   // Item order has to match MapWidget::MapThemeComboIndex
   mapThemeComboBox->addItem(tr("OpenStreetMap"), "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenMapSurfer"), "earth/openstreetmaproads/openstreetmaproads.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"), "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
   mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
@@ -575,9 +573,6 @@ void MainWindow::setupUi()
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenStreetMap->setData(map::OPENSTREETMAP);
-
-  ui->actionMapThemeOpenStreetMapRoads->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenStreetMapRoads->setData(map::OPENSTREETMAPROADS);
 
   ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenTopoMap->setData(map::OPENTOPOMAP);
@@ -1100,7 +1095,6 @@ void MainWindow::connectAllSlots()
 
   // Let theme menus update combo boxes
   connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeOpenStreetMapRoads, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeCartoLight, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
