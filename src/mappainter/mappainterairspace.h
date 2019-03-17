@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERAIRSPACE_H
 #define LITTLENAVMAP_MAPPAINTERAIRSPACE_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 namespace Marble {
 class GeoDataLineString;
@@ -34,8 +34,8 @@ class MapPainterAirspace :
   public MapPainter
 {
 public:
-  MapPainterAirspace(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
-  virtual ~MapPainterAirspace();
+  MapPainterAirspace(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
+  virtual ~MapPainterAirspace() override;
 
   virtual void render(PaintContext *context) override;
 

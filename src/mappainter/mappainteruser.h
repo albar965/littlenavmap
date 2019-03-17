@@ -15,39 +15,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERILS_H
-#define LITTLENAVMAP_MAPPAINTERILS_H
+#ifndef LITTLENAVMAP_MAPPAINTERUSER_H
+#define LITTLENAVMAP_MAPPAINTERUSER_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
-class SymbolPainter;
-
-namespace map {
-struct MapIls;
-
-}
+#include "common/maptypes.h"
 
 /*
- * Draws the ILS feathers and text.
+ * Draws userpoints. Does not use caching to avoid update problems when changing data.
  */
-class MapPainterIls :
+class MapPainterUser :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterIls(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterIls();
+  MapPainterUser(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  virtual ~MapPainterUser() override;
 
   virtual void render(PaintContext *context) override;
 
 private:
-  /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */
-  static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
-  static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
-
-  void drawIlsSymbol(const PaintContext *context, const map::MapIls& ils);
+  void paintUserpoints(PaintContext *context, const QList<map::MapUserpoint>& userpoints, bool drawFast);
 
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H
+#endif // LITTLENAVMAP_MAPPAINTERUSER_H

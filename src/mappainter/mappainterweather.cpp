@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainterweather.h"
+#include "mappainter/mappainterweather.h"
 
 #include "common/symbolpainter.h"
 #include "mapgui/mapscale.h"
@@ -33,7 +33,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterWeather::MapPainterWeather(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterWeather::MapPainterWeather(MapPaintWidget* mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }

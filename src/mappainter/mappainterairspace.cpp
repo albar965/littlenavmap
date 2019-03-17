@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainterairspace.h"
+#include "mappainter/mappainterairspace.h"
 
 #include "common/mapcolors.h"
 #include "util/paintercontextsaver.h"
@@ -35,7 +35,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirspace::MapPainterAirspace(MapWidget *mapWidget, MapScale *mapScale,
+MapPainterAirspace::MapPainterAirspace(MapPaintWidget* mapWidget, MapScale *mapScale,
                                        const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {

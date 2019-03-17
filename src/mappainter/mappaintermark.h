@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERMARK_H
 #define LITTLENAVMAP_MAPPAINTERMARK_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 namespace Marble {
 class GeoDataLineString;
@@ -41,8 +41,8 @@ class MapPainterMark :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterMark(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterMark();
+  MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale);
+  virtual ~MapPainterMark() override;
 
   virtual void render(PaintContext *context) override;
 

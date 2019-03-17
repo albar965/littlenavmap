@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERVECHICLE_H
 #define LITTLENAVMAP_MAPPAINTERVECHICLE_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 #include <QCache>
 
@@ -48,7 +48,7 @@ class MapPainterVehicle :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterVehicle(MapWidget *mapWidget, MapScale *mapScale);
+  MapPainterVehicle(MapPaintWidget* mapPaintWidget, MapScale *mapScale);
   virtual ~MapPainterVehicle();
 
   virtual void render(PaintContext *context) = 0;

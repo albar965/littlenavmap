@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappaintership.h"
+#include "mappainter/mappaintership.h"
 
 #include "navapp.h"
 #include "mapgui/mapwidget.h"
@@ -26,7 +26,7 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterShip::MapPainterShip(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterShip::MapPainterShip(MapPaintWidget* mapWidget, MapScale *mapScale)
   : MapPainterVehicle(mapWidget, mapScale)
 {
 
@@ -42,7 +42,7 @@ void MapPainterShip::render(PaintContext *context)
     // If actions are unchecked return
     return;
 
-  if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
+  if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
   {
     // Draw AI ships first
     if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
@@ -50,7 +50,7 @@ void MapPainterShip::render(PaintContext *context)
       atools::util::PainterContextSaver saver(context->painter);
       Q_UNUSED(saver);
 
-      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+      for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
         if(ac.getCategory() == atools::fs::sc::BOAT &&
            (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))

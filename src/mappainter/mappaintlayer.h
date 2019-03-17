@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTLAYER_H
 #define LITTLENAVMAP_MAPPAINTLAYER_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 #include <QPen>
 
@@ -46,6 +46,7 @@ class MapPainterShip;
 class MapPainterUser;
 class MapPainterAltitude;
 class MapPainterWeather;
+class MapPaintWidget;
 
 /*
  * Implements the Marble layer interface that paints upon the Marble map. Contains all painter instances
@@ -55,8 +56,10 @@ class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
-  MapPaintLayer(MapWidget *widget, MapQuery *mapQueries);
-  virtual ~MapPaintLayer();
+  MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries);
+  virtual ~MapPaintLayer() override;
+
+  void copySettings(const MapPaintLayer& other);
 
   /* Sets databaseLoadStatus to avoid painting while database is offline */
   void preDatabaseLoad();
@@ -171,7 +174,7 @@ private:
 
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
-  MapWidget *mapWidget = nullptr;
+  MapPaintWidget *mapWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
   int overflow = 0;
 

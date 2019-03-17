@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainteraircraft.h"
+#include "mappainter/mappainteraircraft.h"
 
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
@@ -34,7 +34,7 @@ const int NUM_CLOSEST_AI_LABELS = 5;
 const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
 const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
-MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterAircraft::MapPainterAircraft(MapPaintWidget* mapWidget, MapScale *mapScale)
   : MapPainterVehicle(mapWidget, mapScale)
 {
 
@@ -57,7 +57,7 @@ void MapPainterAircraft::render(PaintContext *context)
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     paintTrack(context);
 
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
   const atools::geo::Pos& pos = userAircraft.getPosition();
 
   // Draw AI and online aircraft - not boats ====================================================================
@@ -73,9 +73,9 @@ void MapPainterAircraft::render(PaintContext *context)
     for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
       allAircraft.append(&ac);
 
-    if(NavApp::isConnected() || mapWidget->getUserAircraft().isDebug())
+    if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
     {
-      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+      for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
         if(ac.getCategory() != atools::fs::sc::BOAT)
           allAircraft.append(&ac);

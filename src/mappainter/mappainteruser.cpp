@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainteruser.h"
+#include "mappainter/mappainteruser.h"
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
@@ -39,7 +39,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterUser::MapPainterUser(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterUser::MapPainterUser(MapPaintWidget* mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }

@@ -15,24 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappaintlayer.h"
+#include "mappainter/mappaintlayer.h"
 
 #include "navapp.h"
-#include "mapgui/mappainterweather.h"
+#include "mappainter/mappainterweather.h"
 #include "connect/connectclient.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayersettings.h"
-#include "mapgui/mappainteraircraft.h"
-#include "mapgui/mappaintership.h"
-#include "mapgui/mappainterairport.h"
-#include "mapgui/mappainterairspace.h"
-#include "mapgui/mappainterils.h"
-#include "mapgui/mappaintermark.h"
-#include "mapgui/mappainternav.h"
-#include "mapgui/mappainterroute.h"
-#include "mapgui/mappainteruser.h"
-#include "mapgui/mappainteraltitude.h"
+#include "mappainter/mappainteraircraft.h"
+#include "mappainter/mappaintership.h"
+#include "mappainter/mappainterairport.h"
+#include "mappainter/mappainterairspace.h"
+#include "mappainter/mappainterils.h"
+#include "mappainter/mappaintermark.h"
+#include "mappainter/mappainternav.h"
+#include "mappainter/mappainterroute.h"
+#include "mappainter/mappainteruser.h"
+#include "mappainter/mappainteraltitude.h"
 #include "mapgui/mapscale.h"
 #include "userdata/userdatacontroller.h"
 #include "route/route.h"
@@ -46,7 +46,7 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
+MapPaintLayer::MapPaintLayer(MapPaintWidget *widget, MapQuery *mapQueries)
   : mapQuery(mapQueries), mapWidget(widget)
 {
   // Create the layer configuration
@@ -88,6 +88,18 @@ MapPaintLayer::~MapPaintLayer()
 
   delete layers;
   delete mapScale;
+}
+
+void MapPaintLayer::copySettings(const MapPaintLayer& other)
+{
+  objectTypes = other.objectTypes;
+  objectDisplayTypes = other.objectDisplayTypes;
+  airspaceTypes = other.airspaceTypes;
+  weatherSource = other.weatherSource;
+  sunShading = other.sunShading;
+
+  // Updates layers too
+  setDetailFactor(other.detailFactor);
 }
 
 void MapPaintLayer::preDatabaseLoad()

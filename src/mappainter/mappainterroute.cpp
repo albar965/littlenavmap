@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainterroute.h"
+#include "mappainter/mappainterroute.h"
 
 #include "mapgui/mapwidget.h"
 #include "common/symbolpainter.h"
@@ -39,7 +39,7 @@ using proc::MapProcedureLegs;
 using map::PosCourse;
 using atools::contains;
 
-MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam)
+MapPainterRoute::MapPainterRoute(MapPaintWidget* mapWidget, MapScale *mapScale, const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {
 }
@@ -58,7 +58,7 @@ void MapPainterRoute::render(PaintContext *context)
   // Draw the approach preview if any selected in the search tab
   proc::MapProcedureLeg lastLegPoint;
   if(context->mapLayer->isApproach())
-    paintProcedure(lastLegPoint, context, mapWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
+    paintProcedure(lastLegPoint, context, mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
                    true /* preview */);
 
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&

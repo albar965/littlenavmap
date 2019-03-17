@@ -15,23 +15,39 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
-#define LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
+#ifndef LITTLENAVMAP_MAPPAINTERWEATHER_H
+#define LITTLENAVMAP_MAPPAINTERWEATHER_H
 
-#include "mapgui/mappaintervehicle.h"
+#include "mappainter/mappainter.h"
+
+namespace atools {
+namespace fs {
+namespace weather {
+class Metar;
+}
+}
+}
+
+struct PaintAirportType;
 
 /*
- * Draws the simulator user aircraft and aircraft track
+ * Draws airport weather symbols.
  */
-class MapPainterAircraft :
-  public MapPainterVehicle
+class MapPainterWeather :
+  public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
-  MapPainterAircraft(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterAircraft();
+  MapPainterWeather(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  virtual ~MapPainterWeather() override;
 
   virtual void render(PaintContext *context) override;
 
+private:
+  void drawAirportWeather(PaintContext *context, const atools::fs::weather::Metar& metar,
+                          float x, float y);
+
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H
+#endif // LITTLENAVMAP_MAPPAINTERWEATHER_H

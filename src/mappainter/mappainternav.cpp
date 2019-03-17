@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainternav.h"
+#include "mappainter/mappainternav.h"
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
@@ -36,7 +36,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterNav::MapPainterNav(MapPaintWidget* mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }

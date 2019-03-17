@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappaintervehicle.h"
+#include "mappainter/mappaintervehicle.h"
 
 #include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"
@@ -28,6 +28,7 @@
 #include "util/paintercontextsaver.h"
 #include "settings/settings.h"
 #include "common/vehicleicons.h"
+#include "common/aircrafttrack.h"
 
 #include <marble/GeoPainter.h>
 
@@ -38,7 +39,7 @@ using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectData;
 
-MapPainterVehicle::MapPainterVehicle(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterVehicle::MapPainterVehicle(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 
@@ -150,7 +151,7 @@ float MapPainterVehicle::calcRotation(const PaintContext *context, const SimConn
 
 void MapPainterVehicle::paintTrack(const PaintContext *context)
 {
-  const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
+  const AircraftTrack& aircraftTrack = mapPaintWidget->getAircraftTrack();
 
   if(!aircraftTrack.isEmpty())
   {

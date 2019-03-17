@@ -15,30 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERUSER_H
-#define LITTLENAVMAP_MAPPAINTERUSER_H
+#ifndef LITTLENAVMAP_MAPPAINTERSHIP_H
+#define LITTLENAVMAP_MAPPAINTERSHIP_H
 
-#include "mapgui/mappainter.h"
-
-#include "common/maptypes.h"
+#include "mappainter/mappaintervehicle.h"
 
 /*
- * Draws userpoints. Does not use caching to avoid update problems when changing data.
+ * Draws the simulator ships
  */
-class MapPainterUser :
-  public MapPainter
+class MapPainterShip :
+  public MapPainterVehicle
 {
-  Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterUser(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterUser();
+  MapPainterShip(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  virtual ~MapPainterShip() override;
 
   virtual void render(PaintContext *context) override;
 
-private:
-  void paintUserpoints(PaintContext *context, const QList<map::MapUserpoint>& userpoints, bool drawFast);
-
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERUSER_H
+#endif // LITTLENAVMAP_MAPPAINTERSHIP_H

@@ -143,22 +143,21 @@ SOURCES += src/main.cpp\
     src/search/searchcontroller.cpp \
     src/search/airportsearch.cpp \
     src/search/navsearch.cpp \
-    src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
     src/mapgui/maplayersettings.cpp \
-    src/mapgui/mappainter.cpp \
-    src/mapgui/mappainterairport.cpp \
-    src/mapgui/mappaintermark.cpp \
+    src/mappainter/mappainter.cpp \
+    src/mappainter/mappainterairport.cpp \
+    src/mappainter/mappaintermark.cpp \
     src/mapgui/mapscale.cpp \
     src/search/airporticondelegate.cpp \
     src/common/maptypes.cpp \
     src/common/mapcolors.cpp \
-    src/mapgui/mappainternav.cpp \
+    src/mappainter/mappainternav.cpp \
     src/search/navicondelegate.cpp \
-    src/mapgui/mappainterils.cpp \
+    src/mappainter/mappainterils.cpp \
     src/common/maptools.cpp \
     src/route/routecontroller.cpp \
-    src/mapgui/mappainterroute.cpp \
+    src/mappainter/mappainterroute.cpp \
     src/mapgui/maptooltip.cpp \
     src/common/formatter.cpp \
     src/common/coordinateconverter.cpp \
@@ -173,7 +172,7 @@ SOURCES += src/main.cpp\
     src/route/routenetwork.cpp \
     src/connect/connectdialog.cpp \
     src/connect/connectclient.cpp \
-    src/mapgui/mappainteraircraft.cpp \
+    src/mappainter/mappainteraircraft.cpp \
     src/profile/profilewidget.cpp \
     src/common/aircrafttrack.cpp \
     src/info/infocontroller.cpp \
@@ -203,14 +202,14 @@ SOURCES += src/main.cpp\
     src/search/abstractsearch.cpp \
     src/search/proceduresearch.cpp \
     src/common/proctypes.cpp \
-    src/mapgui/mappainterairspace.cpp \
+    src/mappainter/mappainterairspace.cpp \
     src/db/databaseerrordialog.cpp \
     src/gui/airspacetoolbarhandler.cpp \
     src/navapp.cpp \
     src/common/mapflags.cpp \
     src/common/elevationprovider.cpp \
-    src/mapgui/mappaintership.cpp \
-    src/mapgui/mappaintervehicle.cpp \
+    src/mappainter/mappaintership.cpp \
+    src/mappainter/mappaintervehicle.cpp \
     src/common/updatehandler.cpp \
     src/gui/updatedialog.cpp \
     src/query/airportquery.cpp \
@@ -223,7 +222,7 @@ SOURCES += src/main.cpp\
     src/userdata/userdatacontroller.cpp \
     src/userdata/userdatadialog.cpp \
     src/userdata/userdataicons.cpp \
-    src/mapgui/mappainteruser.cpp \
+    src/mappainter/mappainteruser.cpp \
     src/userdata/userdataexportdialog.cpp \
     src/weather/weatherreporter.cpp \
     src/online/onlinedatacontroller.cpp \
@@ -239,7 +238,7 @@ SOURCES += src/main.cpp\
     src/mapgui/aprongeometrycache.cpp \
     src/gui/timedialog.cpp \
     src/gui/stylehandler.cpp \
-    src/mapgui/mappainteraltitude.cpp \
+    src/mappainter/mappainteraltitude.cpp \
     src/gui/trafficpatterndialog.cpp \
     src/profile/profilescrollarea.cpp \
     src/profile/profilelabelwidget.cpp \
@@ -249,11 +248,13 @@ SOURCES += src/main.cpp\
     src/perf/aircraftperfdialog.cpp \
     src/perf/aircraftperfcontroller.cpp \
     src/common/unitstringtool.cpp \
-    src/mapgui/mappainterweather.cpp \
+    src/mappainter/mappainterweather.cpp \
     src/common/airportfiles.cpp \
     src/common/tabindexes.cpp \
     src/route/routeexportdata.cpp \
-    src/route/routeexportdialog.cpp
+    src/route/routeexportdialog.cpp \
+    src/mapgui/mappaintwidget.cpp \
+    src/mappainter/mappaintlayer.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -263,22 +264,21 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/searchcontroller.h \
     src/search/airportsearch.h \
     src/search/navsearch.h \
-    src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
     src/mapgui/maplayersettings.h \
-    src/mapgui/mappainter.h \
-    src/mapgui/mappainterairport.h \
-    src/mapgui/mappaintermark.h \
+    src/mappainter/mappainter.h \
+    src/mappainter/mappainterairport.h \
+    src/mappainter/mappaintermark.h \
     src/mapgui/mapscale.h \
     src/search/airporticondelegate.h \
     src/common/maptypes.h \
     src/common/mapcolors.h \
-    src/mapgui/mappainternav.h \
+    src/mappainter/mappainternav.h \
     src/search/navicondelegate.h \
-    src/mapgui/mappainterils.h \
+    src/mappainter/mappainterils.h \
     src/common/maptools.h \
     src/route/routecontroller.h \
-    src/mapgui/mappainterroute.h \
+    src/mappainter/mappainterroute.h \
     src/mapgui/maptooltip.h \
     src/common/formatter.h \
     src/common/coordinateconverter.h \
@@ -293,7 +293,7 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routenetwork.h \
     src/connect/connectdialog.h \
     src/connect/connectclient.h \
-    src/mapgui/mappainteraircraft.h \
+    src/mappainter/mappainteraircraft.h \
     src/profile/profilewidget.h \
     src/common/aircrafttrack.h \
     src/info/infocontroller.h \
@@ -323,14 +323,14 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/abstractsearch.h \
     src/search/proceduresearch.h \
     src/common/proctypes.h \
-    src/mapgui/mappainterairspace.h \
+    src/mappainter/mappainterairspace.h \
     src/db/databaseerrordialog.h \
     src/gui/airspacetoolbarhandler.h \
     src/navapp.h \
     src/common/mapflags.h \
     src/common/elevationprovider.h \
-    src/mapgui/mappaintership.h \
-    src/mapgui/mappaintervehicle.h \
+    src/mappainter/mappaintership.h \
+    src/mappainter/mappaintervehicle.h \
     src/common/updatehandler.h \
     src/gui/updatedialog.h \
     src/query/airportquery.h \
@@ -343,7 +343,7 @@ HEADERS  += src/gui/mainwindow.h \
     src/userdata/userdatacontroller.h \
     src/userdata/userdatadialog.h \
     src/userdata/userdataicons.h \
-    src/mapgui/mappainteruser.h \
+    src/mappainter/mappainteruser.h \
     src/userdata/userdataexportdialog.h \
     src/weather/weatherreporter.h \
     src/online/onlinedatacontroller.h \
@@ -359,7 +359,7 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/aprongeometrycache.h \
     src/gui/timedialog.h \
     src/gui/stylehandler.h \
-    src/mapgui/mappainteraltitude.h \
+    src/mappainter/mappainteraltitude.h \
     src/gui/trafficpatterndialog.h \
     src/profile/profilescrollarea.h \
     src/profile/profilelabelwidget.h \
@@ -369,11 +369,13 @@ HEADERS  += src/gui/mainwindow.h \
     src/perf/aircraftperfdialog.h \
     src/perf/aircraftperfcontroller.h \
     src/common/unitstringtool.h \
-    src/mapgui/mappainterweather.h \
+    src/mappainter/mappainterweather.h \
     src/common/airportfiles.h \
     src/common/tabindexes.h \
     src/route/routeexportdata.h \
-    src/route/routeexportdialog.h
+    src/route/routeexportdialog.h \
+    src/mapgui/mappaintwidget.h \
+    src/mappainter/mappaintlayer.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

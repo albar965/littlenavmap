@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappaintermark.h"
+#include "mappainter/mappaintermark.h"
 
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
@@ -49,8 +49,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapScale *mapScale)
-  : MapPainter(mapWidget, mapScale)
+MapPainterMark::MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale)
+  : MapPainter(mapWidgetParam, mapScale)
 {
 }
 
@@ -80,7 +80,7 @@ void MapPainterMark::render(PaintContext *context)
 void MapPainterMark::paintMark(const PaintContext *context)
 {
   int x, y;
-  if(wToS(mapWidget->getSearchMarkPos(), x, y))
+  if(wToS(mapPaintWidget->getSearchMarkPos(), x, y))
   {
     int size = context->sz(context->symbolSizeAirport, 10);
     int size2 = context->sz(context->symbolSizeAirport, 8);
@@ -102,7 +102,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
   GeoPainter *painter = context->painter;
 
   int x, y;
-  if(wToS(mapWidget->getHomePos(), x, y))
+  if(wToS(mapPaintWidget->getHomePos(), x, y))
   {
     int size = atools::roundToInt(context->szF(context->textSizeRangeDistance, 24));
 
@@ -115,7 +115,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
 void MapPainterMark::paintHighlights(PaintContext *context)
 {
   // Draw hightlights from the search result view ------------------------------------------
-  const MapSearchResult& highlightResultsSearch = mapWidget->getSearchHighlights();
+  const MapSearchResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
   int size = context->sz(context->symbolSizeAirport, 6);
 
   QList<Pos> positions;
@@ -175,11 +175,11 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     paintAirspace(context, airspace, size);
 
   // Draw boundary for airspaces higlighted in the information window ------------------------------------------
-  for(const MapAirspace& airspace: mapWidget->getAirspaceHighlights())
+  for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
     paintAirspace(context, airspace, size);
 
   // Draw hightlights from the approach selection ------------------------------------------
-  const proc::MapProcedureLeg& leg = mapWidget->getProcedureLegHighlights();
+  const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
 
   positions.clear();
 
@@ -257,7 +257,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
   // Draw hightlights from the flight plan view ------------------------------------------
-  const QList<int>& routeHighlightResults = mapWidget->getRouteHighlights();
+  const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
   positions.clear();
   for(int idx : routeHighlightResults)
   {
@@ -286,7 +286,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   // Draw hightlight from the elevation profile view ------------------------------------------
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::profileHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
-  const Pos& pos = mapWidget->getProfileHighlight();
+  const Pos& pos = mapPaintWidget->getProfileHighlight();
   if(pos.isValid())
   {
     int x, y;
@@ -364,7 +364,7 @@ void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
 void MapPainterMark::paintRangeRings(const PaintContext *context)
 {
-  const QList<map::RangeMarker>& rangeRings = mapWidget->getRangeRings();
+  const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeRings();
   GeoPainter *painter = context->painter;
 
   painter->setBrush(Qt::NoBrush);
@@ -443,13 +443,13 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 /* Draw a compass rose for the user aircraft with tick marks. */
 void MapPainterMark::paintCompassRose(const PaintContext *context)
 {
-  if(context->objectTypes & map::COMPASS_ROSE && mapWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
+  if(context->objectTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
     atools::util::PainterContextSaver saver(context->painter);
     Q_UNUSED(saver);
 
     Marble::GeoPainter *painter = context->painter;
-    const atools::fs::sc::SimConnectUserAircraft& aircraft = mapWidget->getUserAircraft();
+    const atools::fs::sc::SimConnectUserAircraft& aircraft = mapPaintWidget->getUserAircraft();
     Pos pos = aircraft.getPosition();
 
     // Use either aircraft position or viewport center
@@ -514,10 +514,10 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
           drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.84f), endpoints.at(i)));
         else if((i % (10 / 5)) == 0) // 10 degree ticks
         {
-          if(mapWidget->distance() < 3200 /* km */)
+          if(mapPaintWidget->distance() < 3200 /* km */)
             drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.92f), endpoints.at(i)));
         }
-        else if(mapWidget->distance() < 6400 /* km */) // 5 degree ticks
+        else if(mapPaintWidget->distance() < 6400 /* km */) // 5 degree ticks
           drawLineStraight(context, Line(pos.interpolate(endpoints.at(i), radiusMeter, 0.95f), endpoints.at(i)));
       }
     }
@@ -578,7 +578,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
       {
         if((i % (90 / 5)) == 0)
         {
-          if(mapWidget->distance() < 6400 /* km */)
+          if(mapPaintWidget->distance() < 6400 /* km */)
           {
             if(!endpointsScreen.at(i).isNull())
             {
@@ -601,7 +601,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     }
 
     // Draw small 15 deg labels ======================================================
-    if(mapWidget->distance() < 1600 /* km */ && context->dOptRose(opts::ROSE_DEGREE_LABELS))
+    if(mapPaintWidget->distance() < 1600 /* km */ && context->dOptRose(opts::ROSE_DEGREE_LABELS))
     {
       // Reduce font size
       context->szFont(context->textSizeCompassRose * 0.8f);
@@ -712,7 +712,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   context->szFont(context->textSizeRangeDistance);
   QFontMetrics metrics = painter->fontMetrics();
 
-  const QList<map::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
+  const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarkers();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   TextPlacement textPlacement(context->painter, this);
 
@@ -857,7 +857,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
-  const QList<TrafficPattern>& patterns = mapWidget->getTrafficPatterns();
+  const QList<TrafficPattern>& patterns = mapPaintWidget->getTrafficPatterns();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   context->szFont(context->textSizeRangeDistance);
 
@@ -1026,9 +1026,11 @@ void MapPainterMark::paintUserpointDrag(const PaintContext *context)
   // Get screen position an pixmap
   QPoint cur;
   QPixmap pixmap;
-  mapWidget->getUserpointDragPoints(cur, pixmap);
+  MapWidget *mapWidget = dynamic_cast<MapWidget *>(mapPaintWidget);
+  if(mapWidget != nullptr)
+    mapWidget->getUserpointDragPoints(cur, pixmap);
 
-  if(!cur.isNull() && mapWidget->rect().contains(cur) && !pixmap.isNull())
+  if(!cur.isNull() && mapPaintWidget->rect().contains(cur) && !pixmap.isNull())
     context->painter->drawPixmap(cur.x() - pixmap.width() / 2, cur.y() - pixmap.height() / 2, pixmap);
 }
 
@@ -1039,7 +1041,10 @@ void MapPainterMark::paintRouteDrag(const PaintContext *context)
   QPoint cur;
 
   // Flight plan editing use always three points except at the end
-  mapWidget->getRouteDragPoints(from, to, cur);
+  MapWidget *mapWidget = dynamic_cast<MapWidget *>(mapPaintWidget);
+  if(mapWidget != nullptr)
+    mapWidget->getRouteDragPoints(from, to, cur);
+
   if(!cur.isNull())
   {
     GeoDataCoordinates curGeo;

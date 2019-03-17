@@ -15,25 +15,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERALTITUDE_H
-#define LITTLENAVMAP_MAPPAINTERALTITUDE_H
+#ifndef LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
+#define LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
 
-#include "mapgui/mappainter.h"
-
-class SymbolPainter;
+#include "mappainter/mappaintervehicle.h"
 
 /*
- * Draws MORA (minimum off route altitude) data and grid on the map
+ * Draws the simulator user aircraft and aircraft track
  */
-class MapPainterAltitude :
-  public MapPainter
+class MapPainterAircraft :
+  public MapPainterVehicle
 {
 public:
-  MapPainterAltitude(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterAltitude();
+  MapPainterAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  virtual ~MapPainterAircraft() override;
 
   virtual void render(PaintContext *context) override;
 
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERALTITUDE_H
+#endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

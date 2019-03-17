@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainterils.h"
+#include "mappainter/mappainterils.h"
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
@@ -33,7 +33,7 @@ using namespace Marble;
 using namespace atools::geo;
 using map::MapIls;
 
-MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapScale *mapScale)
+MapPainterIls::MapPainterIls(MapPaintWidget* mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }

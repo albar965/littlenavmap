@@ -15,39 +15,39 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERWEATHER_H
-#define LITTLENAVMAP_MAPPAINTERWEATHER_H
+#ifndef LITTLENAVMAP_MAPPAINTERILS_H
+#define LITTLENAVMAP_MAPPAINTERILS_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
-namespace atools {
-namespace fs {
-namespace weather {
-class Metar;
-}
-}
-}
+class SymbolPainter;
 
-struct PaintAirportType;
+namespace map {
+struct MapIls;
+
+}
 
 /*
- * Draws airport weather symbols.
+ * Draws the ILS feathers and text.
  */
-class MapPainterWeather :
+class MapPainterIls :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterWeather(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterWeather() override;
+  MapPainterIls(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  virtual ~MapPainterIls() override;
 
   virtual void render(PaintContext *context) override;
 
 private:
-  void drawAirportWeather(PaintContext *context, const atools::fs::weather::Metar& metar,
-                          float x, float y);
+  /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */
+  static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
+  static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
+
+  void drawIlsSymbol(const PaintContext *context, const map::MapIls& ils);
 
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERWEATHER_H
+#endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

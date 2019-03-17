@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERROUTE_H
 #define LITTLENAVMAP_MAPPAINTERROUTE_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 #include "geo/line.h"
 
@@ -58,8 +58,8 @@ class MapPainterRoute :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterRoute(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
-  virtual ~MapPainterRoute();
+  MapPainterRoute(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
+  virtual ~MapPainterRoute() override;
 
   virtual void render(PaintContext *context) override;
 

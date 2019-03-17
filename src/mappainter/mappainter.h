@@ -45,9 +45,11 @@ class AirspaceQuery;
 class AirportQuery;
 class MapScale;
 class MapWidget;
+class MapPaintWidget;
 
 namespace map {
 struct MapAirport;
+
 }
 
 /* Struct that is passed on each paint event to all painters */
@@ -173,7 +175,7 @@ class MapPainter :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainter(MapWidget *marbleWidget, MapScale *mapScale);
+  MapPainter(MapPaintWidget *marbleWidget, MapScale *mapScale);
   virtual ~MapPainter();
 
   virtual void render(PaintContext *context) = 0;
@@ -233,7 +235,7 @@ protected:
   const int CIRCLE_MAX_POINTS = 72;
 
   SymbolPainter *symbolPainter;
-  MapWidget *mapWidget;
+  MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
   AirspaceQuery *airspaceQuery, *airspaceQueryOnline;
   AirportQuery *airportQuery;

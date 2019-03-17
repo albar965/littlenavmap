@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 #include "mapgui/mapscale.h"
 #include "navapp.h"
@@ -37,8 +37,8 @@ void PaintContext::szFont(float scale) const
 }
 
 // =================================================
-MapPainter::MapPainter(MapWidget *parentMapWidget, MapScale *mapScale)
-  : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), scale(mapScale)
+MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale)
+  : CoordinateConverter(parentMapWidget->viewport()), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
   mapQuery = NavApp::getMapQuery();
   airspaceQuery = NavApp::getAirspaceQuery();

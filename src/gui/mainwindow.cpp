@@ -776,7 +776,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, map::updateUnits);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapPaintWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
@@ -790,7 +790,7 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapWidget::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
@@ -806,15 +806,15 @@ void MainWindow::connectAllSlots()
           NavApp::getAircraftPerfController(), &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
-  connect(routeExport, &RouteExport::showRect, mapWidget, &MapWidget::showRect);
+  connect(routeExport, &RouteExport::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeExport, &RouteExport::selectDepartureParking, routeController, &RouteController::selectDepartureParking);
 
   // Route controller signals =======================================================
-  connect(routeController, &RouteController::showRect, mapWidget, &MapWidget::showRect);
-  connect(routeController, &RouteController::showPos, mapWidget, &MapWidget::showPos);
+  connect(routeController, &RouteController::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(routeController, &RouteController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(routeController, &RouteController::routeChanged, mapWidget, &MapWidget::routeChanged);
-  connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapWidget::routeAltitudeChanged);
+  connect(routeController, &RouteController::routeChanged, mapWidget, &MapPaintWidget::routeChanged);
+  connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapPaintWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
 
@@ -822,8 +822,8 @@ void MainWindow::connectAllSlots()
           &ProcedureSearch::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
-  connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
-  connect(profileWidget, &ProfileWidget::showPos, mapWidget, &MapWidget::showPos);
+  connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapPaintWidget::changeProfileHighlight);
+  connect(profileWidget, &ProfileWidget::showPos, mapWidget, &MapPaintWidget::showPos);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
@@ -832,8 +832,8 @@ void MainWindow::connectAllSlots()
 
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
-  connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
-  connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(airportSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(airportSearch, &SearchBaseTable::showProcedures,
@@ -845,7 +845,7 @@ void MainWindow::connectAllSlots()
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
-  connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(navSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -853,7 +853,7 @@ void MainWindow::connectAllSlots()
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
-  connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(userSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -895,15 +895,15 @@ void MainWindow::connectAllSlots()
   OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
 
   // Online client search ===================================================================================
-  connect(clientSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
-  connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(clientSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(clientSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(clientSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
 
   // Online center search ===================================================================================
-  connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
-  connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(centerSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(centerSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -924,9 +924,9 @@ void MainWindow::connectAllSlots()
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           NavApp::getAirspaceQueryOnline(), &AirspaceQuery::clearCache);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          mapWidget, &MapWidget::onlineClientAndAtcUpdated);
+          mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          mapWidget, &MapWidget::onlineNetworkChanged);
+          mapWidget, &MapPaintWidget::onlineNetworkChanged);
 
   // Update info
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
@@ -946,16 +946,16 @@ void MainWindow::connectAllSlots()
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
   connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
   connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
-  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
           &RouteController::routeAttachProcedure);
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
 
-  connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
-  connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
+  connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
+  connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
 
   // Use this event to show scenery library dialog on first start after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -1064,13 +1064,14 @@ void MainWindow::connectAllSlots()
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
-  connect(mapWidget, &MapWidget::distanceChanged, this, &MainWindow::distanceChanged);
-  connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
-  connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
+  connect(mapWidget, &MapPaintWidget::distanceChanged, this, &MainWindow::distanceChanged);
+  connect(mapWidget, &MapPaintWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
   connect(mapWidget, &MapWidget::showApproaches,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
-  connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
+  connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged,
+          routeController, &RouteController::shownMapFeaturesChanged);
   connect(mapWidget, &MapWidget::addUserpointFromMap,
           NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
   connect(mapWidget, &MapWidget::editUserpointFromMap,
@@ -1136,8 +1137,8 @@ void MainWindow::connectAllSlots()
   // Clear selection and highlights
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, searchController, &SearchController::clearSelection);
-  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapWidget::clearSearchHighlights);
-  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapWidget::clearAirspaceHighlights);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearSearchHighlights);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearAirspaceHighlights);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, this, &MainWindow::updateHighlightActionStates);
 
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1185,10 +1186,10 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
-  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::showAircraft);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
 
   // Update jump back
-  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::jumpBackToAircraftCancel);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);
 
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
@@ -1215,7 +1216,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
   // Messages about database query result status
-  connect(mapWidget, &MapWidget::resultTruncated, this, &MainWindow::resultTruncated);
+  connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
 
   connect(NavApp::getDatabaseManager(), &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(NavApp::getDatabaseManager(), &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
@@ -1244,8 +1245,9 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::sunShadingTimeChanged);
 
   // Map widget needs to clear track first
-  connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapPaintWidget::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget,
+          &MapPaintWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
@@ -1259,13 +1261,13 @@ void MainWindow::connectAllSlots()
           &ProfileWidget::disconnectedFromSimulator);
   connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
-  connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
+  connect(mapWidget, &MapPaintWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
-  connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
 
-  connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
+  connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirportWeather);
 

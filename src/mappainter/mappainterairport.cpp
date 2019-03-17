@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/mappainterairport.h"
+#include "mappainter/mappainterairport.h"
 
 #include "common/symbolpainter.h"
 #include "mapgui/mapscale.h"
@@ -55,7 +55,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapScale *mapScale,
+MapPainterAirport::MapPainterAirport(MapPaintWidget* mapWidget, MapScale *mapScale,
                                      const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {

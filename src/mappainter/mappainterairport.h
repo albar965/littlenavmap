@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERAIRPORT_H
 #define LITTLENAVMAP_MAPPAINTERAIRPORT_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 #include "fs/common/xpgeometry.h"
 
@@ -46,7 +46,7 @@ class MapPainterAirport :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterAirport(MapWidget *mapWidget, MapScale *mapScale, const Route *routeParam);
+  MapPainterAirport(MapPaintWidget *mapPaintWidget, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterAirport() override;
 
   virtual void render(PaintContext *context) override;

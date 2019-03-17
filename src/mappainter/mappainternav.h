@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERNAV_H
 #define LITTLENAVMAP_MAPPAINTERNAV_H
 
-#include "mapgui/mappainter.h"
+#include "mappainter/mappainter.h"
 
 #include "common/maptypes.h"
 
@@ -33,8 +33,8 @@ class MapPainterNav :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterNav(MapWidget *mapWidget, MapScale *mapScale);
-  virtual ~MapPainterNav();
+  MapPainterNav(MapPaintWidget *mapPaintWidget, MapScale *mapScale);
+  virtual ~MapPainterNav() override;
 
   virtual void render(PaintContext *context) override;
 
