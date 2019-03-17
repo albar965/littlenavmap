@@ -311,6 +311,20 @@ MainWindow::MainWindow()
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
+
+#ifdef DEBUG_INFORMATION
+
+  QAction *debugAction = new QAction("Debug Action");
+  debugAction->setShortcut(QKeySequence("Ctrl+F1"));
+  debugAction->setShortcutContext(Qt::ApplicationShortcut);
+  this->addAction(debugAction);
+
+  ui->menuHelp->addSeparator();
+  ui->menuHelp->addAction(debugAction);
+  connect(debugAction, &QAction::triggered, this, &MainWindow::debugActionTriggered);
+
+#endif
+
 }
 
 MainWindow::~MainWindow()
@@ -389,6 +403,16 @@ MainWindow::~MainWindow()
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 }
+
+#ifdef DEBUG_INFORMATION
+
+void MainWindow::debugActionTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  mapSaveImageAviTab();
+}
+
+#endif
 
 void MainWindow::updateMap() const
 {

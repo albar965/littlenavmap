@@ -311,6 +311,11 @@ private:
   void actionShortcutNavaidInformationTriggered();
   void actionShortcutAircraftProgressTriggered();
 
+#ifdef DEBUG_INFORMATION
+  void debugActionTriggered();
+
+#endif
+
   /* Original unchanged window title */
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
