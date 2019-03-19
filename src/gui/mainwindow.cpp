@@ -1824,6 +1824,9 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
+  Q_UNUSED(x);
+  Q_UNUSED(y);
+
   if(pos.isValid())
   {
     QString text(Unit::coords(pos));
