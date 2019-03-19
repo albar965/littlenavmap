@@ -25,7 +25,7 @@
 #
 # ATOOLS_LIB_PATH
 # Optional. Path to atools static library. Default is "../build-atools-$${CONF_TYPE}"
-# ("../build-atools-$${CONF_TYPE}/$${CONF_TYPE}" on Windows) if not set.
+# if not set.
 #
 # MARBLE_INC_PATH
 # Required. Path to Marble include files of a Marble installation.
