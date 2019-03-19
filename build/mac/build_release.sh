@@ -38,41 +38,41 @@ export DEPLOY_BASE="${APROJECTS}/deploy"
 
 # ===========================================================================
 # ========================== atools
-rm -rf ${APROJECTS}/build-atools-release
-mkdir -p ${APROJECTS}/build-atools-release
-cd ${APROJECTS}/build-atools-release
+rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
+cd ${APROJECTS}/build-atools-${CONF_TYPE}
 
-${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
+${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
 make -j2
 
 # ===========================================================================
 # ========================== littlexpconnect
-rm -rf ${APROJECTS}/build-littlexpconnect-release
-mkdir -p ${APROJECTS}/build-littlexpconnect-release
-cd ${APROJECTS}/build-littlexpconnect-release
+rm -rf ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
+cd ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 
-${QMAKE_SHARED} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
+${QMAKE_SHARED} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
 make -j2
 make deploy -i -l
 
 # ===========================================================================
 # ========================== littlenavconnect
-rm -rf ${APROJECTS}/build-littlenavconnect-release
-mkdir -p ${APROJECTS}/build-littlenavconnect-release
-cd ${APROJECTS}/build-littlenavconnect-release
+rm -rf ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
+cd ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 
-${QMAKE_SHARED} ${APROJECTS}/littlenavconnect/littlenavconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
+${QMAKE_SHARED} ${APROJECTS}/littlenavconnect/littlenavconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
 make -j2
 make copydata
 make deploy -i -l
 
 # ===========================================================================
 # ========================== littlenavmap
-rm -rf ${APROJECTS}/build-littlenavmap-release
-mkdir -p ${APROJECTS}/build-littlenavmap-release
-cd ${APROJECTS}/build-littlenavmap-release
+rm -rf ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
+cd ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 
-${QMAKE_SHARED} ${APROJECTS}/littlenavmap/littlenavmap.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=release
+${QMAKE_SHARED} ${APROJECTS}/littlenavmap/littlenavmap.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
 make -j2
 make copydata
 make deploy -i -l
