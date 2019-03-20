@@ -1,5 +1,7 @@
 @echo off
 
+if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+
 rem === Deploy built programs. ZIP, check with Windows Defender and copy them to network shares =============================
 
 for /f "delims=" %%# in ('powershell get-date -format "{yyyyMMdd-HHmm}"') do @set FILEDATE=%%#

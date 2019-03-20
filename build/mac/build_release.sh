@@ -23,10 +23,11 @@ if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 # export MARBLE_INC_PATH=/home/alex/Programme/Marble-debug/include
 
 export CONF_TYPE=${CONF_TYPE:-"release"}
-export ATOOLS_INC_PATH=${ATOOLS_INC_PATH:-"../atools/src"}
-export ATOOLS_LIB_PATH=${ATOOLS_LIB_PATH:-"../build-atools-${CONF_TYPE}"}
+export ATOOLS_INC_PATH=${ATOOLS_INC_PATH:-"${APROJECTS}/atools/src"}
+export ATOOLS_LIB_PATH=${ATOOLS_LIB_PATH:-"${APROJECTS}/build-atools-${CONF_TYPE}"}
 export MARBLE_INC_PATH=${MARBLE_INC_PATH:-"${APROJECTS}/Marble-${CONF_TYPE}/include"}
 export MARBLE_LIB_PATH=${MARBLE_LIB_PATH:-"${APROJECTS}/Marble-${CONF_TYPE}/lib"}
+export XPSDK_BASE=${XPSDK_BASE:-"${APROJECTS}/X-Plane SDK"}
 export DATABASE_BASE=${DATABASE_BASE:-"${APROJECTS}/little_navmap_db"}
 export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 
