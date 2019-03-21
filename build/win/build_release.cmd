@@ -32,17 +32,20 @@ if defined DATABASE_BASE ( echo %DATABASE_BASE% ) else ( set DATABASE_BASE=%APRO
 if defined HELP_BASE ( echo %HELP_BASE% ) else ( set HELP_BASE=%APROJECTS%\little_navmap_help)
 if defined ATOOLS_GIT_PATH ( echo %ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
 if defined OPENSSL_PATH ( echo %OPENSSL_PATH% ) else ( set OPENSSL_PATH=C:\OpenSSL-Win32)
-if defined ATOOLS_SIMCONNECT_PATH ( echo %ATOOLS_SIMCONNECT_PATH% ) else ( set ATOOLS_SIMCONNECT_PATH="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK")
-if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
+
+rem Windows/qmake cannot deal with paths containing spaces/quotes - defines these variables in the Windows GUI
+rem if defined ATOOLS_SIMCONNECT_PATH ( echo ATOOLS_SIMCONNECT_PATH ) else ( set ATOOLS_SIMCONNECT_PATH="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK")
+rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for all builds
 if defined PATH_SHARED ( echo %PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\5.9.5\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin)
 
 rem Defines the used Qt for Xpconnect
-if defined PATH_STATIC ( echo %PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\bin;C:\msys64\mingw64\bin)
+if defined PATH_STATIC ( echo %PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt5-static\bin;C:\msys64\mingw64\bin)
 
 rem === Build atools, littlenavconnect and littlenavmap =============================
 rem === Merge all files into one littlenavmap directory ===========================
+
 
 rem ===========================================================================
 rem First delete all deploy directories =======================================
@@ -68,8 +71,8 @@ setlocal
 
 rem ===========================================================================
 rem ========================== atools 32 bit
-pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
 set PATH=%PATH%;%PATH_SHARED%
+pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
 
 del /S /Q /F "%APROJECTS%\build-atools-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-atools-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-atools-%CONF_TYPE%\%%f"
@@ -84,7 +87,6 @@ popd
 rem ===========================================================================
 rem ========================== littlenavconnect 32 bit
 pushd "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%"
-set PATH=%PATH%;%PATH_SHARED%
 echo %PATH%
 del /S /Q /F "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%\%%f"
@@ -97,14 +99,11 @@ IF ERRORLEVEL 1 goto :err
 mingw32-make.exe deploy
 IF ERRORLEVEL 1 goto :err
 popd
-endlocal
 
 
 rem ===========================================================================
 rem ========================== littlenavmap 32 bit
-setlocal
 pushd "%APROJECTS%\build-littlenavmap-%CONF_TYPE%"
-set PATH=%PATH%;%PATH_SHARED%
 
 del /S /Q /F "%APROJECTS%\build-littlenavmap-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlenavmap-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-littlenavmap-%CONF_TYPE%\%%f"
@@ -125,8 +124,6 @@ setlocal
 pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
 set PATH=%PATH%;%PATH_STATIC%
 
-set ATOOLS_NO_FS=true
-
 del /S /Q /F "%APROJECTS%\build-atools-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-atools-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-atools-%CONF_TYPE%\%%f"
 IF ERRORLEVEL 1 goto :err
@@ -139,8 +136,8 @@ popd
 
 rem ===========================================================================
 rem ========================== littlexpconnect 64 bit
+
 pushd "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%"
-set PATH=%PATH%;%PATH_STATIC%
 
 del /S /Q /F "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-littlexpconnect-%CONF_TYPE%\%%f"

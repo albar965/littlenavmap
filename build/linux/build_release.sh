@@ -87,8 +87,6 @@ rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 
-export ATOOLS_NO_FS=true
-
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
 make -j4
 
