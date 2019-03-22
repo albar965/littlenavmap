@@ -35,7 +35,12 @@
 # Required. Path to Marble library files of a Marble installation.
 # Example: /home/YOU/Programs/Marble/lib
 # Also reads plugins from "$$MARBLE_LIB_PATH/../plugins" or "$$MARBLE_LIB_PATH/lib/plugins" depending on OS.
-
+#
+# INSTALL_MARBLE_DYLIB
+# Required for macOS only. Path to the Marble shared library in the Marble build folder
+# that was created by running "make all".
+# Example: $HOME/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib
+#
 # OPENSSL_PATH
 # Required for Windows only. Base path of WinSSL installation (https://slproweb.com/products/Win32OpenSSL.html).
 # For example: C:\\OpenSSL-Win32
@@ -83,6 +88,7 @@ ATOOLS_INC_PATH=$$(ATOOLS_INC_PATH)
 ATOOLS_LIB_PATH=$$(ATOOLS_LIB_PATH)
 MARBLE_INC_PATH=$$(MARBLE_INC_PATH)
 MARBLE_LIB_PATH=$$(MARBLE_LIB_PATH)
+INSTALL_MARBLE_DYLIB=$$(INSTALL_MARBLE_DYLIB)
 OPENSSL_PATH=$$(OPENSSL_PATH)
 GIT_PATH=$$(ATOOLS_GIT_PATH)
 SIMCONNECT_PATH=$$(ATOOLS_SIMCONNECT_PATH)
@@ -103,6 +109,9 @@ isEmpty(HELP_BASE) : HELP_BASE=$$PWD/../little_navmap_help
 
 isEmpty(ATOOLS_INC_PATH) : ATOOLS_INC_PATH=$$PWD/../atools/src
 isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
+
+isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
+isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
 # =======================================================================
 # Set compiler flags and paths
@@ -177,6 +186,7 @@ message(ATOOLS_INC_PATH: $$ATOOLS_INC_PATH)
 message(ATOOLS_LIB_PATH: $$ATOOLS_LIB_PATH)
 message(MARBLE_INC_PATH: $$MARBLE_INC_PATH)
 message(MARBLE_LIB_PATH: $$MARBLE_LIB_PATH)
+macx : message(MARBLE_BUILD_PATH: $$MARBLE_BUILD_PATH)
 message(DEPLOY_BASE: $$DEPLOY_BASE)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -604,11 +614,19 @@ unix:!macx {
 
 # Mac specific deploy target
 macx {
-  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
-         -change /Users/alex/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib \
+
+INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
+         -change  $$INSTALL_MARBLE_DYLIB \
           @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+
+#  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
+#         -change $$clean_path($$MARBLE_BUILD_PATH/src/lib/marble/libmarblewidget-qt5.25.dylib) \
+#          @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
   DEPLOY_DIR=\"$$PWD/../deploy\"
+
+message(INSTALL_MARBLE_DYLIB_CMD: $$INSTALL_MARBLE_DYLIB_CMD)
 
   deploy.commands = rm -Rfv $$DEPLOY_APP &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
@@ -643,9 +661,9 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
-  deploy.commands += cp -fv $$[QT_INSTALL_PLUGINS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
-  deploy.commands += cp -fv $$[QT_INSTALL_PLUGINS]/qt_??_??.qm  $$DEPLOY_APP/Contents/MacOS &&
-  deploy.commands += cp -fv $$[QT_INSTALL_PLUGINS]/qtbase*.qm  $$DEPLOY_APP/Contents/MacOS &&
+  deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
+  deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_APP/Contents/MacOS &&
+  deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qtbase*.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -fv $$PWD/README.txt $$DEPLOY_DIR/README-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/CHANGELOG.txt $$DEPLOY_DIR/CHANGELOG-LittleNavmap.txt

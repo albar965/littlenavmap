@@ -37,6 +37,8 @@ export QMAKE_SHARED=${QMAKE_SHARED:-"qmake"}
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
 
+export INSTALL_MARBLE_DYLIB=/Users/alex/Projekte/build-marble-release/src/lib/marble/libmarblewidget-qt5.25.dylib
+
 # ===========================================================================
 # ========================== atools
 rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
