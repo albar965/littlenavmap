@@ -1,6 +1,4 @@
-# ![Little Navmap](assets/images/navroute.png) Little Navmap
-
-## Links {#links}
+# ![Little Navmap](https://albar965.github.io/assets/images/navroute.png) Little Navmap
 
 [**► Releases and Downloads**](https://github.com/albar965/littlenavmap/releases)
 
@@ -16,8 +14,7 @@
 
 [![Little Navmap](https://albar965.github.io/assets/images/Tipp_FSMagazin_D_Neu_2014_50.png)](https://www.facebook.com/FSMAGAZIN/posts/1349379408450042)
 
-| ---- | ---- |
-| [![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg) | [![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](assets/images/sunshadow.jpg) |
+[![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg)  [![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg)
 
 ## Version 2.2.4 Features
 
