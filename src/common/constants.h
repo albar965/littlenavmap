@@ -21,9 +21,6 @@
 #include <QLatin1Literal>
 #include <QSize>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-const-variable"
-
 /* Define to skip caching of approaches when loading */
 // #define DEBUG_APPROACH_NO_CACHE
 
@@ -338,7 +335,5 @@ extern const QSize DEFAULT_MAINWINDOW_SIZE;
 const QString helpLanguageOnline();
 
 } // namespace lnm
-
-#pragma GCC diagnostic pop
 
 #endif // LITTLENAVMAP_CONSTANTS_H
