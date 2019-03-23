@@ -2,17 +2,11 @@
 
 [**► Releases and Downloads**](https://github.com/albar965/littlenavmap/releases)
 
-[**► Translation Packages**](https://albar965.github.io/littlenavmaptranslations.html)
-
 [**► Screenshots**](https://albar965.github.io/littlenavmapscreens.html)
 
 [**► User manuals for _Little Navmap_ and _Little Navconnect_ in all formats and languages.**](https://albar965.github.io/manuals.html)
 
 [► Map Legend](https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/en/LEGEND.html)
-
-[► GitHub Little Navmap Project and Sources](https://github.com/albar965/littlenavmap)
-
-[![Little Navmap](https://albar965.github.io/assets/images/Tipp_FSMagazin_D_Neu_2014_50.png)](https://www.facebook.com/FSMAGAZIN/posts/1349379408450042)
 
 [![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg)  [![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg)
 
