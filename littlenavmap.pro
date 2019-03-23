@@ -497,6 +497,7 @@ OTHER_FILES += \
   CHANGELOG.txt \
   LICENSE.txt \
   README.txt \
+  README.md \
   htmltidy.cfg \
   uncrustify.cfg
 
