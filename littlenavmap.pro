@@ -42,8 +42,8 @@
 # Example: $HOME/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib
 #
 # OPENSSL_PATH
-# Required for Windows only. Base path of WinSSL installation (https://slproweb.com/products/Win32OpenSSL.html).
-# For example: C:\\OpenSSL-Win32
+# Required for Windows only. Base path of WinSSL 1.0.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
+# Defaults to "C:\OpenSSL-Win32" if empty.
 #
 # ATOOLS_GIT_PATH
 # Optional. Path to GIT executable. Revision will be set to "UNKNOWN" if not set.
@@ -112,6 +112,8 @@ isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 
 isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
+
+win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=C:\OpenSSL-Win32
 
 # =======================================================================
 # Set compiler flags and paths
