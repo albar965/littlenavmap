@@ -737,7 +737,11 @@ win32 {
 # =====================================================================
 # Additional targets
 
-QMAKE_EXTRA_TARGETS += deploy copydata
-deploy.depends = copydata
-copydata.depends = all
+# Need to copy data when compiling
+all.depends = copydata
+
+# Deploy needs compiling before
+deploy.depends = all
+
+QMAKE_EXTRA_TARGETS += deploy copydata all
 
