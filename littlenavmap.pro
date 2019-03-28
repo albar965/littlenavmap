@@ -578,6 +578,7 @@ unix:!macx {
   deploy.commands += cp -vf $$PWD/README.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/resources/icons/littlenavmap.svg $$DEPLOY_DIR &&
+  deploy.commands += cp -vf \"$$PWD/desktop/Little Navmap.desktop\" $$DEPLOY_DIR &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/iconengines/libqsvgicon.so*  $$DEPLOY_DIR_LIB/iconengines &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqgif.so*  $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqjpeg.so*  $$DEPLOY_DIR_LIB/imageformats &&
