@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=YOUR_PATH_TO_LITTLENAVMAP/littlenavmap 
+Path=YOUR_PATH_TO_LITTLENAVMAP/
+Name=Little Navmap
+GenericName=Little Navmap
+Icon=YOUR_PATH_TO_LITTLENAVMAP/littlenavmap.svg
+Terminal=false
+Categories=Qt;Utility;Geography;Map;
+

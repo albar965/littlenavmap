@@ -21,9 +21,6 @@
 #include <QLatin1Literal>
 #include <QSize>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-const-variable"
-
 /* Define to skip caching of approaches when loading */
 // #define DEBUG_APPROACH_NO_CACHE
 
@@ -153,6 +150,9 @@ const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/Widge
 const QLatin1Literal SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 const QLatin1Literal SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
+
+const QLatin1Literal IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
+const QLatin1Literal IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
 
 const QLatin1Literal PROFILE_WINDOW_OPTIONS("Profile/Options");
 
@@ -335,7 +335,5 @@ extern const QSize DEFAULT_MAINWINDOW_SIZE;
 const QString helpLanguageOnline();
 
 } // namespace lnm
-
-#pragma GCC diagnostic pop
 
 #endif // LITTLENAVMAP_CONSTANTS_H

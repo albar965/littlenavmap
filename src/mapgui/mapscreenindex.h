@@ -28,10 +28,10 @@ struct MapSearchResult;
 }
 
 namespace Marble {
-class GeoDataLatLonAltBox;
+class GeoDataLatLonBox;
 }
 
-class MapWidget;
+class MapPaintWidget;
 class AirportQuery;
 class AirspaceQuery;
 class MapPaintLayer;
@@ -45,8 +45,10 @@ class MapPaintLayer;
 class MapScreenIndex
 {
 public:
-  MapScreenIndex(MapWidget *parentWidget, MapPaintLayer *mapPaintLayer);
+  MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLayer *mapPaintLayer);
   ~MapScreenIndex();
+
+  void copy(const MapScreenIndex& other);
 
   /*
    * Finds all objects near the screen coordinates with maximal distance of maxDistance to xs/ys.
@@ -55,36 +57,37 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result);
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                     QList<proc::MapProcedurePoint>* procPoints);
+                     QList<proc::MapProcedurePoint> *procPoints) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
-  int getNearestDistanceMarkIndex(int xs, int ys, int maxDistance);
+  int getNearestDistanceMarkIndex(int xs, int ys, int maxDistance) const;
 
   /* Get nearest range rings index (only the centerpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getRangeMarks */
-  int getNearestRangeMarkIndex(int xs, int ys, int maxDistance);
+  int getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const;
 
-  int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance);
+  int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
-  int getNearestRouteLegIndex(int xs, int ys, int maxDistance);
+  int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan waypoint or -1 if nothing was found nearby. */
-  int getNearestRoutePointIndex(int xs, int ys, int maxDistance);
+  int getNearestRoutePointIndex(int xs, int ys, int maxDistance) const;
 
   /* Update geometry after a route or scroll or map change */
-  void updateRouteScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
-  void updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
-  void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
+  void updateAllGeometry(const Marble::GeoDataLatLonBox& curBox);
+  void updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
+  void updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
+  void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
 
   /* Clear internal caches */
   void resetAirspaceOnlineScreenGeometry();
 
   /* Save and restore distance markers and range rings */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Get objects that are highlighted because of selected flight plan legs in the table */
@@ -155,17 +158,17 @@ public:
     return trafficPatterns;
   }
 
-  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft()
+  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
   {
     return simData.getUserAircraftConst();
   }
 
-  const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft()
+  const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft() const
   {
     return lastSimData.getUserAircraftConst();
   }
 
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft()
+  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const
   {
     return simData.getAiAircraftConst();
   }
@@ -221,19 +224,19 @@ public:
   }
 
 private:
-  void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result);
-  void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result);
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result);
+  void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
+  void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                     QList<proc::MapProcedurePoint>* procPoints);
+                                     QList<proc::MapProcedurePoint> *procPoints) const;
   void updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
-                                    const Marble::GeoDataLatLonAltBox& curBox);
+                                    const Marble::GeoDataLatLonBox& curBox);
 
   template<typename TYPE>
-  int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList);
+  int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
-  MapWidget *mapWidget;
+  MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
   AirspaceQuery *airspaceQuery;
   AirspaceQuery *airspaceQueryOnline;

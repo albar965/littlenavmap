@@ -54,6 +54,26 @@ The installation on Linux and macOS computers is similar except different paths 
 redistributable needed.
 
 ------------------------------------------------------------------------------
+-- Linux ---------------------------------------------------------------------
+
+Linux users can use the included desktop file to add Little Navmap to their application menus.
+You have to adapt the paths (YOUR_PATH_TO_LITTLENAVMAP) in "Little Navmap.desktop" to
+point to the application, path and icon.
+
+Once done move the desktop file to "$HOME/.local/share/applications/" and it will show up
+in the application menu.
+
+[Desktop Entry]
+Type=Application
+Exec=YOUR_PATH_TO_LITTLENAVMAP/littlenavmap
+Path=YOUR_PATH_TO_LITTLENAVMAP/
+Name=Little Navmap
+GenericName=Little Navmap
+Icon=YOUR_PATH_TO_LITTLENAVMAP/littlenavmap.svg
+Terminal=false
+Categories=Qt;Utility;Geography;Map;
+
+------------------------------------------------------------------------------
 -- Updating Little Navmap ----------------------------------------------------
 
 I strongly recommend to delete all installed files of a previous Little Navmap version before installing a

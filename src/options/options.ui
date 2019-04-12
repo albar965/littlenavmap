@@ -2772,7 +2772,7 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
        <item row="5" column="0">
         <widget class="QGroupBox" name="groupBox_11">
          <property name="title">
-          <string>Aircraft Track</string>
+          <string>Aircraft Trail</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
@@ -2793,7 +2793,7 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
           <item>
            <widget class="QLabel" name="labelSimMaxTrackPoints">
             <property name="text">
-             <string>Maximum number of aircraft &amp;track points:</string>
+             <string>Maximum number of aircraft &amp;trail points:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxSimMaxTrackPoints</cstring>
