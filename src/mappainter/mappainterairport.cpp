@@ -55,7 +55,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterAirport::MapPainterAirport(MapPaintWidget* mapWidget, MapScale *mapScale,
+MapPainterAirport::MapPainterAirport(MapPaintWidget *mapWidget, MapScale *mapScale,
                                      const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {
@@ -263,7 +263,7 @@ void MapPainterAirport::drawXplaneApron(const PaintContext *context, const map::
 {
   // Create the apron boundary or get it from the cache for this zoom distance
   QPainterPath boundaryPath =
-    NavApp::getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
+    mapPaintWidget->getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
 
   if(!boundaryPath.isEmpty())
     context->painter->drawPath(boundaryPath);

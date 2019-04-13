@@ -171,6 +171,11 @@ public:
 
   map::MapThemeComboIndex getMapThemeIndex() const;
 
+  const InfoController *getInfoController() const
+  {
+    return infoController;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -310,6 +315,11 @@ private:
   void actionShortcutAirportWeatherTriggered();
   void actionShortcutNavaidInformationTriggered();
   void actionShortcutAircraftProgressTriggered();
+
+  /* Internal web server actions */
+  void toggleWebserver(bool checked);
+  void webserverStatusChanged(bool running);
+  void openWebserver();
 
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered();

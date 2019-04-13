@@ -117,7 +117,7 @@ public:
    * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo, bool formatPrint = false);
+  HtmlInfoBuilder(QWidget *parent, bool formatInfo, bool formatPrint = false);
 
   virtual ~HtmlInfoBuilder();
 
@@ -350,7 +350,7 @@ private:
   /* Aircraft size */
   QSize symbolSizeVehicle = QSize(28, 28);
 
-  MainWindow *mainWindow = nullptr;
+  QWidget *parentWidget = nullptr;
   MapQuery *mapQuery;
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;

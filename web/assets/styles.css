@@ -1,0 +1,42 @@
+/*****************************************************************************
+* Stylesheet for Little Navmap internal web page
+*****************************************************************************/
+
+body {
+  font-size: 1.0em;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+/* Put input and buttons into one row */
+form {
+  display: inline-block;
+}
+
+h1 {
+  border-bottom: 2px solid #707070;
+}
+
+p, table, h1, h2, h3, h4 {
+  margin: 0.75em;
+}
+
+/* Limit size of airport input text */
+#airporttext {
+  width: 4em;
+}
+
+#errortext {
+  color: red;
+  font-weight: bold;
+}
+
+/* Gray header bar */
+#header {
+  box-shadow: 0px 0px 18px gray;
+  background: lightgray;
+  border-radius: 25px;
+  padding: 0 1em 0 1em;
+  margin: 0;
+  margin-bottom: 1em;
+  border: none;
+}

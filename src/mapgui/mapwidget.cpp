@@ -3028,11 +3028,13 @@ void MapWidget::updateMapObjectsShown()
                   || currentThemeIndex == map::ATLAS));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
-  setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
-                   (currentThemeIndex == map::OPENSTREETMAP ||
-                    currentThemeIndex == map::CARTODARK ||
-                    currentThemeIndex == map::CARTOLIGHT ||
-                    currentThemeIndex >= map::CUSTOM));
+  // Need to keep track of hillshading separately since Marble has not getter
+  hillshading = ui->actionMapShowHillshading->isChecked() &&
+                (currentThemeIndex == map::OPENSTREETMAP ||
+                 currentThemeIndex == map::CARTODARK ||
+                 currentThemeIndex == map::CARTOLIGHT ||
+                 currentThemeIndex >= map::CUSTOM);
+  setPropertyValue("hillshading", hillshading);
 
   setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 

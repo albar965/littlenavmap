@@ -128,7 +128,7 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
   }
 }
 
-Pos AirportQuery::getAirportCoordinatesByIdent(const QString& ident)
+Pos AirportQuery::getAirportPosByIdent(const QString& ident)
 {
   Pos pos;
   airportCoordsByIdentQuery->bindValue(":ident", ident);

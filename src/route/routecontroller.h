@@ -200,7 +200,7 @@ public:
   void styleChanged();
 
   /* Get the route table as a HTML document only containing the table and header */
-  QString flightplanTableAsHtml(float iconSizePixel) const;
+  QString getFlightplanTableAsHtml(float iconSizePixel) const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;

@@ -328,7 +328,13 @@ SOURCES += \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataexportdialog.cpp \
   src/userdata/userdataicons.cpp \
-  src/weather/weatherreporter.cpp
+  src/weather/weatherreporter.cpp \
+  src/web/webcontroller.cpp \
+  src/web/requesthandler.cpp \
+  src/web/webmapcontroller.cpp \
+    src/web/webtools.cpp \
+    src/web/webflags.cpp \
+    src/web/webapp.cpp
 
 HEADERS  += \
   src/common/aircrafttrack.h \
@@ -451,7 +457,13 @@ HEADERS  += \
   src/userdata/userdatadialog.h \
   src/userdata/userdataexportdialog.h \
   src/userdata/userdataicons.h \
-  src/weather/weatherreporter.h
+  src/weather/weatherreporter.h \
+  src/web/webcontroller.h \
+  src/web/requesthandler.h \
+  src/web/webmapcontroller.h \
+    src/web/webtools.h \
+    src/web/webflags.h \
+    src/web/webapp.h
 
 FORMS += \
   src/connect/connectdialog.ui \
@@ -490,6 +502,7 @@ OTHER_FILES += \
   $$files(desktop/*, true) \
   $$files(etc/*, true) \
   $$files(help/*, true) \
+  $$files(web/*, true) \
   $$files(magdec/*, true) \
   $$files(marble/*, true) \
   *.ts \
@@ -525,6 +538,7 @@ unix:!macx {
   copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$ATOOLS_INC_PATH/../*.qm $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
+  copydata.commands += cp -avfu $$PWD/web $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/customize $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/magdec $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
@@ -535,6 +549,7 @@ unix:!macx {
 # Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
+  copydata.commands += cp -Rv $$PWD/web $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/customize $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/magdec $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
@@ -564,6 +579,7 @@ unix:!macx {
   deploy.commands += cp -Rvf $$OUT_PWD/plugins $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/data $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/help $$DEPLOY_DIR &&
+  deploy.commands += cp -Rvf $$OUT_PWD/web $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/customize $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/translations $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/magdec $$DEPLOY_DIR &&
@@ -709,6 +725,7 @@ win32 {
   exists($$HELP_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$HELP_BASE) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
   deploy.commands += xcopy $$p($$PWD/littlenavmap.exe.simconnect) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/help) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$TARGET_NAME/web) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$TARGET_NAME/customize) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/magdec) $$p($$DEPLOY_BASE/$$TARGET_NAME/magdec) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$TARGET_NAME/etc) &&

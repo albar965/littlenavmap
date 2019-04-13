@@ -26,6 +26,7 @@
 #include "mapgui/maplayersettings.h"
 #include "common/unit.h"
 #include "common/aircrafttrack.h"
+#include "mapgui/aprongeometrycache.h"
 
 #include <QPainter>
 #include <QJsonDocument>
@@ -37,8 +38,9 @@
 /* If width and height of a bounding rect are smaller than this: Use show point */
 const float POS_IS_POINT_EPSILON = 0.0001f;
 
-const static double MINIMUM_DISTANCE = 0.1;
-const static double MAXIMUM_DISTANCE = 6000.;
+// KM
+const static double MINIMUM_DISTANCE_KM = 0.1;
+const static double MAXIMUM_DISTANCE_KM = 6000.;
 
 using namespace Marble;
 using atools::geo::Rect;
@@ -52,6 +54,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   // Set the map quality to gain speed while moving
   setMapQualityForViewContext(HighQuality, Still);
   setMapQualityForViewContext(LowQuality, Animation);
+  setAnimationsEnabled(false);
 
   // All nautical miles and feet internally
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
@@ -62,6 +65,11 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   screenIndex = new MapScreenIndex(this, paintLayer);
 
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
+  avoidBlurredMap = OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP;
+
+  // Initialize the X-Plane apron geometry cache
+  apronGeometryCache = new ApronGeometryCache();
+  apronGeometryCache->setViewportParams(viewport());
 }
 
 MapPaintWidget::~MapPaintWidget()
@@ -75,6 +83,8 @@ MapPaintWidget::~MapPaintWidget()
   delete screenIndex;
 
   delete aircraftTrack;
+
+  delete apronGeometryCache;
 }
 
 void MapPaintWidget::copySettings(const MapPaintWidget& other)
@@ -82,38 +92,46 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   paintLayer->copySettings(*other.paintLayer);
   screenIndex->copy(*other.screenIndex);
 
-  // Copy all MarbleWidget settings
-  setProjection(other.projection());
-  setTheme(other.mapThemeId(), other.currentThemeIndex);
+  // Copy all MarbleWidget settings - some on demand to avoid overhead
+  if(projection() != other.projection())
+    setProjection(other.projection());
 
-  setAnimationsEnabled(other.animationsEnabled());
-  setShowDebugPolygons(other.showDebugPolygons());
-  setShowRuntimeTrace(other.showRuntimeTrace());
-  setShowBackground(other.showBackground());
-  setShowFrameRate(other.showFrameRate());
-  setShowLakes(other.showLakes());
-  setShowRivers(other.showRivers());
-  setShowBorders(other.showBorders());
-  setShowOverviewMap(other.showOverviewMap());
-  setShowScaleBar(other.showScaleBar());
-  setShowCompass(other.showCompass());
-  setShowClouds(other.showClouds());
+  if(mapThemeId() != other.mapThemeId())
+    setTheme(other.mapThemeId(), other.currentThemeIndex);
+
+  // Unused options
+  // setAnimationsEnabled(other.animationsEnabled());
+  // setShowDebugPolygons(other.showDebugPolygons());
+  // setShowRuntimeTrace(other.showRuntimeTrace());
+  // setShowBackground(other.showBackground());
+  // setShowFrameRate(other.showFrameRate());
+  // setShowLakes(other.showLakes());
+  // setShowRivers(other.showRivers());
+  // setShowBorders(other.showBorders());
+  // setShowOverviewMap(other.showOverviewMap());
+  // setShowScaleBar(other.showScaleBar());
+  // setShowCompass(other.showCompass());
+  // setShowClouds(other.showClouds());
+  // setShowCityLights(other.showCityLights());
+  // setLockToSubSolarPoint(other.isLockedToSubSolarPoint());
+  // setSubSolarPointIconVisible(other.isSubSolarPointIconVisible());
+  // setShowAtmosphere(other.showAtmosphere());
+  // setShowCrosshairs(other.showCrosshairs());
+  // setShowRelief(other.showRelief());
+
   setShowSunShading(other.showSunShading());
-  setShowCityLights(other.showCityLights());
-  setLockToSubSolarPoint(other.isLockedToSubSolarPoint());
-  setSubSolarPointIconVisible(other.isSubSolarPointIconVisible());
-  setShowAtmosphere(other.showAtmosphere());
-  setShowCrosshairs(other.showCrosshairs());
   setShowGrid(other.showGrid());
   setShowPlaces(other.showPlaces());
   setShowCities(other.showCities());
   setShowTerrain(other.showTerrain());
   setShowOtherPlaces(other.showOtherPlaces());
-  setShowRelief(other.showRelief());
   setShowIceLayer(other.showIceLayer());
 
-  model()->setPersistentTileCacheLimit(other.model()->persistentTileCacheLimit());
-  setVolatileTileCacheLimit(other.volatileTileCacheLimit());
+  // Adapt cache settings if changed
+  if(model()->persistentTileCacheLimit() != other.model()->persistentTileCacheLimit())
+    model()->setPersistentTileCacheLimit(other.model()->persistentTileCacheLimit());
+  if(volatileTileCacheLimit() != other.volatileTileCacheLimit())
+    setVolatileTileCacheLimit(other.volatileTileCacheLimit());
 
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
@@ -125,6 +143,16 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   homeDistance = other.homeDistance;
   kmlFilePaths = other.kmlFilePaths;
   mapDetailLevel = other.mapDetailLevel;
+  avoidBlurredMap = other.avoidBlurredMap;
+
+  if(hillshading != other.hillshading)
+  {
+    hillshading = other.hillshading;
+    setPropertyValue("hillshading", hillshading);
+  }
+
+  if(size() != other.size())
+    resize(other.size());
 }
 
 void MapPaintWidget::copyView(const MapPaintWidget& other)
@@ -190,6 +218,7 @@ void MapPaintWidget::optionsChanged()
   // Updated sun shadow and force a tile refresh by changing the show status again
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
+  avoidBlurredMap = OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP;
 
   // reloadMap();
   updateCacheSizes();
@@ -306,11 +335,17 @@ map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesByLayer() const
   return paintLayer->getShownAirspacesTypesByLayer();
 }
 
+ApronGeometryCache *MapPaintWidget::getApronGeometryCache()
+{
+  return apronGeometryCache;
+}
+
 void MapPaintWidget::preDatabaseLoad()
 {
   jumpBackToAircraftCancel();
   cancelDragAll();
   databaseLoadStatus = true;
+  apronGeometryCache->clear();
   paintLayer->preDatabaseLoad();
 }
 
@@ -363,6 +398,12 @@ QString MapPaintWidget::createAvitabJson()
   return QString();
 }
 
+void MapPaintWidget::centerRectOnMapPrecise(const atools::geo::Rect& rect, bool allowAdjust)
+{
+  centerRectOnMapPrecise(Marble::GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                                                  GeoDataCoordinates::Degree), allowAdjust);
+}
+
 void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
 {
   // Marble zooms out too far - start by doing this
@@ -398,9 +439,17 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
     qDebug() << Q_FUNC_INFO << "final zoom" << zoom();
 
   // Fix blurryness or zoom one out after correcting by zooming in
-  if(allowAdjust && zoomIterations > 0)
-    // Zoom out to next step to get a sharper map display
-    zoomOut();
+  if((allowAdjust && avoidBlurredMap) || zoomIterations > 0)
+    adjustMapDistance();
+}
+
+void MapPaintWidget::prepareDraw(int width, int height)
+{
+  // Issue a single drawing event to the Marble widget for initialization
+  // No navaids are painted for performance reasons
+  noNavPaint = true;
+  getPixmap(width, height);
+  noNavPaint = false;
 }
 
 QPixmap MapPaintWidget::getPixmap(int width, int height)
@@ -408,12 +457,25 @@ QPixmap MapPaintWidget::getPixmap(int width, int height)
   if(width > 0 && height > 0)
     // Resize if needed - resizeEvent will be called in grab
     resize(width, height);
+
   return grab();
 }
 
 QPixmap MapPaintWidget::getPixmap(const QSize& size)
 {
   return getPixmap(size.width(), size.height());
+}
+
+atools::geo::Pos MapPaintWidget::getCurrentViewCenterPos() const
+{
+  return atools::geo::Pos(centerLongitude(), centerLatitude(), distance());
+}
+
+atools::geo::Rect MapPaintWidget::getCurrentViewRect() const
+{
+  const GeoDataLatLonBox& box = getCurrentViewBoundingBox();
+  return atools::geo::Rect(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree),
+                           box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree));
 }
 
 void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
@@ -449,7 +511,7 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
           (zoomIterations < 10) && (zoom() < maximumZoom()))
     {
 #ifdef DEBUG_INFORMATION
-      qDebug() << Q_FUNC_INFO << "out distance NM" << atools::geo::meterToNm(distance() * 1000.);
+      qDebug() << Q_FUNC_INFO << "out distance NM" << atools::geo::kmToNm(distance());
 #endif
       zoomOut();
       zoomIterations++;
@@ -461,16 +523,15 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
           (zoomIterations < 10) && (zoom() > minimumZoom()))
     {
 #ifdef DEBUG_INFORMATION
-      qDebug() << Q_FUNC_INFO << "in distance NM" << atools::geo::meterToNm(distance() * 1000.);
+      qDebug() << Q_FUNC_INFO << "out distance NM" << atools::geo::kmToNm(distance());
 #endif
       zoomIn();
       zoomIterations++;
     }
 
     // Fix blurryness or zoom one out after correcting by zooming in
-    if((allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP) || zoomIterations > 0)
-      // Zoom out to next step to get a sharper map display
-      zoomOut();
+    if((allowAdjust && avoidBlurredMap) || zoomIterations > 0)
+      adjustMapDistance();
   }
   else
   {
@@ -479,10 +540,26 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
 
     if(rect.getWidthDegree() < 180.f &&
        rect.getHeightDegree() < 180.f)
-      setDistanceToMap(MINIMUM_DISTANCE, allowAdjust);
+      setDistanceToMap(MINIMUM_DISTANCE_KM, allowAdjust);
     else
-      setDistanceToMap(MAXIMUM_DISTANCE, allowAdjust);
+      setDistanceToMap(MAXIMUM_DISTANCE_KM, allowAdjust);
   }
+}
+
+void MapPaintWidget::adjustMapDistance()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Adjusted view zoom FROM" << zoom() << "distance"
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM";
+#endif
+
+  // Zoom out to next step to get a sharper map display
+  zoomOut(Marble::Instant);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Adjusted view zoom TO" << zoom() << "distance"
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM";
+#endif
 }
 
 void MapPaintWidget::centerPosOnMap(const atools::geo::Pos& pos)
@@ -494,21 +571,31 @@ void MapPaintWidget::centerPosOnMap(const atools::geo::Pos& pos)
   }
 }
 
-void MapPaintWidget::setDistanceToMap(double distance, bool allowAdjust)
+void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 {
-  distance = std::min(std::max(distance, MINIMUM_DISTANCE / 2.), MAXIMUM_DISTANCE);
+  distanceKm = std::min(std::max(distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM);
 
-  setDistance(distance);
+  // KM
+  setDistance(distanceKm);
 
-  if(allowAdjust && OptionData::instance().getFlags2() & opts::MAP_AVOID_BLURRED_MAP)
-    // Zoom out to next step to get a sharper map display
-    zoomOut();
+  if(allowAdjust && avoidBlurredMap)
+    adjustMapDistance();
 }
 
-void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick)
+void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
+{
+  showPosInternal(pos, distanceKm, doubleClick, false /* allow adjust */);
+}
+
+void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
+{
+  showPosInternal(pos, distanceKm, doubleClick, true /* allow adjust */);
+}
+
+void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distanceKm, bool doubleClick, bool allowAdjust)
 {
 #if DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << pos << distanceNm << doubleClick;
+  qDebug() << Q_FUNC_INFO << pos << distanceKm << doubleClick;
 #endif
   if(!pos.isValid())
   {
@@ -520,17 +607,15 @@ void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceNm, bool
   showAircraft(false);
   jumpBackToAircraftStart(true /* save distance too */);
 
-  float dst = distanceNm;
-
-  if(dst == 0.f)
+  if(distanceKm == 0.f)
     // Use distance depending on double click
-    dst = atools::geo::nmToKm(Unit::rev(doubleClick ?
-                                        OptionData::instance().getMapZoomShowClick() :
-                                        OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
+    distanceKm = atools::geo::nmToKm(Unit::rev(doubleClick ?
+                                               OptionData::instance().getMapZoomShowClick() :
+                                               OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
   centerPosOnMap(pos);
-  if(dst < map::INVALID_DISTANCE_VALUE)
-    setDistanceToMap(dst);
+  if(distanceKm < map::INVALID_DISTANCE_VALUE)
+    setDistanceToMap(distanceKm, allowAdjust);
 }
 
 void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
@@ -567,12 +652,12 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
       // Center on rectangle
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth(), rect.getEast(), rect.getSouth()));
 
-    float dist = atools::geo::nmToKm(Unit::rev(doubleClick ?
-                                               OptionData::instance().getMapZoomShowClick() :
-                                               OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
+    float distanceKm = atools::geo::nmToKm(Unit::rev(doubleClick ?
+                                                     OptionData::instance().getMapZoomShowClick() :
+                                                     OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
-    if(distance() < dist)
-      setDistanceToMap(dist);
+    if(distance() < distanceKm)
+      setDistanceToMap(distanceKm);
   }
 }
 
@@ -888,6 +973,12 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 
   bool changed = false;
   const GeoDataLatLonBox visibleLatLonBox = getCurrentViewBoundingBox();
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "distance"
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM zoom" << zoom()
+           << "step" << zoomStep();
+#endif
 
   if(viewContext() == Marble::Still && (zoom() != currentZoom || visibleLatLonBox != currentViewBoundingBox))
   {

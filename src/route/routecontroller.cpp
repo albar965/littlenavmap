@@ -408,7 +408,7 @@ void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool tit
     html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
 }
 
-QString RouteController::flightplanTableAsHtml(float iconSizePixel) const
+QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
 {
   qDebug() << Q_FUNC_INFO;
   using atools::util::HtmlBuilder;
@@ -433,11 +433,13 @@ QString RouteController::flightplanTableAsHtml(float iconSizePixel) const
   }
   html.trEnd();
 
+  int nearestLegIndex = route.getActiveLegIndexCorrected();
+
   // Table content
   for(int row = 0; row < model->rowCount(); row++)
   {
     // First column is icon
-    html.tr(QColor());
+    html.tr(nearestLegIndex != row ? QColor() : mapcolors::nextWaypointColor);
     const RouteLeg& routeLeg = route.at(row);
 
     if(iconSizePixel > 0.f)

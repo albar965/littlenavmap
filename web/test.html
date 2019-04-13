@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <title>
+      {applicationName} {applicationVersion} - Webserver
+    </title>
+    <script type="text/javascript" src="assets/scripts.js" xml:space="preserve">
+    </script>
+  </head>
+  <body>
+    <h1>
+      <img src="/images/littlenavmap.svg" alt="{applicationName}" /> {applicationName} - {applicationVersion}
+    </h1>
+    <p>
+      Example file that shows various ways to fetch information from Little Navmap. See <code>Little
+      Navmap/web/test.html</code> for sources.
+    </p>
+    <h2>
+      Example URLs
+    </h2>
+    <ul>
+      <li>
+        <a href=
+        "/mapimage?format=jpg&amp;quality=100&amp;width=768&amp;height=768&amp;lon=-4.99528&amp;lat=50.4408">Center
+        position on map</a>
+      </li>
+      <li>
+        <a href=
+        "/mapimage?format=jpg&amp;quality=100&amp;width=768&amp;height=768&amp;airport=CYYJ&amp;distance=100">Center
+        airport CYYJ on map</a>
+      </li>
+      <li>
+        <a href=
+        "/mapimage?format=jpg&amp;quality=100&amp;width=768&amp;height=768&amp;leftlon=-4.99528&amp;toplat=50.4408&amp;rightlon=-1.60781&amp;bottomlat=47.157">
+        Center rectangle on map</a>
+      </li>
+      <li>
+        <a href=
+        "/mapimage?format=jpg&amp;quality=100&amp;width=768&amp;height=768&amp;airport=EDDF&amp;distance=1">Center
+        airport EDDF on map</a>
+      </li>
+      <li>
+        <a href="/mapimage?format=jpg&amp;quality=100&amp;width=768&amp;height=768&amp;user&amp;distance=1000">User
+        aircraft</a>
+      </li>
+      <li>
+        <a href="/mapimage?format=jpg&amp;quality=100&amp;width=768&amp;height=768&amp;route">Center route on map</a>
+      </li>
+      <li>
+        <a href="/test.html?airportident=EDDF">Show EDDF airport information on this page</a>
+      </li>
+    </ul>
+    <h2>
+      HTML Template examples - see source file
+    </h2>
+    <p>
+      The template variables like <code>{airportRunwayTextExample}</code> are replaced by the server when loading the HTML
+      file.
+    </p>
+    <p>
+      {if hasAirport}
+    </p>
+    <h3 id="top">
+      Airport
+    </h3>
+    <p>
+      <a href="#runways">Runways</a> - <a href="#com">Com Frequencies</a> - <a href="#procedures">Procedures</a> -
+      <a href="#weather">Weather</a>
+    </p>
+    <p>
+      {airportText}
+    </p>
+    <h4 id="runways">
+      Runways
+    </h4>
+    <p>
+      {airportRunwayText}
+    </p>
+    <h4 id="com">
+      Com Frequencies
+    </h4>
+    <p>
+      {airportComText}
+    </p>
+    <h4 id="procedures">
+      Procedures
+    </h4>
+    <p>
+      {airportProcedureText}
+    </p>
+    <h4 id="weather">
+      Weather
+    </h4>
+    <p>
+      {airportWeatherText}
+    </p>
+    <p>
+      {end hasAirport}
+    </p>
+    <h3 id="flightpan">
+      Flight Plan
+    </h3>
+    <p>
+      {flightplanText}
+    </p>
+    <h3 id="aircraft">
+      Aircraft
+    </h3>
+    <p>
+      {aircraftText}
+    </p>
+    <h3 id="progress">
+      Progress
+    </h3>
+    <p>
+      {aircraftProgressText}
+    </p>
+  </body>
+</html>

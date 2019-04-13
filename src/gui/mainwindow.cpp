@@ -73,6 +73,7 @@
 #include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
 #include "mapgui/imageexportdialog.h"
+#include "web/webcontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -288,9 +289,6 @@ MainWindow::MainWindow()
     updateMapObjectsShown();
 
     profileWidget->updateProfileShowFeatures();
-
-    // Initialize the X-Plane apron geometry cache
-    NavApp::getApronGeometryCache()->setViewportParams(NavApp::getMapWidget()->viewport());
 
     loadNavmapLegend();
     updateLegend();
@@ -1297,6 +1295,12 @@ void MainWindow::connectAllSlots()
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
 
+  // Webserver
+  connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
+  connect(ui->actionOpenWebserver, &QAction::triggered, this, &MainWindow::openWebserver);
+  connect(NavApp::getWebController(), &WebController::webserverStatusChanged,
+          this, &MainWindow::webserverStatusChanged);
+
   // Shortcut menu
   connect(ui->actionShortcutMap, &QAction::triggered,
           this, &MainWindow::actionShortcutMapTriggered);
@@ -1605,6 +1609,8 @@ void MainWindow::distanceChanged()
 
 #ifdef DEBUG_INFORMATION
   text += QString(" [%1]").arg(mapWidget->zoom());
+
+  qDebug() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
 #endif
 
   mapDistanceLabel->setText(text);
@@ -2889,6 +2895,9 @@ void MainWindow::mainWindowShown()
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 
   NavApp::getOnlinedataController()->startProcessing();
+  if(ui->actionRunWebserver->isChecked())
+    NavApp::getWebController()->startServer();
+  webserverStatusChanged(NavApp::getWebController()->isRunning());
 
   // Raise all floating docks and focus map widget
   QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
@@ -3256,7 +3265,8 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionUserdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude});
+                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
+                       ui->actionRunWebserver});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -3405,7 +3415,7 @@ void MainWindow::saveActionStates()
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                    ui->actionUserdataCreateLogbook});
+                    ui->actionUserdataCreateLogbook, ui->actionRunWebserver});
   Settings::instance().syncSettings();
 }
 
@@ -3766,4 +3776,23 @@ void MainWindow::updateErrorLabels()
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 {
   return static_cast<map::MapThemeComboIndex>(mapThemeComboBox->currentIndex());
+}
+
+void MainWindow::webserverStatusChanged(bool running)
+{
+  ui->actionRunWebserver->setChecked(running);
+  ui->actionOpenWebserver->setEnabled(running);
+}
+
+void MainWindow::toggleWebserver(bool checked)
+{
+  if(checked)
+    NavApp::getWebController()->startServer();
+  else
+    NavApp::getWebController()->stopServer();
+}
+
+void MainWindow::openWebserver()
+{
+  NavApp::getWebController()->openPage();
 }

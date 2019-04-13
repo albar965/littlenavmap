@@ -31,6 +31,12 @@ class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
 
+namespace atools {
+namespace util {
+class HtmlBuilder;
+}
+}
+
 /*
  * Takes care of the information and simulator aircraft dock windows and tabs
  */
@@ -81,10 +87,9 @@ public:
   /* Program options have changed */
   void optionsChanged();
 
-  const HtmlInfoBuilder *getHtmlInfoBuilder() const
-  {
-    return infoBuilder;
-  }
+  /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
+   * List is empty if airport does not exist. */
+  QStringList getAirportTextFull(const QString& ident) const;
 
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
@@ -92,6 +97,7 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
 private:
+
   /* Do not update aircraft progress more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
 

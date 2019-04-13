@@ -411,7 +411,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
   Q_UNUSED(renderPos);
   Q_UNUSED(layer);
 
-  if(!databaseLoadStatus)
+  if(!databaseLoadStatus && !mapWidget->isNoNavPaint())
   {
     // Update map scale for screen distance approximation
     mapScale->update(viewport, mapWidget->distance());

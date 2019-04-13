@@ -1,0 +1,87 @@
+/*****************************************************************************
+* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
+#ifndef LNM_WEBCONTROLLER_H
+#define LNM_WEBCONTROLLER_H
+
+#include <QObject>
+
+namespace stefanfrings {
+class HttpListener;
+}
+
+class RequestHandler;
+class WebMapController;
+class HtmlInfoBuilder;
+class QSettings;
+
+/*
+ * Facade that hides the internal HTTP web server and keeps track of all global caches and the listener.
+ *
+ * Reads configuration from :/littlenavmap/resources/config/webserver.cfg or settings path.
+ */
+class WebController :
+  public QObject
+{
+  Q_OBJECT
+
+public:
+  /* Create instance and load configuration files */
+  explicit WebController(QWidget *parent = nullptr);
+  virtual ~WebController() override;
+
+  /* Start the server if not already done. Ignored if already runnging. */
+  void startServer();
+
+  /* Stop server if running. Ignored if already stopped. */
+  void stopServer();
+
+  /* Open the server address in the default web browser */
+  void openPage();
+
+  /* True if server is listening */
+  bool isRunning() const;
+
+signals:
+  /* Send after server is started or before server is shutdown */
+  void webserverStatusChanged(bool running);
+
+private:
+  stefanfrings::HttpListener *listener = nullptr;
+
+  /* Map painter */
+  WebMapController *mapController = nullptr;
+
+  /* Handles all HTTP requests using templates or static */
+  RequestHandler *requestHandler = nullptr;
+
+  /* Used to build airport and other HTML information texts. */
+  HtmlInfoBuilder *htmlInfoBuilder = nullptr;
+
+  /* Configuration file and file name. Default is :/littlenavmap/resources/config/webserver.cfg */
+  QSettings *listenerSettings = nullptr;
+  QString configFileName;
+
+  /* Full canonical path containing only "/" as separator */
+  QString documentRoot;
+  int port = 8965;
+
+  QWidget *parentWidget;
+  bool verbose = false;
+};
+
+#endif // LNM_WEBCONTROLLER_H
