@@ -195,9 +195,9 @@ void UserdataSearch::saveState()
 void UserdataSearch::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-    atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
     widgetState.restore(userdataSearchWidgets);
 
     restoreViewState(false);
@@ -209,6 +209,10 @@ void UserdataSearch::restoreState()
   }
   else
   {
+    QList<QObject *> objList;
+    atools::convertList(objList, userdataSearchMenuActions);
+    widgetState.restore(objList);
+
     atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).restore(ui->tableViewUserdata);
     ui->comboBoxUserdataType->setCurrentIndex(0);
     ui->comboBoxUserdataType->clearEditText();

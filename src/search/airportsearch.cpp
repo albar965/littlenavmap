@@ -369,9 +369,9 @@ void AirportSearch::saveState()
 void AirportSearch::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-    atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
     widgetState.restore(airportSearchWidgets);
 
     // Need to block signals here to avoid unwanted behavior (will enable
@@ -394,7 +394,13 @@ void AirportSearch::restoreState()
     }
   }
   else
+  {
+    QList<QObject *> objList;
+    atools::convertList(objList, airportSearchMenuActions);
+    widgetState.restore(objList);
+
     atools::gui::WidgetState(lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewAirportSearch);
+  }
 
   if(!atools::settings::Settings::instance().childGroups().contains("SearchPaneAirport"))
   {
