@@ -82,10 +82,7 @@ void WebController::startServer()
   QString docroot = documentRoot;
   if(docroot.isEmpty())
     // Build full canonical path with / as separator only on all systems and no "/" at the end
-    docroot =
-      QDir::fromNativeSeparators(QFileInfo(QCoreApplication::applicationDirPath() +
-                                           QDir::separator() +
-                                           "web").canonicalFilePath());
+    docroot = QDir::fromNativeSeparators(getDefaultDocumentRoot());
 
   if(docroot.endsWith("/"))
     docroot.chop(1);
@@ -257,5 +254,13 @@ bool WebController::updateSettings()
 
 QString WebController::getAbsoluteWebrootFilePath() const
 {
-  return QDir::toNativeSeparators(QFileInfo(documentRoot).canonicalFilePath());
+  if(documentRoot.isEmpty())
+    return QDir::toNativeSeparators(getDefaultDocumentRoot());
+  else
+    return QDir::toNativeSeparators(QFileInfo(documentRoot).canonicalFilePath());
+}
+
+QString WebController::getDefaultDocumentRoot() const
+{
+  return QFileInfo(QCoreApplication::applicationDirPath() + QDir::separator() + "web").canonicalFilePath();
 }

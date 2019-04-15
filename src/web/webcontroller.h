@@ -77,25 +77,17 @@ public:
   /* Get canonical path of document root with system separators for display */
   QString getAbsoluteWebrootFilePath() const;
 
-  QString getDocumentRoot() const
-  {
-    return documentRoot;
-  }
-
   void setDocumentRoot(const QString& value)
   {
     documentRoot = value;
-  }
-
-  int getPort() const
-  {
-    return port;
   }
 
   void setPort(int value)
   {
     port = value;
   }
+
+  QString getDefaultDocumentRoot() const;
 
 signals:
   /* Send after server is started or before server is shutdown */
