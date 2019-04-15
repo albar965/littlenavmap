@@ -35,6 +35,8 @@ class RangeRingValidator;
 class QTreeWidgetItem;
 class QSpinBox;
 class UnitStringTool;
+class QListWidgetItem;
+class QListWidget;
 
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
@@ -142,6 +144,10 @@ private:
   void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
 
   QVector<int> ringStrToVector(const QString& string) const;
+
+  QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
+                                const QString& iconPath = QString());
+  void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 

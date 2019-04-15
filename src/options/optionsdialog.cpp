@@ -124,6 +124,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+  // Make the splitter handle better visible
+  ui->splitterOptions->setStyleSheet(QString("QSplitter::handle { "
+                                             "background: %1;"
+                                             "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); }").
+                                     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+
   units = new UnitStringTool();
   units->init({
     ui->doubleSpinBoxOptionsMapZoomShowMap,
@@ -139,6 +145,23 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->spinBoxDisplayOnlineGround,
     ui->spinBoxDisplayOnlineTower
   });
+
+  /* *INDENT-OFF* */
+  QListWidget*list=ui->listWidgetOptionPages;
+  list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));;
+  list->addItem(pageListItem(list, tr("User Interface"), tr("Change text sizes and language settings."), ":/littlenavmap/resources/icons/statusbar.svg"));;
+  list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/map.svg"));;
+  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/airport.svg"));;
+  list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));;
+  list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units."), ":/littlenavmap/resources/icons/units.svg"));;
+  list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft."), ":/littlenavmap/resources/icons/aircraft.svg"));;
+  list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
+  list->addItem(pageListItem(list, tr("Weather"), tr("Define paths as well weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
+  list->addItem(pageListItem(list, tr("Online Flying"), tr("Select online flying services like VATSIM, IVAO or custom."), ":/littlenavmap/resources/icons/aircraft_online.svg"));;
+  list->addItem(pageListItem(list, tr("Web Server"), tr("Change settings for the internal web server."), ":/littlenavmap/resources/icons/web.svg"));;
+  list->addItem(pageListItem(list, tr("Cache and Files"), tr("Change map cache and select elevation data source."), ":/littlenavmap/resources/icons/filesave.svg"));;
+  list->addItem(pageListItem(list, tr("Scenery Library Database"), tr("Exclude scenery files from loading."), ":/littlenavmap/resources/icons/database.svg"));;
+  /* *INDENT-ON* */
 
   // Build tree settings to map tab =====================================================
   /* *INDENT-OFF* */
@@ -340,6 +363,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   widgets.append(ui->spinBoxDisplayOnlineTower);
 
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
+
+  connect(ui->listWidgetOptionPages, &QListWidget::currentItemChanged, this, &OptionsDialog::changePage);
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
@@ -730,6 +755,11 @@ void OptionsDialog::restoreState()
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
   onlineDisplayRangeClicked();
+  if(ui->listWidgetOptionPages->selectedItems().isEmpty())
+    ui->listWidgetOptionPages->selectionModel()->select(ui->listWidgetOptionPages->model()->index(0, 0),
+                                                        QItemSelectionModel::ClearAndSelect);
+
+  ui->stackedWidgetOptions->setCurrentIndex(ui->listWidgetOptionPages->currentRow());
 }
 
 void OptionsDialog::updateButtonColors()
@@ -1654,3 +1684,21 @@ void OptionsDialog::showDiskCacheClicked()
   if(!QDesktopServices::openUrl(url))
     atools::gui::Dialog::warning(this, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
 }
+QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text,
+                                             const QString& tooltip, const QString& iconPath)
+{
+  QListWidgetItem *item = new QListWidgetItem(text, parent);
+  if(!tooltip.isEmpty())
+    item->setToolTip(tooltip);
+  if(!iconPath.isEmpty())
+    item->setIcon(QIcon(iconPath));
+  return item;
+}
+
+void OptionsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
+{
+  if(!current)
+    current = previous;
+  ui->stackedWidgetOptions->setCurrentIndex(ui->listWidgetOptionPages->row(current));
+}
+
