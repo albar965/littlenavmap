@@ -802,6 +802,7 @@ void MainWindow::connectAllSlots()
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
 
   // Style handler ===================================================================
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);

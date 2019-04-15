@@ -429,7 +429,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
   {
     if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
       html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
-              toString().replace("-\n", "-").replace("\n", " "), atools::util::html::NOBR);
+              toString().replace("-\n", "-<br/>").replace("\n", "<br/>"), atools::util::html::NO_ENTITIES);
   }
   html.trEnd();
 
@@ -459,7 +459,12 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
         QStandardItem *item = model->item(row, header->logicalIndex(col));
 
         if(item != nullptr)
-          html.td(item->text().toHtmlEscaped());
+        {
+          if(item->textAlignment().testFlag(Qt::AlignRight))
+            html.td(item->text().toHtmlEscaped(), atools::util::html::ALIGN_RIGHT);
+          else
+            html.td(item->text().toHtmlEscaped());
+        }
         else
           html.td(QString());
       }

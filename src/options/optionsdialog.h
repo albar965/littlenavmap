@@ -149,6 +149,14 @@ private:
                                 const QString& iconPath = QString());
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
+  /* Update label for docroot path */
+  void updateWebDocrootStatus();
+  void selectWebDocrootClicked();
+
+  /* Show listening address(es)*/
+  void updateWebServerStatus();
+  void startStopWebServerClicked();
+
   QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;

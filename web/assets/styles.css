@@ -2,16 +2,14 @@
 * Stylesheet for Little Navmap internal web page
 *****************************************************************************/
 
+/* Adjust these values to change the overall style of the web page */
 body {
+  background: white;
   font-size: 1.0em;
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-/* Put input and buttons into one row */
-form {
-  display: inline-block;
-}
-
+/* Put a line below headings */
 h1 {
   border-bottom: 2px solid #707070;
 }
@@ -19,6 +17,14 @@ h1 {
 p, table, h1, h2, h3, h4 {
   margin: 0.75em;
 }
+
+/* Do not change values below **************************************************/
+
+/* Put input and buttons into one row */
+form {
+  display: inline-block;
+}
+
 
 /* Limit size of airport input text */
 #airporttext {

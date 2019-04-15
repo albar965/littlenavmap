@@ -33,8 +33,12 @@
 #include <QApplication>
 #include <QStandardPaths>
 #include <QDir>
+#include <QMessageBox>
 #include <QWidget>
 #include <QHostInfo>
+#include <QNetworkInterface>
+
+#include <options/optiondata.h>
 
 using namespace stefanfrings;
 
@@ -51,6 +55,7 @@ WebController::WebController(QWidget *parent) :
   listenerSettings = new QSettings(configFileName, QSettings::IniFormat, this);
   mapController = new WebMapController(parentWidget, verbose);
   htmlInfoBuilder = new HtmlInfoBuilder(parent, true /*info*/, true /*print*/);
+  updateSettings();
 }
 
 WebController::~WebController()
@@ -74,19 +79,21 @@ void WebController::startServer()
     return;
   }
 
-  // Build full canonical path with / as separator only on all systems and no "/" at the end
-  documentRoot = QFileInfo(QCoreApplication::applicationDirPath() + QDir::separator() + "web").canonicalFilePath();
-  documentRoot.replace('\\', '/');
-  if(documentRoot.endsWith("/"))
-    documentRoot.chop(1);
+  QString docroot = documentRoot;
+  if(docroot.isEmpty())
+    // Build full canonical path with / as separator only on all systems and no "/" at the end
+    docroot =
+      QDir::fromNativeSeparators(QFileInfo(QCoreApplication::applicationDirPath() +
+                                           QDir::separator() +
+                                           "web").canonicalFilePath());
+
+  if(docroot.endsWith("/"))
+    docroot.chop(1);
 
   // Initialize global settings and caches
-  WebApp::init(this, configFileName, documentRoot);
+  WebApp::init(this, configFileName, docroot);
 
-  // QString docroot = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() + QDir::separator() +
-  // QApplication::applicationName() + QDir::separator() + "Webserver";
-
-  qDebug() << Q_FUNC_INFO << "Docroot" << documentRoot << "port" << port;
+  qDebug() << Q_FUNC_INFO << "Docroot" << docroot << "port" << port;
 
   // Start map
   mapController->init();
@@ -101,7 +108,63 @@ void WebController::startServer()
 
   listener = new HttpListener(listenerSettings, requestHandler, this);
 
-  qInfo() << Q_FUNC_INFO << "Listening on" << listener->serverAddress().toString() << listener->serverPort();
+  if(!listener->isListening())
+  {
+    // Not listening - display error dialog ====================================================
+    QString localErrorString = listener->errorString();
+
+    QMessageBox::warning(parentWidget, QApplication::applicationName(),
+                         tr("Unable to start the server. Error:\n%1.").arg(listener->errorString()));
+    stopServer();
+  }
+  else
+  {
+    // Listening ====================================================
+    qInfo() << Q_FUNC_INFO << "Listening on" << listener->serverAddress().toString() << listener->serverPort();
+
+    QHostAddress addr = listener->serverAddress();
+    QUrl url;
+    url.setScheme("http");
+    url.setPort(port);
+
+    if(addr == QHostAddress::Any)
+    {
+      // Collect hostnames and IPs from all interfaces
+      QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+      for(const QHostAddress& ip : ipAddressesList)
+      {
+        QString ipStr = ip.toString();
+        if(!ip.isLoopback() && !ip.isNull() && ip.protocol() == QAbstractSocket::IPv4Protocol)
+        {
+          QString name = QHostInfo::fromName(ipStr).hostName();
+          qDebug() << "Found valid IP" << ipStr << "name" << name;
+
+          if(!name.isEmpty() && name != ipStr)
+          {
+            url.setHost(name);
+            urlList.append(url);
+          }
+          else
+          {
+            url.setHost(ipStr);
+            urlList.append(url);
+          }
+
+          url.setHost(ipStr);
+          urlIpList.append(url);
+        }
+        else
+          qDebug() << "Found IP" << ipStr;
+      }
+    }
+
+    // Add localhost if nothing was found
+    if(urlList.isEmpty())
+      urlList.append(QString("http://localhost:%1").arg(port));
+
+    if(urlIpList.isEmpty())
+      urlIpList.append(QString("http://127.0.0.1:%1").arg(port));
+  }
 
   emit webserverStatusChanged(true);
 }
@@ -116,8 +179,6 @@ void WebController::stopServer()
     return;
   }
 
-  emit webserverStatusChanged(false);
-
   mapController->deInit();
 
   if(listener != nullptr)
@@ -129,29 +190,72 @@ void WebController::stopServer()
   delete requestHandler;
   requestHandler = nullptr;
 
+  urlList.clear();
+  urlIpList.clear();
+
   WebApp::deinit();
+
+  emit webserverStatusChanged(false);
+}
+
+void WebController::restartServer()
+{
+  if(isRunning())
+  {
+    stopServer();
+    startServer();
+  }
 }
 
 void WebController::openPage()
 {
-  if(listener != nullptr && listener->isListening())
-  {
-    QUrl url;
-    QHostAddress addr = listener->serverAddress();
-    if(addr == QHostAddress::Any || addr == QHostAddress::LocalHost || addr == QHostAddress::LocalHostIPv6)
-      url.setHost("localhost");
-    else
-      url.setHost(QHostInfo::fromName(addr.toString()).hostName());
-    url.setPort(listener->serverPort());
-    url.setScheme("http");
-
-    atools::gui::HelpHandler::openUrl(parentWidget, url);
-  }
-  else
-    qWarning() << Q_FUNC_INFO << "Not listening";
+  if(!getUrl(false).isEmpty())
+    atools::gui::HelpHandler::openUrl(parentWidget, getUrl(false));
 }
 
 bool WebController::isRunning() const
 {
   return listener != nullptr && listener->isListening();
+}
+
+QStringList WebController::getUrlStr() const
+{
+  QStringList retval;
+  for(int i = 0; i < urlList.size(); i++)
+    retval.append(tr("<a href=\"%1\">%1</a> (IP address <a href=\"%2\">%2</a>)").
+                  arg(urlList.value(i).toString()).arg(urlIpList.value(i).toString()));
+  return retval;
+}
+
+void WebController::optionsChanged()
+{
+  if(updateSettings())
+    restartServer();
+}
+
+bool WebController::updateSettings()
+{
+  bool changed = false;
+  int newport = OptionData::instance().getWebPort();
+  if(port != newport)
+  {
+    port = newport;
+    changed = true;
+  }
+
+  QString newdocumentRoot =
+    QDir::fromNativeSeparators(QFileInfo(OptionData::instance().getWebDocumentRoot()).canonicalFilePath());
+
+  if(QDir::fromNativeSeparators(QFileInfo(documentRoot).canonicalFilePath()) != newdocumentRoot)
+  {
+    documentRoot = newdocumentRoot;
+    changed = true;
+  }
+
+  return changed;
+}
+
+QString WebController::getAbsoluteWebrootFilePath() const
+{
+  return QDir::toNativeSeparators(QFileInfo(documentRoot).canonicalFilePath());
 }

@@ -834,6 +834,16 @@ public:
     return displayOnlineTower;
   }
 
+  QString getWebDocumentRoot() const
+  {
+    return webDocumentRoot;
+  }
+
+  int getWebPort() const
+  {
+    return webPort;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1088,6 +1098,10 @@ private:
   int onlineReloadSeconds = 180, onlineReloadSecondsConfig = 180;
   QString onlineVatsimStatusUrl;
   QString onlineIvaoStatusUrl;
+
+  QString webDocumentRoot;
+  int webPort = 8965;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

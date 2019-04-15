@@ -24,6 +24,7 @@
 #include "atools.h"
 #include "ui_options.h"
 #include "weather/weatherreporter.h"
+#include "web/webcontroller.h"
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
 #include "gui/widgetutil.h"
@@ -217,150 +218,154 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   rangeRingValidator = new RangeRingValidator;
 
   // Create widget list for state saver
-  widgets.append(ui->tabWidgetOptions);
-  widgets.append(ui->checkBoxOptionsGuiCenterKml);
-  widgets.append(ui->checkBoxOptionsGuiCenterRoute);
-  widgets.append(ui->checkBoxOptionsGuiAvoidOverwrite);
-  widgets.append(ui->checkBoxOptionsGuiOverrideLanguage);
-  widgets.append(ui->checkBoxOptionsGuiOverrideLocale);
-  widgets.append(ui->checkBoxOptionsMapEmptyAirports);
-  widgets.append(ui->checkBoxOptionsMapEmptyAirports3D);
-  widgets.append(ui->checkBoxOptionsRouteShortName);
-  widgets.append(ui->checkBoxOptionsMapTooltipAirport);
-  widgets.append(ui->checkBoxOptionsMapTooltipNavaid);
-  widgets.append(ui->checkBoxOptionsMapTooltipAirspace);
-  widgets.append(ui->checkBoxOptionsMapClickAirport);
-  widgets.append(ui->checkBoxOptionsMapClickNavaid);
-  widgets.append(ui->checkBoxOptionsMapClickAirspace);
-  widgets.append(ui->checkBoxOptionsMapUndock);
-  widgets.append(ui->checkBoxOptionsRouteEastWestRule);
-  widgets.append(ui->comboBoxOptionsRouteAltitudeRuleType);
-  widgets.append(ui->checkBoxOptionsRoutePreferNdb);
-  widgets.append(ui->checkBoxOptionsRoutePreferVor);
-  widgets.append(ui->checkBoxOptionsRouteExportUserWpt);
-  widgets.append(ui->checkBoxOptionsStartupLoadKml);
-  widgets.append(ui->checkBoxOptionsStartupLoadMapSettings);
-  widgets.append(ui->checkBoxOptionsStartupLoadRoute);
-  widgets.append(ui->checkBoxOptionsStartupLoadTrail);
-  widgets.append(ui->checkBoxOptionsStartupLoadSearch);
-  widgets.append(ui->checkBoxOptionsStartupLoadInfoContent);
-  widgets.append(ui->checkBoxOptionsWeatherInfoAsn);
-  widgets.append(ui->checkBoxOptionsWeatherInfoNoaa);
-  widgets.append(ui->checkBoxOptionsWeatherInfoVatsim);
-  widgets.append(ui->checkBoxOptionsWeatherInfoIvao);
-  widgets.append(ui->checkBoxOptionsWeatherInfoFs);
-  widgets.append(ui->checkBoxOptionsWeatherTooltipAsn);
-  widgets.append(ui->checkBoxOptionsWeatherTooltipNoaa);
-  widgets.append(ui->checkBoxOptionsWeatherTooltipVatsim);
-  widgets.append(ui->checkBoxOptionsWeatherTooltipIvao);
-  widgets.append(ui->checkBoxOptionsWeatherTooltipFs);
-  widgets.append(ui->lineEditOptionsMapRangeRings);
-  widgets.append(ui->lineEditOptionsWeatherAsnPath);
-  widgets.append(ui->lineEditOptionsWeatherNoaaUrl);
-  widgets.append(ui->lineEditOptionsWeatherVatsimUrl);
-  widgets.append(ui->lineEditOptionsWeatherIvaoUrl);
-  widgets.append(ui->listWidgetOptionsDatabaseAddon);
-  widgets.append(ui->listWidgetOptionsDatabaseExclude);
-  widgets.append(ui->comboBoxMapScrollDetails);
-  widgets.append(ui->radioButtonOptionsSimUpdateFast);
-  widgets.append(ui->radioButtonOptionsSimUpdateLow);
-  widgets.append(ui->radioButtonOptionsSimUpdateMedium);
-  widgets.append(ui->checkBoxOptionsSimUpdatesConstant);
-  widgets.append(ui->spinBoxOptionsSimUpdateBox);
-  widgets.append(ui->spinBoxSimMaxTrackPoints);
-  widgets.append(ui->radioButtonOptionsStartupShowHome);
-  widgets.append(ui->radioButtonOptionsStartupShowLast);
-  widgets.append(ui->radioButtonOptionsStartupShowFlightplan);
+  widgets.append(
+    {ui->listWidgetOptionPages,
+     ui->splitterOptions,
+     ui->checkBoxOptionsGuiCenterKml,
+     ui->checkBoxOptionsGuiCenterRoute,
+     ui->checkBoxOptionsGuiAvoidOverwrite,
+     ui->checkBoxOptionsGuiOverrideLanguage,
+     ui->checkBoxOptionsGuiOverrideLocale,
+     ui->checkBoxOptionsMapEmptyAirports,
+     ui->checkBoxOptionsMapEmptyAirports3D,
+     ui->checkBoxOptionsRouteShortName,
+     ui->checkBoxOptionsMapTooltipAirport,
+     ui->checkBoxOptionsMapTooltipNavaid,
+     ui->checkBoxOptionsMapTooltipAirspace,
+     ui->checkBoxOptionsMapClickAirport,
+     ui->checkBoxOptionsMapClickNavaid,
+     ui->checkBoxOptionsMapClickAirspace,
+     ui->checkBoxOptionsMapUndock,
+     ui->checkBoxOptionsRouteEastWestRule,
+     ui->comboBoxOptionsRouteAltitudeRuleType,
+     ui->checkBoxOptionsRoutePreferNdb,
+     ui->checkBoxOptionsRoutePreferVor,
+     ui->checkBoxOptionsRouteExportUserWpt,
+     ui->checkBoxOptionsStartupLoadKml,
+     ui->checkBoxOptionsStartupLoadMapSettings,
+     ui->checkBoxOptionsStartupLoadRoute,
+     ui->checkBoxOptionsStartupLoadTrail,
+     ui->checkBoxOptionsStartupLoadSearch,
+     ui->checkBoxOptionsStartupLoadInfoContent,
+     ui->checkBoxOptionsWeatherInfoAsn,
+     ui->checkBoxOptionsWeatherInfoNoaa,
+     ui->checkBoxOptionsWeatherInfoVatsim,
+     ui->checkBoxOptionsWeatherInfoIvao,
+     ui->checkBoxOptionsWeatherInfoFs,
+     ui->checkBoxOptionsWeatherTooltipAsn,
+     ui->checkBoxOptionsWeatherTooltipNoaa,
+     ui->checkBoxOptionsWeatherTooltipVatsim,
+     ui->checkBoxOptionsWeatherTooltipIvao,
+     ui->checkBoxOptionsWeatherTooltipFs,
+     ui->lineEditOptionsMapRangeRings,
+     ui->lineEditOptionsWeatherAsnPath,
+     ui->lineEditOptionsWeatherNoaaUrl,
+     ui->lineEditOptionsWeatherVatsimUrl,
+     ui->lineEditOptionsWeatherIvaoUrl,
+     ui->listWidgetOptionsDatabaseAddon,
+     ui->listWidgetOptionsDatabaseExclude,
+     ui->comboBoxMapScrollDetails,
+     ui->radioButtonOptionsSimUpdateFast,
+     ui->radioButtonOptionsSimUpdateLow,
+     ui->radioButtonOptionsSimUpdateMedium,
+     ui->checkBoxOptionsSimUpdatesConstant,
+     ui->spinBoxOptionsSimUpdateBox,
+     ui->spinBoxSimMaxTrackPoints,
+     ui->radioButtonOptionsStartupShowHome,
+     ui->radioButtonOptionsStartupShowLast,
+     ui->radioButtonOptionsStartupShowFlightplan,
 
-  widgets.append(ui->spinBoxOptionsCacheDiskSize);
-  widgets.append(ui->spinBoxOptionsCacheMemorySize);
-  widgets.append(ui->radioButtonCacheUseOffineElevation);
-  widgets.append(ui->radioButtonCacheUseOnlineElevation);
-  widgets.append(ui->lineEditCacheOfflineDataPath);
+     ui->spinBoxOptionsCacheDiskSize,
+     ui->spinBoxOptionsCacheMemorySize,
+     ui->radioButtonCacheUseOffineElevation,
+     ui->radioButtonCacheUseOnlineElevation,
+     ui->lineEditCacheOfflineDataPath,
 
-  widgets.append(ui->spinBoxOptionsGuiInfoText);
-  widgets.append(ui->spinBoxOptionsGuiAircraftPerf);
-  widgets.append(ui->spinBoxOptionsGuiRouteText);
-  widgets.append(ui->spinBoxOptionsGuiSearchText);
-  widgets.append(ui->spinBoxOptionsGuiSimInfoText);
-  // widgets.append(ui->comboBoxOptionsGuiTheme);
-  widgets.append(ui->spinBoxOptionsGuiThemeMapDimming);
-  widgets.append(ui->spinBoxOptionsMapClickRect);
-  widgets.append(ui->spinBoxOptionsMapTooltipRect);
-  widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
-  widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMapMenu);
-  widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
+     ui->spinBoxOptionsGuiInfoText,
+     ui->spinBoxOptionsGuiAircraftPerf,
+     ui->spinBoxOptionsGuiRouteText,
+     ui->spinBoxOptionsGuiSearchText,
+     ui->spinBoxOptionsGuiSimInfoText,
+     ui->spinBoxOptionsGuiThemeMapDimming,
+     ui->spinBoxOptionsMapClickRect,
+     ui->spinBoxOptionsMapTooltipRect,
+     ui->doubleSpinBoxOptionsMapZoomShowMap,
+     ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
+     ui->spinBoxOptionsRouteGroundBuffer,
 
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeAircraftAi);
-  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeNavaid);
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeNavaid);
-  widgets.append(ui->spinBoxOptionsDisplayThicknessFlightplan);
-  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAirport);
-  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAircraftAi);
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeFlightplan);
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeAircraftUser);
-  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAircraftUser);
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeAirport);
-  widgets.append(ui->spinBoxOptionsDisplayThicknessTrail);
-  widgets.append(ui->spinBoxOptionsDisplayThicknessRangeDistance);
-  widgets.append(ui->spinBoxOptionsDisplayThicknessCompassRose);
-  widgets.append(ui->spinBoxOptionsDisplaySunShadeDarkness);
-  widgets.append(ui->comboBoxOptionsDisplayTrailType);
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeCompassRose);
-  widgets.append(ui->spinBoxOptionsDisplayTextSizeRangeDistance);
+     ui->spinBoxOptionsDisplayTextSizeAircraftAi,
+     ui->spinBoxOptionsDisplaySymbolSizeNavaid,
+     ui->spinBoxOptionsDisplayTextSizeNavaid,
+     ui->spinBoxOptionsDisplayThicknessFlightplan,
+     ui->spinBoxOptionsDisplaySymbolSizeAirport,
+     ui->spinBoxOptionsDisplaySymbolSizeAircraftAi,
+     ui->spinBoxOptionsDisplayTextSizeFlightplan,
+     ui->spinBoxOptionsDisplayTextSizeAircraftUser,
+     ui->spinBoxOptionsDisplaySymbolSizeAircraftUser,
+     ui->spinBoxOptionsDisplayTextSizeAirport,
+     ui->spinBoxOptionsDisplayThicknessTrail,
+     ui->spinBoxOptionsDisplayThicknessRangeDistance,
+     ui->spinBoxOptionsDisplayThicknessCompassRose,
+     ui->spinBoxOptionsDisplaySunShadeDarkness,
+     ui->comboBoxOptionsDisplayTrailType,
+     ui->spinBoxOptionsDisplayTextSizeCompassRose,
+     ui->spinBoxOptionsDisplayTextSizeRangeDistance,
 
-  widgets.append(ui->comboBoxOptionsStartupUpdateChannels);
-  widgets.append(ui->comboBoxOptionsStartupUpdateRate);
+     ui->comboBoxOptionsStartupUpdateChannels,
+     ui->comboBoxOptionsStartupUpdateRate,
 
-  widgets.append(ui->comboBoxOptionsUnitDistance);
-  widgets.append(ui->comboBoxOptionsUnitAlt);
-  widgets.append(ui->comboBoxOptionsUnitSpeed);
-  widgets.append(ui->comboBoxOptionsUnitVertSpeed);
-  widgets.append(ui->comboBoxOptionsUnitShortDistance);
-  widgets.append(ui->comboBoxOptionsUnitCoords);
-  widgets.append(ui->comboBoxOptionsUnitFuelWeight);
+     ui->comboBoxOptionsUnitDistance,
+     ui->comboBoxOptionsUnitAlt,
+     ui->comboBoxOptionsUnitSpeed,
+     ui->comboBoxOptionsUnitVertSpeed,
+     ui->comboBoxOptionsUnitShortDistance,
+     ui->comboBoxOptionsUnitCoords,
+     ui->comboBoxOptionsUnitFuelWeight,
 
-  widgets.append(ui->checkBoxOptionsShowTod);
-  widgets.append(ui->checkBoxOptionsMapZoomAvoidBlurred);
+     ui->checkBoxOptionsShowTod,
+     ui->checkBoxOptionsMapZoomAvoidBlurred,
 
-  widgets.append(ui->checkBoxOptionsMapAirportText);
-  widgets.append(ui->checkBoxOptionsMapNavaidText);
-  widgets.append(ui->checkBoxOptionsMapFlightplanText);
-  widgets.append(ui->checkBoxOptionsMapAirportBoundary);
-  widgets.append(ui->checkBoxOptionsMapAirportDiagram);
-  widgets.append(ui->checkBoxOptionsMapFlightplanDimPassed);
-  widgets.append(ui->checkBoxOptionsSimDoNotFollowOnScroll);
-  widgets.append(ui->checkBoxOptionsSimCenterLeg);
-  widgets.append(ui->checkBoxOptionsSimCenterLegTable);
-  widgets.append(ui->spinBoxSimDoNotFollowOnScrollTime);
+     ui->checkBoxOptionsMapAirportText,
+     ui->checkBoxOptionsMapNavaidText,
+     ui->checkBoxOptionsMapFlightplanText,
+     ui->checkBoxOptionsMapAirportBoundary,
+     ui->checkBoxOptionsMapAirportDiagram,
+     ui->checkBoxOptionsMapFlightplanDimPassed,
+     ui->checkBoxOptionsSimDoNotFollowOnScroll,
+     ui->checkBoxOptionsSimCenterLeg,
+     ui->checkBoxOptionsSimCenterLegTable,
+     ui->spinBoxSimDoNotFollowOnScrollTime,
 
-  widgets.append(ui->radioButtonOptionsOnlineNone);
-  widgets.append(ui->radioButtonOptionsOnlineVatsim);
-  widgets.append(ui->radioButtonOptionsOnlineIvao);
-  widgets.append(ui->radioButtonOptionsOnlineCustomStatus);
-  widgets.append(ui->radioButtonOptionsOnlineCustom);
+     ui->radioButtonOptionsOnlineNone,
+     ui->radioButtonOptionsOnlineVatsim,
+     ui->radioButtonOptionsOnlineIvao,
+     ui->radioButtonOptionsOnlineCustomStatus,
+     ui->radioButtonOptionsOnlineCustom,
 
-  widgets.append(ui->lineEditOptionsOnlineStatusUrl);
-  widgets.append(ui->lineEditOptionsOnlineWhazzupUrl);
-  widgets.append(ui->spinBoxOptionsOnlineUpdate);
-  widgets.append(ui->comboBoxOptionsOnlineFormat);
+     ui->lineEditOptionsOnlineStatusUrl,
+     ui->lineEditOptionsOnlineWhazzupUrl,
+     ui->spinBoxOptionsOnlineUpdate,
+     ui->comboBoxOptionsOnlineFormat,
 
-  widgets.append(ui->checkBoxDisplayOnlineGroundRange);
-  widgets.append(ui->checkBoxDisplayOnlineApproachRange);
-  widgets.append(ui->checkBoxDisplayOnlineObserverRange);
-  widgets.append(ui->checkBoxDisplayOnlineFirRange);
-  widgets.append(ui->checkBoxDisplayOnlineAreaRange);
-  widgets.append(ui->checkBoxDisplayOnlineDepartureRange);
-  widgets.append(ui->checkBoxDisplayOnlineTowerRange);
-  widgets.append(ui->checkBoxDisplayOnlineClearanceRange);
-  widgets.append(ui->spinBoxDisplayOnlineClearance);
-  widgets.append(ui->spinBoxDisplayOnlineArea);
-  widgets.append(ui->spinBoxDisplayOnlineApproach);
-  widgets.append(ui->spinBoxDisplayOnlineDeparture);
-  widgets.append(ui->spinBoxDisplayOnlineFir);
-  widgets.append(ui->spinBoxDisplayOnlineObserver);
-  widgets.append(ui->spinBoxDisplayOnlineGround);
-  widgets.append(ui->spinBoxDisplayOnlineTower);
+     ui->checkBoxDisplayOnlineGroundRange,
+     ui->checkBoxDisplayOnlineApproachRange,
+     ui->checkBoxDisplayOnlineObserverRange,
+     ui->checkBoxDisplayOnlineFirRange,
+     ui->checkBoxDisplayOnlineAreaRange,
+     ui->checkBoxDisplayOnlineDepartureRange,
+     ui->checkBoxDisplayOnlineTowerRange,
+     ui->checkBoxDisplayOnlineClearanceRange,
+     ui->spinBoxDisplayOnlineClearance,
+     ui->spinBoxDisplayOnlineArea,
+     ui->spinBoxDisplayOnlineApproach,
+     ui->spinBoxDisplayOnlineDeparture,
+     ui->spinBoxDisplayOnlineFir,
+     ui->spinBoxDisplayOnlineObserver,
+     ui->spinBoxDisplayOnlineGround,
+     ui->spinBoxDisplayOnlineTower,
+
+     ui->spinBoxOptionsWebPort,
+     ui->lineEditOptionsWebDocroot});
 
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
@@ -489,6 +494,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::onlineDisplayRangeClicked);
   connect(ui->checkBoxDisplayOnlineClearanceRange, &QCheckBox::toggled,
           this, &OptionsDialog::onlineDisplayRangeClicked);
+
+  // Web server =======================================================================
+  connect(ui->pushButtonOptionsWebSelectDocroot, &QPushButton::clicked, this, &OptionsDialog::selectWebDocrootClicked);
+  connect(ui->lineEditOptionsWebDocroot, &QLineEdit::textEdited, this, &OptionsDialog::updateWebDocrootStatus);
+  connect(ui->pushButtonOptionsWebStart, &QPushButton::clicked, this, &OptionsDialog::startStopWebServerClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -506,6 +516,8 @@ int OptionsDialog::exec()
   updateWidgetUnits();
   updateDatabaseButtonState();
   updateOnlineWidgetStatus();
+  updateWebServerStatus();
+  updateWebDocrootStatus();
 
   return QDialog::exec();
 }
@@ -625,6 +637,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     // Update dialog internal stuff
     updateWidgetUnits();
     updateActiveSkyPathStatus();
+    updateWebDocrootStatus();
+    updateWebServerStatus();
     updateWeatherButtonState();
     updateDatabaseButtonState();
   }
@@ -639,8 +653,13 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
+  {
+    // Need to restore settings in web server since it might be started from the configuration page
+    WebController *webController = NavApp::getWebController();
+    if(webController != nullptr)
+      webController->optionsChanged();
     reject();
-
+  }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
   {
     qDebug() << "OptionsDialog::resetDefaultClicked";
@@ -661,6 +680,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
       updateWidgetUnits();
       updateActiveSkyPathStatus();
+      updateWebDocrootStatus();
+      updateWebServerStatus();
       updateWeatherButtonState();
       updateDatabaseButtonState();
     }
@@ -755,6 +776,10 @@ void OptionsDialog::restoreState()
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
   onlineDisplayRangeClicked();
+
+  updateWebServerStatus();
+  updateWebDocrootStatus();
+
   if(ui->listWidgetOptionPages->selectedItems().isEmpty())
     ui->listWidgetOptionPages->selectionModel()->select(ui->listWidgetOptionPages->model()->index(0, 0),
                                                         QItemSelectionModel::ClearAndSelect);
@@ -1243,6 +1268,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOnlineTower =
     displayOnlineRangeToData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange);
 
+  data.webPort = ui->spinBoxOptionsWebPort->value();
+  data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
+
   data.valid = true;
 }
 
@@ -1458,6 +1486,9 @@ void OptionsDialog::optionDataToWidgets()
                              data.displayOnlineGround);
   displayOnlineRangeFromData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange,
                              data.displayOnlineTower);
+
+  ui->spinBoxOptionsWebPort->setValue(data.webPort);
+  ui->lineEditOptionsWebDocroot->setText(QDir::toNativeSeparators(data.webDocumentRoot));
 }
 
 /* Add flag from checkbox to OptionData flags */
@@ -1684,6 +1715,7 @@ void OptionsDialog::showDiskCacheClicked()
   if(!QDesktopServices::openUrl(url))
     atools::gui::Dialog::warning(this, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
 }
+
 QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text,
                                              const QString& tooltip, const QString& iconPath)
 {
@@ -1702,3 +1734,89 @@ void OptionsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previo
   ui->stackedWidgetOptions->setCurrentIndex(ui->listWidgetOptionPages->row(current));
 }
 
+void OptionsDialog::updateWebServerStatus()
+{
+  WebController *webController = NavApp::getWebController();
+  if(webController != nullptr)
+  {
+    if(webController->isRunning())
+    {
+      QStringList urls = webController->getUrlStr();
+
+      if(urls.size() > 1)
+        ui->labelOptionsWebStatus->setText(tr("Web Server is running at<ul><li>%1</li></ul>").
+                                           arg(webController->getUrlStr().join("</li><li>")));
+      else
+        ui->labelOptionsWebStatus->setText(tr("Web Server is running at %1").arg(urls.join(tr(", "))));
+
+      ui->pushButtonOptionsWebStart->setText(tr("&Stop Web Server"));
+    }
+    else
+    {
+      ui->labelOptionsWebStatus->setText(tr("Web Server is not running."));
+      ui->pushButtonOptionsWebStart->setText(tr("&Start Web Server"));
+    }
+  }
+}
+
+void OptionsDialog::updateWebDocrootStatus()
+{
+  const QString& path = ui->lineEditOptionsWebDocroot->text();
+
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Directory does not exist.")));
+    else if(!fileinfo.isDir())
+      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Is not a directory.")));
+    else if(!QFileInfo(path + QDir::separator() + "index.html").exists())
+      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No index.html found.")));
+    else
+      ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));
+  }
+  else
+  {
+    // Use default path
+    WebController *webController = NavApp::getWebController();
+    if(webController != nullptr)
+      ui->labelOptionWebDocrootStatus->setText(tr("Using default document root %1.").arg(
+                                                 webController->getAbsoluteWebrootFilePath()));
+    else
+      // Might happen only at startup
+      ui->labelOptionWebDocrootStatus->setText(tr("Not initialized."));
+  }
+}
+
+void OptionsDialog::selectWebDocrootClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  QString path = atools::gui::Dialog(this).openDirectoryDialog(
+    tr("Open Document Root Directory"), lnm::OPTIONS_DIALOG_WEB_DOCROOT_DLG, ui->lineEditOptionsWebDocroot->text());
+
+  if(!path.isEmpty())
+    ui->lineEditOptionsWebDocroot->setText(QDir::toNativeSeparators(path));
+
+  updateWebDocrootStatus();
+  updateWebServerStatus();
+}
+
+void OptionsDialog::startStopWebServerClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  WebController *webController = NavApp::getWebController();
+  if(webController != nullptr)
+  {
+    if(webController->isRunning())
+      webController->stopServer();
+    else
+    {
+      // Update options from page before starting
+      webController->setDocumentRoot(
+        QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).canonicalFilePath()));
+      webController->setPort(ui->spinBoxOptionsWebPort->value());
+      webController->startServer();
+    }
+  }
+  updateWebServerStatus();
+}

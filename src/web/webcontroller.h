@@ -19,6 +19,8 @@
 #define LNM_WEBCONTROLLER_H
 
 #include <QObject>
+#include <QUrl>
+#include <QVector>
 
 namespace stefanfrings {
 class HttpListener;
@@ -49,12 +51,51 @@ public:
 
   /* Stop server if running. Ignored if already stopped. */
   void stopServer();
+  void restartServer();
 
   /* Open the server address in the default web browser */
   void openPage();
 
   /* True if server is listening */
   bool isRunning() const;
+
+  /* Get the default url. Usually hostname and port or IP and port as fallback. */
+  QUrl getUrl(bool useIpAddress) const
+  {
+    return useIpAddress ? urlIpList.value(0) : urlList.value(0);
+  }
+
+  /* Get list of bound URLs (IPs) for display */
+  QStringList getUrlStr() const;
+
+  /* Update settings and probably restart server. */
+  void optionsChanged();
+
+  /* Update settings from option data but do not restart. Returns true if any changes. */
+  bool updateSettings();
+
+  /* Get canonical path of document root with system separators for display */
+  QString getAbsoluteWebrootFilePath() const;
+
+  QString getDocumentRoot() const
+  {
+    return documentRoot;
+  }
+
+  void setDocumentRoot(const QString& value)
+  {
+    documentRoot = value;
+  }
+
+  int getPort() const
+  {
+    return port;
+  }
+
+  void setPort(int value)
+  {
+    port = value;
+  }
 
 signals:
   /* Send after server is started or before server is shutdown */
@@ -82,6 +123,8 @@ private:
 
   QWidget *parentWidget;
   bool verbose = false;
+
+  QVector<QUrl> urlList, urlIpList;
 };
 
 #endif // LNM_WEBCONTROLLER_H
