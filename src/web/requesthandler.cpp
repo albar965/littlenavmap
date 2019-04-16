@@ -28,6 +28,7 @@
 #include "web/webmapcontroller.h"
 #include "web/webtools.h"
 #include "web/webapp.h"
+#include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "common/htmlinfobuilder.h"
 #include "util/htmlbuilder.h"
@@ -195,7 +196,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
 
             // ===========================================================================
             // Aircraft registration, weight, etc.
-            atools::util::HtmlBuilder html(true /* has background color */);
+            atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
 
             atools::fs::sc::SimConnectUserAircraft userAircraft;
             if(t.contains("{aircraftProgressText}") || t.contains("{aircraftText}"))
