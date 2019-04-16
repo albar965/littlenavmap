@@ -285,6 +285,12 @@ public:
 
   ApronGeometryCache *getApronGeometryCache();
 
+  /* true if real map display widget - false if hidden for online services or other applications */
+  bool isVisibleWidget() const
+  {
+    return visibleWidget;
+  }
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);

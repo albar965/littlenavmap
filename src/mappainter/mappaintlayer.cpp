@@ -550,8 +550,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         overflow = 0;
     }
 
-    if(!mapWidget->isPrinting())
-      // Dim the map by drawing a semi-transparent black rectangle
+    if(!mapWidget->isPrinting() && mapWidget->isVisibleWidget())
+      // Dim the map by drawing a semi-transparent black rectangle - but not for printing or web services
       mapcolors::darkenPainterRect(*painter);
   }
   return true;

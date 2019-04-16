@@ -88,7 +88,7 @@ public:
   void optionsChanged();
 
   /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
-   * List is empty if airport does not exist. */
+   * List is empty if airport does not exist. Uses own white background color for tables. */
   QStringList getAirportTextFull(const QString& ident) const;
 
 signals:
@@ -97,7 +97,6 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
 private:
-
   /* Do not update aircraft progress more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
 

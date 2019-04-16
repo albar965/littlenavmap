@@ -33,6 +33,7 @@
 #include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
+#include "common/mapcolors.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
@@ -1099,7 +1100,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
   map::WeatherContext weatherContext;
   mainWindow->buildWeatherContext(weatherContext, airport);
 
-  atools::util::HtmlBuilder html(true /* background color */);
+  atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
   HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
   builder.airportText(airport, weatherContext, html, nullptr);
   retval.append(html.getHtml());

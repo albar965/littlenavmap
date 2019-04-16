@@ -413,7 +413,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
   qDebug() << Q_FUNC_INFO;
   using atools::util::HtmlBuilder;
 
-  HtmlBuilder html(true);
+  atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
   int minColWidth = view->horizontalHeader()->minimumSectionSize() + 1;
 
   // Header lines
