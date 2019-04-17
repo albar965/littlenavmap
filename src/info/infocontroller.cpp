@@ -33,6 +33,7 @@
 #include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
+#include "common/mapcolors.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
@@ -200,12 +201,12 @@ void InfoController::anchorClicked(const QUrl& url)
       if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
       {
         // Zoom to position =========================================
-        float zoom = 0.f;
-        if(query.hasQueryItem("zoom"))
-          zoom = query.queryItemValue("zoom").toFloat();
+        float distanceKm = 0.f;
+        if(query.hasQueryItem("distance"))
+          distanceKm = query.queryItemValue("distance").toFloat();
 
         emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
-                                      query.queryItemValue("laty").toFloat()), zoom, false);
+                                      query.queryItemValue("laty").toFloat()), distanceKm, false);
       }
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
@@ -1088,4 +1089,37 @@ void InfoController::setTextEditFontSize(QTextEdit *textEdit, float origSize, in
     f.setPointSizeF(newSize);
     textEdit->setFont(f);
   }
+}
+
+QStringList InfoController::getAirportTextFull(const QString& ident) const
+{
+  QStringList retval;
+  map::MapAirport airport;
+  airportQuery->getAirportByIdent(airport, ident);
+
+  map::WeatherContext weatherContext;
+  mainWindow->buildWeatherContext(weatherContext, airport);
+
+  atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
+  HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
+  builder.airportText(airport, weatherContext, html, nullptr);
+  retval.append(html.getHtml());
+
+  html.clear();
+  builder.runwayText(airport, html);
+  retval.append(html.getHtml());
+
+  html.clear();
+  builder.comText(airport, html);
+  retval.append(html.getHtml());
+
+  html.clear();
+  builder.procedureText(airport, html);
+  retval.append(html.getHtml());
+
+  html.clear();
+  builder.weatherText(weatherContext, airport, html);
+  retval.append(html.getHtml());
+
+  return retval;
 }

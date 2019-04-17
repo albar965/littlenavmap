@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <title>
+      {applicationName} {applicationVersion} - Webserver
+    </title>
+    <style type="text/css" media="screen" xml:space="preserve">
+    /*<![CDATA[*/
+    form {
+      display: inline-block;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    tr {
+      border: none;
+    }
+
+    td {
+      border-right: solid 1px #c0c0c0;
+      border-left: solid 1px #c0c0c0;
+    }
+
+    th {
+      border-right: solid 1px black;
+      border-left: solid 1px black;
+    }
+
+    /*]]>*/
+    </style>
+    <script type="text/javascript" src="/assets/scripts.js" xml:space="preserve">
+    </script>
+    <script type="text/javascript" xml:space="preserve">
+    //<![CDATA[
+
+      // Fill values for reload and refresh functions
+      var timeoutHandle = 0;
+      var currentInterval = -1;
+      var refreshkey = "flightplanrefresh";
+      var pageToReload = "/flightplan_doc.html";
+
+    //]]>
+    </script>
+  </head>
+  <body onload="refreshPage()">
+    <div id="header">
+      <form id="refreshform" name="refreshform">
+        <p>
+          - <a href="/index.html">Map</a> - Flight Plan - <a href="/aircraft.html">Aircraft</a> - <a href=
+          "/progress.html">Aircraft Progress</a> - <a href="/airport.html">Airport</a> - <a href="{helpUrl}">Help</a>
+          -  {flightplanrefreshsel} <button type="button" onclick="reloadPage()">Reload</button>
+        </p>
+      </form>
+    </div>
+    <div id="doc">
+      Loading ...
+    </div>
+  </body>
+</html>

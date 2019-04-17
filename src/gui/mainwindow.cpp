@@ -72,6 +72,8 @@
 #include "util/version.h"
 #include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
+#include "mapgui/imageexportdialog.h"
+#include "web/webcontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -96,9 +98,8 @@
 static const int WEATHER_UPDATE_MS = 15000;
 
 // All known map themes
-static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
-                                           "openstreetmaproadshs", "opentopomap", "plain", "political",
-                                           "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
+static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
+                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -289,9 +290,6 @@ MainWindow::MainWindow()
 
     profileWidget->updateProfileShowFeatures();
 
-    // Initialize the X-Plane apron geometry cache
-    NavApp::getApronGeometryCache()->setViewportParams(NavApp::getMapWidget()->viewport());
-
     loadNavmapLegend();
     updateLegend();
     updateWindowTitle();
@@ -311,6 +309,20 @@ MainWindow::MainWindow()
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
+
+#ifdef DEBUG_INFORMATION
+
+  QAction *debugAction = new QAction("Debug Action");
+  debugAction->setShortcut(QKeySequence("Ctrl+F1"));
+  debugAction->setShortcutContext(Qt::ApplicationShortcut);
+  this->addAction(debugAction);
+
+  ui->menuHelp->addSeparator();
+  ui->menuHelp->addAction(debugAction);
+  connect(debugAction, &QAction::triggered, this, &MainWindow::debugActionTriggered);
+
+#endif
+
 }
 
 MainWindow::~MainWindow()
@@ -389,6 +401,16 @@ MainWindow::~MainWindow()
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 }
+
+#ifdef DEBUG_INFORMATION
+
+void MainWindow::debugActionTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  mapSaveImageAviTab();
+}
+
+#endif
 
 void MainWindow::updateMap() const
 {
@@ -547,7 +569,6 @@ void MainWindow::setupUi()
   mapThemeComboBox->setStatusTip(helpText);
   // Item order has to match MapWidget::MapThemeComboIndex
   mapThemeComboBox->addItem(tr("OpenStreetMap"), "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenMapSurfer"), "earth/openstreetmaproads/openstreetmaproads.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"), "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
   mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
@@ -575,9 +596,6 @@ void MainWindow::setupUi()
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenStreetMap->setData(map::OPENSTREETMAP);
-
-  ui->actionMapThemeOpenStreetMapRoads->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenStreetMapRoads->setData(map::OPENSTREETMAPROADS);
 
   ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenTopoMap->setData(map::OPENTOPOMAP);
@@ -776,7 +794,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, map::updateUnits);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapPaintWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
@@ -784,13 +802,14 @@ void MainWindow::connectAllSlots()
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
 
   // Style handler ===================================================================
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapWidget::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
@@ -806,15 +825,15 @@ void MainWindow::connectAllSlots()
           NavApp::getAircraftPerfController(), &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
-  connect(routeExport, &RouteExport::showRect, mapWidget, &MapWidget::showRect);
+  connect(routeExport, &RouteExport::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeExport, &RouteExport::selectDepartureParking, routeController, &RouteController::selectDepartureParking);
 
   // Route controller signals =======================================================
-  connect(routeController, &RouteController::showRect, mapWidget, &MapWidget::showRect);
-  connect(routeController, &RouteController::showPos, mapWidget, &MapWidget::showPos);
+  connect(routeController, &RouteController::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(routeController, &RouteController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
-  connect(routeController, &RouteController::routeChanged, mapWidget, &MapWidget::routeChanged);
-  connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapWidget::routeAltitudeChanged);
+  connect(routeController, &RouteController::routeChanged, mapWidget, &MapPaintWidget::routeChanged);
+  connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapPaintWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
 
@@ -822,8 +841,8 @@ void MainWindow::connectAllSlots()
           &ProcedureSearch::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
-  connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
-  connect(profileWidget, &ProfileWidget::showPos, mapWidget, &MapWidget::showPos);
+  connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapPaintWidget::changeProfileHighlight);
+  connect(profileWidget, &ProfileWidget::showPos, mapWidget, &MapPaintWidget::showPos);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
@@ -832,8 +851,8 @@ void MainWindow::connectAllSlots()
 
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
-  connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
-  connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(airportSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(airportSearch, &SearchBaseTable::showProcedures,
@@ -845,7 +864,7 @@ void MainWindow::connectAllSlots()
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
-  connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(navSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -853,7 +872,7 @@ void MainWindow::connectAllSlots()
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
-  connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(userSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -895,15 +914,15 @@ void MainWindow::connectAllSlots()
   OnlinedataController *onlinedataController = NavApp::getOnlinedataController();
 
   // Online client search ===================================================================================
-  connect(clientSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
-  connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(clientSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(clientSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(clientSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
 
   // Online center search ===================================================================================
-  connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapWidget::showRect);
-  connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapWidget::showPos);
+  connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(centerSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(centerSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -924,9 +943,9 @@ void MainWindow::connectAllSlots()
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           NavApp::getAirspaceQueryOnline(), &AirspaceQuery::clearCache);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          mapWidget, &MapWidget::onlineClientAndAtcUpdated);
+          mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          mapWidget, &MapWidget::onlineNetworkChanged);
+          mapWidget, &MapPaintWidget::onlineNetworkChanged);
 
   // Update info
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
@@ -946,16 +965,16 @@ void MainWindow::connectAllSlots()
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
   connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
   connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
-  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
-  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
           &RouteController::routeAttachProcedure);
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
 
-  connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
-  connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
+  connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
+  connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
 
   // Use this event to show scenery library dialog on first start after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -1064,13 +1083,14 @@ void MainWindow::connectAllSlots()
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
-  connect(mapWidget, &MapWidget::distanceChanged, this, &MainWindow::distanceChanged);
-  connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
-  connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
+  connect(mapWidget, &MapPaintWidget::distanceChanged, this, &MainWindow::distanceChanged);
+  connect(mapWidget, &MapPaintWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
   connect(mapWidget, &MapWidget::showApproaches,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
-  connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
+  connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged,
+          routeController, &RouteController::shownMapFeaturesChanged);
   connect(mapWidget, &MapWidget::addUserpointFromMap,
           NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
   connect(mapWidget, &MapWidget::editUserpointFromMap,
@@ -1100,7 +1120,6 @@ void MainWindow::connectAllSlots()
 
   // Let theme menus update combo boxes
   connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeOpenStreetMapRoads, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
   connect(ui->actionMapThemeCartoLight, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
@@ -1136,8 +1155,8 @@ void MainWindow::connectAllSlots()
   // Clear selection and highlights
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, routeController, &RouteController::clearSelection);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, searchController, &SearchController::clearSelection);
-  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapWidget::clearSearchHighlights);
-  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapWidget::clearAirspaceHighlights);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearSearchHighlights);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearAirspaceHighlights);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, this, &MainWindow::updateHighlightActionStates);
 
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1185,10 +1204,10 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
-  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::showAircraft);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
 
   // Update jump back
-  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::jumpBackToAircraftCancel);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);
 
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
@@ -1215,7 +1234,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
   // Messages about database query result status
-  connect(mapWidget, &MapWidget::resultTruncated, this, &MainWindow::resultTruncated);
+  connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
 
   connect(NavApp::getDatabaseManager(), &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(NavApp::getDatabaseManager(), &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
@@ -1244,8 +1263,9 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::sunShadingTimeChanged);
 
   // Map widget needs to clear track first
-  connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapPaintWidget::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget,
+          &MapPaintWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
@@ -1259,13 +1279,13 @@ void MainWindow::connectAllSlots()
           &ProfileWidget::disconnectedFromSimulator);
   connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
-  connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
+  connect(mapWidget, &MapPaintWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
-  connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
 
-  connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::weatherUpdated);
+  connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirportWeather);
 
@@ -1275,6 +1295,12 @@ void MainWindow::connectAllSlots()
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
+
+  // Webserver
+  connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
+  connect(ui->actionOpenWebserver, &QAction::triggered, this, &MainWindow::openWebserver);
+  connect(NavApp::getWebController(), &WebController::webserverStatusChanged,
+          this, &MainWindow::webserverStatusChanged);
 
   // Shortcut menu
   connect(ui->actionShortcutMap, &QAction::triggered,
@@ -1584,6 +1610,8 @@ void MainWindow::distanceChanged()
 
 #ifdef DEBUG_INFORMATION
   text += QString(" [%1]").arg(mapWidget->zoom());
+
+  qDebug() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
 #endif
 
   mapDistanceLabel->setText(text);
@@ -1803,6 +1831,9 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
 
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
+  Q_UNUSED(x);
+  Q_UNUSED(y);
+
   if(pos.isValid())
   {
     QString text(Unit::coords(pos));
@@ -2346,27 +2377,64 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   }
 }
 
+bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json)
+{
+  ImageExportDialog exportDialog(this, dialogTitle, optionPrefx, mapWidget->width(), mapWidget->height());
+  int retval = exportDialog.exec();
+  if(retval == QDialog::Accepted)
+  {
+    if(exportDialog.isCurrentView())
+    {
+      // Copy image as is from current view
+      mapWidget->showOverlays(false, false /* show scale */);
+      pixmap = mapWidget->mapScreenShot();
+      mapWidget->showOverlays(true, false /* show scale */);
+
+      if(json != nullptr)
+        *json = mapWidget->createAvitabJson();
+    }
+    else
+    {
+      // Create a map widget clone with the desired resolution
+      MapPaintWidget paintWidget(this, false /* no real widget - hidden */);
+      paintWidget.setActive(); // Activate painting
+      paintWidget.setKeepWorldRect(); // Center world rectangle when resizing
+
+      // Copy all map settings
+      paintWidget.copySettings(*mapWidget);
+
+      // Copy visible rectangle
+      paintWidget.copyView(*mapWidget);
+
+      pixmap = paintWidget.getPixmap(exportDialog.getSize());
+
+      if(json != nullptr)
+        *json = paintWidget.createAvitabJson();
+    }
+    PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
+    return true;
+  }
+  return false;
+}
+
 void MainWindow::mapSaveImage()
 {
-  QString imageFile = dialog->saveFileDialog(
-    tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
-    "jpg", "MainWindow/",
-    atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
-    arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
-
-  if(!imageFile.isEmpty())
+  QPixmap pixmap;
+  if(createMapImage(pixmap, tr(" - Save Map as Image"), lnm::IMAGE_EXPORT_DIALOG))
   {
-    QPixmap pixmap;
-    mapWidget->showOverlays(false, false /* show scale */);
-    pixmap = mapWidget->mapScreenShot();
-    mapWidget->showOverlays(true, false /* show scale */);
+    QString imageFile = dialog->saveFileDialog(
+      tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
+      "jpg", "MainWindow/",
+      atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
+      arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")));
 
-    PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
-
-    if(!pixmap.save(imageFile))
-      atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
-    else
-      setStatusMessage(tr("Map image saved."));
+    if(!imageFile.isEmpty())
+    {
+      if(!pixmap.save(imageFile))
+        atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG, PNG and BMP are allowed."));
+      else
+        setStatusMessage(tr("Map image saved."));
+    }
   }
 }
 
@@ -2374,49 +2442,52 @@ void MainWindow::mapSaveImageAviTab()
 {
   if(mapWidget->projection() == Marble::Mercator)
   {
-    QString json = mapWidget->createAvitabJson();
-
-    if(!json.isEmpty())
+    QPixmap pixmap;
+    QString json;
+    if(createMapImage(pixmap, tr(" - Save Map as Image for AviTab"), lnm::IMAGE_EXPORT_AVITAB_DIALOG, &json))
     {
-      QString defaultFileName;
-
-      if(routeController->getRoute().isEmpty())
-        defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
-      else
-        defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
-
-      QString imageFile = dialog->saveFileDialog(
-        tr("Save Map as Image for AviTab"),
-        tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
-        "png", "MainWindow/AviTab",
-        atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
-        QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
-        QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
-        false /* confirm overwrite */, true /* autonumber file */);
-
-      if(!imageFile.isEmpty())
+      if(!json.isEmpty())
       {
-        QPixmap pixmap;
-        mapWidget->showOverlays(false, false /* show scale */);
-        pixmap = mapWidget->mapScreenShot();
-        mapWidget->showOverlays(true, false /* show scale */);
+        QString defaultFileName;
 
-        if(!pixmap.save(imageFile))
-          atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
+        if(routeController->getRoute().isEmpty())
+          defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
-        {
-          QFile jsonFile(imageFile + ".json");
-          if(jsonFile.open(QIODevice::WriteOnly | QIODevice::Text))
-          {
-            QTextStream stream(&jsonFile);
-            stream << json.toUtf8();
+          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".png");
 
-            setStatusMessage(tr("Map image saved."));
-          }
+        QString imageFile = dialog->saveFileDialog(
+          tr("Save Map as Image for AviTab"),
+          tr("AviTab Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE_AVITAB),
+          "png", "MainWindow/AviTab",
+          atools::fs::FsPaths::getBasePath(NavApp::getCurrentSimulatorDb()) +
+          QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
+          QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
+          false /* confirm overwrite */, true /* autonumber file */);
+
+        if(!imageFile.isEmpty())
+        {
+
+          if(!pixmap.save(imageFile))
+            atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
           else
-            atools::gui::ErrorHandler(this).handleIOError(jsonFile, tr("Error saving JSON."));
+          {
+            QFile jsonFile(imageFile + ".json");
+            if(jsonFile.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+              QTextStream stream(&jsonFile);
+              stream << json.toUtf8();
+
+              setStatusMessage(tr("Map image saved."));
+            }
+            else
+              atools::gui::ErrorHandler(this).handleIOError(jsonFile, tr("Error saving JSON."));
+          }
         }
       }
+      else
+        QMessageBox::warning(this, QApplication::applicationName(),
+                             tr("Map does not cover window.\n"
+                                "Ensure that the map fills the window completely."));
     }
   }
   else
@@ -2427,17 +2498,14 @@ void MainWindow::mapSaveImageAviTab()
 void MainWindow::mapCopyToClipboard()
 {
   QPixmap pixmap;
-  mapWidget->showOverlays(false, false /* show scale */);
-  pixmap = mapWidget->mapScreenShot();
-  mapWidget->showOverlays(true, false /* show scale */);
-
-  PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
-
-  // Copy formatted and plain text to clipboard
-  QMimeData *data = new QMimeData;
-  data->setImageData(pixmap);
-  QGuiApplication::clipboard()->setMimeData(data);
-  setStatusMessage(tr("Map image copied to clipboard."));
+  if(createMapImage(pixmap, tr(" - Copy Map Image to Clipboard"), lnm::IMAGE_EXPORT_DIALOG))
+  {
+    // Copy formatted and plain text to clipboard
+    QMimeData *data = new QMimeData;
+    data->setImageData(pixmap);
+    QGuiApplication::clipboard()->setMimeData(data);
+    setStatusMessage(tr("Map image copied to clipboard."));
+  }
 }
 
 void MainWindow::sunShadingTimeChanged()
@@ -2828,6 +2896,9 @@ void MainWindow::mainWindowShown()
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */);
 
   NavApp::getOnlinedataController()->startProcessing();
+  if(ui->actionRunWebserver->isChecked())
+    NavApp::getWebController()->startServer();
+  webserverStatusChanged(NavApp::getWebController()->isRunning());
 
   // Raise all floating docks and focus map widget
   QTimer::singleShot(10, this, &MainWindow::raiseFloatingWindows);
@@ -3195,7 +3266,8 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionUserdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude});
+                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
+                       ui->actionRunWebserver});
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -3344,7 +3416,7 @@ void MainWindow::saveActionStates()
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                    ui->actionUserdataCreateLogbook});
+                    ui->actionUserdataCreateLogbook, ui->actionRunWebserver});
   Settings::instance().syncSettings();
 }
 
@@ -3705,4 +3777,23 @@ void MainWindow::updateErrorLabels()
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
 {
   return static_cast<map::MapThemeComboIndex>(mapThemeComboBox->currentIndex());
+}
+
+void MainWindow::webserverStatusChanged(bool running)
+{
+  ui->actionRunWebserver->setChecked(running);
+  ui->actionOpenWebserver->setEnabled(running);
+}
+
+void MainWindow::toggleWebserver(bool checked)
+{
+  if(checked)
+    NavApp::getWebController()->startServer();
+  else
+    NavApp::getWebController()->stopServer();
+}
+
+void MainWindow::openWebserver()
+{
+  NavApp::getWebController()->openPage();
 }

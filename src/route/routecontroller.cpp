@@ -47,9 +47,8 @@
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
-#include "atools.h"
-#include "routealtitude.h"
-#include "routeexport.h"
+#include "route/routealtitude.h"
+#include "route/routeexport.h"
 #include "route/userwaypointdialog.h"
 #include "route/flightplanentrybuilder.h"
 #include "fs/pln/flightplanio.h"
@@ -60,6 +59,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "perf/aircraftperfcontroller.h"
+#include "fs/sc/simconnectdata.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -408,12 +408,12 @@ void RouteController::flightplanHeader(atools::util::HtmlBuilder& html, bool tit
     html.p(buildFlightplanLabel2(), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
 }
 
-QString RouteController::flightplanTableAsHtml(float iconSizePixel) const
+QString RouteController::getFlightplanTableAsHtml(float iconSizePixel) const
 {
   qDebug() << Q_FUNC_INFO;
   using atools::util::HtmlBuilder;
 
-  HtmlBuilder html(true);
+  atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
   int minColWidth = view->horizontalHeader()->minimumSectionSize() + 1;
 
   // Header lines
@@ -429,15 +429,17 @@ QString RouteController::flightplanTableAsHtml(float iconSizePixel) const
   {
     if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
       html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
-              toString().replace("-\n", "-").replace("\n", " "), atools::util::html::NOBR);
+              toString().replace("-\n", "-<br/>").replace("\n", "<br/>"), atools::util::html::NO_ENTITIES);
   }
   html.trEnd();
+
+  int nearestLegIndex = route.getActiveLegIndexCorrected();
 
   // Table content
   for(int row = 0; row < model->rowCount(); row++)
   {
     // First column is icon
-    html.tr(QColor());
+    html.tr(nearestLegIndex != row ? QColor() : mapcolors::nextWaypointColor);
     const RouteLeg& routeLeg = route.at(row);
 
     if(iconSizePixel > 0.f)
@@ -457,7 +459,12 @@ QString RouteController::flightplanTableAsHtml(float iconSizePixel) const
         QStandardItem *item = model->item(row, header->logicalIndex(col));
 
         if(item != nullptr)
-          html.td(item->text().toHtmlEscaped());
+        {
+          if(item->textAlignment().testFlag(Qt::AlignRight))
+            html.td(item->text().toHtmlEscaped(), atools::util::html::ALIGN_RIGHT);
+          else
+            html.td(item->text().toHtmlEscaped());
+        }
         else
           html.td(QString());
       }

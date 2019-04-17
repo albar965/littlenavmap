@@ -114,7 +114,7 @@ WeatherReporter::~WeatherReporter()
 atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
 {
   if(!NavApp::isLoadingDatabase())
-    return NavApp::getAirportQuerySim()->getAirportCoordinatesByIdent(airportIdent);
+    return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
   else
     return atools::geo::EMPTY_POS;
 }

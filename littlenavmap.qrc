@@ -222,5 +222,9 @@
         <file>resources/icons/aircraftperf.svg</file>
         <file>resources/icons/saveasfg.svg</file>
         <file>resources/config/urls.cfg</file>
+        <file>resources/config/webserver.cfg</file>
+        <file>resources/icons/map.svg</file>
+        <file>resources/icons/units.svg</file>
+        <file>resources/icons/web.svg</file>
     </qresource>
 </RCC>

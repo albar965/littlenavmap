@@ -199,8 +199,9 @@ public:
   void optionsChanged();
   void styleChanged();
 
-  /* Get the route table as a HTML document only containing the table and header */
-  QString flightplanTableAsHtml(float iconSizePixel) const;
+  /* Get the route table as a HTML document only containing the table and header.
+   * Uses own colors for table background. */
+  QString getFlightplanTableAsHtml(float iconSizePixel) const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;

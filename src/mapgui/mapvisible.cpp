@@ -18,7 +18,7 @@
 #include "mapgui/mapvisible.h"
 
 #include "mapgui/maplayer.h"
-#include "mapgui/mappaintlayer.h"
+#include "mappainter/mappaintlayer.h"
 #include "navapp.h"
 #include "util/htmlbuilder.h"
 #include "gui/mainwindow.h"

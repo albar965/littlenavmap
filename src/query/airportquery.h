@@ -67,7 +67,7 @@ public:
   map::MapAirport getAirportById(int airportId);
 
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
-  atools::geo::Pos getAirportCoordinatesByIdent(const QString& ident);
+  atools::geo::Pos getAirportPosByIdent(const QString& ident);
 
   bool hasProcedures(const QString& ident) const;
 

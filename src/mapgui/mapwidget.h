@@ -18,42 +18,23 @@
 #ifndef LITTLENAVMAP_NAVMAPWIDGET_H
 #define LITTLENAVMAP_NAVMAPWIDGET_H
 
-#include "common/maptypes.h"
+#include "mapgui/mappaintwidget.h"
+
 #include "gui/mapposhistory.h"
-#include "fs/sc/simconnectdata.h"
-#include "common/aircrafttrack.h"
 
 #include <QTimer>
-#include <QWidget>
 
-#include <marble/GeoDataLatLonAltBox.h>
-#include <marble/MarbleWidget.h>
+class MapTooltip;
+class QContextMenuEvent;
+class JumpBack;
+class MainWindow;
+class MapVisible;
 
 namespace atools {
 namespace sql {
 class SqlRecord;
 }
-
-namespace geo {
-class Pos;
-class Rect;
 }
-namespace fs {
-class SimConnectData;
-}
-}
-
-class QContextMenuEvent;
-class MainWindow;
-class MapPaintLayer;
-class MapQuery;
-class AirportQuery;
-class RouteController;
-class MapTooltip;
-class MapScreenIndex;
-class Route;
-class MapVisible;
-class JumpBack;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
@@ -74,6 +55,7 @@ enum MouseState
                             * Avoid cancelling all drag when loosing focus */
   DRAG_POST_CANCEL = 0x0080, /* Right mousebutton clicked - cancel all actions */
 
+  /* Used to check if any interaction is going on */
   DRAG_ALL = mw::DRAG_DISTANCE | mw::DRAG_CHANGE_DISTANCE | mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
              mw::DRAG_USER_POINT
 };
@@ -82,32 +64,77 @@ Q_DECLARE_FLAGS(MouseStates, MouseState);
 Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates);
 }
 
-namespace proc {
-struct MapProcedureLeg;
-
-struct MapProcedureLegs;
-
-}
+/*
+ * LNM main map drawing widget which also covers all keyboard and mouse interaction.
+ *
+ * Keeps map position history and takes care of aircraft/waypoint centering when flying.
+ */
 class MapWidget :
-  public Marble::MarbleWidget
+  public MapPaintWidget
 {
   Q_OBJECT
 
 public:
   MapWidget(MainWindow *parent);
-  virtual ~MapWidget();
+  virtual ~MapWidget() override;
+
+  /* Map zoom and scroll position history goto next or last */
+  void historyNext();
+  void historyBack();
 
   /* Save and restore markers, Marble plug-in settings, loaded KML files and more */
   void saveState();
   void restoreState();
 
-  /* Jump to position on the map using the given zoom distance.
-   *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
-   *  Use predefined zoom if distanceNm is 0 */
-  void showPos(const atools::geo::Pos& pos, float distanceNm, bool doubleClick);
+  /* Get zoom and scroll position history */
+  const atools::gui::MapPosHistory *getHistory() const
+  {
+    return &history;
+  }
 
-  /* Show the bounding rectangle on the map */
-  void showRect(const atools::geo::Rect& rect, bool doubleClick);
+  /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
+   * if dragging departure or destination */
+  void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
+
+  /* Get source and current position while dragging a userpoint */
+  void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
+
+  /* Update zoom */
+  void jumpBackToAircraftUpdateDistance();
+
+  /* Update tooltip in case of weather changes */
+  void showTooltip(bool update);
+  void updateTooltip();
+
+  /* The main window show event was triggered after program startup. */
+  void mainWindowShown();
+
+  /* Show home postion or last postion on map after program startup */
+  void showSavedPosOnStartup();
+
+  /* Show or hide all map overlays (optionally excluding scalebar) */
+  void showOverlays(bool show, bool showScalebar);
+
+  /* End all distance line and route dragging modes */
+  virtual void cancelDragAll() override;
+
+  /* New data from simconnect has arrived. Update aircraft position and track. */
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
+
+  /* Update sun shading from UI elements */
+  void updateSunShadingOption();
+
+  /* Reset drawing actions in UI only */
+  void resetSettingActionsToDefault();
+
+  /* Update the shown map object types depending on action status (toolbar or menu) */
+  virtual void updateMapObjectsShown() override;
+
+  /* Remove pattern at index and update the map */
+  void removeTrafficPatterm(int index);
+
+  /* Opens a dialog for configuration */
+  void addTrafficPattern(const map::MapAirport& airport);
 
   /* Jump to the search center mark using default zoom */
   void showSearchMark();
@@ -121,247 +148,43 @@ public:
   /* Save current position and zoom distance as home */
   void changeHome();
 
-  /* Show user simulator aircraft. state is tool button state */
-  void showAircraft(bool centerAircraftChecked);
-
-  /* Update hightlighted objects */
-  void changeSearchHighlights(const map::MapSearchResult& newHighlights);
-  void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
-  void changeProfileHighlight(const atools::geo::Pos& pos);
-
-  void changeApproachHighlight(const proc::MapProcedureLegs& approach);
-
-  /* Update route screen coordinate index */
-  void routeChanged(bool geometryChanged);
-  void routeAltitudeChanged(float altitudeFeet);
-
-  /* New data from simconnect has arrived. Update aircraft position and track. */
-  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
-
-  /* Hightlight a point along the route while mouse over in the profile window */
-  void highlightProfilePoint(const atools::geo::Pos& pos);
-
-  /* Stop showing aircraft position on map */
-  void disconnectedFromSimulator();
-
-  /* Clear previous aircraft track */
-  void connectedToSimulator();
-
-  /* Add a KML file to map display. The file will be restored on program startup */
-  bool addKmlFile(const QString& kmlFile);
-
-  /* Remove all KML files from map */
-  void clearKmlFiles();
-
-  const atools::geo::Pos& getSearchMarkPos() const
-  {
-    return searchMarkPos;
-  }
-
-  const atools::geo::Pos& getHomePos() const
-  {
-    return homePos;
-  }
-
-  /* Getters used by the painters */
-  const map::MapSearchResult& getSearchHighlights() const;
-  const proc::MapProcedureLeg& getProcedureLegHighlights() const;
-
-  const proc::MapProcedureLegs& getProcedureHighlight() const;
-
-  const QList<int>& getRouteHighlights() const;
-
-  const QList<map::RangeMarker>& getRangeRings() const;
-
-  const QList<map::DistanceMarker>& getDistanceMarkers() const;
-
-  const QList<map::TrafficPattern>& getTrafficPatterns() const;
-
-  const atools::geo::Pos& getProfileHighlight() const;
-
-  void clearSearchHighlights();
-  bool hasHighlights() const;
-
-  const AircraftTrack& getAircraftTrack() const
-  {
-    return aircraftTrack;
-  }
-
-  bool hasTrackPoints() const
-  {
-    return !aircraftTrack.isEmpty();
-  }
-
-  /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
-   * if dragging departure or destination */
-  void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
-
-  /* Get source and current position while dragging a userpoint */
-  void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
-
-  /* Delete the current aircraft track. Will not stop collecting new track points */
-  void deleteAircraftTrack();
-
   /* Add general (red) range ring */
   void addRangeRing(const atools::geo::Pos& pos);
-
-  void addTrafficPattern(const map::MapAirport& airport);
 
   /* Add radio navaid range ring */
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type, const QString& ident,
                        const QString& frequency, int range);
 
-  /* Removes all range rings and distance measurement lines */
-  void clearRangeRingsAndDistanceMarkers();
-
   /* If true stop downloading map data */
   void workOffline(bool offline);
 
-  /* Disconnect painter to avoid updates while no data is available */
-  void preDatabaseLoad();
+  /* Remove range rings on index, print message and update map */
+  void removeRangeRing(int index);
 
-  /* Changes in options dialog */
-  void optionsChanged();
+  /* Remove measurement line on index, print message and update map */
+  void removeDistanceMarker(int index);
 
-  /* GUI style has changed */
-  void styleChanged();
+  void setMapDetail(int factor);
 
-  /* Update map */
-  void postDatabaseLoad();
-
-  /* Set map theme.
-   * @param theme filename of the map theme
-   * @param index MapThemeComboIndex
-   */
-  void setTheme(const QString& theme, int index);
-
-  /* Map zoom and scroll position history goto next or last */
-  void historyNext();
-  void historyBack();
-
-  atools::gui::MapPosHistory *getHistory()
-  {
-    return &history;
-  }
-
-  /* Show home postion or last postion on map after program startup */
-  void showSavedPosOnStartup();
-
-  /* Show points of interest and other labels for certain map themes */
-  void setShowMapPois(bool show);
-
-  /* Globe shadow */
-  void setShowMapSunShading(bool show);
-  void setSunShadingDateTime(const QDateTime& datetime);
-  QDateTime getSunShadingDateTime() const;
-
-  /* Define which airport or navaid types are shown on the map */
-  void setShowMapFeatures(map::MapObjectTypes type, bool show);
-  void setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show);
-  void setShowMapAirspaces(map::MapAirspaceFilter types);
-
-  map::MapObjectTypes getShownMapFeatures() const;
-  map::MapAirspaceFilter getShownAirspaces() const;
-  map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
+  /* Reset details and feature visibility on the map back to default */
+  void resetSettingsToDefault();
 
   /* Change map detail level */
   void increaseMapDetail();
   void decreaseMapDetail();
   void defaultMapDetail();
-  void setMapDetail(int factor);
 
-  /* Update the shown map object types depending on action status (toolbar or menu) */
-  void updateMapObjectsShown();
+  /* Removes all range rings and distance measurement lines */
+  void clearRangeRingsAndDistanceMarkers();
 
-  /* Update tooltip in case of weather changes */
-  void showTooltip(bool update);
-  void updateTooltip();
-
-  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
-
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
-
-  MainWindow *getParentWindow() const
-  {
-    return mainWindow;
-  }
-
-  const QStringList& getKmlFiles() const
-  {
-    return kmlFilePaths;
-  }
-
-  /* The main window show event was triggered after program startup. */
-  void mainWindowShown();
-
-  /* End all distance line and route dragging modes */
-  void cancelDragAll();
-
-  void showOverlays(bool show, bool showScalebar);
-
-  /* Stores delta values depending on fast or slow update. User aircraft is only updated if
-   * delta values are exceeded. */
-  struct SimUpdateDelta
-  {
-    float manhattanLengthDelta;
-    float headingDelta;
-    float speedDelta;
-    float altitudeDelta;
-    qint64 timeDeltaMs;
-  };
-
-  void restoreHistoryState();
-
-  void resetSettingsToDefault();
-
-  void resetSettingActionsToDefault();
-
-  void onlineClientAndAtcUpdated();
-  void onlineNetworkChanged();
-
-  void updateSunShadingOption();
-
-  void weatherUpdated();
-
-  /* Current weather source for icon display */
-  map::MapWeatherSource getMapWeatherSource() const;
-
-  /* Airspaces from the information window are kept in a separate list */
-  void changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces);
-
-  const QList<map::MapAirspace>& getAirspaceHighlights() const;
-  void clearAirspaceHighlights();
-
-  /* From center button */
-  void jumpBackToAircraftCancel();
-
-  /* Update zoom */
-  void jumpBackToAircraftUpdateDistance();
-
-  /* Avoids dark background when printing in night mode */
-  void setPrinting(bool value)
-  {
-    printing = value;
-  }
-
-  bool isPrinting() const
-  {
-    return printing;
-  }
-
-  /* Create json document with coordinates for AviTab configuration */
-  QString createAvitabJson();
+  /* Delete the current aircraft track. Will not stop collecting new track points */
+  void deleteAircraftTrack();
 
 signals:
-  /* Emitted whenever the result exceeds the limit clause in the queries */
-  void resultTruncated(int truncatedTo);
-
-  /* Search center has changed by context menu */
-  void searchMarkChanged(const atools::geo::Pos& mark);
-
-  /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+  /* State isFlying between last and current aircraft has changed */
+  void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
+                       float averageTasKts);
 
   /* Set parking position, departure, destination for flight plan from context menu */
   void routeSetParkingStart(map::MapParking parking);
@@ -377,8 +200,8 @@ signals:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int oldIndex);
 
-  /* Update action state (disabled/enabled) */
-  void updateActionStates();
+  /* Show a map object in the search panel (context menu) */
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
 
   /* Show information about objects from single click or context menu */
   void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
@@ -394,108 +217,100 @@ signals:
   /* Show approaches from context menu */
   void showApproaches(map::MapAirport airport);
 
-  /* Aircraft track was pruned and needs to be updated */
-  void aircraftTrackPruned();
-
-  void shownMapFeaturesChanged(map::MapObjectTypes types);
-
-  /* State isFlying  between last and current aircraft has changed */
-  void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
-                       float averageTasKts);
-
 private:
-  bool eventFilter(QObject *obj, QEvent *e) override;
-  void setDetailLevel(int factor);
+  /* Convert paint layer value to menu actions checked / not checked */
+  virtual map::MapWeatherSource weatherSourceFromUi() override;
+  void weatherSourceToUi(map::MapWeatherSource weatherSource);
 
-  /* Hide and prevent re-show */
-  void hideTooltip();
+  /* Convert paint layer value to menu actions checked / not checked */
+  virtual map::MapSunShading sunShadingFromUi() override;
+  void sunShadingToUi(map::MapSunShading sunShading);
 
-  void overlayStateToMenu();
-  void overlayStateFromMenu();
+  /* Connect menu actions to overlays */
   void connectOverlayMenus();
 
-  /* Overloaded methods */
-  virtual void mousePressEvent(QMouseEvent *event) override;
-  virtual void mouseReleaseEvent(QMouseEvent *event) override;
-  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
-  virtual void mouseMoveEvent(QMouseEvent *event) override;
-  virtual void wheelEvent(QWheelEvent *event) override;
-
-  /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
-  bool mousePressCheckModifierActions(QMouseEvent *event);
-
-  virtual bool event(QEvent *event) override;
-  virtual void contextMenuEvent(QContextMenuEvent *event) override;
-  virtual void paintEvent(QPaintEvent *paintEvent) override;
-  virtual void focusOutEvent(QFocusEvent *) override;
-  virtual void keyPressEvent(QKeyEvent *event) override;
-  virtual void leaveEvent(QEvent *) override;
-
-  void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
-  bool showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result,
-                                const QString& menuText);
-
+  /* Show information from context menu or single click */
   void handleInfoClick(QPoint pos);
-  bool loadKml(const QString& filename, bool center);
-  void updateCacheSizes();
 
+  /* Cancel mouse actions */
   void cancelDragDistance();
   void cancelDragRoute();
-  void elevationDisplayTimerTimeout();
   void cancelDragUserpoint();
 
-  void zoomInOut(bool directionIn, bool smooth);
-
-  bool isCenterLegAndAircraftActive();
-
-  /* Remove range rings on index, print message and update map */
-  void removeRangeRing(int index);
-
-  /* Remove measurement line on index, print message and update map */
-  void removeDistanceMarker(int index);
+  /* Display elevation at mouse cursor after a short timeout */
+  void elevationDisplayTimerTimeout();
 
   /* Start a line measurement after context menu selection or click+modifier */
   void addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapSearchResult& result);
   void addMeasurement(const atools::geo::Pos& pos, bool rhumb, const map::MapAirport *airport, const map::MapVor *vor,
                       const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
 
-  /* Remove pattern at index and update the map */
-  void removeTrafficPatterm(int index);
-
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();
 
-  /* Internal zooming and centering. Zooms one step out to get a sharper map display if allowAdjust is true */
-  void setDistanceToMap(double distance, bool allowAdjust = true);
-  void centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust = true);
-  void centerPosOnMap(const atools::geo::Pos& pos);
-
-  /* Convert paint layer value to menu actions checked / not checked */
-  map::MapWeatherSource weatherSourceFromUi();
-  void weatherSourceToUi(map::MapWeatherSource weatherSource);
-
-  /* Convert paint layer value to menu actions checked / not checked */
-  map::MapSunShading sunShadingFromUi();
-  void sunShadingToUi(map::MapSunShading sunShading);
-
+  /* Center aircraft again after scrolling or zooming */
   void jumpBackToAircraftTimeout(const QVariantList& values);
-  void jumpBackToAircraftStart(bool saveDistance);
 
-  /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
-  int mapDetailLevel;
+  /* Needed filter to avoid and/or disable some Marble pecularities */
+  bool eventFilter(QObject *obj, QEvent *e) override;
 
-  QStringList kmlFilePaths;
+  /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
+  bool mousePressCheckModifierActions(QMouseEvent *event);
 
-  /* Do not draw while database is unavailable */
-  bool databaseLoadStatus = false;
+  /* Update the flight plan from a drag and drop result. Show a menu if multiple objects are
+   * found at the button release position. */
+  void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
+
+  /* Show menu to allow selection of a map feature below the cursor */
+  bool showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, const map::MapSearchResult& result,
+                                const QString& menuText);
+
+  /* MapPaintWidget overrides for UI updates mostly ============================================================ */
+  virtual void optionsChanged() override;
+  virtual void overlayStateFromMenu() override;
+  virtual void overlayStateToMenu() override;
+  virtual void jumpBackToAircraftStart(bool saveDistance) override;
+  virtual void updateThemeUi(int index) override;
+  virtual void updateMapVisibleUi() const override;
+
+  /* From center button */
+  virtual void jumpBackToAircraftCancel() override;
+
+  /* Hide and prevent re-show */
+  virtual void hideTooltip() override;
+
+  virtual void handleHistory() override;
+  virtual void updateShowAircraftUi(bool centerAircraftChecked) override;
+
+  /* Overloaded methods from QWidget ============================================================ */
+  virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+  virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual void wheelEvent(QWheelEvent *event) override;
+
+  virtual void contextMenuEvent(QContextMenuEvent *event) override;
+  virtual void focusOutEvent(QFocusEvent *) override;
+  virtual void keyPressEvent(QKeyEvent *event) override;
+  virtual void leaveEvent(QEvent *) override;
+
+  /* Catch tooltip event */
+  virtual bool event(QEvent *event) override;
+
+  bool isCenterLegAndAircraftActive();
+
+  /* Update actions from detail setting */
+  void updateDetailUi(int mapDetails);
+
+  void setDetailLevel(int factor);
+
+  void zoomInOut(bool directionIn, bool smooth);
 
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
 
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
-  map::MapThemeComboIndex currentComboIndex = map::INVALID_THEME;
 
   mw::MouseStates mouseState = mw::NONE;
   bool contextMenuActive = false;
@@ -518,42 +333,13 @@ private:
   QList<proc::MapProcedurePoint> procPointsTooltip;
   MapTooltip *mapTooltip;
 
-  MainWindow *mainWindow;
-  MapPaintLayer *paintLayer;
-  MapVisible *mapVisible;
-  MapQuery *mapQuery;
-  AirportQuery *airportQuery;
-  MapScreenIndex *screenIndex = nullptr;
-
-  atools::geo::Pos searchMarkPos, homePos;
-  double homeDistance = 0.;
-
-  /* Distance marker that is changed using drag and drop */
-  int currentDistanceMarkerIndex = -1;
   /* Backup of distance marker for drag and drop in case the action is cancelled */
   map::DistanceMarker distanceMarkerBackup;
 
   atools::gui::MapPosHistory history;
-  Marble::Projection currentProjection;
-
-  AircraftTrack aircraftTrack;
-
-  QHash<QString, QAction *> mapOverlays;
 
   /* Need to check if the zoom and position was changed by the map history to avoid recursion */
   bool noStoreInHistory = false;
-
-  /* Values used to check if view has changed */
-  Marble::GeoDataLatLonAltBox currentViewBoundingBox;
-
-  /* Current zoom value (NOT distance) */
-  int currentZoom = -1;
-
-  /* Used to check for simulator aircraft updates */
-  qint64 lastSimUpdateMs = 0L;
-  qint64 lastCenterAcAndWp = 0L;
-  qint64 lastSimUpdateTooltipMs = 0L;
-  bool active = false;
 
   /* Delay display of elevation display to avoid lagging mouse movements */
   QTimer elevationDisplayTimer;
@@ -573,15 +359,6 @@ private:
   /* Last sample from average value calculation */
   qint64 takeoffLastSampleTimeMs = 0L;
 
-  /* Used for distance calculation */
-  atools::fs::sc::SimConnectUserAircraft takeoffLandingLastAircraft;
-
-  /* The the overlays from updating */
-  bool ignoreOverlayUpdates = false;
-
-  /* Avoids dark background when printing in night mode */
-  bool printing = false;
-
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
@@ -590,13 +367,28 @@ private:
   /* Reset lastWheelPos in case of no wheel events */
   ulong lastWheelEventTimestamp = 0L;
 
+  MainWindow *mainWindow;
+
+  MapVisible *mapVisible;
+
+  /* Used for distance calculation */
+  atools::fs::sc::SimConnectUserAircraft takeoffLandingLastAircraft;
+
+  /* Used to check for simulator aircraft updates */
+  qint64 lastSimUpdateMs = 0L;
+  qint64 lastCenterAcAndWp = 0L;
+  qint64 lastSimUpdateTooltipMs = 0L;
+
+  /* Maps overlay name to menu action for hide/show */
+  QHash<QString, QAction *> mapOverlays;
+
+  /* Distance marker that is changed using drag and drop */
+  int currentDistanceMarkerIndex = -1;
+
 #ifdef DEBUG_MOVING_AIRPLANE
   void debugMovingPlane(QMouseEvent *event);
 
 #endif
-
 };
-
-Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);
 
 #endif // LITTLENAVMAP_NAVMAPWIDGET_H

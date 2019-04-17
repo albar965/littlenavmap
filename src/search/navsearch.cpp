@@ -262,9 +262,9 @@ void NavSearch::saveState()
 void NavSearch::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
-    atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
     widgetState.restore(navSearchWidgets);
 
     // Need to block signals here to avoid unwanted behavior (will enable
@@ -284,7 +284,13 @@ void NavSearch::restoreState()
     maxDistanceWidget->setMinimum(minDistanceWidget->value());
   }
   else
+  {
+    QList<QObject *> objList;
+    atools::convertList(objList, navSearchMenuActions);
+    widgetState.restore(objList);
+
     atools::gui::WidgetState(lnm::SEARCHTAB_NAV_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewNavSearch);
+  }
 
   if(!atools::settings::Settings::instance().childGroups().contains("SearchPaneNav"))
   {

@@ -119,6 +119,10 @@ extern QColor mapPrintHeaderColor;
 
 // ==========================================================================
 
+/* Web page table background colors */
+const QColor webTableBackgroundColor("#f3f3f3");
+const QColor webTableAltBackgroundColor("#eceae8");
+
 extern QPen taxiwayLinePen;
 extern QColor taxiwayNameColor;
 extern QColor taxiwayNameBackgroundColor;

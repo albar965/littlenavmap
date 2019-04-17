@@ -21,9 +21,6 @@
 #include <QLatin1Literal>
 #include <QSize>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-const-variable"
-
 /* Define to skip caching of approaches when loading */
 // #define DEBUG_APPROACH_NO_CACHE
 
@@ -154,6 +151,9 @@ const QLatin1Literal SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 const QLatin1Literal SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
 
+const QLatin1Literal IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
+const QLatin1Literal IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
+
 const QLatin1Literal PROFILE_WINDOW_OPTIONS("Profile/Options");
 
 const QLatin1Literal SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient/WidgetView");
@@ -202,6 +202,7 @@ const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS("OptionsDialog/DisplayOption
 const QLatin1Literal OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE("OptionsDialog/DisplayOptionsCompassRose");
 const QLatin1Literal OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
 const QLatin1Literal OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
+const QLatin1Literal OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
 
 /* Other options that are only accessible in the configuration file */
 const QLatin1Literal OPTIONS_LANGUAGE("Options/Language");
@@ -214,6 +215,7 @@ const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
+const QLatin1Literal OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
 const QLatin1Literal OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1Literal OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
@@ -335,7 +337,5 @@ extern const QSize DEFAULT_MAINWINDOW_SIZE;
 const QString helpLanguageOnline();
 
 } // namespace lnm
-
-#pragma GCC diagnostic pop
 
 #endif // LITTLENAVMAP_CONSTANTS_H

@@ -1,5 +1,10 @@
 @echo off
 
+if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+
+rem Override by envrionment variable for another target or leave empty for no copying - needs putty tools in path
+rem set SSH_DEPLOY_TARGET=user@host:/data/alex/Public/Releases
+
 rem === Deploy built programs. ZIP, check with Windows Defender and copy them to network shares =============================
 
 for /f "delims=" %%# in ('powershell get-date -format "{yyyyMMdd-HHmm}"') do @set FILEDATE=%%#
@@ -18,14 +23,6 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavconnect.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\Releases\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\darkon\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
-del \\frida\ssd\alex\Releases\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\frida\ssd\alex\Releases\LittleNavconnect-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
 rem ===========================================================================
 rem ==== Pack Little Xpconnect ===================================================================
 del LittleXpconnect.zip
@@ -34,14 +31,6 @@ del LittleXpconnect.zip
 IF ERRORLEVEL 1 goto :err
 
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleXpconnect.zip"
-IF ERRORLEVEL 1 goto :err
-
-del \\darkon\public\Releases\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\darkon\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
-del \\frida\ssd\alex\Releases\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\frida\ssd\alex\Releases\LittleXpconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -54,13 +43,14 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavmap.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\Releases\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\darkon\public\Releases\LittleNavmap-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
+rem ===========================================================================
+rem ==== Copy all =============================================================
 
-del \\frida\ssd\alex\Releases\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\frida\ssd\alex\Releases\LittleNavmap-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
+if defined SSH_DEPLOY_TARGET (
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavmap.zip %SSH_DEPLOY_TARGET%/LittleNavmap-win-%FILEDATE%.zip
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleXpconnect.zip %SSH_DEPLOY_TARGET%/LittleXpconnect-win-%FILEDATE%.zip
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavconnect.zip %SSH_DEPLOY_TARGET%/LittleNavconnect-win-%FILEDATE%.zip
+)
 
 popd
 

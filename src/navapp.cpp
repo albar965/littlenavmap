@@ -36,11 +36,11 @@
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
 #include "common/vehicleicons.h"
-#include "mapgui/aprongeometrycache.h"
 #include "gui/stylehandler.h"
 #include "weather/weatherreporter.h"
 #include "fs/weather/metar.h"
 #include "perf/aircraftperfcontroller.h"
+#include "web/webcontroller.h"
 
 #include "ui_mainwindow.h"
 
@@ -56,7 +56,6 @@ AirspaceQuery *NavApp::airspaceQuery = nullptr;
 AirspaceQuery *NavApp::airspaceQueryOnline = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
-ApronGeometryCache *NavApp::apronGeometryCache = nullptr;
 
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
@@ -74,6 +73,8 @@ OnlinedataController *NavApp::onlinedataController = nullptr;
 AircraftPerfController *NavApp::aircraftPerfController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
 StyleHandler *NavApp::styleHandler = nullptr;
+
+WebController *NavApp::webController = nullptr;
 
 bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
@@ -153,15 +154,13 @@ void NavApp::init(MainWindow *mainWindowParam)
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
   procedureQuery->initQueries();
 
-  apronGeometryCache = new ApronGeometryCache();
-
   connectClient = new ConnectClient(mainWindow);
 
   updateHandler = new UpdateHandler(mainWindow);
 
   styleHandler = new StyleHandler();
 
-  // The check will be called on main window shown
+  webController = new WebController(mainWindow);
 }
 
 void NavApp::initElevationProvider()
@@ -173,7 +172,11 @@ void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
 
-  qDebug() << Q_FUNC_INFO << "delete styleHandler ";
+  qDebug() << Q_FUNC_INFO << "delete webController";
+  delete webController;
+  webController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete styleHandler";
   delete styleHandler;
   styleHandler = nullptr;
 
@@ -229,10 +232,6 @@ void NavApp::deInit()
   delete procedureQuery;
   procedureQuery = nullptr;
 
-  qDebug() << Q_FUNC_INFO << "delete apronGeometryCache";
-  delete apronGeometryCache;
-  apronGeometryCache = nullptr;
-
   qDebug() << Q_FUNC_INFO << "delete databaseManager";
   delete databaseManager;
   databaseManager = nullptr;
@@ -284,8 +283,6 @@ void NavApp::preDatabaseLoad()
   airspaceQuery->deInitQueries();
   airspaceQueryOnline->deInitQueries();
   procedureQuery->deInitQueries();
-
-  apronGeometryCache->clear();
 
   delete databaseMeta;
   databaseMeta = nullptr;
@@ -349,6 +346,11 @@ const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
   return mainWindow->getMapWidget()->getUserAircraft();
 }
 
+const atools::geo::Pos& NavApp::getUserAircraftPos()
+{
+  return mainWindow->getMapWidget()->getUserAircraft().getPosition();
+}
+
 const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
 {
   return mainWindow->getMapWidget()->getAiAircraft();
@@ -367,6 +369,11 @@ AirportQuery *NavApp::getAirportQueryNav()
 MapQuery *NavApp::getMapQuery()
 {
   return mapQuery;
+}
+
+atools::geo::Pos NavApp::getAirportPos(const QString& ident)
+{
+  return airportQuerySim->getAirportPosByIdent(ident);
 }
 
 AirspaceQuery *NavApp::getAirspaceQuery()
@@ -397,6 +404,11 @@ const Route& NavApp::getRouteConst()
 Route& NavApp::getRoute()
 {
   return mainWindow->getRouteController()->getRoute();
+}
+
+const atools::geo::Rect& NavApp::getRouteRect()
+{
+  return mainWindow->getRouteController()->getRoute().getBoundingRect();
 }
 
 int NavApp::getRouteSize()
@@ -529,11 +541,6 @@ VehicleIcons *NavApp::getVehicleIcons()
   return vehicleIcons;
 }
 
-ApronGeometryCache *NavApp::getApronGeometryCache()
-{
-  return apronGeometryCache;
-}
-
 bool NavApp::isLoadingDatabase()
 {
   return loadingDatabase;
@@ -625,6 +632,11 @@ MapWidget *NavApp::getMapWidget()
   return mainWindow->getMapWidget();
 }
 
+MapPaintWidget *NavApp::getMapPaintWidget()
+{
+  return mainWindow->getMapWidget();
+}
+
 map::MapWeatherSource NavApp::getMapWeatherSource()
 {
   return mainWindow->getMapWidget()->getMapWeatherSource();
@@ -640,6 +652,11 @@ RouteController *NavApp::getRouteController()
   return mainWindow->getRouteController();
 }
 
+const InfoController *NavApp::getInfoController()
+{
+  return mainWindow->getInfoController();
+}
+
 const QString& NavApp::getCurrentRouteFilepath()
 {
   return mainWindow->getRouteController()->getCurrentRouteFilepath();
@@ -648,6 +665,11 @@ const QString& NavApp::getCurrentRouteFilepath()
 const QString& NavApp::getCurrentAircraftPerfFilepath()
 {
   return aircraftPerfController->getCurrentFilepath();
+}
+
+WebController *NavApp::getWebController()
+{
+  return webController;
 }
 
 DatabaseManager *NavApp::getDatabaseManager()

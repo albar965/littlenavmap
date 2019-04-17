@@ -36,6 +36,7 @@ class DatabaseManager;
 class QMainWindow;
 class RouteController;
 class MapWidget;
+class MapPaintWidget;
 class WeatherReporter;
 class ElevationProvider;
 class AircraftTrack;
@@ -46,14 +47,16 @@ class OnlinedataController;
 class UserdataIcons;
 class UserdataSearch;
 class VehicleIcons;
-class ApronGeometryCache;
 class StyleHandler;
 class AircraftPerfController;
+class WebController;
+class InfoController;
 
 namespace atools {
 
 namespace geo {
 class Pos;
+class Rect;
 }
 
 namespace fs {
@@ -131,6 +134,7 @@ public:
   static bool isUserAircraftValid();
 
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
+  static const atools::geo::Pos& getUserAircraftPos();
 
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
@@ -140,6 +144,8 @@ public:
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
   static MapQuery *getMapQuery();
+
+  static atools::geo::Pos getAirportPos(const QString& ident);
 
   /* Nav data as source */
   static AirspaceQuery *getAirspaceQuery();
@@ -151,6 +157,7 @@ public:
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
+  static const atools::geo::Rect& getRouteRect();
   static int getRouteSize();
 
   static const RouteAltitude& getAltitudeLegs();
@@ -208,7 +215,9 @@ public:
   static MainWindow *getMainWindow();
 
   static MapWidget *getMapWidget();
+  static MapPaintWidget *getMapPaintWidget();
   static RouteController *getRouteController();
+  static const InfoController *getInfoController();
 
   static DatabaseManager *getDatabaseManager();
 
@@ -254,7 +263,6 @@ public:
 
   static VehicleIcons *getVehicleIcons();
 
-  static ApronGeometryCache *getApronGeometryCache();
 
   /* Not entirely reliable since other modules might be initialized later */
   static bool isLoadingDatabase();
@@ -270,6 +278,8 @@ public:
   static const QString& getCurrentRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
 
+  static WebController *getWebController();
+
 private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
@@ -278,7 +288,6 @@ private:
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
-  static ApronGeometryCache *apronGeometryCache;
 
   /* Most important handlers */
   static ConnectClient *connectClient;
@@ -301,6 +310,8 @@ private:
   static UpdateHandler *updateHandler;
   static VehicleIcons *vehicleIcons;
   static StyleHandler *styleHandler;
+
+  static WebController *webController;
 
   static bool loadingDatabase;
   static bool shuttingDown;

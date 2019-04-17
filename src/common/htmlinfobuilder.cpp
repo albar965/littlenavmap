@@ -63,8 +63,8 @@ using atools::fs::weather::Metar;
 using atools::geo::Pos;
 using atools::fs::util::roundComFrequency;
 
-const float HELIPAD_ZOOM_METER = 200.f;
-const float STARTPOS_ZOOM_METER = 500.f;
+const float HELIPAD_DISTANCE_KM = 0.200f;
+const float STARTPOS_DISTANCE_KM = 0.500f;
 
 const float MIN_GROUND_SPEED = 30.f;
 
@@ -74,10 +74,8 @@ const int WEATHER_MAX_AGE_HOURS = 6;
 // Maximum distance for bearing display
 const int MAX_DISTANCE_FOR_BEARING_METER = atools::geo::nmToMeter(500);
 
-HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
-                                 bool formatPrint)
-  : mainWindow(parentWindow), info(formatInfo),
-  print(formatPrint)
+HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, bool formatInfo, bool formatPrint)
+  : parentWidget(parent), info(formatInfo), print(formatPrint)
 {
   mapQuery = NavApp::getMapQuery();
   infoQuery = NavApp::getInfoQuery();
@@ -625,8 +623,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
           if(!print)
-            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
-                   arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER)),
+            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&distance=%3").
+                   arg(pos.getLonX()).arg(pos.getLatY()).arg(HELIPAD_DISTANCE_KM),
                    atools::util::html::LINK_NO_UL).br();
 
           if(closed)
@@ -676,8 +674,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.text(startText);
           else
-            html.a(startText, QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
-                   arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(STARTPOS_ZOOM_METER)),
+            html.a(startText, QString("lnm://show?lonx=%1&laty=%2&distance=%3").
+                   arg(pos.getLonX()).arg(pos.getLatY()).arg(STARTPOS_DISTANCE_KM),
                    atools::util::html::LINK_NO_UL);
           i++;
         }

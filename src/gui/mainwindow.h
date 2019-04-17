@@ -171,6 +171,11 @@ public:
 
   map::MapThemeComboIndex getMapThemeIndex() const;
 
+  const InfoController *getInfoController() const
+  {
+    return infoController;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -244,10 +249,14 @@ private:
   void resetMessages();
   void showDatabaseFiles();
 
+  /* Save map as images */
   void mapSaveImage();
   void mapSaveImageAviTab();
-
   void mapCopyToClipboard();
+
+  /* Opens dialog for image resolution and returns pixmap and optionally AviTab JSON */
+  bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json = nullptr);
+
   void distanceChanged();
   void showDonationPage();
   void showFaqPage();
@@ -306,6 +315,16 @@ private:
   void actionShortcutAirportWeatherTriggered();
   void actionShortcutNavaidInformationTriggered();
   void actionShortcutAircraftProgressTriggered();
+
+  /* Internal web server actions */
+  void toggleWebserver(bool checked);
+  void webserverStatusChanged(bool running);
+  void openWebserver();
+
+#ifdef DEBUG_INFORMATION
+  void debugActionTriggered();
+
+#endif
 
   /* Original unchanged window title */
   QString mainWindowTitle;

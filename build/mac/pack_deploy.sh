@@ -1,12 +1,21 @@
 #!/bin/bash
 
+# Echo all commands and exit on failure
 set -e
 set -x
 
+# Error checking for required variable APROJECTS
+if [ -z "$APROJECTS" ] ; then echo APROJECTS environment variable not set ; exit 1 ; fi
+if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
+
 export FILENAME=`date "+20%y%m%d-%H%M"`
+
+# Override by envrionment variable for another target
+export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"darkon:/data/alex/Public/Releases"}
 
 (
   cd ${APROJECTS}/deploy
+
 
   rm -rfv LittleNavmap.zip LittleNavconnect.zip LittleXpconnect.zip
 
@@ -19,7 +28,7 @@ export FILENAME=`date "+20%y%m%d-%H%M"`
   zip -r -y -9 LittleNavconnect.zip "Little Navconnect.app" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt
 
-  scp LittleXpconnect.zip darkon:/data/alex/Public/Releases/LittleXpconnect-macOS-${FILENAME}.zip
-  scp LittleNavconnect.zip darkon:/data/alex/Public/Releases/LittleNavconnect-macOS-${FILENAME}.zip
-  scp LittleNavmap.zip darkon:/data/alex/Public/Releases/LittleNavmap-macOS-${FILENAME}.zip
+  scp LittleXpconnect.zip ${SSH_DEPLOY_TARGET}/LittleXpconnect-macOS-${FILENAME}.zip
+  scp LittleNavconnect.zip ${SSH_DEPLOY_TARGET}/LittleNavconnect-macOS-${FILENAME}.zip
+  scp LittleNavmap.zip ${SSH_DEPLOY_TARGET}/LittleNavmap-macOS-${FILENAME}.zip
 )

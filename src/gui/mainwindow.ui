@@ -28,7 +28,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -205,6 +205,9 @@
     </property>
     <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
+    <addaction name="actionRunWebserver"/>
+    <addaction name="actionOpenWebserver"/>
+    <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -302,7 +305,6 @@
       <string>&amp;Theme</string>
      </property>
      <addaction name="actionMapThemeOpenStreetMap"/>
-     <addaction name="actionMapThemeOpenStreetMapRoads"/>
      <addaction name="actionMapThemeOpenTopoMap"/>
      <addaction name="actionMapThemeStamenTerrain"/>
      <addaction name="actionMapThemeCartoLight"/>
@@ -7045,20 +7047,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>OpenStreetMap Mapnik online map theme</string>
    </property>
   </action>
-  <action name="actionMapThemeOpenStreetMapRoads">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>OpenMap&amp;Surfer</string>
-   </property>
-   <property name="toolTip">
-    <string>OpenMapSurfer OSM Roads online map theme</string>
-   </property>
-   <property name="statusTip">
-    <string>OpenMapSurfer OSM Roads online map theme</string>
-   </property>
-  </action>
   <action name="actionMapThemeStamenTerrain">
    <property name="checkable">
     <bool>true</bool>
@@ -9528,6 +9516,22 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Save flight plan as MDX file usable by the Leonardo Maddog X</string>
+   </property>
+  </action>
+  <action name="actionRunWebserver">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Run &amp;Webserver</string>
+   </property>
+  </action>
+  <action name="actionOpenWebserver">
+   <property name="text">
+    <string>Open Webserver &amp;Page in Browser</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Webserver Page in Browser</string>
    </property>
   </action>
  </widget>
