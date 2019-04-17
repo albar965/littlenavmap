@@ -27,9 +27,9 @@ stefanfrings::TemplateCache *WebApp::templateCache = nullptr;
 stefanfrings::HttpSessionStore *WebApp::sessionStore = nullptr;
 stefanfrings::StaticFileController *WebApp::staticFileController = nullptr;
 
-QSettings *WebApp::templateCacheSettings = nullptr;
-QSettings *WebApp::sessionSettings = nullptr;
-QSettings *WebApp::staticFileControllerSettings = nullptr;
+atools::io::IniKeyValues WebApp::templateCacheSettings;
+atools::io::IniKeyValues WebApp::sessionSettings;
+atools::io::IniKeyValues WebApp::staticFileControllerSettings;
 
 QString WebApp::documentRoot;
 QString WebApp::htmlExtension = ".html";
@@ -39,36 +39,33 @@ void WebApp::init(QObject *parent, const QString& configFileName, const QString&
   qDebug() << Q_FUNC_INFO;
   documentRoot = docrootParam;
 
+  atools::io::IniReader reader;
+  reader.setCommentCharacters({";", "#"});
+  reader.setPreserveCase(true);
+  reader.read(configFileName);
+
   // Configure template loader and cache
-  templateCacheSettings = new QSettings(configFileName, QSettings::IniFormat, parent);
-  templateCacheSettings->beginGroup("templates");
-  templateCacheSettings->setValue("path", docrootParam);
+  templateCacheSettings = reader.getKeyValuePairs("templates");
+  if(!templateCacheSettings.contains("path"))
+    templateCacheSettings.insert("path", documentRoot);
+  templateCacheSettings.insert("filename", configFileName);
   templateCache = new stefanfrings::TemplateCache(templateCacheSettings, parent);
-  htmlExtension = templateCacheSettings->value("suffix").toString();
+  htmlExtension = templateCacheSettings.value("suffix").toString();
 
   // Configure session store
-  sessionSettings = new QSettings(configFileName, QSettings::IniFormat, parent);
-  sessionSettings->beginGroup("sessions");
+  sessionSettings = reader.getKeyValuePairs("sessions");
+  sessionSettings.insert("filename", configFileName);
   sessionStore = new stefanfrings::HttpSessionStore(sessionSettings, parent);
 
   // Configure static file controller
-  staticFileControllerSettings = new QSettings(configFileName, QSettings::IniFormat, parent);
-  staticFileControllerSettings->beginGroup("docroot");
-  staticFileControllerSettings->setValue("path", docrootParam);
+  staticFileControllerSettings = reader.getKeyValuePairs("docroot");
+  if(!staticFileControllerSettings.contains("path"))
+    staticFileControllerSettings.insert("path", docrootParam);
+  staticFileControllerSettings.insert("filename", configFileName);
   staticFileController = new stefanfrings::StaticFileController(staticFileControllerSettings, parent);
-
 }
 
 void WebApp::deinit()
 {
   qDebug() << Q_FUNC_INFO;
-
-  delete templateCacheSettings;
-  templateCacheSettings = nullptr;
-
-  delete sessionSettings;
-  sessionSettings = nullptr;
-
-  delete staticFileControllerSettings;
-  staticFileControllerSettings = nullptr;
 }

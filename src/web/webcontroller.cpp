@@ -48,11 +48,21 @@ WebController::WebController(QWidget *parent) :
   qDebug() << Q_FUNC_INFO;
 
   // Find the configuration file and create settings
-  configFileName = atools::settings::Settings::getOverloadedLocalPath(":/littlenavmap/resources/config/webserver.cfg");
+  QString confPath = ":/littlenavmap/resources/config/webserver.cfg";
+  configFileName = atools::settings::Settings::getOverloadedPath(confPath);
+
+  atools::io::IniReader reader;
+  reader.setCommentCharacters({";", "#"});
+  reader.setPreserveCase(true);
+  reader.read(configFileName);
+  listenerSettings = reader.getKeyValuePairs("listener");
 
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEBSERVER_DEBUG, false).toBool();
 
-  listenerSettings = new QSettings(configFileName, QSettings::IniFormat, this);
+  // Remember any custom set certificates for later
+  sslKeyFile = listenerSettings.value("sslKeyFile").toString();
+  sslCertFile = listenerSettings.value("sslCertFile").toString();
+
   mapController = new WebMapController(parentWidget, verbose);
   htmlInfoBuilder = new HtmlInfoBuilder(parent, true /*info*/, true /*print*/);
   updateSettings();
@@ -65,7 +75,6 @@ WebController::~WebController()
   stopServer();
 
   delete mapController;
-  delete listenerSettings;
   delete htmlInfoBuilder;
 }
 
@@ -90,18 +99,35 @@ void WebController::startServer()
   // Initialize global settings and caches
   WebApp::init(this, configFileName, docroot);
 
-  qDebug() << Q_FUNC_INFO << "Docroot" << docroot << "port" << port;
+  qDebug() << Q_FUNC_INFO << "Docroot" << docroot << "port" << port << "SSL" << encrypted;
 
   // Start map
   mapController->init();
 
   requestHandler = new RequestHandler(this, mapController, htmlInfoBuilder, verbose);
 
-  // Configure and start the TCP listener
-  listenerSettings->beginGroup("listener");
+  // Set port if not set by user
+  if(!listenerSettings.contains("port"))
+    listenerSettings.insert("port", port);
 
-  // Override port value in configuration file
-  listenerSettings->setValue("port", port);
+  if(encrypted)
+  {
+    listenerSettings.insert("sslKeyFile", sslKeyFile.isEmpty() ?
+                            ":/littlenavmap/resources/config/ssl/lnm.key" : sslKeyFile);
+    listenerSettings.insert("sslCertFile", sslCertFile.isEmpty() ?
+                            ":/littlenavmap/resources/config/ssl/lnm.cert" : sslCertFile);
+  }
+  else
+  {
+    listenerSettings.remove("sslKeyFile");
+    listenerSettings.remove("sslCertFile");
+  }
+
+  listenerSettings.insert("filename", configFileName);
+
+  qDebug() << "Using" <<
+    "sslKeyFile" << listenerSettings.value("sslKeyFile").toString() <<
+    "sslCertFile" << listenerSettings.value("sslCertFile").toString();
 
   listener = new HttpListener(listenerSettings, requestHandler, this);
 
@@ -121,7 +147,7 @@ void WebController::startServer()
 
     QHostAddress addr = listener->serverAddress();
     QUrl url;
-    url.setScheme("http");
+    url.setScheme(encrypted ? "https" : "http");
     url.setPort(port);
 
     if(addr == QHostAddress::Any)
@@ -157,10 +183,10 @@ void WebController::startServer()
 
     // Add localhost if nothing was found
     if(urlList.isEmpty())
-      urlList.append(QString("http://localhost:%1").arg(port));
+      urlList.append(QString(QString(encrypted ? "https" : "http") + "://localhost:%1").arg(port));
 
     if(urlIpList.isEmpty())
-      urlIpList.append(QString("http://127.0.0.1:%1").arg(port));
+      urlIpList.append(QString(QString(encrypted ? "https" : "http") + "://127.0.0.1:%1").arg(port));
   }
 
   emit webserverStatusChanged(true);
@@ -237,6 +263,13 @@ bool WebController::updateSettings()
   if(port != newport)
   {
     port = newport;
+    changed = true;
+  }
+
+  int newencrypted = OptionData::instance().isWebEncrypted();
+  if(encrypted != newencrypted)
+  {
+    encrypted = newencrypted;
     changed = true;
   }
 

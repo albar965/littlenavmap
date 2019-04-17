@@ -18,6 +18,8 @@
 #ifndef LNM_WEBCONTROLLER_H
 #define LNM_WEBCONTROLLER_H
 
+#include "io/inireader.h"
+
 #include <QObject>
 #include <QUrl>
 #include <QVector>
@@ -89,6 +91,16 @@ public:
 
   QString getDefaultDocumentRoot() const;
 
+  bool isEncrypted() const
+  {
+    return encrypted;
+  }
+
+  void setEncrypted(bool value)
+  {
+    encrypted = value;
+  }
+
 signals:
   /* Send after server is started or before server is shutdown */
   void webserverStatusChanged(bool running);
@@ -106,17 +118,23 @@ private:
   HtmlInfoBuilder *htmlInfoBuilder = nullptr;
 
   /* Configuration file and file name. Default is :/littlenavmap/resources/config/webserver.cfg */
-  QSettings *listenerSettings = nullptr;
+  atools::io::IniKeyValues listenerSettings;
   QString configFileName;
 
   /* Full canonical path containing only "/" as separator */
   QString documentRoot;
   int port = 8965;
 
+  /* use HTTPS / SSL */
+  bool encrypted = false;
+
   QWidget *parentWidget;
   bool verbose = false;
 
   QVector<QUrl> urlList, urlIpList;
+
+  /* Remember custom certifiates. */
+  QString sslKeyFile, sslCertFile;
 };
 
 #endif // LNM_WEBCONTROLLER_H

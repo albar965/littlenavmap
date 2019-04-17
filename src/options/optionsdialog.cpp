@@ -365,6 +365,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxDisplayOnlineTower,
 
      ui->spinBoxOptionsWebPort,
+     ui->checkBoxOptionsWebEncrypted,
      ui->lineEditOptionsWebDocroot});
 
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
@@ -1270,6 +1271,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.webPort = ui->spinBoxOptionsWebPort->value();
   data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
+  data.webEncrypted = ui->checkBoxOptionsWebEncrypted->isChecked();
 
   data.valid = true;
 }
@@ -1488,6 +1490,7 @@ void OptionsDialog::optionDataToWidgets()
                              data.displayOnlineTower);
 
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
+  ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);
   ui->lineEditOptionsWebDocroot->setText(QDir::toNativeSeparators(data.webDocumentRoot));
 }
 
@@ -1815,6 +1818,7 @@ void OptionsDialog::startStopWebServerClicked()
       webController->setDocumentRoot(
         QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).canonicalFilePath()));
       webController->setPort(ui->spinBoxOptionsWebPort->value());
+      webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
       webController->startServer();
     }
   }

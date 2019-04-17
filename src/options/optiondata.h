@@ -844,6 +844,11 @@ public:
     return webPort;
   }
 
+  bool isWebEncrypted() const
+  {
+    return webEncrypted;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1099,9 +1104,11 @@ private:
   QString onlineVatsimStatusUrl;
   QString onlineIvaoStatusUrl;
 
+  /* Webserver values */
   QString webDocumentRoot;
   int webPort = 8965;
-
+  /* true for HTTPS / SSL */
+  bool webEncrypted = false;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

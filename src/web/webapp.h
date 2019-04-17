@@ -18,6 +18,8 @@
 #ifndef LNM_WEBAPP_H
 #define LNM_WEBAPP_H
 
+#include "io/inireader.h"
+
 namespace stefanfrings {
 class TemplateCache;
 class HttpSessionStore;
@@ -78,7 +80,7 @@ private:
   /* Controller for static files */
   static stefanfrings::StaticFileController *staticFileController;
 
-  static QSettings *templateCacheSettings, *sessionSettings, *staticFileControllerSettings;
+  static atools::io::IniKeyValues templateCacheSettings, sessionSettings, staticFileControllerSettings;
 
   static QString documentRoot, htmlExtension;
 };

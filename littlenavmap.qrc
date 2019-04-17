@@ -226,5 +226,7 @@
         <file>resources/icons/map.svg</file>
         <file>resources/icons/units.svg</file>
         <file>resources/icons/web.svg</file>
+        <file>resources/config/ssl/lnm.cert</file>
+        <file>resources/config/ssl/lnm.key</file>
     </qresource>
 </RCC>
