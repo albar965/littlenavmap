@@ -78,6 +78,7 @@
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
+#include <marble/HttpDownloadManager.h>
 
 #include <QDebug>
 #include <QCloseEvent>
@@ -92,6 +93,8 @@
 #include <QEvent>
 #include <QMimeData>
 #include <QClipboard>
+#include <QProgressDialog>
+#include <QThread>
 
 #include "ui_mainwindow.h"
 
@@ -2400,15 +2403,61 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
       paintWidget.setActive(); // Activate painting
       paintWidget.setKeepWorldRect(); // Center world rectangle when resizing
 
+      paintWidget.setAvoidBlurredMap(exportDialog.isAvoidBlurredMap());
+      paintWidget.setAdjustOnResize(exportDialog.isAvoidBlurredMap());
+
       // Copy all map settings
       paintWidget.copySettings(*mapWidget);
 
       // Copy visible rectangle
       paintWidget.copyView(*mapWidget);
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
+      // Prepare drawing by painting a dummy image
+      paintWidget.prepareDraw(exportDialog.getSize().width(), exportDialog.getSize().height());
+      QGuiApplication::restoreOverrideCursor();
+
+      // Create a progress dialog
+      int numSeconds = 60;
+      QString label = tr("Waiting up to %1 seconds for map download ...\n");
+      QProgressDialog progress(label.arg(numSeconds), tr("&Ignore Downloads and Continue"), 0, numSeconds, this);
+      progress.setWindowModality(Qt::WindowModal);
+      progress.setMinimumDuration(0);
+      progress.show();
+      QApplication::processEvents();
+
+      // Get download job information and update progress text
+      int queuedJobs = -1, activeJobs = -1;
+      connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged,
+              [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
+      {
+        progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
+                              arg(active).arg(queued));
+        queuedJobs = queued;
+        activeJobs = active;
+      });
+
+      // Loop until seconds are over
+      for(int i = 0; i < numSeconds; i++)
+      {
+        progress.setValue(i);
+        QApplication::processEvents();
+
+        if(progress.wasCanceled() || paintWidget.renderStatus() == Marble::Complete ||
+           (queuedJobs == 0 && activeJobs == 0))
+          break;
+
+        QThread::sleep(1);
+      }
+      progress.setValue(numSeconds);
+
+      // Now draw the actual image including navaids
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       pixmap = paintWidget.getPixmap(exportDialog.getSize());
+      QGuiApplication::restoreOverrideCursor();
 
       if(json != nullptr)
+        // Create Avitab reference if needed
         *json = paintWidget.createAvitabJson();
     }
     PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
@@ -2744,6 +2793,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
   s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
+  s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }

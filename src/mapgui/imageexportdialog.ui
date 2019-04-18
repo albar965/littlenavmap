@@ -6,21 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>140</height>
+    <width>359</width>
+    <height>173</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>LittleNavmap - Export Map as Image</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="labelWidth">
+   <item row="5" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="labelResolution">
      <property name="text">
-      <string>&amp;Width:</string>
+      <string>&amp;Resolution:</string>
      </property>
      <property name="buddy">
-      <cstring>spinBoxWidth</cstring>
+      <cstring>comboBoxResolution</cstring>
      </property>
     </widget>
    </item>
@@ -67,42 +77,6 @@ Note that all options except &quot;Current Map View&quot; will change visible de
      </item>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QSpinBox" name="spinBoxWidth">
-     <property name="suffix">
-      <string> pixel</string>
-     </property>
-     <property name="minimum">
-      <number>32</number>
-     </property>
-     <property name="maximum">
-      <number>8192</number>
-     </property>
-     <property name="value">
-      <number>1920</number>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="labelHeight">
-     <property name="text">
-      <string>&amp;Height:</string>
-     </property>
-     <property name="buddy">
-      <cstring>spinBoxHeight</cstring>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1">
     <widget class="QSpinBox" name="spinBoxHeight">
      <property name="suffix">
@@ -119,17 +93,7 @@ Note that all options except &quot;Current Map View&quot; will change visible de
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="labelResolution">
-     <property name="text">
-      <string>&amp;Resolution:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxResolution</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -141,6 +105,49 @@ Note that all options except &quot;Current Map View&quot; will change visible de
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="spinBoxWidth">
+     <property name="suffix">
+      <string> pixel</string>
+     </property>
+     <property name="minimum">
+      <number>32</number>
+     </property>
+     <property name="maximum">
+      <number>8192</number>
+     </property>
+     <property name="value">
+      <number>1920</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelHeight">
+     <property name="text">
+      <string>&amp;Height:</string>
+     </property>
+     <property name="buddy">
+      <cstring>spinBoxHeight</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelWidth">
+     <property name="text">
+      <string>&amp;Width:</string>
+     </property>
+     <property name="buddy">
+      <cstring>spinBoxWidth</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2" alignment="Qt::AlignRight">
+    <widget class="QCheckBox" name="checkBoxAvoidBlurred">
+     <property name="text">
+      <string>&amp;Zoom out to avoid blurred map</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -94,6 +94,11 @@ bool ImageExportDialog::isCurrentView() const
   return ui->comboBoxResolution->currentIndex() == CURRENT_MAP_VIEW;
 }
 
+bool ImageExportDialog::isAvoidBlurredMap() const
+{
+  return ui->checkBoxAvoidBlurred->isChecked();
+}
+
 void ImageExportDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBox->button(QDialogButtonBox::Ok))
@@ -115,7 +120,8 @@ void ImageExportDialog::saveState()
     this,
     ui->comboBoxResolution,
     ui->spinBoxWidth,
-    ui->spinBoxHeight
+    ui->spinBoxHeight,
+    ui->checkBoxAvoidBlurred
   });
 
 }
@@ -127,7 +133,8 @@ void ImageExportDialog::restoreState()
     this,
     ui->comboBoxResolution,
     ui->spinBoxWidth,
-    ui->spinBoxHeight
+    ui->spinBoxHeight,
+    ui->checkBoxAvoidBlurred
   });
   currentResolutionIndexChanged();
 }

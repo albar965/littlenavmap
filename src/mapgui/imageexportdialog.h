@@ -46,6 +46,8 @@ public:
   /* true if image should be saved as is in map view */
   bool isCurrentView() const;
 
+  bool isAvoidBlurredMap() const;
+
 private:
   void currentResolutionIndexChanged();
   void buttonBoxClicked(QAbstractButton *button);
