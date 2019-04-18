@@ -1017,31 +1017,61 @@ void RouteString::filterWaypoints(MapSearchResult& result, atools::geo::Pos& las
     // Get the nearest position only if there is no match with an airway
     if(updateNearestPos)
     {
+      struct ObjectDist
+      {
+        float distMeter;
+        Pos pos;
+        map::MapObjectTypes type;
+      };
+
       // Find something whatever is nearest and use that for the last position
-      QVector<std::pair<float, Pos> > dists;
+      QVector<ObjectDist> dists;
       if(result.hasAirports())
-        dists.append(std::make_pair(result.airports.first().position.distanceMeterTo(lastPos),
-                                    result.airports.first().position));
+        dists.append({
+          result.airports.first().position.distanceMeterTo(lastPos),
+          result.airports.first().position,
+          map::AIRPORT
+        });
       if(result.hasWaypoints())
-        dists.append(std::make_pair(result.waypoints.first().position.distanceMeterTo(lastPos),
-                                    result.waypoints.first().position));
+        dists.append({
+          result.waypoints.first().position.distanceMeterTo(lastPos),
+          result.waypoints.first().position,
+          map::WAYPOINT
+        });
       if(result.hasVor())
-        dists.append(std::make_pair(result.vors.first().position.distanceMeterTo(lastPos),
-                                    result.vors.first().position));
+        dists.append({
+          result.vors.first().position.distanceMeterTo(lastPos),
+          result.vors.first().position,
+          map::VOR
+        });
       if(result.hasNdb())
-        dists.append(std::make_pair(result.ndbs.first().position.distanceMeterTo(lastPos),
-                                    result.ndbs.first().position));
+        dists.append({
+          result.ndbs.first().position.distanceMeterTo(lastPos),
+          result.ndbs.first().position,
+          map::NDB
+        });
 
       // Sort by distance
       if(dists.size() > 1)
-        std::sort(dists.begin(), dists.end(), [](const std::pair<float, Pos>& p1,
-                                                 const std::pair<float, Pos>& p2) -> bool {
-          return p1.first < p2.first;
+        std::sort(dists.begin(), dists.end(), [](const ObjectDist& p1, const ObjectDist& p2) -> bool {
+          return p1.distMeter < p2.distMeter;
         });
 
       if(!dists.isEmpty())
+      {
+        // Check for special case where a NDB and a VOR with the same name are nearby. Prefer VOR in this case.
+        if(dists.size() >= 2 && dists.at(0).type == map::NDB && dists.at(1).type == map::VOR &&
+           atools::almostEqual(dists.at(0).distMeter, dists.at(1).distMeter, 10000.f))
+        {
+          dists.removeFirst();
+
+          if(result.hasNdb())
+            result.ndbs.removeFirst();
+        }
+
         // Use position of nearest to last
-        lastPos = dists.first().second;
+        lastPos = dists.first().pos;
+      }
     }
   }
 }
