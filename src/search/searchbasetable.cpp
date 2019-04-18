@@ -18,6 +18,7 @@
 #include "search/searchbasetable.h"
 #include "gui/itemviewzoomhandler.h"
 #include "navapp.h"
+#include "common/constants.h"
 #include "search/sqlcontroller.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
@@ -34,6 +35,7 @@
 #include "options/optiondata.h"
 #include "common/unit.h"
 #include "sql/sqlrecord.h"
+#include "gui/dialog.h"
 
 #include <QTimer>
 #include <QClipboard>
@@ -477,6 +479,16 @@ void SearchBaseTable::distanceSearchStateChanged(int state)
 
 void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
 {
+  if((NavApp::getMapWidget()->getSearchMarkPos().isNull() ||
+      !NavApp::getMapWidget()->getSearchMarkPos().isValid()) && checked)
+  {
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
+                                                   tr("The search center is not set.\n"
+                                                      "Right-click into the map and select\n"
+                                                      "\"Set Center for Distance Search\"."),
+                                                   tr("Do not &show this dialog again."));
+  }
+
   QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
   QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
   QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
