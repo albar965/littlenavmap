@@ -341,7 +341,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).
+         userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
 
   // Display only points for airports until the cutoff limit
@@ -359,7 +359,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).
+         userpoint().userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16)).
 
   // Make sure that there is always an layer
@@ -376,7 +376,7 @@ void MapPaintLayer::initMapLayerSettings()
          airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
          airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint(false).userpointInfo(false).
+         userpoint(false).userpointInfo(false).userpoinSymbolSize(12).
          airportMaxTextLength(16));
 
   // Sort layers
