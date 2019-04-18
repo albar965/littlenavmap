@@ -72,7 +72,7 @@
      <addaction name="actionRouteSaveAsLeveldRte"/>
      <addaction name="actionRouteSaveAsFeelthereFpl"/>
      <addaction name="actionRouteSaveAsQwRte"/>
-     <addaction name="actionRouteSaveAsMdx"/>
+     <addaction name="actionRouteSaveAsMdr"/>
     </widget>
     <widget class="QMenu" name="menuE_xport_Flight_Plan_to_other_Formats">
      <property name="title">
@@ -9519,15 +9519,15 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Save flight plan as RTE file usable by QualityWings Aircraft</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsMdx">
+  <action name="actionRouteSaveAsMdr">
    <property name="text">
-    <string>Export Flight Plan as Maddog X &amp;MDX ...</string>
+    <string>Export Flight Plan as Maddog X &amp;MDR ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as MDX file usable by the Leonardo Maddog X</string>
+    <string>Save flight plan as MDR file usable by the Leonardo Maddog X</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as MDX file usable by the Leonardo Maddog X</string>
+    <string>Save flight plan as MDR file usable by the Leonardo Maddog X</string>
    </property>
   </action>
  </widget>
