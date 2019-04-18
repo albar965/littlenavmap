@@ -572,22 +572,22 @@ bool RouteExport::routeExportQwRte()
   return false;
 }
 
-bool RouteExport::routeExportMdx()
+bool RouteExport::routeExportMdr()
 {
   qDebug() << Q_FUNC_INFO;
   if(routeValidate(false /* validate parking */, true /* validate departure and destination */))
   {
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flight Plan for Maddog X Aircraft"),
-      tr("MDX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDX), "mdx", "Route/Mdx",
+      tr("MDR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_MDR), "mdr", "Route/Mdx",
       NavApp::getCurrentSimulatorBasePath(),
-      buildDefaultFilenameShort(QString(), ".mdx"),
+      buildDefaultFilenameShort(QString(), ".mdr"),
       false /* confirm overwrite */, true /* autonumber */);
 
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveMdx, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, std::bind(&atools::fs::pln::FlightplanIO::saveMdr, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved for Maddog X."));
         return true;

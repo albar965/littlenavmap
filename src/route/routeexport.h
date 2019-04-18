@@ -118,7 +118,7 @@ public:
   bool routeExportQwRte();
 
   /* Leonardo Maddog X */
-  bool routeExportMdx();
+  bool routeExportMdr();
 
   /* Check if route has valid departure  and destination and departure parking.
    *  @return true if route can be saved anyway */
