@@ -462,6 +462,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
       context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
       context.symbolSizeAirport = od.getDisplaySymbolSizeAirport() / 100.f;
+      context.symbolSizeAirportWeather = od.getDisplaySymbolSizeAirportWeather() / 100.f;
       context.symbolSizeNavaid = od.getDisplaySymbolSizeNavaid() / 100.f;
       context.textSizeAircraftAi = od.getDisplayTextSizeAircraftAi() / 100.f;
       context.textSizeAircraftUser = od.getDisplayTextSizeAircraftUser() / 100.f;

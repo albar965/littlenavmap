@@ -618,6 +618,11 @@ public:
     return displaySymbolSizeAirport;
   }
 
+  int getDisplaySymbolSizeAirportWeather() const
+  {
+    return displaySymbolSizeAirportWeather;
+  }
+
   int getDisplaySymbolSizeAircraftAi() const
   {
     return displaySymbolSizeAircraftAi;
@@ -994,6 +999,9 @@ private:
 
   // spinBoxOptionsDisplaySymbolSizeAirport
   int displaySymbolSizeAirport = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeAirportWeather
+  int displaySymbolSizeAirportWeather = 100;
 
   // spinBoxOptionsDisplaySymbolSizeAircraftAi
   int displaySymbolSizeAircraftAi = 100;
