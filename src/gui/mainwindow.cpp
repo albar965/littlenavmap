@@ -3339,6 +3339,8 @@ void MainWindow::saveStateMain()
   qDebug() << "writeSettings";
 
 #ifdef DEBUG_CREATE_WINDOW_STATE
+  // Print the main window state as binary for inclusion into the program =====================
+  qDebug() << "===============================================================================";
   QStringList hexStr;
   QByteArray state = saveState();
   for(char i : state)
@@ -3346,6 +3348,49 @@ void MainWindow::saveStateMain()
   qDebug().noquote().nospace() << "\n\nconst static unsigned char mainWindowState["
                                << state.size() << "] ="
                                << "{" << hexStr.join(",") << "};\n";
+  qDebug() << "===============================================================================";
+  #endif
+
+#ifdef DEBUG_DUMP_SORTCUTS
+  // Print all main menu and sub menu shortcuts ==============================================
+  qDebug() << "===============================================================================";
+  QList<const QAction *> actions;
+
+  QString out;
+  QTextStream stream(&out, QIODevice::WriteOnly);
+
+  for(const QAction *mainmenus : ui->menuBar->actions())
+  {
+    if(mainmenus->menu() != nullptr)
+    {
+      QString mainmenu = mainmenus->text().remove("&");
+      for(const QAction *mainAction : mainmenus->menu()->actions())
+      {
+        if(mainAction->menu() != nullptr)
+        {
+          QString submenu = mainAction->text().remove("&");
+          for(const QAction *subAction : mainAction->menu()->actions())
+          {
+            if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
+              stream << "| " << mainmenu << " -> " << submenu << " -> "
+                     << subAction->text().remove("&")
+                     << " | " << subAction->shortcut().toString() << " |" << endl;
+          }
+          submenu.clear();
+        }
+        else
+        {
+          if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
+            stream << "| " << mainmenu << " -> "
+                   << mainAction->text().remove("&")
+                   << " | " << mainAction->shortcut().toString() << " |" << endl;
+        }
+      }
+    }
+  }
+  qDebug().nospace().noquote() << endl << out;
+
+  qDebug() << "===============================================================================";
 #endif
 
   saveMainWindowStates();
