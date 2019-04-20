@@ -82,16 +82,20 @@ bool NavApp::loadingDatabase = false;
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
-  setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
-  setApplicationName("Little Navmap");
-  setOrganizationName("ABarthel");
-  setOrganizationDomain("littlenavmap.org");
-
-  setApplicationVersion("2.3.0.develop"); // VERSION_NUMBER - Little Navmap
+  initApplication();
 }
 
 NavApp::~NavApp()
 {
+}
+
+void NavApp::initApplication()
+{
+  setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
+  setApplicationName("Little Navmap");
+  setOrganizationName("ABarthel");
+  setOrganizationDomain("littlenavmap.org");
+  setApplicationVersion("2.3.0.develop"); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()

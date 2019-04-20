@@ -198,7 +198,10 @@ enum Flag2
   MAP_AVOID_BLURRED_MAP = 1 << 13,
 
   /* checkBoxOptionsMapUndock */
-  MAP_ALLOW_UNDOCK = 1 << 14
+  MAP_ALLOW_UNDOCK = 1 << 14,
+
+  /* checkBoxOptionsGuiHighDpi */
+  HIGH_DPI_DISPLAY_SUPPORT = 1 << 15
 
 };
 

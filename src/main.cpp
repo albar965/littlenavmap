@@ -135,8 +135,19 @@ int main(int argc, char *argv[])
       qWarning() << "Wrong renderer" << renderOpt;
   }
 
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+  NavApp::initApplication();
+
+  int checkState = Settings::instance().valueInt("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2);
+  if(checkState == 2)
+  {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
+  }
+  else
+  {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
+  }
 
   // Set application information
   int retval = 0;

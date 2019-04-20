@@ -226,6 +226,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLanguage,
      ui->checkBoxOptionsGuiOverrideLocale,
+     ui->checkBoxOptionsGuiHighDpi,
      ui->checkBoxOptionsMapEmptyAirports,
      ui->checkBoxOptionsMapEmptyAirports3D,
      ui->checkBoxOptionsRouteShortName,
@@ -1135,6 +1136,7 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts::MAP_AVOID_BLURRED_MAP);
   toFlags2(ui->checkBoxOptionsMapUndock, opts::MAP_ALLOW_UNDOCK);
+  toFlags2(ui->checkBoxOptionsGuiHighDpi, opts::HIGH_DPI_DISPLAY_SUPPORT);
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
@@ -1336,6 +1338,7 @@ void OptionsDialog::optionDataToWidgets()
 
   fromFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts::MAP_AVOID_BLURRED_MAP);
   fromFlags2(ui->checkBoxOptionsMapUndock, opts::MAP_ALLOW_UNDOCK);
+  fromFlags2(ui->checkBoxOptionsGuiHighDpi, opts::HIGH_DPI_DISPLAY_SUPPORT);
 
   fromFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);

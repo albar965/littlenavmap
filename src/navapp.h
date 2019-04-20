@@ -263,7 +263,6 @@ public:
 
   static VehicleIcons *getVehicleIcons();
 
-
   /* Not entirely reliable since other modules might be initialized later */
   static bool isLoadingDatabase();
 
@@ -279,6 +278,8 @@ public:
   static const QString& getCurrentAircraftPerfFilepath();
 
   static WebController *getWebController();
+
+  static void initApplication();
 
 private:
   /* Database query helpers and caches */

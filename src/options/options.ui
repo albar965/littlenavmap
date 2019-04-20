@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
+    <width>916</width>
     <height>561</height>
    </rect>
   </property>
@@ -332,17 +332,207 @@
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsPage2">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
-          <property name="toolTip">
-           <string>Does not apply to the KML files loaded after startup.</string>
+        <item row="6" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_8">
+          <property name="title">
+           <string>Text Size</string>
           </property>
-          <property name="text">
-           <string>Center Google Earth &amp;KML after loading</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
+          <layout class="QGridLayout" name="gridLayout_20">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelOptionsGuiRouteText">
+             <property name="text">
+              <string>Text size for &amp;flight plan table:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsGuiRouteText</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="spinBoxOptionsGuiRouteText">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="minimum">
+              <number>70</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="labelOptionsGuiSimInfoText">
+             <property name="text">
+              <string>Text size for &amp;simulator aircraft information dock window:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsGuiSimInfoText</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="minimum">
+              <number>70</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="minimum">
+              <number>50</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="minimum">
+              <number>50</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
+             <property name="text">
+              <string>Text size for &amp;aircraft performance report:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsGuiAircraftPerf</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="labelOptionsGuiInfoText">
+             <property name="text">
+              <string>Text size for &amp;information dock window:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsGuiInfoText</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelOptionsGuiSearchText">
+             <property name="text">
+              <string>Text size for &amp;search result tables and procedure view:</string>
+             </property>
+             <property name="buddy">
+              <cstring>spinBoxOptionsGuiSearchText</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+             <property name="suffix">
+              <string> %</string>
+             </property>
+             <property name="minimum">
+              <number>50</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
         </item>
         <item row="7" column="0" colspan="2">
@@ -392,12 +582,28 @@ A restart is required for the settings to take effect.</string>
           </layout>
          </widget>
         </item>
-        <item row="6" column="0" colspan="2">
-         <widget class="QGroupBox" name="groupBox_8">
-          <property name="title">
-           <string>Text Size</string>
+        <item row="10" column="0">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_20">
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="9" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_13">
+          <property name="title">
+           <string>Files</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="spacing">
+            <number>2</number>
+           </property>
            <property name="leftMargin">
             <number>2</number>
            </property>
@@ -410,203 +616,59 @@ A restart is required for the settings to take effect.</string>
            <property name="bottomMargin">
             <number>2</number>
            </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item row="5" column="0">
-            <widget class="QLabel" name="labelOptionsGuiSimInfoText">
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
+             <property name="toolTip">
+              <string>Does not apply to the KML files loaded after startup.</string>
+             </property>
              <property name="text">
-              <string>Text size for &amp;simulator aircraft information dock window:</string>
+              <string>Center Google Earth &amp;KML after loading</string>
              </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsGuiSimInfoText</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="minimum">
-              <number>50</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="minimum">
-              <number>70</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="minimum">
-              <number>50</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelOptionsGuiSearchText">
-             <property name="text">
-              <string>Text size for &amp;search result tables and procedure view:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsGuiSearchText</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="labelOptionsGuiRouteText">
-             <property name="text">
-              <string>Text size for &amp;flight plan table:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsGuiRouteText</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="labelOptionsGuiInfoText">
-             <property name="text">
-              <string>Text size for &amp;information dock window:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsGuiInfoText</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="spinBoxOptionsGuiRouteText">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="minimum">
-              <number>70</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
-             <property name="text">
-              <string>Text size for &amp;aircraft performance report:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxOptionsGuiAircraftPerf</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> %</string>
-             </property>
-             <property name="minimum">
-              <number>50</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>100</number>
+             <property name="checked">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="8" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+        <item row="0" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_7">
+          <property name="title">
+           <string>Display</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsGuiHighDpi">
+             <property name="toolTip">
+              <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution. 
+All Little Navmap features like text, icons and graphics will be scaled for better visibility if this option is checked.</string>
+             </property>
+             <property name="text">
+              <string>Enable high &amp;DPI monitor support (restart required after change)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -4318,7 +4380,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>comboBoxOptionsStartupUpdateRate</tabstop>
   <tabstop>comboBoxOptionsStartupUpdateChannels</tabstop>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
-  <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
   <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
