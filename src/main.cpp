@@ -135,6 +135,8 @@ int main(int argc, char *argv[])
       qWarning() << "Wrong renderer" << renderOpt;
   }
 
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
   // Set application information
   int retval = 0;
   NavApp app(argc, argv);
