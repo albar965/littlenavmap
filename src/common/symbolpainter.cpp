@@ -273,16 +273,34 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int
 void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar, float x, float y,
                                        float size, bool windPointer, bool windBarbs, bool fast)
 {
-  using namespace atools::fs::weather;
-
-  QColor color;
-
   if(metar.isValid())
   {
     const atools::fs::weather::MetarParser& parsedMetar = metar.getParsedMetar();
 
     // Determine correct color for flight rules (IFR, etc.) =============================================
     atools::fs::weather::MetarParser::FlightRules flightRules = parsedMetar.getFlightRules();
+    atools::util::PainterContextSaver saver(painter);
+
+    painter->setBackgroundMode(Qt::OpaqueMode);
+    painter->setBackground(mapcolors::weatherBackgoundColor);
+    painter->setBrush(mapcolors::weatherBackgoundColor);
+
+    // Rectangle for all drawing centered around x and y
+    QRectF rect(x - size / 2.f, y - size / 2.f, size, size);
+
+    // Draw while outline / background circle ===================================
+    painter->setPen(mapcolors::weatherBackgoundColor);
+    float margin = size / 5.f;
+    painter->drawEllipse(rect.marginsAdded(QMarginsF(margin, margin, margin, margin)));
+
+    // Wind pointer and/or barbs =====================================================
+    if(windBarbs || windPointer)
+      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, fast);
+
+    // Draw coverage indicating pies or circles =====================================================
+
+    // Color depending on flight rule
+    QColor color;
     switch(flightRules)
     {
       case atools::fs::weather::MetarParser::UNKNOWN:
@@ -301,128 +319,7 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
         break;
     }
 
-    atools::util::PainterContextSaver saver(painter);
-
-    painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->setBackground(mapcolors::weatherBackgoundColor);
-    painter->setBrush(mapcolors::weatherBackgoundColor);
-
-    // Rectangle for all drawing centered around x and y
-    QRectF rect(x - size / 2.f, y - size / 2.f, size, size);
-
-    // Draw while outline / background circle ===================================
-    painter->setPen(mapcolors::weatherBackgoundColor);
-    float margin = size / 5.f;
-    painter->drawEllipse(rect.marginsAdded(QMarginsF(margin, margin, margin, margin)));
-
-    float wind = parsedMetar.getPrevailingWindSpeedKnots();
     float lineWidth = size * 0.2f;
-    if(wind >= 2.f && wind < INVALID_METAR_VALUE / 2.f && windPointer && !fast &&
-       parsedMetar.getPrevailingWindDir() >= 0)
-    {
-      QVector<int> barbs;
-      float lineLength = size;
-      float bgLineWidth = lineWidth * 2.f;
-      float barbStep = lineWidth * 1.5f;
-      float barbLength50 = size * 0.6f;
-      float barbLength10 = barbLength50;
-      float barbLength5 = barbLength10 * 0.6f;
-
-      // Calculate wind barb types and put then in order from outside towards circle  ===================================
-      if(windBarbs)
-      {
-        float tempWind = wind;
-        while(tempWind >= 5.f)
-        {
-          if(tempWind >= 50.f)
-          {
-            tempWind -= 50.f;
-            barbs.append(50);
-          }
-          else if(tempWind >= 10.f)
-          {
-            tempWind -= 10.f;
-            barbs.append(10);
-          }
-          else if(tempWind >= 5.f)
-          {
-            tempWind -= 5.f;
-            barbs.append(5);
-            break;
-          }
-        }
-
-        lineLength += barbs.size() * barbStep;
-      }
-
-      // Draw wind pointer background ============================================================
-      QLineF line(0., 0., 0., -lineLength);
-      if(windPointer && !fast)
-      {
-        painter->translate(QPointF(x, y));
-        painter->rotate(parsedMetar.getPrevailingWindDir());
-        // Line from 0 to 0 - length
-        painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth));
-        painter->drawLine(line);
-      }
-
-      if(!barbs.isEmpty())
-      {
-        // Draw wind barbs background ============================================================
-        painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth, Qt::SolidLine, Qt::RoundCap,
-                             Qt::RoundJoin));
-        painter->setBrush(mapcolors::weatherBackgoundColor);
-        // Lenghten the line for the rectangle
-        float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
-        for(int barb : barbs)
-        {
-          if(barb == 50)
-            painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
-                                            QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
-                                            QPointF(0.f, barbPos - barbLength50 / 2.f)}));
-          else if(barb == 10)
-            painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
-          else if(barb == 5)
-            painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
-
-          barbPos += barbStep;
-        }
-      }
-
-      if(windPointer && !fast)
-      {
-        // Draw wind pointer  ============================================================
-        painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth));
-        painter->drawLine(line);
-      }
-
-      if(!barbs.isEmpty())
-      {
-        // Draw wind barbs ============================================================
-        painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth * 0.6f,
-                             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        painter->setBrush(mapcolors::weatherWindColor);
-        // Lenghten the line for the rectangle
-        float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
-        for(int barb : barbs)
-        {
-          if(barb == 50)
-            painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
-                                            QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
-                                            QPointF(0.f, barbPos - barbLength50 / 2.f)}));
-          else if(barb == 10)
-            painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
-          else if(barb == 5)
-            painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
-
-          barbPos += barbStep;
-        }
-        painter->setBrush(mapcolors::weatherBackgoundColor);
-      }
-      painter->resetTransform();
-    }
-
-    // Draw coverage indicating pies or circles =====================================================
     painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     atools::fs::weather::MetarCloud::Coverage maxCoverage = parsedMetar.getMaxCoverage();
     switch(maxCoverage)
@@ -478,6 +375,153 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
         break;
     }
   }
+}
+
+void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar,
+                                  float x, float y, float size, bool windBarbs, bool fast) const
+{
+  float wind = parsedMetar.getPrevailingWindSpeedKnots();
+
+  if(wind >= 2.f && wind < atools::fs::weather::INVALID_METAR_VALUE / 2.f && !fast &&
+     parsedMetar.getPrevailingWindDir() >= 0)
+  {
+    // Calculate dimensions ============================
+    float lineWidth = size * 0.3f;
+    float bgLineWidth = lineWidth * 2.f;
+
+    float barbLength50 = size * 0.7f;
+    float barbLength10 = barbLength50;
+    float barbLength5 = barbLength10 * 0.65f;
+    float barbStep = lineWidth * 1.5f;
+
+    float lineLength = size;
+    QVector<int> barbs, barbsGust, *barbsBackground = nullptr;
+
+    lineLength = size;
+
+    // Calculate a list of feathers ========================================
+    if(windBarbs) // Otherwise pointer only
+    {
+      // Normal wind barbs
+      barbs = calculateWindBarbs(lineLength, lineWidth, wind, true /* use 50 knot barbs */);
+
+      float windGust = parsedMetar.getGustSpeedKts();
+      if(windGust >= 2.f && windGust < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
+      {
+        // Gust wind barbs
+        lineLength = size;
+        barbsGust =
+          calculateWindBarbs(lineLength, lineWidth, windGust,
+                             barbs.contains(50) /* use 50 knot barbs only if there are ones in the normal wind*/);
+        barbsBackground = &barbsGust;
+      }
+      else
+        barbsBackground = &barbs;
+    }
+
+    // Draw wind pointer background ============================================================
+    QLineF line(0., 0., 0., -lineLength);
+    if(!fast)
+    {
+      painter->translate(QPointF(x, y));
+      painter->rotate(parsedMetar.getPrevailingWindDir());
+      // Line from 0 to 0 - length
+      painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth));
+      painter->drawLine(line);
+    }
+
+    if(windBarbs)
+    {
+      // Draw wind barbs background ============================================================
+      if(barbsBackground != nullptr && !barbsBackground->isEmpty())
+      {
+        painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth,
+                             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->setBrush(mapcolors::weatherBackgoundColor);
+        drawBarbFeathers(painter, *barbsBackground, lineLength, barbLength5, barbLength10, barbLength50, barbStep);
+      }
+
+      // Draw wind barbs ============================================================
+      if(!barbsGust.isEmpty())
+      {
+        painter->setPen(QPen(mapcolors::weatherWindGustColor, lineWidth * 0.6f,
+                             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->setBrush(mapcolors::weatherWindGustColor);
+        drawBarbFeathers(painter, barbsGust, lineLength, barbLength5, barbLength10, barbLength50, barbStep);
+      }
+
+      // Draw wind barbs ============================================================
+      if(!barbs.isEmpty())
+      {
+        painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth * 0.6f,
+                             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->setBrush(mapcolors::weatherWindColor);
+        drawBarbFeathers(painter, barbs, lineLength, barbLength5, barbLength10, barbLength50, barbStep);
+      }
+    }
+
+    // Draw wind pointer  ============================================================
+    if(!fast)
+    {
+      painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth));
+      painter->setBrush(mapcolors::weatherBackgoundColor);
+      painter->drawLine(line);
+    }
+    painter->resetTransform();
+  }
+}
+
+void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
+                                     float barbLength10, float barbLength50, float barbStep) const
+{
+  // Lenghten the line for the rectangle
+  float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+  for(int barb : barbs)
+  {
+    if(barb == 50)
+      painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
+                                      QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
+                                      QPointF(0.f, barbPos - barbLength50 / 2.f)}));
+    else if(barb == 10)
+      painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
+    else if(barb == 5)
+      painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
+
+    barbPos += barbStep;
+  }
+}
+
+QVector<int> SymbolPainter::calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const
+{
+  QVector<int> barbs;
+
+  float barbStep = lineWidth * 1.5f;
+
+  // Calculate wind barb types and put then in order from outside towards circle  ===================================
+  float tempWind = wind;
+  while(tempWind >= 5.f)
+  {
+    if(tempWind >= 50.f && useBarb50)
+    {
+      tempWind -= 50.f;
+      barbs.append(50);
+    }
+    else if(tempWind >= 10.f)
+    {
+      tempWind -= 10.f;
+      barbs.append(10);
+    }
+    else if(tempWind >= 5.f)
+    {
+      tempWind -= 5.f;
+      barbs.append(5);
+      break;
+    }
+  }
+
+  lineLength += barbs.size() * barbStep;
+
+  return barbs;
 }
 
 void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int size, float dir)

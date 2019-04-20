@@ -72,6 +72,7 @@ extern QColor distanceColor;
 /* Weather icon colors */
 extern QColor weatherBackgoundColor;
 extern QColor weatherWindColor;
+extern QColor weatherWindGustColor;
 extern QColor weatherLifrColor;
 extern QColor weatherIfrColor;
 extern QColor weatherMvfrColor;

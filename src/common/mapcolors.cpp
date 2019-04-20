@@ -68,6 +68,7 @@ QColor distanceColor(Qt::black);
 
 QColor weatherBackgoundColor(Qt::white);
 QColor weatherWindColor(Qt::black);
+QColor weatherWindGustColor("#ff8040");
 
 QColor weatherLifrColor(QColor("#d000d0"));
 QColor weatherIfrColor(QColor("#d00000"));
@@ -591,6 +592,7 @@ void syncColors()
   colorSettings.beginGroup("Weather");
   syncColor(colorSettings, "WeatherBackgoundColor", weatherBackgoundColor);
   syncColor(colorSettings, "WeatherWindColor", weatherWindColor);
+  syncColor(colorSettings, "WeatherWindGustColor", weatherWindGustColor);
   syncColor(colorSettings, "WeatherLifrColor", weatherLifrColor);
   syncColor(colorSettings, "WeatherIfrColor", weatherIfrColor);
   syncColor(colorSettings, "WeatherMvfrColor", weatherMvfrColor);

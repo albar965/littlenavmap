@@ -29,6 +29,7 @@ namespace atools {
 namespace fs {
 namespace weather {
 class Metar;
+class MetarParser;
 }
 }
 }
@@ -199,6 +200,13 @@ private:
 
   QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
   void prepareForIcon(QPainter& painter);
+
+  void drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar, float x, float y,
+                     float size, bool windBarbs, bool fast) const;
+
+  QVector<int> calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const;
+  void drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
+                        float barbLength10, float barbLength50, float barbStep) const;
 
 };
 

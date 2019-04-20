@@ -33,7 +33,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterWeather::MapPainterWeather(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterWeather::MapPainterWeather(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }
@@ -45,8 +45,7 @@ MapPainterWeather::~MapPainterWeather()
 void MapPainterWeather::render(PaintContext *context)
 {
   bool drawWeather = context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) &&
-                     context->mapLayer->isAirportWeather() &&
-                     context->viewContext == Marble::Still;
+                     context->mapLayer->isAirportWeather();
 
   if(!drawWeather)
     return;
