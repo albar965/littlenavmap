@@ -4407,7 +4407,7 @@ Nu verlaten.</translation>
         <location filename="src/gui/mainwindow.cpp" line="2889"/>
         <location filename="src/gui/mainwindow.cpp" line="2899"/>
         <source>Online Clients</source>
-        <translation>Inline Gebruikers</translation>
+        <translation>Online Gebruikers</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2982"/>
@@ -8570,7 +8570,7 @@ Alleen JPG en PNG zijn toegestaan.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="1320"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1323"/>
         <source>Wind:</source>
-        <translation>ind:</translation>
+        <translation>Wind:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1331"/>

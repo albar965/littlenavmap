@@ -9397,10 +9397,10 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Export Flight Plan as &amp;vPilot VFP ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot or swift</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot or swift</string>
    </property>
   </action>
   <action name="actionRouteSaveAsIvap">
