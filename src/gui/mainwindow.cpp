@@ -2837,6 +2837,8 @@ void MainWindow::mainWindowShown()
 
   mapWidget->showSavedPosOnStartup();
 
+  atools::gui::Application::sendFontChanged();
+
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
   {
