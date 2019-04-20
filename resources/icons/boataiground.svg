@@ -13,7 +13,7 @@
    width="128"
    height="128"
    id="svg1655"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="boataiground.svg">
   <metadata
      id="metadata10">
@@ -61,7 +61,7 @@
      style="display:inline"
      id="layer2" />
   <path
-     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:#ff7f00;fill-opacity:1;fill-rule:evenodd;stroke:#808080;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 64.635274,18.978405 C 43.355666,28.284611 5.8667577,74.019916 5.8667577,74.019916 L 41.637413,115.3034 c 0,0 48.837809,-33.485602 60.783577,-53.408489 8.62776,-14.389183 17.35768,-42.718898 12.32269,-48.510006 -4.21407,-4.8469138 -34.875278,-1.0684 -50.108406,5.5935 z"
      id="path4137"
      inkscape:connector-curvature="0"
@@ -103,13 +103,13 @@
      y="61.074009" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:72.00735474px;line-height:125%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      x="71.294769"
      y="113.44746"
-     id="text17209"
-     sodipodi:linespacing="125%"><tspan
+     id="text17209"><tspan
        sodipodi:role="line"
        id="tspan17211"
        x="71.294769"
-       y="113.44746">A</tspan></text>
+       y="113.44746"
+       style="font-size:72.00735474px;line-height:1.25">A</tspan></text>
 </svg>
