@@ -655,7 +655,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         html.h3(tr("Start Positions"));
 
         int i = 0;
-        for(const SqlRecord& startRec: *startVector)
+        for(const SqlRecord& startRec : *startVector)
         {
           QString type = startRec.valueStr("type");
           QString name = startRec.valueStr("runway_name");
@@ -873,7 +873,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         // Fill table ==========================================================
         html.table();
 
-        if(!(type& proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
+        if(!(type & proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
         {
           rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
           // html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
@@ -2114,7 +2114,6 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   aircraftTitle(aircraft, html, false /* show more/less switch */, false /* true if less info mode */);
 
-  html.nbsp().nbsp();
   QString aircraftText;
   if(aircraft.isUser())
   {
@@ -2159,9 +2158,11 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("No %2 shown on map.").arg(typeText), atools::util::html::BOLD);
+    html.p(aircraftText, atools::util::html::BOLD);
   }
 
-  head(html, aircraftText);
+  if(!info)
+    head(html, aircraftText);
 
   html.table();
   if(!aircraft.getAirplaneTitle().isEmpty())

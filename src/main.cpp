@@ -50,6 +50,7 @@
 #include <QLibrary>
 #include <QPixmapCache>
 #include <QFontDatabase>
+#include <QSettings>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -105,11 +106,12 @@ int main(int argc, char *argv[])
   qRegisterMetaType<atools::fs::sc::SimConnectReply>();
   qRegisterMetaType<atools::fs::sc::WeatherRequest>();
 
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap");
   // The loading mechanism can be configured through the QT_OPENGL environment variable and the following application attributes:
   // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.
   // Qt::AA_UseOpenGLES Equivalent to setting QT_OPENGL to angle.
   // Qt::AA_UseSoftwareOpenGL Equivalent to setting QT_OPENGL to software.
-  QString renderOpt = QString::fromLocal8Bit(qgetenv("LNM_RENDERER").constData());
+  QString renderOpt = settings.value("Options/RenderOpt", "desktop").toString();
   if(!renderOpt.isEmpty())
   {
     // QT_OPENGL does not work - so do this ourselves
@@ -134,19 +136,22 @@ int main(int argc, char *argv[])
     else
       qWarning() << "Wrong renderer" << renderOpt;
   }
+  qInfo() << "renderOpt" << renderOpt;
 
-  NavApp::initApplication();
-
-  int checkState = Settings::instance().valueInt("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2);
+  int checkState = settings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt();
   if(checkState == 2)
   {
+    qInfo() << "High DPI scaling enabled";
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
   }
   else
   {
+    qInfo() << "High DPI scaling disabled";
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
+    QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
+    QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
   }
 
   // Set application information

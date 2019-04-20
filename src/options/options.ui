@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>916</width>
-    <height>561</height>
+    <width>1096</width>
+    <height>597</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -656,8 +656,8 @@ A restart is required for the settings to take effect.</string>
            <item>
             <widget class="QCheckBox" name="checkBoxOptionsGuiHighDpi">
              <property name="toolTip">
-              <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution. 
-All Little Navmap features like text, icons and graphics will be scaled for better visibility if this option is checked.</string>
+              <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution.
+This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
              </property>
              <property name="text">
               <string>Enable high &amp;DPI monitor support (restart required after change)</string>

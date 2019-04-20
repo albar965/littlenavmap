@@ -279,9 +279,9 @@ public:
 
   static WebController *getWebController();
 
+private:
   static void initApplication();
 
-private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
