@@ -51,6 +51,7 @@
 #include <QPixmapCache>
 #include <QFontDatabase>
 #include <QSettings>
+#include <QScreen>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -106,12 +107,14 @@ int main(int argc, char *argv[])
   qRegisterMetaType<atools::fs::sc::SimConnectReply>();
   qRegisterMetaType<atools::fs::sc::WeatherRequest>();
 
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap");
+  // Tasks that have to be done before creating the application object and logging system =================
+  QStringList messages;
+  QSettings earlySettings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap");
   // The loading mechanism can be configured through the QT_OPENGL environment variable and the following application attributes:
   // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.
   // Qt::AA_UseOpenGLES Equivalent to setting QT_OPENGL to angle.
   // Qt::AA_UseSoftwareOpenGL Equivalent to setting QT_OPENGL to software.
-  QString renderOpt = settings.value("Options/RenderOpt", "desktop").toString();
+  QString renderOpt = earlySettings.value("Options/RenderOpt", "none").toString();
   if(!renderOpt.isEmpty())
   {
     // QT_OPENGL does not work - so do this ourselves
@@ -133,28 +136,28 @@ int main(int argc, char *argv[])
       QApplication::setAttribute(Qt::AA_UseOpenGLES, false);
       QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
     }
-    else
-      qWarning() << "Wrong renderer" << renderOpt;
+    else if(renderOpt != "none")
+      messages.append("Wrong renderer " + renderOpt);
   }
-  qInfo() << "renderOpt" << renderOpt;
+  messages.append("RenderOpt " + renderOpt);
 
-  int checkState = settings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt();
+  int checkState = earlySettings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt();
   if(checkState == 2)
   {
-    qInfo() << "High DPI scaling enabled";
+    messages.append("High DPI scaling enabled");
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
   }
   else
   {
-    qInfo() << "High DPI scaling disabled";
+    messages.append("High DPI scaling disabled");
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-    QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
+    // QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true); // Freezes with QT_SCALE_FACTOR=2 on Linux
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
     QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
   }
 
-  // Set application information
+  // Create application object ===========================================================
   int retval = 0;
   NavApp app(argc, argv);
 
@@ -196,6 +199,9 @@ int main(int argc, char *argv[])
 
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();
+    for(const QString& message : messages)
+      qInfo() << message;
+
     qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
                                 << Application::applicationName() << " revision " << GIT_REVISION;
 
@@ -218,6 +224,7 @@ int main(int argc, char *argv[])
     atools::fs::FsPaths::logAllPaths();
 
     qInfo() << "QT_OPENGL" << QString::fromLocal8Bit(qgetenv("QT_OPENGL").constData());
+    qInfo() << "QT_SCALE_FACTOR" << QString::fromLocal8Bit(qgetenv("QT_SCALE_FACTOR").constData());
     if(app.testAttribute(Qt::AA_UseDesktopOpenGL))
       qInfo() << "Using Qt desktop renderer";
     if(app.testAttribute(Qt::AA_UseOpenGLES))
@@ -226,6 +233,13 @@ int main(int argc, char *argv[])
       qInfo() << "Using Qt software renderer";
 
     qInfo() << "UI default font" << app.font();
+    for(const QScreen *screen: QGuiApplication::screens())
+      qInfo() << "Screen" << screen->name()
+              << "size" << screen->size()
+              << "physical size" << screen->physicalSize()
+              << "DPI ratio" << screen->devicePixelRatio()
+              << "DPI x" << screen->logicalDotsPerInchX()
+              << "y" << screen->logicalDotsPerInchX();
 
     migrate::checkAndMigrateSettings();
 
