@@ -65,6 +65,12 @@ before_script:
     - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
     - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../atools-release.tar.gz -C ../'
 
+    # Get littlenavconnect and littlexpconnect for deployment
+    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlenavconnect-release.tar.gz ../littlenavconnect-release.tar.gz'
+    - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../littlenavconnect-release.tar.gz -C ../'
+    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlexpconnect-release.tar.gz ../littlexpconnect-release.tar.gz'
+    - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../littlexpconnect-release.tar.gz -C ../'
+
 script:
     # Build atools if auth token for dropbox is not available
     - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || mkdir ../build-atools-release'
@@ -78,3 +84,16 @@ script:
     - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
     - make -j2
 
+after_success:
+    # Call 'make deploy' for all necessary projects
+    - '[ -f ~/.dropbox_uploader ] && mkdir ../deploy'
+    - '[ -f ~/.dropbox_uploader ] && make deploy'
+    - '[ -f ~/.dropbox_uploader ] && cd ../build-littlenavconnect-release'
+    - '[ -f ~/.dropbox_uploader ] && make deploy'
+    - '[ -f ~/.dropbox_uploader ] && cd ../build-littlexpconnect-release'
+    - '[ -f ~/.dropbox_uploader ] && make deploy'
+
+    # Deploy artefacts to dropbox
+    - '[ -f ~/.dropbox_uploader ] && tar -cvzf ../littlenavmap-release-${TRAVIS_COMMIT}.tar.gz ../deploy/'
+    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh mkdir linux'
+    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh upload ../littlenavmap-release-${TRAVIS_COMMIT}.tar.gz linux'
