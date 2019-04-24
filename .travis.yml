@@ -18,7 +18,7 @@ before_install:
     - sudo apt-get -qq update
 
     # Decrypt auth token for deployment
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || openssl aes-256-cbc -K $encrypted_931412a0316f_key -iv $encrypted_931412a0316f_iv -in deployment/.dropbox_uploader.enc -out ~/.dropbox_uploader -d'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || openssl aes-256-cbc -K $encrypted_98e6e310ff7a_key -iv $encrypted_98e6e310ff7a_iv -in deployment/.dropbox_uploader.enc -out ~/.dropbox_uploader -d'
 
 install:
     # Install needed Qt modules
