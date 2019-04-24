@@ -30,6 +30,7 @@
 #include "ui_routestringdialog.h"
 
 #include <QClipboard>
+#include <QAction>
 
 using atools::gui::HelpHandler;
 
