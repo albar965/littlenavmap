@@ -57,9 +57,28 @@ install:
     - cd ../build-marble-release
     - sudo make install/fast
 
+    # Install patchelf (needed for 'make deploy')
+    - cd ../
+    - wget http://nixos.org/releases/patchelf/patchelf-0.10/patchelf-0.10.tar.bz2
+    - tar xf patchelf-0.10.tar.bz2
+    - cd patchelf-0.10/
+    - ./configure --prefix="$HOME/.local"
+    - sudo make install
+
 before_script:    
     # Clone atools
     - git clone --branch=master https://github.com/albar965/atools.git ../atools
+
+    # Clone littenavconnect (for deployment)
+    - git clone --branch=master https://github.com/albar965/littlenavconnect.git ../littlenavconnect
+
+    # Clone littexpconnect (for deployment)
+    - git clone --branch=master https://github.com/albar965/littlexpconnect.git ../littlexpconnect
+
+    # Get X-Plane SDK (for deployment)
+    - wget -P '../' "http://developer.x-plane.com/wp-content/plugins/code-sample-generation/sample_templates/XPSDK301.zip"
+    - unzip ../XPSDK301.zip -d '../XPSDK'
+    - mv '../XPSDK/SDK' '../X-Plane SDK'
 
     # Get atools if auth token for dropbox is available
     - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
