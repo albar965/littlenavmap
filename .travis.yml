@@ -14,7 +14,7 @@ addons:
 
 before_install:
     # Add repository for Qt
-    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.10.1-xenial
+    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.12.2-xenial
     - sudo apt-get -qq update
 
     # Decrypt auth token for deployment
@@ -22,12 +22,12 @@ before_install:
 
 install:
     # Install needed Qt modules
-    - sudo apt-get --yes install libgl1-mesa-dev qt510base qt510svg qt510script qt510declarative
+    - sudo apt-get --yes install libgl1-mesa-dev qt512base qt512svg qt512script qt512declarative
 
     # Set Qt variables
-    - QTDIR="/opt/qt510"
+    - QTDIR="/opt/qt512"
     - PATH="$QTDIR/bin:$PATH"
-    - source /opt/qt510/bin/qt510-env.sh
+    - source /opt/qt512/bin/qt512-env.sh
 
     # Set used gcc version
     - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
