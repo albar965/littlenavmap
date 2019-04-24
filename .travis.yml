@@ -50,8 +50,8 @@ install:
     - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || make -j2'
 
     # Get marble if auth token for dropbox is available
-    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/marble-release.tar.gz ../marble-release.tar.gz'
-    - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../marble-release.tar.gz -C ../'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/marble-release.tar.gz ../marble-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../marble-release.tar.gz -C ../'
 
     # Install marble
     - cd ../build-marble-release
@@ -81,14 +81,14 @@ before_script:
     - mv '../XPSDK/SDK' '../X-Plane SDK'
 
     # Get atools if auth token for dropbox is available
-    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
-    - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../atools-release.tar.gz -C ../'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/atools-release.tar.gz ../atools-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../atools-release.tar.gz -C ../'
 
     # Get littlenavconnect and littlexpconnect for deployment
-    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlenavconnect-release.tar.gz ../littlenavconnect-release.tar.gz'
-    - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../littlenavconnect-release.tar.gz -C ../'
-    - '[ -f ~/.dropbox_uploader ] && ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlexpconnect-release.tar.gz ../littlexpconnect-release.tar.gz'
-    - '[ -f ~/.dropbox_uploader ] && tar -xvzf ../littlexpconnect-release.tar.gz -C ../'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlenavconnect-release.tar.gz ../littlenavconnect-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../littlenavconnect-release.tar.gz -C ../'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || ../littlenavmap/deployment/dropbox_uploader.sh download linux/littlexpconnect-release.tar.gz ../littlexpconnect-release.tar.gz'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || tar -xvzf ../littlexpconnect-release.tar.gz -C ../'
 
 script:
     # Build atools if auth token for dropbox is not available
