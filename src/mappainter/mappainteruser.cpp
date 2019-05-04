@@ -39,7 +39,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace map;
 
-MapPainterUser::MapPainterUser(MapPaintWidget* mapWidget, MapScale *mapScale)
+MapPainterUser::MapPainterUser(MapPaintWidget *mapWidget, MapScale *mapScale)
   : MapPainter(mapWidget, mapScale)
 {
 }
@@ -89,8 +89,9 @@ void MapPainterUser::paintUserpoints(PaintContext *context, const QList<MapUserp
           y += size / 2.f;
         }
 
-        context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f),
-                                     *icons->getIconPixmap(userpoint.type, atools::roundToInt(size)));
+        if(x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
+          context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f),
+                                       *icons->getIconPixmap(userpoint.type, atools::roundToInt(size)));
 
         if(context->mapLayer->isUserpointInfo() && !drawFast)
         {
