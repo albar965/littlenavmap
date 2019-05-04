@@ -317,9 +317,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
   }
 }
 
-void OnlinedataController::downloadFailed(const QString& error, QString url)
+void OnlinedataController::downloadFailed(const QString& error, int errorCode, QString url)
 {
-  qWarning() << Q_FUNC_INFO << "Failed" << error << url;
+  qWarning() << Q_FUNC_INFO << "Failed" << error << errorCode << url;
   stopAllProcesses();
 
   mainWindow->setOnlineConnectionStatusMessageText(tr("Failed"),

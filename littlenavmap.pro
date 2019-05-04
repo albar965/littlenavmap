@@ -505,6 +505,8 @@ OTHER_FILES += \
   $$files(web/*, true) \
   $$files(magdec/*, true) \
   $$files(marble/*, true) \
+  .travis.yml \
+  .gitignore \
   *.ts \
   BUILD.txt \
   CHANGELOG.txt \

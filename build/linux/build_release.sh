@@ -35,8 +35,8 @@ export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 # Defines the used Qt for all builds
 export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.9.5/gcc_64/bin/qmake"}
 
-# Defines the used Qt for Xpconnect
-export QMAKE_STATIC=${QMAKE_STATIC:-"/mnt/disk/build-qt-5.12-release/bin/qmake"}
+# Defines the used Qt for Xpconnect (/mnt/disk/build-qt-5.12-release/bin/qmake)
+export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/build-qt-5.12-release/bin/qmake"}
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
@@ -86,6 +86,9 @@ make deploy
 rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
+
+export ATOOLS_NO_GRIB=true
+export ATOOLS_NO_FS=true
 
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
 make -j4

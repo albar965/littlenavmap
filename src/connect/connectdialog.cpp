@@ -96,7 +96,7 @@ ConnectDialog::~ConnectDialog()
 /* A button box button was clicked */
 void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
 {
-  qDebug() << "host" << ui->comboBoxConnectHostname->currentText();
+  qDebug() << Q_FUNC_INFO << "host" << ui->comboBoxConnectHostname->currentText();
 
   if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
   {

@@ -128,6 +128,9 @@ del /S /Q /F "%APROJECTS%\build-atools-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-atools-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-atools-%CONF_TYPE%\%%f"
 IF ERRORLEVEL 1 goto :err
 
+set ATOOLS_NO_GRIB=true
+set ATOOLS_NO_FS=true
+
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe -j2
