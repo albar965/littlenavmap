@@ -3266,11 +3266,11 @@ void MainWindow::restoreStateMain()
   qDebug() << "searchController";
   routeFileHistory->restoreState();
 
-  qDebug() << "searchController";
-  searchController->restoreState();
-
   qDebug() << "mapWidget";
   mapWidget->restoreState();
+
+  qDebug() << "searchController";
+  searchController->restoreState();
 
   qDebug() << "userdataControlle";
   NavApp::getUserdataController()->restoreState();

@@ -83,7 +83,7 @@ TEMPLATE = app
 TARGET_NAME=Little Navmap
 
 # =======================================================================
-# Copy ennvironment variables into qmake variables
+# Copy environment variables into qmake variables
 ATOOLS_INC_PATH=$$(ATOOLS_INC_PATH)
 ATOOLS_LIB_PATH=$$(ATOOLS_LIB_PATH)
 MARBLE_INC_PATH=$$(MARBLE_INC_PATH)
