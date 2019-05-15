@@ -31,6 +31,7 @@
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
+#include "grib/gribreader.h"
 #include "util/updatecheck.h"
 #include "util/htmlbuilder.h"
 #include "common/unitstringtool.h"
@@ -151,8 +152,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QListWidget*list=ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));;
   list->addItem(pageListItem(list, tr("User Interface"), tr("Change text sizes and language settings."), ":/littlenavmap/resources/icons/statusbar.svg"));;
-  list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/map.svg"));;
-  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/airport.svg"));;
+  list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));;
+  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols and texts for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));;
+  list->addItem(pageListItem(list, tr("Map Display 2"), tr("Change colors, symbols and texts for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));;
   list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));;
   list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units."), ":/littlenavmap/resources/icons/units.svg"));;
   list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft."), ":/littlenavmap/resources/icons/aircraft.svg"));;
@@ -263,6 +265,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->lineEditOptionsWeatherNoaaUrl,
      ui->lineEditOptionsWeatherVatsimUrl,
      ui->lineEditOptionsWeatherIvaoUrl,
+
+     ui->lineEditOptionsWeatherXplaneWind,
+     ui->lineEditOptionsWeatherNoaaWindUrl,
+
      ui->listWidgetOptionsDatabaseAddon,
      ui->listWidgetOptionsDatabaseExclude,
      ui->comboBoxMapScrollDetails,
@@ -300,6 +306,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplayThicknessFlightplan,
      ui->spinBoxOptionsDisplaySymbolSizeAirport,
      ui->spinBoxOptionsDisplaySymbolSizeAirportWeather,
+     ui->spinBoxOptionsDisplaySymbolSizeWindBarbs,
      ui->spinBoxOptionsDisplaySymbolSizeAircraftAi,
      ui->spinBoxOptionsDisplayTextSizeFlightplan,
      ui->spinBoxOptionsDisplayTextSizeAircraftUser,
@@ -376,6 +383,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
+  // ===========================================================================
   // Weather widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::selectActiveSkyPathClicked);
@@ -391,7 +399,28 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherIvaoUrl, &QLineEdit::textEdited,
           this, &OptionsDialog::updateWeatherButtonState);
+  connect(ui->lineEditOptionsWeatherNoaaWindUrl, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateWeatherButtonState);
 
+  connect(ui->lineEditOptionsWeatherXplaneWind, &QLineEdit::editingFinished,
+          this, &OptionsDialog::updateWeatherButtonState);
+  connect(ui->lineEditOptionsWeatherXplaneWind, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateXplaneWindStatus);
+
+  // Weather test buttons
+  connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherNoaaUrlClicked);
+  connect(ui->pushButtonOptionsWeatherVatsimTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherVatsimUrlClicked);
+  connect(ui->pushButtonOptionsWeatherIvaoTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherIvaoUrlClicked);
+
+  connect(ui->pushButtonOptionsWeatherNoaaWindTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherNoaaWindUrlClicked);
+  connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked,
+          this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
+
+  // ===========================================================================
   // Database exclude path
   connect(ui->pushButtonOptionsDatabaseAddExcludeDir, &QPushButton::clicked,
           this, &OptionsDialog::addDatabaseExcludeDirClicked);
@@ -410,6 +439,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->listWidgetOptionsDatabaseAddon, &QListWidget::currentRowChanged,
           this, &OptionsDialog::updateDatabaseButtonState);
 
+  // ===========================================================================
   // Cache
   connect(ui->pushButtonOptionsCacheClearMemory, &QPushButton::clicked,
           this, &OptionsDialog::clearMemCachedClicked);
@@ -417,14 +447,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::clearDiskCachedClicked);
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked,
           this, &OptionsDialog::showDiskCacheClicked);
-
-  // Weather test buttons
-  connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
-          this, &OptionsDialog::testWeatherNoaaUrlClicked);
-  connect(ui->pushButtonOptionsWeatherVatsimTest, &QPushButton::clicked,
-          this, &OptionsDialog::testWeatherVatsimUrlClicked);
-  connect(ui->pushButtonOptionsWeatherIvaoTest, &QPushButton::clicked,
-          this, &OptionsDialog::testWeatherIvaoUrlClicked);
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled,
           this, &OptionsDialog::simUpdatesConstantClicked);
@@ -640,6 +662,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     // Update dialog internal stuff
     updateWidgetUnits();
     updateActiveSkyPathStatus();
+    updateXplaneWindStatus();
     updateWebDocrootStatus();
     updateWebServerStatus();
     updateWeatherButtonState();
@@ -683,6 +706,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
       updateWidgetUnits();
       updateActiveSkyPathStatus();
+      updateXplaneWindStatus();
       updateWebDocrootStatus();
       updateWebServerStatus();
       updateWeatherButtonState();
@@ -954,6 +978,17 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
 }
 
+/* Test NOAA GRIB download URL and show a dialog of the first line */
+void OptionsDialog::testWeatherNoaaWindUrlClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  QStringList result;
+  if(WeatherReporter::testUrl(ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString(), result))
+    QMessageBox::information(this, QApplication::applicationName(), tr("Success."));
+  else
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
+}
+
 void OptionsDialog::testWeatherUrl(const QString& url)
 {
   QStringList result;
@@ -1216,6 +1251,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayThicknessFlightplan = ui->spinBoxOptionsDisplayThicknessFlightplan->value();
   data.displaySymbolSizeAirport = ui->spinBoxOptionsDisplaySymbolSizeAirport->value();
   data.displaySymbolSizeAirportWeather = ui->spinBoxOptionsDisplaySymbolSizeAirportWeather->value();
+  data.displaySymbolSizeWindBarbs = ui->spinBoxOptionsDisplaySymbolSizeWindBarbs->value();
   data.displaySymbolSizeAircraftAi = ui->spinBoxOptionsDisplaySymbolSizeAircraftAi->value();
   data.displayTextSizeFlightplan = ui->spinBoxOptionsDisplayTextSizeFlightplan->value();
   data.displayTextSizeAircraftUser = ui->spinBoxOptionsDisplayTextSizeAircraftUser->value();
@@ -1276,6 +1312,9 @@ void OptionsDialog::widgetsToOptionData()
   data.webPort = ui->spinBoxOptionsWebPort->value();
   data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
   data.webEncrypted = ui->checkBoxOptionsWebEncrypted->isChecked();
+
+  data.weatherXplaneWind = ui->lineEditOptionsWeatherXplaneWind->text();
+  data.weatherNoaaWindBaseUrl = ui->lineEditOptionsWeatherNoaaWindUrl->text();
 
   data.valid = true;
 }
@@ -1431,6 +1470,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsDisplayThicknessFlightplan->setValue(data.displayThicknessFlightplan);
   ui->spinBoxOptionsDisplaySymbolSizeAirport->setValue(data.displaySymbolSizeAirport);
   ui->spinBoxOptionsDisplaySymbolSizeAirportWeather->setValue(data.displaySymbolSizeAirportWeather);
+  ui->spinBoxOptionsDisplaySymbolSizeWindBarbs->setValue(data.displaySymbolSizeWindBarbs);
   ui->spinBoxOptionsDisplaySymbolSizeAircraftAi->setValue(data.displaySymbolSizeAircraftAi);
   ui->spinBoxOptionsDisplayTextSizeFlightplan->setValue(data.displayTextSizeFlightplan);
   ui->spinBoxOptionsDisplayTextSizeAircraftUser->setValue(data.displayTextSizeAircraftUser);
@@ -1498,6 +1538,9 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
   ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);
   ui->lineEditOptionsWebDocroot->setText(QDir::toNativeSeparators(data.webDocumentRoot));
+
+  ui->lineEditOptionsWeatherXplaneWind->setText(data.weatherXplaneWind);
+  ui->lineEditOptionsWeatherNoaaWindUrl->setText(data.weatherNoaaWindBaseUrl);
 }
 
 /* Add flag from checkbox to OptionData flags */
@@ -1607,7 +1650,9 @@ void OptionsDialog::updateWeatherButtonState()
   ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherIvaoTest->setEnabled(!ui->lineEditOptionsWeatherIvaoUrl->text().isEmpty());
+  ui->pushButtonOptionsWeatherNoaaWindTest->setEnabled(!ui->lineEditOptionsWeatherNoaaWindUrl->text().isEmpty());
   updateActiveSkyPathStatus();
+  updateXplaneWindStatus();
 }
 
 /* Checks the path to the ASN weather file and its contents. Display an error message in the label */
@@ -1619,14 +1664,12 @@ void OptionsDialog::updateActiveSkyPathStatus()
   {
     QFileInfo fileinfo(path);
     if(!fileinfo.exists())
-      ui->labelOptionsWeatherAsnPathState->setText(
-        HtmlBuilder::errorMessage(tr("File does not exist.")));
+      ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(tr("File does not exist.")));
     else if(!fileinfo.isFile())
-      ui->labelOptionsWeatherAsnPathState->setText(
-        HtmlBuilder::errorMessage(tr("Is not a file.")));
+      ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
     else if(!WeatherReporter::validateActiveSkyFile(path))
-      ui->labelOptionsWeatherAsnPathState->setText(
-        HtmlBuilder::errorMessage(tr("Is not an Active Sky weather snapshot file.")));
+      ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(
+                                                     tr("Is not an Active Sky weather snapshot file.")));
     else
       ui->labelOptionsWeatherAsnPathState->setText(
         tr("Weather snapshot file is valid. Using this one for all simulators"));
@@ -1670,6 +1713,26 @@ void OptionsDialog::updateActiveSkyPathStatus()
   }
 }
 
+/* Checks the path to the X-Plane wind GRIB file. Display an error message in the label */
+void OptionsDialog::updateXplaneWindStatus()
+{
+  const QString& path = ui->lineEditOptionsWeatherXplaneWind->text();
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelOptionsWeatherXplaneWindPathState->setText(HtmlBuilder::errorMessage(tr("File does not exist.")));
+    else if(!fileinfo.isFile())
+      ui->labelOptionsWeatherXplaneWindPathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
+    else if(!atools::grib::GribReader::validateGribFile(path))
+      ui->labelOptionsWeatherXplaneWindPathState->setText(HtmlBuilder::errorMessage(tr("Is not a X-Plane wind file.")));
+    else
+      ui->labelOptionsWeatherXplaneWindPathState->setText(tr("X-Plane wind file is valid."));
+  }
+  else
+    ui->labelOptionsWeatherXplaneWindPathState->setText(tr("Using default X-Plane wind file."));
+}
+
 void OptionsDialog::selectActiveSkyPathClicked()
 {
   qDebug() << Q_FUNC_INFO;
@@ -1681,6 +1744,22 @@ void OptionsDialog::selectActiveSkyPathClicked()
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(path));
+
+  updateWeatherButtonState();
+}
+
+void OptionsDialog::weatherXplaneWindPathSelectClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // global_winds.grib
+  QString path = atools::gui::Dialog(this).openFileDialog(
+    tr("Open X-Plane Wind File"),
+    tr("X-Plane Wind Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GRIB),
+    lnm::OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG, ui->lineEditOptionsWeatherXplaneWind->text());
+
+  if(!path.isEmpty())
+    ui->lineEditOptionsWeatherXplaneWind->setText(QDir::toNativeSeparators(path));
 
   updateWeatherButtonState();
 }

@@ -82,10 +82,12 @@ private:
   void fromFlags2(QRadioButton *radioButton, opts::Flags2 flag);
 
   void selectActiveSkyPathClicked();
+  void weatherXplaneWindPathSelectClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
+  void updateXplaneWindStatus();
 
   void addDatabaseExcludeDirClicked();
   void addDatabaseExcludeFileClicked();
@@ -101,6 +103,7 @@ private:
   void testWeatherNoaaUrlClicked();
   void testWeatherVatsimUrlClicked();
   void testWeatherIvaoUrlClicked();
+  void testWeatherNoaaWindUrlClicked();
   void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);

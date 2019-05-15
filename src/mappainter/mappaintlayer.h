@@ -46,6 +46,7 @@ class MapPainterShip;
 class MapPainterUser;
 class MapPainterAltitude;
 class MapPainterWeather;
+class MapPainterWind;
 class MapPaintWidget;
 
 /*
@@ -168,6 +169,7 @@ private:
   MapPainterUser *mapPainterUser;
   MapPainterAltitude *mapPainterAltitude;
   MapPainterWeather *mapPainterWeather;
+  MapPainterWind *mapPainterWind;
 
   /* Database source */
   MapQuery *mapQuery = nullptr;

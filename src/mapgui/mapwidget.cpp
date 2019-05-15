@@ -46,6 +46,7 @@
 #include "connect/connectclient.h"
 #include "common/unit.h"
 #include "common/aircrafttrack.h"
+#include "weather/windreporter.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -3059,6 +3060,7 @@ void MapWidget::updateMapObjectsShown()
   // Display types which are not used in structs
   setShowMapFeaturesDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
   setShowMapFeaturesDisplay(map::MINIMUM_ALTITUDE, ui->actionMapShowMinimumAltitude->isChecked());
+  setShowMapFeaturesDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
 
   // Force addon airport independent of other settings or not
   setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());

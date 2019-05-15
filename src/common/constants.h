@@ -120,6 +120,8 @@ const QLatin1Literal MAP_TRAFFICPATTERNS("Map/TrafficPatterns");
 const QLatin1Literal MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1Literal MAP_USERDATA("Map/Userdata");
 const QLatin1Literal MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");
+const QLatin1Literal MAP_WIND_LEVEL("Map/WindLevel");
+const QLatin1Literal MAP_WIND_SOURCE("Map/WindSource");
 const QLatin1Literal MAP_HOMEDISTANCE("Map/HomeDistance");
 const QLatin1Literal MAP_HOMELATY("Map/HomeLatY");
 const QLatin1Literal MAP_HOMELONX("Map/HomeLonX");
@@ -189,6 +191,7 @@ const QLatin1Literal FLIGHTPLAN_ONLINE_EXPORT("Route/FlightplanOnlineExport");
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1Literal OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
+const QLatin1Literal OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG("OptionsDialog/WeatherFileDialogXplaneWind");
 const QLatin1Literal OPTIONS_DIALOG_GLOBE_FILE_DLG("OptionsDialog/CacheFileDialogGlobe");
 const QLatin1Literal OPTIONS_DIALOG_DB_DIR_DLG("OptionsDialog/DatabaseDirDialog");
 const QLatin1Literal OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFilesDialog");
@@ -216,6 +219,7 @@ const QLatin1Literal OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1Literal OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1Literal OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1Literal OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
+const QLatin1Literal OPTIONS_WIND_DEBUG("Options/WindDebug");
 const QLatin1Literal OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
 const QLatin1Literal OPTIONS_VERSION("Options/Version");
 const QLatin1Literal OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
@@ -266,6 +270,7 @@ const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml)");
 const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
+const QLatin1Literal FILE_PATTERN_GRIB("(*.grib)");
 #else
 /* Use more or less case insensitive patterns for Linux */
 const QLatin1Literal FILE_PATTERN_SCENERYCONFIG("(*.cfg *.Cfg *.CFG)");
@@ -297,7 +302,9 @@ const QLatin1Literal FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1Literal FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1Literal FILE_PATTERN_BGL_XML("(*.xml *.Xml *.XML)");
 const QLatin1Literal FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf *.LNMPERF *.Lnmperf *.LNMperf)");
+const QLatin1Literal FILE_PATTERN_GRIB("(*.grib *.GRIB *.Grib)");
 #endif
+
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 
 const QString FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");

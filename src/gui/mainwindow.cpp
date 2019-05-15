@@ -74,6 +74,7 @@
 #include "fs/perf/aircraftperf.h"
 #include "mapgui/imageexportdialog.h"
 #include "web/webcontroller.h"
+#include "weather/windreporter.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -113,7 +114,7 @@ using atools::gui::HelpHandler;
 MainWindow::MainWindow()
   : QMainWindow(nullptr), ui(new Ui::MainWindow)
 {
-  qDebug() << "MainWindow constructor";
+  qDebug() << Q_FUNC_INFO << "constructor";
 
   aboutMessage =
     QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
@@ -164,7 +165,7 @@ MainWindow::MainWindow()
 
     routeExport = new RouteExport(this);
 
-    qDebug() << "MainWindow Creating OptionsDialog";
+    qDebug() << Q_FUNC_INFO << "Creating OptionsDialog";
     optionsDialog = new OptionsDialog(this);
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
@@ -194,7 +195,7 @@ MainWindow::MainWindow()
     mainWindowTitle = windowTitle();
 
     // Prepare database and queries
-    qDebug() << "MainWindow Creating DatabaseManager";
+    qDebug() << Q_FUNC_INFO << "Creating DatabaseManager";
 
     NavApp::init(this);
 
@@ -205,22 +206,26 @@ MainWindow::MainWindow()
     // Add actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();
 
-    qDebug() << "MainWindow Creating WeatherReporter";
+    qDebug() << Q_FUNC_INFO << "Creating WeatherReporter";
     weatherReporter = new WeatherReporter(this, NavApp::getCurrentSimulatorDb());
 
-    qDebug() << "MainWindow Creating FileHistoryHandler for flight plans";
+    qDebug() << Q_FUNC_INFO << "Creating WindReporter";
+    windReporter = new WindReporter(this, NavApp::getCurrentSimulatorDb());
+    windReporter->addToolbarButton();
+
+    qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
                                               ui->actionRecentRoutesClear);
 
-    qDebug() << "MainWindow Creating RouteController";
+    qDebug() << Q_FUNC_INFO << "Creating RouteController";
     routeController = new RouteController(this, ui->tableViewRoute);
 
-    qDebug() << "MainWindow Creating FileHistoryHandler for KML files";
+    qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for KML files";
     kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
                                             ui->actionClearKmlMenu);
 
     // Create map widget and replace dummy widget in window
-    qDebug() << "MainWindow Creating MapWidget";
+    qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
     if(OptionData::instance().getFlags2() & opts::MAP_ALLOW_UNDOCK)
     {
@@ -236,13 +241,13 @@ MainWindow::MainWindow()
     NavApp::initElevationProvider();
 
     // Create elevation profile widget and replace dummy widget in window
-    qDebug() << "MainWindow Creating ProfileWidget";
+    qDebug() << Q_FUNC_INFO << "Creating ProfileWidget";
     profileWidget = new ProfileWidget(ui->scrollAreaProfile->viewport());
     ui->scrollAreaProfile->setWidget(profileWidget);
     profileWidget->show();
 
     // Have to create searches in the same order as the tabs
-    qDebug() << "MainWindow Creating SearchController";
+    qDebug() << Q_FUNC_INFO << "Creating SearchController";
     searchController = new SearchController(this, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
@@ -255,24 +260,24 @@ MainWindow::MainWindow()
     searchController->createOnlineCenterSearch(ui->tableViewOnlineCenterSearch);
     searchController->createOnlineServerSearch(ui->tableViewOnlineServerSearch);
 
-    qDebug() << "MainWindow Creating InfoController";
+    qDebug() << Q_FUNC_INFO << "Creating InfoController";
     infoController = new InfoController(this);
 
-    qDebug() << "MainWindow Creating InfoController";
+    qDebug() << Q_FUNC_INFO << "Creating InfoController";
     airspaceHandler = new AirspaceToolBarHandler(this);
     airspaceHandler->createToolButtons();
 
-    qDebug() << "MainWindow Creating PrintSupport";
+    qDebug() << Q_FUNC_INFO << "Creating PrintSupport";
     printSupport = new PrintSupport(this);
 
-    qDebug() << "MainWindow Connecting slots";
+    qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
     NavApp::getAircraftPerfController()->connectAllSlots();
 
     // Add user defined points toolbar button and submenu items
     NavApp::getUserdataController()->addToolbarButton();
 
-    qDebug() << "MainWindow Reading settings";
+    qDebug() << Q_FUNC_INFO << "Reading settings";
     restoreStateMain();
 
     updateActionStates();
@@ -282,10 +287,10 @@ MainWindow::MainWindow()
     airspaceHandler->updateButtonsAndActions();
     updateOnlineActionStates();
 
-    qDebug() << "MainWindow Setting theme";
+    qDebug() << Q_FUNC_INFO << "Setting theme";
     changeMapTheme();
 
-    qDebug() << "MainWindow Setting projection";
+    qDebug() << Q_FUNC_INFO << "Setting projection";
     mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
 
     // Wait until everything is set up and update map
@@ -301,7 +306,7 @@ MainWindow::MainWindow()
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
     clockTimer.start();
 
-    qDebug() << "MainWindow Constructor done";
+    qDebug() << Q_FUNC_INFO << "Constructor done";
   }
   // Exit application if something goes wrong
   catch(atools::Exception& e)
@@ -347,6 +352,8 @@ MainWindow::~MainWindow()
   delete searchController;
   qDebug() << Q_FUNC_INFO << "delete weatherReporter";
   delete weatherReporter;
+  qDebug() << Q_FUNC_INFO << "delete windReporter";
+  delete windReporter;
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
@@ -381,6 +388,8 @@ MainWindow::~MainWindow()
   delete actionGroupMapSunShading;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherSource";
   delete actionGroupMapWeatherSource;
+  qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherWindSource";
+  delete actionGroupMapWeatherWindSource;
 
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
@@ -401,7 +410,7 @@ MainWindow::~MainWindow()
 
   atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
 
-  qDebug() << "MainWindow destructor about to shut down logging";
+  qDebug() << Q_FUNC_INFO << "destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 }
 
@@ -594,6 +603,11 @@ void MainWindow::setupUi()
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherNoaa);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherVatsim);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherIvao);
+
+  // Weather source sub menu
+  actionGroupMapWeatherWindSource = new QActionGroup(ui->menuHighAltitudeWindSource);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
@@ -793,6 +807,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, windReporter, &WindReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, map::updateUnits);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
@@ -1287,6 +1302,7 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
+  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
@@ -3272,8 +3288,11 @@ void MainWindow::restoreStateMain()
   qDebug() << "searchController";
   searchController->restoreState();
 
-  qDebug() << "userdataControlle";
+  qDebug() << "userdataController";
   NavApp::getUserdataController()->restoreState();
+
+  qDebug() << "windReporter";
+  NavApp::getWindReporter()->restoreState();
 
   qDebug() << "aircraftPerfController";
   NavApp::getAircraftPerfController()->restoreState();
@@ -3338,7 +3357,7 @@ void MainWindow::restoreStateMain()
 /* Write settings for all windows, docks, controller and manager classes */
 void MainWindow::saveStateMain()
 {
-  qDebug() << "writeSettings";
+  qDebug() << Q_FUNC_INFO;
 
 #ifdef DEBUG_CREATE_WINDOW_STATE
   // Print the main window state as binary for inclusion into the program =====================
@@ -3408,6 +3427,10 @@ void MainWindow::saveStateMain()
   qDebug() << "userDataController";
   if(NavApp::getUserdataController() != nullptr)
     NavApp::getUserdataController()->saveState();
+
+  qDebug() << "windReporter";
+  if(NavApp::getWindReporter() != nullptr)
+    NavApp::getWindReporter()->saveState();
 
   qDebug() << "aircraftPerfController";
   if(NavApp::getAircraftPerfController() != nullptr)
@@ -3578,6 +3601,7 @@ void MainWindow::preDatabaseLoad()
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
     weatherReporter->preDatabaseLoad();
+    windReporter->preDatabaseLoad();
 
     NavApp::preDatabaseLoad();
 
@@ -3600,6 +3624,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();
     weatherReporter->postDatabaseLoad(type);
+    windReporter->postDatabaseLoad(type);
 
     // U actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();

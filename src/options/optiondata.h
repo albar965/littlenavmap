@@ -626,6 +626,11 @@ public:
     return displaySymbolSizeAirportWeather;
   }
 
+  int getDisplaySymbolSizeWindBarbs() const
+  {
+    return displaySymbolSizeWindBarbs;
+  }
+
   int getDisplaySymbolSizeAircraftAi() const
   {
     return displaySymbolSizeAircraftAi;
@@ -857,6 +862,16 @@ public:
     return webEncrypted;
   }
 
+  const QString& getWeatherXplaneWind() const
+  {
+    return weatherXplaneWind;
+  }
+
+  const QString& getWeatherNoaaWindBaseUrl() const
+  {
+    return weatherNoaaWindBaseUrl;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1006,6 +1021,9 @@ private:
   // spinBoxOptionsDisplaySymbolSizeAirportWeather
   int displaySymbolSizeAirportWeather = 100;
 
+  // spinBoxOptionsDisplaySymbolSizeWindBarbs
+  int displaySymbolSizeWindBarbs = 100;
+
   // spinBoxOptionsDisplaySymbolSizeAircraftAi
   int displaySymbolSizeAircraftAi = 100;
 
@@ -1120,6 +1138,9 @@ private:
   int webPort = 8965;
   /* true for HTTPS / SSL */
   bool webEncrypted = false;
+
+  /* X-Plane GRIB file or NOAA GRIB base URL */
+  QString weatherXplaneWind, weatherNoaaWindBaseUrl;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

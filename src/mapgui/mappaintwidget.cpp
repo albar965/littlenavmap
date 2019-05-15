@@ -258,6 +258,12 @@ void MapPaintWidget::weatherUpdated()
     update();
 }
 
+void MapPaintWidget::windUpdated()
+{
+  if(paintLayer->getShownMapObjects() | map::WIND_BARBS)
+    update();
+}
+
 map::MapWeatherSource MapPaintWidget::getMapWeatherSource() const
 {
   return paintLayer->getWeatherSource();

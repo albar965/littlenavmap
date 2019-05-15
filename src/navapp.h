@@ -38,6 +38,7 @@ class RouteController;
 class MapWidget;
 class MapPaintWidget;
 class WeatherReporter;
+class WindReporter;
 class ElevationProvider;
 class AircraftTrack;
 class QSplashScreen;
@@ -163,6 +164,7 @@ public:
   static const RouteAltitude& getAltitudeLegs();
 
   static float getRouteCruiseSpeedKts();
+  static float getRouteCruiseAltFt();
 
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
@@ -204,6 +206,7 @@ public:
   static WeatherReporter *getWeatherReporter();
   static atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos);
   static map::MapWeatherSource getAirportWeatherSource();
+  static WindReporter *getWindReporter();
 
   static void updateWindowTitle();
   static void updateErrorLabels();
@@ -242,6 +245,8 @@ public:
 
   static void initSplashScreen();
   static void finishSplashScreen();
+
+  /* Remove splash when showing error messages, etc. to avoid overlay */
   static void deleteSplashScreen();
 
   static bool isShuttingDown();

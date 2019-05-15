@@ -36,6 +36,7 @@ class QToolButton;
 class SearchBaseTable;
 class DatabaseManager;
 class WeatherReporter;
+class WindReporter;
 class ConnectClient;
 class ProfileWidget;
 class InfoController;
@@ -101,7 +102,7 @@ class MainWindow :
 
 public:
   MainWindow();
-  virtual ~MainWindow();
+  virtual ~MainWindow() override;
 
   MapWidget *getMapWidget() const
   {
@@ -126,6 +127,11 @@ public:
   WeatherReporter *getWeatherReporter() const
   {
     return weatherReporter;
+  }
+
+  WindReporter *getWindReporter() const
+  {
+    return windReporter;
   }
 
   /* Update the window title after switching simulators, flight plan name or change status. */
@@ -368,13 +374,14 @@ private:
 
   /* Managment and controller classes */
   WeatherReporter *weatherReporter = nullptr;
+  WindReporter *windReporter = nullptr;
   InfoController *infoController = nullptr;
   AirspaceToolBarHandler *airspaceHandler = nullptr;
   RouteExport *routeExport = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,
-               *actionGroupMapWeatherSource = nullptr;
+               *actionGroupMapWeatherSource = nullptr, *actionGroupMapWeatherWindSource = nullptr;
 
   QTimer weatherUpdateTimer;
 

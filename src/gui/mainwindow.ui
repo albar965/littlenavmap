@@ -362,6 +362,18 @@
      <addaction name="actionMapShowWeatherVatsim"/>
      <addaction name="actionMapShowWeatherIvao"/>
     </widget>
+    <widget class="QMenu" name="menuHighAltitudeWindSource">
+     <property name="title">
+      <string>Wind source</string>
+     </property>
+     <addaction name="actionMapShowWindSimulator"/>
+     <addaction name="actionMapShowWindNOAA"/>
+    </widget>
+    <widget class="QMenu" name="menuHighAltitudeWindLevels">
+     <property name="title">
+      <string>Wind levels</string>
+     </property>
+    </widget>
     <addaction name="actionMapResetSettings"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
@@ -387,6 +399,10 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowAirportWeather"/>
     <addaction name="menuMapShowAirportWeatherSource"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowHighAltitudeWinds"/>
+    <addaction name="menuHighAltitudeWindLevels"/>
+    <addaction name="menuHighAltitudeWindSource"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowSunShading"/>
     <addaction name="menuSunShading"/>
@@ -9532,6 +9548,43 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="toolTip">
     <string>Open Webserver Page in Browser</string>
+   </property>
+  </action>
+  <action name="actionShowHighAltitudeWinds">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/wind.svg</normaloff>:/littlenavmap/resources/icons/wind.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show wind barbs</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the wind grid</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the wind grid</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindSimulator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Flight Simulator (X-Plane only)</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindNOAA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;NOAA</string>
    </property>
   </action>
  </widget>

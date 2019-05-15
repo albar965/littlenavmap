@@ -228,5 +228,9 @@
         <file>resources/icons/web.svg</file>
         <file>resources/config/ssl/lnm.cert</file>
         <file>resources/config/ssl/lnm.key</file>
+        <file>resources/icons/mapdisplay2.svg</file>
+        <file>resources/icons/mapdisplay.svg</file>
+        <file>resources/icons/mapsettings.svg</file>
+        <file>resources/icons/wind.svg</file>
     </qresource>
 </RCC>

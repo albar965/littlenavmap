@@ -192,6 +192,10 @@ public:
   /* Get dimensions of a custom text box */
   QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
+  /* Upper level winds */
+  void drawWindBarbs(QPainter *painter, float wind, float gust, float dir, float x, float y, float size,
+                     bool windBarbs, bool altWind, bool fast) const;
+
 private:
   QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
                            const map::MapAirport& airport, int maxTextLength);
@@ -202,7 +206,7 @@ private:
   void prepareForIcon(QPainter& painter);
 
   void drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar, float x, float y,
-                     float size, bool windBarbs, bool fast) const;
+                     float size, bool windBarbs, bool altWind, bool fast) const;
 
   QVector<int> calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const;
   void drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,

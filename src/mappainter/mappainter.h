@@ -90,6 +90,7 @@ struct PaintContext
   float textSizeRangeDistance = 1.f;
   float symbolSizeAirport = 1.f;
   float symbolSizeAirportWeather = 1.f;
+  float symbolSizeWindBarbs = 1.f;
   float symbolSizeAircraftAi = 1.f;
   float textSizeFlightplan = 1.f;
   float textSizeAircraftUser = 1.f;

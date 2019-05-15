@@ -270,6 +270,7 @@ SOURCES += \
   src/mappainter/mappainteruser.cpp \
   src/mappainter/mappaintervehicle.cpp \
   src/mappainter/mappainterweather.cpp \
+  src/mappainter/mappainterwind.cpp \
   src/mappainter/mappaintlayer.cpp \
   src/navapp.cpp \
   src/online/onlinedatacontroller.cpp \
@@ -329,6 +330,7 @@ SOURCES += \
   src/userdata/userdataexportdialog.cpp \
   src/userdata/userdataicons.cpp \
   src/weather/weatherreporter.cpp \
+  src/weather/windreporter.cpp \
   src/web/webcontroller.cpp \
   src/web/requesthandler.cpp \
   src/web/webmapcontroller.cpp \
@@ -399,6 +401,7 @@ HEADERS  += \
   src/mappainter/mappainteruser.h \
   src/mappainter/mappaintervehicle.h \
   src/mappainter/mappainterweather.h \
+  src/mappainter/mappainterwind.h \
   src/mappainter/mappaintlayer.h \
   src/navapp.h \
   src/online/onlinedatacontroller.h \
@@ -458,6 +461,7 @@ HEADERS  += \
   src/userdata/userdataexportdialog.h \
   src/userdata/userdataicons.h \
   src/weather/weatherreporter.h \
+  src/weather/windreporter.h \
   src/web/webcontroller.h \
   src/web/requesthandler.h \
   src/web/webmapcontroller.h \

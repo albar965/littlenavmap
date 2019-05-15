@@ -430,6 +430,11 @@ float NavApp::getRouteCruiseSpeedKts()
   return aircraftPerfController->getRouteCruiseSpeedKts();
 }
 
+float NavApp::getRouteCruiseAltFt()
+{
+  return getRoute().getCruisingAltitudeFeet();
+}
+
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
 {
   return getDatabaseManager()->getCurrentSimulator();
@@ -588,6 +593,11 @@ ElevationProvider *NavApp::getElevationProvider()
 WeatherReporter *NavApp::getWeatherReporter()
 {
   return mainWindow->getWeatherReporter();
+}
+
+WindReporter *NavApp::getWindReporter()
+{
+  return mainWindow->getWindReporter();
 }
 
 atools::fs::weather::Metar NavApp::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos)

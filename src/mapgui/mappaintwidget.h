@@ -202,6 +202,9 @@ public:
   /* Redraw map to reflect weather changes */
   void weatherUpdated();
 
+  /* Redraw map to reflect wind barb changes */
+  void windUpdated();
+
   /* Current weather source for icon display */
   map::MapWeatherSource getMapWeatherSource() const;
 

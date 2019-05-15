@@ -99,7 +99,7 @@ const OptionData& OptionData::instance()
   if(!optData.valid)
   {
     qCritical() << "OptionData not initialized yet";
-    throw new atools::Exception("OptionData not initialized yet");
+    throw atools::Exception("OptionData not initialized yet");
   }
 
   return optData;

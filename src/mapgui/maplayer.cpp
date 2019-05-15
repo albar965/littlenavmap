@@ -443,6 +443,18 @@ MapLayer& MapLayer::airportWeather(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::windBarbs(bool value)
+{
+  layerWindBarbs = value;
+  return *this;
+}
+
+MapLayer& MapLayer::windBarbsSymbolSize(int size)
+{
+  layerWindBarbsSymbolSize = size;
+  return *this;
+}
+
 MapLayer& MapLayer::airportWeatherDetails(bool value)
 {
   layerAirportWeatherDetails = value;

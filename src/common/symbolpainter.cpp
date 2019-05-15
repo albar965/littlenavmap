@@ -295,7 +295,7 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
 
     // Wind pointer and/or barbs =====================================================
     if(windBarbs || windPointer)
-      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, fast);
+      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, false /* altWind */, fast);
 
     // Draw coverage indicating pies or circles =====================================================
 
@@ -378,16 +378,32 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar,
-                                  float x, float y, float size, bool windBarbs, bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool fast) const
 {
-  float wind = parsedMetar.getPrevailingWindSpeedKnots();
+  drawWindBarbs(painter, parsedMetar.getPrevailingWindSpeedKnots(),
+                parsedMetar.getGustSpeedKts(), parsedMetar.getPrevailingWindDir(), x, y, size, windBarbs, altWind,
+                fast);
+}
 
-  if(wind >= 2.f && wind < atools::fs::weather::INVALID_METAR_VALUE / 2.f && !fast &&
-     parsedMetar.getPrevailingWindDir() >= 0)
+void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, float dir,
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool fast) const
+{
+  // Make lines thinner for high altitude wind barbs
+  float lineWidth = size * (altWind ? 0.2f : 0.3f);
+  float bgLineWidth = lineWidth * 2.5f;
+
+  if(altWind)
+  {
+    // High altitude wind barbs only - center circle
+    painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth * .6f, Qt::SolidLine, Qt::RoundCap,
+                         Qt::RoundJoin));
+    painter->drawEllipse(QPointF(x, y), bgLineWidth / 2.f, bgLineWidth / 2.f);
+  }
+
+  if(wind >= 2.f && wind < atools::fs::weather::INVALID_METAR_VALUE / 2.f &&
+     dir >= 0.f && dir < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
   {
     // Calculate dimensions ============================
-    float lineWidth = size * 0.3f;
-    float bgLineWidth = lineWidth * 2.f;
 
     float barbLength50 = size * 0.7f;
     float barbLength10 = barbLength50;
@@ -400,12 +416,12 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::
     lineLength = size;
 
     // Calculate a list of feathers ========================================
-    if(windBarbs) // Otherwise pointer only
+    if(windBarbs && !fast) // Otherwise pointer only
     {
       // Normal wind barbs
       barbs = calculateWindBarbs(lineLength, lineWidth, wind, true /* use 50 knot barbs */);
 
-      float windGust = parsedMetar.getGustSpeedKts();
+      float windGust = gust;
       if(windGust >= 2.f && windGust < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
       {
         // Gust wind barbs
@@ -420,17 +436,15 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::
     }
 
     // Draw wind pointer background ============================================================
-    QLineF line(0., 0., 0., -lineLength);
-    if(!fast)
-    {
-      painter->translate(QPointF(x, y));
-      painter->rotate(parsedMetar.getPrevailingWindDir());
-      // Line from 0 to 0 - length
-      painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth));
-      painter->drawLine(line);
-    }
 
-    if(windBarbs)
+    QLineF line(0., 0., 0., -lineLength);
+    painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->translate(QPointF(x, y));
+    painter->rotate(dir);
+    // Line from 0 to 0 - length
+    painter->drawLine(line);
+
+    if(windBarbs && !fast)
     {
       // Draw wind barbs background ============================================================
       if(barbsBackground != nullptr && !barbsBackground->isEmpty())
@@ -461,13 +475,18 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::
     }
 
     // Draw wind pointer  ============================================================
-    if(!fast)
-    {
-      painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth));
-      painter->setBrush(mapcolors::weatherBackgoundColor);
-      painter->drawLine(line);
-    }
+    painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setBrush(mapcolors::weatherBackgoundColor);
+    painter->drawLine(line);
     painter->resetTransform();
+
+  }
+
+  if(altWind)
+  {
+    // High altitude wind barbs only - center circle
+    painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth * 0.6f, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawEllipse(QPointF(x, y), lineWidth, lineWidth);
   }
 }
 
