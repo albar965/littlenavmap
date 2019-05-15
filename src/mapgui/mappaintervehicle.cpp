@@ -63,7 +63,7 @@ void MapPainterVehicle::paintAiVehicle(const PaintContext *context, const SimCon
   float x, y;
   if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
   {
-    if(!hidden)
+    if(!hidden && x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
     {
       float rotate = calcRotation(context, vehicle);
 
@@ -122,7 +122,7 @@ void MapPainterVehicle::paintUserAircraft(const PaintContext *context,
   // Get projection corrected rotation angle
   float rotate = calcRotation(context, userAircraft);
 
-  if(rotate < map::INVALID_COURSE_VALUE)
+  if(rotate < map::INVALID_COURSE_VALUE && x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
   {
     context->painter->translate(x, y);
     context->painter->rotate(atools::geo::normalizeCourse(rotate));

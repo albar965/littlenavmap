@@ -106,8 +106,11 @@ void MapPainterMark::paintHome(const PaintContext *context)
   {
     int size = atools::roundToInt(context->szF(context->textSizeRangeDistance, 24));
 
-    QPixmap pixmap = QIcon(":/littlenavmap/resources/icons/homemap.svg").pixmap(QSize(size, size));
-    painter->drawPixmap(QPoint(x - size / 2, y - size / 2), pixmap);
+    if(x < INVALID_INT / 2 && y < INVALID_INT / 2)
+    {
+      QPixmap pixmap = QIcon(":/littlenavmap/resources/icons/homemap.svg").pixmap(QSize(size, size));
+      painter->drawPixmap(QPoint(x - size / 2, y - size / 2), pixmap);
+    }
   }
 }
 
