@@ -1,6 +1,22 @@
 Numbers (#) refer to Github issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 2.2.5
+
+* Disabled OpenMapSurfer since map is not available at the given URL, needs a API key and has download limitations now.
+* Fixed occasional crashes when drawing.
+* Fixed small issue where user point icons were too large on higher zoom levels.
+* Fixed maddog X export to use correct file extension mdr. #377
+
+related from atools version 3.2.5
+
+* Fixed crash when loading P3D scenery that appears when using fsAerodata cycle 1905r1 or later.
+* Added support for X-Plane 8.33 kHz frequency spacing.
+* Fixed parsing issue with coordinates in some cases.
+* Fixed missing "=" in cruise altitude for BBS export.
+* Made loading of FMS flight plans more tolerant for wrong "DIRECT" instead of correct "DRCT".
+
+
 Version 2.2.4
 
 * Changed default email, manual and help link URLs from Gitbook to https://www.littlenavmap.org #238
