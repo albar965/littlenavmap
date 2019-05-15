@@ -42,8 +42,13 @@
 # Example: $HOME/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib
 #
 # OPENSSL_PATH
-# Required for Windows only. Base path of WinSSL 1.0.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
-# Defaults to "C:\OpenSSL-Win32" if empty.
+# Windows: Base path of WinSSL 1.0.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
+#          Defaults to "C:\OpenSSL-Win32" if empty.
+# Linux:   If your Linux distribution does not come with OpenSSL 1.0.0 download and compile it yourself and
+#          adjust this path to point to the OpenSSL base directory, i.e. the result of "make install".
+#          Default in this case (not found in system) is ../build-openssl-$$CONF_TYPE
+#          ./config --prefix=../build-openssl-$$CONF_TYPE --openssldir=../build-openssl-$$CONF_TYPE/openssl shared -fPIC
+# macOS:   Not used.
 #
 # ATOOLS_GIT_PATH
 # Optional. Path to GIT executable. Revision will be set to "UNKNOWN" if not set.
@@ -114,6 +119,7 @@ isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
 win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=C:\OpenSSL-Win32
+unix:!macx: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$PWD/../build-openssl-$$CONF_TYPE/lib
 
 # =======================================================================
 # Set compiler flags and paths
@@ -129,6 +135,8 @@ unix:!macx {
   # Makes the shell script and setting LD_LIBRARY_PATH redundant
   QMAKE_RPATHDIR=.
   QMAKE_RPATHDIR+=./lib
+
+  LIBS += -L$$OPENSSL_PATH
 
   # Search path for the Marble widget so while linking
   QMAKE_RPATHLINKDIR=$$MARBLE_LIB_PATH
@@ -146,6 +154,7 @@ win32 {
   CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5d
   CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
+  LIBS += -L$$OPENSSL_PATH
 
   !isEmpty(SIMCONNECT_PATH) {
     DEFINES += SIMCONNECT_BUILD
@@ -549,7 +558,9 @@ unix:!macx {
   copydata.commands += cp -avfu $$PWD/magdec $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
-  copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
+  copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh &&
+  copydata.commands += cp -vfa $$OPENSSL_PATH/libssl.so.1.0.0 $$OUT_PWD &&
+  copydata.commands += cp -vfa $$OPENSSL_PATH/libcrypto.so.1.0.0 $$OUT_PWD
 }
 
 # Mac OS X - Copy help and Marble plugins and data
