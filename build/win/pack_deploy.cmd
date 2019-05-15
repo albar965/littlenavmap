@@ -18,12 +18,8 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavconnect.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\Releases\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\darkon\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
-del \\frida\ssd\alex\Releases\LittleNavconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleNavconnect.zip \\frida\ssd\alex\Releases\LittleNavconnect-win-%FILEDATE%.zip
+del \\sol\public\Releases\LittleNavconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleNavconnect.zip \\sol\public\Releases\LittleNavconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -36,12 +32,8 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleXpconnect.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\Releases\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\darkon\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
-del \\frida\ssd\alex\Releases\LittleXpconnect-%FILEDATE%.zip
-copy /Y /Z /B LittleXpconnect.zip \\frida\ssd\alex\Releases\LittleXpconnect-win-%FILEDATE%.zip
+del \\sol\public\Releases\LittleXpconnect-%FILEDATE%.zip
+copy /Y /Z /B LittleXpconnect.zip \\sol\public\Releases\LittleXpconnect-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
@@ -54,12 +46,8 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\LittleNavmap.zip"
 IF ERRORLEVEL 1 goto :err
 
-del \\darkon\public\Releases\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\darkon\public\Releases\LittleNavmap-win-%FILEDATE%.zip
-IF ERRORLEVEL 1 goto :err
-
-del \\frida\ssd\alex\Releases\LittleNavmap-%FILEDATE%.zip
-copy /Y /Z /B LittleNavmap.zip \\frida\ssd\alex\Releases\LittleNavmap-win-%FILEDATE%.zip
+del \\sol\public\Releases\LittleNavmap-%FILEDATE%.zip
+copy /Y /Z /B LittleNavmap.zip \\sol\public\Releases\LittleNavmap-win-%FILEDATE%.zip
 IF ERRORLEVEL 1 goto :err
 
 popd
