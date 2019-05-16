@@ -46,6 +46,7 @@ void initTranslateableTexts()
       {proc::FAF, QObject::tr("FAF")},
       {proc::FACF, QObject::tr("FACF")},
       {proc::MAP, QObject::tr("MAP")},
+      {proc::FEP, QObject::tr("FEP")},
       {proc::NONE, QString()}
     });
 
@@ -55,6 +56,7 @@ void initTranslateableTexts()
       {proc::FAF, QObject::tr("Final Approach Fix")},
       {proc::FACF, QObject::tr("Final Approach Course Fix")},
       {proc::MAP, QObject::tr("Missed Approach Point")},
+      {proc::FEP, QObject::tr("Final Endpoint Fix")},
       {proc::NONE, QString()}
     });
 
@@ -598,6 +600,11 @@ bool MapProcedureLeg::isFinalApproachCourseFix() const
   return proc::specialType(arincDescrCode) == proc::FACF;
 }
 
+bool MapProcedureLeg::isFinalEndpointFix() const
+{
+  return proc::specialType(arincDescrCode) == proc::FEP;
+}
+
 bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type,
@@ -622,6 +629,10 @@ proc::LegSpecialType specialType(const QString& arincDescrCode)
   QChar idx3(atools::strAt(arincDescrCode, 3));
   if(idx3 == 'A' /* IAF */ || idx3 == 'C' /* IAF and hold */ || idx3 == 'D' /* IAF with final approach course fix */)
     return proc::IAF;
+
+  if(idx3 == 'E')
+    // Final endpoint fix
+    return proc::FEP;
 
   if(idx3 == 'M')
     // Missed approach point
