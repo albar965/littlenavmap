@@ -3,19 +3,22 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 Version 2.2.5
 
+* Fixed procedure decoding which wrongly used final endpoint fix altitude as restriction.
+  This resulted in a wrong "Cannot comply to altitude restrictions" message. #379
 * Disabled OpenMapSurfer since map is not available at the given URL, needs a API key and has download limitations now.
-* Fixed occasional crashes when drawing.
 * Fixed small issue where user point icons were too large on higher zoom levels.
 * Fixed maddog X export to use correct file extension mdr. #377
+* Fixed occasional crashes when drawing.
+* Now omitting final DCT for flight factor aircraft export to corte.in file.
+  Should fix loading of flight plans without STAR. #394
 
 related from atools version 3.2.5
 
-* Fixed crash when loading P3D scenery that appears when using fsAerodata cycle 1905r1 or later.
-* Added support for X-Plane 8.33 kHz frequency spacing.
+* Fixed crash when loading P3D scenery that appears when using fsAerodata cycle 1905r1 or later. #413
+* Added support for X-Plane 8.33 kHz frequency spacing. #409
 * Fixed parsing issue with coordinates in some cases.
-* Fixed missing "=" in cruise altitude for BBS export.
-* Made loading of FMS flight plans more tolerant for wrong "DIRECT" instead of correct "DRCT".
-
+* Fixed missing "=" in cruise altitude for BBS flight plan export.
+* Made loading of FMS flight plans more tolerant for wrong "DIRECT" instead of correct "DRCT" for X-Plane FMS files.
 
 Version 2.2.4
 
