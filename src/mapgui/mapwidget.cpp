@@ -233,7 +233,6 @@ void MapWidget::setTheme(const QString& theme, int index)
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
-      case map::OPENSTREETMAPROADS:
       case map::OPENSTREETMAP:
       case map::CARTODARK:
       case map::CARTOLIGHT:
@@ -321,7 +320,6 @@ void MapWidget::updateMapObjectsShown()
 
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    (currentComboIndex == map::OPENSTREETMAP ||
-                    currentComboIndex == map::OPENSTREETMAPROADS ||
                     currentComboIndex == map::CARTODARK ||
                     currentComboIndex == map::CARTOLIGHT ||
                     currentComboIndex >= map::CUSTOM));
