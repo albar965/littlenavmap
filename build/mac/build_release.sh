@@ -46,7 +46,7 @@ mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
-make -j2
+make -j4
 
 # ===========================================================================
 # ========================== littlexpconnect
@@ -55,7 +55,7 @@ mkdir -p ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 cd ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
-make -j2
+make -j4
 make deploy -i -l
 
 # ===========================================================================
@@ -65,7 +65,7 @@ mkdir -p ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 cd ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/littlenavconnect/littlenavconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
-make -j2
+make -j4
 make copydata
 make deploy -i -l
 
@@ -76,7 +76,7 @@ mkdir -p ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 cd ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/littlenavmap/littlenavmap.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
-make -j2
+make -j4
 make copydata
 make deploy -i -l
 

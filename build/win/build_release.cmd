@@ -80,7 +80,7 @@ IF ERRORLEVEL 1 goto :err
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
+mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
 popd
 
@@ -94,7 +94,7 @@ IF ERRORLEVEL 1 goto :err
 
 qmake.exe "%APROJECTS%\littlenavconnect\littlenavconnect.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
+mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe deploy
 IF ERRORLEVEL 1 goto :err
@@ -111,7 +111,7 @@ IF ERRORLEVEL 1 goto :err
 
 qmake.exe "%APROJECTS%\littlenavmap\littlenavmap.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
+mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe deploy
 IF ERRORLEVEL 1 goto :err
@@ -133,7 +133,7 @@ set ATOOLS_NO_FS=true
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
+mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
 popd
 
@@ -148,7 +148,7 @@ IF ERRORLEVEL 1 goto :err
 
 qmake.exe "%APROJECTS%\littlexpconnect\littlexpconnect.pro" -spec win32-g++ CONFIG+=%CONF_TYPE% DEFINES+=XPLM200=1 DEFINES+=APL=0 DEFINES+=IBM=0 DEFINES+=LIN=1
 IF ERRORLEVEL 1 goto :err
-mingw32-make.exe -j2
+mingw32-make.exe -j4
 IF ERRORLEVEL 1 goto :err
 mingw32-make.exe deploy
 IF ERRORLEVEL 1 goto :err
