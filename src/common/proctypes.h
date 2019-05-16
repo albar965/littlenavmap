@@ -167,9 +167,10 @@ enum LegSpecialType
   FAF, /* Final approach fix. The final approach point on an instrument approach with vertical guidance is glide
         *  slope or glide path intercept at the lowest published altitude (ICAO definition). */
   FACF, /* Final approach course fix. */
-  MAP /* Miseed approach point.
-       * This is the point prescribed in each instrument approach at which a missed approach procedure shall
-       * be executed if the required visual reference does not exist.[ */
+  MAP, /* Miseed approach point.
+        * This is the point prescribed in each instrument approach at which a missed approach procedure shall
+        * be executed if the required visual reference does not exist.[ */
+  FEP /* Final endpoint fix - only needed to ignore altitude restriction */
 };
 
 /* Reduced procedure leg type for map index, tooltips and similar */
@@ -394,6 +395,7 @@ struct MapProcedureLeg
 
   bool isFinalApproachFix() const;
   bool isFinalApproachCourseFix() const;
+  bool isFinalEndpointFix() const;
 
   bool isHold() const;
   bool isCircular() const;

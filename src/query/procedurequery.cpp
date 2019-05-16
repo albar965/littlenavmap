@@ -974,8 +974,8 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
         vectorLeg.time = vectorLeg.theta = vectorLeg.rho = 0.f;
         vectorLeg.magvar = nextLeg.magvar;
         vectorLeg.missed = vectorLeg.flyover =
-                             vectorLeg.trueCourse = vectorLeg.intercept =
-                                                      vectorLeg.disabled = vectorLeg.malteseCross = false;
+          vectorLeg.trueCourse = vectorLeg.intercept =
+            vectorLeg.disabled = vectorLeg.malteseCross = false;
 
         legs.approachLegs.insert(i + 1, vectorLeg);
       }
@@ -1003,6 +1003,10 @@ void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs)
       // Found the connection between transition and approach with same altitudes
       // Use restriction of the initial fix
       prevLeg.altRestriction.descriptor = leg.altRestriction.descriptor;
+
+    if(leg.isFinalEndpointFix())
+      // FEP has altitude above TDZ - ignore this here
+      leg.altRestriction.descriptor = proc::MapAltRestriction::NONE;
   }
 }
 
