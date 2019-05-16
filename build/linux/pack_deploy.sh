@@ -15,8 +15,8 @@ tar cfvz LittleXpconnect.tar.gz "Little Xpconnect"
 tar cfvz LittleNavconnect.tar.gz "Little Navconnect"
 )
 
-scp ${APROJECTS}/deploy/LittleNavmap.tar.gz darkon:/data/alex/Public/Releases/LittleNavmap-linux-${FILENAME}.tar.gz
-scp ${APROJECTS}/deploy/LittleXpconnect.tar.gz darkon:/data/alex/Public/Releases/LittleXpconnect-linux-${FILENAME}.tar.gz
-scp ${APROJECTS}/deploy/LittleNavconnect.tar.gz darkon:/data/alex/Public/Releases/LittleNavconnect-linux-${FILENAME}.tar.gz
+scp ${APROJECTS}/deploy/LittleNavmap.tar.gz sol:/data/alex/Public/Releases/LittleNavmap-linux-${FILENAME}.tar.gz
+scp ${APROJECTS}/deploy/LittleXpconnect.tar.gz sol:/data/alex/Public/Releases/LittleXpconnect-linux-${FILENAME}.tar.gz
+scp ${APROJECTS}/deploy/LittleNavconnect.tar.gz sol:/data/alex/Public/Releases/LittleNavconnect-linux-${FILENAME}.tar.gz
 
 

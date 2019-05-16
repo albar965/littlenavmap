@@ -20,6 +20,10 @@ related from atools version 3.2.5
 * Fixed missing "=" in cruise altitude for BBS flight plan export.
 * Made loading of FMS flight plans more tolerant for wrong "DIRECT" instead of correct "DRCT" for X-Plane FMS files.
 
+related from Little Xpconnect version 1.0.15
+
+* Updated for new turboprop definitions in X-Plane.
+
 Version 2.2.4
 
 * Changed default email, manual and help link URLs from Gitbook to https://www.littlenavmap.org #238
