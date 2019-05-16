@@ -434,6 +434,10 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   else if(options & rs::SID_STAR_GENERIC)
     retval.append("STAR");
 
+  // Remove last DCT for flight factor export
+  if(options & rs::NO_FINAL_DCT && retval.last() == "DCT")
+    retval.removeLast();
+
   // Add destination airport
   if(options & rs::START_AND_DEST)
     retval.append(lastId + (gfpCoords ? "," + coords::toGfpFormat(lastPos) : QString()));
