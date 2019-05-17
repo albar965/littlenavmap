@@ -26,6 +26,7 @@
 #include "grib/windquery.h"
 
 #include <marble/GeoPainter.h>
+#include <marble/ViewportParams.h>
 
 using namespace atools::geo;
 
@@ -48,13 +49,15 @@ void MapPainterWind::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
   Q_UNUSED(saver);
 
-  const atools::grib::WindPosVector& windForRect = NavApp::getWindReporter()->getWindForRect(context->viewportRect);
+  const atools::grib::WindPosList *windForRect =
+    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(),
+                                              context->mapLayer, context->lazyUpdate);
   atools::geo::Rect rect = context->viewportRect;
 
   // Inflate for half a grid cell size to avoid disappearing symbols at map border
   rect.inflate(0.5f, 0.5f);
 
-  for(const atools::grib::WindPos& windPos : windForRect)
+  for(const atools::grib::WindPos& windPos : *windForRect)
   {
     if(rect.contains(windPos.pos))
     {

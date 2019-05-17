@@ -66,6 +66,7 @@ public:
   bool hasSameQueryParametersVor(const MapLayer *other) const;
   bool hasSameQueryParametersNdb(const MapLayer *other) const;
   bool hasSameQueryParametersWaypoint(const MapLayer *other) const;
+  bool hasSameQueryParametersWind(const MapLayer *other) const;
   bool hasSameQueryParametersMarker(const MapLayer *other) const;
   bool hasSameQueryParametersIls(const MapLayer *other) const;
 

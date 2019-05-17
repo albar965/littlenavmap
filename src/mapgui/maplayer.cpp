@@ -68,6 +68,11 @@ bool MapLayer::hasSameQueryParametersWaypoint(const MapLayer *other) const
   return layerWaypoint == other->layerWaypoint;
 }
 
+bool MapLayer::hasSameQueryParametersWind(const MapLayer *other) const
+{
+  return layerWindBarbs == other->layerWindBarbs;
+}
+
 bool MapLayer::hasSameQueryParametersMarker(const MapLayer *other) const
 {
   return layerMarker == other->layerMarker;

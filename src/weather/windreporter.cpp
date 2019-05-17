@@ -25,17 +25,20 @@
 #include "options/optiondata.h"
 #include "common/unit.h"
 #include "geo/rect.h"
+#include "mapgui/maplayer.h"
 
 #include <QToolButton>
 #include <QDebug>
 #include <QMessageBox>
 #include <QDir>
 
+static double queryRectInflationFactor = 0.2;
+static double queryRectInflationIncrement = 0.1;
+static int queryMaxRows = 5000;
+
 WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType type)
   : QObject(parent), simType(type)
 {
-  windPosVector = new atools::grib::WindPosVector();
-
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
   query = new atools::grib::WindQuery(parent, verbose);
@@ -52,7 +55,6 @@ WindReporter::~WindReporter()
   delete query;
   delete actionGroup;
   delete windlevelToolButton;
-  delete windPosVector;
 }
 
 void WindReporter::preDatabaseLoad()
@@ -299,19 +301,35 @@ float WindReporter::getAltitude() const
   }
 }
 
-const atools::grib::WindPosVector& WindReporter::getWindForRect(atools::geo::Rect rect)
+const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
+                                                              const MapLayer *mapLayer, bool lazy)
 {
-  // TODO cache
-  windPosVector->clear();
+// Update
+  windPosCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
+                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersWind(newLayer);
+  });
 
-  rect.inflate(1.f, 1.f);
-  if(rect.getNorth() > 85.f)
-    rect.setNorth(85.f);
-  if(rect.getSouth() < -85.f)
-    rect.setSouth(-85.f);
+  if((windPosCache.list.isEmpty() && !lazy) || cachedLevel != currentLevel)
+  {
+    windPosCache.clear();
+    for(const Marble::GeoDataLatLonBox& box :
+        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    {
+      atools::geo::Rect r(box.west(Marble::GeoDataCoordinates::Degree),
+                          box.north(Marble::GeoDataCoordinates::Degree),
+                          box.east(Marble::GeoDataCoordinates::Degree),
+                          box.south(Marble::GeoDataCoordinates::Degree));
 
-  query->getWindForRect(*windPosVector, rect, getAltitude());
-  return *windPosVector;
+      atools::grib::WindPosVector windPosVector;
+      query->getWindForRect(windPosVector, r, getAltitude());
+      windPosCache.list.append(windPosVector.toList());
+      cachedLevel = currentLevel;
+    }
+  }
+  windPosCache.validate(queryMaxRows);
+  return &windPosCache.list;
 }
 
 void WindReporter::getWindForRoute(atools::grib::WindPosVector& winds, atools::grib::WindPos& average,

@@ -20,7 +20,7 @@
 
 #include "fs/fspaths.h"
 
-#include <QVector>
+#include "query/querytypes.h"
 
 namespace atools {
 namespace geo {
@@ -31,6 +31,7 @@ namespace grib {
 class WindQuery;
 struct WindPos;
 
+typedef QList<WindPos> WindPosList;
 typedef QVector<WindPos> WindPosVector;
 }
 }
@@ -98,8 +99,9 @@ public:
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
 
-  /* Get a list of wind positions for the given rectangle */
-  const atools::grib::WindPosVector& getWindForRect(atools::geo::Rect rect);
+  /* Get a list of wind positions for the given rectangle for painting */
+  const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                  bool lazy);
 
   /* Get a list of wind positions for the current flight plan */
   void getWindForRoute(atools::grib::WindPosVector& winds, atools::grib::WindPos& average, const Route& route);
@@ -162,7 +164,8 @@ private:
   bool ignoreUpdates = false;
 
   /* Wind positions as a result of querying the rectangle for caching */
-  atools::grib::WindPosVector *windPosVector = nullptr;
+  SimpleRectCache<atools::grib::WindPos> windPosCache;
+  int cachedLevel = wr::NONE;
 };
 
 #endif // LNM_WINDREPORTER_H
