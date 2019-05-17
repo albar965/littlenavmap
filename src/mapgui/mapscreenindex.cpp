@@ -319,13 +319,8 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
   }
 }
 
-void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
-{
-  getAllNearest(xs, ys, maxDistance, result, nullptr);
-}
-
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                   QList<proc::MapProcedurePoint> *procPoints) const
+                                   QList<proc::MapProcedurePoint> *procPoints, atools::geo::Pos *windPos) const
 {
   using maptools::insertSortedByDistance;
 
@@ -438,6 +433,23 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
       int routeIndex = obj.routeIndex;
       airportQuery->getAirportById(obj, obj.getId());
       obj.routeIndex = routeIndex;
+    }
+  }
+
+  // Check if pointer is near a wind barb in the one degree grid
+  if(paintLayer->getShownMapObjectDisplayTypes() & map::WIND_BARBS)
+  {
+    // Round screen position to nearest grid cell
+    atools::geo::Pos pos = conv.sToW(xs, ys).snapToGrid();
+    if(pos.isValid())
+    {
+      int xg, yg;
+      if(conv.wToS(pos, xg, yg))
+      {
+        // Screen distance in pixel to the nearest cell
+        if(atools::geo::manhattanDistance(xg, yg, xs, ys) < maxDistance)
+          result.windPos = pos;
+      }
     }
   }
 }

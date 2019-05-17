@@ -235,6 +235,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapTooltipAirport,
      ui->checkBoxOptionsMapTooltipNavaid,
      ui->checkBoxOptionsMapTooltipAirspace,
+     ui->checkBoxOptionsMapTooltipWind,
      ui->checkBoxOptionsMapClickAirport,
      ui->checkBoxOptionsMapClickNavaid,
      ui->checkBoxOptionsMapClickAirspace,
@@ -1194,6 +1195,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_AIRPORT, ui->checkBoxOptionsMapTooltipAirport->isChecked());
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_NAVAID, ui->checkBoxOptionsMapTooltipNavaid->isChecked());
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_AIRSPACE, ui->checkBoxOptionsMapTooltipAirspace->isChecked());
+  data.displayTooltipOptions.setFlag(opts::TOOLTIP_WIND, ui->checkBoxOptionsMapTooltipWind->isChecked());
 
   data.displayClickOptions.setFlag(opts::CLICK_AIRPORT, ui->checkBoxOptionsMapClickAirport->isChecked());
   data.displayClickOptions.setFlag(opts::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
@@ -1400,6 +1402,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->checkBoxOptionsMapTooltipAirport->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRPORT));
   ui->checkBoxOptionsMapTooltipNavaid->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_NAVAID));
   ui->checkBoxOptionsMapTooltipAirspace->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRSPACE));
+  ui->checkBoxOptionsMapTooltipWind->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_WIND));
 
   ui->checkBoxOptionsMapClickAirport->setChecked(data.displayClickOptions.testFlag(opts::CLICK_AIRPORT));
   ui->checkBoxOptionsMapClickNavaid->setChecked(data.displayClickOptions.testFlag(opts::CLICK_NAVAID));

@@ -702,6 +702,8 @@ struct MapSearchResult
   QList<atools::fs::sc::SimConnectAircraft> onlineAircraft;
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
+  atools::geo::Pos windPos;
+
   /* true if none of the types exists in this result */
   bool isEmpty(const map::MapObjectTypes& types = map::ALL) const;
 
@@ -876,6 +878,7 @@ struct WeatherContext
 
 QDebug operator<<(QDebug out, const map::WeatherContext& record);
 
+// =====================================================================================
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
 const QString& navTypeNameVor(const QString& type);

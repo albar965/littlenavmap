@@ -26,6 +26,8 @@
 #include "query/airspacequery.h"
 #include "options/optiondata.h"
 #include "sql/sqlrecord.h"
+#include "weather/windreporter.h"
+#include "grib/windquery.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -294,6 +296,23 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
 
       html.p();
       info.airwayText(airway, html);
+      html.pEnd();
+      numEntries++;
+    }
+  }
+
+  // High altitude winds ===========================================================================
+  if(opts & opts::TOOLTIP_WIND && mapSearchResult.windPos.isValid())
+  {
+    atools::grib::WindPosVector winds = NavApp::getWindReporter()->getWindStackForPos(mapSearchResult.windPos);
+    if(!winds.isEmpty())
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+      info.windText(winds, html, NavApp::getWindReporter()->getAltitude());
       html.pEnd();
       numEntries++;
     }

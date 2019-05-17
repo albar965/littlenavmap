@@ -178,6 +178,7 @@ public:
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
   map::MapObjectTypes getShownMapFeatures() const;
+  map::MapObjectDisplayTypes getShownMapFeaturesDisplay() const;
   map::MapAirspaceFilter getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
 

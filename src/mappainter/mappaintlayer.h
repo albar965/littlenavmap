@@ -92,6 +92,12 @@ public:
     return objectTypes;
   }
 
+  /* Additional types like wind barbs or minimum altitude grid */
+  map::MapObjectDisplayTypes getShownMapObjectDisplayTypes() const
+  {
+    return objectDisplayTypes;
+  }
+
   /* Adjusted by layer visibility */
   map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
 

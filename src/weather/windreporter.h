@@ -156,9 +156,11 @@ private:
   QActionGroup *actionGroup = nullptr;
 
   /* Levels for the dropdown menu in feet */
-  QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  const QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
   int currentLevel = wr::NONE;
   wr::WindSource currentSource = wr::NOAA;
+
+  const QVector<int> levelsTooltip = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Avoid action signals when updating GUI elements */
   bool ignoreUpdates = false;

@@ -43,6 +43,7 @@
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "common/vehicleicons.h"
+#include "grib/windquery.h"
 
 #include <QSize>
 #include <QFileInfo>
@@ -819,6 +820,32 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
   html.brText(Unit::distShortFeet(std::max(helipad.width, helipad.length)));
   if(helipad.closed)
     html.brText(tr("Is Closed"));
+}
+
+void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
+                               float currentAltitude) const
+{
+  if(!windStack.isEmpty())
+  {
+    head(html, tr("Wind"));
+    html.table();
+    html.tr().th(Unit::getUnitAltStr()).th(tr("°M")).th(Unit::getUnitSpeedStr()).trEnd();
+    for(const atools::grib::WindPos& wind : windStack)
+    {
+      // Display currently selected altitude bold
+      float alt = wind.pos.getAltitude();
+      Flags flags =
+        atools::almostEqual(alt, currentAltitude, 10.f) ? atools::util::html::BOLD : atools::util::html::NONE;
+
+      // One table row with three data fields
+      html.tr().
+      td(Unit::altFeet(alt, false), flags).
+      td(tr("%1").arg(wind.wind.dir - NavApp::getMagVar(wind.pos), 0, 'f', 0), flags).
+      td(tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0), flags).
+      trEnd();
+    }
+    html.tableEnd();
+  }
 }
 
 void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html) const

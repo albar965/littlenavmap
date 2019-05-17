@@ -375,8 +375,6 @@ void MapWidget::updateTooltip()
 
 void MapWidget::showTooltip(bool update)
 {
-  // qDebug() << Q_FUNC_INFO << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
-
   if(databaseLoadStatus)
     return;
 
@@ -1458,9 +1456,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(airport != nullptr)
     procedureText = informationText =
-                      measureText = departureText =
-                                      destinationText = addRouteText =
-                                                          searchText = patternText = map::airportText(*airport);
+      measureText = departureText =
+        destinationText = addRouteText =
+          searchText = patternText = map::airportText(*airport);
 
   // Userpoints are drawn on top of all features
   if(userpoint != nullptr)

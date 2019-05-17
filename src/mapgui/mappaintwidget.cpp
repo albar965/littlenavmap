@@ -331,6 +331,11 @@ map::MapObjectTypes MapPaintWidget::getShownMapFeatures() const
   return paintLayer->getShownMapObjects();
 }
 
+map::MapObjectDisplayTypes MapPaintWidget::getShownMapFeaturesDisplay() const
+{
+  return paintLayer->getShownMapObjectDisplayTypes();
+}
+
 map::MapAirspaceFilter MapPaintWidget::getShownAirspaces() const
 {
   return paintLayer->getShownAirspaces();

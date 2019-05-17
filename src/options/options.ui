@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
-    <height>561</height>
+    <width>785</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -794,6 +794,19 @@ This will scale the Little Navmap map graphics and icons for better visibility i
              </property>
              <property name="checked">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxOptionsMapTooltipWind">
+             <property name="toolTip">
+              <string>Show tooltips for high altitude winds when hovering the cursor over a wind barb.</string>
+             </property>
+             <property name="text">
+              <string>Show for high altitude &amp;wind barbs</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>

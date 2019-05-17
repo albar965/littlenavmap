@@ -69,6 +69,10 @@ struct MapUserpoint;
 
 namespace atools {
 
+namespace grib {
+struct WindPos;
+typedef QVector<atools::grib::WindPos> WindPosVector;
+}
 namespace geo {
 class Pos;
 }
@@ -224,6 +228,12 @@ public:
    */
   void helipadText(const map::MapHelipad& helipad,
                    atools::util::HtmlBuilder& html) const;
+
+  /*
+   * Creates a HTML description for a all upper layer winds at position
+   * @param html Result containing HTML snippet
+   */
+  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html, float currentAltitude) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.

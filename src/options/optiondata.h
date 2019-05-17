@@ -269,7 +269,8 @@ enum DisplayTooltipOption
   TOOLTIP_NONE = 0,
   TOOLTIP_AIRPORT = 1 << 1,
   TOOLTIP_NAVAID = 1 << 2,
-  TOOLTIP_AIRSPACE = 1 << 3
+  TOOLTIP_AIRSPACE = 1 << 3,
+  TOOLTIP_WIND = 1 << 4
 };
 
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);

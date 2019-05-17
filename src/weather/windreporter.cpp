@@ -304,7 +304,7 @@ float WindReporter::getAltitude() const
 const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
                                                               const MapLayer *mapLayer, bool lazy)
 {
-// Update
+  // Update
   windPosCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -349,12 +349,21 @@ atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos, f
 atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos,
                                                              QVector<int> altitudesFt)
 {
-  // TODO
-  return atools::grib::WindPosVector();
+  atools::grib::WindPosVector winds;
+
+  for(int i : altitudesFt)
+  {
+    atools::grib::WindPos wp;
+    wp.pos = pos;
+    wp.pos.setAltitude(i);
+    wp.wind = query->getWindForPos(pos, i);
+    winds.append(wp);
+  }
+
+  return winds;
 }
 
 atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos)
 {
-  // TODO
-  return atools::grib::WindPosVector();
+  return getWindStackForPos(pos, levelsTooltip);
 }
