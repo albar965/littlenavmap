@@ -52,19 +52,23 @@ void MapPainterWind::render(PaintContext *context)
   const atools::grib::WindPosList *windForRect =
     NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(),
                                               context->mapLayer, context->lazyUpdate);
-  atools::geo::Rect rect = context->viewportRect;
 
-  // Inflate for half a grid cell size to avoid disappearing symbols at map border
-  rect.inflate(0.5f, 0.5f);
-
-  for(const atools::grib::WindPos& windPos : *windForRect)
+  if(windForRect != nullptr)
   {
-    if(rect.contains(windPos.pos))
+    atools::geo::Rect rect = context->viewportRect;
+
+    // Inflate for half a grid cell size to avoid disappearing symbols at map border
+    rect.inflate(0.5f, 0.5f);
+
+    for(const atools::grib::WindPos& windPos : *windForRect)
     {
-      bool isVisible, isHidden;
-      QPoint pos = wToS(windPos.pos, DEFAULT_WTOS_SIZE, &isVisible, &isHidden);
-      if(!pos.isNull() && /*isVisible && */ !isHidden)
-        drawWindBarb(context, windPos.wind.speed, windPos.wind.dir, pos.x(), pos.y());
+      if(rect.contains(windPos.pos))
+      {
+        bool isVisible, isHidden;
+        QPoint pos = wToS(windPos.pos, DEFAULT_WTOS_SIZE, &isVisible, &isHidden);
+        if(!pos.isNull() && /*isVisible && */ !isHidden)
+          drawWindBarb(context, windPos.wind.speed, windPos.wind.dir, pos.x(), pos.y());
+      }
     }
   }
 }

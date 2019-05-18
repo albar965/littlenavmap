@@ -58,8 +58,7 @@ public:
    * @param maxDistance maximum distance to xs/ys
    */
   void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                     QList<proc::MapProcedurePoint> *procPoints = nullptr,
-                     atools::geo::Pos *windPos = nullptr) const;
+                     QList<proc::MapProcedurePoint> *procPoints = nullptr) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */

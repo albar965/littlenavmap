@@ -840,7 +840,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, ato
       // One table row with three data fields
       html.tr().
       td(Unit::altFeet(alt, false), flags).
-      td(tr("%1").arg(wind.wind.dir - NavApp::getMagVar(wind.pos), 0, 'f', 0), flags).
+      td(tr("%1").arg(atools::geo::normalizeCourse(wind.wind.dir - NavApp::getMagVar(wind.pos)), 0, 'f', 0), flags).
       td(tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0), flags).
       trEnd();
     }

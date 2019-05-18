@@ -53,6 +53,7 @@ enum SpecialLevels
 
 enum WindSource
 {
+  NO_SOURCE, /* Disabled */
   SIMULATOR, /* X-Plane GRIB file */
   NOAA /* Download from NOAA site */
 };
@@ -96,6 +97,9 @@ public:
   /* true if wind barbs are to be drawn */
   bool isWindShown() const;
 
+  /* True if wind source is enabled */
+  bool isWindEnabled() const;
+
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
 
@@ -109,11 +113,13 @@ public:
   /* Get (interpolated) wind for given position and altitude */
   atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos, float altFeet);
 
-  /* Get a list of winds for the given position at all given altitudes. Altitiude field in pos contains the altitude. */
+  /* Get a list of winds for the given position at all given altitudes. Altitiude field in pos contains the altitude.
+   * Adds flight plan altitude if needed and selected in GUI. */
   atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt);
 
   /* Get a list of winds for the given position at all given altitudes. Returns only not interpolated levels.
-   *  Altitiude field in pos contains the altitude. */
+   * Altitiude field in pos contains the altitude.
+   * Adds flight plan altitude if needed and selected in GUI. */
   atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos);
 
 signals:
@@ -157,6 +163,8 @@ private:
 
   /* Levels for the dropdown menu in feet */
   const QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+
+  /* Currently displayed altitude or one of SpecialLevels */
   int currentLevel = wr::NONE;
   wr::WindSource currentSource = wr::NOAA;
 

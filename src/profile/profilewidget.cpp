@@ -37,6 +37,8 @@
 #include "common/vehicleicons.h"
 #include "util/paintercontextsaver.h"
 #include "common/jumpback.h"
+#include "weather/windreporter.h"
+#include "grib/windquery.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -1537,6 +1539,15 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
      tr(" Above Ground Altitude ") + Unit::altFeet(aboveGround) + tr(", ") : QString()) +
     (maxElev < map::INVALID_ALTITUDE_VALUE ?
      tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
+
+  // Show wind at altitude===============================================
+  if(NavApp::getWindReporter()->isWindEnabled())
+  {
+    atools::grib::WindPos wind = NavApp::getWindReporter()->getWindForPos(pos, altitude);
+    variableLabelText.append(tr(", Wind %1°M, %2").
+                             arg(atools::geo::normalizeCourse(wind.wind.dir - NavApp::getMagVar(wind.pos)), 0, 'f', 0).
+                             arg(Unit::speedKts(wind.wind.speed)));
+  }
 
 #ifdef DEBUG_INFORMATION
   variableLabelText.append(QString(" [%1]").arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)));

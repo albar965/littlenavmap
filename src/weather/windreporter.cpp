@@ -208,6 +208,11 @@ bool WindReporter::isWindShown() const
   return currentLevel != wr::NONE;
 }
 
+bool WindReporter::isWindEnabled() const
+{
+  return query->hasWindData();
+}
+
 void WindReporter::sourceActionTriggered()
 {
   if(!ignoreUpdates)
@@ -304,32 +309,36 @@ float WindReporter::getAltitude() const
 const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
                                                               const MapLayer *mapLayer, bool lazy)
 {
-  // Update
-  windPosCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  if(query->hasWindData())
   {
-    return curLayer->hasSameQueryParametersWind(newLayer);
-  });
-
-  if((windPosCache.list.isEmpty() && !lazy) || cachedLevel != currentLevel)
-  {
-    windPosCache.clear();
-    for(const Marble::GeoDataLatLonBox& box :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    // Update
+    windPosCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
+                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
     {
-      atools::geo::Rect r(box.west(Marble::GeoDataCoordinates::Degree),
-                          box.north(Marble::GeoDataCoordinates::Degree),
-                          box.east(Marble::GeoDataCoordinates::Degree),
-                          box.south(Marble::GeoDataCoordinates::Degree));
+      return curLayer->hasSameQueryParametersWind(newLayer);
+    });
 
-      atools::grib::WindPosVector windPosVector;
-      query->getWindForRect(windPosVector, r, getAltitude());
-      windPosCache.list.append(windPosVector.toList());
-      cachedLevel = currentLevel;
+    if((windPosCache.list.isEmpty() && !lazy) || cachedLevel != currentLevel) // Force update if level has changed
+    {
+      windPosCache.clear();
+      for(const Marble::GeoDataLatLonBox& box :
+          query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+      {
+        atools::geo::Rect r(box.west(Marble::GeoDataCoordinates::Degree),
+                            box.north(Marble::GeoDataCoordinates::Degree),
+                            box.east(Marble::GeoDataCoordinates::Degree),
+                            box.south(Marble::GeoDataCoordinates::Degree));
+
+        atools::grib::WindPosVector windPosVector;
+        query->getWindForRect(windPosVector, r, getAltitude());
+        windPosCache.list.append(windPosVector.toList());
+        cachedLevel = currentLevel;
+      }
     }
+    windPosCache.validate(queryMaxRows);
+    return &windPosCache.list;
   }
-  windPosCache.validate(queryMaxRows);
-  return &windPosCache.list;
+  return nullptr;
 }
 
 void WindReporter::getWindForRoute(atools::grib::WindPosVector& winds, atools::grib::WindPos& average,
@@ -341,8 +350,12 @@ void WindReporter::getWindForRoute(atools::grib::WindPosVector& winds, atools::g
 atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos, float altFeet)
 {
   atools::grib::WindPos wp;
-  wp.pos = pos;
-  wp.wind = query->getWindForPos(pos, altFeet);
+  wp.init();
+  if(query->hasWindData())
+  {
+    wp.pos = pos;
+    wp.wind = query->getWindForPos(pos.alt(altFeet));
+  }
   return wp;
 }
 
@@ -351,15 +364,31 @@ atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::
 {
   atools::grib::WindPosVector winds;
 
-  for(int i : altitudesFt)
+  if(query->hasWindData())
   {
+    float curAlt = getAltitude();
     atools::grib::WindPos wp;
-    wp.pos = pos;
-    wp.pos.setAltitude(i);
-    wp.wind = query->getWindForPos(pos, i);
-    winds.append(wp);
-  }
 
+    // Collect wind for all levels
+    for(int i = 0; i < altitudesFt.size(); i++)
+    {
+      float alt = altitudesFt.at(i);
+      float altNext = i < altitudesFt.size() - 1 ? altitudesFt.at(i + 1) : 100000.f;
+
+      // Get wind for layer/altitude
+      wp.pos = pos.alt(alt);
+      wp.wind = query->getWindForPos(wp.pos);
+      winds.append(wp);
+
+      if(currentLevel == wr::FLIGHTPLAN && curAlt > alt && curAlt < altNext)
+      {
+        // Insert flight plan altitude if selected in GUI
+        wp.pos = pos.alt(curAlt);
+        wp.wind = query->getWindForPos(wp.pos);
+        winds.append(wp);
+      }
+    }
+  }
   return winds;
 }
 

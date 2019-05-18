@@ -320,7 +320,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 }
 
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
-                                   QList<proc::MapProcedurePoint> *procPoints, atools::geo::Pos *windPos) const
+                                   QList<proc::MapProcedurePoint> *procPoints) const
 {
   using maptools::insertSortedByDistance;
 
