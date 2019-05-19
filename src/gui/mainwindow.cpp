@@ -606,6 +606,7 @@ void MainWindow::setupUi()
 
   // Weather source sub menu
   actionGroupMapWeatherWindSource = new QActionGroup(ui->menuHighAltitudeWindSource);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindDisabled);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
 
@@ -1303,6 +1304,7 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
+  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);

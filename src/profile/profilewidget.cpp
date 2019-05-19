@@ -1541,7 +1541,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
      tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
 
   // Show wind at altitude===============================================
-  if(NavApp::getWindReporter()->isWindEnabled())
+  if(NavApp::getWindReporter()->hasWindData())
   {
     atools::grib::WindPos wind = NavApp::getWindReporter()->getWindForPos(pos, altitude);
     variableLabelText.append(tr(", Wind %1°M, %2").

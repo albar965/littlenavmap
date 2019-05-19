@@ -28,7 +28,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -366,6 +366,7 @@
      <property name="title">
       <string>Wind source</string>
      </property>
+     <addaction name="actionMapShowWindDisabled"/>
      <addaction name="actionMapShowWindSimulator"/>
      <addaction name="actionMapShowWindNOAA"/>
     </widget>
@@ -400,7 +401,6 @@
     <addaction name="actionMapShowAirportWeather"/>
     <addaction name="menuMapShowAirportWeatherSource"/>
     <addaction name="separator"/>
-    <addaction name="actionShowHighAltitudeWinds"/>
     <addaction name="menuHighAltitudeWindLevels"/>
     <addaction name="menuHighAltitudeWindSource"/>
     <addaction name="separator"/>
@@ -3620,7 +3620,7 @@
         <string/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabRoutePlan">
         <attribute name="title">
@@ -9550,30 +9550,18 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Open Webserver Page in Browser</string>
    </property>
   </action>
-  <action name="actionShowHighAltitudeWinds">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/wind.svg</normaloff>:/littlenavmap/resources/icons/wind.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show wind barbs</string>
-   </property>
-   <property name="toolTip">
-    <string>Show the wind grid</string>
-   </property>
-   <property name="statusTip">
-    <string>Show the wind grid</string>
-   </property>
-  </action>
   <action name="actionMapShowWindSimulator">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>&amp;Flight Simulator (X-Plane only)</string>
+   </property>
+   <property name="toolTip">
+    <string>Use the X-Plane wind file</string>
+   </property>
+   <property name="statusTip">
+    <string>Use the X-Plane wind file</string>
    </property>
   </action>
   <action name="actionMapShowWindNOAA">
@@ -9585,6 +9573,26 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="text">
     <string>&amp;NOAA</string>
+   </property>
+   <property name="toolTip">
+    <string>Download wind files from NOAA</string>
+   </property>
+   <property name="statusTip">
+    <string>Download wind files from NOAA</string>
+   </property>
+  </action>
+  <action name="actionMapShowWindDisabled">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Disabled</string>
+   </property>
+   <property name="toolTip">
+    <string>Do not download or read wind files</string>
+   </property>
+   <property name="statusTip">
+    <string>Do not download or read wind files</string>
    </property>
   </action>
  </widget>

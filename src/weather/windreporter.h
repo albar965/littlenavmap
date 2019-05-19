@@ -98,7 +98,7 @@ public:
   bool isWindShown() const;
 
   /* True if wind source is enabled */
-  bool isWindEnabled() const;
+  bool hasWindData() const;
 
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
@@ -142,6 +142,7 @@ private:
   void valuesToAction();
 
   void sourceActionTriggered();
+  void updateToolButtonState();
 
   /* GRIB wind data query for downloading files and monitoring files */
   atools::grib::WindQuery *query = nullptr;

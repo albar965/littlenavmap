@@ -46,6 +46,7 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
   connect(query, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  connect(ui->actionMapShowWindDisabled, &QAction::triggered, this, &WindReporter::sourceActionTriggered);
   connect(ui->actionMapShowWindNOAA, &QAction::triggered, this, &WindReporter::sourceActionTriggered);
   connect(ui->actionMapShowWindSimulator, &QAction::triggered, this, &WindReporter::sourceActionTriggered);
 }
@@ -93,6 +94,7 @@ void WindReporter::restoreState()
   }
   valuesToAction();
   updateDataSource();
+  updateToolButtonState();
 }
 
 void WindReporter::updateDataSource()
@@ -121,6 +123,7 @@ void WindReporter::updateDataSource()
 void WindReporter::windDownloadFinished()
 {
   qDebug() << Q_FUNC_INFO;
+  updateToolButtonState();
   emit windUpdated();
 }
 
@@ -132,6 +135,7 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
   NavApp::deleteSplashScreen();
   QMessageBox::warning(NavApp::getQMainWidget(), QApplication::applicationName(),
                        tr("Error downloading wind data: %1 (%2").arg(error).arg(errorCode));
+  updateToolButtonState();
 }
 
 void WindReporter::addToolbarButton()
@@ -208,7 +212,7 @@ bool WindReporter::isWindShown() const
   return currentLevel != wr::NONE;
 }
 
-bool WindReporter::isWindEnabled() const
+bool WindReporter::hasWindData() const
 {
   return query->hasWindData();
 }
@@ -216,7 +220,10 @@ bool WindReporter::isWindEnabled() const
 void WindReporter::sourceActionTriggered()
 {
   if(!ignoreUpdates)
+  {
     updateDataSource();
+    updateToolButtonState();
+  }
 }
 
 void WindReporter::toolbarActionTriggered()
@@ -225,8 +232,15 @@ void WindReporter::toolbarActionTriggered()
   {
     actionToValues();
     windlevelToolButton->setChecked(!actionNone->isChecked());
+    updateToolButtonState();
     emit windUpdated();
   }
+}
+
+void WindReporter::updateToolButtonState()
+{
+  windlevelToolButton->setEnabled(query->hasWindData());
+  NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(query->hasWindData());
 }
 
 void WindReporter::valuesToAction()
@@ -259,6 +273,9 @@ void WindReporter::valuesToAction()
   qDebug() << Q_FUNC_INFO << "source" << currentSource;
   switch(currentSource)
   {
+    case wr::NO_SOURCE:
+      NavApp::getMainUi()->actionMapShowWindDisabled->setChecked(true);
+      break;
     case wr::NOAA:
       NavApp::getMainUi()->actionMapShowWindNOAA->setChecked(true);
       break;
@@ -277,7 +294,9 @@ void WindReporter::actionToValues()
   else
     currentLevel = wr::NONE;
 
-  if(NavApp::getMainUi()->actionMapShowWindNOAA->isChecked())
+  if(NavApp::getMainUi()->actionMapShowWindDisabled->isChecked())
+    currentSource = wr::NO_SOURCE;
+  else if(NavApp::getMainUi()->actionMapShowWindNOAA->isChecked())
     currentSource = wr::NOAA;
   else if(NavApp::getMainUi()->actionMapShowWindSimulator->isChecked())
     currentSource = wr::SIMULATOR;
