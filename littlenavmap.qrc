@@ -232,5 +232,11 @@
         <file>resources/icons/mapdisplay.svg</file>
         <file>resources/icons/mapsettings.svg</file>
         <file>resources/icons/wind.svg</file>
+        <file>resources/icons/userpoint_TACAN.svg</file>
+        <file>resources/icons/userpoint_VORDME.svg</file>
+        <file>resources/icons/userpoint_VOR.svg</file>
+        <file>resources/icons/userpoint_DME.svg</file>
+        <file>resources/icons/userpoint_VORTAC.svg</file>
+        <file>resources/icons/userpoint_NDB.svg</file>
     </qresource>
 </RCC>
