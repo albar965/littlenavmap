@@ -37,6 +37,7 @@
 #include "gui/actiontextsaver.h"
 #include "mapgui/maplayersettings.h"
 #include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
 #include "sql/sqlrecord.h"
 #include "gui/trafficpatterndialog.h"
 #include "gui/actionstatesaver.h"
@@ -1771,6 +1772,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << "destinationText" << destinationText;
   qDebug() << "addRouteText" << addRouteText;
   qDebug() << "searchText" << searchText;
+
+  atools::gui::util::addMenuShortcuts(&menu);
 
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(menuPos);

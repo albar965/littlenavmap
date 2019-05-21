@@ -20,6 +20,7 @@
 #include "navapp.h"
 #include "common/constants.h"
 #include "search/sqlcontroller.h"
+#include "gui/widgetutil.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
 #include "common/mapcolors.h"
@@ -574,7 +575,7 @@ void SearchBaseTable::reconnectSelectionModel()
 {
   if(view->selectionModel() != nullptr)
   {
-    void (SearchBaseTable::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+    void (SearchBaseTable::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
       &SearchBaseTable::tableSelectionChanged;
 
     connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
@@ -1040,6 +1041,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                       {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
                        si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionSearchSetMark);
+
+  atools::gui::util::addMenuShortcuts(&menu);
 
   QAction *action = menu.exec(menuPos);
 

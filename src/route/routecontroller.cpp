@@ -27,6 +27,7 @@
 #include "common/tabindexes.h"
 #include "fs/db/databasemeta.h"
 #include "common/formatter.h"
+#include "gui/widgetutil.h"
 #include "fs/perf/aircraftperf.h"
 #include "search/proceduresearch.h"
 #include "common/unit.h"
@@ -219,7 +220,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                     ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
                     ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark});
 
-  void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+  void (RouteController::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
     &RouteController::tableSelectionChanged;
 
   if(view->selectionModel() != nullptr)
@@ -1895,6 +1896,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteSetMark);
+
+  atools::gui::util::addMenuShortcuts(&menu);
 
   QAction *action = menu.exec(menuPos);
   if(action != nullptr)

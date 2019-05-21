@@ -29,6 +29,7 @@
 #include "route/routecontroller.h"
 #include "route/routealtitude.h"
 #include "common/aircrafttrack.h"
+#include "gui/widgetutil.h"
 #include "common/unit.h"
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
@@ -1625,6 +1626,9 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addAction(ui->actionProfileShowZoom);
   menu.addAction(ui->actionProfileShowLabels);
   menu.addAction(ui->actionProfileShowScrollbars);
+
+  atools::gui::util::addMenuShortcuts(&menu);
+
   QAction *action = menu.exec(menuPos);
 
   if(action == ui->actionProfileShowOnMap)
