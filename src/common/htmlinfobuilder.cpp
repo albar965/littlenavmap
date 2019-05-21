@@ -900,7 +900,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         // Fill table ==========================================================
         html.table();
 
-        if(!(type & proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
+        if(!(type& proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
         {
           rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
           // html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
@@ -3111,9 +3111,22 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
 
   if(sceneryInfo != nullptr)
   {
+    int i = 0;
     for(const SqlRecord& rec : *sceneryInfo)
-      html.row2(rec.valueStr("title"), filepathTextShow(rec.valueStr("filepath")),
+    {
+      QString title = rec.valueStr("title");
+      if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+        title = i == 0 ? tr("X-Plane") : QString();
+
+      html.row2(title, filepathTextShow(rec.valueStr("filepath")),
                 atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+      i++;
+    }
+
+    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      html.row2(QString(),
+                html.cleared().a(tr("Scenery Gateway"), QString("https://gateway.x-plane.com/scenery/page/%1").
+                                 arg(airport.ident)), atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
   }
 
   html.tableEnd();
