@@ -52,7 +52,13 @@ void UserdataIcons::initTranslateableTexts()
     {QLatin1Literal("Seaport"), tr("Seaport", "UserpointType")},
     {QLatin1Literal("Unknown"), tr("Unknown", "UserpointType")},
     {QLatin1Literal("VRP"), tr("VRP", "UserpointType")},
-    {QLatin1Literal("Waypoint"), tr("Waypoint", "UserpointType")}
+    {QLatin1Literal("Waypoint"), tr("Waypoint", "UserpointType")},
+    {QLatin1Literal("VOR"), tr("VOR", "UserpointType")},
+    {QLatin1Literal("VORDME"), tr("VORDME", "UserpointType")},
+    {QLatin1Literal("DME"), tr("DME", "UserpointType")},
+    {QLatin1Literal("VORTAC"), tr("VORTAC", "UserpointType")},
+    {QLatin1Literal("TACAN"), tr("TACAN", "UserpointType")},
+    {QLatin1Literal("NDB"), tr("NDB", "UserpointType")}
   });
 
   translationToTypeMap = QHash<QString, QString>(
@@ -75,7 +81,13 @@ void UserdataIcons::initTranslateableTexts()
     {tr("Seaport", "UserpointType"), QLatin1Literal("Seaport")},
     {tr("Unknown", "UserpointType"), QLatin1Literal("Unknown")},
     {tr("VRP", "UserpointType"), QLatin1Literal("VRP")},
-    {tr("Waypoint", "UserpointType"), QLatin1Literal("Waypoint")}
+    {tr("Waypoint", "UserpointType"), QLatin1Literal("Waypoint")},
+    {tr("VOR", "UserpointType"), QLatin1Literal("VOR")},
+    {tr("VORDME", "UserpointType"), QLatin1Literal("VORDME")},
+    {tr("DME", "UserpointType"), QLatin1Literal("DME")},
+    {tr("VORTAC", "UserpointType"), QLatin1Literal("VORTAC")},
+    {tr("TACAN", "UserpointType"), QLatin1Literal("TACAN")},
+    {tr("NDB", "UserpointType"), QLatin1Literal("NDB")}
   });
 }
 
