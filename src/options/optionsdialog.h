@@ -138,7 +138,6 @@ private:
   void updateCacheElevationStates();
   void offlineDataSelectClicked();
   void checkUpdateClicked();
-  void mapEmptyAirportsClicked(bool state);
   void updateOnlineWidgetStatus();
   void onlineTestStatusUrlClicked();
   void onlineTestWhazzupUrlClicked();

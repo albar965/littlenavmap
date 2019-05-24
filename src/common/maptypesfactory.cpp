@@ -165,7 +165,6 @@ map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, 
   flags |= airportFlag(record, "is_closed", AP_CLOSED);
   flags |= airportFlag(record, "is_military", AP_MIL);
   flags |= airportFlag(record, "is_addon", AP_ADDON);
-  flags |= airportFlag(record, "is_3d", AP_3D);
   flags |= airportFlag(record, "num_runway_hard", AP_HARD);
   flags |= airportFlag(record, "num_runway_soft", AP_SOFT);
   flags |= airportFlag(record, "num_runway_water", AP_WATER);
