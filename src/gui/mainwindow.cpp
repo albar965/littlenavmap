@@ -833,15 +833,17 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
 
+  // WindReporter ===================================================================================
+  // Wind has to be calculated first - receive routeChanged signal first
+  connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateManualRouteWinds);
+
   // Aircraft performance signals =======================================================
-  connect(NavApp::getAircraftPerfController(), &AircraftPerfController::aircraftPerformanceChanged,
+  AircraftPerfController *perfController = NavApp::getAircraftPerfController();
+  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
           routeController, &RouteController::aircraftPerformanceChanged);
-
-  connect(routeController, &RouteController::routeChanged,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::routeChanged);
-
+  connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::routeAltitudeChanged);
+          perfController, &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapPaintWidget::showRect);
@@ -1300,16 +1302,21 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapPaintWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
+  // Weather update ===================================================
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
-  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
-  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirportWeather);
 
+  // Wind update ===================================================
+  connect(windReporter, &WindReporter::windUpdated, routeController, &RouteController::windUpdated);
+  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
+  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
+
+  // Legend ===============================================
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 

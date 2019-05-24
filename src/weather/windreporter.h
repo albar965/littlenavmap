@@ -26,10 +26,13 @@ namespace atools {
 namespace geo {
 class Rect;
 class Pos;
+class Line;
+class LineString;
 }
 namespace grib {
 class WindQuery;
 struct WindPos;
+struct Wind;
 
 typedef QList<WindPos> WindPosList;
 typedef QVector<WindPos> WindPosVector;
@@ -41,7 +44,7 @@ class QAction;
 class QActionGroup;
 class Route;
 
-namespace wr {
+namespace wind {
 
 /* All levels above 0 are millibar */
 enum SpecialLevels
@@ -97,30 +100,38 @@ public:
   /* true if wind barbs are to be drawn */
   bool isWindShown() const;
 
-  /* True if wind source is enabled */
+  /* True if wind available */
   bool hasWindData() const;
+
+  /* true if X-Plane or NOAA wind is enabled. */
+  bool isWindSourceEnabled() const;
 
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
   float getAltitude() const;
 
-  /* Get a list of wind positions for the given rectangle for painting */
+  /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                   bool lazy);
-
-  /* Get a list of wind positions for the current flight plan */
-  void getWindForRoute(atools::grib::WindPosVector& winds, atools::grib::WindPos& average, const Route& route);
 
   /* Get (interpolated) wind for given position and altitude */
   atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos, float altFeet);
 
+  /* Get interpolated winds for lines. Use manual wind setting if checkbox is set. */
+  atools::grib::Wind getWindForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
+  atools::grib::Wind getWindForLine(const atools::geo::Line& line);
+  atools::grib::Wind getWindForLineString(const atools::geo::LineString& line);
+
   /* Get a list of winds for the given position at all given altitudes. Altitiude field in pos contains the altitude.
-   * Adds flight plan altitude if needed and selected in GUI. */
+   * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
   atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt);
 
   /* Get a list of winds for the given position at all given altitudes. Returns only not interpolated levels.
    * Altitiude field in pos contains the altitude.
-   * Adds flight plan altitude if needed and selected in GUI. */
+   * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting. */
   atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos);
+
+  /* Updates the query class */
+  void updateManualRouteWinds();
 
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
@@ -144,8 +155,8 @@ private:
   void sourceActionTriggered();
   void updateToolButtonState();
 
-  /* GRIB wind data query for downloading files and monitoring files */
-  atools::grib::WindQuery *query = nullptr;
+  /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
+  atools::grib::WindQuery *windQuery = nullptr, *windQueryManual = nullptr;
 
   /* Toolbar button */
   QToolButton *windlevelToolButton = nullptr;
@@ -166,8 +177,8 @@ private:
   const QVector<int> levels = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Currently displayed altitude or one of SpecialLevels */
-  int currentLevel = wr::NONE;
-  wr::WindSource currentSource = wr::NOAA;
+  int currentLevel = wind::NONE;
+  wind::WindSource currentSource = wind::NOAA;
 
   const QVector<int> levelsTooltip = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
@@ -176,7 +187,7 @@ private:
 
   /* Wind positions as a result of querying the rectangle for caching */
   SimpleRectCache<atools::grib::WindPos> windPosCache;
-  int cachedLevel = wr::NONE;
+  int cachedLevel = wind::NONE;
 };
 
 #endif // LNM_WINDREPORTER_H

@@ -1542,16 +1542,36 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
      tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev) : QString());
 
   // Show wind at altitude===============================================
-  if(NavApp::getWindReporter()->hasWindData())
+  const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.at(index + 1) : nullptr;
+  if(NavApp::getWindReporter()->hasWindData() && leg != nullptr)
   {
     atools::grib::WindPos wind = NavApp::getWindReporter()->getWindForPos(pos, altitude);
+
+    float headWind = 0.f, crossWind = 0.f;
+    atools::geo::windForCourse(headWind, crossWind, wind.wind.speed, wind.wind.dir, leg->getCourseToTrue());
+
+    float magVar = NavApp::getMagVar(wind.pos);
+
     variableLabelText.append(tr(", Wind %1°M, %2").
-                             arg(atools::geo::normalizeCourse(wind.wind.dir - NavApp::getMagVar(wind.pos)), 0, 'f', 0).
+                             arg(atools::geo::normalizeCourse(wind.wind.dir - magVar), 0, 'f', 0).
                              arg(Unit::speedKts(wind.wind.speed)));
+
+    if(std::abs(headWind) >= 1.f)
+    {
+      QString windPtr;
+      if(headWind >= 1.f)
+        windPtr = tr("◄");
+      else if(headWind <= -1.f)
+        windPtr = tr("►");
+      variableLabelText.append(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+    }
   }
 
 #ifdef DEBUG_INFORMATION
-  variableLabelText.append(QString(" [%1]").arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)));
+  variableLabelText.append(QString(" [alt %1,idx %2,crs %3]").
+                           arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
+                           arg(index).
+                           arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-"));
 #endif
 
   // Allow event to propagate to scroll widget

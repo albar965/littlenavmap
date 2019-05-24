@@ -127,8 +127,12 @@ public:
   /* Wind speed in knots as set in the flight plan dock on tab aircraft */
   float getWindSpeed() const;
 
+  /* Checkbox above flight plan table */
+  bool isWindManual() const;
+
   /* Sent back after aircraftPerformanceChanged was sent from here */
   void routeChanged(bool geometryChanged, bool newFlightplan = false);
+  void windUpdated();
   void routeAltitudeChanged(float altitudeFeet);
 
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
@@ -152,8 +156,10 @@ private:
   /* Collect information action toggled */
   void collectToggled();
 
+  void manualWindToggled();
+
   /* Wind spin boxes changed */
-  void windChanged();
+  void windBoxesChanged();
 
   /* Update wind data after a delay to avoid laggy pointer */
   void windChangedDelayed();

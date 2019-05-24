@@ -81,6 +81,7 @@ float RouteAltitudeLeg::dx() const
 QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
 {
   out << obj.getIdent()
+      << obj.getLineString()
       << "TOC" << obj.isTopOfClimb()
       << "TOD" << obj.isTopOfDescent()
       << "speed" << obj.getAverageSpeedKts()
@@ -88,6 +89,8 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
       << "fuel" << obj.getFuel()
       << "missed" << obj.isMissed()
       << "procedure" << obj.isAnyProcedure()
+      << "wind speed" << obj.getWindSpeed()
+      << "wind dir" << obj.getWindDirection()
       << "geometry" << obj.getGeometry() << "NM/ft";
   return out;
 }

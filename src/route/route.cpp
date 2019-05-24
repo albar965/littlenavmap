@@ -25,6 +25,7 @@
 #include "route/flightplanentrybuilder.h"
 #include "query/procedurequery.h"
 #include "query/airportquery.h"
+#include "weather/windreporter.h"
 #include "navapp.h"
 #include "fs/util/fsutil.h"
 #include "route/routealtitude.h"
@@ -837,6 +838,7 @@ void Route::removeProcedureLegs(proc::MapProcedureTypes type)
   clearFlightplanProcedureProperties(type);
 
   updateAll();
+  updateLegAltitudes();
 }
 
 void Route::clearFlightplanProcedureProperties(proc::MapProcedureTypes type)
@@ -959,7 +961,6 @@ void Route::updateAll()
   updateMagvar();
   updateDistancesAndCourse();
   updateBoundingRect();
-  updateLegAltitudes();
 }
 
 void Route::updateAirportRegions()
@@ -1135,11 +1136,12 @@ void Route::updateLegAltitudes()
     atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
 
   altitude->setCruiseAltitude(getCruisingAltitudeFeet());
+
+  // Need to update the wind data for manual wind setting
+  NavApp::getWindReporter()->updateManualRouteWinds();
   altitude->calculate();
 
-  altitude->calculateTrip(NavApp::getAircraftPerformance(),
-                          aircraftPerfController->getWindDir(),
-                          aircraftPerfController->getWindSpeed());
+  altitude->calculateTrip(NavApp::getAircraftPerformance());
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */

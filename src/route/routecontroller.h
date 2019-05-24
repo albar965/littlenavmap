@@ -237,6 +237,7 @@ public:
   bool hasSelection();
 
   void aircraftPerformanceChanged();
+  void windUpdated();
 
   /* Get table columns from the view */
   QStringList getRouteColumns() const;

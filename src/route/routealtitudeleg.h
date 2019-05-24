@@ -114,6 +114,38 @@ public:
     return fuel;
   }
 
+  /* First and last point of this leg. Pos 2 in the line is position of this leg.
+   * Can contain more than two points for TOC and/or TOD legs.
+   * Altitude in Pos is set */
+  const atools::geo::LineString& getLineString() const
+  {
+    return line;
+  }
+
+  /* Average wind direction for leg degrees true */
+  float getWindDirection() const
+  {
+    return windDirection;
+  }
+
+  /* Average wind speed for this leg in knots */
+  float getWindSpeed() const
+  {
+    return windSpeed;
+  }
+
+  /* Average head wind speed for this leg in knots. Negative values are tailwind. */
+  float getHeadWind() const
+  {
+    return windHead;
+  }
+
+  /* Average crosswind for this leg. If cross wind is < 0 wind is from left */
+  float getCrossWind() const
+  {
+    return windCross;
+  }
+
 private:
   friend class RouteAltitude;
 
@@ -153,6 +185,7 @@ private:
   /* Length is 0 */
   bool isPoint() const;
 
+  atools::geo::LineString line;
   QString ident;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
@@ -160,6 +193,9 @@ private:
   float travelTimeHours = 0.f;
   float fuel = 0.f;
   float averageSpeedKts = 0.f;
+
+  // Average wind values for this leg
+  float windDirection = 0.f, windSpeed = 0.f, windHead = 0.f, windCross = 0.f;
 
 };
 

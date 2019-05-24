@@ -514,6 +514,26 @@ void RouteController::aircraftPerformanceChanged()
   emit routeChanged(true);
 }
 
+void RouteController::windUpdated()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(!route.isEmpty())
+  {
+    // Get type, speed and cruise altitude from widgets
+    route.updateLegAltitudes();
+
+    updateModelRouteTimeFuel();
+
+    highlightProcedureItems();
+    highlightNextWaypoint(route.getActiveLegIndexCorrected());
+    updateErrorLabel();
+  }
+  updateWindowLabel();
+
+  // Emit also for empty route to catch performance changes
+  emit routeChanged(true);
+}
+
 /* Spin box altitude has changed value */
 void RouteController::routeAltChanged()
 {
@@ -695,6 +715,7 @@ void RouteController::newFlightplan()
 
   route.createRouteLegsFromFlightplan();
   route.updateAll();
+  route.updateLegAltitudes();
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -796,7 +817,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
   route.updateAll();
   route.updateAirwaysAndAltitude(adjustAltitude, adjustRouteType);
 
-  // Need to update again after updateAll and altitude change
   route.updateLegAltitudes();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
@@ -1001,6 +1021,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     loadProceduresFromFlightplan(true /* clear old procedure properties */, false /* quiet */);
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+    route.updateLegAltitudes();
 
     route.updateActiveLegAndPos(true /* force update */);
     updateTableModel();
@@ -1170,6 +1191,7 @@ void RouteController::calculateDirect()
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
 
   updateTableModel();
   postChange(undoCommand);
@@ -1382,7 +1404,6 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       route.updateActiveLegAndPos(true /* force update */);
 
-      // Need to update again after updateAll and altitude change
       route.updateLegAltitudes();
 
       updateTableModel();
@@ -1472,6 +1493,7 @@ void RouteController::reverseRoute()
   route.createRouteLegsFromFlightplan();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   route.updateActiveLegAndPos(true /* force update */);
@@ -1504,6 +1526,7 @@ void RouteController::postDatabaseLoad()
   loadProceduresFromFlightplan(false /* clear old procedure properties */, false /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
 
   // Update runway or parking if one of these has changed due to the database switch
   Flightplan& flightplan = route.getFlightplan();
@@ -2096,6 +2119,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   loadProceduresFromFlightplan(true /* clear old procedure properties */, true /* quiet */);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
 
   updateTableModel();
   NavApp::updateWindowTitle();
@@ -2221,6 +2245,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+    route.updateLegAltitudes();
 
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
@@ -2289,6 +2314,7 @@ void RouteController::deleteSelectedLegs()
 
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+    route.updateLegAltitudes();
 
     // Force update of start if departure airport was removed
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
@@ -2401,10 +2427,13 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
+
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
+  updateErrorLabel();
   postChange(undoCommand);
   NavApp::updateWindowTitle();
   emit routeChanged(true);
@@ -2441,11 +2470,14 @@ void RouteController::routeSetStartPosition(map::MapStart start)
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
+
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
   postChange(undoCommand);
+  updateErrorLabel();
   NavApp::updateWindowTitle();
   emit routeChanged(true);
 
@@ -2465,6 +2497,8 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
+
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2473,6 +2507,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   updateTableModel();
 
   postChange(undoCommand);
+  updateErrorLabel();
   NavApp::updateWindowTitle();
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
@@ -2517,6 +2552,8 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
+
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2525,6 +2562,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   updateTableModel();
 
   postChange(undoCommand);
+  updateErrorLabel();
   NavApp::updateWindowTitle();
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
@@ -2614,9 +2652,10 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
     route.setDepartureProcedureLegs(legs);
     route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */);
   }
-  updateErrorLabel();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
+
   routeToFlightPlan();
 
   // Get type and cruise altitude from widgets
@@ -2627,6 +2666,7 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
+  updateErrorLabel();
 
   qDebug() << Q_FUNC_INFO << route.getFlightplan().getProperties();
 
@@ -2673,6 +2713,8 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
+
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2684,6 +2726,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
+  updateErrorLabel();
 
   emit routeChanged(true);
 
@@ -2786,6 +2829,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
 
   // Force update of start if departure airport was changed
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
@@ -2798,6 +2842,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   updateTableModel();
 
   postChange(undoCommand);
+  updateErrorLabel();
   NavApp::updateWindowTitle();
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Replaced waypoint in flight plan."));
@@ -2822,6 +2867,7 @@ void RouteController::routeDelete(int index)
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);
+  route.updateLegAltitudes();
 
   // Force update of start if departure airport was removed
   updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
@@ -2833,6 +2879,8 @@ void RouteController::routeDelete(int index)
 
   postChange(undoCommand);
   NavApp::updateWindowTitle();
+  updateErrorLabel();
+
   emit routeChanged(true);
 
   NavApp::setStatusMessage(tr("Removed waypoint from flight plan."));

@@ -33,13 +33,17 @@ class AircraftPerf;
 }
 }
 
+namespace wind {
+struct WindAverageRoute;
+}
+
 class Route;
 
 /*
  * This class calculates altitudes for all route legs. This covers top of climb/descent
  * and sticks to all altitude restrictions of procedures while calculating.
  *
- * Also contains methods to calculate trip time and fuel consumption base on AircraftPerf information.
+ * Also contains methods to calculate trip time, wind and fuel consumption base on AircraftPerf information.
  *
  * Uses the route object for calculation and caches all values.
  */
@@ -60,7 +64,7 @@ public:
   void calculate();
 
   /* Calculate travelling time and fuel consumption based on given performance object and wind */
-  void calculateTrip(const atools::fs::perf::AircraftPerf& perf, float windDir, float windSpeed);
+  void calculateTrip(const atools::fs::perf::AircraftPerf& perf);
 
   /* Get interpolated altitude value in ft for the given distance to destination in NM */
   float getAltitudeForDistance(float distanceToDest) const;
@@ -204,6 +208,30 @@ public:
   /* Get an array for all altitudes in feet. Includes procedure points. */
   QVector<float> getAltitudes() const;
 
+  /* Average wind direction for route degrees true */
+  float getWindDirection() const
+  {
+    return windDirection;
+  }
+
+  /* Average wind speed for this route in knots */
+  float getWindSpeed() const
+  {
+    return windSpeed;
+  }
+
+  /* Average head wind speed for this route in knots. Negative values are tailwind. */
+  float getHeadWind() const
+  {
+    return windHead;
+  }
+
+  /* Average crosswind for this route. If cross wind is < 0 wind is from left */
+  float getCrossWind() const
+  {
+    return windCross;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
@@ -248,6 +276,9 @@ private:
   /* Adjust range for vector size */
   int fixRange(int index) const;
 
+  /* Fill line object in leg with geometry */
+  void fillGeometry();
+
   /* NM from start */
   float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
         distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
@@ -255,6 +286,9 @@ private:
   /* Fuel and performance calculation results */
   float tripFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
   bool unflyableLegs = false;
+
+  // Average wind values for the whole route
+  float windDirection = 0.f, windSpeed = 0.f, windHead = 0.f, windCross = 0.f;
 
   /* index in altitude legs */
   int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,

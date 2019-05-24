@@ -3620,7 +3620,7 @@
         <string/>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabRoutePlan">
         <attribute name="title">
@@ -3876,226 +3876,266 @@
           <number>2</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutAircraftPerformance">
+          <layout class="QVBoxLayout" name="verticalLayout_30">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>&amp;Wind:</string>
+            <layout class="QHBoxLayout" name="horizontalLayoutAircraftPerformance">
+             <property name="spacing">
+              <number>2</number>
              </property>
-             <property name="buddy">
-              <cstring>spinBoxAircraftPerformanceWindSpeed</cstring>
+             <property name="topMargin">
+              <number>0</number>
              </property>
-            </widget>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Edit Aircraft Performance</string>
+               </property>
+               <property name="statusTip">
+                <string>Edit Aircraft Performance</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_4">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceNew">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Add new aircraft performance data</string>
+               </property>
+               <property name="statusTip">
+                <string>Add new aircraft performance data</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceLoad">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Open Aircraft Performance File</string>
+               </property>
+               <property name="statusTip">
+                <string>Open Aircraft Performance File</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceSave">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Save Aircraft Performance File</string>
+               </property>
+               <property name="statusTip">
+                <string>Save Aircraft Performance File</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceSaveAs">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Save Aircraft Performance File as</string>
+               </property>
+               <property name="statusTip">
+                <string>Save Aircraft Performance File as</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAircraftPerformanceHelp">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Show help for aircraft performance</string>
+               </property>
+               <property name="statusTip">
+                <string>Show help for aircraft performance</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
-             <property name="toolTip">
-              <string>Average wind at flight plan cruise level.
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>&amp;Wind:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAircraftPerformanceWindSpeed</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
+               <property name="toolTip">
+                <string>Average wind at flight plan cruise level.
 Wind speed will be interpolated for climb and descent phases.</string>
-             </property>
-             <property name="statusTip">
-              <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
-             </property>
-             <property name="suffix">
-              <string> %speed%</string>
-             </property>
-             <property name="maximum">
-              <number>300</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
-             <property name="toolTip">
-              <string>Average magnetic wind direction at flight plan cruise level</string>
-             </property>
-             <property name="statusTip">
-              <string>Average magnetic wind direction at flight plan cruise level</string>
-             </property>
-             <property name="suffix">
-              <string> °M</string>
-             </property>
-             <property name="maximum">
-              <number>360</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Edit Aircraft Performance</string>
-             </property>
-             <property name="statusTip">
-              <string>Edit Aircraft Performance</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfedit.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceNew">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Add new aircraft performance data</string>
-             </property>
-             <property name="statusTip">
-              <string>Add new aircraft performance data</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfnew.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceLoad">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Open Aircraft Performance File</string>
-             </property>
-             <property name="statusTip">
-              <string>Open Aircraft Performance File</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceSave">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Save Aircraft Performance File</string>
-             </property>
-             <property name="statusTip">
-              <string>Save Aircraft Performance File</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsave.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceSaveAs">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Save Aircraft Performance File as</string>
-             </property>
-             <property name="statusTip">
-              <string>Save Aircraft Performance File as</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfsaveas.svg</iconset>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignRight">
-            <widget class="QPushButton" name="pushButtonAircraftPerformanceHelp">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Show help for aircraft performance</string>
-             </property>
-             <property name="statusTip">
-              <string>Show help for aircraft performance</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../littlenavmap.qrc">
-               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
-             </property>
-            </widget>
+               </property>
+               <property name="statusTip">
+                <string>Average wind at flight plan cruise level. Wind speed will be interpolated for climb and descent phases.</string>
+               </property>
+               <property name="suffix">
+                <string> %speed%</string>
+               </property>
+               <property name="maximum">
+                <number>300</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
+               <property name="toolTip">
+                <string>Average true wind direction at flight plan cruise level</string>
+               </property>
+               <property name="statusTip">
+                <string>Average true wind direction at flight plan cruise level</string>
+               </property>
+               <property name="suffix">
+                <string> °T</string>
+               </property>
+               <property name="maximum">
+                <number>360</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxAircraftPerformanceWindMan">
+               <property name="text">
+                <string>&amp;Manual</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -10423,8 +10463,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
   <tabstop>pushButtonRouteClearSelection</tabstop>
   <tabstop>pushButtonRouteHelp</tabstop>
   <tabstop>tableViewRoute</tabstop>
-  <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
-  <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
   <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
   <tabstop>pushButtonAircraftPerformanceNew</tabstop>
   <tabstop>pushButtonAircraftPerformanceLoad</tabstop>
