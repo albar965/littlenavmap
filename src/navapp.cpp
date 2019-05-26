@@ -117,6 +117,7 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   magDecReader = new atools::fs::common::MagDecReader();
   magDecReader->readFromTable(*databaseManager->getDatabaseSim());
+  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() << magDecReader->getWmmVersion();
 
   moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseMora());
   moraReader->readFromTable();
@@ -303,6 +304,8 @@ void NavApp::postDatabaseLoad()
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
   magDecReader->readFromTable(*getDatabaseSim());
+  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() << magDecReader->getWmmVersion();
+
   moraReader->readFromTable(*getDatabaseMora());
 
   airportQuerySim->initQueries();

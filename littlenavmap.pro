@@ -516,7 +516,6 @@ OTHER_FILES += \
   $$files(etc/*, true) \
   $$files(help/*, true) \
   $$files(web/*, true) \
-  $$files(magdec/*, true) \
   $$files(marble/*, true) \
   .travis.yml \
   .gitignore \
@@ -555,7 +554,6 @@ unix:!macx {
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/web $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/customize $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/magdec $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh &&
@@ -568,7 +566,6 @@ macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/web $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/customize $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
-  copydata.commands += cp -Rv $$PWD/magdec $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$ATOOLS_INC_PATH/../*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
@@ -599,7 +596,6 @@ unix:!macx {
   deploy.commands += cp -Rvf $$OUT_PWD/web $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/customize $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/translations $$DEPLOY_DIR &&
-  deploy.commands += cp -Rvf $$OUT_PWD/magdec $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/littlenavmap $$DEPLOY_DIR &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_DIR/translations &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_DIR/translations &&
@@ -744,7 +740,6 @@ win32 {
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/help) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$TARGET_NAME/web) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$TARGET_NAME/customize) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/magdec) $$p($$DEPLOY_BASE/$$TARGET_NAME/magdec) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$TARGET_NAME/etc) &&
   deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$TARGET_NAME/data) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libmarblewidget-qt5$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&

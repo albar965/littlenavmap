@@ -1145,7 +1145,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     }
 
     if(atools::almostNotEqual(climbDist + cruiseDist + descentDist, legDist))
-      qWarning() << Q_FUNC_INFO << "Distance differs";
+      qWarning() << Q_FUNC_INFO << "Distance differs" << (climbDist + cruiseDist + descentDist) << legDist;
 
     // Calculate leg time ================================================================
     float climbTime = climbSpeed > 0.f ? (climbDist / climbSpeed) : 0.f;
