@@ -262,7 +262,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsWeatherTooltipFs,
      ui->lineEditOptionsMapRangeRings,
      ui->lineEditOptionsWeatherAsnPath,
-     ui->lineEditOptionsWeatherNoaaUrl,
+     ui->lineEditOptionsWeatherXplanePath,
+     ui->lineEditOptionsWeatherNoaaStationsUrl,
      ui->lineEditOptionsWeatherVatsimUrl,
      ui->lineEditOptionsWeatherIvaoUrl,
 
@@ -384,16 +385,24 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
   // ===========================================================================
-  // Weather widgets
+  // Weather widgets - ASN
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::selectActiveSkyPathClicked);
-
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::editingFinished,
           this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::textEdited,
           this, &OptionsDialog::updateActiveSkyPathStatus);
 
-  connect(ui->lineEditOptionsWeatherNoaaUrl, &QLineEdit::textEdited,
+  // Weather widgets - X-Plane METAR
+  connect(ui->pushButtonOptionsWeatherXplanePathSelect, &QPushButton::clicked,
+          this, &OptionsDialog::selectXplanePathClicked);
+  connect(ui->lineEditOptionsWeatherXplanePath, &QLineEdit::editingFinished,
+          this, &OptionsDialog::updateWeatherButtonState);
+  connect(ui->lineEditOptionsWeatherXplanePath, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateXplanePathStatus);
+
+  // Online weather
+  connect(ui->lineEditOptionsWeatherNoaaStationsUrl, &QLineEdit::textEdited,
           this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherVatsimUrl, &QLineEdit::textEdited,
           this, &OptionsDialog::updateWeatherButtonState);
@@ -953,7 +962,24 @@ void OptionsDialog::trailColorClicked()
 void OptionsDialog::testWeatherNoaaUrlClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  testWeatherUrl(ui->lineEditOptionsWeatherNoaaUrl->text());
+  QStringList resultStr;
+
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  QDateTime datetime = QDateTime::currentDateTimeUtc();
+  datetime.setTime(QTime(datetime.time().hour(), 0, 0));
+  QString url = ui->lineEditOptionsWeatherNoaaStationsUrl->text().arg(datetime.time().hour(), 2, 10, QChar('0'));
+
+  bool result = WeatherReporter::testUrl(url, QString(), resultStr);
+
+  QGuiApplication::restoreOverrideCursor();
+
+  if(result)
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
+                             arg(resultStr.join("<br/>")));
+  else
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
 
 /* Test Vatsim weather URL and show a dialog with the result */
@@ -967,24 +993,32 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
 void OptionsDialog::testWeatherIvaoUrlClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  QStringList result;
-  if(WeatherReporter::testUrl(ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), result))
+  QStringList resultStr;
+
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+  bool result = WeatherReporter::testUrl(ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), resultStr);
+  QGuiApplication::restoreOverrideCursor();
+
+  if(result)
     QMessageBox::information(this, QApplication::applicationName(),
                              tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
-                             arg(result.join("<br/>")));
+                             arg(resultStr.join("<br/>")));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
 
 /* Test NOAA GRIB download URL and show a dialog of the first line */
 void OptionsDialog::testWeatherNoaaWindUrlClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  QStringList result;
-  if(WeatherReporter::testUrl(ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString(), result))
+  QStringList resultStr;
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+  bool result = WeatherReporter::testUrl(ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString(), resultStr);
+  QGuiApplication::restoreOverrideCursor();
+  if(result)
     QMessageBox::information(this, QApplication::applicationName(), tr("Success."));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join("\n")));
+    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
 
 void OptionsDialog::testWeatherUrl(const QString& url)
@@ -1193,8 +1227,9 @@ void OptionsDialog::widgetsToOptionData()
 
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
+  data.weatherXplanePath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
-  data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaUrl->text();
+  data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaStationsUrl->text();
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
   data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text();
 
@@ -1408,8 +1443,9 @@ void OptionsDialog::optionDataToWidgets()
     }
   }
   ui->lineEditOptionsMapRangeRings->setText(txt);
+  ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(data.weatherXplanePath));
   ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(data.weatherActiveSkyPath));
-  ui->lineEditOptionsWeatherNoaaUrl->setText(data.weatherNoaaUrl);
+  ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl);
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
   ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl);
 
@@ -1639,11 +1675,13 @@ void OptionsDialog::updateWeatherButtonState()
   ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAs);
   ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAs);
 
-  ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaUrl->text().isEmpty());
+  ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaStationsUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherIvaoTest->setEnabled(!ui->lineEditOptionsWeatherIvaoUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherNoaaWindTest->setEnabled(!ui->lineEditOptionsWeatherNoaaWindUrl->text().isEmpty());
+
   updateActiveSkyPathStatus();
+  updateXplanePathStatus();
   updateXplaneWindStatus();
 }
 
@@ -1705,6 +1743,26 @@ void OptionsDialog::updateActiveSkyPathStatus()
   }
 }
 
+void OptionsDialog::updateXplanePathStatus()
+{
+  const QString& path = ui->lineEditOptionsWeatherXplanePath->text();
+
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelOptionsWeatherXplanePathState->setText(HtmlBuilder::errorMessage(tr("File does not exist.")));
+    else if(!fileinfo.isFile())
+      ui->labelOptionsWeatherXplanePathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
+    else
+      ui->labelOptionsWeatherXplanePathState->setText(
+        tr("Weather file is valid. Using this one for X-Plane."));
+  }
+  else
+    // No manual path set
+    ui->labelOptionsWeatherAsnPathState->setText(tr("Using default weather from X-Plane base path."));
+}
+
 /* Checks the path to the X-Plane wind GRIB file. Display an error message in the label */
 void OptionsDialog::updateXplaneWindStatus()
 {
@@ -1736,6 +1794,21 @@ void OptionsDialog::selectActiveSkyPathClicked()
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(path));
+
+  updateWeatherButtonState();
+}
+
+void OptionsDialog::selectXplanePathClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString path = atools::gui::Dialog(this).openFileDialog(
+    tr("Open X-Plane METAR File"),
+    tr("X-Plane METAR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_XPLANE_METAR),
+    lnm::OPTIONS_DIALOG_XPLANE_DLG, ui->lineEditOptionsWeatherXplanePath->text());
+
+  if(!path.isEmpty())
+    ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(path));
 
   updateWeatherButtonState();
 }

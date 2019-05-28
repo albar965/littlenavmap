@@ -480,6 +480,12 @@ public:
     return weatherActiveSkyPath;
   }
 
+  /* X-Plane path that overrides the default */
+  const QString& getWeatherXplanePath() const
+  {
+    return weatherXplanePath;
+  }
+
   const QString& getWeatherNoaaUrl() const
   {
     return weatherNoaaUrl;
@@ -917,8 +923,8 @@ private:
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
 
-  // ui->lineEditOptionsWeatherAsnPath
-  QString weatherActiveSkyPath,
+  QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
+          weatherXplanePath, // lineEditOptionsWeatherXplanePath
           weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
           weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=%1",
           weatherIvaoUrl = "http://wx.ivao.aero/metar.php";

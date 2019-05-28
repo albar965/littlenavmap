@@ -82,11 +82,13 @@ private:
   void fromFlags2(QRadioButton *radioButton, opts::Flags2 flag);
 
   void selectActiveSkyPathClicked();
+  void selectXplanePathClicked();
   void weatherXplaneWindPathSelectClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
+  void updateXplanePathStatus();
   void updateXplaneWindStatus();
 
   void addDatabaseExcludeDirClicked();

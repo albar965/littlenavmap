@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>785</width>
-    <height>565</height>
+    <height>551</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -674,7 +674,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsPage3">
        <layout class="QGridLayout" name="gridLayout_21">
-        <item row="3" column="1">
+        <item row="3" column="1" alignment="Qt::AlignTop">
          <widget class="QGroupBox" name="groupBoxOptionsMapInfoClicks">
           <property name="title">
            <string>Information Clicks</string>
@@ -737,7 +737,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
           </layout>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="3" column="0" alignment="Qt::AlignTop">
          <widget class="QGroupBox" name="groupBoxMapTooltips">
           <property name="title">
            <string>Tooltips</string>
@@ -1045,6 +1045,9 @@ A range ring will be added for each radius value.</string>
              </property>
              <property name="text">
               <string>50 100 200 500</string>
+             </property>
+             <property name="cursorPosition">
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -3295,18 +3298,260 @@ Note that this value does not affect flight plan calculation or saving of flight
       </widget>
       <widget class="QWidget" name="stackedWidgetOptionsPage9">
        <layout class="QGridLayout" name="gridLayout_6">
-        <item row="8" column="1" colspan="2">
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+        <item row="6" column="1" colspan="2">
+         <widget class="QGroupBox" name="groupBox_10">
+          <property name="title">
+           <string>Files and Web Addresses for Airport Weather</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
+          <layout class="QGridLayout" name="gridLayout_22">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
+             <property name="toolTip">
+              <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
+If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
+             </property>
+             <property name="placeholderText">
+              <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
+             <property name="text">
+              <string>&amp;IVAO Weather Download URL:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherIvaoUrl</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherXplanePath">
+             <property name="text">
+              <string>X-&amp;Plane weather file:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherXplanePath</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
+             <property name="toolTip">
+              <string>Download URL for the IVAO weather file</string>
+             </property>
+             <property name="text">
+              <string>http://wx.ivao.aero/metar.php</string>
+             </property>
+             <property name="cursorPosition">
+              <number>0</number>
+             </property>
+             <property name="placeholderText">
+              <string>No URL set. IVAO weather reports are disabled.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherAsnPath">
+             <property name="text">
+              <string>Active Sky weather &amp;File:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherAsnPath</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
+             <property name="toolTip">
+              <string>Complete URL of the VATSIM network weather service.
+&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+             </property>
+             <property name="text">
+              <string>https://metar.vatsim.net/metar.php?id=%1</string>
+             </property>
+             <property name="cursorPosition">
+              <number>0</number>
+             </property>
+             <property name="placeholderText">
+              <string>No URL set. VATSIM weather reports are disabled.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherXplanePath">
+             <property name="toolTip">
+              <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
+If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
+             </property>
+             <property name="placeholderText">
+              <string>No &quot;METAR.rwx&quot; selected. Using default file.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
+             <property name="toolTip">
+              <string>Test the IVAO download URL</string>
+             </property>
+             <property name="text">
+              <string>&amp;Test</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
+             <property name="toolTip">
+              <string>Send a test request to the NOAA weather service.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Test</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
+             <property name="toolTip">
+              <string>Send a test request to the VATSIM weather service.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Test</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherAsnPathSelect">
+             <property name="toolTip">
+              <string>Select the &quot;current_wx_snapshot.txt&quot; file.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Select File ...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
+             <property name="text">
+              <string>&amp;VATSIM Weather Service URL:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherVatsimUrl</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
+             <property name="toolTip">
+              <string>Complete URL of the NOAA weather service file.
+&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.</string>
+             </property>
+             <property name="text">
+              <string>https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
+             </property>
+             <property name="cursorPosition">
+              <number>0</number>
+             </property>
+             <property name="placeholderText">
+              <string>No URL set. NOAA weather reports are disabled.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
+             <property name="text">
+              <string>&amp;NOAA Weather Service URL:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherNoaaStationsUrl</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherXplanePathSelect">
+             <property name="toolTip">
+              <string>Select the &quot;current_wx_snapshot.txt&quot; file.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Select File ...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QLabel" name="labelOptionsWeatherXplanePathState">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Valid</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" colspan="2">
+            <widget class="QLabel" name="labelOptionsWeatherAsnPathState">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Valid</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item row="0" column="1">
          <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
@@ -3329,8 +3574,11 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="bottomMargin">
             <number>2</number>
            </property>
-           <property name="spacing">
+           <property name="horizontalSpacing">
             <number>2</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>1</number>
            </property>
            <item row="1" column="0">
             <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
@@ -3388,6 +3636,140 @@ Note that this value does not affect flight plan calculation or saving of flight
           </layout>
          </widget>
         </item>
+        <item row="7" column="1" colspan="2">
+         <widget class="QGroupBox" name="groupBox_14">
+          <property name="title">
+           <string>Files and Web Addresses for Wind Reports</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_31">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherNoaaWindUrl">
+             <property name="text">
+              <string>NOAA &amp;Wind Service Base URL:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherNoaaWindUrl</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherXplaneWind">
+             <property name="toolTip">
+              <string>This file &quot;global_winds.grib&quot; will be used only if X-Plane is selected.
+If this field is empty, the default X-Plane wind file will be used.</string>
+             </property>
+             <property name="placeholderText">
+              <string>No &quot;global_winds.grib&quot; selected. Using X-Plane base path.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaWindUrl">
+             <property name="toolTip">
+              <string>Base URL of the NOAA weather service.
+There is usually no need to change this URL.
+Entering a wrong value might cause errors when downloading wind reports.</string>
+             </property>
+             <property name="text">
+              <string>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
+             </property>
+             <property name="cursorPosition">
+              <number>0</number>
+             </property>
+             <property name="placeholderText">
+              <string>No URL set. NOAA weather reports are disabled.</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindTest">
+             <property name="toolTip">
+              <string>Send a test request to the NOAA weather service.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Test</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="pushButtonOptionsWeatherXplaneWindPathSelect">
+             <property name="toolTip">
+              <string>Select the &quot;global_winds.grib&quot; file from the X-Plane base directory.</string>
+             </property>
+             <property name="text">
+              <string>&amp;Select File ...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelOptionsWeatherXplaneWind">
+             <property name="text">
+              <string>&amp;X-Plane Wind File:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditOptionsWeatherXplaneWind</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QLabel" name="labelOptionsWeatherXplaneWindPathState">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Valid</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
         <item row="0" column="2">
          <widget class="QGroupBox" name="groupBoxOptionsWeatherTooltip">
           <property name="toolTip">
@@ -3409,8 +3791,11 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="bottomMargin">
             <number>2</number>
            </property>
-           <property name="spacing">
+           <property name="horizontalSpacing">
             <number>2</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>1</number>
            </property>
            <item row="1" column="0">
             <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipAsn">
@@ -3462,314 +3847,6 @@ Note that this value does not affect flight plan calculation or saving of flight
              </property>
              <property name="checked">
               <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="6" column="1" colspan="2">
-         <widget class="QGroupBox" name="groupBox_10">
-          <property name="title">
-           <string>Files and Web Addresses for Airport Weather</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_22">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
-             <property name="toolTip">
-              <string>Complete URL of the VATSIM network weather service.
-&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
-             </property>
-             <property name="text">
-              <string>https://metar.vatsim.net/metar.php?id=%1</string>
-             </property>
-             <property name="placeholderText">
-              <string>No URL set. VATSIM weather reports are disabled.</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
-             <property name="toolTip">
-              <string>Send a test request to the VATSIM weather service.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Test</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
-             <property name="toolTip">
-              <string>Download URL for the IVAO weather file</string>
-             </property>
-             <property name="text">
-              <string>http://wx.ivao.aero/metar.php</string>
-             </property>
-             <property name="placeholderText">
-              <string>No URL set. IVAO weather reports are disabled.</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="labelOptionsWeatherAsnPath">
-             <property name="text">
-              <string>Active Sky weather &amp;File:</string>
-             </property>
-             <property name="buddy">
-              <cstring>lineEditOptionsWeatherAsnPath</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="pushButtonOptionsWeatherAsnPathSelect">
-             <property name="toolTip">
-              <string>Select the &quot;current_wx_snapshot.txt&quot; file.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Select File ...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaUrl">
-             <property name="toolTip">
-              <string>Complete URL of the NOAA weather service.
-&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
-             </property>
-             <property name="text">
-              <string>https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</string>
-             </property>
-             <property name="placeholderText">
-              <string>No URL set. NOAA weather reports are disabled.</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
-             <property name="text">
-              <string>&amp;IVAO Weather Download URL:</string>
-             </property>
-             <property name="buddy">
-              <cstring>lineEditOptionsWeatherIvaoUrl</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
-             <property name="text">
-              <string>&amp;NOAA Weather Service URL:</string>
-             </property>
-             <property name="buddy">
-              <cstring>lineEditOptionsWeatherNoaaUrl</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="2">
-            <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
-             <property name="toolTip">
-              <string>Test the IVAO download URL</string>
-             </property>
-             <property name="text">
-              <string>&amp;Test</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
-             <property name="text">
-              <string>&amp;VATSIM Weather Service URL:</string>
-             </property>
-             <property name="buddy">
-              <cstring>lineEditOptionsWeatherVatsimUrl</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
-             <property name="toolTip">
-              <string>Send a test request to the NOAA weather service.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Test</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
-             <property name="toolTip">
-              <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
-If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
-             </property>
-             <property name="placeholderText">
-              <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelOptionsWeatherAsnPathState">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Valid</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-             <property name="margin">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="7" column="1" colspan="2">
-         <widget class="QGroupBox" name="groupBox_14">
-          <property name="title">
-           <string>Files and Web Addresses for Wind Reports</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_31">
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="pushButtonOptionsWeatherXplaneWindPathSelect">
-             <property name="toolTip">
-              <string>Select the &quot;global_winds.grib&quot; file from the X-Plane base directory.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Select File ...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindTest">
-             <property name="toolTip">
-              <string>Send a test request to the NOAA weather service.</string>
-             </property>
-             <property name="text">
-              <string>&amp;Test</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelOptionsWeatherNoaaWindUrl">
-             <property name="text">
-              <string>NOAA &amp;Wind Service Base URL:</string>
-             </property>
-             <property name="buddy">
-              <cstring>lineEditOptionsWeatherNoaaWindUrl</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEditOptionsWeatherXplaneWind">
-             <property name="toolTip">
-              <string>This file &quot;global_winds.grib&quot; will be used only if X-Plane is selected.
-If this field is empty, the default X-Plane wind file will be used.</string>
-             </property>
-             <property name="placeholderText">
-              <string>No &quot;global_winds.grib&quot; selected. Using X-Plane base path.</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaWindUrl">
-             <property name="toolTip">
-              <string>Base URL of the NOAA weather service.
-There is usually no need to change this URL.
-Entering a wrong value might cause errors when downloading wind reports.</string>
-             </property>
-             <property name="text">
-              <string>https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
-             </property>
-             <property name="placeholderText">
-              <string>No URL set. NOAA weather reports are disabled.</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelOptionsWeatherXplaneWindPathState">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Valid</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-             <property name="margin">
-              <number>6</number>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="labelOptionsWeatherXplaneWind">
-             <property name="text">
-              <string>&amp;X-Plane Wind File:</string>
-             </property>
-             <property name="buddy">
-              <cstring>lineEditOptionsWeatherXplaneWind</cstring>
              </property>
             </widget>
            </item>
@@ -4657,7 +4734,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsWeatherTooltipIvao</tabstop>
   <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
   <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
-  <tabstop>lineEditOptionsWeatherNoaaUrl</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaStationsUrl</tabstop>
   <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
   <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
   <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
