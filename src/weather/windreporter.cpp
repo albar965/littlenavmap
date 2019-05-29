@@ -98,7 +98,9 @@ void WindReporter::restoreState()
     currentSource = static_cast<wind::WindSource>(settings.valueInt(lnm::MAP_WIND_SOURCE, wind::NOAA));
   }
   valuesToAction();
-  updateDataSource();
+
+  // Download wind data with a delay of five seconds after startup
+  QTimer::singleShot(5000, this, &WindReporter::updateDataSource);
   updateToolButtonState();
 }
 

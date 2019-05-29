@@ -78,6 +78,9 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
 
+  // Delay download of NOAA weather for three seconds to speed up startup time
+  QTimer::singleShot(3000, noaaWeather, &NoaaWeatherDownloader::startDownload);
+
   vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
 
@@ -125,36 +128,6 @@ atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airport
     return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
   else
     return atools::geo::EMPTY_POS;
-}
-
-void WeatherReporter::noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line)
-{
-  // Need to use hardcoded English month names since QDate uses localized names
-  static const QStringList months({"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"});
-  static const QRegularExpression INDEX_LINE_REGEXP(
-    ">([A-Z0-9]{3,4}).TXT<.*>(\\d+)-(\\S+)-(\\d+)\\s+(\\d+):(\\d+)\\s*<");
-
-  // <tr><td><a href="AGGM.TXT">AGGM.TXT</a></td><td align="right">09-Feb-2018 03:06  </td><td align="right"> 72 </td></tr>
-  // <tr><td><a href="AGTB.TXT">AGTB.TXT</a></td><td align="right">27-Feb-2009 10:31  </td><td align="right"> 88 </td></tr>
-  // <tr><td><a href="AK15.TXT">AK15.TXT</a></td><td align="right">13-Jan-2014 13:20  </td><td align="right"> 58 </td></tr>
-  // qDebug() << Q_FUNC_INFO << line;
-
-  QRegularExpressionMatch match = INDEX_LINE_REGEXP.match(line);
-  if(match.hasMatch())
-  {
-    icao = match.captured(1).toUpper();
-
-    // 09-Feb-2018 03:06
-    int day = match.captured(2).toInt();
-    int month = months.indexOf(match.captured(3)) + 1;
-    int year = match.captured(4).toInt();
-    int hour = match.captured(5).toInt();
-    int minute = match.captured(6).toInt();
-
-    lastUpdate = QDateTime(QDate(year, month, day), QTime(hour, minute));
-
-    // qDebug() << icao << lastUpdate;
-  }
 }
 
 void WeatherReporter::deleteFsWatcher()

@@ -180,7 +180,6 @@ private:
   void createFsWatcher();
   void initXplane();
 
-  static void noaaIndexParser(QString& icao, QDateTime& lastUpdate, const QString& line);
   static atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
