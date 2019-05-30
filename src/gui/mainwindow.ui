@@ -4122,6 +4122,14 @@ Wind speed will be interpolated for climb and descent phases.</string>
              </item>
              <item>
               <widget class="QCheckBox" name="checkBoxAircraftPerformanceWindMan">
+               <property name="toolTip">
+                <string>Use manual wind settings for fuel calculation if checked.
+This will also be reflected by the wind barbs at the flight plan waypoints and the
+wind display in the elevation profile top line.</string>
+               </property>
+               <property name="statusTip">
+                <string>Use manual wind settings for fuel calculation.</string>
+               </property>
                <property name="text">
                 <string>&amp;Manual</string>
                </property>

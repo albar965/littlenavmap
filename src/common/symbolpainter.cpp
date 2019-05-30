@@ -295,7 +295,7 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
 
     // Wind pointer and/or barbs =====================================================
     if(windBarbs || windPointer)
-      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, false /* altWind */, fast);
+      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, false /* altWind */, false /* route */, fast);
 
     // Draw coverage indicating pies or circles =====================================================
 
@@ -378,24 +378,28 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar,
-                                  float x, float y, float size, bool windBarbs, bool altWind, bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool route,
+                                  bool fast) const
 {
-  drawWindBarbs(painter, parsedMetar.getPrevailingWindSpeedKnots(),
-                parsedMetar.getGustSpeedKts(), parsedMetar.getPrevailingWindDir(), x, y, size, windBarbs, altWind,
-                fast);
+  drawWindBarbs(painter, parsedMetar.getPrevailingWindSpeedKnots(), parsedMetar.getGustSpeedKts(),
+                parsedMetar.getPrevailingWindDir(), x, y, size, windBarbs, altWind, route, fast);
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, float dir,
-                                  float x, float y, float size, bool windBarbs, bool altWind, bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool route,
+                                  bool fast) const
 {
   // Make lines thinner for high altitude wind barbs
   float lineWidth = size * (altWind ? 0.2f : 0.3f);
   float bgLineWidth = lineWidth * 2.5f;
 
+  // Use yellow route color background for wind barbs at flight plan waypoints
+  QColor background = route ? mapcolors::routeTextBoxColor : mapcolors::weatherBackgoundColor;
+
   if(altWind)
   {
     // High altitude wind barbs only - center circle
-    painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth * .6f, Qt::SolidLine, Qt::RoundCap,
+    painter->setPen(QPen(background, bgLineWidth * .6f, Qt::SolidLine, Qt::RoundCap,
                          Qt::RoundJoin));
     painter->drawEllipse(QPointF(x, y), bgLineWidth / 2.f, bgLineWidth / 2.f);
   }
@@ -438,7 +442,7 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
     // Draw wind pointer background ============================================================
 
     QLineF line(0., 0., 0., -lineLength);
-    painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setPen(QPen(background, bgLineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->translate(QPointF(x, y));
     painter->rotate(dir);
     // Line from 0 to 0 - length
@@ -449,9 +453,9 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
       // Draw wind barbs background ============================================================
       if(barbsBackground != nullptr && !barbsBackground->isEmpty())
       {
-        painter->setPen(QPen(mapcolors::weatherBackgoundColor, bgLineWidth,
+        painter->setPen(QPen(background, bgLineWidth,
                              Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        painter->setBrush(mapcolors::weatherBackgoundColor);
+        painter->setBrush(background);
         drawBarbFeathers(painter, *barbsBackground, lineLength, barbLength5, barbLength10, barbLength50, barbStep);
       }
 
@@ -476,7 +480,7 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
 
     // Draw wind pointer  ============================================================
     painter->setPen(QPen(mapcolors::weatherWindColor, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    painter->setBrush(mapcolors::weatherBackgoundColor);
+    painter->setBrush(background);
     painter->drawLine(line);
     painter->resetTransform();
 

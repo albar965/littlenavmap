@@ -631,6 +631,11 @@ atools::geo::Pos Route::getPositionAtDistance(float distFromStartNm) const
   return retval;
 }
 
+const RouteAltitudeLeg& Route::getAltitudeLegAt(int i) const
+{
+  return altitude->at(i);
+}
+
 int Route::getDestinationLegIndex() const
 {
   if(isEmpty())

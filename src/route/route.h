@@ -25,6 +25,7 @@
 class CoordinateConverter;
 class FlightplanEntryBuilder;
 class RouteAltitude;
+class RouteAltitudeLeg;
 
 /*
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
@@ -172,7 +173,7 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  map::MapSearchResult& mapobjects, QList<proc::MapProcedurePoint>* procPoints,
+                  map::MapSearchResult& mapobjects, QList<proc::MapProcedurePoint> *procPoints,
                   bool includeProcedure) const;
 
   /* @return true if any leg has an airway name */
@@ -394,6 +395,8 @@ public:
   {
     return *altitude;
   }
+
+  const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
   void updateLegAltitudes();

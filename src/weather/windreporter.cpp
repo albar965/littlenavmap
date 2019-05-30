@@ -86,6 +86,7 @@ void WindReporter::optionsChanged()
 void WindReporter::saveState()
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_LEVEL, currentLevel);
+  atools::settings::Settings::instance().setValue(lnm::MAP_WIND_LEVEL_ROUTE, showFlightplanWaypoints);
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_SOURCE, currentSource);
 }
 
@@ -95,6 +96,7 @@ void WindReporter::restoreState()
   {
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     currentLevel = settings.valueInt(lnm::MAP_WIND_LEVEL, wind::NONE);
+    showFlightplanWaypoints = settings.valueBool(lnm::MAP_WIND_LEVEL_ROUTE, false);
     currentSource = static_cast<wind::WindSource>(settings.valueInt(lnm::MAP_WIND_SOURCE, wind::NOAA));
   }
   valuesToAction();
@@ -160,12 +162,22 @@ void WindReporter::addToolbarButton()
   button->setStatusTip(button->toolTip());
   button->setCheckable(true);
 
-  actionGroup = new QActionGroup(button);
-
   // Insert before show route
   ui->toolbarMapOptions->insertWidget(ui->actionMapShowSunShading, button);
   ui->menuHighAltitudeWindLevels->clear();
 
+  // Create and add flight plan action =====================================
+  actionFlightplanWaypoints = new QAction(tr("At Flight Plan Waypoints"), button);
+  actionFlightplanWaypoints->setToolTip(tr("Show wind at flight plan waypoints"));
+  actionFlightplanWaypoints->setStatusTip(actionFlightplanWaypoints->toolTip());
+  actionFlightplanWaypoints->setCheckable(true);
+  button->addAction(actionFlightplanWaypoints);
+  ui->menuHighAltitudeWindLevels->addAction(actionFlightplanWaypoints);
+  connect(actionFlightplanWaypoints, &QAction::triggered, this, &WindReporter::toolbarActionFlightplanTriggered);
+
+  ui->menuHighAltitudeWindLevels->addSeparator();
+
+  actionGroup = new QActionGroup(button);
   // Create and add none action =====================================
   actionNone = new QAction(tr("None"), button);
   actionNone->setToolTip(tr("Do not show wind barbs"));
@@ -222,6 +234,11 @@ bool WindReporter::isWindShown() const
   return currentLevel != wind::NONE;
 }
 
+bool WindReporter::isRouteWindShown() const
+{
+  return showFlightplanWaypoints;
+}
+
 bool WindReporter::isWindSourceEnabled() const
 {
   return NavApp::getMainUi()->actionMapShowWindDisabled->isChecked();
@@ -241,12 +258,23 @@ void WindReporter::sourceActionTriggered()
   }
 }
 
+void WindReporter::toolbarActionFlightplanTriggered()
+{
+  if(!ignoreUpdates)
+  {
+    actionToValues();
+    windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
+    updateToolButtonState();
+    emit windUpdated();
+  }
+}
+
 void WindReporter::toolbarActionTriggered()
 {
   if(!ignoreUpdates)
   {
     actionToValues();
-    windlevelToolButton->setChecked(!actionNone->isChecked());
+    windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
     updateToolButtonState();
     emit windUpdated();
   }
@@ -255,7 +283,9 @@ void WindReporter::toolbarActionTriggered()
 void WindReporter::updateToolButtonState()
 {
   windlevelToolButton->setEnabled(windQuery->hasWindData());
-  NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(windQuery->hasWindData());
+  NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(
+    windQuery->hasWindData() ||
+    (NavApp::getAircraftPerfController()->isWindManual() && windQueryManual->hasWindData()));
 }
 
 void WindReporter::valuesToAction()
@@ -283,7 +313,9 @@ void WindReporter::valuesToAction()
       }
   }
 
-  windlevelToolButton->setChecked(!actionNone->isChecked());
+  actionFlightplanWaypoints->setChecked(showFlightplanWaypoints);
+
+  windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
 
   qDebug() << Q_FUNC_INFO << "source" << currentSource;
   switch(currentSource)
@@ -315,6 +347,8 @@ void WindReporter::actionToValues()
     currentSource = wind::NOAA;
   else if(NavApp::getMainUi()->actionMapShowWindSimulator->isChecked())
     currentSource = wind::SIMULATOR;
+
+  showFlightplanWaypoints = actionFlightplanWaypoints->isChecked();
 
   qDebug() << Q_FUNC_INFO << currentLevel;
 }
@@ -387,18 +421,29 @@ atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos, f
   return wp;
 }
 
-atools::grib::Wind WindReporter::getWindForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2)
+atools::grib::WindPos WindReporter::getWindForPos(const atools::geo::Pos& pos)
+{
+  return getWindForPos(pos, pos.getAltitude());
+}
+
+atools::grib::Wind WindReporter::getWindForPosRoute(const atools::geo::Pos& pos)
+{
+  return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->
+         getWindForPos(pos);
+}
+
+atools::grib::Wind WindReporter::getWindForLineRoute(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2)
 {
   return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->
          getWindAverageForLine(pos1, pos2);
 }
 
-atools::grib::Wind WindReporter::getWindForLine(const atools::geo::Line& line)
+atools::grib::Wind WindReporter::getWindForLineRoute(const atools::geo::Line& line)
 {
-  return getWindForLine(line.getPos1(), line.getPos2());
+  return getWindForLineRoute(line.getPos1(), line.getPos2());
 }
 
-atools::grib::Wind WindReporter::getWindForLineString(const atools::geo::LineString& line)
+atools::grib::Wind WindReporter::getWindForLineStringRoute(const atools::geo::LineString& line)
 {
   return (NavApp::getAircraftPerfController()->isWindManual() ? windQueryManual : windQuery)->
          getWindAverageForLineString(line);

@@ -27,6 +27,7 @@
 #include "mapgui/mapscale.h"
 #include "util/paintercontextsaver.h"
 #include "common/textplacement.h"
+#include "route/routealtitudeleg.h"
 
 #include <QBitArray>
 #include <marble/GeoDataLineString.h>
@@ -39,7 +40,9 @@ using proc::MapProcedureLegs;
 using map::PosCourse;
 using atools::contains;
 
-MapPainterRoute::MapPainterRoute(MapPaintWidget* mapWidget, MapScale *mapScale, const Route *routeParam)
+const static float MIN_WIND_BARB_ALTITUDE = 8000.f;
+
+MapPainterRoute::MapPainterRoute(MapPaintWidget *mapWidget, MapScale *mapScale, const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)
 {
 }
@@ -58,7 +61,8 @@ void MapPainterRoute::render(PaintContext *context)
   // Draw the approach preview if any selected in the search tab
   proc::MapProcedureLeg lastLegPoint;
   if(context->mapLayer->isApproach())
-    paintProcedure(lastLegPoint, context, mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
+    paintProcedure(lastLegPoint, context,
+                   mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
                    true /* preview */);
 
   if(context->objectTypes & map::FLIGHTPLAN && OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD &&
@@ -236,6 +240,9 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   // Draw symbol text
   drawRouteSymbolText(context, visibleStartPoints, textPlacement.getStartPoints());
+
+  if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE))
+    drawWindBarbs(context, visibleStartPoints, textPlacement.getStartPoints());
 
   // Remember last point across procedures to avoid overlaying text
   proc::MapProcedureLeg lastLegPoint;
@@ -1239,6 +1246,15 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
 
+  if(!preview && (leg.isSid() || leg.isStar()) &&
+     (context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE)))
+  {
+    // Do not draw wind barbs for approaches
+    const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(index);
+    if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE)
+      drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
+  }
+
   // Remember last painted leg for next procedure painter
   lastLegPoint = leg;
 }
@@ -1445,6 +1461,24 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
   }
 }
 
+void MapPainterRoute::drawWindBarbs(const PaintContext *context,
+                                    const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
+{
+  int i = 0;
+  for(const QPointF& pt : startPoints)
+  {
+    if(visibleStartPoints.testBit(i))
+    {
+      int x = atools::roundToInt(pt.x());
+      int y = atools::roundToInt(pt.y());
+      const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(i);
+      if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE)
+        drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
+    }
+    i++;
+  }
+}
+
 void MapPainterRoute::drawRouteSymbolText(const PaintContext *context,
                                           const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
@@ -1525,4 +1559,12 @@ void MapPainterRoute::drawStartParking(const PaintContext *context)
       }
     }
   }
+}
+
+void MapPainterRoute::drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir,
+                                             float x, float y)
+{
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getWindBarbsSymbolSize());
+  symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
+                               true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);
 }

@@ -89,6 +89,8 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
       << "fuel" << obj.getFuel()
       << "missed" << obj.isMissed()
       << "procedure" << obj.isAnyProcedure()
+      << "avg wind speed" << obj.getAverageWindSpeed()
+      << "avg wind dir" << obj.getAverageWindDirection()
       << "wind speed" << obj.getWindSpeed()
       << "wind dir" << obj.getWindDirection()
       << "geometry" << obj.getGeometry() << "NM/ft";

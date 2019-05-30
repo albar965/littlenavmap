@@ -260,7 +260,8 @@ void MapPaintWidget::weatherUpdated()
 
 void MapPaintWidget::windUpdated()
 {
-  if(paintLayer->getShownMapObjects() | map::WIND_BARBS)
+  if(paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS ||
+     paintLayer->getShownMapObjectDisplayTypes() | map::WIND_BARBS_ROUTE)
     update();
 }
 

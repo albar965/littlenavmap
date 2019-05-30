@@ -114,7 +114,7 @@ public:
     return fuel;
   }
 
-  /* First and last point of this leg. Pos 2 in the line is position of this leg.
+  /* First and last point of this leg. Pos 2 in the line is position of this leg waypoint.
    * Can contain more than two points for TOC and/or TOD legs.
    * Altitude in Pos is set */
   const atools::geo::LineString& getLineString() const
@@ -123,27 +123,37 @@ public:
   }
 
   /* Average wind direction for leg degrees true */
-  float getWindDirection() const
+  float getAverageWindDirection() const
   {
-    return windDirection;
+    return avgWindDirection;
   }
 
   /* Average wind speed for this leg in knots */
+  float getAverageWindSpeed() const
+  {
+    return avgWindSpeed;
+  }
+
+  /* Average head wind speed for this leg in knots. Negative values are tailwind. */
+  float getAverageHeadWind() const
+  {
+    return avgWindHead;
+  }
+
+  /* Average crosswind for this leg. If cross wind is < 0 wind is from left */
+  float getAverageCrossWind() const
+  {
+    return avgWindCross;
+  }
+
   float getWindSpeed() const
   {
     return windSpeed;
   }
 
-  /* Average head wind speed for this leg in knots. Negative values are tailwind. */
-  float getHeadWind() const
+  float getWindDirection() const
   {
-    return windHead;
-  }
-
-  /* Average crosswind for this leg. If cross wind is < 0 wind is from left */
-  float getCrossWind() const
-  {
-    return windCross;
+    return windDirection;
   }
 
 private:
@@ -195,8 +205,10 @@ private:
   float averageSpeedKts = 0.f;
 
   // Average wind values for this leg
-  float windDirection = 0.f, windSpeed = 0.f, windHead = 0.f, windCross = 0.f;
+  float avgWindDirection = 0.f, avgWindSpeed = 0.f, avgWindHead = 0.f, avgWindCross = 0.f;
 
+  // Wind at the waypoint (y2)
+  float windSpeed = 0.f, windDirection = 0.f;
 };
 
 QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj);

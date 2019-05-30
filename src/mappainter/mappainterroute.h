@@ -118,6 +118,9 @@ private:
   void paintProcedureUnderlay(const PaintContext *context, const proc::MapProcedureLeg& leg, int x, int y, int size);
 
   void drawStartParking(const PaintContext *context);
+  void drawWindBarbs(const PaintContext *context, const QBitArray& visibleStartPoints,
+                       const QList<QPointF>& startPoints);
+  void drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir, float x, float y);
 
   const Route *route;
 };

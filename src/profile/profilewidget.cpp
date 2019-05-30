@@ -1545,16 +1545,16 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.at(index + 1) : nullptr;
   if(NavApp::getWindReporter()->hasWindData() && leg != nullptr)
   {
-    atools::grib::WindPos wind = NavApp::getWindReporter()->getWindForPos(pos, altitude);
+    atools::grib::Wind wind = NavApp::getWindReporter()->getWindForPosRoute(pos.alt(altitude));
 
     float headWind = 0.f, crossWind = 0.f;
-    atools::geo::windForCourse(headWind, crossWind, wind.wind.speed, wind.wind.dir, leg->getCourseToTrue());
+    atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
 
-    float magVar = NavApp::getMagVar(wind.pos);
+    float magVar = NavApp::getMagVar(pos);
 
     variableLabelText.append(tr(", Wind %1°M, %2").
-                             arg(atools::geo::normalizeCourse(wind.wind.dir - magVar), 0, 'f', 0).
-                             arg(Unit::speedKts(wind.wind.speed)));
+                             arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
+                             arg(Unit::speedKts(wind.speed)));
 
     if(std::abs(headWind) >= 1.f)
     {

@@ -3062,6 +3062,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeaturesDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
   setShowMapFeaturesDisplay(map::MINIMUM_ALTITUDE, ui->actionMapShowMinimumAltitude->isChecked());
   setShowMapFeaturesDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
+  setShowMapFeaturesDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
 
   // Force addon airport independent of other settings or not
   setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());

@@ -122,6 +122,7 @@ const QLatin1Literal MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1Literal MAP_USERDATA("Map/Userdata");
 const QLatin1Literal MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");
 const QLatin1Literal MAP_WIND_LEVEL("Map/WindLevel");
+const QLatin1Literal MAP_WIND_LEVEL_ROUTE("Map/WindLevelRoute");
 const QLatin1Literal MAP_WIND_SOURCE("Map/WindSource");
 const QLatin1Literal MAP_HOMEDISTANCE("Map/HomeDistance");
 const QLatin1Literal MAP_HOMELATY("Map/HomeLatY");

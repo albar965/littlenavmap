@@ -97,8 +97,11 @@ public:
     return currentLevel;
   }
 
-  /* true if wind barbs are to be drawn */
+  /* true if wind barbs grid is to be drawn */
   bool isWindShown() const;
+
+  /* true if wind barbs should be shown at flight plan waypoints */
+  bool isRouteWindShown() const;
 
   /* True if wind available */
   bool hasWindData() const;
@@ -115,11 +118,15 @@ public:
 
   /* Get (interpolated) wind for given position and altitude */
   atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos, float altFeet);
+  atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos);
+
+  /* Get (interpolated) wind for given position and altitude. Use manual wind setting if checkbox is set. */
+  atools::grib::Wind getWindForPosRoute(const atools::geo::Pos& pos);
 
   /* Get interpolated winds for lines. Use manual wind setting if checkbox is set. */
-  atools::grib::Wind getWindForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
-  atools::grib::Wind getWindForLine(const atools::geo::Line& line);
-  atools::grib::Wind getWindForLineString(const atools::geo::LineString& line);
+  atools::grib::Wind getWindForLineRoute(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
+  atools::grib::Wind getWindForLineRoute(const atools::geo::Line& line);
+  atools::grib::Wind getWindForLineStringRoute(const atools::geo::LineString& line);
 
   /* Get a list of winds for the given position at all given altitudes. Altitiude field in pos contains the altitude.
    * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
@@ -140,6 +147,7 @@ signals:
 private:
   /* One of the toolbar dropdown menu items of main menu items was triggered */
   void toolbarActionTriggered();
+  void toolbarActionFlightplanTriggered();
   void updateDataSource();
 
   /* Download successfully finished. Only for void init(). */
@@ -162,7 +170,8 @@ private:
   QToolButton *windlevelToolButton = nullptr;
 
   /* Special actions */
-  QAction *actionNone = nullptr, *actionFlightplan = nullptr, *actionAgl = nullptr;
+  QAction *actionNone = nullptr, *actionFlightplanWaypoints = nullptr, *actionFlightplan = nullptr,
+          *actionAgl = nullptr;
 
   /* Actions for levels */
   QVector<QAction *> actionLevelVector;
@@ -179,6 +188,7 @@ private:
   /* Currently displayed altitude or one of SpecialLevels */
   int currentLevel = wind::NONE;
   wind::WindSource currentSource = wind::NOAA;
+  bool showFlightplanWaypoints = false;
 
   const QVector<int> levelsTooltip = {10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
