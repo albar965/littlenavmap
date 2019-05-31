@@ -78,9 +78,6 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   noaaWeather->setFetchAirportCoords(fetchAirportCoordinates);
 
-  // Delay download of NOAA weather for three seconds to speed up startup time
-  QTimer::singleShot(3000, noaaWeather, &NoaaWeatherDownloader::startDownload);
-
   vatsimWeather = new WeatherNetSingle(parentWindow, onlineWeatherTimeoutSecs, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
 

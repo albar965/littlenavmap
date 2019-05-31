@@ -197,10 +197,7 @@ void WebController::stopServer()
   qDebug() << Q_FUNC_INFO;
 
   if(!isRunning())
-  {
-    qWarning() << Q_FUNC_INFO << "Web server already stopped";
     return;
-  }
 
   mapController->deInit();
 
