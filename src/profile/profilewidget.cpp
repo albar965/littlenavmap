@@ -1543,16 +1543,18 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
   // Show wind at altitude===============================================
   const RouteLeg *leg = index < legList.route.size() - 1 ? &legList.route.at(index + 1) : nullptr;
-  if(NavApp::getWindReporter()->hasWindData() && leg != nullptr)
+  WindReporter *windReporter = NavApp::getWindReporter();
+  if((windReporter->hasWindData() || windReporter->isWindManual()) && leg != nullptr)
   {
-    atools::grib::Wind wind = NavApp::getWindReporter()->getWindForPosRoute(pos.alt(altitude));
+    atools::grib::Wind wind = windReporter->getWindForPosRoute(pos.alt(altitude));
 
     float headWind = 0.f, crossWind = 0.f;
     atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
 
     float magVar = NavApp::getMagVar(pos);
 
-    variableLabelText.append(tr(", Wind %1°M, %2").
+    variableLabelText.append(tr(", %1Wind %2°M, %3").
+                             arg(windReporter->isWindManual() ? tr("Manual ") : QString()).
                              arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
                              arg(Unit::speedKts(wind.speed)));
 

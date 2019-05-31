@@ -106,6 +106,9 @@ public:
   /* True if wind available */
   bool hasWindData() const;
 
+  /* true if checkbox "manual" is checked */
+  bool isWindManual() const;
+
   /* true if X-Plane or NOAA wind is enabled. */
   bool isWindSourceEnabled() const;
 

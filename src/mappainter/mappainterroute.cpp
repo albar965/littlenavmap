@@ -1464,6 +1464,9 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
 void MapPainterRoute::drawWindBarbs(const PaintContext *context,
                                     const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
+  if(!route->hasAltitudeLegs() || !route->hasValidProfile())
+    return;
+
   int i = 0;
   for(const QPointF& pt : startPoints)
   {

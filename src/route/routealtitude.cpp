@@ -135,6 +135,7 @@ void RouteAltitude::clearAll()
   travelTime = 0.f;
   averageGroundSpeed = 0.f;
   unflyableLegs = false;
+  validProfile = false;
 }
 
 float RouteAltitude::getTotalDistance() const
@@ -601,6 +602,8 @@ void RouteAltitude::calculate()
 
       // Reset all to cruise level - profile will print a message
       calculateDistances();
+
+      validProfile = false;
     }
     else
     {
@@ -610,6 +613,7 @@ void RouteAltitude::calculate()
 
       // Fetch ILS and VASI at destination
       calculateApproachIlsAndSlopes();
+      validProfile = true;
     }
 
     // Set coordinates into legs
@@ -924,6 +928,9 @@ void RouteAltitude::fillGeometry()
     if(altLeg.topOfDescent)
       altLeg.line.insert(altLeg.line.size() - 1,
                          route->getPositionAtDistance(distanceTopOfDescent).alt(route->getCruisingAltitudeFeet()));
+
+    if(!altLeg.line.hasAllValidPoints())
+      qWarning() << Q_FUNC_INFO << "Invalid points";
   }
 }
 

@@ -232,6 +232,11 @@ public:
     return windCross;
   }
 
+  bool isValidProfile() const
+  {
+    return validProfile;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const RouteAltitude& obj);
 
@@ -303,6 +308,9 @@ private:
 
   /* Set by calculate */
   bool violatesRestrictions = false;
+
+  /* Has TOC and TOD */
+  bool validProfile = false;
 
   float climbRateFtPerNm = 333.f, descentRateFtPerNm = 333.f;
   float cruiseAltitide = 0.f;

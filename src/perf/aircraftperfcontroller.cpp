@@ -733,20 +733,25 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2), flags);
 
   // Wind =======================================================
-  if(!NavApp::getWindReporter()->hasWindData())
-    html.row2(tr("Average Wind:"), tr("Wind source disabled"), flags);
-  else
+  QStringList windText;
+
+  if(!isWindManual())
   {
-    QStringList windText;
-
-    // Wind ========================
-    if(std::abs(altitudeLegs.getWindSpeed()) >= 1.f)
+    if(NavApp::getWindReporter()->hasWindData())
     {
-      windText.append(tr("%1°T, %2").
-                      arg(altitudeLegs.getWindDirection(), 0, 'f', 0).
-                      arg(Unit::speedKts(altitudeLegs.getWindSpeed())));
+      if(std::abs(altitudeLegs.getWindSpeed()) >= 1.f)
+      {
+        windText.append(tr("%1°T, %2").
+                        arg(altitudeLegs.getWindDirection(), 0, 'f', 0).
+                        arg(Unit::speedKts(altitudeLegs.getWindSpeed())));
+      }
     }
+    else
+      windText.append(tr("Wind source disabled"));
+  }
 
+  if(isWindManual() || NavApp::getWindReporter()->hasWindData())
+  {
     // Headwind =======================
     float headWind = altitudeLegs.getHeadWind();
     if(std::abs(headWind) >= 1.f)
@@ -758,9 +763,10 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
         windPtr = tr("►");
       windText.append(tr("%1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
     }
-
-    html.row2(tr("Average Wind:"), windText.join(tr(", ")), flags);
   }
+
+  if(!windText.isEmpty())
+    html.row2(tr("Average %1Wind:").arg(isWindManual() ? tr("Manual ") : QString()), windText.join(tr(", ")), flags);
 
   html.tableEnd();
 

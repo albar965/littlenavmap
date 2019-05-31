@@ -397,6 +397,8 @@ public:
   }
 
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
+  bool hasAltitudeLegs() const;
+  bool hasValidProfile() const;
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
   void updateLegAltitudes();

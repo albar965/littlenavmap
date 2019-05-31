@@ -249,6 +249,11 @@ bool WindReporter::hasWindData() const
   return windQuery->hasWindData();
 }
 
+bool WindReporter::isWindManual() const
+{
+  return NavApp::getAircraftPerfController()->isWindManual();
+}
+
 void WindReporter::sourceActionTriggered()
 {
   if(!ignoreUpdates)

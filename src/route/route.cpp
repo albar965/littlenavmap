@@ -602,7 +602,7 @@ atools::geo::Pos Route::getPositionAtDistance(float distFromStartNm) const
   for(int i = 0; i < size() - 1; i++)
   {
     total += at(i + 1).getDistanceTo();
-    if(total > distFromStartNm)
+    if(total >= distFromStartNm)
     {
       // Distance already within leg
       foundIndex = i;
@@ -628,12 +628,24 @@ atools::geo::Pos Route::getPositionAtDistance(float distFromStartNm) const
     }
   }
 
+  if(!retval.isValid())
+    qWarning() << Q_FUNC_INFO << "position not valid";
   return retval;
 }
 
 const RouteAltitudeLeg& Route::getAltitudeLegAt(int i) const
 {
   return altitude->at(i);
+}
+
+bool Route::hasAltitudeLegs() const
+{
+  return !altitude->isEmpty();
+}
+
+bool Route::hasValidProfile() const
+{
+  return altitude->isValidProfile();
 }
 
 int Route::getDestinationLegIndex() const
