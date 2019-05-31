@@ -157,6 +157,8 @@ int main(int argc, char *argv[])
     QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
   }
 
+  NavApp::setShowExceptionDialog(earlySettings.value("Options/ExceptionDialog", true).toBool());
+
   // Create application object ===========================================================
   int retval = 0;
   NavApp app(argc, argv);
