@@ -143,6 +143,9 @@ public:
   /* Updates the query class */
   void updateManualRouteWinds();
 
+  /* Update toolbar button and menu items */
+  void updateToolButtonState();
+
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
   void windUpdated();
@@ -164,7 +167,6 @@ private:
   void valuesToAction();
 
   void sourceActionTriggered();
-  void updateToolButtonState();
 
   /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
   atools::grib::WindQuery *windQuery = nullptr, *windQueryManual = nullptr;

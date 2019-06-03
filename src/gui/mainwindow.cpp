@@ -833,12 +833,16 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
 
+  AircraftPerfController *perfController = NavApp::getAircraftPerfController();
+
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first
   connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateManualRouteWinds);
+  connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateToolButtonState);
+  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
+          windReporter, &WindReporter::updateToolButtonState);
 
   // Aircraft performance signals =======================================================
-  AircraftPerfController *perfController = NavApp::getAircraftPerfController();
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
           routeController, &RouteController::aircraftPerformanceChanged);
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);

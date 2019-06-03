@@ -120,7 +120,10 @@ void WindReporter::updateDataSource()
       path = NavApp::getSimulatorBasePath(NavApp::getCurrentSimulatorDb()) + QDir::separator() + "global_winds.grib";
 
     if(QFileInfo::exists(path))
+    {
       windQuery->initFromFile(path);
+      windDownloadFinished();
+    }
   }
   else if(ui->actionMapShowWindNOAA->isChecked())
     // Download from NOAA - will call windDownloadFinished later
@@ -287,10 +290,19 @@ void WindReporter::toolbarActionTriggered()
 
 void WindReporter::updateToolButtonState()
 {
-  windlevelToolButton->setEnabled(windQuery->hasWindData());
-  NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(
-    windQuery->hasWindData() ||
-    (NavApp::getAircraftPerfController()->isWindManual() && windQueryManual->hasWindData()));
+  // Actions that need real wind
+  bool windEnabled = windQuery->hasWindData();
+  actionNone->setEnabled(windEnabled);
+  actionFlightplan->setEnabled(windEnabled);
+  actionAgl->setEnabled(windEnabled);
+  for(QAction *action: actionLevelVector)
+    action->setEnabled(windEnabled);
+
+  // Disable button and menu if real wind is disabled and manual wind is not selected
+  bool manualWind = isWindManual();
+  actionFlightplanWaypoints->setEnabled(!NavApp::getRoute().isFlightplanEmpty() && (windEnabled || manualWind));
+  windlevelToolButton->setEnabled(windEnabled || manualWind);
+  NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(windEnabled || manualWind);
 }
 
 void WindReporter::valuesToAction()
