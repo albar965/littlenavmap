@@ -40,6 +40,7 @@ using proc::MapProcedureLegs;
 using map::PosCourse;
 using atools::contains;
 
+/* Do not draw barbs below this altitude */
 const static float MIN_WIND_BARB_ALTITUDE = 8000.f;
 
 MapPainterRoute::MapPainterRoute(MapPaintWidget *mapWidget, MapScale *mapScale, const Route *routeParam)
@@ -1249,8 +1250,16 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   if(!preview && (leg.isSid() || leg.isStar()) &&
      (context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE)))
   {
+    int routeIdx = index;
+
+    // Convert from procedure index to route leg index
+    if(leg.isSid())
+      routeIdx += route->getDepartureLegsOffset();
+    else if(leg.isStar())
+      routeIdx += route->getStarLegsOffset();
+
     // Do not draw wind barbs for approaches
-    const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(index);
+    const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(routeIdx);
     if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE)
       drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
   }
