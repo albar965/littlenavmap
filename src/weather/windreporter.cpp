@@ -301,8 +301,9 @@ void WindReporter::updateToolButtonState()
   // Disable button and menu if real wind is disabled and manual wind is not selected
   bool manualWind = isWindManual();
   actionFlightplanWaypoints->setEnabled(!NavApp::getRoute().isFlightplanEmpty() && (windEnabled || manualWind));
-  windlevelToolButton->setEnabled(windEnabled || manualWind);
-  NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(windEnabled || manualWind);
+
+  // windlevelToolButton->setEnabled(windEnabled || manualWind);
+  // NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(windEnabled || manualWind);
 }
 
 void WindReporter::valuesToAction()

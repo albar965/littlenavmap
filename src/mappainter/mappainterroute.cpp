@@ -25,7 +25,9 @@
 #include "geo/calculations.h"
 #include "route/routecontroller.h"
 #include "mapgui/mapscale.h"
+#include "navapp.h"
 #include "util/paintercontextsaver.h"
+#include "weather/windreporter.h"
 #include "common/textplacement.h"
 #include "route/routealtitudeleg.h"
 
@@ -242,7 +244,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Draw symbol text
   drawRouteSymbolText(context, visibleStartPoints, textPlacement.getStartPoints());
 
-  if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE))
+  if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
+     (NavApp::getWindReporter()->hasWindData() || NavApp::getWindReporter()->isWindManual()))
     drawWindBarbs(context, visibleStartPoints, textPlacement.getStartPoints());
 
   // Remember last point across procedures to avoid overlaying text
@@ -1247,21 +1250,24 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
 
-  if(!preview && (leg.isSid() || leg.isStar()) &&
-     (context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE)))
+  if(!preview && (leg.isSid() || leg.isStar()))
   {
-    int routeIdx = index;
+    if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
+       (NavApp::getWindReporter()->hasWindData() || NavApp::getWindReporter()->isWindManual()))
+    {
+      int routeIdx = index;
 
-    // Convert from procedure index to route leg index
-    if(leg.isSid())
-      routeIdx += route->getDepartureLegsOffset();
-    else if(leg.isStar())
-      routeIdx += route->getStarLegsOffset();
+      // Convert from procedure index to route leg index
+      if(leg.isSid())
+        routeIdx += route->getDepartureLegsOffset();
+      else if(leg.isStar())
+        routeIdx += route->getStarLegsOffset();
 
-    // Do not draw wind barbs for approaches
-    const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(routeIdx);
-    if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE)
-      drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
+      // Do not draw wind barbs for approaches
+      const RouteAltitudeLeg& altLeg = route->getAltitudeLegAt(routeIdx);
+      if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE)
+        drawWindBarbAtWaypoint(context, altLeg.getWindSpeed(), altLeg.getWindDirection(), x, y);
+    }
   }
 
   // Remember last painted leg for next procedure painter
