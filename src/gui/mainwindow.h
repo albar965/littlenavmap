@@ -328,7 +328,9 @@ private:
   void openWebserver();
 
 #ifdef DEBUG_INFORMATION
-  void debugActionTriggered();
+  void debugActionTriggered1();
+  void debugActionTriggered2();
+  void debugActionTriggered3();
 
 #endif
 

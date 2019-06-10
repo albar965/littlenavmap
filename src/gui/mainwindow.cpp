@@ -320,14 +320,24 @@ MainWindow::MainWindow()
 
 #ifdef DEBUG_INFORMATION
 
-  QAction *debugAction = new QAction("Debug Action");
-  debugAction->setShortcut(QKeySequence("Ctrl+F1"));
-  debugAction->setShortcutContext(Qt::ApplicationShortcut);
-  this->addAction(debugAction);
+  QAction *debugAction1 = new QAction("Debug Action");
+  debugAction1->setShortcut(QKeySequence("Ctrl+F1"));
+  debugAction1->setShortcutContext(Qt::ApplicationShortcut);
+  this->addAction(debugAction1);
+
+  QAction *debugAction2 = new QAction("Debug Action 2");
+  this->addAction(debugAction2);
+
+  QAction *debugAction3 = new QAction("Debug Action 3");
+  this->addAction(debugAction3);
 
   ui->menuHelp->addSeparator();
-  ui->menuHelp->addAction(debugAction);
-  connect(debugAction, &QAction::triggered, this, &MainWindow::debugActionTriggered);
+  ui->menuHelp->addAction(debugAction1);
+  ui->menuHelp->addAction(debugAction2);
+  ui->menuHelp->addAction(debugAction3);
+  connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
+  connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
+  connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
 
 #endif
 
@@ -416,10 +426,23 @@ MainWindow::~MainWindow()
 
 #ifdef DEBUG_INFORMATION
 
-void MainWindow::debugActionTriggered()
+void MainWindow::debugActionTriggered1()
 {
   qDebug() << Q_FUNC_INFO;
-  mapSaveImageAviTab();
+
+  qDebug() << NavApp::getRouteConst();
+}
+
+void MainWindow::debugActionTriggered2()
+{
+  qDebug() << Q_FUNC_INFO;
+
+}
+
+void MainWindow::debugActionTriggered3()
+{
+  qDebug() << Q_FUNC_INFO;
+
 }
 
 #endif
