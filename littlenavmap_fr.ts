@@ -4757,7 +4757,7 @@ La vitesse du vent sera interpolée pour les phases de montée et de descente.</
     <message>
         <location filename="src/gui/mainwindow.ui" line="6361"/>
         <location filename="src/gui/mainwindow.ui" line="6364"/>
-        <source>Set this as destionation for the flight plan</source>
+        <source>Set this as destination for the flight plan</source>
         <translation type="unfinished">Définisser cette option comme destination pour le plan de vol</translation>
     </message>
     <message>

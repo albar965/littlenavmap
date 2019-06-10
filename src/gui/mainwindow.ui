@@ -6417,10 +6417,10 @@ wind display in the elevation profile top line.</string>
     <string>Set %1 as Flight Plan Destination</string>
    </property>
    <property name="toolTip">
-    <string>Set this as destionation for the flight plan</string>
+    <string>Set this as destination for the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Set this as destionation for the flight plan</string>
+    <string>Set this as destination for the flight plan</string>
    </property>
   </action>
   <action name="actionRouteAddPos">

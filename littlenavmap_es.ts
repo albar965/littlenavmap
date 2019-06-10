@@ -4221,7 +4221,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6361"/>
         <location filename="src/gui/mainwindow.ui" line="6364"/>
-        <source>Set this as destionation for the flight plan</source>
+        <source>Set this as destination for the flight plan</source>
         <translation>Definir esto como destino para el Plan de Vuelo</translation>
     </message>
     <message>

@@ -3860,7 +3860,7 @@ Note that all options except &quot;Current Map View&quot; will change visible de
     <message>
         <location filename="src/gui/mainwindow.ui" line="6361"/>
         <location filename="src/gui/mainwindow.ui" line="6364"/>
-        <source>Set this as destionation for the flight plan</source>
+        <source>Set this as destination for the flight plan</source>
         <translation>Stel dit in als aankomstluchthaven voor het vluchtplan</translation>
     </message>
     <message>

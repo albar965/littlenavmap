@@ -4057,7 +4057,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6361"/>
         <location filename="src/gui/mainwindow.ui" line="6364"/>
-        <source>Set this as destionation for the flight plan</source>
+        <source>Set this as destination for the flight plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

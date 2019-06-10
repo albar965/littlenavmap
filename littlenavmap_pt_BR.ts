@@ -6619,7 +6619,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6361"/>
         <location filename="src/gui/mainwindow.ui" line="6364"/>
-        <source>Set this as destionation for the flight plan</source>
+        <source>Set this as destination for the flight plan</source>
         <translation>Definir isso como destino para o plano de voo</translation>
     </message>
     <message>
