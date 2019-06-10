@@ -24,6 +24,7 @@
 #include "settings/settings.h"
 #include "gui/widgetutil.h"
 #include "navapp.h"
+#include "route/route.h"
 #include "atools.h"
 #include "geo/calculations.h"
 #include "weather/windreporter.h"
@@ -518,9 +519,9 @@ void AircraftPerfController::connectAllSlots()
 void AircraftPerfController::updateActionStates()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  bool routeValid = NavApp::getRouteSize() >= 2;
+  bool routeValid = NavApp::getRouteConst().getSizeWithoutAlternates() >= 2;
 
-  // Switch of all loading if collecting performance
+  // Switch off all loading if collecting performance
   if(isCollecting())
     fileHistory->disableAll();
   else
@@ -774,24 +775,17 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   html.p().b(tr("Fuel Plan")).pEnd();
   html.table();
   html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
-  float tripFuel = altitudeLegs.getTripFuel();
-  html.row2(tr("Trip Fuel:"), fuelLbsGal(tripFuel), atools::util::html::BOLD | flags);
-  float blockFuel = (altitudeLegs.getTripFuel() * perf->getContingencyFuelFactor()) +
-                    perf->getTaxiFuel() + perf->getExtraFuel() + perf->getReserveFuel();
-  html.row2(tr("Block Fuel:"), fuelLbsGal(blockFuel), atools::util::html::BOLD | flags);
-  float destFuel = blockFuel - tripFuel - perf->getTaxiFuel();
-  if(atools::almostEqual(destFuel, 0.f, 0.1f))
-    // Avoid -0 case
-    destFuel = 0.f;
-  html.row2(tr("Fuel at Destination:"), fuelLbsGal(destFuel), flags);
+  html.row2(tr("Trip Fuel:"), fuelLbsGal(altitudeLegs.getTripFuel()), atools::util::html::BOLD | flags);
+  html.row2(tr("Block Fuel:"), fuelLbsGal(altitudeLegs.getBlockFuel(*perf)), atools::util::html::BOLD | flags);
+  html.row2(tr("Fuel at Destination:"), fuelLbsGal(altitudeLegs.getDestinationFuel(*perf)), flags);
+  html.row2(tr("Alternate Fuel:"), fuelLbsGal(altitudeLegs.getAlternateFuel()), flags);
   html.row2(tr("Reserve Fuel:"), fuelLbsGal(perf->getReserveFuel()), flags);
   html.row2(tr("Taxi Fuel:"), fuelLbsGal(perf->getTaxiFuel()), flags);
   html.row2(tr("Extra Fuel:"), fuelLbsGal(perf->getExtraFuel()), flags);
 
-  float contFuel = altitudeLegs.getTripFuel() * (perf->getContingencyFuelFactor() - 1.f);
   html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
             arg(perf->getContingencyFuel(), 0, 'f', 0).
-            arg(fuelLbsGal(contFuel)), flags);
+            arg(fuelLbsGal(altitudeLegs.getContingencyFuel(*perf))), flags);
   html.tableEnd();
 
   // Climb and descent phases =======================================================

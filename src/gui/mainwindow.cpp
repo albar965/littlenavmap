@@ -884,6 +884,7 @@ void MainWindow::connectAllSlots()
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
+  connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
 
@@ -1264,6 +1265,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeSetParkingStart, routeController, &RouteController::routeSetParking);
   connect(mapWidget, &MapWidget::routeSetHelipadStart, routeController, &RouteController::routeSetHelipad);
   connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
+  connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
@@ -1649,7 +1651,7 @@ void MainWindow::distanceChanged()
 
   QString text = distStr + " " + Unit::getUnitDistStr();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ZOOM
   text += QString(" [%1]").arg(mapWidget->zoom());
 
   qDebug() << "distance" << mapWidget->distance() << "zoom" << mapWidget->zoom();
@@ -2085,7 +2087,8 @@ void MainWindow::routeAppend()
 
   if(!routeFile.isEmpty())
   {
-    if(routeController->insertFlightplan(routeFile, routeController->getRoute().size() /* append */))
+    if(routeController->insertFlightplan(routeFile,
+                                         routeController->getRoute().getDestinationAirportLegIndex() + 1 /* append */))
     {
       routeFileHistory->addFile(routeFile);
       if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
@@ -2815,6 +2818,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_PROC_ERROR, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
   s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
 
@@ -3903,7 +3907,7 @@ void MainWindow::updateErrorLabels()
   QString tooltip;
   QString err;
   // Show only if route is valid, there are errors and nothing is collecting performance
-  bool showError = NavApp::getRoute().size() >= 2 && NavApp::getAltitudeLegs().hasErrors() &&
+  bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors() &&
                    !NavApp::isCollectingPerformance();
   if(showError)
     err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(tooltip).join(" "));

@@ -72,8 +72,9 @@ void MapPainterAirport::render(PaintContext *context)
 
   if(context->objectTypes.testFlag(map::FLIGHTPLAN))
   {
-    for(const RouteLeg& routeLeg : *route)
+    for(int i = 0; i < route->size(); i++)
     {
+      const RouteLeg& routeLeg = route->at(i);
       if(routeLeg.getMapObjectType() == map::AIRPORT)
         routeAirportIdMap.insert(routeLeg.getAirport().id);
     }

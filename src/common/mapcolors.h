@@ -180,6 +180,7 @@ const QColor mapDragColor = QColor(Qt::darkYellow);
 
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
+const QColor routeAlternateOutlineColor = QColor(Qt::darkGray);
 
 const QColor routeProcedureOutlineColor = QColor(Qt::black);
 
@@ -199,10 +200,18 @@ const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);
 
+/* Procedure colors */
 const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
 const QColor routeProcedureMissedTableColorDark = QColor(240, 170, 120);
 const QColor routeProcedureTableColor = QColor(Qt::darkBlue);
 const QColor routeProcedureTableColorDark = QColor(140, 200, 240);
+
+/* Alternate airport leg colors */
+const QColor routeAlternateTableColor = QColor(Qt::darkGray);
+const QColor routeAlternateTableColorDark = QColor(Qt::gray);
+
+const QColor routeInvalidTableColor = QColor(Qt::red);
+const QColor routeInvalidTableColorDark = QColor(Qt::red);
 
 const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));
@@ -235,6 +244,7 @@ const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);
 void adjustPenForVectors(QPainter *painter);
+void adjustPenForAlternate(QPainter *painter);
 
 /* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);

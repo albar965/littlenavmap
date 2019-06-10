@@ -29,6 +29,8 @@
  * Contains fuel and time information calculated from aircraft performance too.
  *
  * Geometry might contain more than two points for TOC and/or TOD legs.
+ *
+ * Alternate leg distances and times are measured from destination airport.
  */
 class RouteAltitudeLeg
 {
@@ -70,6 +72,11 @@ public:
   bool isMissed() const
   {
     return missed;
+  }
+
+  bool isAlternate() const
+  {
+    return alternate;
   }
 
   float getTravelTimeHours() const
@@ -199,7 +206,7 @@ private:
   QString ident;
   QPolygonF geometry;
   proc::MapAltRestriction restriction;
-  bool procedure = false, missed = false, topOfClimb = false, topOfDescent = false;
+  bool procedure = false, missed = false, alternate = false, topOfClimb = false, topOfDescent = false;
   float travelTimeHours = 0.f;
   float fuel = 0.f;
   float averageSpeedKts = 0.f;

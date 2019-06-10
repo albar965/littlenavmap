@@ -418,11 +418,6 @@ const atools::geo::Rect& NavApp::getRouteRect()
   return mainWindow->getRouteController()->getRoute().getBoundingRect();
 }
 
-int NavApp::getRouteSize()
-{
-  return mainWindow->getRouteController()->getRoute().size();
-}
-
 const RouteAltitude& NavApp::getAltitudeLegs()
 {
   return mainWindow->getRouteController()->getRoute().getAltitudeLegs();

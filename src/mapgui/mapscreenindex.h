@@ -261,12 +261,14 @@ private:
   QList<map::DistanceMarker> distanceMarks;
   QList<map::TrafficPattern> trafficPatterns;
 
-  /* Geometry objects that are cached in screen coordinate system for faster access */
+  /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;
+  QList<std::pair<int, QPoint> > routePoints;
+
+  /* Geometry objects that are cached in screen coordinate system for faster access */
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QPolygon> > airspacePolygons;
   QList<std::pair<int, QPolygon> > airspacePolygonsOnline;
-  QList<std::pair<int, QPoint> > routePoints;
 
 };
 

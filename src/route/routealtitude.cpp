@@ -143,6 +143,27 @@ float RouteAltitude::getTotalDistance() const
   return route->getTotalDistance();
 }
 
+float RouteAltitude::getBlockFuel(const atools::fs::perf::AircraftPerf& perf) const
+{
+  return (tripFuel * perf.getContingencyFuelFactor()) + alternateFuel +
+         perf.getTaxiFuel() + perf.getExtraFuel() + perf.getReserveFuel();
+}
+
+float RouteAltitude::getDestinationFuel(const atools::fs::perf::AircraftPerf& perf) const
+{
+  float destFuel = getBlockFuel(perf) - tripFuel - perf.getTaxiFuel();
+
+  if(atools::almostEqual(destFuel, 0.f, 0.1f))
+    // Avoid -0 case
+    destFuel = 0.f;
+  return destFuel;
+}
+
+float RouteAltitude::getContingencyFuel(const atools::fs::perf::AircraftPerf& perf) const
+{
+  return tripFuel * (perf.getContingencyFuelFactor() - 1.f);
+}
+
 bool RouteAltitude::hasErrors() const
 {
   return altRestrictionsViolated() || !(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
@@ -184,18 +205,19 @@ QVector<float> RouteAltitude::getAltitudes() const
     if(!route->isEmpty())
     {
       // Fix departure altitude if airport is valid
-      const RouteLeg& first = route->first();
+      const RouteLeg& first = route->getDepartureAirportLeg();
       if(first.isRoute() && first.getAirport().isValid())
         retval.replace(0, first.getPosition().getAltitude());
 
       // Replace the zero altitude of the last dummy segment with the airport altitude
-      const RouteLeg& last = route->last();
+      const RouteLeg& last = route->getDestinationAirportLeg();
       if(last.isRoute() && last.getAirport().isValid())
         retval.replace(retval.size() - 1, last.getPosition().getAltitude());
     }
   }
   else
   {
+    int destinationAirportLegIndex = route->getDestinationAirportLegIndex();
     // No altitude legs - copy airport and cruise altitude ==========================
     for(int i = 0; i < route->size(); i++)
     {
@@ -203,7 +225,7 @@ QVector<float> RouteAltitude::getAltitudes() const
 
       if(i == 0 && leg.getAirport().isValid())
         retval.append(leg.getPosition().getAltitude());
-      else if(i == route->size() - 1 && leg.getAirport().isValid())
+      else if(i == destinationAirportLegIndex && leg.getAirport().isValid())
         retval.append(leg.getPosition().getAltitude());
       else
         retval.append(route->getCruisingAltitudeFeet());
@@ -423,7 +445,7 @@ void RouteAltitude::simplyfyRouteAltitudes()
     // Use several iterations
     for(int i = 0; i < 16; i++)
     {
-      for(int j = legIndexTopOfDescent; j < size() - 1; j++)
+      for(int j = legIndexTopOfDescent; j < route->getDestinationAirportLegIndex(); j++)
         simplifyRouteAltitude(j, false /* departure */);
     }
   }
@@ -563,7 +585,7 @@ void RouteAltitude::calculate()
 {
   clearAll();
 
-  if(route->size() > 1)
+  if(route->getSizeWithoutAlternates() > 1)
   {
     if(route->getTotalDistance() < 0.5f)
       return;
@@ -581,7 +603,7 @@ void RouteAltitude::calculate()
     violatesRestrictions = false;
     for(RouteAltitudeLeg& leg : *this)
     {
-      if(!leg.isMissed())
+      if(!leg.isMissed() && !leg.isAlternate())
         violatesRestrictions |= violatesAltitudeRestriction(leg);
 
       if(violatesRestrictions)
@@ -630,6 +652,7 @@ void RouteAltitude::calculateDistances()
 {
   float distanceToLeg = 0.f;
   int destinationLegIdx = route->getDestinationLegIndex();
+  const RouteLeg& destinationAirportLeg = route->getDestinationAirportLeg();
 
   if(destinationLegIdx == map::INVALID_INDEX_VALUE)
   {
@@ -658,6 +681,12 @@ void RouteAltitude::calculateDistances()
     }
     // else ignore missed approach dummy legs after destination runway
 
+    if(leg.isAlternate())
+    {
+      alt.geometry.append(QPointF(0., destinationAirportLeg.getAltitude()));
+      alt.geometry.append(QPointF(leg.getDistanceTo(), leg.getAltitude()));
+    }
+
     append(alt);
   }
 
@@ -678,6 +707,7 @@ void RouteAltitude::calculateDistances()
     }
 
     altLeg.missed = leg.isAnyProcedure() && leg.getProcedureLeg().isMissed();
+    altLeg.alternate = leg.isAlternate();
 
     if(last.isRoute() || leg.isRoute() || // Any is route - also covers STAR to airport
        (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) || // empty space from SID to STAR, transition or approach
@@ -709,7 +739,7 @@ void RouteAltitude::calculateDeparture()
     first().setAlt(departAlt);
 
   // Start from departure forward until hitting cruise altitude (TOC)
-  for(int i = departureLegIdx; i < route->size(); i++)
+  for(int i = departureLegIdx; i <= route->getDestinationAirportLegIndex(); i++)
   {
     // Calculate altitude for this leg based on altitude of the leg to the right
     RouteAltitudeLeg& alt = (*this)[i];
@@ -798,7 +828,7 @@ void RouteAltitude::calculateArrival()
   }
 
   // Calculate from last leg down until we hit the cruise altitude (TOD)
-  for(int i = route->size() - 1; i >= 0; i--)
+  for(int i = route->getDestinationAirportLegIndex(); i >= 0; i--)
   {
     RouteAltitudeLeg& alt = (*this)[i];
     RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
@@ -906,6 +936,8 @@ void RouteAltitude::fillGeometry()
 {
   Q_ASSERT(route->size() == size());
 
+  const RouteLeg& destinationAirportLeg = route->getDestinationAirportLeg();
+
   for(int i = 0; i < route->size(); i++)
   {
     RouteAltitudeLeg& altLeg = (*this)[i];
@@ -913,21 +945,29 @@ void RouteAltitude::fillGeometry()
 
     altLeg.line.clear();
 
-    if(altLeg.isPoint())
-      altLeg.line.append(routeLeg.getPosition().alt(altLeg.y1()));
+    if(altLeg.isAlternate())
+    {
+      altLeg.line.append(destinationAirportLeg.getPosition());
+      altLeg.line.append(routeLeg.getPosition());
+    }
     else
     {
-      if(i > 0)
-        altLeg.line.append(route->at(i - 1).getPosition().alt(altLeg.y1()));
-      altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
+      if(altLeg.isPoint())
+        altLeg.line.append(routeLeg.getPosition().alt(altLeg.y1()));
+      else
+      {
+        if(i > 0)
+          altLeg.line.append(route->at(i - 1).getPosition().alt(altLeg.y1()));
+        altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
+      }
+
+      if(altLeg.topOfClimb)
+        altLeg.line.insert(1, route->getPositionAtDistance(distanceTopOfClimb).alt(route->getCruisingAltitudeFeet()));
+
+      if(altLeg.topOfDescent)
+        altLeg.line.insert(altLeg.line.size() - 1,
+                           route->getPositionAtDistance(distanceTopOfDescent).alt(route->getCruisingAltitudeFeet()));
     }
-
-    if(altLeg.topOfClimb)
-      altLeg.line.insert(1, route->getPositionAtDistance(distanceTopOfClimb).alt(route->getCruisingAltitudeFeet()));
-
-    if(altLeg.topOfDescent)
-      altLeg.line.insert(altLeg.line.size() - 1,
-                         route->getPositionAtDistance(distanceTopOfDescent).alt(route->getCruisingAltitudeFeet()));
 
     if(!altLeg.line.hasAllValidPoints())
       qWarning() << Q_FUNC_INFO << "Invalid points";
@@ -936,19 +976,25 @@ void RouteAltitude::fillGeometry()
 
 float RouteAltitude::getDestinationAltitude() const
 {
-  const RouteLeg& destLeg = route->at(route->getDestinationLegIndex());
-  if(destLeg.isAnyProcedure() && destLeg.getProcedureLegAltRestr().isValid())
+  const RouteLeg& destLeg = route->getDestinationLeg();
+
+  if(!destLeg.isValid())
+    qWarning() << Q_FUNC_INFO << "dest leg not valid";
+  else
   {
-    if(destLeg.getRunwayEnd().isValid())
-      // Use restriction from procedure - field elevation + 50 ft
-      return destLeg.getProcedureLegAltRestr().alt1;
-    else
-      // Not valid - start at cruise at a waypoint
-      return adjustAltitudeForRestriction(cruiseAltitide, destLeg.getProcedureLegAltRestr());
+    if(destLeg.isAnyProcedure() && destLeg.getProcedureLegAltRestr().isValid())
+    {
+      if(destLeg.getRunwayEnd().isValid())
+        // Use restriction from procedure - field elevation + 50 ft
+        return destLeg.getProcedureLegAltRestr().alt1;
+      else
+        // Not valid - start at cruise at a waypoint
+        return adjustAltitudeForRestriction(cruiseAltitide, destLeg.getProcedureLegAltRestr());
+    }
+    else if(destLeg.getAirport().isValid())
+      // Airport altitude
+      return destLeg.getPosition().getAltitude();
   }
-  else if(destLeg.getAirport().isValid())
-    // Airport altitude
-    return destLeg.getPosition().getAltitude();
 
   // Other leg types (waypoint, VOR, etc.) remain on cruise
   return cruiseAltitide;
@@ -1012,6 +1058,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
   travelTime = 0.f;
   tripFuel = 0.f;
+  alternateFuel = 0.f;
   unflyableLegs = false;
 
   float tocDist = getTopOfClimbDistance();
@@ -1027,176 +1074,196 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   for(int i = 0; i < size(); i++)
   {
     RouteAltitudeLeg& leg = (*this)[i];
-
     float legDist = leg.getDistanceTo();
+
     if(atools::almostEqual(legDist, 0.f))
       // same as last one - no travel time and no fuel
       continue;
 
-    // Beginning and end of this leg
-    float startDist = leg.getDistanceFromStart() - leg.getDistanceTo();
-    float endDist = leg.getDistanceFromStart();
-
-    float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;
-
-    atools::grib::Wind climbWind = {0.f, 0.f}, cruiseWind = {0.f, 0.f}, descentWind = {0.f, 0.f};
-
-    float climbSpeed = 0.f, cruiseSpeed = 0.f, descentSpeed = 0.f;
-
-    // Check if leg covers TOC and/or TOD =================================================
-    // Calculate wind, distance and averate speed (TAS) for this leg
-    // Wind is interpolated by altitude
-    if(endDist < tocDist)
+    if(leg.isAlternate())
     {
-      // All climb before TOC ==========================
-      climbDist = legDist;
-      climbWind = windReporter->getWindForLineStringRoute(leg.getLineString());
-      climbSpeed = perf.getClimbSpeed();
-    }
-    else if(startDist > todDist)
-    {
-      // All descent after TOD ==========================
-      descentDist = legDist;
-      descentWind = windReporter->getWindForLineStringRoute(leg.getLineString());
-      descentSpeed = perf.getDescentSpeed();
-    }
-    else if(startDist < tocDist && endDist > todDist)
-    {
-      // Crosses TOC *and* TOD  - phases climb, cruise and descent ==========================
-      // start to TOC ===================
-      climbDist = tocDist - startDist;
-      climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
-      climbSpeed = perf.getClimbSpeed();
-
-      // cruise - TOC to TOD ===================
-      cruiseDist = todDist - tocDist;
-      cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().mid(1, 2));
-      cruiseSpeed = perf.getCruiseSpeed();
-
-      // TOD to destination ===================
-      descentDist = endDist - todDist;
-      descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
-      descentSpeed = perf.getDescentSpeed();
-    }
-    else if(startDist < tocDist && endDist < todDist)
-    {
-      // Crosses TOC and goes into cruise ==========================
-      climbDist = tocDist - startDist;
-      climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
-      climbSpeed = perf.getClimbSpeed();
-
-      cruiseDist = endDist - tocDist;
-      cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
-      cruiseSpeed = perf.getCruiseSpeed();
-    }
-    else if(startDist > tocDist && endDist > todDist)
-    {
-      // Goes from cruise to and after TOD ==========================
-      cruiseDist = todDist - startDist;
-      cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
-      cruiseSpeed = perf.getCruiseSpeed();
-
-      descentDist = endDist - todDist;
-      descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
-      descentSpeed = perf.getDescentSpeed();
+      // Alternate legs are calculated from destination airport
+      leg.averageSpeedKts = perf.getCruiseSpeed();
+      leg.travelTimeHours = legDist / perf.getCruiseSpeed();
+      leg.fuel = perf.getCruiseFuelFlow() * leg.travelTimeHours;
     }
     else
     {
-      // Cruise only ==========================
-      cruiseDist = legDist;
-      cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString());
-      cruiseSpeed = perf.getCruiseSpeed();
-    }
+      // Beginning and end of this leg
+      float startDist = leg.getDistanceFromStart() - leg.getDistanceTo();
+      float endDist = leg.getDistanceFromStart();
 
-    // Calculate ground speed for each phase (climb, cruise, descent) of this leg - 0 is phase is not touched
-    float course = route->at(i).getCourseToMag();
+      float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;
 
-    float climbHeadWind = 0.f, climbCrossWind = 0.f,
-          cruiseHeadWind = 0.f, cruiseCrossWind = 0.f,
-          descentHeadWind = 0.f, descentCrossWind = 0.f;
+      atools::grib::Wind climbWind = {0.f, 0.f}, cruiseWind = {0.f, 0.f}, descentWind = {0.f, 0.f};
+
+      float climbSpeed = 0.f, cruiseSpeed = 0.f, descentSpeed = 0.f;
+
+      // Check if leg covers TOC and/or TOD =================================================
+      // Calculate wind, distance and averate speed (TAS) for this leg
+      // Wind is interpolated by altitude
+      if(endDist < tocDist)
+      {
+        // All climb before TOC ==========================
+        climbDist = legDist;
+        climbWind = windReporter->getWindForLineStringRoute(leg.getLineString());
+        climbSpeed = perf.getClimbSpeed();
+      }
+      else if(startDist > todDist)
+      {
+        // All descent after TOD ==========================
+        descentDist = legDist;
+        descentWind = windReporter->getWindForLineStringRoute(leg.getLineString());
+        descentSpeed = perf.getDescentSpeed();
+      }
+      else if(startDist < tocDist && endDist > todDist)
+      {
+        // Crosses TOC *and* TOD  - phases climb, cruise and descent ==========================
+        // start to TOC ===================
+        climbDist = tocDist - startDist;
+        climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
+        climbSpeed = perf.getClimbSpeed();
+
+        // cruise - TOC to TOD ===================
+        cruiseDist = todDist - tocDist;
+        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().mid(1, 2));
+        cruiseSpeed = perf.getCruiseSpeed();
+
+        // TOD to destination ===================
+        descentDist = endDist - todDist;
+        descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
+        descentSpeed = perf.getDescentSpeed();
+      }
+      else if(startDist < tocDist && endDist < todDist)
+      {
+        // Crosses TOC and goes into cruise ==========================
+        climbDist = tocDist - startDist;
+        climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
+        climbSpeed = perf.getClimbSpeed();
+
+        cruiseDist = endDist - tocDist;
+        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
+        cruiseSpeed = perf.getCruiseSpeed();
+      }
+      else if(startDist > tocDist && endDist > todDist)
+      {
+        // Goes from cruise to and after TOD ==========================
+        cruiseDist = todDist - startDist;
+        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
+        cruiseSpeed = perf.getCruiseSpeed();
+
+        descentDist = endDist - todDist;
+        descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
+        descentSpeed = perf.getDescentSpeed();
+      }
+      else
+      {
+        // Cruise only ==========================
+        cruiseDist = legDist;
+        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString());
+        cruiseSpeed = perf.getCruiseSpeed();
+      }
+
+      // Calculate ground speed for each phase (climb, cruise, descent) of this leg - 0 is phase is not touched
+      float course = route->at(i).getCourseToMag();
+
+      float climbHeadWind = 0.f, climbCrossWind = 0.f,
+            cruiseHeadWind = 0.f, cruiseCrossWind = 0.f,
+            descentHeadWind = 0.f, descentCrossWind = 0.f;
 
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "=========== leg #" << i
-             << "wind: climb" << climbWind << "cruise" << cruiseWind << "descent" << descentWind;
+      qDebug() << Q_FUNC_INFO << "=========== leg #" << i
+               << "wind: climb" << climbWind << "cruise" << cruiseWind << "descent" << descentWind;
 #endif
 
-    // Skip wind calculation for circular legs which have no course
-    if(course < map::INVALID_COURSE_VALUE)
-    {
-      // Calculate ground speed
-      climbSpeed = atools::geo::windCorrectedGroundSpeed(climbWind.speed, climbWind.dir, course, climbSpeed);
-      cruiseSpeed = atools::geo::windCorrectedGroundSpeed(cruiseWind.speed, cruiseWind.dir, course, cruiseSpeed);
-      descentSpeed = atools::geo::windCorrectedGroundSpeed(descentWind.speed, descentWind.dir, course, descentSpeed);
+      // Skip wind calculation for circular legs which have no course
+      if(course < map::INVALID_COURSE_VALUE)
+      {
+        // Calculate ground speed
+        climbSpeed = atools::geo::windCorrectedGroundSpeed(climbWind.speed, climbWind.dir, course, climbSpeed);
+        cruiseSpeed = atools::geo::windCorrectedGroundSpeed(cruiseWind.speed, cruiseWind.dir, course, cruiseSpeed);
+        descentSpeed = atools::geo::windCorrectedGroundSpeed(descentWind.speed, descentWind.dir, course, descentSpeed);
 
-      // Calculate head and cross wind for leg
-      atools::geo::windForCourse(climbHeadWind, climbCrossWind, climbWind.speed, climbWind.dir, course);
-      atools::geo::windForCourse(cruiseHeadWind, cruiseCrossWind, cruiseWind.speed, cruiseWind.dir, course);
-      atools::geo::windForCourse(descentHeadWind, descentCrossWind, descentWind.speed, descentWind.dir, course);
-    }
+        // Calculate head and cross wind for leg
+        atools::geo::windForCourse(climbHeadWind, climbCrossWind, climbWind.speed, climbWind.dir, course);
+        atools::geo::windForCourse(cruiseHeadWind, cruiseCrossWind, cruiseWind.speed, cruiseWind.dir, course);
+        atools::geo::windForCourse(descentHeadWind, descentCrossWind, descentWind.speed, descentWind.dir, course);
+      }
 
-    // Check if wind is too strong
-    if(!(climbSpeed < map::INVALID_SPEED_VALUE))
-    {
-      unflyableLegs = true;
-      climbSpeed = perf.getClimbSpeed();
-    }
-    if(!(cruiseSpeed < map::INVALID_SPEED_VALUE))
-    {
-      unflyableLegs = true;
-      cruiseSpeed = perf.getCruiseSpeed();
-    }
-    if(!(descentSpeed < map::INVALID_SPEED_VALUE))
-    {
-      unflyableLegs = true;
-      descentSpeed = perf.getDescentSpeed();
-    }
+      // Check if wind is too strong
+      if(!(climbSpeed < map::INVALID_SPEED_VALUE))
+      {
+        unflyableLegs = true;
+        climbSpeed = perf.getClimbSpeed();
+      }
+      if(!(cruiseSpeed < map::INVALID_SPEED_VALUE))
+      {
+        unflyableLegs = true;
+        cruiseSpeed = perf.getCruiseSpeed();
+      }
+      if(!(descentSpeed < map::INVALID_SPEED_VALUE))
+      {
+        unflyableLegs = true;
+        descentSpeed = perf.getDescentSpeed();
+      }
 
-    if(atools::almostNotEqual(climbDist + cruiseDist + descentDist, legDist))
-      qWarning() << Q_FUNC_INFO << "Distance differs" << (climbDist + cruiseDist + descentDist) << legDist;
+      if(atools::almostNotEqual(climbDist + cruiseDist + descentDist, legDist))
+        qWarning() << Q_FUNC_INFO << "Distance differs" << (climbDist + cruiseDist + descentDist) << legDist;
 
-    // Calculate leg time ================================================================
-    float climbTime = climbSpeed > 0.f ? (climbDist / climbSpeed) : 0.f;
-    float cruiseTime = cruiseSpeed > 0.f ? (cruiseDist / cruiseSpeed) : 0.f;
-    float descentTime = descentSpeed > 0.f ? (descentDist / descentSpeed) : 0.f;
+      // Calculate leg time ================================================================
+      float climbTime = climbSpeed > 0.f ? (climbDist / climbSpeed) : 0.f;
+      float cruiseTime = cruiseSpeed > 0.f ? (cruiseDist / cruiseSpeed) : 0.f;
+      float descentTime = descentSpeed > 0.f ? (descentDist / descentSpeed) : 0.f;
 
-    // Assign values to leg =========================================================
-    if(!leg.isMissed() && legDist < map::INVALID_DISTANCE_VALUE)
-    {
-      // Assign averages ==========================
-      // Speed =============
-      leg.averageSpeedKts = (climbSpeed * climbDist +
-                             cruiseSpeed * cruiseDist +
-                             descentSpeed * descentDist) / legDist;
+      // Assign values to leg =========================================================
+      if(!leg.isMissed() && !leg.isAlternate() && legDist < map::INVALID_DISTANCE_VALUE)
+      {
+        // Assign averages ==========================
+        // Speed =============
+        leg.averageSpeedKts = (climbSpeed * climbDist +
+                               cruiseSpeed * cruiseDist +
+                               descentSpeed * descentDist) / legDist;
 
-      // Wind ===========
-      leg.avgWindSpeed = (climbWind.speed * climbDist +
-                          cruiseWind.speed * cruiseDist +
-                          descentWind.speed * descentDist) / legDist;
-      leg.avgWindDirection = atools::geo::normalizeCourse((climbWind.dir * climbDist +
-                                                           cruiseWind.dir * cruiseDist +
-                                                           descentWind.dir * descentDist) / legDist);
-      leg.avgWindHead = (climbHeadWind * climbDist +
-                         cruiseHeadWind * cruiseDist +
-                         descentHeadWind * descentDist) / legDist;
-      leg.avgWindCross = (climbCrossWind * climbDist +
-                          cruiseCrossWind * cruiseDist +
-                          descentCrossWind * descentDist) / legDist;
+        // Wind ===========
+        leg.avgWindSpeed = (climbWind.speed * climbDist +
+                            cruiseWind.speed * cruiseDist +
+                            descentWind.speed * descentDist) / legDist;
+        leg.avgWindDirection = atools::geo::normalizeCourse((climbWind.dir * climbDist +
+                                                             cruiseWind.dir * cruiseDist +
+                                                             descentWind.dir * descentDist) / legDist);
+        leg.avgWindHead = (climbHeadWind * climbDist +
+                           cruiseHeadWind * cruiseDist +
+                           descentHeadWind * descentDist) / legDist;
+        leg.avgWindCross = (climbCrossWind * climbDist +
+                            cruiseCrossWind * cruiseDist +
+                            descentCrossWind * descentDist) / legDist;
 
-      // Sum up fuel for phases ============
-      leg.fuel = perf.getClimbFuelFlow() * climbTime +
-                 perf.getCruiseFuelFlow() * cruiseTime +
-                 perf.getDescentFuelFlow() * descentTime;
+        // Sum up fuel for phases ============
+        leg.fuel = perf.getClimbFuelFlow() * climbTime +
+                   perf.getCruiseFuelFlow() * cruiseTime +
+                   perf.getDescentFuelFlow() * descentTime;
 
-      // Sum up time for phases ===============
-      leg.travelTimeHours = climbTime + cruiseTime + descentTime;
+        // Sum up time for phases ===============
+        leg.travelTimeHours = climbTime + cruiseTime + descentTime;
 
-      atools::grib::Wind wind = windReporter->getWindForPosRoute(leg.getLineString().getPos2());
-      leg.windSpeed = wind.speed;
-      leg.windDirection = wind.dir;
+        atools::grib::Wind wind = windReporter->getWindForPosRoute(leg.getLineString().getPos2());
+        leg.windSpeed = wind.speed;
+        leg.windDirection = wind.dir;
 
-      travelTime += leg.travelTimeHours;
-      tripFuel += leg.fuel;
-    }
+        travelTime += leg.travelTimeHours;
+        tripFuel += leg.fuel;
+      } // if(!leg.isMissed() && !leg.isAlternate() && legDist < map::INVALID_DISTANCE_VALUE)
+    } // if(leg.isAlternate()) ... else
+  } // for(int i = 0; i < size(); i++)
+
+  // Calculate alternate fuel  =====================================
+  // Fuel to the farthest alternate
+  alternateFuel = 0.f;
+  int offset = route->getAlternateLegsOffset();
+  if(offset != map::INVALID_INDEX_VALUE)
+  {
+    for(int idx = offset; idx < offset + route->getNumAlternateLegs(); idx++)
+      alternateFuel = std::max(at(idx).getFuel(), alternateFuel);
   }
 
   // Calculate average values for all =====================================
@@ -1204,7 +1271,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   float accDist = 0.f, u = 0.f, v = 0.f;
   for(const RouteAltitudeLeg& leg : *this)
   {
-    if(leg.isMissed())
+    if(leg.isMissed() || leg.isAlternate())
       break;
 
     float legDist = leg.getDistanceTo();
@@ -1245,6 +1312,7 @@ QDebug operator<<(QDebug out, const RouteAltitude& obj)
       << "travelTime " << obj.getTravelTimeHours()
       << "averageSpeed" << obj.getAverageGroundSpeed()
       << "tripFuel" << obj.getTripFuel()
+      << "alternateFuel" << obj.getAlternateFuel()
       << "totalDistance" << obj.route->getTotalDistance()
       << endl;
 

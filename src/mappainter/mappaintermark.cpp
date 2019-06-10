@@ -642,7 +642,7 @@ void MapPainterMark::paintCompassRose(const PaintContext *context)
     {
       const Route& route = NavApp::getRouteConst();
 
-      if(route.size() > 1 && aircraft.isFlying())
+      if(route.getSizeWithoutAlternates() > 1 && aircraft.isFlying())
       {
         bool isCorrected = false;
         int activeLegCorrected = route.getActiveLegIndexCorrected(&isCorrected);
@@ -1040,32 +1040,29 @@ void MapPainterMark::paintUserpointDrag(const PaintContext *context)
 /* Draw route dragging/moving lines */
 void MapPainterMark::paintRouteDrag(const PaintContext *context)
 {
-  Pos from, to;
+  LineString fixed;
   QPoint cur;
 
-  // Flight plan editing use always three points except at the end
   MapWidget *mapWidget = dynamic_cast<MapWidget *>(mapPaintWidget);
   if(mapWidget != nullptr)
-    mapWidget->getRouteDragPoints(from, to, cur);
+    mapWidget->getRouteDragPoints(fixed, cur);
 
   if(!cur.isNull())
   {
     GeoDataCoordinates curGeo;
     if(sToW(cur.x(), cur.y(), curGeo))
     {
+      context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
       GeoDataLineString linestring;
       linestring.setTessellate(true);
 
-      if(from.isValid())
-        linestring.append(GeoDataCoordinates(from.getLonX(), from.getLatY(), 0, DEG));
-      linestring.append(GeoDataCoordinates(curGeo));
-      if(to.isValid())
-        linestring.append(GeoDataCoordinates(to.getLonX(), to.getLatY(), 0, DEG));
-
-      if(linestring.size() > 1)
+      // Draw lines from current mouse position to all fixed points which can be waypoints or several alternates
+      for(const Pos& pos : fixed)
       {
-        context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap,
-                                      Qt::RoundJoin));
+        linestring.clear();
+        linestring.append(GeoDataCoordinates(curGeo));
+        linestring.append(GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
         context->painter->drawPolyline(linestring);
       }
     }

@@ -43,6 +43,7 @@ class RouteLeg
   Q_DECLARE_TR_FUNCTIONS(RouteLeg)
 
 public:
+  RouteLeg();
   RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
   ~RouteLeg();
 
@@ -65,7 +66,7 @@ public:
    */
   void createFromAirport(int entryIndex, const map::MapAirport& newAirport, const RouteLeg *prevLeg);
 
-  void createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
+  void createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
@@ -92,6 +93,7 @@ public:
 
   /* Get position of airport or navaid. Source can be flight plan entry or database. */
   const atools::geo::Pos& getPosition() const;
+  float getAltitude() const;
 
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
@@ -221,11 +223,24 @@ public:
   /* true if nav database otherwise simulator */
   bool isNavdata() const;
 
+  /* Route leg - not part of procedure and not alternate */
   bool isRoute() const
   {
-    return !isAnyProcedure();
+    return !isAnyProcedure() && !isAlternate();
   }
 
+  /* Alterante airport */
+  bool isAlternate() const
+  {
+    return alternate;
+  }
+
+  void setAlternate(bool value = true)
+  {
+    alternate = value;
+  }
+
+  /* SID, STAR or approach */
   bool isAnyProcedure() const
   {
     return type & map::PROCEDURE;
@@ -288,6 +303,9 @@ public:
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
 
+  /* Invalid empty leg to avoid unneeded instantiations */
+  static RouteLeg EMPTY_ROUTELEG;
+
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder
   void assignIntersection(const map::MapSearchResult& mapobjectResult,
@@ -318,6 +336,7 @@ private:
   map::MapAirway airway;
 
   bool valid = false;
+  bool alternate = false;
 
   float distanceTo = 0.f,
         distanceToRhumb = 0.f,

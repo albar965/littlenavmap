@@ -94,7 +94,7 @@ public:
 
   /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
    * if dragging departure or destination */
-  void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
+  void getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur);
 
   /* Get source and current position while dragging a userpoint */
   void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
@@ -193,6 +193,7 @@ signals:
   /* Set route departure or destination from context menu */
   void routeSetStart(map::MapAirport ap);
   void routeSetDest(map::MapAirport ap);
+  void routeAddAlternate(map::MapAirport ap);
 
   /* Add, replace or delete object from flight plan from context menu or drag and drop.
    *  index = 0: prepend to route
@@ -315,10 +316,12 @@ private:
   mw::MouseStates mouseState = mw::NONE;
   bool contextMenuActive = false;
 
-  /* Current position when dragging a flight plan point or leg */
+  /* Current moving position when dragging a flight plan point or leg */
   QPoint routeDragCur;
-  atools::geo::Pos routeDragFrom /* First fixed point of route drag */,
-                   routeDragTo /* Second fixed point of route drag */;
+
+  /* Fixed points of route drag which will not move with the mouse */
+  atools::geo::LineString routeDragFixed;
+
   int routeDragPoint = -1 /* Index of changed point */,
       routeDragLeg = -1 /* index of changed leg */;
 

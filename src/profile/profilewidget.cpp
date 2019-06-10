@@ -363,7 +363,8 @@ int ProfileWidget::getFlightplanAltY() const
 
 bool ProfileWidget::hasValidRouteForDisplay(const Route& route) const
 {
-  return widgetVisible && !legList.elevationLegs.isEmpty() && route.size() >= 2 && route.getAltitudeLegs().size() >= 2;
+  return widgetVisible && !legList.elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
+         route.getAltitudeLegs().size() >= 2;
 }
 
 int ProfileWidget::altitudeY(float altitudeFt) const
@@ -679,8 +680,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Calculate line y positions ======================================================
   bool showTodToc = OptionData::instance().getFlags() & opts::FLIGHT_PLAN_SHOW_TOD;
   QVector<QPolygon> altLegs; /* Flight plan waypoint screen coordinates. x = distance and y = altitude */
-  for(const RouteAltitudeLeg& routeAlt : altitudeLegs)
+
+  for(int i = 0; i < altitudeLegs.size(); i++)
   {
+    const RouteAltitudeLeg& routeAlt = altitudeLegs.at(i);
+    if(routeAlt.isMissed() || routeAlt.isAlternate())
+      break;
+
     QPolygonF geo = routeAlt.getGeometry();
     if(!showTodToc)
     {
@@ -693,15 +699,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Collect indexes in reverse (painting) order without missed ================
   QVector<int> indexes;
-  for(int i = 0; i < route.size(); i++)
+  for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
   {
-    if(route.at(i).getProcedureLeg().isMissed())
+    if(route.at(i).getProcedureLeg().isMissed() || route.at(i).isAlternate())
       break;
-    else
-      indexes.prepend(i);
+    indexes.prepend(i);
   }
 
-  // Make default font 20 percent smaller and set to bold =======================================
+  // Set default font to bold =======================================
   QFont defaultFont = painter.font();
   defaultFont.setBold(true);
   painter.setFont(defaultFont);
@@ -797,11 +802,20 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   const OptionData& optData = OptionData::instance();
 
-  // Get active route leg
+  // Get active route leg but ignore alternate legs
   bool activeValid = route.isActiveValid();
+
   // Active normally start at 1 - this will consider all legs as not passed
-  int activeRouteLeg = activeValid ? route.getActiveLegIndex() : 0;
+  int activeRouteLeg = activeValid ? std::min(route.getActiveLegIndex(), waypointX.size() - 1) : 0;
   int passedRouteLeg = optData.getFlags2() & opts::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+
+  if(route.isActiveAlternate())
+  {
+    // Disable active leg and show all legs as passed if an alternate is enabled
+    activeRouteLeg = 0;
+    passedRouteLeg = optData.getFlags2() & opts::MAP_ROUTE_DIM_PASSED ?
+                     std::min(passedRouteLeg + 1, waypointX.size()) : 0;
+  }
 
   if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
   {
@@ -889,6 +903,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     for(int routeIndex : indexes)
     {
       const RouteLeg& leg = route.at(routeIndex);
+
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
@@ -978,7 +993,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       QPoint symPt(altLegs.at(waypointIndex).last());
 
       // Draw all airport except destination and departure
-      if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.size() - 1)
+      if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
         symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false);
 
@@ -994,7 +1009,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(!route.isEmpty())
     {
       // Draw departure always on the left also if there are departure procedures
-      const RouteLeg& departureLeg = route.first();
+      const RouteLeg& departureLeg = route.getDepartureAirportLeg();
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().width(departureLeg.getIdent());
@@ -1004,7 +1019,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       }
 
       // Draw destination always on the right also if there are approach procedures
-      const RouteLeg& destinationLeg = route.last();
+      const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().width(destinationLeg.getIdent());
@@ -1078,7 +1093,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // Departure altitude label =========================================================
     QColor labelColor = mapcolors::profileLabelColor;
-    float departureAlt = legList.route.first().getPosition().getAltitude();
+    float departureAlt = legList.route.getDepartureAirportLeg().getPosition().getAltitude();
     int departureAltTextY = Y0 + atools::roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
     QString startAltStr = Unit::altFeet(departureAlt);
@@ -1086,7 +1101,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                        textatt::BOLD | textatt::RIGHT, 255);
 
     // Destination altitude label =========================================================
-    float destAlt = route.last().getPosition().getAltitude();
+    float destAlt = route.getDestinationAirportLeg().getPosition().getAltitude();
     int destinationAltTextY = Y0 + static_cast<int>(h - destAlt * verticalScale);
     destinationAltTextY = std::min(destinationAltTextY, Y0 + h - painter.fontMetrics().height() / 2);
     QString destAltStr = Unit::altFeet(destAlt);
@@ -1330,8 +1345,12 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   legs.maxElevationFt = 0.f;
   legs.elevationLegs.clear();
 
+  if(legs.route.getSizeWithoutAlternates() <= 1)
+    // Return empty result
+    return ElevationLegList();
+
   // Loop over all route legs
-  for(int i = 1; i < legs.route.size(); i++)
+  for(int i = 1; i <= legs.route.getDestinationAirportLegIndex(); i++)
   {
     if(terminateThreadSignal)
       // Return empty result

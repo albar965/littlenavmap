@@ -188,20 +188,20 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route, boo
       departureRw.append("O");
 
     // Add SID and departure airport
-    retval.prepend("FPN/RI:DA:" + route.first().getIdent() +
+    retval.prepend("FPN/RI:DA:" + route.getDepartureAirportLeg().getIdent() +
                    ":D:" + sid + (sidTrans.isEmpty() ? QString() : "." + sidTrans) +
                    (departureRw.isEmpty() ? QString() : ":R:" + departureRw));
   }
   else
   {
     // Add departure airport only - no coordinates since these are not accurate
-    retval.prepend("FPN/RI:F:" + route.first().getIdent());
+    retval.prepend("FPN/RI:F:" + route.getDestinationAirportLeg().getIdent());
   }
 
   if((route.hasAnyArrivalProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
   {
     // Arrival airport - no coordinates
-    retval.append(":AA:" + route.last().getIdent());
+    retval.append(":AA:" + route.getDestinationAirportLeg().getIdent());
 
     // STAR ===============================
     if(route.hasAnyStarProcedure())
@@ -225,7 +225,7 @@ QString RouteString::createGfpStringForRouteInternalProc(const Route& route, boo
     if(!retval.endsWith(":F:"))
       retval.append(":F:");
     // Arrival airport only - no coordinates since these are not accurate
-    retval.append(route.last().getIdent());
+    retval.append(route.getDestinationAirportLeg().getIdent());
   }
 
   qDebug() << Q_FUNC_INFO << retval;
@@ -313,7 +313,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
       arrivalName = route.getArrivalLegs().approachType + destRwy;
   }
 
-  if(route.isEmpty())
+  if(route.getSizeWithoutAlternates() == 0)
     return retval;
 
   bool hasSid = ((options& rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
@@ -326,7 +326,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
   Pos lastPos;
   map::MapObjectTypes lastType = map::NONE;
   int lastIndex = 0;
-  for(int i = 0; i < route.size(); i++)
+  for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
   {
     const RouteLeg& leg = route.at(i);
     if(leg.isAnyProcedure())
@@ -752,7 +752,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, QStringL
     flightplan.setDeparturePosition(departure.position);
 
     FlightplanEntry entry;
-    entryBuilder->buildFlightplanEntry(departure, entry);
+    entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);
     flightplan.getEntries().append(entry);
 
     if(!cleanItems.isEmpty())
@@ -831,7 +831,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, QStrin
     flightplan.setDestinationPosition(destination.position);
 
     FlightplanEntry entry;
-    entryBuilder->buildFlightplanEntry(destination, entry);
+    entryBuilder->buildFlightplanEntry(destination, entry, false /* alternate */);
     flightplan.getEntries().append(entry);
 
     if(!cleanItems.isEmpty())

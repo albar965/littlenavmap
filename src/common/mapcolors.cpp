@@ -653,6 +653,17 @@ void adjustPenForVectors(QPainter *painter)
   painter->setPen(pen);
 }
 
+void adjustPenForAlternate(QPainter *painter)
+{
+  // Use different pattern and smaller line for vector legs
+  QPen pen = painter->pen();
+  pen.setStyle(Qt::DotLine);
+  pen.setCapStyle(Qt::FlatCap);
+  painter->setPen(pen);
+  painter->setBackground(Qt::white);
+  painter->setBackgroundMode(Qt::OpaqueMode);
+}
+
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
 {
   QFont font = painter->font();

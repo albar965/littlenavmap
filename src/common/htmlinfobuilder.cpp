@@ -150,10 +150,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
   {
     // Add flight plan information if airport is a part of it
-    if(airport.routeIndex == 0)
+    if(airport.routeIndex == route->getDepartureAirportLegIndex())
       html.row2(tr("Departure Airport"), QString());
-    else if(airport.routeIndex == route->size() - 1)
+    else if(airport.routeIndex == route->getDestinationAirportLegIndex())
       html.row2(tr("Destination Airport"), QString());
+    else if(airport.routeIndex >= route->getAlternateLegsOffset())
+      html.row2(tr("Alternate Airport"), QString());
     else
       html.row2(tr("Flight Plan position:"), locale.toString(airport.routeIndex + 1));
   }
@@ -2425,10 +2427,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     bool isCorrected = false;
     int activeLegCorrected = route.getActiveLegIndexCorrected(&isCorrected);
     int activeLeg = route.getActiveLegIndex();
+    bool alternate = route.isActiveAlternate();
 
     if(activeLegCorrected != map::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
+      if(alternate)
+        // Use distance to alternate instead of destination
+        distToDestNm = nearestLegDistance;
+
       if(distToDestNm > 0.01f && distToDestNm < map::INVALID_DISTANCE_VALUE && userAircaft->getFuelFlowPPH() > 0.01f &&
          userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
       {
@@ -2443,7 +2450,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       // Route distances ===============================================================
       if(distToDestNm < map::INVALID_DISTANCE_VALUE)
       {
-        head(html, tr("Destination"));
+        head(html, alternate ? tr("Alternate") : tr("Destination"));
         html.table();
 
         bool timeAvailable = aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED;
@@ -2483,7 +2490,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.tableEnd();
       }
 
-      if(route.size() > 1)
+      if(route.getSizeWithoutAlternates() > 1 && !alternate) // No TOD display when flying an alternate leg
       {
         // Top of descent  ===============================================================
         if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
@@ -2531,20 +2538,22 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
 
       // Next leg ====================================================
-      QString apprText;
-      if(activeLegCorrected != map::INVALID_INDEX_VALUE)
+      QString wpText;
+      if(alternate)
+        wpText = tr(" - Alternate");
+      else if(activeLegCorrected != map::INVALID_INDEX_VALUE)
       {
         const RouteLeg& routeLeg = route.at(activeLegCorrected);
 
         if(routeLeg.getProcedureLeg().isApproach())
-          apprText = tr(" - Approach");
+          wpText = tr(" - Approach");
         else if(routeLeg.getProcedureLeg().isTransition())
-          apprText = tr(" - Transition");
+          wpText = tr(" - Transition");
         else if(routeLeg.getProcedureLeg().isMissed())
-          apprText = tr(" - Missed Approach");
+          wpText = tr(" - Missed Approach");
       }
 
-      head(html, tr("Next Waypoint") + apprText);
+      head(html, tr("Next Waypoint") + wpText);
       html.table();
 
       if(activeLegCorrected != map::INVALID_INDEX_VALUE)
@@ -2626,9 +2635,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           {
             courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
 
-            html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
-                      locale.toString(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()), 'f', 0) +
-                      tr("°M, ") + timeStr);
+            if(alternate)
+              // Already part of the destination information when flying an alternate leg
+              html.row2(tr("Course:"),
+                        locale.toString(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()), 'f', 0));
+            else
+              html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
+                        locale.toString(normalizeCourse(courseToWptTrue - routeLeg.getMagvar()), 'f', 0) +
+                        tr("°M, ") + timeStr);
           }
           else // if(!leg.noDistanceDisplay())
                // Only distance and time for arc legs
@@ -2636,7 +2650,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
 
         // No cross track and course for holds
-        if(route.size() > 1)
+        if(route.getSizeWithoutAlternates() > 1)
         {
           // No course for arcs
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())

@@ -145,6 +145,9 @@ public:
   /* Replaces destination airport or adds destination if not valid */
   void routeSetDestination(map::MapAirport airport);
 
+  /* Add an alternate airport */
+  void routeAddAlternate(map::MapAirport airport);
+
   /*
    * Adds a navaid, airport or user defined position to flight plan.
    * @param id Id of object to insert
@@ -367,6 +370,8 @@ private:
   void highlightNextWaypoint(int nearestLegIndex);
   void highlightProcedureItems();
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool quiet);
+  void loadAlternateFromFlightplan(bool quiet);
+
   void updateIcons();
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);

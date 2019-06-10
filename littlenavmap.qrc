@@ -238,5 +238,6 @@
         <file>resources/icons/userpoint_DME.svg</file>
         <file>resources/icons/userpoint_VORTAC.svg</file>
         <file>resources/icons/userpoint_NDB.svg</file>
+        <file>resources/icons/airportroutealt.svg</file>
     </qresource>
 </RCC>

@@ -797,7 +797,7 @@ bool RouteExport::routeValidate(bool validateParking, bool validateDepartureAndD
         else if(result == QMessageBox::YesToAll)
         {
           // Zoom to airport and cancel out
-          emit showRect(NavApp::getRouteConst().first().getAirport().bounding, false);
+          emit showRect(NavApp::getRouteConst().getDepartureAirportLeg().getAirport().bounding, false);
           return false;
         }
         else if(result == QMessageBox::Save)

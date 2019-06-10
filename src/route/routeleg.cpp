@@ -45,8 +45,15 @@ const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 // Appended to X-Plane free parking names - obsolete
 const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
 
+RouteLeg RouteLeg::EMPTY_ROUTELEG;
+
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
+{
+
+}
+
+RouteLeg::RouteLeg()
 {
 
 }
@@ -67,7 +74,7 @@ void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirpo
   valid = true;
 }
 
-void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
+void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLegs& legs, const RouteLeg *prevLeg)
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
@@ -177,6 +184,9 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
       if(!mapobjectResult.airports.isEmpty())
       {
         assignAirport(mapobjectResult, flightplanEntry);
+
+        alternate = flightplanEntry->getFlags() & atools::fs::pln::entry::ALTERNATE;
+
         valid = true;
 
         // Resolve parking ==============================
@@ -350,21 +360,20 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
-  if(prevLeg != nullptr)
+  if(prevLeg != nullptr && prevLeg->isValid())
   {
     const Pos& prevPos = prevLeg->getPosition();
 
     if(isAnyProcedure())
     {
-      if(
-        (prevLeg->isRoute() || // Transition from route to procedure
-         (prevLeg->getProcedureLeg().isAnyDeparture() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
-         (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
-        ) && // Direct connection between procedures
+      if((prevLeg->isRoute() || // Transition from route to procedure
+          (prevLeg->getProcedureLeg().isAnyDeparture() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
+          (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
+          ) && // Direct connection between procedures
 
-        (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
-         procedureLeg.line.isPoint()) // Beginning of procedure
-        )
+         (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
+          procedureLeg.line.isPoint()) // Beginning of procedure
+         )
       {
         // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
 
@@ -397,6 +406,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
       }
       else
       {
+        // Calculate for normal or alternate leg - prev is destination airport for alternate legs
         distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
         distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
         courseTo = normalizeCourse(prevLeg->getPosition().angleDegTo(getPosition()));
@@ -538,6 +548,32 @@ const atools::geo::Pos& RouteLeg::getPosition() const
       return getFlightplanEntry().getPosition();
   }
   return atools::geo::EMPTY_POS;
+}
+
+float RouteLeg::getAltitude() const
+{
+  if(airport.isValid())
+    return airport.position.getAltitude();
+  else if(vor.isValid())
+    return vor.position.getAltitude();
+  else if(ndb.isValid())
+    return ndb.position.getAltitude();
+  else if(waypoint.isValid())
+    return 0.f;
+  else if(ils.isValid())
+    return ils.position.getAltitude();
+  else if(runwayEnd.isValid())
+    return runwayEnd.getPosition().getAltitude();
+  else if(!procedureLeg.displayText.isEmpty())
+    return 0.f;
+  else if(type == map::INVALID)
+    return 0.f;
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+    return 0.f;
+  else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+    return 0.f;
+  else
+    return 0.f;
 }
 
 QString RouteLeg::getIdent() const
@@ -786,17 +822,23 @@ void RouteLeg::assignRunwayOrHelipad(const QString& name)
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)
 {
-  out << "RouteLeg[id" << leg.getId() << leg.getPosition()
-      << "magvar" << leg.getMagvar()
-      << "distance" << leg.getDistanceTo()
-      << "course mag" << leg.getCourseToMag()
-      << "course true" << leg.getCourseToTrue()
-      << "id" << leg.getId()
-      << "ident" << leg.getIdent()
-      << "nav" << leg.isNavdata()
-      << leg.getIdent() << leg.getMapObjectTypeName()
-      << proc::procedureLegTypeStr(leg.getProcedureLegType())
-      << "airway" << leg.getAirway().id << leg.getAirwayName() << (leg.getAirway().isValid() ? "valid" : "invalid")
-      << "]";
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace() << "RouteLeg["
+                          << "id " << leg.getId()
+                          << ", " << leg.getIdent()
+                          << ", " << leg.getMapObjectTypeName()
+                          << ", distance " << leg.getDistanceTo()
+                          << ", " << leg.getPosition()
+                          << ", course " << leg.getCourseToMag() << "°M " << leg.getCourseToTrue() << "°T"
+                          << ", magvar " << leg.getMagvar()
+                          << (leg.isValid() ? ", valid" : QString())
+                          << (leg.isNavdata() ? ", nav" : QString())
+                          << (leg.isAlternate() ? ", alternate" : QString())
+                          << (leg.isAnyProcedure() ? ", procedure" : QString())
+                          << ", " << proc::procedureLegTypeStr(leg.getProcedureLegType())
+                          << ", airway " << leg.getAirway().id << " " << leg.getAirwayName()
+                          << (leg.getAirway().isValid() ? " valid" : " invalid")
+                          << "]";
   return out;
 }

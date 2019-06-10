@@ -175,10 +175,9 @@ void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
   pixmap = userpointDragPixmap;
 }
 
-void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
+void MapWidget::getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur)
 {
-  from = routeDragFrom;
-  to = routeDragTo;
+  fixedPos = routeDragFixed;
   cur = routeDragCur;
 }
 
@@ -680,6 +679,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
                                                              screenSearchDistance * 4 / 3);
           if(routePoint != -1)
           {
+            // Drag a waypoint ==============================================
             routeDragPoint = routePoint;
             qDebug() << "route point" << routePoint;
 
@@ -687,20 +687,37 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             mouseState = mw::DRAG_ROUTE_POINT;
 
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
+            routeDragFixed.clear();
 
-            if(routePoint > 0)
-              routeDragFrom = route.at(routePoint - 1).getPosition();
+            if(routePoint > 0 && route.at(routePoint).isAlternate())
+            {
+              // Alternate airports are treated as endpoints
+              routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
+            }
+            else if(routePoint == route.getDestinationAirportLegIndex() && route.hasAlternates())
+            {
+              // Add all lines to alternates as fixed lines if moving destination with alternates
+              if(routePoint > 0)
+                routeDragFixed.append(route.at(routePoint - 1).getPosition());
+              for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
+                routeDragFixed.append(route.at(i).getPosition());
+            }
             else
-              routeDragFrom = atools::geo::EMPTY_POS;
+            {
+              if(routePoint > 0)
+                // First point of route
+                routeDragFixed.append(route.at(routePoint - 1).getPosition());
 
-            if(routePoint < route.size() - 1)
-              routeDragTo = route.at(routePoint + 1).getPosition();
-            else
-              routeDragTo = atools::geo::EMPTY_POS;
+              if(routePoint < route.size() - 1)
+                // Last point of plan
+                routeDragFixed.append(route.at(routePoint + 1).getPosition());
+            }
+
             setContextMenuPolicy(Qt::PreventContextMenu);
           }
           else
           {
+            // Drag a route leg ===================================================
             int routeLeg = getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(),
                                                                           event->pos().y(), screenSearchDistance);
             if(routeLeg != -1)
@@ -712,8 +729,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
               routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
-              routeDragFrom = route.at(routeLeg).getPosition();
-              routeDragTo = route.at(routeLeg + 1).getPosition();
+              routeDragFixed.clear();
+              routeDragFixed.append(route.at(routeLeg).getPosition());
+              routeDragFixed.append(route.at(routeLeg + 1).getPosition());
               setContextMenuPolicy(Qt::PreventContextMenu);
             }
           }
@@ -1012,8 +1030,7 @@ void MapWidget::cancelDragRoute()
       setCursor(Qt::ArrowCursor);
 
     routeDragCur = QPoint();
-    routeDragFrom = atools::geo::EMPTY_POS;
-    routeDragTo = atools::geo::EMPTY_POS;
+    routeDragFixed.clear();
     routeDragPoint = -1;
     routeDragLeg = -1;
   }
@@ -1239,7 +1256,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
                                           ui->actionMapShowInformation, ui->actionMapShowApproaches,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                          ui->actionRouteAirportDest,
+                                          ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                           ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
@@ -1251,7 +1268,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                             ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
                                             ui->actionMapShowInformation, ui->actionMapShowApproaches,
                                             ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                            ui->actionRouteAirportDest,
+                                            ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                             ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                             ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                             ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
@@ -1280,6 +1297,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addAction(ui->actionRouteAirportStart);
   menu.addAction(ui->actionRouteAirportDest);
+  menu.addAction(ui->actionRouteAirportAlternate);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteAddPos);
@@ -1347,6 +1365,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionRouteAppendPos->setEnabled(visibleOnMap);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
+  ui->actionRouteAirportAlternate->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
 
   ui->actionMapEditUserWaypoint->setEnabled(false);
@@ -1589,12 +1608,21 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else
       ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
+
+    if(airport != nullptr && NavApp::getRouteConst().getSizeWithoutAlternates() > 0)
+    {
+      ui->actionRouteAirportAlternate->setEnabled(true);
+      ui->actionRouteAirportAlternate->setText(ui->actionRouteAirportAlternate->text().arg(destinationText));
+    }
+    else
+      ui->actionRouteAirportAlternate->setText(ui->actionRouteAirportAlternate->text().arg(QString()));
   }
   else
   {
     // No airport or selected parking position
     ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
+    ui->actionRouteAirportAlternate->setText(ui->actionRouteAirportAlternate->text().arg(QString()));
   }
 
   // ===================================================================================
@@ -1889,8 +1917,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapEditUserWaypoint)
       NavApp::getRouteController()->editUserWaypointName(routeIndex);
     else if(action == ui->actionRouteAddPos || action == ui->actionRouteAppendPos ||
-            action == ui->actionRouteAirportStart ||
-            action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
+            action == ui->actionRouteAirportStart || action == ui->actionRouteAirportDest ||
+            action == ui->actionRouteAirportAlternate || action == ui->actionMapShowInformation)
     {
       Pos position = pos;
       map::MapObjectTypes type = map::NONE;
@@ -1993,6 +2021,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         emit routeSetStart(*airport);
       else if(action == ui->actionRouteAirportDest)
         emit routeSetDest(*airport);
+      else if(action == ui->actionRouteAirportAlternate)
+        emit routeAddAlternate(*airport);
       else if(action == ui->actionMapShowInformation)
       {
         if(isAircraft)
@@ -2066,6 +2096,13 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   // Get all objects where the mouse button was released
   map::MapSearchResult result;
   getScreenIndexConst()->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result);
+
+  // Allow only aiports for alterates
+  if(point >= 0)
+  {
+    if(NavApp::getRouteConst().at(point).isAlternate())
+      result.clear(map::MapObjectType(~map::AIRPORT));
+  }
 
   // Count number of all objects
   int totalSize = result.getTotalSize(map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);

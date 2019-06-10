@@ -31,9 +31,30 @@ class RouteAltitudeLeg;
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
  * about the active route leg and current aircraft position.
  *
- * The flight plan is kept in sync and contains dummy entries for all procedure legs.
+ * The flight plan and the route is kept in sync and contains dummy entries for all procedure legs.
+ * Destination airport is added after any arrival procedures. Alternates after that.
  *
  * Procedure information is kept in FlightPlan properties and will be reloaded on demand.
+ *
+ * Index functions return map::INVALID_INDEX_VALUE if not valid.
+ * Leg methods return invalid legs if unusable index.
+ *
+ * Example layout of the list:
+ *  0	DEPARTURE
+ *  1	SID Leg 1 (RW)
+ *  2	SID Leg 2
+ *  3	WPT 1
+ *  4	WPT 2
+ *  4	WPT 3
+ *  5	STAR Leg 1
+ *  6	STAR Leg 2
+ *  7	APPR Leg 1
+ *  8	APPR Leg 2 (RW)
+ *  9	MISSED Leg 1 (excluded from total distance)
+ * 10	MISSED Leg 2              "
+ * 11	DESTINATION AIRPORT
+ * 12	ALTERNATE 1 (distance calculated from dest airport)
+ * 13	ALTERNATE 2               "
  */
 class Route :
   private QList<RouteLeg>
@@ -87,6 +108,17 @@ public:
   int getDestinationIndexBeforeProcedure() const;
   const RouteLeg& getDestinationBeforeProcedure() const;
 
+  /* Index for first alternate airport or invalid if none */
+  int getAlternateLegsOffset() const
+  {
+    return alternateLegsOffset;
+  }
+
+  int getNumAlternateLegs() const
+  {
+    return numAlternateLegs;
+  }
+
   /* map::INVALID_INDEX_VALUE if no active.
    * 1 for first leg to route.size() - 1 for active legs.
    * 0 is special case for plans consisting of only one airport */
@@ -96,14 +128,42 @@ public:
   }
 
   /* true if active leg is valid. false for special one airport case */
-  bool isActiveValid() const
+  bool isActiveValid() const;
+
+  /* true if active leg is an alternate leg*/
+  bool isActiveAlternate() const;
+
+  void setDepartureParking(const map::MapParking& departureParking);
+  void setDepartureStart(const map::MapStart& departureStart);
+
+  /* Create copies of first and last to ease tracking */
+  const RouteLeg& getLastLeg() const
   {
-    return activeLegIndex > 0 && activeLegIndex < size();
+    return last();
   }
 
-  /* Either destination airport or last leg of approach procedure (usually runway) before missed */
-  int getDestinationLegIndex() const;
+  const RouteLeg& getFirstLeg() const
+  {
+    return first();
+  }
+
+  /* First leg of departure procedure. 1 if SID used otherwise 0. */
   int getDepartureLegIndex() const;
+  const RouteLeg& getDepartureLeg() const;
+
+  /* First leg. Always 0 if not empty. */
+  int getDepartureAirportLegIndex() const;
+  const RouteLeg& getDepartureAirportLeg() const;
+
+  /* Either destination airport or last leg of approach procedure (usually runway) before missed.
+   * Not necessarily an airport or runway. */
+  int getDestinationLegIndex() const;
+  const RouteLeg& getDestinationLeg() const;
+
+  /* Always destination airport after missed (if any) and one before the alternate if any.
+   *  Not necessarily an airport. */
+  int getDestinationAirportLegIndex() const;
+  const RouteLeg& getDestinationAirportLeg() const;
 
   /* true if flight plan is not empty and airport is departure or destination */
   bool isAirportDeparture(const QString& ident) const;
@@ -121,9 +181,6 @@ public:
   /* Corrected methods replace the current leg with the initial fix
    * if one follows between route and transition/approach.  */
   int getActiveLegIndexCorrected(bool *corrected = nullptr) const;
-
-  /* At the end of the route and beyond */
-  bool isPassedLastLeg() const;
 
   /* Get top of descent or climb position based on the option setting (default is 3 nm per 1000 ft) */
   atools::geo::Pos getTopOfDescentPos() const;
@@ -202,6 +259,12 @@ public:
   /* @return true if has intermediate waypoints */
   bool hasEntries() const;
 
+  /* @return true if route has at lease one alternate */
+  bool hasAlternates() const
+  {
+    return alternateLegsOffset != map::INVALID_INDEX_VALUE;
+  }
+
   /* @return true if it has at least two waypoints */
   bool canCalcRoute() const;
 
@@ -275,8 +338,11 @@ public:
   /* Does not delete flight plan properties. Clears the MapProcedure structures. */
   void clearProcedures(proc::MapProcedureTypes type);
 
-  /* Removes legs that match the given procedures */
+  /* Removes legs that match the given procedures from the route and/or flightplan */
   void clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute = true, bool clearFlightplan = true);
+
+  /* Remove alternate airport(s) from route and flightplan */
+  void removeAlternateLegs();
 
   /* Deletes flight plan properties too */
   void removeProcedureLegs();
@@ -296,10 +362,11 @@ public:
     return boundingRect;
   }
 
-  const atools::geo::Pos& getPositionAt(int i) const
-  {
-    return at(i).getPosition();
-  }
+  /* Leg end position - i.e. the waypoint at the end of the leg */
+  const atools::geo::Pos& getPositionAt(int i) const;
+
+  /* Leg start position - i.e. the waypoint at the end of the previous leg */
+  const atools::geo::Pos& getPrevPositionAt(int i) const;
 
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */
@@ -354,28 +421,66 @@ public:
     return starLegsOffset;
   }
 
-  /* Pull only the needed methods in public space to have control over it */
-  using QList<RouteLeg>::const_iterator;
-  using QList<RouteLeg>::begin;
-  using QList<RouteLeg>::end;
-  using QList<RouteLeg>::at;
-  using QList<RouteLeg>::first;
-  using QList<RouteLeg>::last;
-  using QList<RouteLeg>::size;
-  using QList<RouteLeg>::isEmpty;
-  using QList<RouteLeg>::clear;
-  using QList<RouteLeg>::append;
-  using QList<RouteLeg>::prepend;
-  using QList<RouteLeg>::insert;
-  using QList<RouteLeg>::replace;
-  using QList<RouteLeg>::move;
-  using QList<RouteLeg>::removeAt;
-  using QList<RouteLeg>::removeLast;
-  using QList<RouteLeg>::operator[];
+  /* Create copies of list methods to ease tracking of usage */
+  const RouteLeg& at(int i) const;
+
+  int size() const
+  {
+    return QList::size();
+  }
+
+  int getSizeWithoutAlternates() const;
+
+  bool isEmpty() const // OK
+  {
+    return QList::isEmpty();
+  }
+
+  void append(const RouteLeg& leg) // OK
+  {
+    QList::append(leg);
+  }
+
+  void prepend(const RouteLeg& leg) // OK
+  {
+    QList::prepend(leg);
+  }
+
+  void insert(int before, const RouteLeg& leg) // OK
+  {
+    QList::insert(before, leg);
+  }
+
+  void replace(int i, const RouteLeg& leg) // OK
+  {
+    QList::replace(i, leg);
+  }
+
+  void move(int from, int to) // OK
+  {
+    QList::move(from, to);
+  }
+
+  void removeAt(int i) // OK
+  {
+    QList::removeAt(i);
+  }
+
+  /* Removes only route legs and does not touch the flight plan copy */
+  void clear() // OK
+  {
+    QList::clear();
+  }
+
+  /* Removes all legs, procedure information and flight plan legs */
+  void clearAll();
 
   /* Removes approaches and SID/STAR depending on save options, deletes duplicates and returns a copy.
    *  All procedure legs are converted to normal flight plan (user) legs.  */
   Route adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp) const;
+
+  /* Update user defined waypoint */
+  void changeUserAndPosition(int index, const QString& name, const atools::geo::Pos& pos);
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
@@ -398,6 +503,7 @@ public:
 
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
+  int getNumAltitudeLegs() const;
   bool hasValidProfile() const;
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
@@ -412,6 +518,14 @@ public:
   /* SID RAMY6, Approach ILS 12, etc. */
   QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
 
+  /* Assign index and pointer to flight plan for all objects */
+  void updateIndicesAndOffsets();
+  void updateAlternateIndicesAndOffsets();
+
+  void clearFlightplanAlternateProperties();
+
+  void updateAlternateProperties();
+
 private:
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
@@ -421,11 +535,6 @@ private:
 
   /* Update and calculate magnetic variation for all route map objects */
   void updateMagvar();
-
-  /* Update leg altitudes, TOC and TOC */
-
-  /* Assign index and pointer to flight plan for all objects */
-  void updateIndicesAndOffsets();
 
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
   void copy(const Route& other);
@@ -437,8 +546,10 @@ private:
   float projectedDistance(const atools::geo::LineDistance& result, float legFromStart, int legIndex) const;
 
   atools::geo::Rect boundingRect;
-  /* Nautical miles not including missed approach */
+
+  /* Nautical miles not including missed approach and alternates */
   float totalDistance = 0.f;
+
   atools::fs::pln::Flightplan flightplan;
   proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
   map::MapObjectTypes shownTypes;
@@ -446,8 +557,11 @@ private:
   int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
   map::PosCourse activePos;
-  int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
-      arrivalLegsOffset = map::INVALID_INDEX_VALUE;
+  int departureLegsOffset = map::INVALID_INDEX_VALUE, /* First departure leg */
+      starLegsOffset = map::INVALID_INDEX_VALUE, /* First STAR leg */
+      arrivalLegsOffset = map::INVALID_INDEX_VALUE, /* First arrival leg */
+      alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
+  int numAlternateLegs = 0;
 
   RouteAltitude *altitude;
 };

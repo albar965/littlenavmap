@@ -9641,6 +9641,21 @@ wind display in the elevation profile top line.</string>
     <string>Do not download or read wind files</string>
    </property>
   </action>
+  <action name="actionRouteAirportAlternate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add %1 as Flight Plan Alternate</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

@@ -131,13 +131,23 @@ public:
     return violatesRestrictions;
   }
 
-  /* Pull only the needed methods in public space to have control over it and allow only read access */
-  using QVector<RouteAltitudeLeg>::const_iterator;
-  using QVector<RouteAltitudeLeg>::begin;
-  using QVector<RouteAltitudeLeg>::end;
-  using QVector<RouteAltitudeLeg>::at;
-  using QVector<RouteAltitudeLeg>::size;
-  using QVector<RouteAltitudeLeg>::isEmpty;
+  const RouteAltitudeLeg& at(int i) const
+  {
+    if(i < 0 || i > size() - 1)
+      qWarning() << Q_FUNC_INFO << "Invalid index" << i;
+
+    return QVector::at(i);
+  }
+
+  int size() const
+  {
+    return QVector::size();
+  }
+
+  bool isEmpty() const // OK
+  {
+    return QVector::isEmpty();
+  }
 
   /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
   const QVector<map::MapIls>& getDestRunwayIls() const
@@ -179,6 +189,21 @@ public:
   {
     return tripFuel;
   }
+
+  /* Fuel to the farthest alternate airport from the destination */
+  float getAlternateFuel() const
+  {
+    return alternateFuel;
+  }
+
+  /* Get all fuel to load for flight */
+  float getBlockFuel(const atools::fs::perf::AircraftPerf& perf) const;
+
+  /* Get fuel amount at destination */
+  float getDestinationFuel(const atools::fs::perf::AircraftPerf& perf) const;
+
+  /* Get contingency fuel amount*/
+  float getContingencyFuel(const atools::fs::perf::AircraftPerf& perf) const;
 
   /* true if there are legs where the headwind is higher than aircraft capabilities */
   bool hasUnflyableLegs() const
@@ -289,7 +314,7 @@ private:
         distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
 
   /* Fuel and performance calculation results */
-  float tripFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
+  float tripFuel = 0.f, alternateFuel = 0.f, travelTime = 0.f, averageGroundSpeed = 0.f;
   bool unflyableLegs = false;
 
   // Average wind values for the whole route

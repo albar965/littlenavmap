@@ -463,7 +463,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
     {
       updateLayers();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
 #endif
 

@@ -119,8 +119,10 @@ private:
 
   void drawStartParking(const PaintContext *context);
   void drawWindBarbs(const PaintContext *context, const QBitArray& visibleStartPoints,
-                       const QList<QPointF>& startPoints);
+                     const QList<QPointF>& startPoints);
   void drawWindBarbAtWaypoint(const PaintContext *context, float windSpeed, float windDir, float x, float y);
+  void drawRouteInternal(const PaintContext *context, QStringList routeTexts, QVector<atools::geo::Line> lines,
+                         int passedRouteLeg);
 
   const Route *route;
 };

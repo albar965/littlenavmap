@@ -159,7 +159,6 @@ public:
   static const Route& getRouteConst();
   static Route& getRoute();
   static const atools::geo::Rect& getRouteRect();
-  static int getRouteSize();
 
   static const RouteAltitude& getAltitudeLegs();
 

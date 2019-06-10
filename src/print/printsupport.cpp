@@ -92,8 +92,8 @@ void PrintSupport::fillWeatherCache()
   if(!route.isEmpty())
   {
     map::WeatherContext currentWeatherContext;
-    mainWindow->buildWeatherContext(currentWeatherContext, route.first().getAirport());
-    mainWindow->buildWeatherContext(currentWeatherContext, route.last().getAirport());
+    mainWindow->buildWeatherContext(currentWeatherContext, route.getDepartureAirportLeg().getAirport());
+    mainWindow->buildWeatherContext(currentWeatherContext, route.getDestinationAirportLeg().getAirport());
   }
 }
 
@@ -223,9 +223,9 @@ void PrintSupport::createFlightplanDocuments()
   // Start and destination  =========================================================================
   // print start and destination information if these are airports
   if(route.hasValidDeparture() && opts & prt::DEPARTURE_ANY)
-    addAirport(cursor, route.first().getAirport(), tr("Departure"), true /* departure */);
+    addAirport(cursor, route.getDepartureAirportLeg().getAirport(), tr("Departure"), true /* departure */);
   if(route.hasValidDestination() && opts & prt::DESTINATION_ANY)
-    addAirport(cursor, route.last().getAirport(), tr("Destination"), false /* destination */);
+    addAirport(cursor, route.getDestinationAirportLeg().getAirport(), tr("Destination"), false /* destination */);
 
   printDocument->adjustSize();
 }

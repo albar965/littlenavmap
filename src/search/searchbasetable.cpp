@@ -829,6 +829,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Save and restore action texts on return
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
+                                      ui->actionRouteAirportAlternate,
                                       ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange,
                                       ui->actionSearchShowApproaches, ui->actionMapTrafficPattern,
                                       ui->actionUserdataAdd, ui->actionUserdataDelete});
@@ -842,7 +843,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ui->actionSearchResetSearch, ui->actionSearchShowAll,
     ui->actionMapTrafficPattern,
     ui->actionMapRangeRings, ui->actionMapNavaidRange,
-    ui->actionRouteAirportStart, ui->actionRouteAirportDest, ui->actionRouteAddPos, ui->actionRouteAppendPos,
+    ui->actionRouteAirportStart, ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
+    ui->actionRouteAddPos, ui->actionRouteAppendPos,
     ui->actionSearchTableCopy, ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing,
     ui->actionSearchResetView, ui->actionSearchSetMark
   });
@@ -892,8 +894,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                        navType == map::WAYPOINT || navType == map::AIRPORT ||
                                        navType == map::USERPOINT);
 
-  ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == map::AIRPORT);
+  ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
+  ui->actionRouteAirportAlternate->setEnabled(navType == map::AIRPORT &&
+                                              NavApp::getRouteConst().getSizeWithoutAlternates() > 0);
   ui->actionMapTrafficPattern->setEnabled(navType == map::AIRPORT && !airport.noRunways());
 
   ui->actionSearchShowApproaches->setEnabled(false);
@@ -946,6 +950,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionRouteAppendPos->setText(tr("Append to Flight Plan"));
   ui->actionRouteAirportStart->setText(tr("Set as Flight Plan Departure"));
   ui->actionRouteAirportDest->setText(tr("Set as Flight Plan Destination"));
+  ui->actionRouteAirportAlternate->setText(tr("Add as Flight Plan Alternate"));
   ui->actionMapTrafficPattern->setText(tr("Display Airport Traffic Pattern"));
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
@@ -1019,6 +1024,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
     menu.addAction(ui->actionRouteAirportStart);
     menu.addAction(ui->actionRouteAirportDest);
+    menu.addAction(ui->actionRouteAirportAlternate);
     menu.addSeparator();
   }
 
@@ -1107,6 +1113,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       emit routeSetDeparture(airportQuery->getAirportById(controller->getIdForRow(index)));
     else if(action == ui->actionRouteAirportDest)
       emit routeSetDestination(airportQuery->getAirportById(controller->getIdForRow(index)));
+    else if(action == ui->actionRouteAirportAlternate)
+      emit routeAddAlternate(airportQuery->getAirportById(controller->getIdForRow(index)));
   }
 }
 

@@ -391,15 +391,15 @@ void UserdataController::createTakoffLanding(const atools::fs::sc::SimConnectUse
     if(!route.isEmpty())
     {
       QString from, to;
-      if(route.first().getAirport().isValid())
-        from = map::airportText(route.first().getAirport());
+      if(route.getDepartureAirportLeg().getAirport().isValid())
+        from = map::airportText(route.getDepartureAirportLeg().getAirport());
       else
-        from = route.first().getIdent();
+        from = route.getDepartureAirportLeg().getIdent();
 
-      if(route.last().getAirport().isValid())
-        to = map::airportText(route.last().getAirport());
+      if(route.getDestinationAirportLeg().getAirport().isValid())
+        to = map::airportText(route.getDestinationAirportLeg().getAirport());
       else
-        to = route.last().getIdent();
+        to = route.getDestinationAirportLeg().getIdent();
 
       description << tr("From: %2 to %3").arg(from).arg(to);
       description << tr("Cruising altitude: %1").arg(Unit::altFeet(route.getCruisingAltitudeFeet()));

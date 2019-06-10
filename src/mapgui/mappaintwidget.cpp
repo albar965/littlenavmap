@@ -986,7 +986,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
   bool changed = false;
   const GeoDataLatLonBox visibleLatLonBox = getCurrentViewBoundingBox();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_PAINT
   qDebug() << Q_FUNC_INFO << "distance"
            << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM zoom" << zoom()
            << "step" << zoomStep();

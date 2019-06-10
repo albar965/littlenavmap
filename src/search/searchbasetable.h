@@ -157,6 +157,9 @@ signals:
   /* Set airport as flight plan destination (from context menu) */
   void routeSetDestination(const map::MapAirport& airport);
 
+  /* Add an alternate airport */
+  void routeAddAlternate(const map::MapAirport& airport);
+
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
