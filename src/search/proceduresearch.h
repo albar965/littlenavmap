@@ -139,6 +139,12 @@ private:
 
   void contextMenu(const QPoint& pos);
 
+  /* Called from menu actions */
+  void showInformationSelected();
+  void showOnMapSelected();
+  void approachAttachSelected();
+  void attachApproach(QString runway);
+
   // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
@@ -171,6 +177,7 @@ private:
   void updateTreeHeader();
   void createFonts();
 
+  /* Get parent items of a leg item or current */
   QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
   QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
 
@@ -186,11 +193,13 @@ private:
   static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
-  QVector<QAction *> buildRunwaySubmenu(QMenu& menu, const ProcData& procData);
+  QVector<QAction *> buildRunwaySubmenu(QMenu& menu, const ProcData& procData, bool submenu);
 
   void fetchSingleTransitionId(proc::MapProcedureRef& ref);
   QString approachAndTransitionText(const QTreeWidgetItem *item);
   void clearSelectionTriggered();
+
+  const proc::MapProcedureLegs *fetchProcData(ProcData& procData, proc::MapProcedureRef& ref, QTreeWidgetItem *item);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<ProcData> itemIndex;
@@ -210,8 +219,6 @@ private:
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;
 
-  /* Used to make the table rows smaller and also used to adjust font size */
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
   FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
