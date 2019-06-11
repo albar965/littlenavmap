@@ -1837,7 +1837,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(routeLeg != nullptr)
   {
     ui->actionRouteShowInformation->setEnabled(routeLeg->isValid() &&
-                                               routeLeg->isRoute() &&
+                                               (routeLeg->isRoute() || routeLeg->isAlternate()) &&
                                                routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
                                                routeLeg->getMapObjectType() != map::INVALID);
 

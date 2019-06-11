@@ -1458,11 +1458,7 @@ void Route::setDepartureParking(const map::MapParking& departureParking)
   int idx = getDepartureAirportLegIndex();
 
   if(idx != map::INVALID_INDEX_VALUE)
-  {
-    RouteLeg& leg = (*this)[idx];
-    leg.setDepartureParking(departureParking);
-    leg.setDepartureStart(map::MapStart());
-  }
+    (*this)[idx].setDepartureParking(departureParking);
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << idx;
 }
@@ -1472,11 +1468,7 @@ void Route::setDepartureStart(const map::MapStart& departureStart)
   int idx = getDepartureAirportLegIndex();
 
   if(idx != map::INVALID_INDEX_VALUE)
-  {
-    RouteLeg& leg = (*this)[idx];
-    leg.setDepartureParking(map::MapParking());
-    leg.setDepartureStart(departureStart);
-  }
+    (*this)[idx].setDepartureStart(departureStart);
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << idx;
 }

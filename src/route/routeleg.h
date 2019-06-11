@@ -81,7 +81,8 @@ public:
   void updateUserName(const QString& name);
   void updateUserPosition(const atools::geo::Pos& pos);
 
-  /* Set parking and start position. Does not modify the flight plan entry. */
+  /* Set parking and start position. Does not modify the flight plan entry.
+   * Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
   void setDepartureStart(const map::MapStart& departureStart);
 

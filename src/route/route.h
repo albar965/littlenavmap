@@ -133,6 +133,7 @@ public:
   /* true if active leg is an alternate leg*/
   bool isActiveAlternate() const;
 
+  /* Set departure parking information. Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
   void setDepartureStart(const map::MapStart& departureStart);
 

@@ -1804,9 +1804,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                           "<li>Ground Speed</li>"
                                             "<li>Departure parking position</li>"
                                               "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                              "</ul>"
-                                              "This information will be lost when reloading the file.<br/><br/>"
-                                              "Really save as FMS file?<br/>"),
+                                                "<li>Alternate destination airports</li>"
+                                                "</ul>"
+                                                "This information will be lost when reloading the file.<br/><br/>"
+                                                "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FMS 3."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1825,9 +1826,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                       "<li>Ground Speed</li>"
                                         "<li>Departure parking position</li>"
                                           "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                          "</ul>"
-                                          "This information will be lost when reloading the file.<br/><br/>"
-                                          "Really save as FMS file?<br/>"),
+                                            "<li>Alternate destination airports</li>"
+                                            "</ul>"
+                                            "This information will be lost when reloading the file.<br/><br/>"
+                                            "Really save as FMS file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FMS 11."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1847,9 +1849,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                             "<li>Ground Speed</li>"
                                               "<li>Departure parking position</li>"
                                                 "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                "</ul>"
-                                                "This information will be lost when reloading the file.<br/><br/>"
-                                                "Really save as FLP file?<br/>"),
+                                                  "<li>Alternate destination airports</li>"
+                                                  "</ul>"
+                                                  "This information will be lost when reloading the file.<br/><br/>"
+                                                  "Really save as FLP file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FLP."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1869,9 +1872,10 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
                                             "<li>Ground Speed</li>"
                                               "<li>Departure parking position</li>"
                                                 "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                "</ul>"
-                                                "This information will be lost when reloading the file.<br/><br/>"
-                                                "Really save as FGFP file?<br/>"),
+                                                  "<li>Alternate destination airports</li>"
+                                                  "</ul>"
+                                                  "This information will be lost when reloading the file.<br/><br/>"
+                                                  "Really save as FGFP file?<br/>"),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FGFP."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
