@@ -1279,11 +1279,13 @@ bool RouteController::exportFlighplanAsClean(const QString& filename)
 
   routeFilename = filename;
   routeFileFormat = atools::fs::pln::PLN_FSX;
+  route.getFlightplan().setFileFormat(atools::fs::pln::PLN_FSX);
   bool retval = saveFlightplan(true /* clean export */);
 
   // Revert back to original name
   routeFilename = savedFilename;
   routeFileFormat = savedFileFormat;
+  route.getFlightplan().setFileFormat(savedFileFormat);
   return retval;
 }
 
