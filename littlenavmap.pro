@@ -249,6 +249,7 @@ SOURCES += \
   src/export/htmlexporter.cpp \
   src/gui/airspacetoolbarhandler.cpp \
   src/gui/mainwindow.cpp \
+  src/gui/runwayselection.cpp \
   src/gui/stylehandler.cpp \
   src/gui/timedialog.cpp \
   src/gui/trafficpatterndialog.cpp \
@@ -381,6 +382,7 @@ HEADERS  += \
   src/export/htmlexporter.h \
   src/gui/airspacetoolbarhandler.h \
   src/gui/mainwindow.h \
+  src/gui/runwayselection.h \
   src/gui/stylehandler.h \
   src/gui/timedialog.h \
   src/gui/trafficpatterndialog.h \

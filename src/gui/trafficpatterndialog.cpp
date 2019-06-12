@@ -17,18 +17,16 @@
 
 #include "gui/trafficpatterndialog.h"
 
-#include "common/maptypes.h"
 #include "common/constants.h"
-#include "gui/widgetstate.h"
-#include "query/airportquery.h"
+#include "gui/runwayselection.h"
 #include "geo/calculations.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
-#include "navapp.h"
 #include "gui/helphandler.h"
 #include "common/unitstringtool.h"
 #include "common/unit.h"
+#include "atools.h"
 
 #include "ui_trafficpatterndialog.h"
 
@@ -37,23 +35,23 @@
 using atools::geo::Pos;
 
 TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport) :
-  QDialog(parent), ui(new Ui::TrafficPatternDialog), airport(mapAirport), color(Qt::darkRed)
+  QDialog(parent), ui(new Ui::TrafficPatternDialog), color(Qt::darkRed)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
 
-  fillRunwayComboBox();
-  fillAirportLabel();
+  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetTrafficPatternRunway);
+  runwaySelection->setAirportLabel(ui->labelTrafficPatternAirport);
+  runwaySelection->setShowPattern(true);
+
+  connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &TrafficPatternDialog::updateRunwayLabel);
+  connect(runwaySelection, &RunwaySelection::doubleClicked, this, &TrafficPatternDialog::doubleClicked);
 
   connect(ui->checkBoxTrafficPattern45Degree, &QCheckBox::toggled, this, &TrafficPatternDialog::updateWidgets);
-  connect(ui->comboBoxTrafficPatternRunway, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &TrafficPatternDialog::updateRunwayLabel);
   connect(ui->buttonBoxTrafficPattern, &QDialogButtonBox::clicked, this, &TrafficPatternDialog::buttonBoxClicked);
   connect(ui->pushButtonTrafficPatternColor, &QPushButton::clicked, this, &TrafficPatternDialog::colorButtonClicked);
-
-  restoreState();
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
@@ -62,10 +60,13 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
     ui->doubleSpinBoxDownwindDistance,
     ui->spinBoxTrafficPatternAltitude
   });
+
+  restoreState();
 }
 
 TrafficPatternDialog::~TrafficPatternDialog()
 {
+  delete runwaySelection;
   delete units;
   delete ui;
 }
@@ -85,55 +86,17 @@ void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
-void TrafficPatternDialog::fillAirportLabel()
+void TrafficPatternDialog::doubleClicked()
 {
-  ui->labelTrafficPatternAirport->setText(tr("%1, elevation %2").
-                                          arg(map::airportTextShort(airport)).
-                                          arg(Unit::altFeet(airport.position.getAltitude())));
-}
-
-void TrafficPatternDialog::fillRunwayComboBox()
-{
-  const QList<map::MapRunway> *rw = NavApp::getAirportQuerySim()->getRunways(airport.id);
-  if(rw != nullptr)
-    runways = *rw;
-
-  std::sort(runways.begin(), runways.end(), [](const map::MapRunway& rw1, const map::MapRunway& rw2) -> bool {
-    return rw1.length > rw2.length;
-  });
-
-  int index = 0;
-  for(const map::MapRunway& runway : runways)
-  {
-    QString atts;
-    if(runway.isHard())
-      atts = tr("Hard");
-    else if(runway.isSoft())
-      atts = tr("Soft");
-    else if(runway.isWater())
-      atts = tr("Water");
-
-    QString primaryName(tr("%1, %2, %3").
-                        arg(runway.primaryName).
-                        arg(Unit::distShortFeet(runway.length)).
-                        arg(atts));
-    QString secondaryName(tr("%1, %2, %3").
-                          arg(runway.secondaryName).
-                          arg(Unit::distShortFeet(runway.length)).
-                          arg(atts));
-
-    ui->comboBoxTrafficPatternRunway->addItem(primaryName, QVariantList({index, true}));
-    ui->comboBoxTrafficPatternRunway->addItem(secondaryName, QVariantList({index, false}));
-    index++;
-  }
-
-  updateRunwayLabel(0);
+  saveState();
+  QDialog::accept();
 }
 
 void TrafficPatternDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG, false);
   widgetState.restore({
+    this,
     ui->doubleSpinBoxDownwindDistance,
     ui->spinBoxTrafficPatternAltitude,
     ui->doubleSpinBoxTrafficPatternBaseDistance,
@@ -145,13 +108,14 @@ void TrafficPatternDialog::restoreState()
 
   updateWidgets();
   updateButtonColor();
-  updateRunwayLabel(ui->comboBoxTrafficPatternRunway->currentIndex());
+  runwaySelection->restoreState();
 }
 
 void TrafficPatternDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG, false);
   widgetState.save({
+    this,
     ui->doubleSpinBoxDownwindDistance,
     ui->spinBoxTrafficPatternAltitude,
     ui->doubleSpinBoxTrafficPatternBaseDistance,
@@ -177,50 +141,17 @@ void TrafficPatternDialog::updateButtonColor()
   atools::gui::util::changeWidgetColor(ui->pushButtonTrafficPatternColor, color);
 }
 
-void TrafficPatternDialog::updateRunwayLabel(int index)
+void TrafficPatternDialog::updateRunwayLabel()
 {
-  if(index >= 0)
-  {
-    QVariantList data = ui->comboBoxTrafficPatternRunway->itemData(index).toList();
-    int rwIndex = data.at(0).toInt();
-    bool primary = data.at(1).toBool();
+  map::MapRunway rw;
+  map::MapRunwayEnd end;
+  runwaySelection->getCurrentSelected(rw, end);
 
-    const map::MapRunway& rw = runways.at(rwIndex);
+  if(rw.patternAlt > 100.f)
+    ui->spinBoxTrafficPatternAltitude->setValue(atools::roundToInt(Unit::rev(rw.patternAlt, Unit::altFeetF)));
 
-    float heading = atools::geo::normalizeCourse((primary ? rw.heading : atools::geo::opposedCourseDeg(
-                                                    rw.heading)) - airport.magvar);
-
-    QStringList atts;
-    if(rw.isLighted())
-      atts.append(tr("Lighted"));
-
-    if(primary && rw.primaryClosed)
-      atts.append(tr("Closed"));
-    if(!primary && rw.secondaryClosed)
-      atts.append(tr("Closed"));
-
-    QString name(tr("<b>%1</b>, %2 x %3, %4°M, %5%6").
-                 arg(primary ? rw.primaryName : rw.secondaryName).
-                 arg(Unit::distShortFeet(rw.length, false)).
-                 arg(Unit::distShortFeet(rw.width)).
-                 arg(QLocale().toString(heading, 'f', 0)).
-                 arg(map::surfaceName(rw.surface)).
-                 arg(atts.isEmpty() ? QString() : ", " + atts.join(", ")));
-
-    if(rw.patternAlt > 100.f)
-    {
-      name.append(tr(", Pattern Altitude %1").arg(Unit::altFeet(rw.patternAlt)));
-      ui->spinBoxTrafficPatternAltitude->setValue(atools::roundToInt(Unit::rev(rw.patternAlt, Unit::altFeetF)));
-    }
-
-    map::MapRunwayEnd end =
-      NavApp::getAirportQuerySim()->getRunwayEndById(primary ? rw.primaryEndId : rw.secondaryEndId);
-    if(end.isValid() && (end.pattern == "R" || end.pattern == "L"))
-      ui->comboBoxTrafficPatternTurnDirection->setCurrentIndex(end.pattern == "L" ? 0 : 1);
-
-    ui->labelTrafficPatternRunwayInfo->setText(name);
-
-  }
+  if(end.isValid() && (end.pattern == "R" || end.pattern == "L"))
+    ui->comboBoxTrafficPatternTurnDirection->setCurrentIndex(end.pattern == "L" ? 0 : 1);
 }
 
 void TrafficPatternDialog::updateWidgets()
@@ -230,11 +161,12 @@ void TrafficPatternDialog::updateWidgets()
 
 void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
 {
-  QVariantList data = ui->comboBoxTrafficPatternRunway->currentData().toList();
-  int rwIndex = data.at(0).toInt();
-  bool primary = data.at(1).toBool();
+  map::MapRunway rw;
+  map::MapRunwayEnd end;
+  runwaySelection->getCurrentSelected(rw, end);
 
-  const map::MapRunway& rw = runways.at(rwIndex);
+  bool primary = !end.secondary;
+  const map::MapAirport& airport = runwaySelection->getAirport();
 
   pattern.airportIcao = airport.ident;
   pattern.runwayName = primary ? rw.primaryName : rw.secondaryName;
@@ -242,10 +174,9 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   pattern.turnRight = ui->comboBoxTrafficPatternTurnDirection->currentIndex() == 1;
   pattern.base45Degree = ui->checkBoxTrafficPattern45Degree->isChecked();
   pattern.showEntryExit = ui->checkBoxTrafficPatternEntryExit->isChecked();
-  pattern.downwindDistance =
-    Unit::rev(static_cast<float>(ui->doubleSpinBoxDownwindDistance->value()), Unit::distNmF);
-  pattern.baseDistance =
-    Unit::rev(static_cast<float>(ui->doubleSpinBoxTrafficPatternBaseDistance->value()), Unit::distNmF);
+  pattern.downwindDistance = Unit::rev(static_cast<float>(ui->doubleSpinBoxDownwindDistance->value()), Unit::distNmF);
+  pattern.baseDistance = Unit::rev(
+    static_cast<float>(ui->doubleSpinBoxTrafficPatternBaseDistance->value()), Unit::distNmF);
 
   pattern.heading = primary ? rw.heading : atools::geo::opposedCourseDeg(rw.heading);
   pattern.magvar = airport.magvar;
@@ -255,12 +186,12 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   Pos pos = rw.position.endpointRhumb(
     atools::geo::feetToMeter(rw.length / 2 - (primary ? rw.primaryOffset : rw.secondaryOffset)), heading);
 
-  float altLocalUnit = Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF);
-  qDebug() << Q_FUNC_INFO << "ui->spinBoxTrafficPatternAltitude->value()" << ui->spinBoxTrafficPatternAltitude->value();
-  qDebug() << Q_FUNC_INFO << "airport.getPosition().getAltitude()" << airport.getPosition().getAltitude();
-  qDebug() << Q_FUNC_INFO << "altLocalUnit" << altLocalUnit;
+  float altFeet = Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF);
+  qDebug() << Q_FUNC_INFO << "altitude" << ui->spinBoxTrafficPatternAltitude->value()
+           << "airport altitude" << airport.getPosition().getAltitude()
+           << "alt feet" << altFeet;
 
-  pos.setAltitude(altLocalUnit + airport.getPosition().getAltitude());
+  pos.setAltitude(altFeet + airport.getPosition().getAltitude());
   pattern.position = pos;
 
   qDebug() << Q_FUNC_INFO << "pattern.position" << pattern.position;
