@@ -150,6 +150,7 @@ signals:
 
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport);
+  void showProceduresCustom(const map::MapAirport& airport);
 
   /* Set airport as flight plan departure (from context menu) */
   void routeSetDeparture(const map::MapAirport& airport);
@@ -207,6 +208,7 @@ private:
   void tableCopyClipboard();
   void showInformationTriggered();
   void showApproachesTriggered();
+  void showApproachesCustomTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool visible);
@@ -228,6 +230,8 @@ private:
 
   ViewEventFilter *viewEventFilter = nullptr;
   SearchWidgetEventFilter *widgetEventFilter = nullptr;
+  void showApproaches(bool custom);
+
 };
 
 #endif // LITTLENAVMAP_SEARCHBASE_H

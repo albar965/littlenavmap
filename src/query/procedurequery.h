@@ -92,6 +92,9 @@ public:
   int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId,
                           float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
 
+  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, float distance,
+                            float altitude);
+
   /* Flush the cache to update units */
   void clearCache();
 
@@ -110,6 +113,9 @@ private:
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
   proc::MapProcedureLeg buildApproachLegEntry(const map::MapAirport& airport);
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
+
+  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
+                            float distance, float altitude);
 
   /* See comments in postProcessLegs about the steps below */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs);
@@ -188,6 +194,9 @@ private:
 
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
+
+  /* Dummy used for custom approaches. */
+  Q_DECL_CONSTEXPR static int CUSTOM_APPROACH_ID = 1000000000;
 
   /* Use this value as an id base for the artifical vector legs. */
   Q_DECL_CONSTEXPR static int VECTOR_LEG_ID_BASE = 1250000000;

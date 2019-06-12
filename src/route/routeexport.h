@@ -130,8 +130,8 @@ public:
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
-  static Route routeAdjustedToProcedureOptions(const Route& route);
-  Route routeAdjustedToProcedureOptions();
+  static Route routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp);
+  Route routeAdjustedToProcedureOptions(bool replaceCustomWp);
 
 signals:
   /* Show airport on map to allow parking selection */

@@ -216,7 +216,8 @@ signals:
   void moveUserpointFromMap(const map::MapUserpoint& point);
 
   /* Show approaches from context menu */
-  void showApproaches(map::MapAirport airport);
+  void showProcedures(map::MapAirport airport);
+  void showProceduresCustom(map::MapAirport airport);
 
 private:
   /* Convert paint layer value to menu actions checked / not checked */

@@ -699,7 +699,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Collect indexes in reverse (painting) order without missed ================
   QVector<int> indexes;
-  for(int i = 0; i <= route.getDestinationAirportLegIndex(); i++)
+  for(int i = 0; i <= route.getDestinationLegIndex(); i++)
   {
     if(route.at(i).getProcedureLeg().isMissed() || route.at(i).isAlternate())
       break;
@@ -790,7 +790,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
-  // Draw ILS or VASI guidane ============================
+  // Draw ILS or VASI guidance ============================
   if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
     paintIls(painter, route);
 
@@ -941,6 +941,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                              symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
         else if(type == map::INVALID)
           symPainter.textBox(&painter, {atools::elideTextShort(leg.getIdent(), 6)}, mapcolors::routeInvalidPointColor,
+                             symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+        else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
+          // Custom approach
+          symPainter.textBox(&painter, {atools::elideTextShort(leg.getProcedureLeg().fixIdent, 6)},
+                             mapcolors::routeUserPointColor,
                              symPt.x() - 5, symytxt, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
       }
     }
@@ -1350,14 +1355,14 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     return ElevationLegList();
 
   // Loop over all route legs
-  for(int i = 1; i <= legs.route.getDestinationAirportLegIndex(); i++)
+  for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
   {
     if(terminateThreadSignal)
       // Return empty result
       return ElevationLegList();
 
     const RouteLeg& routeLeg = legs.route.at(i);
-    if(routeLeg.getProcedureLeg().isMissed())
+    if(routeLeg.getProcedureLeg().isMissed() || routeLeg.isAlternate())
       break;
 
     const RouteLeg& lastLeg = legs.route.at(i - 1);

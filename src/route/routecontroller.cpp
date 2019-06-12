@@ -45,6 +45,7 @@
 #include "route/routefinder.h"
 #include "route/routenetworkairway.h"
 #include "route/routenetworkradio.h"
+#include "route/customproceduredialog.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
@@ -206,6 +207,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowApproachesCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableSelectAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -216,7 +218,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
-                    ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionRouteShowApproaches,
+                    ui->actionRouteTableCopy, ui->actionRouteShowInformation,
+                    ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
                     ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
                     ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark});
 
@@ -234,6 +237,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
   connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showProceduresMenu);
+  connect(ui->actionRouteShowApproachesCustom, &QAction::triggered, this, &RouteController::showProceduresMenuCustom);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
@@ -1146,9 +1150,37 @@ bool RouteController::saveFlighplanAs(const QString& filename, pln::FileFormat t
 /* Save flight plan using the same format indicated in the flight plan object */
 bool RouteController::saveFlightplan(bool cleanExport)
 {
+  bool replaceCustomWp = false;
+
+  if(cleanExport)
+    // Replace approach with user waypoints
+    replaceCustomWp = true;
+  else
+  {
+    switch(route.getFlightplan().getFileFormat())
+    {
+      case atools::fs::pln::PLN_FSX:
+        // Not clean FSX allows custom approaches
+        replaceCustomWp = false;
+        break;
+
+      case atools::fs::pln::NONE:
+      case atools::fs::pln::PLN_FS9:
+      case atools::fs::pln::FMS3:
+      case atools::fs::pln::FMS11:
+      case atools::fs::pln::FLP:
+      case atools::fs::pln::PLN_FSC:
+      case atools::fs::pln::FLIGHTGEAR:
+        // Replace waypoints and do not insert approach information
+        replaceCustomWp = true;
+        break;
+    }
+  }
+
   // Get a copy that has procedures replaced with waypoints depending on settings
   // Also fills altitude in flight plan entry position
-  Flightplan flightplan = RouteExport::routeAdjustedToProcedureOptions(route).getFlightplan();
+  Flightplan flightplan =
+    RouteExport::routeAdjustedToProcedureOptions(route, replaceCustomWp).getFlightplan();
   qDebug() << Q_FUNC_INFO << "flightplan.getFileFormat()" << flightplan.getFileFormat()
            << "routeFileFormat" << routeFileFormat;
 
@@ -1740,6 +1772,17 @@ void RouteController::showProceduresMenu()
 }
 
 /* From context menu */
+void RouteController::showProceduresMenuCustom()
+{
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+  {
+    const RouteLeg& routeLeg = route.at(index.row());
+    emit showProceduresCustom(routeLeg.getAirport());
+  }
+}
+
+/* From context menu */
 void RouteController::showOnMapMenu()
 {
   QModelIndex index = view->currentIndex();
@@ -1795,22 +1838,20 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
-                                      ui->actionRouteShowApproaches, ui->actionRouteDeleteLeg,
-                                      ui->actionRouteInsert, ui->actionMapTrafficPattern});
+                                      ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
+                                      ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver(
   {
-    ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowOnMap,
-    ui->actionRouteActivateLeg, ui->actionRouteLegUp, ui->actionRouteLegDown, ui->actionRouteDeleteLeg,
-    ui->actionMapEditUserWaypoint,
-    ui->actionRouteCalcRadionavSelected, ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected,
-    ui->actionRouteCalcSetAltSelected,
-    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange,
-    ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
-    ui->actionRouteResetView, ui->actionRouteSetMark, ui->actionRouteInsert, ui->actionRouteTableAppend
-  });
+    ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
+    ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteLegUp, ui->actionRouteLegDown,
+    ui->actionRouteDeleteLeg, ui->actionMapEditUserWaypoint, ui->actionRouteCalcRadionavSelected,
+    ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected, ui->actionRouteCalcSetAltSelected,
+    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange, ui->actionRouteTableCopy,
+    ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll, ui->actionRouteResetView, ui->actionRouteSetMark,
+    ui->actionRouteInsert, ui->actionRouteTableAppend});
   Q_UNUSED(stateSaver);
 
   QModelIndex index = view->indexAt(pos);
@@ -1863,11 +1904,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
     {
       bool hasDeparture = NavApp::getAirportQueryNav()->hasDepartureProcedures(routeLeg->getIdent());
       bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(routeLeg->getIdent());
+      bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(routeLeg->getIdent());
+      bool airportDestination = NavApp::getRouteConst().isAirportDestination(routeLeg->getIdent());
 
       if(hasAnyArrival || hasDeparture)
       {
-        bool airportDeparture = NavApp::getRouteConst().isAirportDeparture(routeLeg->getIdent());
-        bool airportDestination = NavApp::getRouteConst().isAirportDestination(routeLeg->getIdent());
         if(airportDeparture)
         {
           if(hasDeparture)
@@ -1896,6 +1937,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
       }
       else
         ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
+
+      ui->actionRouteShowApproachesCustom->setEnabled(true);
+      if(airportDestination)
+        ui->actionRouteShowApproachesCustom->setText(tr("Create Approach to Airport and insert into Flight Plan"));
+      else
+        ui->actionRouteShowApproachesCustom->setText(tr("Create Approach and use Airport as Destination"));
     }
     else
       ui->actionRouteShowApproaches->setText(tr("Show procedures"));
@@ -1989,6 +2036,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionRouteShowInformation);
   menu.addAction(ui->actionRouteShowApproaches);
+  menu.addAction(ui->actionRouteShowApproachesCustom);
   menu.addAction(ui->actionRouteShowOnMap);
   menu.addAction(ui->actionRouteActivateLeg);
   menu.addSeparator();
@@ -2791,11 +2839,38 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
   updateStartPositionBestRunway(false /* force */, false /* undo */);
 }
 
+void RouteController::showProceduresCustom(map::MapAirport airport)
+{
+  qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
+
+  CustomProcedureDialog dialog(mainWindow, airport);
+  int result = dialog.exec();
+
+  if(result == QDialog::Accepted)
+  {
+    map::MapRunway runway;
+    map::MapRunwayEnd end;
+    dialog.getSelected(runway, end);
+    qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
+
+    proc::MapProcedureLegs procedure;
+    NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end,
+                                                      dialog.getEntryDistance(), dialog.getEntryAltitude());
+    routeAttachProcedure(procedure, QString());
+  }
+}
+
 void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)
 {
   qDebug() << Q_FUNC_INFO
            << legs.approachType << legs.approachFixIdent << legs.approachSuffix << legs.approachArincName
            << legs.transitionType << legs.transitionFixIdent;
+
+  if(legs.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "empty procedure";
+    return;
+  }
 
   RouteCommand *undoCommand = nullptr;
 

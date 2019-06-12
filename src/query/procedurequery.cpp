@@ -1686,6 +1686,9 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
     properties.remove(pln::APPROACHSUFFIX);
     properties.remove(pln::APPROACHDISTANCE);
     properties.remove(pln::APPROACHSIZE);
+
+    properties.remove(pln::APPROACH_CUSTOM_DISTANCE);
+    properties.remove(pln::APPROACH_CUSTOM_ALTITUDE);
   }
 }
 
@@ -1747,6 +1750,12 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
       properties.insert(pln::APPROACHSUFFIX, arrivalLegs.approachSuffix);
       properties.insert(pln::APPROACHDISTANCE, QString::number(arrivalLegs.approachDistance, 'f', 1));
       properties.insert(pln::APPROACHSIZE, QString::number(arrivalLegs.approachLegs.size()));
+
+      if(arrivalLegs.approachType == "CUSTOM")
+      {
+        properties.insert(pln::APPROACH_CUSTOM_DISTANCE, QString::number(arrivalLegs.approachCustomDistance, 'f', 2));
+        properties.insert(pln::APPROACH_CUSTOM_ALTITUDE, QString::number(arrivalLegs.approachCustomAltitude, 'f', 2));
+      }
     }
   }
 }
@@ -1830,6 +1839,84 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
       qWarning() << "Loading of STAR transition" << starTrans << "failed";
   }
   return starTransId;
+}
+
+void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport,
+                                          const map::MapRunwayEnd& runwayEnd, float distance, float altitude)
+{
+  map::MapAirport airportNav = mapQuery->getAirportNav(airport);
+  Pos initialFixPos = runwayEnd.position.endpointRhumb(atools::geo::nmToMeter(distance),
+                                                       atools::geo::opposedCourseDeg(runwayEnd.heading));
+
+  // Create procedure ========================================
+  procedure.ref.runwayEndId = runwayEnd.id;
+  procedure.ref.airportId = airportNav.id;
+  procedure.ref.approachId = CUSTOM_APPROACH_ID;
+  procedure.approachFixIdent = airport.ident + runwayEnd.name;
+  procedure.approachType = "CUSTOM";
+  procedure.runwayEnd = runwayEnd;
+  procedure.procedureRunway = runwayEnd.name;
+  procedure.mapType = proc::PROCEDURE_APPROACH;
+  procedure.approachDistance = distance;
+  procedure.approachCustomDistance = distance;
+  procedure.approachCustomAltitude = altitude;
+  procedure.gpsOverlay = procedure.hasError = procedure.circleToLand = false;
+  procedure.transitionDistance = procedure.missedDistance = 0.f;
+  procedure.bounding = atools::geo::Rect(initialFixPos);
+  procedure.bounding.extend(runwayEnd.position);
+
+  // Create an initial fix leg at the given distance =======================
+  proc::MapProcedureLeg initLeg;
+  initLeg.fixType = "CST";
+  initLeg.fixIdent = "IF" + runwayEnd.name;
+  initLeg.fixRegion = airport.region;
+  initLeg.fixPos = initialFixPos;
+  initLeg.line = Line(initialFixPos);
+  initLeg.geometry = LineString(initialFixPos);
+  initLeg.altRestriction.descriptor = proc::MapAltRestriction::AT;
+  initLeg.altRestriction.alt1 = airport.position.getAltitude() + altitude;
+  initLeg.type = proc::INITIAL_FIX;
+  initLeg.mapType = proc::PROCEDURE_APPROACH;
+  initLeg.course = 0.f;
+  initLeg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
+  initLeg.distance = initLeg.calculatedDistance = 0.f;
+  initLeg.theta = initLeg.rho = initLeg.time = 0.f;
+  initLeg.magvar = airport.magvar;
+  initLeg.missed = initLeg.flyover = initLeg.trueCourse =
+    initLeg.intercept = initLeg.disabled = initLeg.malteseCross = false;
+  procedure.approachLegs.append(initLeg);
+
+  // Create the runway leg ================================================
+  proc::MapProcedureLeg runwayLeg;
+  runwayLeg.fixType = "R";
+  runwayLeg.fixIdent = "RW" + runwayEnd.name;
+  runwayLeg.fixRegion = airport.region;
+  runwayLeg.fixPos = runwayEnd.position;
+  runwayLeg.line = Line(initialFixPos, runwayEnd.position);
+  runwayLeg.geometry = LineString(initialFixPos, runwayEnd.position);
+  runwayLeg.navaids.runwayEnds.append(runwayEnd);
+  runwayLeg.navId = -1;
+  runwayLeg.altRestriction.descriptor = proc::MapAltRestriction::AT;
+  runwayLeg.altRestriction.alt1 = airport.position.getAltitude();
+  runwayLeg.type = proc::COURSE_TO_FIX;
+  runwayLeg.mapType = proc::PROCEDURE_APPROACH;
+  runwayLeg.course = atools::geo::normalizeCourse(runwayEnd.heading - airport.magvar);
+  runwayLeg.calculatedTrueCourse = runwayEnd.heading;
+  runwayLeg.distance = runwayLeg.calculatedDistance = distance;
+  runwayLeg.theta = runwayLeg.rho = runwayLeg.time = 0.f;
+  runwayLeg.magvar = airport.magvar;
+  runwayLeg.missed = runwayLeg.flyover = runwayLeg.trueCourse =
+    runwayLeg.intercept = runwayLeg.disabled = runwayLeg.malteseCross = false;
+  procedure.approachLegs.append(runwayLeg);
+}
+
+void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport,
+                                          const QString& runwayEnd, float distance, float altitude)
+{
+  map::MapSearchResult result;
+  runwayEndByName(result, runwayEnd, airport);
+  if(!result.runwayEnds.isEmpty())
+    createCustomApproach(procedure, airport, result.runwayEnds.first(), distance, altitude);
 }
 
 void ProcedureQuery::clearCache()
@@ -1947,17 +2034,28 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     // Use approach name
     QString type = properties.value(pln::APPROACHTYPE);
-    if(type.isEmpty())
-      type = "%";
-    approachIdByNameQuery->bindValue(":fixident", properties.value(pln::APPROACH));
-    approachIdByNameQuery->bindValue(":type", type);
-    approachIdByNameQuery->bindValue(":apident", destination.ident);
+    if(type == "CUSTOM")
+    {
+      createCustomApproach(arrivalLegs, destination, properties.value(pln::APPROACHRW),
+                           properties.value(pln::APPROACH_CUSTOM_DISTANCE).toFloat(),
+                           properties.value(pln::APPROACH_CUSTOM_ALTITUDE).toFloat());
+      approachId = arrivalLegs.isEmpty() ? -1 : CUSTOM_APPROACH_ID;
+    }
+    else
+    {
+      if(type.isEmpty())
+        type = "%";
+      approachIdByNameQuery->bindValue(":fixident", properties.value(pln::APPROACH));
+      approachIdByNameQuery->bindValue(":type", type);
+      approachIdByNameQuery->bindValue(":apident", destination.ident);
 
-    approachId = findApproachId(destination, approachIdByNameQuery,
-                                properties.value(pln::APPROACHSUFFIX),
-                                properties.value(pln::APPROACHRW),
-                                properties.value(pln::APPROACHDISTANCE).toFloat(),
-                                properties.value(pln::APPROACHSIZE).toInt());
+      approachId = findApproachId(destination, approachIdByNameQuery,
+                                  properties.value(pln::APPROACHSUFFIX),
+                                  properties.value(pln::APPROACHRW),
+                                  properties.value(pln::APPROACHDISTANCE).toFloat(),
+                                  properties.value(pln::APPROACHSIZE).toInt());
+    }
+
     if(approachId == -1)
     {
       qWarning() << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
@@ -2048,7 +2146,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << transitionId;
   }
-  else if(approachId != -1) // Fetch and copy approach only from cache
+  else if(approachId != -1 && approachId != CUSTOM_APPROACH_ID) // Fetch and copy approach only from cache
   {
     const proc::MapProcedureLegs *legs = getApproachLegs(destination, approachId);
     if(legs != nullptr)

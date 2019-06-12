@@ -1254,7 +1254,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                          ui->actionMapShowInformation, ui->actionMapShowApproaches,
+                                          ui->actionMapShowInformation,
+                                          ui->actionMapShowApproaches, ui->actionMapShowApproachesCustom,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
@@ -1266,7 +1267,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   atools::gui::ActionStateSaver stateSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                             ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                             ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
-                                            ui->actionMapShowInformation, ui->actionMapShowApproaches,
+                                            ui->actionMapShowInformation,
+                                            ui->actionMapShowApproaches, ui->actionMapShowApproachesCustom,
                                             ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                             ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                             ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
@@ -1279,6 +1281,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   QMenu menu;
   menu.addAction(ui->actionMapShowInformation);
   menu.addAction(ui->actionMapShowApproaches);
+  menu.addAction(ui->actionMapShowApproachesCustom);
   menu.addSeparator();
 
   menu.addAction(ui->actionMapMeasureDistance);
@@ -1358,6 +1361,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   ui->actionMapShowInformation->setEnabled(false);
   ui->actionMapShowApproaches->setEnabled(false);
+  ui->actionMapShowApproachesCustom->setEnabled(false);
   ui->actionMapTrafficPattern->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
@@ -1478,7 +1482,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     procedureText = informationText =
       measureText = departureText =
         destinationText = addRouteText =
-          searchText = patternText = map::airportText(*airport);
+          searchText = patternText = map::airportText(*airport, 20);
 
   // Userpoints are drawn on top of all features
   if(userpoint != nullptr)
@@ -1486,7 +1490,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // Override airport if part of route and visible
   if((airportDeparture || airportDestination) && airport != nullptr && routeVisible)
-    informationText = addRouteText = map::airportText(*airport);
+    informationText = addRouteText = map::airportText(*airport, 20);
 
   int departureParkingAirportId = -1;
   // Parking or helipad only if no airport at cursor
@@ -1555,7 +1559,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   QString routeText;
   if(airport != nullptr && airport->routeIndex != -1)
   {
-    routeText = map::airportText(*airport);
+    routeText = map::airportText(*airport, 20);
     routeIndex = airport->routeIndex;
     deleteType = map::AIRPORT;
   }
@@ -1595,7 +1599,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       // Get airport for parking
       map::MapAirport parkAp;
       NavApp::getAirportQuerySim()->getAirportById(parkAp, departureParkingAirportId);
-      airportText = map::airportText(parkAp) + " / ";
+      airportText = map::airportText(parkAp, 20) + " / ";
     }
 
     ui->actionRouteAirportStart->setEnabled(true);
@@ -1730,11 +1734,16 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else
       ui->actionMapShowApproaches->setText(tr("Show procedures (%1 has no procedure)").arg(airport->ident));
 
+    ui->actionMapShowApproachesCustom->setEnabled(true);
+    if(airportDestination)
+      ui->actionMapShowApproachesCustom->setText(tr("Create Approach to %1 and insert into Flight Plan").
+                                                 arg(procedureText));
+    else
+      ui->actionMapShowApproachesCustom->setText(tr("Create Approach and use %1 as Destination").
+                                                 arg(procedureText));
   }
   else
-  {
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
-  }
 
   if(airport != nullptr && !airport->noRunways())
   {
@@ -2062,7 +2071,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapTrafficPattern)
       addTrafficPattern(*airport);
     else if(action == ui->actionMapShowApproaches)
-      emit showApproaches(*airport);
+      emit showProcedures(*airport);
+    else if(action == ui->actionMapShowApproachesCustom)
+      emit showProceduresCustom(*airport);
     else if(action == ui->actionMapUserdataAdd)
     {
       if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
@@ -2173,7 +2184,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, con
   for(const map::MapAirport& obj : result.airports)
   {
     QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
-                                  menuText.arg(map::airportText(obj)), this);
+                                  menuText.arg(map::airportText(obj, 20)), this);
     action->setData(QVariantList({obj.id, map::AIRPORT}));
     menu.addAction(action);
   }

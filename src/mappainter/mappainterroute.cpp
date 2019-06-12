@@ -1289,6 +1289,18 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(drawTextDetail)
       paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
+  else if(!leg.fixIdent.isEmpty() && wToS(leg.fixPos, x, y))
+  {
+    // Custom IF case
+    texts.append(leg.fixIdent);
+    if(drawTextDetail)
+      paintProcedureUnderlay(context, leg, x, y,
+                             context->sz(context->symbolSizeNavaid,
+                                         context->mapLayerEffective->getWaypointSymbolSize()));
+    paintProcedurePoint(context, x, y, false);
+    if(drawTextDetail)
+      paintText(context, mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
+  }
 
   if(!preview && (leg.isSid() || leg.isStar()))
   {

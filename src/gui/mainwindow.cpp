@@ -905,6 +905,8 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(airportSearch, &SearchBaseTable::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(airportSearch, &SearchBaseTable::showProceduresCustom,
+          routeController, &RouteController::showProceduresCustom);
   connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
@@ -1136,8 +1138,9 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapPaintWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
-  connect(mapWidget, &MapWidget::showApproaches,
+  connect(mapWidget, &MapWidget::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(mapWidget, &MapWidget::showProceduresCustom, routeController, &RouteController::showProceduresCustom);
   connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged,
           routeController, &RouteController::shownMapFeaturesChanged);
   connect(mapWidget, &MapWidget::addUserpointFromMap,

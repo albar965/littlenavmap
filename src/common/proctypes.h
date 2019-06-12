@@ -269,7 +269,6 @@ struct MapProcedureRef
 
 struct MapProcedureLeg
 {
-
   QString fixType, fixIdent, fixRegion,
           recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
           turnDirection, /* Turn to this fix*/
@@ -296,7 +295,7 @@ struct MapProcedureLeg
 
   int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
-  float course,
+  float course, /* magnetic from ARINC */
         distance /* Distance from source in nm */,
         calculatedDistance /* Calculated distance closer to the real one in nm */,
         calculatedTrueCourse /* Calculated distance closer to the real one */,
@@ -438,6 +437,10 @@ struct MapProcedureLegs
         transitionDistance = 0.f,
         missedDistance = 0.f;
 
+  /* Parameters only for custom approaches.
+   * Altitude in feet above airport elevation and distance to runway threshold in NM */
+  float approachCustomAltitude = 0.f, approachCustomDistance = 0.f;
+
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
        circleToLand; /* Runway is not part of procedure and was added internally */
@@ -457,6 +460,11 @@ struct MapProcedureLegs
   bool isTypeLoc() const
   {
     return approachType == "LOC";
+  }
+
+  bool isCustom() const
+  {
+    return approachType == "CUSTOM";
   }
 
   void clearApproach();

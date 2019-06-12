@@ -245,6 +245,9 @@ public:
   /* Get table columns from the view */
   QStringList getRouteColumns() const;
 
+  /* Add custom procedure and probably set new destination airport */
+  void showProceduresCustom(map::MapAirport airport);
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -353,6 +356,7 @@ private:
 
   void showInformationMenu();
   void showProceduresMenu();
+  void showProceduresMenuCustom();
   void showOnMapMenu();
 
   void undoTriggered();

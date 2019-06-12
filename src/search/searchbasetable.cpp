@@ -137,6 +137,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   ui->actionSearchShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchShowApproachesCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchTableSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
@@ -146,7 +147,8 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   // Actions that cover the whole dock window
   ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
 
-  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation, ui->actionSearchShowApproaches,
+  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation,
+                         ui->actionSearchShowApproaches, ui->actionSearchShowApproachesCustom,
                          ui->actionSearchShowOnMap, ui->actionSearchTableSelectNothing});
 
   // Update single shot timer
@@ -155,6 +157,8 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   connect(updateTimer, &QTimer::timeout, this, &SearchBaseTable::editTimeout);
   connect(ui->actionSearchShowInformation, &QAction::triggered, this, &SearchBaseTable::showInformationTriggered);
   connect(ui->actionSearchShowApproaches, &QAction::triggered, this, &SearchBaseTable::showApproachesTriggered);
+  connect(ui->actionSearchShowApproachesCustom, &QAction::triggered,
+          this, &SearchBaseTable::showApproachesCustomTriggered);
   connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &SearchBaseTable::showOnMapTriggered);
   connect(ui->actionSearchTableSelectNothing, &QAction::triggered, this, &SearchBaseTable::nothingSelectedTriggered);
 
@@ -829,25 +833,21 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Save and restore action texts on return
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
-                                      ui->actionRouteAirportAlternate,
-                                      ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange,
-                                      ui->actionSearchShowApproaches, ui->actionMapTrafficPattern,
-                                      ui->actionUserdataAdd, ui->actionUserdataDelete});
+                                      ui->actionRouteAirportAlternate, ui->actionRouteAddPos, ui->actionRouteAppendPos,
+                                      ui->actionMapNavaidRange, ui->actionSearchShowApproaches,
+                                      ui->actionSearchShowApproachesCustom,
+                                      ui->actionMapTrafficPattern, ui->actionUserdataAdd, ui->actionUserdataDelete});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
   atools::gui::ActionStateSaver stateSaver(
   {
-    ui->actionSearchShowInformation, ui->actionSearchShowApproaches, ui->actionSearchShowOnMap,
-    ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
-    ui->actionSearchResetSearch, ui->actionSearchShowAll,
-    ui->actionMapTrafficPattern,
-    ui->actionMapRangeRings, ui->actionMapNavaidRange,
-    ui->actionRouteAirportStart, ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
-    ui->actionRouteAddPos, ui->actionRouteAppendPos,
-    ui->actionSearchTableCopy, ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing,
-    ui->actionSearchResetView, ui->actionSearchSetMark
-  });
+    ui->actionSearchShowInformation, ui->actionSearchShowApproaches, ui->actionSearchShowApproachesCustom,
+    ui->actionSearchShowOnMap, ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
+    ui->actionSearchResetSearch, ui->actionSearchShowAll, ui->actionMapTrafficPattern, ui->actionMapRangeRings,
+    ui->actionMapNavaidRange, ui->actionRouteAirportStart, ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
+    ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionSearchTableCopy, ui->actionSearchTableSelectAll,
+    ui->actionSearchTableSelectNothing, ui->actionSearchResetView, ui->actionSearchSetMark});
   Q_UNUSED(stateSaver);
 
   bool columnCanFilter = false;
@@ -901,6 +901,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionMapTrafficPattern->setEnabled(navType == map::AIRPORT && !airport.noRunways());
 
   ui->actionSearchShowApproaches->setEnabled(false);
+  ui->actionSearchShowApproachesCustom->setEnabled(false);
   if(navType == map::AIRPORT && airport.isValid())
   {
     bool hasAnyArrival = NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airport.ident);
@@ -938,6 +939,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     }
     else
       ui->actionSearchShowApproaches->setText(tr("Show procedures (airport has no procedure)"));
+
+    ui->actionSearchShowApproachesCustom->setEnabled(true);
+    if(airportDestination)
+      ui->actionSearchShowApproachesCustom->setText(tr("Create Approach to Airport and insert into Flight Plan"));
+    else
+      ui->actionSearchShowApproachesCustom->setText(tr("Create Approach and use Airport as Destination"));
   }
   else
     ui->actionSearchShowApproaches->setText(tr("Show procedures"));
@@ -967,7 +974,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     menu.addAction(ui->actionSearchShowInformation);
     if(navType == map::AIRPORT)
+    {
       menu.addAction(ui->actionSearchShowApproaches);
+      menu.addAction(ui->actionSearchShowApproachesCustom);
+    }
     menu.addAction(ui->actionSearchShowOnMap);
     menu.addSeparator();
   }
@@ -1144,6 +1154,16 @@ void SearchBaseTable::showInformationTriggered()
 /* Triggered by show approaches action in context menu. Populates map search result and emits show information */
 void SearchBaseTable::showApproachesTriggered()
 {
+  showApproaches(false);
+}
+
+void SearchBaseTable::showApproachesCustomTriggered()
+{
+  showApproaches(true);
+}
+
+void SearchBaseTable::showApproaches(bool custom)
+{
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
@@ -1154,7 +1174,11 @@ void SearchBaseTable::showApproachesTriggered()
       map::MapObjectTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
-      emit showProcedures(airportQuery->getAirportById(id));
+
+      if(custom)
+        emit showProceduresCustom(airportQuery->getAirportById(id));
+      else
+        emit showProcedures(airportQuery->getAirportById(id));
     }
   }
 }

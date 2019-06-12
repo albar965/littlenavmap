@@ -7637,6 +7637,57 @@ wind display in the elevation profile top line.</string>
     <string>Ctrl+Shift+R</string>
    </property>
   </action>
+  <action name="actionMapShowApproachesCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add custom approach for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+  </action>
+  <action name="actionRouteShowApproachesCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add custom approach for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionSearchShowApproachesCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add custom approach for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+C</string>
+   </property>
+  </action>
   <action name="actionInfoApproachAttach">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">

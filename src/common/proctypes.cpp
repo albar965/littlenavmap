@@ -69,7 +69,8 @@ void initTranslateableTexts()
       {"TN", QObject::tr("Terminal NDB")},
       {"W", QObject::tr("Waypoint")},
       {"TW", QObject::tr("Terminal Waypoint")},
-      {"R", QObject::tr("Runway")}
+      {"R", QObject::tr("Runway")},
+      {"CST", QObject::tr("Custom Fix")}
     });
 
   approachTypeToStr = QHash<QString, QString>(
@@ -92,8 +93,10 @@ void initTranslateableTexts()
       {"GNSS", QObject::tr("GNSS")},
       {"TCN", QObject::tr("TACAN")},
       {"CTL", QObject::tr("Circle to Land")},
-      {"MLS", QObject::tr("MLS")}
+      {"MLS", QObject::tr("MLS")},
 
+      /* User defined approach procedure */
+      {"CUSTOM", QObject::tr("Custom")}
     });
 
   approachLegTypeToStr = QHash<ProcedureLegType, QString>(

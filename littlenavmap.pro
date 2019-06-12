@@ -299,6 +299,7 @@ SOURCES += \
   src/query/mapquery.cpp \
   src/query/procedurequery.cpp \
   src/query/querytypes.cpp \
+  src/route/customproceduredialog.cpp \
   src/route/flightplanentrybuilder.cpp \
   src/route/parkingdialog.cpp \
   src/route/route.cpp \
@@ -431,6 +432,7 @@ HEADERS  += \
   src/query/mapquery.h \
   src/query/procedurequery.h \
   src/query/querytypes.h \
+  src/route/customproceduredialog.h \
   src/route/flightplanentrybuilder.h \
   src/route/parkingdialog.h \
   src/route/route.h \
@@ -492,6 +494,7 @@ FORMS += \
   src/options/options.ui \
   src/perf/aircraftperfdialog.ui \
   src/print/printdialog.ui \
+  src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
   src/route/routeexportdialog.ui \
   src/route/routestringdialog.ui \

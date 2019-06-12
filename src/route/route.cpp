@@ -727,9 +727,11 @@ int Route::getDestinationLegIndex() const
     // Last leg before missed approach is destination runway
     for(int i = arrivalLegsOffset; i <= getDestinationAirportLegIndex(); i++)
     {
-      if(at(i).isAnyProcedure() && at(i).getProcedureType() & proc::PROCEDURE_MISSED)
+      const RouteLeg& leg = at(i);
+      if((leg.isAnyProcedure() && leg.getProcedureLeg().isMissed()) || leg.isAlternate())
         return i - 1;
     }
+    return getDestinationAirportLegIndex() - 1;
   }
   // Simple destination airport without approach
   return getDestinationAirportLegIndex();
@@ -1614,7 +1616,7 @@ void Route::createRouteLegsFromFlightplan()
   {
     // Correct departure and destination values if missing - can happen after import of FLP or FMS plans
     if(flightplan.getDepartureAiportName().isEmpty())
-      flightplan.setDepartureAiportName(first().getName());
+      flightplan.setDepartureAiportName(getDepartureAirportLeg().getName());
     if(!flightplan.getDeparturePosition().isValid())
       flightplan.setDeparturePosition(first().getPosition());
 
@@ -1625,9 +1627,10 @@ void Route::createRouteLegsFromFlightplan()
   }
 }
 
-Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp) const
+Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp, bool replaceCustomWp) const
 {
-  qDebug() << Q_FUNC_INFO << "saveApproachWp" << saveApproachWp << "saveSidStarWp" << saveSidStarWp;
+  qDebug() << Q_FUNC_INFO << "saveApproachWp" << saveApproachWp << "saveSidStarWp" << saveSidStarWp
+           << "replaceCustomWp" << replaceCustomWp;
 
   Route route(*this);
 
@@ -1636,6 +1639,9 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp)
   QVector<float> altVector = altitude->getAltitudes();
   for(int i = 0; i < route.size(); i++)
     route.getFlightplan().getEntries()[i].setAltitude(altVector.at(i));
+
+  if(route.getArrivalLegs().isCustom() && replaceCustomWp)
+    saveApproachWp = true;
 
   // First remove properties and procedure structures
   if(saveApproachWp)
@@ -1703,7 +1709,12 @@ Route Route::adjustedToProcedureOptions(bool saveApproachWp, bool saveSidStarWp)
         {
           // Make a user defined waypoint from manual, altitude or other points
           entry.setWaypointType(atools::fs::pln::entry::USER);
-          entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+
+          if((replaceCustomWp || saveApproachWp) &&
+             getArrivalLegs().isCustom() && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+            entry.setWaypointId(leg.getProcedureLeg().fixIdent);
+          else
+            entry.setWaypointId(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
         }
       }
     }

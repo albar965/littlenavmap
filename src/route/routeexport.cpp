@@ -815,7 +815,8 @@ QString RouteExport::buildDefaultFilename(const QString& extension, const QStrin
 {
   QString filename;
 
-  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
+  const Route& route = NavApp::getRouteConst();
+  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
 
   if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
     filename = "IFR ";
@@ -823,14 +824,14 @@ QString RouteExport::buildDefaultFilename(const QString& extension, const QStrin
     filename = "VFR ";
 
   if(flightplan.getDepartureAiportName().isEmpty())
-    filename += flightplan.getEntries().first().getIcaoIdent();
+    filename += flightplan.getEntries().at(route.getDepartureAirportLegIndex()).getIcaoIdent();
   else
     filename += flightplan.getDepartureAiportName() + " (" + flightplan.getDepartureIdent() + ")";
 
   filename += " to ";
 
   if(flightplan.getDestinationAiportName().isEmpty())
-    filename += flightplan.getEntries().last().getIcaoIdent();
+    filename += flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIcaoIdent();
   else
     filename += flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
 
@@ -846,12 +847,13 @@ QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString
 {
   QString filename;
 
-  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
+  const Route& route = NavApp::getRouteConst();
+  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
 
-  filename += flightplan.getEntries().first().getIcaoIdent();
+  filename += flightplan.getEntries().at(route.getDepartureAirportLegIndex()).getIcaoIdent();
   filename += sep;
 
-  filename += flightplan.getEntries().last().getIcaoIdent();
+  filename += flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIcaoIdent();
   filename += suffix;
 
   // Remove characters that are note allowed in most filesystems
@@ -862,8 +864,9 @@ QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString
 bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString::createGfpStringForRoute(routeAdjustedToProcedureOptions(), false /* procedures */,
-                                                     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+  QString gfp = RouteString::createGfpStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/), false /* procedures */,
+    OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -883,8 +886,9 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename)
 bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(),
-                                                  0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+  QString txt = RouteString::createStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/),
+    0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -904,8 +908,9 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QStringList list = RouteString::createStringForRouteList(routeAdjustedToProcedureOptions(), 0.f,
-                                                           rs::DCT | rs::START_AND_DEST);
+  QStringList list = RouteString::createStringForRouteList(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/), 0.f,
+    rs::DCT | rs::START_AND_DEST);
 
   // Remove last DCT
   if(list.size() - 2 >= 0 && list.at(list.size() - 2) == "DCT")
@@ -958,7 +963,7 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
     atools::fs::pln::FlightplanIO().saveGarminGns(
-      routeAdjustedToProcedureOptions().getFlightplan(), filename, options);
+      routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/).getFlightplan(), filename, options);
   }
   catch(atools::Exception& e)
   {
@@ -976,8 +981,9 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename)
 bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString gfp = RouteString::createGfpStringForRoute(routeAdjustedToProcedureOptions(), true /* procedures */,
-                                                     OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
+  QString gfp = RouteString::createGfpStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/), true /* procedures */,
+    OptionData::instance().getFlags() & opts::ROUTE_GARMIN_USER_WPT);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1146,7 +1152,7 @@ bool RouteExport::exportFlighplan(const QString& filename,
 
   try
   {
-    exportFunc(routeAdjustedToProcedureOptions().getFlightplan(), filename);
+    exportFunc(routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/).getFlightplan(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -1165,7 +1171,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteString::createStringForRoute(
-    routeAdjustedToProcedureOptions(), 0.f,
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/), 0.f,
     rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
     rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
@@ -1281,7 +1287,8 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   qDebug() << Q_FUNC_INFO << "Copied" << filename << "to" << backupFile << result;
 
   // Create route string
-  QString route = RouteString::createStringForRoute(routeAdjustedToProcedureOptions(), 0.f, rs::START_AND_DEST);
+  QString route = RouteString::createStringForRoute(
+    routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/), 0.f, rs::START_AND_DEST);
   QString name = buildDefaultFilenameShort(QString(), QString());
 
   // Find a unique name between all loaded
@@ -1341,7 +1348,8 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   try
   {
     atools::fs::pln::FlightplanIO().saveGpx(
-      routeAdjustedToProcedureOptions().getFlightplan(), filename, track, timestamps,
+      routeAdjustedToProcedureOptions(true /* replace custom procedure waypoints*/).getFlightplan(),
+      filename, track, timestamps,
       static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()));
   }
   catch(atools::Exception& e)
@@ -1357,15 +1365,16 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   return true;
 }
 
-Route RouteExport::routeAdjustedToProcedureOptions()
+Route RouteExport::routeAdjustedToProcedureOptions(bool replaceCustomWp)
 {
-  return routeAdjustedToProcedureOptions(NavApp::getRoute());
+  return routeAdjustedToProcedureOptions(NavApp::getRoute(), replaceCustomWp);
 }
 
-Route RouteExport::routeAdjustedToProcedureOptions(const Route& route)
+Route RouteExport::routeAdjustedToProcedureOptions(const Route& route, bool replaceCustomWp)
 {
   Route rt = route.adjustedToProcedureOptions(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked(),
-                                              NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked());
+                                              NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked(),
+                                              replaceCustomWp);
 
   // Update airway structures
   rt.updateAirwaysAndAltitude(false /* adjustRouteAltitude */, false /* adjustRouteType */);

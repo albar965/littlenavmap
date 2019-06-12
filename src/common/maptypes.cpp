@@ -1162,9 +1162,9 @@ QString airwayAltTextShort(const MapAirway& airway)
   return altTxt;
 }
 
-QString airportText(const MapAirport& airport)
+QString airportText(const MapAirport& airport, int elideName)
 {
-  return QObject::tr("Airport %1 (%2)").arg(airport.name).arg(airport.ident);
+  return QObject::tr("Airport %1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
 }
 
 QString airportTextShort(const MapAirport& airport)
