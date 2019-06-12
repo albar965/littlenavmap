@@ -872,19 +872,19 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
       ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
 
+      map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(currentAirportNav);
       if((route.hasValidDeparture() &&
-          route.getDepartureAirportLeg().getId() == currentAirportNav.id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
-         (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == currentAirportNav.id &&
+          route.getDepartureAirportLeg().getId() == airportSim.id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
+         (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == airportSim.id &&
           ref.mapType & proc::PROCEDURE_ARRIVAL_ALL))
         ui->actionInfoApproachAttach->setText(tr("&Insert %1 into Flight Plan").arg(text));
       else
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").arg(currentAirportNav.ident).arg(
-                                                  text));
+          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").arg(airportSim.ident).arg(text));
 
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").arg(currentAirportNav.ident).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").arg(airportSim.ident).arg(text));
       }
     }
   }
@@ -903,7 +903,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionSearchProcedureShowOnMap->setEnabled(airportSim.isValid());
   ui->actionSearchProcedureShowInSearch->setEnabled(airportSim.isValid());
 
-  QString airportText = map::airportTextShort(airportSim);
+  QString airportText = airportSim.isValid() ? map::airportTextShort(airportSim) : tr("Airport");
   ui->actionSearchProcedureInformation->setText(ui->actionSearchProcedureInformation->text().arg(airportText));
   ui->actionSearchProcedureShowOnMap->setText(ui->actionSearchProcedureShowOnMap->text().arg(airportText));
   ui->actionSearchProcedureShowInSearch->setText(ui->actionSearchProcedureShowInSearch->text().arg(airportText));
