@@ -24,8 +24,10 @@
 #include "gui/helphandler.h"
 #include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
-#include "settings/settings.h"
 #include "common/unitstringtool.h"
+#include "settings/settings.h"
+#include "common/formatter.h"
+#include "util/htmlbuilder.h"
 
 #include <QPushButton>
 
@@ -80,12 +82,15 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
     ui->spinBoxContingencyFuel,
     ui->spinBoxClimbSpeed,
     ui->spinBoxExtraFuel,
-    ui->spinBoxDescentSpeed,
     ui->spinBoxTaxiFuel,
     ui->spinBoxReserveFuel,
     ui->doubleSpinBoxClimbVertSpeed,
     ui->spinBoxDescentSpeed,
-    ui->doubleSpinBoxDescentVertSpeed
+    ui->doubleSpinBoxDescentVertSpeed,
+    ui->spinBoxAlternateSpeed,
+    ui->spinBoxAlternateFuelFlow,
+    ui->spinBoxRunwayLength,
+    ui->spinBoxUsableFuel
   }, aircraftPerformance.useFuelAsVolume());
 
   // Copy performance object
@@ -101,6 +106,7 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
 
   // Update vertical speed descent rule
   vertSpeedChanged();
+  updateRange();
 
   // Fuel by volume or weight changed
   connect(ui->comboBoxFuelUnit, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
@@ -113,6 +119,19 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   connect(ui->spinBoxDescentSpeed,
           static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &AircraftPerfDialog::vertSpeedChanged);
+
+  connect(ui->spinBoxUsableFuel,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &AircraftPerfDialog::updateRange);
+  connect(ui->spinBoxCruiseSpeed,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &AircraftPerfDialog::updateRange);
+  connect(ui->spinBoxCruiseFuelFlow,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &AircraftPerfDialog::updateRange);
+  connect(ui->spinBoxReserveFuel,
+          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &AircraftPerfDialog::updateRange);
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AircraftPerfDialog::buttonBoxClicked);
 
@@ -135,19 +154,13 @@ atools::fs::perf::AircraftPerf AircraftPerfDialog::getAircraftPerf() const
 void AircraftPerfDialog::restoreState()
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_EDIT_DIALOG);
-  ws.restore(this);
-
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-  resize(settings.valueVar(lnm::AIRCRAFT_PERF_EDIT_DIALOG_SIZE).toSize());
+  ws.restore({this, ui->tabWidget});
 }
 
 void AircraftPerfDialog::saveState()
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_EDIT_DIALOG);
-  ws.save(this);
-
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-  settings.setValueVar(lnm::AIRCRAFT_PERF_EDIT_DIALOG_SIZE, size());
+  ws.save({this, ui->tabWidget});
 }
 
 void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
@@ -174,7 +187,31 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
     atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "AIRCRAFTPERFEDIT.html",
                                              lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
+  {
+    saveState();
     QDialog::reject();
+  }
+}
+
+void AircraftPerfDialog::updateRange()
+{
+  if(ui->spinBoxUsableFuel->value() < 1.)
+    ui->labelUsableFuelRange->setText(atools::util::HtmlBuilder::errorMessage(tr("Usable fuel not set.")));
+  else if(ui->spinBoxUsableFuel->value() <= ui->spinBoxReserveFuel->value())
+    ui->labelUsableFuelRange->setText(atools::util::HtmlBuilder::errorMessage(tr("Usable fuel smaller than reserve.")));
+  else if(ui->spinBoxUsableFuel->value() > 1.)
+  {
+    float speedKts = Unit::rev(static_cast<float>(ui->spinBoxCruiseSpeed->value()), Unit::speedKtsF);
+    float fuelVolWeight = static_cast<float>(ui->spinBoxUsableFuel->value()) -
+                          static_cast<float>(ui->spinBoxReserveFuel->value());
+    float fuelFlowVolWeight = static_cast<float>(ui->spinBoxCruiseFuelFlow->value());
+
+    float enduranceHours = fuelVolWeight / fuelFlowVolWeight;
+
+    ui->labelUsableFuelRange->setText(tr("Estimated range with reserve %1, %2.").
+                                      arg(Unit::distNm(enduranceHours * speedKts)).
+                                      arg(formatter::formatMinutesHoursLong(enduranceHours)));
+  }
 }
 
 void AircraftPerfDialog::vertSpeedChanged()
@@ -185,7 +222,7 @@ void AircraftPerfDialog::vertSpeedChanged()
 
   // 2,3 NM per 1000 ft
 
-  QString txt = tr("Descent Rule of Thumb: %1 per %2 %3").
+  QString txt = tr("Descent Rule of Thumb: %1 per %2 %3.").
                 arg(Unit::distNm(1.f / -descentRateFtPerNm * Unit::rev(1000.f, Unit::altFeetF))).
                 arg(QLocale().toString(1000.f, 'f', 0)).
                 arg(Unit::getUnitAltStr());
@@ -223,6 +260,7 @@ void AircraftPerfDialog::toDialog(const atools::fs::perf::AircraftPerf *aircraft
   ui->lineEditType->setText(aircraftPerf->getAircraftType());
   ui->textBrowserDescription->setText(aircraftPerf->getDescription());
 
+  ui->spinBoxUsableFuel->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getUsableFuel(), vol)));
   ui->spinBoxReserveFuel->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getReserveFuel(), vol)));
   ui->spinBoxExtraFuel->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getExtraFuel(), vol)));
   ui->spinBoxTaxiFuel->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getTaxiFuel(), vol)));
@@ -238,6 +276,12 @@ void AircraftPerfDialog::toDialog(const atools::fs::perf::AircraftPerf *aircraft
   ui->spinBoxDescentSpeed->setValue(roundToInt(Unit::speedKtsF(aircraftPerf->getDescentSpeed())));
   ui->doubleSpinBoxDescentVertSpeed->setValue(-Unit::speedVertFpmF(aircraftPerf->getDescentVertSpeed()));
   ui->spinBoxDescentFuelFlow->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getDescentFuelFlow(), vol)));
+
+  ui->spinBoxAlternateSpeed->setValue(roundToInt(Unit::speedKtsF(aircraftPerf->getAlternateSpeed())));
+  ui->spinBoxAlternateFuelFlow->setValue(roundToInt(Unit::fuelLbsGallonF(aircraftPerf->getAlternateFuelFlow(), vol)));
+
+  ui->spinBoxRunwayLength->setValue(roundToInt(Unit::distShortFeetF(aircraftPerf->getMinRunwayLength())));
+  ui->comboBoxRunwayType->setCurrentIndex(aircraftPerf->getRunwayType());
 }
 
 void AircraftPerfDialog::fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf) const
@@ -250,6 +294,7 @@ void AircraftPerfDialog::fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf
   aircraftPerf->setJetFuel(ui->comboBoxFuelType->currentIndex()); // 0 = avgas
   aircraftPerf->setDescription(ui->textBrowserDescription->toPlainText());
 
+  aircraftPerf->setUsableFuel(Unit::rev(ui->spinBoxUsableFuel->value(), Unit::fuelLbsGallonF, vol));
   aircraftPerf->setReserveFuel(Unit::rev(ui->spinBoxReserveFuel->value(), Unit::fuelLbsGallonF, vol));
   aircraftPerf->setExtraFuel(Unit::rev(ui->spinBoxExtraFuel->value(), Unit::fuelLbsGallonF, vol));
   aircraftPerf->setTaxiFuel(Unit::rev(ui->spinBoxTaxiFuel->value(), Unit::fuelLbsGallonF, vol));
@@ -267,4 +312,10 @@ void AircraftPerfDialog::fromDialog(atools::fs::perf::AircraftPerf *aircraftPerf
   aircraftPerf->setDescentVertSpeed(-Unit::rev(static_cast<float>(ui->doubleSpinBoxDescentVertSpeed->value()),
                                                Unit::speedVertFpmF));
   aircraftPerf->setDescentFuelFlow(Unit::rev(ui->spinBoxDescentFuelFlow->value(), Unit::fuelLbsGallonF, vol));
+
+  aircraftPerf->setAlternateSpeed(Unit::rev(ui->spinBoxAlternateSpeed->value(), Unit::speedKtsF));
+  aircraftPerf->setAlternateFuelFlow(Unit::rev(ui->spinBoxAlternateFuelFlow->value(), Unit::fuelLbsGallonF, vol));
+
+  aircraftPerf->setMinRunwayLength(Unit::rev(ui->spinBoxRunwayLength->value(), Unit::distShortFeetF));
+  aircraftPerf->setRunwayType(ui->comboBoxRunwayType->currentIndex());
 }

@@ -69,6 +69,9 @@ private:
   /* Update vertical speed descent rule */
   void vertSpeedChanged();
 
+  /* Update range label */
+  void updateRange();
+
   Ui::AircraftPerfDialog *ui;
   UnitStringTool *units = nullptr;
   atools::fs::perf::AircraftPerf *perf = nullptr, *perfBackup = nullptr;

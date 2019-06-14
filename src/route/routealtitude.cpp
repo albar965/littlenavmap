@@ -1082,10 +1082,11 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
     if(leg.isAlternate())
     {
-      // Alternate legs are calculated from destination airport
-      leg.averageSpeedKts = perf.getCruiseSpeed();
-      leg.travelTimeHours = legDist / perf.getCruiseSpeed();
-      leg.fuel = perf.getCruiseFuelFlow() * leg.travelTimeHours;
+      // Alternate legs are calculated from destination airport - use cruise if alternate speed is not set
+      leg.averageSpeedKts = perf.getAlternateSpeed() > 1.f ? perf.getAlternateSpeed() : perf.getCruiseSpeed();
+      leg.travelTimeHours = legDist / leg.averageSpeedKts;
+      leg.fuel = (perf.getAlternateFuelFlow() > 0.f ? perf.getAlternateFuelFlow() : perf.getCruiseFuelFlow()) *
+                 leg.travelTimeHours;
     }
     else
     {

@@ -208,6 +208,9 @@ private:
 
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
+
+  /* Used to detect aircraft changes */
+  QString airplaneModel;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H

@@ -43,6 +43,7 @@
 #include "route/routealtitude.h"
 #include "gui/widgetstate.h"
 #include "fs/perf/aircraftperfhandler.h"
+#include "fs/sc/simconnectdata.h"
 
 #include <QDebug>
 #include <QUrlQuery>
@@ -696,7 +697,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   if(!print)
   {
     QStringList errs;
-    if(perf->getReserveFuel() < 1.0f)
+    if(perf->getUsableFuel() < 0.1f)
+      errs.append(tr("usable fuel"));
+    if(perf->getReserveFuel() < 0.1f)
       errs.append(tr("reserve fuel"));
     if(perf->getClimbFuelFlow() < 0.1f)
       errs.append(tr("climb fuel flow"));
@@ -704,10 +707,29 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       errs.append(tr("cruise fuel flow"));
     if(perf->getDescentFuelFlow() < 0.1f)
       errs.append(tr("descent fuel flow"));
+    if(perf->getAlternateFuelFlow() < 0.1f)
+      errs.append(tr("alternate fuel flow"));
 
     if(!errs.isEmpty())
       html.p().error((errs.size() == 1 ? tr("Invalid value for %1.") : tr("Invalid values for %1.")).
                      arg(errs.join(tr(", ")))).pEnd();
+
+    if(perf->getUsableFuel() > 1.f)
+      if(altitudeLegs.getBlockFuel(*perf) > perf->getUsableFuel())
+        html.p().error(tr("Block fuel exceeds usable of %1.").arg(fuelLbsGal(perf->getUsableFuel()))).pEnd();
+
+    if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
+      html.p().error(tr("Reserve fuel bigger than usable.")).pEnd();
+
+    if(perf->getAircraftType().isEmpty())
+      html.p().warning(tr("Aircraft type is not set.")).pEnd();
+    else
+    {
+      QString model = NavApp::getUserAircraft().getAirplaneModel();
+      if(!model.isEmpty() && perf->getAircraftType() != model)
+        html.p().warning(tr("Airplane model does not match:\nSimulator %1 ≠ Performance File %2.").
+                         arg(model).arg(perf->getAircraftType())).pEnd();
+    }
   }
 
   // Flight data =======================================================
@@ -776,16 +798,29 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   html.table();
   html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
   html.row2(tr("Trip Fuel:"), fuelLbsGal(altitudeLegs.getTripFuel()), atools::util::html::BOLD | flags);
-  html.row2(tr("Block Fuel:"), fuelLbsGal(altitudeLegs.getBlockFuel(*perf)), atools::util::html::BOLD | flags);
+  float blockFuel = altitudeLegs.getBlockFuel(*perf);
+  html.row2(tr("Block Fuel:"), tr("%1%2").
+            arg(fuelLbsGal(blockFuel)).
+            arg(perf->getUsableFuel() >
+                1.f ? tr(", %1 %").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f', 0) : QString()),
+            atools::util::html::BOLD | flags);
   html.row2(tr("Fuel at Destination:"), fuelLbsGal(altitudeLegs.getDestinationFuel(*perf)), flags);
-  html.row2(tr("Alternate Fuel:"), fuelLbsGal(altitudeLegs.getAlternateFuel()), flags);
-  html.row2(tr("Reserve Fuel:"), fuelLbsGal(perf->getReserveFuel()), flags);
-  html.row2(tr("Taxi Fuel:"), fuelLbsGal(perf->getTaxiFuel()), flags);
-  html.row2(tr("Extra Fuel:"), fuelLbsGal(perf->getExtraFuel()), flags);
 
-  html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
-            arg(perf->getContingencyFuel(), 0, 'f', 0).
-            arg(fuelLbsGal(altitudeLegs.getContingencyFuel(*perf))), flags);
+  if(altitudeLegs.getAlternateFuel() > 0.f)
+    html.row2(tr("Alternate Fuel:"), fuelLbsGal(altitudeLegs.getAlternateFuel()), flags);
+
+  html.row2(tr("Reserve Fuel:"), fuelLbsGal(perf->getReserveFuel()), flags);
+
+  if(perf->getTaxiFuel() > 0.f)
+    html.row2(tr("Taxi Fuel:"), fuelLbsGal(perf->getTaxiFuel()), flags);
+
+  if(perf->getExtraFuel() > 0.f)
+    html.row2(tr("Extra Fuel:"), fuelLbsGal(perf->getExtraFuel()), flags);
+
+  if(perf->getContingencyFuel() > 0.f)
+    html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
+              arg(perf->getContingencyFuel(), 0, 'f', 0).
+              arg(fuelLbsGal(altitudeLegs.getContingencyFuel(*perf))), flags);
   html.tableEnd();
 
   // Climb and descent phases =======================================================
@@ -907,6 +942,13 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
       changed = true;
       updateReport();
     }
+  }
+
+  // Check if model has changed and update report warnings
+  if(airplaneModel != simulatorData.getUserAircraftConst().getAirplaneModel())
+  {
+    updateReport();
+    airplaneModel = simulatorData.getUserAircraftConst().getAirplaneModel();
   }
 }
 
