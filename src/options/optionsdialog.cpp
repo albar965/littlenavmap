@@ -132,22 +132,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                              "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); }").
                                      arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 
-  units = new UnitStringTool();
-  units->init({
-    ui->doubleSpinBoxOptionsMapZoomShowMap,
-    ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
-    ui->spinBoxOptionsRouteGroundBuffer,
-    ui->labelOptionsMapRangeRings,
-    ui->spinBoxDisplayOnlineClearance,
-    ui->spinBoxDisplayOnlineArea,
-    ui->spinBoxDisplayOnlineApproach,
-    ui->spinBoxDisplayOnlineDeparture,
-    ui->spinBoxDisplayOnlineFir,
-    ui->spinBoxDisplayOnlineObserver,
-    ui->spinBoxDisplayOnlineGround,
-    ui->spinBoxDisplayOnlineTower
-  });
-
   /* *INDENT-OFF* */
   QListWidget*list=ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));;
@@ -644,7 +628,26 @@ void OptionsDialog::updateOnlineWidgetStatus()
 
 void OptionsDialog::updateWidgetUnits()
 {
-  units->update();
+  if(units == nullptr)
+  {
+    units = new UnitStringTool();
+    units->init({
+      ui->doubleSpinBoxOptionsMapZoomShowMap,
+      ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
+      ui->spinBoxOptionsRouteGroundBuffer,
+      ui->labelOptionsMapRangeRings,
+      ui->spinBoxDisplayOnlineClearance,
+      ui->spinBoxDisplayOnlineArea,
+      ui->spinBoxDisplayOnlineApproach,
+      ui->spinBoxDisplayOnlineDeparture,
+      ui->spinBoxDisplayOnlineFir,
+      ui->spinBoxDisplayOnlineObserver,
+      ui->spinBoxDisplayOnlineGround,
+      ui->spinBoxDisplayOnlineTower
+    });
+  }
+  else
+    units->update();
 }
 
 bool OptionsDialog::isOverrideLanguage()

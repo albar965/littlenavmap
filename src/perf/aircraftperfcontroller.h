@@ -183,8 +183,12 @@ private:
   void stopCollecting();
 
   /* Make a string with fuel in lbs and gallons or kg and liter */
-  QString fuelLbsGal(float valueLbsGal);
-  QString ffLbsGal(float valueLbsGal);
+  /* To currently user selected fuel units */
+  QString fuelWeightVolLocal(float valueLbsGal);
+  QString ffWeightVolLocal(float valueLbsGal);
+
+  /* To opposite of currently user selected fuel units */
+  QString fuelWeightVolOther(float valueLbsGal);
 
   MainWindow *mainWindow;
 

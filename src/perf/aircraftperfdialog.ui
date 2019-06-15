@@ -186,12 +186,22 @@
           <widget class="QComboBox" name="comboBoxFuelUnit">
            <item>
             <property name="text">
-             <string>Weight (%weight%)</string>
+             <string>Weight (lbs)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Volume (%volume%)</string>
+             <string>Volume (gal)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Weight (kg)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Volume (liter)</string>
             </property>
            </item>
           </widget>

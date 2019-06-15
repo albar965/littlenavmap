@@ -584,8 +584,8 @@ void AircraftPerfController::updateReport()
       html.p().b(tr("Fuel")).pEnd();
       html.table();
       html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
-      html.row2(tr("Total Fuel Consumed:"), fuelLbsGal(perfHandler->getTotalFuelConsumed()), flags);
-      html.row2(tr("Taxi Fuel:"), fuelLbsGal(perf->getTaxiFuel()), flags);
+      html.row2(tr("Total Fuel Consumed:"), fuelWeightVolLocal(perfHandler->getTotalFuelConsumed()), flags);
+      html.row2(tr("Taxi Fuel:"), fuelWeightVolLocal(perf->getTaxiFuel()), flags);
       html.tableEnd();
     }
 
@@ -596,7 +596,7 @@ void AircraftPerfController::updateReport()
       html.row2(tr("True Airspeed:"), Unit::speedKts(perf->getClimbSpeed()), flags);
       html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(perf->getClimbVertSpeed()) + tr(" <b>▲</b>"),
                 atools::util::html::NO_ENTITIES | flags);
-      html.row2(tr("Fuel Flow:"), ffLbsGal(perf->getClimbFuelFlow()), flags);
+      html.row2(tr("Fuel Flow:"), ffWeightVolLocal(perf->getClimbFuelFlow()), flags);
       html.tableEnd();
     }
 
@@ -605,7 +605,7 @@ void AircraftPerfController::updateReport()
       html.p().b(tr("Cruise")).pEnd();
       html.table();
       html.row2(tr("True Airspeed:"), Unit::speedKts(perf->getCruiseSpeed()), flags);
-      html.row2(tr("Fuel Flow:"), ffLbsGal(perf->getCruiseFuelFlow()), flags);
+      html.row2(tr("Fuel Flow:"), ffWeightVolLocal(perf->getCruiseFuelFlow()), flags);
       html.tableEnd();
     }
     if(segment >= atools::fs::perf::DESCENT)
@@ -616,7 +616,7 @@ void AircraftPerfController::updateReport()
       // Descent speed is always positive
       html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(-perf->getDescentVertSpeed()) + tr(" <b>▼</b>"),
                 atools::util::html::NO_ENTITIES | flags);
-      html.row2(tr("Fuel Flow:"), ffLbsGal(perf->getDescentFuelFlow()), flags);
+      html.row2(tr("Fuel Flow:"), ffWeightVolLocal(perf->getDescentFuelFlow()), flags);
       html.tableEnd();
     }
   }
@@ -716,7 +716,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
     if(perf->getUsableFuel() > 1.f)
       if(altitudeLegs.getBlockFuel(*perf) > perf->getUsableFuel())
-        html.p().error(tr("Block fuel exceeds usable of %1.").arg(fuelLbsGal(perf->getUsableFuel()))).pEnd();
+        html.p().error(tr("Block fuel exceeds usable of %1.").arg(fuelWeightVolLocal(perf->getUsableFuel()))).pEnd();
 
     if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
       html.p().error(tr("Reserve fuel bigger than usable.")).pEnd();
@@ -797,30 +797,35 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   html.p().b(tr("Fuel Plan")).pEnd();
   html.table();
   html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
-  html.row2(tr("Trip Fuel:"), fuelLbsGal(altitudeLegs.getTripFuel()), atools::util::html::BOLD | flags);
+  html.row2(tr("Trip Fuel:"), tr("<b>%1</b> (%2)").
+            arg(fuelWeightVolLocal(altitudeLegs.getTripFuel())).
+            arg(fuelWeightVolOther(altitudeLegs.getTripFuel())), atools::util::html::NO_ENTITIES | flags);
   float blockFuel = altitudeLegs.getBlockFuel(*perf);
-  html.row2(tr("Block Fuel:"), tr("%1%2").
-            arg(fuelLbsGal(blockFuel)).
-            arg(perf->getUsableFuel() >
-                1.f ? tr(", %1 %").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f', 0) : QString()),
-            atools::util::html::BOLD | flags);
-  html.row2(tr("Fuel at Destination:"), fuelLbsGal(altitudeLegs.getDestinationFuel(*perf)), flags);
+  QString percent = perf->getUsableFuel() >
+                    1.f ? tr("<br/>%1 % of usable Fuel").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f',
+                                                             0) : QString();
+  html.row2(tr("Block Fuel:"), tr("<b>%1</b> (%2)%3").
+            arg(fuelWeightVolLocal(blockFuel)).
+            arg(fuelWeightVolOther(blockFuel)).
+            arg(percent),
+            atools::util::html::NO_ENTITIES | flags);
+  html.row2(tr("Fuel at Destination:"), fuelWeightVolLocal(altitudeLegs.getDestinationFuel(*perf)), flags);
 
   if(altitudeLegs.getAlternateFuel() > 0.f)
-    html.row2(tr("Alternate Fuel:"), fuelLbsGal(altitudeLegs.getAlternateFuel()), flags);
+    html.row2(tr("Alternate Fuel:"), fuelWeightVolLocal(altitudeLegs.getAlternateFuel()), flags);
 
-  html.row2(tr("Reserve Fuel:"), fuelLbsGal(perf->getReserveFuel()), flags);
+  html.row2(tr("Reserve Fuel:"), fuelWeightVolLocal(perf->getReserveFuel()), flags);
 
   if(perf->getTaxiFuel() > 0.f)
-    html.row2(tr("Taxi Fuel:"), fuelLbsGal(perf->getTaxiFuel()), flags);
+    html.row2(tr("Taxi Fuel:"), fuelWeightVolLocal(perf->getTaxiFuel()), flags);
 
   if(perf->getExtraFuel() > 0.f)
-    html.row2(tr("Extra Fuel:"), fuelLbsGal(perf->getExtraFuel()), flags);
+    html.row2(tr("Extra Fuel:"), fuelWeightVolLocal(perf->getExtraFuel()), flags);
 
   if(perf->getContingencyFuel() > 0.f)
     html.row2(tr("Contingency Fuel:"), tr("%1 %, %2").
               arg(perf->getContingencyFuel(), 0, 'f', 0).
-              arg(fuelLbsGal(altitudeLegs.getContingencyFuel(*perf))), flags);
+              arg(fuelWeightVolLocal(altitudeLegs.getContingencyFuel(*perf))), flags);
   html.tableEnd();
 
   // Climb and descent phases =======================================================
@@ -863,20 +868,77 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   }
 }
 
-QString AircraftPerfController::fuelLbsGal(float valueLbsGal)
+QString fuelWeightVol(atools::fs::perf::AircraftPerf *perf, opts::UnitFuelAndWeight unitFuelAndWeight,
+                      float valueLbsGal)
 {
-  if(perf->useFuelAsVolume())
-    return Unit::fuelLbsAndGal(AircraftPerf::fromGalToLbs(perf->isJetFuel(), valueLbsGal), valueLbsGal);
-  else
-    return Unit::fuelLbsAndGal(valueLbsGal, AircraftPerf::fromLbsToGal(perf->isJetFuel(), valueLbsGal));
+  static const QString STR("%1 %2 %3 %4");
+
+  // Source value is always lbs or gallon depending on setting in perf
+  // convert according to unitFuelAndWeight or pass through
+  using namespace atools::geo;
+  switch(unitFuelAndWeight)
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      if(perf->useFuelAsVolume())
+        // Pass volume through and convert volume to weight
+        return STR.
+               arg(fromGalToLbs(perf->isJetFuel(), valueLbsGal), 0, 'f', 0).
+               arg(Unit::getSuffixFuelWeightLbs()).
+               arg(valueLbsGal, 0, 'f', 0).
+               arg(Unit::getSuffixFuelVolGal());
+      else
+        // Pass weight through and convert weight to volume
+        return STR.
+               arg(valueLbsGal, 0, 'f', 0).
+               arg(Unit::getSuffixFuelWeightLbs()).
+               arg(fromLbsToGal(perf->isJetFuel(), valueLbsGal), 0, 'f', 0).
+               arg(Unit::getSuffixFuelVolGal());
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      if(perf->useFuelAsVolume())
+        // Convert to metric and pass volume  through and convert volume to weight
+        return STR.
+               arg(fromLiterToKg(perf->isJetFuel(), lbsToKg(valueLbsGal)), 0, 'f', 0).
+               arg(Unit::getSuffixFuelWeightKg()).
+               arg(gallonToLiter(valueLbsGal), 0, 'f', 0).
+               arg(Unit::getSuffixFuelVolLiter());
+      else
+        // Convert to metric and  pass weight through and convert weight to volume
+        return STR.
+               arg(lbsToKg(valueLbsGal), 0, 'f', 0).
+               arg(Unit::getSuffixFuelWeightKg()).
+               arg(fromLbsToGal(perf->isJetFuel(), gallonToLiter(valueLbsGal)), 0, 'f', 0).
+               arg(Unit::getSuffixFuelVolLiter());
+  }
+  return QString();
 }
 
-QString AircraftPerfController::ffLbsGal(float valueLbsGal)
+QString AircraftPerfController::fuelWeightVolLocal(float valueLbsGal)
+{
+  // Convert to locally selected unit
+  return fuelWeightVol(perf, OptionData::instance().getUnitFuelAndWeight(), valueLbsGal);
+}
+
+QString AircraftPerfController::fuelWeightVolOther(float valueLbsGal)
+{
+  // Convert to opposite of locally selected unit (lbs/gal vs. kg/l and vice versa)
+  switch(OptionData::instance().getUnitFuelAndWeight())
+  {
+    case opts::FUEL_WEIGHT_GAL_LBS:
+      return fuelWeightVol(perf, opts::FUEL_WEIGHT_LITER_KG, valueLbsGal);
+
+    case opts::FUEL_WEIGHT_LITER_KG:
+      return fuelWeightVol(perf, opts::FUEL_WEIGHT_GAL_LBS, valueLbsGal);
+  }
+  return QString();
+}
+
+QString AircraftPerfController::ffWeightVolLocal(float valueLbsGal)
 {
   if(perf->useFuelAsVolume())
-    return Unit::ffLbsAndGal(AircraftPerf::fromGalToLbs(perf->isJetFuel(), valueLbsGal), valueLbsGal);
+    return Unit::ffLbsAndGal(atools::geo::fromGalToLbs(perf->isJetFuel(), valueLbsGal), valueLbsGal);
   else
-    return Unit::ffLbsAndGal(valueLbsGal, AircraftPerf::fromLbsToGal(perf->isJetFuel(), valueLbsGal));
+    return Unit::ffLbsAndGal(valueLbsGal, atools::geo::fromLbsToGal(perf->isJetFuel(), valueLbsGal));
 }
 
 void AircraftPerfController::saveState()

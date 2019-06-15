@@ -3569,13 +3569,13 @@ void RouteController::updateModelRouteTimeFuel()
         float weight = 0.f, vol = 0.f;
         if(perf.useFuelAsVolume())
         {
-          weight = AircraftPerf::fromGalToLbs(perf.isJetFuel(), totalTempFuel);
+          weight = atools::geo::fromGalToLbs(perf.isJetFuel(), totalTempFuel);
           vol = totalTempFuel;
         }
         else
         {
           weight = totalTempFuel;
-          vol = AircraftPerf::fromLbsToGal(perf.isJetFuel(), totalTempFuel);
+          vol = atools::geo::fromLbsToGal(perf.isJetFuel(), totalTempFuel);
         }
 
         if(atools::almostEqual(vol, 0.f, 0.01f))

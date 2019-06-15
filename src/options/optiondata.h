@@ -463,7 +463,7 @@ public:
     return unitCoords;
   }
 
-  opts::UnitFuelAndWeight getUnitFuelWeight() const
+  opts::UnitFuelAndWeight getUnitFuelAndWeight() const
   {
     return unitFuelWeight;
   }
