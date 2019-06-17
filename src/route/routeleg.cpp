@@ -628,7 +628,9 @@ bool RouteLeg::isNavdata() const
 
 QString RouteLeg::getRegion() const
 {
-  if(vor.isValid())
+  if(airport.isValid())
+    return airport.region;
+  else if(vor.isValid())
     return vor.region;
   else if(ndb.isValid())
     return ndb.region;
