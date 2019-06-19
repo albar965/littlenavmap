@@ -1801,17 +1801,20 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS3_WARNING,
-                                 tr("The old X-Plane FMS format version 3 does not allow saving of:"
-                                    "<ul>"
-                                      "<li>Procedures</li>"
-                                        "<li>Airways</li>"
-                                          "<li>Ground Speed</li>"
-                                            "<li>Departure parking position</li>"
-                                              "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                "<li>Alternate destination airports</li>"
-                                                "</ul>"
-                                                "This information will be lost when reloading the file.<br/><br/>"
-                                                "Really save as FMS file?<br/>"),
+                                 tr("<p>The old X-Plane FMS format version 3 does not allow saving of:</p>"
+                                      "<ul>"
+                                        "<li>Procedures</li>"
+                                          "<li>Airways</li>"
+                                            "<li>Ground Speed</li>"
+                                              "<li>Departure parking position</li>"
+                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                                  "<li>Alternate destination airports</li>"
+                                                    "<li>User defined/custom approaches</li>"
+                                                    "</ul>"
+                                                    "<p>This information or parts of it can be lost when reloading the file.</p>"
+                                                      "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
+                                                        "<p>Really save as FMS file?</p>"
+                                    ),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FMS 3."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1823,17 +1826,20 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FMS11_WARNING,
-                                 tr("This format can only be loaded from "
-                                    "X-Plane 11.10 and above.<br/>"
-                                    "It does not allow saving of:"
-                                    "<ul>"
-                                      "<li>Ground Speed</li>"
-                                        "<li>Departure parking position</li>"
-                                          "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                            "<li>Alternate destination airports</li>"
-                                            "</ul>"
-                                            "This information will be lost when reloading the file.<br/><br/>"
-                                            "Really save as FMS file?<br/>"),
+                                 tr("<p>This format can only be loaded from "
+                                      "X-Plane 11.10 and above.<br/>"
+                                      "It does not allow saving of:</p>"
+                                      "<ul>"
+                                        "<li>Ground Speed</li>"
+                                          "<li>Departure parking position</li>"
+                                            "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                              "<li>Alternate destination airports</li>"
+                                                "<li>User defined/custom approaches</li>"
+                                                "</ul>"
+                                                "<p>This information or parts of it can be lost when reloading the file.</p>"
+                                                  "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
+                                                    "<p>Really save as FMS file?</p>"
+                                    ),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FMS 11."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1845,18 +1851,21 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLP_WARNING,
-                                 tr("The FLP format does not allow saving of:"
-                                    "<ul>"
-                                      "<li>Procedures (limited, can result in mismatches)</li>"
-                                        "<li>Position names</li>"
-                                          "<li>Cruise Altitude</li>"
-                                            "<li>Ground Speed</li>"
-                                              "<li>Departure parking position</li>"
-                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                  "<li>Alternate destination airports</li>"
-                                                  "</ul>"
-                                                  "This information will be lost when reloading the file.<br/><br/>"
-                                                  "Really save as FLP file?<br/>"),
+                                 tr("<p>The FLP format does not allow saving of:</p>"
+                                      "<ul>"
+                                        "<li>Procedures (limited, can result in mismatches)</li>"
+                                          "<li>Position names</li>"
+                                            "<li>Cruise Altitude</li>"
+                                              "<li>Ground Speed</li>"
+                                                "<li>Departure parking position</li>"
+                                                  "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                                    "<li>Alternate destination airports</li>"
+                                                      "<li>User defined/custom approaches</li>"
+                                                      "</ul>"
+                                                      "<p>This information or parts of it can be lost when reloading the file.</p>"
+                                                        "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
+                                                          "<p>Really save as FLP file?</p>"
+                                    ),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FLP."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
@@ -1868,18 +1877,21 @@ bool MainWindow::routeSaveCheckWarnings(bool& saveAs, atools::fs::pln::FileForma
     // Ask before saving file
     result =
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_FLIGHTGEAR_WARNING,
-                                 tr("The FlightGear format does not allow saving of:"
-                                    "<ul>"
-                                      "<li>Procedures (only SID, STAR and the respective transitions)</li>"
-                                        "<li>Position names</li>"
-                                          "<li>Cruise Altitude</li>"
-                                            "<li>Ground Speed</li>"
-                                              "<li>Departure parking position</li>"
-                                                "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
-                                                  "<li>Alternate destination airports</li>"
-                                                  "</ul>"
-                                                  "This information will be lost when reloading the file.<br/><br/>"
-                                                  "Really save as FGFP file?<br/>"),
+                                 tr("<p>The FlightGear format does not allow saving of:</p>"
+                                      "<ul>"
+                                        "<li>Procedures (only SID, STAR and the respective transitions)</li>"
+                                          "<li>Position names</li>"
+                                            "<li>Cruise Altitude</li>"
+                                              "<li>Ground Speed</li>"
+                                                "<li>Departure parking position</li>"
+                                                  "<li>Types (IFR/VFR, Low Alt/High Alt)</li>"
+                                                    "<li>Alternate destination airports</li>"
+                                                      "<li>User defined/custom approaches</li>"
+                                                      "</ul>"
+                                                      "<p>This information or parts of it can be lost when reloading the file.</p>"
+                                                        "<p><b>Save an additional copy using the default PLN format to keep all information.</b></p>"
+                                                          "<p>Really save as FGFP file?</p>"
+                                    ),
                                  tr("Do not show this dialog again and save the Flight Plan in the future as FGFP."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
   }
