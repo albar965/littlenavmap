@@ -66,8 +66,8 @@ public:
   QVector<int> getTransitionIdsForApproach(int approachId);
 
   void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                      map::MapAirport departure,
-                                      map::MapAirport destination,
+                                      const map::MapAirport& departure,
+                                      const map::MapAirport& destination,
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& departureLegs, QStringList& errors);
 
@@ -92,7 +92,8 @@ public:
   int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId,
                           float distance = map::INVALID_DISTANCE_VALUE, int size = -1);
 
-  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, float distance,
+  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
+                            const map::MapRunwayEnd& runwayEndSim, float distance,
                             float altitude);
 
   /* Flush the cache to update units */
@@ -167,6 +168,7 @@ private:
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
   void runwayEndByName(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
+  void runwayEndByNameSim(map::MapSearchResult& result, const QString& name, const map::MapAirport& airport);
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern or matches exactly */
   bool doesRunwayMatch(const QString& runway, const QString& runwayFromQuery, const QString& arincName,

@@ -1903,6 +1903,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         insert = routeLeg->isRoute();
     }
 
+    ui->actionRouteShowApproachesCustom->setEnabled(false);
     ui->actionRouteShowApproaches->setEnabled(false);
     if(routeLeg->isValid() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
@@ -1949,7 +1950,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
         ui->actionRouteShowApproachesCustom->setText(tr("Create Approach and use Airport as Destination"));
     }
     else
+    {
       ui->actionRouteShowApproaches->setText(tr("Show procedures"));
+      ui->actionRouteShowApproachesCustom->setText(tr("Create procedure"));
+    }
 
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
@@ -2883,8 +2887,13 @@ void RouteController::routeAttachProcedure(proc::MapProcedureLegs legs, const QS
 
   // Airport id in legs is from nav database - convert to simulator database
   map::MapAirport airportSim;
-  NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
-  mapQuery->getAirportSimReplace(airportSim);
+  if(legs.isCustom())
+    NavApp::getAirportQuerySim()->getAirportById(airportSim, legs.ref.airportId);
+  else
+  {
+    NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
+    mapQuery->getAirportSimReplace(airportSim);
+  }
 
   if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_ARRIVAL)
   {

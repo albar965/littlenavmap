@@ -225,8 +225,8 @@ struct MapProcedureRef
   {
   }
 
-  int airportId /* always from navdatabase*/,
-      runwayEndId /* always from navdatabase*/,
+  int airportId /* always from navdatabase - only simdatabase if this is a custom approach */,
+      runwayEndId /* always from navdatabase - only simdatabase if this is a custom approach */,
       approachId, transitionId, legId;
   proc::MapProcedureTypes mapType;
 
