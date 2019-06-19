@@ -82,6 +82,7 @@ const QLatin1Literal ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
 const QLatin1Literal ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 const QLatin1Literal ACTIONS_SHOW_START_PERF_COLLECTION("Actions/ShowPerfCollection");
 const QLatin1Literal ACTIONS_SHOW_DELETE_TRAIL("Actions/DeleteTrail");
+const QLatin1Literal ACTIONS_SHOW_RESET_PERF("Actions/ResetPerformanceColl");
 const QLatin1Literal ACTIONS_SHOW_SEARCH_CENTER_NULL("Actions/SearchCenterNull");
 const QLatin1Literal ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL("Actions/DownloadFailed");
 
@@ -171,7 +172,7 @@ const QLatin1Literal AIRCRAFT_PERF_FILENAME("AircraftPerformance/Filename");
 const QLatin1Literal AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
 const QLatin1Literal AIRCRAFT_PERF_FILENAMESRECENT("AircraftPerformance/FilenamesRecent");
 const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG("AircraftPerformance/EditDialog");
-const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG_SIZE("AircraftPerformance/EditDialogSize");
+const QLatin1Literal AIRCRAFT_PERF_MERGE_DIALOG("AircraftPerformance/MergeDialog");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");

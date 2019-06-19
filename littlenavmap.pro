@@ -288,6 +288,7 @@ SOURCES += \
   src/options/optionsdialog.cpp \
   src/perf/aircraftperfcontroller.cpp \
   src/perf/aircraftperfdialog.cpp \
+  src/perf/perfmergedialog.cpp \
   src/print/printdialog.cpp \
   src/print/printsupport.cpp \
   src/profile/profilelabelwidget.cpp \
@@ -421,6 +422,7 @@ HEADERS  += \
   src/options/optionsdialog.h \
   src/perf/aircraftperfcontroller.h \
   src/perf/aircraftperfdialog.h \
+  src/perf/perfmergedialog.h \
   src/print/printdialog.h \
   src/print/printsupport.h \
   src/profile/profilelabelwidget.h \
@@ -493,6 +495,7 @@ FORMS += \
   src/mapgui/imageexportdialog.ui \
   src/options/options.ui \
   src/perf/aircraftperfdialog.ui \
+  src/perf/perfmergedialog.ui \
   src/print/printdialog.ui \
   src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \

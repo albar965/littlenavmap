@@ -3498,7 +3498,7 @@ void RouteController::updateModelRouteTimeFuel()
   int row = 0;
   float cumulatedTravelTime = 0.f;
 
-  bool setValues = !NavApp::isCollectingPerformance() && !altitudeLegs.hasErrors();
+  bool setValues = !altitudeLegs.hasErrors();
   const AircraftPerf& perf = NavApp::getAircraftPerformance();
   float totalFuelLbsOrGal = altitudeLegs.getTripFuel() + altitudeLegs.getAlternateFuel();
 
@@ -3976,7 +3976,7 @@ QString RouteController::buildFlightplanLabel2() const
         break;
     }
 
-    if(NavApp::getAircraftPerfController()->isDescentValid() && !NavApp::isCollectingPerformance() &&
+    if(NavApp::getAircraftPerfController()->isDescentValid() &&
        route.getAltitudeLegs().getTravelTimeHours() > 0.f)
       return tr("<b>%1, %2</b>, %3").
              arg(Unit::distNm(route.getTotalDistance())).

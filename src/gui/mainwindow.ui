@@ -428,7 +428,9 @@
     <addaction name="separator"/>
     <addaction name="actionAircraftPerformanceEdit"/>
     <addaction name="separator"/>
-    <addaction name="actionAircraftPerformanceCollect"/>
+    <addaction name="actionAircraftPerformanceLoadMerge"/>
+    <addaction name="actionAircraftPerformanceMerge"/>
+    <addaction name="actionAircraftPerformanceRestart"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
@@ -3849,7 +3851,7 @@
        </widget>
        <widget class="QWidget" name="tabAircraftPerformance">
         <attribute name="title">
-         <string>Aircraft</string>
+         <string>Aircraft Performance</string>
         </attribute>
         <attribute name="toolTip">
          <string>Aircraft Performance and Fuel Planning</string>
@@ -4126,6 +4128,133 @@ Wind speed will be interpolated for climb and descent phases.</string>
           <widget class="QTextBrowser" name="textBrowserAircraftPerformanceReport">
            <property name="placeholderText">
             <string>No aircraft performance report available.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabCurrentPerformance">
+        <attribute name="title">
+         <string>Current Performance</string>
+        </attribute>
+        <attribute name="toolTip">
+         <string>Collected performance for current flight</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_32">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonAircraftPerfCollectRestart">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Restart Aircraft Performance Collection</string>
+             </property>
+             <property name="statusTip">
+              <string>Restart Aircraft Performance Collection</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfreset.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonAircraftPerfCollectMerge">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Merge the recorded performance into current</string>
+             </property>
+             <property name="statusTip">
+              <string>Merge the recorded performance into current</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfmerge.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonAircraftPerfCollectHelp">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Show help for aircraft performance</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for aircraft performance</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserAircraftPerformanceCurrent">
+           <property name="placeholderText">
+            <string>No report for current performance available.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -9138,20 +9267,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Remove all recent aircraft performance files from menu</string>
    </property>
   </action>
-  <action name="actionAircraftPerformanceCollect">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Collect Performance for Flight</string>
-   </property>
-   <property name="iconText">
-    <string>Collect Performance for Flight</string>
-   </property>
-   <property name="statusTip">
-    <string>Collect Performance for Flight</string>
-   </property>
-  </action>
   <action name="actionAircraftPerformanceSave">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9675,6 +9790,39 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceLoadMerge">
+   <property name="text">
+    <string>&amp;Open Aircraft Performance and Merge ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Aircraft Performance File and merge into current</string>
+   </property>
+   <property name="statusTip">
+    <string>Open Aircraft Performance File and merge into current</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceMerge">
+   <property name="text">
+    <string>Merge collected Aircraft Performance ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Merge the recorded performance into current</string>
+   </property>
+   <property name="statusTip">
+    <string>Merge the recorded performance into current</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceRestart">
+   <property name="text">
+    <string>Restart Aircraft Performance Collection</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart Aircraft Performance Collection</string>
+   </property>
+   <property name="statusTip">
+    <string>Restart Aircraft Performance Collection</string>
    </property>
   </action>
  </widget>

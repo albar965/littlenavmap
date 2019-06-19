@@ -138,7 +138,6 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
           this, &AircraftPerfDialog::updateRange);
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AircraftPerfDialog::buttonBoxClicked);
-
 }
 
 AircraftPerfDialog::~AircraftPerfDialog()

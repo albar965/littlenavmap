@@ -24,6 +24,7 @@ enum TabIndex
 {
   ROUTE = 0,
   AIRCRAFT = 1,
+  COLLECTION = 2
 };
 
 }

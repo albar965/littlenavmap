@@ -58,32 +58,8 @@ public:
   explicit AircraftPerfController(MainWindow *parent);
   virtual ~AircraftPerfController();
 
-  /* Create a new performance sheet and opens the edit dialog after asking to save currently unchanged */
-  void create();
-
-  /* Opens the edit dialog. */
-  void edit();
-
-  /* Open file dialog and load a new performance file after asking to save currently unchanged */
-  void load();
-
   /* Load a new performance file from file history after asking to save currently unchanged */
   void loadFile(const QString& perfFile);
-
-  /* Save current performance file */
-  bool save();
-
-  /* Open save dialog and save current performance file */
-  bool saveAs();
-
-  /* true if currently collection performance data */
-  bool isCollecting() const
-  {
-    return perfHandler != nullptr;
-  }
-
-  /* Open related help in browser */
-  void helpClicked() const;
 
   /* Ask user if data can be deleted when quitting.
    * @return true continue with new, exit, etc. */
@@ -153,8 +129,30 @@ signals:
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
 
 private:
-  /* Collect information action toggled */
-  void collectToggled();
+  /* Create a new performance sheet and opens the edit dialog after asking to save currently unchanged */
+  void create();
+
+  /* Opens the edit dialog. */
+  void edit();
+
+  /* Open file dialog and load a new performance file after asking to save currently unchanged */
+  void load();
+
+  /* Open file dialog and show merge dialog */
+  void loadAndMerge();
+
+  /* Show merge dialog for currently collected performance */
+  void mergeCollected();
+
+  /* Save current performance file */
+  bool save();
+
+  /* Open save dialog and save current performance file */
+  bool saveAs();
+
+  /* Open related help in browser */
+  void helpClickedPerf() const;
+  void helpClickedPerfCollect() const;
 
   void manualWindToggled();
 
@@ -164,8 +162,11 @@ private:
   /* Update wind data after a delay to avoid laggy pointer */
   void windChangedDelayed();
 
-  /* Create or update HTML report */
+  /* Create or update HTML report for fuel plan */
   void updateReport();
+
+  /* Create or update HTML report for performance collection */
+  void updateReportCurrent();
 
   void updateActionStates();
 
@@ -175,13 +176,6 @@ private:
   /* URL or show file in performance report clicked */
   void anchorClicked(const QUrl& url);
 
-  /* Show information dialog on performance collection */
-  bool collectPerformanceDialog();
-
-  /* Start and stop collecting performance data */
-  void startCollecting();
-  void stopCollecting();
-
   /* Make a string with fuel in lbs and gallons or kg and liter */
   /* To currently user selected fuel units */
   QString fuelWeightVolLocal(float valueLbsGal);
@@ -189,6 +183,12 @@ private:
 
   /* To opposite of currently user selected fuel units */
   QString fuelWeightVolOther(float valueLbsGal);
+
+  /* Restart performance collection  */
+  void restartCollect();
+
+  /* Dock window or tab visibility changed */
+  void visibilityChanged();
 
   MainWindow *mainWindow;
 
@@ -203,8 +203,9 @@ private:
   QString currentFilepath;
   atools::fs::perf::AircraftPerf *perf = nullptr;
 
-  /* null if not collecting */
+  /* Collects aircraft data */
   atools::fs::perf::AircraftPerfHandler *perfHandler = nullptr;
+
   atools::gui::FileHistoryHandler *fileHistory = nullptr;
 
   /* Last update of report when collecting data */
@@ -212,9 +213,6 @@ private:
 
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
-
-  /* Used to detect aircraft changes */
-  QString airplaneModel;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H

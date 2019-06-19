@@ -528,11 +528,6 @@ AircraftPerfController *NavApp::getAircraftPerfController()
   return aircraftPerfController;
 }
 
-bool NavApp::isCollectingPerformance()
-{
-  return aircraftPerfController->isCollecting();
-}
-
 const atools::fs::perf::AircraftPerf& NavApp::getAircraftPerformance()
 {
   return aircraftPerfController->getAircraftPerformance();

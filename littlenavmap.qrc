@@ -240,5 +240,7 @@
         <file>resources/icons/userpoint_NDB.svg</file>
         <file>resources/icons/airportroutealt.svg</file>
         <file>resources/icons/approachcustom.svg</file>
+        <file>resources/icons/aircraftperfreset.svg</file>
+        <file>resources/icons/aircraftperfmerge.svg</file>
     </qresource>
 </RCC>

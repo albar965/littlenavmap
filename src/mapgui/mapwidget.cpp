@@ -36,6 +36,7 @@
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
 #include "mapgui/maplayersettings.h"
+#include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "sql/sqlrecord.h"
@@ -332,6 +333,12 @@ bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
+#ifdef DEBUG_MOVING_AIRPLANE
+    if(QGuiApplication::queryKeyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+      return QWidget::event(event);
+
+#endif
+
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
     // Load tooltip data into mapSearchResultTooltip

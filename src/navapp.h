@@ -258,7 +258,6 @@ public:
   static UserdataController *getUserdataController();
   static OnlinedataController *getOnlinedataController();
   static AircraftPerfController *getAircraftPerfController();
-  static bool isCollectingPerformance();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
 
   static atools::fs::common::MagDecReader *getMagDecReader();

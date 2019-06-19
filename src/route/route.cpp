@@ -1323,15 +1323,14 @@ void Route::updateLegAltitudes()
 {
   AircraftPerfController *aircraftPerfController = NavApp::getAircraftPerfController();
 
-  bool collecting = aircraftPerfController->isCollecting();
   // Calculate if values are valid or collecting data
-  altitude->setCalcTopOfClimb(collecting || aircraftPerfController->isClimbValid());
-  altitude->setCalcTopOfDescent(collecting || aircraftPerfController->isDescentValid());
+  altitude->setCalcTopOfClimb(aircraftPerfController->isClimbValid());
+  altitude->setCalcTopOfDescent(aircraftPerfController->isDescentValid());
 
   // Use default values if invalid values or collecting data
   const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
-  altitude->setClimbRateFtPerNm(collecting ? 333.f : perf.getClimbRateFtPerNm());
-  altitude->setDesentRateFtPerNm(collecting ? 333.f : perf.getDescentRateFtPerNm());
+  altitude->setClimbRateFtPerNm(perf.getClimbRateFtPerNm());
+  altitude->setDesentRateFtPerNm(perf.getDescentRateFtPerNm());
 
   altitude->setSimplify(
     atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());

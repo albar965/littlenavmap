@@ -2865,6 +2865,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
   s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
+  s.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
   s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
   s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
 
@@ -3937,8 +3938,7 @@ void MainWindow::updateErrorLabels()
   QString tooltip;
   QString err;
   // Show only if route is valid, there are errors and nothing is collecting performance
-  bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors() &&
-                   !NavApp::isCollectingPerformance();
+  bool showError = NavApp::getRoute().getSizeWithoutAlternates() >= 2 && NavApp::getAltitudeLegs().hasErrors();
   if(showError)
     err = atools::util::HtmlBuilder::errorMessage(NavApp::getAltitudeLegs().getErrorStrings(tooltip).join(" "));
 
