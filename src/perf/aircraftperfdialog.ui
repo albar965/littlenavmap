@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
-    <height>674</height>
+    <width>500</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -406,6 +406,9 @@ the given descent speeds</string>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
+            <property name="margin">
+             <number>5</number>
+            </property>
            </widget>
           </item>
          </layout>
@@ -735,6 +738,9 @@ the given descent speeds</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="margin">
+             <number>5</number>
             </property>
            </widget>
           </item>
