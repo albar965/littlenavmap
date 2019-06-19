@@ -3421,6 +3421,7 @@ void MapWidget::setDetailLevel(int factor)
 #ifdef DEBUG_MOVING_AIRPLANE
 void MapWidget::debugMovingPlane(QMouseEvent *event)
 {
+  using atools::fs::sc::SimConnectData;
   static int packetId = 0;
   static Pos lastPos;
   static QPoint lastPoint;
@@ -3449,7 +3450,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       if(!route.isEmpty())
       {
         float distanceFromStart = route.getDistanceFromStart(pos);
-        ground = distanceFromStart<2.f || distanceFromStart> route.getTotalDistance() - 2.f;
+        ground = distanceFromStart<1.f || distanceFromStart> route.getTotalDistance() - 1.f;
 
         if(!ground)
         {
@@ -3478,16 +3479,16 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         {
           tas = 20.f;
           fuelflow = 20.f;
-          if(distanceFromStart < 1.f || distanceFromStart > route.getTotalDistance() - 1.f)
+          if(distanceFromStart < 0.5f || distanceFromStart > route.getTotalDistance() - 0.5f)
             fuelflow = 0.f;
         }
       }
 
+      if(!(alt < map::INVALID_ALTITUDE_VALUE))
+        alt = route.getCruisingAltitudeFeet();
       pos.setAltitude(alt);
 
-      atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos, ground,
-                                                                                                  vertSpeed, tas,
-                                                                                                  fuelflow);
+      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow);
       data.setPacketId(packetId++);
 
       emit NavApp::getConnectClient()->dataPacketReceived(data);
