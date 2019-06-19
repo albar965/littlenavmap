@@ -3431,22 +3431,63 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+      Pos pos(lon, lat);
 
-      float projectionDistance = NavApp::getRouteConst().getProjectionDistance();
+      const Route& route = NavApp::getRouteConst();
+      float projectionDistance = route.getProjectionDistance();
 
-      double alt = 100.f;
+      if(!(projectionDistance < map::INVALID_DISTANCE_VALUE))
+        projectionDistance = route.getDistanceFromStart(pos);
+
+      float alt = 0.f;
       if(projectionDistance < map::INVALID_DISTANCE_VALUE)
-        alt = static_cast<double>(NavApp::getAltitudeLegs().getAltitudeForDistance(
-                                    NavApp::getRoute().getTotalDistance() - projectionDistance));
-      Pos pos(lon, lat, alt);
+        alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
 
-      if(pos.getAltitude() < 100.f)
-        pos.setAltitude(100.f);
+      bool ground = false;
+      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f;
 
-      if(!(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE))
-        pos.setAltitude(100.f);
+      if(!route.isEmpty())
+      {
+        float distanceFromStart = route.getDistanceFromStart(pos);
+        ground = distanceFromStart<2.f || distanceFromStart> route.getTotalDistance() - 2.f;
 
-      atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
+        if(!ground)
+        {
+          float tocDist = route.getTopOfClimbDistance();
+          float todDist = route.getTopOfDescentDistance();
+
+          const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
+
+          tas = perf.getCruiseSpeed();
+          fuelflow = perf.getCruiseFuelFlowLbs();
+
+          if(projectionDistance < tocDist)
+          {
+            vertSpeed = perf.getClimbVertSpeed();
+            tas = perf.getClimbSpeed();
+            fuelflow = perf.getClimbFuelFlowLbs();
+          }
+          if(projectionDistance > todDist)
+          {
+            vertSpeed = -perf.getDescentVertSpeed();
+            tas = perf.getDescentSpeed();
+            fuelflow = perf.getDescentFuelFlowLbs();
+          }
+        }
+        else
+        {
+          tas = 20.f;
+          fuelflow = 20.f;
+          if(distanceFromStart < 1.f || distanceFromStart > route.getTotalDistance() - 1.f)
+            fuelflow = 0.f;
+        }
+      }
+
+      pos.setAltitude(alt);
+
+      atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos, ground,
+                                                                                                  vertSpeed, tas,
+                                                                                                  fuelflow);
       data.setPacketId(packetId++);
 
       emit NavApp::getConnectClient()->dataPacketReceived(data);
