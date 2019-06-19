@@ -2823,6 +2823,7 @@ void MainWindow::updateMapObjectsShown()
 
   mapWidget->updateMapObjectsShown();
   profileWidget->update();
+  updateActionStates();
   setStatusMessage(tr("Map settings changed."));
 }
 
@@ -3184,6 +3185,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(NavApp::getRouteConst().hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
+  ui->actionInfoApproachShowMissedAppr->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
