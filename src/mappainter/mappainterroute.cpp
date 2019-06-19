@@ -43,7 +43,7 @@ using map::PosCourse;
 using atools::contains;
 
 /* Do not draw barbs below this altitude */
-const static float MIN_WIND_BARB_ALTITUDE = 8000.f;
+const static float MIN_WIND_BARB_ALTITUDE = 5000.f;
 
 MapPainterRoute::MapPainterRoute(MapPaintWidget *mapWidget, MapScale *mapScale, const Route *routeParam)
   : MapPainter(mapWidget, mapScale), route(routeParam)

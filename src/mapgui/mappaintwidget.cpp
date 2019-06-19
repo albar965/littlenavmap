@@ -703,8 +703,8 @@ void MapPaintWidget::routeChanged(bool geometryChanged)
   {
     cancelDragAll();
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
-    update();
   }
+  update();
 }
 
 void MapPaintWidget::routeAltitudeChanged(float altitudeFeet)

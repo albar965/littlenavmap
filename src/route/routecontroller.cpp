@@ -528,7 +528,8 @@ void RouteController::aircraftPerformanceChanged()
   NavApp::updateWindowTitle();
 
   // Emit also for empty route to catch performance changes
-  emit routeChanged(true);
+  emit routeChanged(false);
+  // emit routeChanged(true);
 }
 
 void RouteController::windUpdated()
@@ -548,7 +549,8 @@ void RouteController::windUpdated()
   updateWindowLabel();
 
   // Emit also for empty route to catch performance changes
-  emit routeChanged(true);
+  emit routeChanged(false);
+  // emit routeChanged(true);
 }
 
 /* Spin box altitude has changed value */

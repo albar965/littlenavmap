@@ -42,10 +42,12 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
+  // Real wind ==================
   windQuery = new atools::grib::WindQuery(parent, verbose);
   connect(windQuery, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
   connect(windQuery, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
 
+  // Layers from custom settings ==================
   windQueryManual = new atools::grib::WindQuery(parent, verbose);
   windQueryManual->initFromFixedModel(0.f, 0.f, 0.f);
 
@@ -271,7 +273,6 @@ void WindReporter::toolbarActionFlightplanTriggered()
   if(!ignoreUpdates)
   {
     actionToValues();
-    windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
     updateToolButtonState();
     emit windUpdated();
   }
@@ -282,7 +283,6 @@ void WindReporter::toolbarActionTriggered()
   if(!ignoreUpdates)
   {
     actionToValues();
-    windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
     updateToolButtonState();
     emit windUpdated();
   }
@@ -290,17 +290,22 @@ void WindReporter::toolbarActionTriggered()
 
 void WindReporter::updateToolButtonState()
 {
+  bool hasRealWind = windQuery->hasWindData();
+  bool manualWind = isWindManual();
+
+  windlevelToolButton->setChecked((!actionNone->isChecked() && hasRealWind) ||
+                                  (actionFlightplanWaypoints->isChecked() && (hasRealWind || manualWind)));
+
   // Actions that need real wind
-  bool windEnabled = windQuery->hasWindData();
-  actionNone->setEnabled(windEnabled);
-  actionFlightplan->setEnabled(windEnabled);
-  actionAgl->setEnabled(windEnabled);
+  actionNone->setEnabled(hasRealWind);
+  actionFlightplan->setEnabled(hasRealWind);
+  actionAgl->setEnabled(hasRealWind);
+
   for(QAction *action: actionLevelVector)
-    action->setEnabled(windEnabled);
+    action->setEnabled(hasRealWind);
 
   // Disable button and menu if real wind is disabled and manual wind is not selected
-  bool manualWind = isWindManual();
-  actionFlightplanWaypoints->setEnabled(!NavApp::getRoute().isFlightplanEmpty() && (windEnabled || manualWind));
+  actionFlightplanWaypoints->setEnabled(!NavApp::getRoute().isFlightplanEmpty() && (hasRealWind || manualWind));
 
   // windlevelToolButton->setEnabled(windEnabled || manualWind);
   // NavApp::getMainUi()->menuHighAltitudeWindLevels->setEnabled(windEnabled || manualWind);
@@ -332,8 +337,6 @@ void WindReporter::valuesToAction()
   }
 
   actionFlightplanWaypoints->setChecked(showFlightplanWaypoints);
-
-  windlevelToolButton->setChecked(!actionNone->isChecked() || actionFlightplanWaypoints->isChecked());
 
   qDebug() << Q_FUNC_INFO << "source" << currentSource;
   switch(currentSource)

@@ -468,9 +468,9 @@ void RouteAltitude::simplyfyRouteAltitudes()
 
 void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << index;
-#endif
+  // #ifdef DEBUG_INFORMATION
+  // qDebug() << Q_FUNC_INFO << index;
+  // #endif
 
   if(index <= 0 || index >= size() - 1)
   {
@@ -1276,7 +1276,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       break;
 
     float legDist = leg.getDistanceTo();
-    if(atools::almostEqual(legDist, 0.f))
+    if(atools::almostEqual(legDist, 0.f) || !(legDist < map::INVALID_DISTANCE_VALUE))
       continue;
 
     // Speed ===================

@@ -783,8 +783,8 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     }
   }
 
-  if(!windText.isEmpty())
-    html.row2(tr("Average %1Wind:").arg(isWindManual() ? tr("Manual ") : QString()), windText.join(tr(", ")), flags);
+  html.row2(tr("Average %1Wind:").arg(isWindManual() ? tr("Manual ") : QString()),
+            (windText.isEmpty() ? tr("None") : windText.join(tr(", "))), flags);
 
   html.tableEnd();
 
