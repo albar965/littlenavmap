@@ -214,6 +214,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi,
      ui->checkBoxOptionsMapEmptyAirports,
+     ui->checkBoxOptionsMapEmptyAirports3D,
      ui->checkBoxOptionsRouteShortName,
      ui->checkBoxOptionsMapTooltipAirport,
      ui->checkBoxOptionsMapTooltipNavaid,
@@ -467,6 +468,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsStartupCheckUpdate, &QPushButton::clicked,
           this, &OptionsDialog::checkUpdateClicked);
 
+  connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled,
+          this, &OptionsDialog::mapEmptyAirportsClicked);
+
   connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled, this,
           &OptionsDialog::simNoFollowAircraftOnScrollClicked);
 
@@ -580,11 +584,9 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
                                tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                arg(result.mid(0, 6).join("<br/>")));
     else
-      atools::gui::Dialog::warning(this,
-                                   tr(
-                                     "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
-                                       "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
-                                         "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+      atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                              "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                                "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                    arg(result.mid(0, 6).join("<br/>")));
   }
   else
@@ -810,6 +812,7 @@ void OptionsDialog::restoreState()
   widgetsToOptionData();
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
+  mapEmptyAirportsClicked(false);
   simNoFollowAircraftOnScrollClicked(false);
   updateButtonColors();
   onlineDisplayRangeClicked();
@@ -1126,6 +1129,12 @@ void OptionsDialog::simUpdatesConstantClicked(bool state)
   ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
 }
 
+void OptionsDialog::mapEmptyAirportsClicked(bool state)
+{
+  Q_UNUSED(state);
+  ui->checkBoxOptionsMapEmptyAirports3D->setEnabled(ui->checkBoxOptionsMapEmptyAirports->isChecked());
+}
+
 void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
 {
   Q_UNUSED(state);
@@ -1205,6 +1214,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
+  toFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts::MAP_EMPTY_AIRPORTS_3D);
   toFlags2(ui->checkBoxOptionsRouteShortName, opts::ROUTE_SAVE_SHORT_NAME);
 
   toFlags2(ui->checkBoxOptionsMapAirportText, opts::MAP_AIRPORT_TEXT_BACKGROUND);
@@ -1412,6 +1422,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
+  fromFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts::MAP_EMPTY_AIRPORTS_3D);
   fromFlags2(ui->checkBoxOptionsRouteShortName, opts::ROUTE_SAVE_SHORT_NAME);
 
   fromFlags2(ui->checkBoxOptionsMapAirportText, opts::MAP_AIRPORT_TEXT_BACKGROUND);

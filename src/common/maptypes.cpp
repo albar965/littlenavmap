@@ -843,7 +843,12 @@ bool MapAirport::emptyDraw(const OptionData& od) const
     return false;
 
   if(od.getFlags() & opts::MAP_EMPTY_AIRPORTS)
-    return empty() && !waterOnly();
+  {
+    if(od.getFlags2() & opts::MAP_EMPTY_AIRPORTS_3D && xplane)
+      return !is3d() && !addon() && !waterOnly();
+    else
+      return empty() && !waterOnly();
+  }
   else
     return false;
 }
@@ -860,6 +865,11 @@ bool MapAirport::empty() const
 bool MapAirport::addon() const
 {
   return flags.testFlag(AP_ADDON);
+}
+
+bool MapAirport::is3d() const
+{
+  return flags.testFlag(AP_3D);
 }
 
 bool MapAirport::procedure() const

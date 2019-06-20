@@ -946,6 +946,11 @@
                    <string>★★★★★</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>3D (X-Plane)</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>

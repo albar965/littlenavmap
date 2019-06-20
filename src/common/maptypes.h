@@ -129,6 +129,7 @@ struct MapAirport
   bool noRunways() const;
   bool tower() const;
   bool addon() const;
+  bool is3d() const;
   bool anyFuel() const;
   bool complete() const;
   bool towerObject() const;

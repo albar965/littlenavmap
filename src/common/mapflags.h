@@ -224,6 +224,7 @@ enum MapAirportFlag
   AP_FENCE = 1 << 19,
   AP_RW_CLOSED = 1 << 20, /* Has at least one closed runway */
   AP_COMPLETE = 1 << 21, /* Struct completely loaded? */
+  AP_3D = 1 << 22, /* X-Plane 3D airport */
   AP_ALL = 0xffffffff
 };
 

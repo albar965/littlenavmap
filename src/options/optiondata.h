@@ -153,7 +153,7 @@ enum Flag2
 
   /* Treat empty airports special.
    * ui->checkBoxOptionsMapEmptyAirports3D */
-  // MAP_EMPTY_AIRPORTS_3D = 1 << 0, X-Plane obsolete with 11.33
+  MAP_EMPTY_AIRPORTS_3D = 1 << 0,
 
   /* Save PLN using short names
    * ui->checkBoxOptionsRouteShortName */

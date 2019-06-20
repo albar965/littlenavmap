@@ -116,7 +116,8 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Sea
                 << "rating >= 2"
                 << "rating >= 3"
                 << "rating >= 4"
-                << "rating = 5"; // Add required column for this query as comment - will be checked if available
+                << "rating = 5"
+                << "is_3d > 0 /*is_3d*/"; // Add required column for this query as comment - will be checked if available
 
   QStringList rampCondMap;
   rampCondMap << QString()
@@ -177,6 +178,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Sea
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed")).hidden()).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military")).hidden()).
   append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Addon")).hidden()).
+  append(Column("is_3d", tr("3D")).hidden()).
 
   append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
          includesName().indexCondMap(rwSurface).hidden()).

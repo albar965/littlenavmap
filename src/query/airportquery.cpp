@@ -715,6 +715,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
   SqlRecord aprec = db->record("airport");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
+  if(aprec.contains("is_3d"))
+    airportQueryBase.append("is_3d");
   if(aprec.contains("transition_altitude"))
     airportQueryBase.append("transition_altitude");
   return airportQueryBase;
@@ -736,6 +738,8 @@ QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase 
   SqlRecord aprec = db->record("airport_medium");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
+  if(aprec.contains("is_3d"))
+    airportQueryBase.append("is_3d");
   return airportQueryBase;
 }
 

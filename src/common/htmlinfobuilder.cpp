@@ -229,6 +229,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(airport.addon())
     facilities.append(tr("Add-on"));
+  if(airport.is3d())
+    facilities.append(tr("3D"));
   if(airport.flags.testFlag(AP_MIL))
     facilities.append(tr("Military"));
 
