@@ -37,12 +37,12 @@
 #include "route/routealtitude.h"
 #include "ui_mainwindow.h"
 #include "fs/pln/flightplanio.h"
+#include "exception.h"
 
 #include <QDir>
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QXmlStreamReader>
-#include <exception.h>
 
 RouteExport::RouteExport(MainWindow *parent)
   : mainWindow(parent)

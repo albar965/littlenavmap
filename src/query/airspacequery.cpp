@@ -22,6 +22,7 @@
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 #include "query/airportquery.h"
 #include "navapp.h"
 #include "common/maptools.h"

@@ -23,6 +23,7 @@
 #include "fs/common/binarygeometry.h"
 #include "online/onlinedatacontroller.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 #include "query/airportquery.h"
 #include "query/airspacequery.h"
 #include "navapp.h"

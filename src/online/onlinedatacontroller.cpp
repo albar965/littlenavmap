@@ -27,6 +27,7 @@
 #include "gui/dialog.h"
 #include "geo/calculations.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 #include "mapgui/maplayer.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "navapp.h"

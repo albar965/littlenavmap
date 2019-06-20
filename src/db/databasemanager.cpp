@@ -41,6 +41,7 @@
 #include "fs/online/onlinedatamanager.h"
 #include "io/fileroller.h"
 #include "atools.h"
+#include "sql/sqlexception.h"
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -55,6 +56,7 @@
 #include <QAbstractButton>
 #include <QSettings>
 #include <QSplashScreen>
+
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;

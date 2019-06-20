@@ -18,6 +18,8 @@
 #include "query/infoquery.h"
 
 #include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 #include "settings/settings.h"
 #include "common/constants.h"
 

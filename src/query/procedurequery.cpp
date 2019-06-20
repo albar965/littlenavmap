@@ -17,6 +17,7 @@
 
 #include "query/procedurequery.h"
 #include "navapp.h"
+#include "sql/sqlrecord.h"
 #include "query/mapquery.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
