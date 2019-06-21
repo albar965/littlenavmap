@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>507</width>
-    <height>602</height>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,17 +83,17 @@
     <widget class="QComboBox" name="comboBoxType">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -178,17 +178,17 @@
     <widget class="QComboBox" name="comboBoxCruiseFuelFlow">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -197,17 +197,17 @@
     <widget class="QComboBox" name="comboBoxAlternateSpeed">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -229,17 +229,17 @@
     <widget class="QComboBox" name="comboBoxClimbVertSpeed">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -316,13 +316,6 @@
       <number>2</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButtonIgnore">
-       <property name="text">
-        <string>Ignore</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="pushButtonCopy">
        <property name="text">
         <string>&amp;Copy</string>
@@ -333,6 +326,13 @@
       <widget class="QPushButton" name="pushButtonMerge">
        <property name="text">
         <string>&amp;Merge</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonIgnore">
+       <property name="text">
+        <string>Ignore</string>
        </property>
       </widget>
      </item>
@@ -381,17 +381,17 @@
     <widget class="QComboBox" name="comboBoxUsableFuel">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -492,17 +492,17 @@
     <widget class="QComboBox" name="comboBoxReserveFuel">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -556,17 +556,17 @@
     <widget class="QComboBox" name="comboBoxClimbSpeed">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -678,17 +678,17 @@
     <widget class="QComboBox" name="comboBoxContingencyFuel">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -736,17 +736,17 @@
     <widget class="QComboBox" name="comboBoxDescentFuelFlow">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -765,17 +765,17 @@
     <widget class="QComboBox" name="comboBoxCruiseSpeed">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -791,17 +791,17 @@
     <widget class="QComboBox" name="comboBoxName">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -862,17 +862,17 @@
     <widget class="QComboBox" name="comboBoxDescentSpeed">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -949,17 +949,17 @@
     <widget class="QComboBox" name="comboBoxTaxiFuel">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -991,17 +991,17 @@
     <widget class="QComboBox" name="comboBoxClimbFuelFlow">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -1010,17 +1010,17 @@
     <widget class="QComboBox" name="comboBoxDescentVertSpeed">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -1065,17 +1065,17 @@
     <widget class="QComboBox" name="comboBoxExtraFuel">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -1084,17 +1084,17 @@
     <widget class="QComboBox" name="comboBoxAlternateFuelFlow">
      <item>
       <property name="text">
-       <string>Ignore</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Copy</string>
       </property>
      </item>
      <item>
       <property name="text">
        <string>Merge</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </item>
     </widget>
@@ -1149,7 +1149,6 @@
   <tabstop>comboBoxDescentFuelFlow</tabstop>
   <tabstop>comboBoxAlternateSpeed</tabstop>
   <tabstop>comboBoxAlternateFuelFlow</tabstop>
-  <tabstop>pushButtonIgnore</tabstop>
   <tabstop>pushButtonCopy</tabstop>
   <tabstop>pushButtonMerge</tabstop>
  </tabstops>

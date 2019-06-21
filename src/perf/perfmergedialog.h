@@ -60,9 +60,9 @@ private:
   /* Indexes of all combo boxes */
   enum ComboBoxIndex
   {
-    IGNORE,
     COPY,
-    MERGE
+    MERGE,
+    IGNORE
   };
 
   void restoreState();
