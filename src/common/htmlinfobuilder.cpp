@@ -3137,10 +3137,20 @@ void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& 
       i++;
     }
 
+    atools::util::html::Flags linkFlags = atools::util::html::SMALL | atools::util::html::LINK_NO_UL;
+    QStringList links;
+
     if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
-      html.row2(QString(),
-                html.cleared().a(tr("Scenery Gateway"), QString("https://gateway.x-plane.com/scenery/page/%1").
-                                 arg(airport.ident)), atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+      links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
+                                    QString("https://gateway.x-plane.com/scenery/page/%1").
+                                    arg(airport.ident), linkFlags).getHtml());
+
+    if(airport.ident.size() <= 4)
+      links.append(html.cleared().a(tr("Skyvector"), QString("https://skyvector.com/airport/%1").
+                                    arg(airport.ident), linkFlags).getHtml());
+
+    if(!links.isEmpty())
+      html.row2(QString(), links.join(tr(", ")), atools::util::html::NO_ENTITIES);
   }
 
   html.tableEnd();
