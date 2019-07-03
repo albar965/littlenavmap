@@ -189,7 +189,8 @@ public:
   void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
 
   /* Description for user defined points */
-  void userpointText(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
+
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.

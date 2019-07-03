@@ -1583,9 +1583,12 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 #endif
 }
 
-void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const
+void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) const
 {
   atools::sql::SqlRecord rec = NavApp::getUserdataManager()->getRecord(userpoint.id);
+
+  // Update the structure since it might not have the latest changes
+  userpoint = NavApp::getUserdataController()->getUserpointById(userpoint.id);
 
   // Check if userpoint still exists since it can be deleted in the background
   if(!rec.isEmpty())
