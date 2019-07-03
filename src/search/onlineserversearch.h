@@ -43,7 +43,7 @@ class OnlineServerSearch :
 
 public:
   OnlineServerSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~OnlineServerSearch();
+  virtual ~OnlineServerSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;

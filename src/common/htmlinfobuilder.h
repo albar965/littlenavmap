@@ -36,35 +36,21 @@ class QFileInfo;
 
 namespace map {
 struct MapAirport;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapWaypoint;
-
 struct MapAirway;
-
 struct MapAirspace;
-
 struct MapMarker;
-
 struct MapAirport;
-
 struct MapParking;
-
 struct MapHelipad;
-
 struct MapStart;
-
 struct MapUserpointRoute;
-
 struct MapProcedurePoint;
-
 struct MapProcedureRef;
-
 struct MapUserpoint;
-
+struct MapLogbookEntry;
 }
 
 namespace atools {
@@ -191,6 +177,8 @@ public:
   /* Description for user defined points */
   void userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
 
+  /* Description for logbook entries */
+  void logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.
@@ -234,7 +222,8 @@ public:
    * Creates a HTML description for a all upper layer winds at position
    * @param html Result containing HTML snippet
    */
-  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html, float currentAltitude) const;
+  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
+                float currentAltitude) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.
@@ -351,6 +340,10 @@ private:
 
   void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
                             bool mapDisplay) const;
+
+  /* Insert airport link using ident and/or name */
+  QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
+                      const QString& name = QString()) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

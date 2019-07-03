@@ -15,21 +15,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_NAVSEARCH_H
-#define LITTLENAVMAP_NAVSEARCH_H
+#ifndef LITTLENAVMAP_LOGDATASEARCH_H
+#define LITTLENAVMAP_LOGDATASEARCH_H
 
 #include "search/searchbasetable.h"
 
 #include <QObject>
 
-class QWidget;
 class QTableView;
-class SqlController;
-class ColumnList;
 class QAction;
 class QMainWindow;
 class Column;
-class NavIconDelegate;
 
 namespace atools {
 namespace sql {
@@ -38,16 +34,16 @@ class SqlDatabase;
 }
 
 /*
- * Navaid (VOR, NDB, and waypoint) search tab including all search widgets and the result table view.
+ * Search tab for logbook entries including all search widgets and the result table view.
  */
-class NavSearch :
+class LogdataSearch :
   public SearchBaseTable
 {
   Q_OBJECT
 
 public:
-  NavSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~NavSearch() override;
+  LogdataSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
+  virtual ~LogdataSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;
@@ -57,6 +53,11 @@ public:
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 
+signals:
+  void addLogEntry();
+  void editLogEntries(const QVector<int>& ids);
+  void deleteLogEntries(const QVector<int>& ids);
+
 private:
   virtual void updateButtonMenu() override;
   virtual void saveViewState(bool distSearchActive) override;
@@ -65,20 +66,26 @@ private:
   QAction *followModeAction() override;
 
   void setCallbacks();
+
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
-  void overrideMode(const QStringList& overrideColumnTitles);
+
+  /* Edit button clicked */
+  void editLogEntriesTriggered();
+
+  /* Delete button clicked */
+  void deleteLogEntriesTriggered();
+
+  /* Add button */
+  void addLogEntryTriggered();
 
   /* All layouts, lines and drop down menu items */
-  QList<QObject *> navSearchWidgets;
+  QList<QObject *> logdataSearchWidgets;
 
   /* All drop down menu actions */
-  QList<QAction *> navSearchMenuActions;
-
-  /* Draw navaid icon into ident table column */
-  NavIconDelegate *iconDelegate = nullptr;
+  QList<QAction *> logdataSearchMenuActions;
 
 };
 
-#endif // LITTLENAVMAP_NAVSEARCH_H
+#endif // LITTLENAVMAP_LOGDATASEARCH_H

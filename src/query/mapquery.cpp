@@ -22,6 +22,7 @@
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
 #include "online/onlinedatacontroller.h"
+#include "userdata/logdatacontroller.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "query/airportquery.h"
@@ -405,6 +406,12 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
     map::MapUserpoint userPoint = getUserdataPointById(id);
     if(userPoint.isValid())
       result.userpoints.append(userPoint);
+  }
+  else if(type == map::LOGBOOK)
+  {
+    map::MapLogbookEntry logEntry = NavApp::getLogdataController()->getLogEntryById(id);
+    if(logEntry.isValid())
+      result.logbookEntries.append(logEntry);
   }
   else if(type == map::ILS)
   {

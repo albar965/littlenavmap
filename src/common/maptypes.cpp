@@ -1130,6 +1130,11 @@ QString userpointText(const MapUserpoint& userpoint)
   return QObject::tr("Userpoint %1").arg(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident);
 }
 
+QString logEntryText(const MapLogbookEntry& logEntry)
+{
+  return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
+}
+
 QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
   return QObject::tr("Position %1").arg(userpoint.name);
@@ -1477,6 +1482,7 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & map::AIRSPACE && !airspaces.isEmpty();
   filled |= types & map::USERPOINTROUTE && !userPointsRoute.isEmpty();
   filled |= types & map::USERPOINT && !userpoints.isEmpty();
+  filled |= types & map::LOGBOOK && !logbookEntries.isEmpty();
   filled |= types & map::AIRCRAFT_AI && !aiAircraft.isEmpty();
   filled |= types & map::AIRCRAFT_ONLINE && !onlineAircraft.isEmpty();
   return !filled;

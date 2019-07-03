@@ -26,7 +26,7 @@ class GeoDataLineString;
 
 namespace map {
 struct MapAirspace;
-
+struct MapLogbookEntry;
 }
 
 class MapWidget;
@@ -57,6 +57,7 @@ private:
   void paintCompassRose(const PaintContext *context);
   void paintUserpointDrag(const PaintContext *context);
   void paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size);
+  void paintLogEntries(PaintContext *context, const QList<map::MapLogbookEntry>& entries);
 
 };
 

@@ -118,6 +118,8 @@ public:
   static QString fuelLbsAndGal(float valueLbs, float valueGal, bool addUnit = true);
 
   static QString fuelLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
+
+  /* Converts either volume or weight to current unit */
   static float fuelLbsGallonF(float value, bool fuelAsVolume = false);
 
   static QString ffLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);

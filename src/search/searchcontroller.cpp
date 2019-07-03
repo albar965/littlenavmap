@@ -25,12 +25,14 @@
 #include "mapgui/mapwidget.h"
 #include "gui/helphandler.h"
 #include "sql/sqlrecord.h"
+#include "search/logdatasearch.h"
 #include "ui_mainwindow.h"
 #include "search/userdatasearch.h"
 #include "common/constants.h"
 #include "search/proceduresearch.h"
 #include "options/optiondata.h"
 #include "userdata/userdatacontroller.h"
+#include "userdata/logdatacontroller.h"
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
@@ -54,6 +56,9 @@ SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSea
   connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
           this, &SearchController::helpPressedUserdata);
 
+  connect(NavApp::getMainUi()->pushButtonLogdataHelp, &QPushButton::clicked,
+          this, &SearchController::helpPressedLogdata);
+
   connect(NavApp::getMainUi()->pushButtonOnlineClientHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressedOnlineClient);
   connect(NavApp::getMainUi()->pushButtonOnlineCenterHelpSearch, &QPushButton::clicked,
@@ -66,6 +71,7 @@ SearchController::~SearchController()
   delete navSearch;
   delete procedureSearch;
   delete userdataSearch;
+  delete logdataSearch;
   delete onlineClientSearch;
   delete onlineCenterSearch;
   delete onlineServerSearch;
@@ -101,6 +107,12 @@ void SearchController::helpPressedProcedure()
 void SearchController::helpPressedUserdata()
 {
   HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-search",
+                              lnm::helpLanguageOnline());
+}
+
+void SearchController::helpPressedLogdata()
+{
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOGBOOK.html#logbook-search",
                               lnm::helpLanguageOnline());
 }
 
@@ -166,6 +178,20 @@ void SearchController::createUserdataSearch(QTableView *tableView)
           NavApp::getUserdataController(), &UserdataController::addUserpoint);
 }
 
+void SearchController::createLogdataSearch(QTableView *tableView)
+{
+  logdataSearch = new LogdataSearch(mainWindow, tableView, si::SEARCH_LOG);
+  postCreateSearch(logdataSearch);
+
+  // Get edit and delete signals from user search action and pushbuttons
+  connect(logdataSearch, &LogdataSearch::editLogEntries,
+          NavApp::getLogdataController(), &LogdataController::editLogEntries);
+  connect(logdataSearch, &LogdataSearch::deleteLogEntries,
+          NavApp::getLogdataController(), &LogdataController::deleteLogEntries);
+  connect(logdataSearch, &LogdataSearch::addLogEntry,
+          NavApp::getLogdataController(), &LogdataController::addLogEntry);
+}
+
 void SearchController::createOnlineClientSearch(QTableView *tableView)
 {
   onlineClientSearch = new OnlineClientSearch(mainWindow, tableView, si::SEARCH_ONLINE_CLIENT);
@@ -221,6 +247,11 @@ void SearchController::refreshUserdata()
   userdataSearch->refreshData(false /* load all */, true /* keep selection */);
 }
 
+void SearchController::refreshLogdata()
+{
+  logdataSearch->refreshData(false /* load all */, true /* keep selection */);
+}
+
 void SearchController::clearSelection()
 {
   for(AbstractSearch *search : allSearchTabs)
@@ -264,6 +295,11 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       userdataSearch->selectAll();
       break;
 
+    case map::LOGBOOK:
+      // Shown in user search tab
+      logdataSearch->resetSearch();
+      logdataSearch->filterByRecord(record);
+      logdataSearch->selectAll();
       break;
 
     case map::AIRCRAFT_ONLINE:

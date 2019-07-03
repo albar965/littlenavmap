@@ -17,7 +17,7 @@
    <item>
     <widget class="QCheckBox" name="checkBoxUserpointExportSelected">
      <property name="text">
-      <string>Export &amp;selected userpoints only</string>
+      <string>Export &amp;selected entries only</string>
      </property>
     </widget>
    </item>

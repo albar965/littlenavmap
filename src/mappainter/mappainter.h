@@ -160,6 +160,10 @@ struct PaintContext
   /* Calculate and set font based on scale */
   void szFont(float scale) const;
 
+  /* Calculate label text flags for route waypoints */
+  textflags::TextFlags airportTextFlags() const;
+  textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
+
 };
 
 struct PaintAirportType

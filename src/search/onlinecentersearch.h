@@ -43,7 +43,7 @@ class OnlineCenterSearch :
 
 public:
   OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~OnlineCenterSearch();
+  virtual ~OnlineCenterSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;

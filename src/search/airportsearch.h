@@ -42,7 +42,7 @@ class AirportSearch :
 
 public:
   AirportSearch(QMainWindow *parent, QTableView *tableView, si::SearchTabIndex tabWidgetIndex);
-  virtual ~AirportSearch();
+  virtual ~AirportSearch() override;
 
   /* All state saving is done through the widget state */
   virtual void saveState() override;

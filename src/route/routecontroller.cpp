@@ -683,8 +683,8 @@ void RouteController::restoreState()
         {
           // Cannot be loaded - clear current filename
           routeFilename.clear();
-          fileDeparture.clear();
-          fileDestination.clear();
+          fileDepartureIdent.clear();
+          fileDestinationIdent.clear();
           fileIfrVfr = pln::VFR;
           route.clear();
           routeFileFormat = atools::fs::pln::PLN_FSX;
@@ -693,8 +693,8 @@ void RouteController::restoreState()
       else
       {
         routeFilename.clear();
-        fileDeparture.clear();
-        fileDestination.clear();
+        fileDepartureIdent.clear();
+        fileDestinationIdent.clear();
         fileIfrVfr = pln::VFR;
         route.clear();
         routeFileFormat = atools::fs::pln::PLN_FSX;
@@ -824,8 +824,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, con
 
   routeFilename = filename;
   routeFileFormat = flightplan.getFileFormat();
-  fileDeparture = flightplan.getDepartureIdent();
-  fileDestination = flightplan.getDestinationIdent();
+  fileDepartureIdent = flightplan.getDepartureIdent();
+  fileDestinationIdent = flightplan.getDestinationIdent();
   fileIfrVfr = flightplan.getFlightplanType();
 
   assignAircraftPerformance(flightplan);
@@ -1190,8 +1190,8 @@ bool RouteController::saveFlightplan(bool cleanExport)
   {
     if(!cleanExport)
     {
-      fileDeparture = flightplan.getDepartureIdent();
-      fileDestination = flightplan.getDestinationIdent();
+      fileDepartureIdent = flightplan.getDepartureIdent();
+      fileDestinationIdent = flightplan.getDestinationIdent();
       fileIfrVfr = flightplan.getFlightplanType();
     }
 
@@ -2329,11 +2329,11 @@ bool RouteController::doesFilenameMatchRoute(atools::fs::pln::FileFormat format)
 
     if(format == atools::fs::pln::PLN_FS9 || format == atools::fs::pln::PLN_FSC || format == atools::fs::pln::PLN_FSX)
       return fileIfrVfr == route.getFlightplan().getFlightplanType() &&
-             fileDeparture == route.getFlightplan().getDepartureIdent() &&
-             fileDestination == route.getFlightplan().getDestinationIdent();
+             fileDepartureIdent == route.getFlightplan().getDepartureIdent() &&
+             fileDestinationIdent == route.getFlightplan().getDestinationIdent();
     else
-      return fileDeparture == route.getFlightplan().getDepartureIdent() &&
-             fileDestination == route.getFlightplan().getDestinationIdent();
+      return fileDepartureIdent == route.getFlightplan().getDepartureIdent() &&
+             fileDestinationIdent == route.getFlightplan().getDestinationIdent();
 
   }
   return false;
@@ -4009,8 +4009,8 @@ void RouteController::clearRoute()
   routeFilename.clear();
   routeFileFormat = atools::fs::pln::PLN_FSX;
 
-  fileDeparture.clear();
-  fileDestination.clear();
+  fileDepartureIdent.clear();
+  fileDestinationIdent.clear();
   fileIfrVfr = pln::VFR;
   undoStack->clear();
   undoIndex = 0;

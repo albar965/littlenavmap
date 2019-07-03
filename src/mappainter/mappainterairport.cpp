@@ -67,7 +67,7 @@ MapPainterAirport::~MapPainterAirport()
 
 void MapPainterAirport::render(PaintContext *context)
 {
-  // Get all airports from the route and add them to the map
+  // Get all airports from the route and add them to the map to avoid duplicate drawing
   QSet<int> routeAirportIdMap; // Collect all airports from route and bounding rectangle
 
   if(context->objectTypes.testFlag(map::FLIGHTPLAN))
@@ -78,6 +78,16 @@ void MapPainterAirport::render(PaintContext *context)
       if(routeLeg.getMapObjectType() == map::AIRPORT)
         routeAirportIdMap.insert(routeLeg.getAirport().id);
     }
+  }
+
+  // Get airports from logbook highlight to avoid duplicate drawing
+  const MapSearchResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
+  for(const MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
+  {
+    if(entry.departurePos.isValid())
+      routeAirportIdMap.insert(entry.departure.id);
+    if(entry.destinationPos.isValid())
+      routeAirportIdMap.insert(entry.destination.id);
   }
 
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
@@ -143,12 +153,13 @@ void MapPainterAirport::render(PaintContext *context)
       drawAirportDiagram(context, *airport.airport);
   }
 
+  textflags::TextFlags apTextFlags = context->airportTextFlags();
+
   // Add airport symbols on top of diagrams
   for(int i = 0; i < visibleAirports.size(); i++)
   {
     const MapAirport *airport = visibleAirports.at(i).airport;
     const QPointF& pt = visibleAirports.at(i).point;
-    const MapLayer *layer = context->mapLayer;
     float x = static_cast<float>(pt.x());
     float y = static_cast<float>(pt.y());
 
@@ -157,29 +168,15 @@ void MapPainterAirport::render(PaintContext *context)
       // Draw simplified runway lines
       drawAirportSymbolOverview(context, *airport, x, y);
 
-    // More detailed symbol will be drawn by the route painter - so skip here
+    // More detailed symbol will be drawn by the route or log painter - so skip here
     if(!routeAirportIdMap.contains(airport->id))
     {
       // Symbol will be omitted for runway overview
       drawAirportSymbol(context, *airport, x, y);
 
-      // Build and draw airport text
-      textflags::TextFlags flags;
-
-      if(layer->isAirportInfo())
-        flags = textflags::IDENT | textflags::NAME | textflags::INFO;
-
-      if(layer->isAirportIdent())
-        flags |= textflags::IDENT;
-      else if(layer->isAirportName())
-        flags |= textflags::NAME;
-
-      if(!(context->flags2 & opts::MAP_AIRPORT_TEXT_BACKGROUND))
-        flags |= textflags::NO_BACKGROUND;
-
       context->szFont(context->textSizeAirport);
       symbolPainter->drawAirportText(context->painter, *airport, x, y,
-                                     context->dispOpts, flags,
+                                     context->dispOpts, apTextFlags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagramRunway(),

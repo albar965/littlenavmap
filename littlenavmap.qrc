@@ -242,5 +242,9 @@
         <file>resources/icons/approachcustom.svg</file>
         <file>resources/icons/aircraftperfreset.svg</file>
         <file>resources/icons/aircraftperfmerge.svg</file>
+        <file>resources/icons/logdata_delete.svg</file>
+        <file>resources/icons/logdata_edit.svg</file>
+        <file>resources/icons/logdata_add.svg</file>
+        <file>resources/icons/logbook.svg</file>
     </qresource>
 </RCC>

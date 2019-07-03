@@ -158,6 +158,7 @@ const QLatin1Literal SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/Widge
 const QLatin1Literal SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1Literal SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 const QLatin1Literal SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
+const QLatin1Literal SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView");
 
 const QLatin1Literal IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
 const QLatin1Literal IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
@@ -192,6 +193,8 @@ const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
 
 /* Flightplan export dialog for online formats */
 const QLatin1Literal FLIGHTPLAN_ONLINE_EXPORT("Route/FlightplanOnlineExport");
+
+const QLatin1Literal LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
 
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
@@ -314,6 +317,7 @@ const QLatin1Literal FILE_PATTERN_GRIB("(*.grib *.GRIB *.Grib)");
 
 const QString FILE_PATTERN_AS_SNAPSHOT("(current_wx_snapshot.txt)");
 const QString FILE_PATTERN_XPLANE_METAR("(METAR.rwx)");
+const QString FILE_PATTERN_XPLANE_LOGBOOK("(X-Plane*Pilot.txt)"); /* Need * since file dialog fails on spaces */
 
 const QString FILE_PATTERN_IMAGE("(*.jpg *.jpeg *.png *.bmp)");
 const QString FILE_PATTERN_IMAGE_AVITAB("(*.png *.jpeg)");

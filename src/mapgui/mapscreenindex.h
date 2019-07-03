@@ -81,6 +81,7 @@ public:
   void updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
+  void updateLogEnryScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
 
   /* Clear internal caches */
   void resetAirspaceOnlineScreenGeometry();
@@ -101,9 +102,9 @@ public:
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
-  map::MapSearchResult& getSearchHighlights()
+  void changeSearchHighlights(const map::MapSearchResult& newHighlights)
   {
-    return searchHighlights;
+    searchHighlights = newHighlights;
   }
 
   const map::MapSearchResult& getSearchHighlights() const
@@ -212,24 +213,24 @@ public:
     return airspaceHighlights;
   }
 
-  QList<map::MapAirspace>& getAirspaceHighlights()
-  {
-    return airspaceHighlights;
-  }
-
-  void setAirspaceHighlights(const QList<map::MapAirspace>& value)
+  void changeAirspaceHighlights(const QList<map::MapAirspace>& value)
   {
     airspaceHighlights = value;
   }
 
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
+  void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
+
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                      QList<proc::MapProcedurePoint> *procPoints) const;
   void updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
                                     const Marble::GeoDataLatLonBox& curBox);
+
+  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line, const Marble::GeoDataLatLonBox& curBox,
+                                const CoordinateConverter& conv);
 
   template<typename TYPE>
   int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;
@@ -267,8 +268,11 @@ private:
 
   /* Geometry objects that are cached in screen coordinate system for faster access */
   QList<std::pair<int, QLine> > airwayLines;
+  QList<std::pair<int, QLine> > logEntryLines;
   QList<std::pair<int, QPolygon> > airspacePolygons;
   QList<std::pair<int, QPolygon> > airspacePolygonsOnline;
+
+  QVector<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance) const;
 
 };
 

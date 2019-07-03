@@ -72,7 +72,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="labelName">
            <property name="text">
-            <string>&amp;Name:</string>
+            <string>&amp;Aircraft model:</string>
            </property>
            <property name="buddy">
             <cstring>lineEditName</cstring>
@@ -82,7 +82,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="labelType">
            <property name="text">
-            <string>Aircraft &amp;Type:</string>
+            <string>Aircraft &amp;type:</string>
            </property>
            <property name="buddy">
             <cstring>lineEditType</cstring>

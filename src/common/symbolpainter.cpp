@@ -972,8 +972,12 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
     if(flags & textflags::ROUTE_TEXT)
       atts |= textatt::ROUTE_BG_COLOR;
 
+    if(flags & textflags::LOG_TEXT)
+      atts |= textatt::LOG_BG_COLOR;
+
     int transparency = diagram ? 130 : 255;
-    if(airport.emptyDraw() && !(flags & textflags::ROUTE_TEXT))
+    // No background for empty airports except if they are part of the route or log
+    if(airport.emptyDraw() && !(flags& textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
@@ -1053,6 +1057,8 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   {
     if(atts.testFlag(textatt::ROUTE_BG_COLOR))
       backColor = mapcolors::routeTextBoxColor;
+    else if(atts.testFlag(textatt::LOG_BG_COLOR))
+      backColor = mapcolors::logTextBoxColor;
     else
       backColor = mapcolors::textBoxColor;
   }

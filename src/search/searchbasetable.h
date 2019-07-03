@@ -166,6 +166,10 @@ signals:
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
   void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
+  /* Load flight plan or load aircraft performance file triggered from logbook */
+  void loadRouteFile(const QString& filepath);
+  void loadPerfFile(const QString& filepath);
+
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;
@@ -190,7 +194,8 @@ protected:
   /* Column definitions that will be used to create the SQL queries */
   ColumnList *columns;
   QTableView *view;
-  QMainWindow *mainWindow;
+  MapQuery *mapQuery;
+  AirportQuery *airportQuery;
 
 private:
   virtual void saveViewState(bool distSearchActive) = 0;
@@ -224,8 +229,6 @@ private:
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
-  MapQuery *mapQuery;
-  AirportQuery *airportQuery;
 
   /* Used to delay search when using the time intensive distance search */
   QTimer *updateTimer;

@@ -328,6 +328,39 @@ void MapTypesFactory::fillUserdataPoint(const SqlRecord& rec, map::MapUserpoint&
   obj.position = atools::geo::Pos(rec.valueFloat("lonx"), rec.valueFloat("laty"));
 }
 
+void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLogbookEntry& obj)
+{
+  if(rec.isEmpty())
+    return;
+
+  obj.id = rec.valueInt("logbook_id");
+  obj.departureIdent = rec.valueStr("departure_ident").toUpper();
+  obj.departureName = rec.valueStr("departure_name");
+  obj.departureRunway = rec.valueStr("departure_runway");
+
+  obj.departurePos = atools::geo::Pos(rec.value("departure_lonx"), rec.value("departure_laty"),
+                                      rec.value("departure_alt"));
+
+  obj.destinationIdent = rec.valueStr("destination_ident").toUpper();
+  obj.destinationName = rec.valueStr("destination_name");
+  obj.destinationRunway = rec.valueStr("destination_runway");
+
+  obj.destinationPos = atools::geo::Pos(rec.value("destination_lonx"), rec.value("destination_laty"),
+                                        rec.value("destination_alt"));
+
+  obj.simulator = rec.valueStr("simulator");
+  obj.description = rec.valueStr("description");
+
+  obj.aircraftType = rec.valueStr("aircraft_type");
+  obj.aircraftRegistration = rec.valueStr("aircraft_registration");
+  obj.simulator = rec.valueStr("simulator");
+  obj.distance = rec.valueFloat("distance");
+  obj.distanceGc = atools::geo::meterToNm(obj.departurePos.distanceMeterTo(obj.destinationPos));
+
+  obj.perfFile = rec.valueStr("performance_file");
+  obj.routeFile = rec.valueStr("flightplan_file");
+}
+
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
 {
   ndb.id = record.valueInt("ndb_id");

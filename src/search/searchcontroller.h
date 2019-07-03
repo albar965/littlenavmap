@@ -28,6 +28,7 @@ class AirportSearch;
 class NavSearch;
 class ProcedureSearch;
 class UserdataSearch;
+class LogdataSearch;
 class OnlineClientSearch;
 class OnlineCenterSearch;
 class OnlineServerSearch;
@@ -73,6 +74,7 @@ public:
   void createProcedureSearch(QTreeWidget *treeWidget);
 
   void createUserdataSearch(QTableView *tableView);
+  void createLogdataSearch(QTableView *tableView);
 
   void createOnlineClientSearch(QTableView *tableView);
   void createOnlineCenterSearch(QTableView *tableView);
@@ -96,6 +98,11 @@ public:
   UserdataSearch *getUserdataSearch() const
   {
     return userdataSearch;
+  }
+
+  LogdataSearch *getLogdataSearch() const
+  {
+    return logdataSearch;
   }
 
   OnlineClientSearch *getOnlineClientSearch() const
@@ -137,6 +144,8 @@ public:
   /* Refresh after import or changes */
   void refreshUserdata();
 
+  void refreshLogdata();
+
   /* Clear selection in all search windows  */
   void clearSelection();
 
@@ -151,6 +160,7 @@ private:
   void helpPressedUserdata();
   void helpPressedOnlineClient();
   void helpPressedOnlineCenter();
+  void helpPressedLogdata();
 
   MapQuery *mapQuery;
 
@@ -158,6 +168,7 @@ private:
   NavSearch *navSearch = nullptr;
   ProcedureSearch *procedureSearch = nullptr;
   UserdataSearch *userdataSearch = nullptr;
+  LogdataSearch *logdataSearch = nullptr;
   OnlineClientSearch *onlineClientSearch = nullptr;
   OnlineCenterSearch *onlineCenterSearch = nullptr;
   OnlineServerSearch *onlineServerSearch = nullptr;

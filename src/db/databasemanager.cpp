@@ -38,6 +38,7 @@
 #include "navapp.h"
 #include "gui/dialog.h"
 #include "fs/userdata/userdatamanager.h"
+#include "fs/userdata/logdatamanager.h"
 #include "fs/online/onlinedatamanager.h"
 #include "io/fileroller.h"
 #include "atools.h"
@@ -56,7 +57,6 @@
 #include <QAbstractButton>
 #include <QSettings>
 #include <QSplashScreen>
-
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -193,11 +193,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   {
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_LOGBOOK);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
     databaseUser = new SqlDatabase(DATABASE_NAME_USER);
+    databaseLogbook = new SqlDatabase(DATABASE_NAME_LOGBOOK);
     databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
-    // Open user point database
+    // Open user point database =================================
     openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
     userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
     if(!userdataManager->hasSchema())
@@ -205,7 +207,15 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     else
       userdataManager->updateSchema();
 
-    // Open online network database
+    // Open logbook database =================================
+    openWriteableDatabase(databaseLogbook, "logbook", "logbook", true /* backup */);
+    logdataManager = new atools::fs::userdata::LogdataManager(databaseLogbook);
+    if(!logdataManager->hasSchema())
+      logdataManager->createSchema();
+    else
+      logdataManager->updateSchema();
+
+    // Open online network database ==============================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     bool verbose = settings.getAndStoreValue(lnm::OPTIONS_WHAZZUP_PARSER_DEBUG, false).toBool();
 
@@ -224,22 +234,26 @@ DatabaseManager::~DatabaseManager()
   delete databaseDialog;
   delete progressDialog;
   delete userdataManager;
+  delete logdataManager;
   delete onlinedataManager;
 
   closeDatabases();
   closeUserDatabase();
+  closeLogDatabase();
   closeOnlineDatabase();
 
   delete databaseSim;
   delete databaseNav;
   delete databaseMora;
   delete databaseUser;
+  delete databaseLogbook;
   delete databaseOnline;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
   SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
+  SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
 }
@@ -820,6 +834,11 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
 void DatabaseManager::closeUserDatabase()
 {
   closeDatabaseFile(databaseUser);
+}
+
+void DatabaseManager::closeLogDatabase()
+{
+  closeDatabaseFile(databaseLogbook);
 }
 
 void DatabaseManager::closeOnlineDatabase()

@@ -315,6 +315,7 @@ private:
   void actionShortcutAirportSearchTriggered();
   void actionShortcutNavaidSearchTriggered();
   void actionShortcutUserpointSearchTriggered();
+  void actionShortcutLogbookSearchTriggered();
   void actionShortcutFlightPlanTriggered();
   void actionShortcutAircraftPerformanceTriggered();
   void actionShortcutAirportInformationTriggered();

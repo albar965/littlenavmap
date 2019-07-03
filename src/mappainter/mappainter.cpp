@@ -24,6 +24,7 @@
 #include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
+#include "mapgui/maplayer.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -34,6 +35,46 @@ using namespace atools::geo;
 void PaintContext::szFont(float scale) const
 {
   return mapcolors::scaleFont(painter, scale, &defaultFont);
+}
+
+textflags::TextFlags PaintContext::airportTextFlags() const
+{
+  // Build and draw airport text
+  textflags::TextFlags textflags = textflags::NONE;
+
+  if(mapLayer->isAirportInfo())
+    textflags = textflags::IDENT | textflags::NAME | textflags::INFO;
+
+  if(mapLayer->isAirportIdent())
+    textflags |= textflags::IDENT;
+  else if(mapLayer->isAirportName())
+    textflags |= textflags::NAME;
+
+  if(!(flags2 & opts::MAP_AIRPORT_TEXT_BACKGROUND))
+    textflags |= textflags::NO_BACKGROUND;
+
+  return textflags;
+}
+
+textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const
+{
+  // Show ident always on route
+  textflags::TextFlags textflags = textflags::IDENT;
+
+  if(drawAsRoute)
+    textflags |= textflags::ROUTE_TEXT;
+
+  if(drawAsLog)
+    textflags |= textflags::LOG_TEXT;
+
+  // Use more more detailed text for flight plan
+  if(mapLayer->isAirportRouteInfo())
+    textflags |= textflags::NAME | textflags::INFO;
+
+  if(!(flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
+    textflags |= textflags::NO_BACKGROUND;
+
+  return textflags;
 }
 
 // =================================================

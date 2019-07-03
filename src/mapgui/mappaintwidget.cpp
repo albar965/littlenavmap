@@ -764,13 +764,13 @@ const atools::geo::Pos& MapPaintWidget::getProfileHighlight() const
 
 void MapPaintWidget::clearSearchHighlights()
 {
-  screenIndex->getSearchHighlights() = map::MapSearchResult();
+  screenIndex->changeSearchHighlights(map::MapSearchResult());
   update();
 }
 
 void MapPaintWidget::clearAirspaceHighlights()
 {
-  screenIndex->getAirspaceHighlights().clear();
+  screenIndex->changeAirspaceHighlights(QList<map::MapAirspace>());
   update();
 }
 
@@ -819,13 +819,14 @@ void MapPaintWidget::changeApproachHighlight(const proc::MapProcedureLegs& appro
 /* Also clicked airspaces in the info window */
 void MapPaintWidget::changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces)
 {
-  screenIndex->getAirspaceHighlights() = airspaces;
+  screenIndex->changeAirspaceHighlights(airspaces);
   update();
 }
 
 void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights)
 {
-  screenIndex->getSearchHighlights() = newHighlights;
+  screenIndex->changeSearchHighlights(newHighlights);
+  screenIndex->updateLogEnryScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 

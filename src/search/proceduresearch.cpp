@@ -254,7 +254,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();
   ui->dockWidgetSearch->raise();
-  ui->tabWidgetSearch->setCurrentIndex(2);
+  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_PROC);
   treeWidget->setFocus();
 
   if(NavApp::getRouteConst().isAirportDeparture(airport.ident))
@@ -977,7 +977,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   }
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
-    ui->tabWidgetSearch->setCurrentIndex(0);
+    ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
     emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident));
   }
   // Done by the actions themselves

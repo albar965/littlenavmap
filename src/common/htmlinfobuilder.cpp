@@ -33,6 +33,8 @@
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
+#include "userdata/logdatacontroller.h"
+#include "userdata/userdatacontroller.h"
 #include "fs/userdata/userdatamanager.h"
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
@@ -1657,6 +1659,186 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     qWarning() << Q_FUNC_INFO << "Empty record";
 }
 
+void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const
+{
+  atools::sql::SqlRecord rec = NavApp::getLogdataController()->getLogEntryRecordById(logEntry.id);
+
+  // Update the structure since it might not have the latest changes
+  logEntry = NavApp::getLogdataController()->getLogEntryById(logEntry.id);
+
+  if(!rec.isEmpty())
+  {
+    html.img(QIcon(":/littlenavmap/resources/icons/logbook.svg"), QString(), QString(), symbolSizeTitle);
+    html.nbsp().nbsp();
+
+    navaidTitle(html, tr("Logbook Entry - %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent));
+
+    // html.nbsp().nbsp();
+    // if(logEntry.isDestAndDepartPosValid())
+    // {
+    // atools::geo::Rect rect = logEntry.bounding();
+    // html.a(tr("Map"), QString("lnm://show?west=%1&north=%2&east=%3&south=%4").
+    // arg(rect.getWest()).arg(rect.getNorth()).arg(rect.getEast()).arg(rect.getSouth()),
+    // atools::util::html::LINK_NO_UL);
+    // }
+    // else
+    // html.text(tr("Map"));
+
+    html.br();
+
+    // From/to ================================================================
+    html.table();
+    html.row2(tr("From:"),
+              airportLink(html, logEntry.departureIdent, logEntry.departureName) +
+              tr(", %1").arg(Unit::altFeet(rec.valueFloat("departure_alt"))),
+              atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
+    html.row2(tr("To:"),
+              airportLink(html, logEntry.destinationIdent, logEntry.destinationName) +
+              tr(", %1").arg(Unit::altFeet(rec.valueFloat("destination_alt"))),
+              atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
+
+    if(info)
+    {
+      html.tableEnd();
+      html.br();
+
+      // Aircraft ================================================================
+      html.table();
+    }
+    if(rec.valueStr("aircraft_name").isEmpty())
+      html.row2If(tr("Aircraft model:"), rec.valueStr("aircraft_type"));
+    else
+      html.row2If(tr("Aircraft model and type:"), tr("%1, %2").
+                  arg(rec.valueStr("aircraft_name")).arg(rec.valueStr("aircraft_type")));
+    html.row2If(tr("Aircraft registration:"), rec.valueStr("aircraft_registration"));
+    html.row2If(tr("Flight number:"), rec.valueStr("flightplan_number"));
+    html.row2If(tr("Simulator:"), rec.valueStr("simulator"));
+
+    if(info)
+    {
+      html.tableEnd();
+
+      // Flight =======================================================
+      html.p(tr("Flight"), atools::util::html::BOLD);
+      html.table();
+    }
+
+    if(rec.valueFloat("flightplan_cruise_altitude") > 0.f)
+      html.row2(tr("Flight plan cruise altitude:"), Unit::altFeet(rec.valueFloat("flightplan_cruise_altitude")));
+
+    if(rec.valueFloat("distance") > 0.f)
+      html.row2(tr("Flight plan distance:"), Unit::distNm(rec.valueFloat("distance")));
+
+    if(info)
+    {
+      if(rec.valueFloat("distance_flown") > 0.f)
+        html.row2(tr("Distance flown:"), Unit::distNm(rec.valueFloat("distance_flown")));
+
+      if(logEntry.departurePos.isValid() && logEntry.destinationPos.isValid())
+        html.row2(tr("Great circle distance:"),
+                  Unit::distMeter(logEntry.departurePos.distanceMeterTo(logEntry.destinationPos)));
+    }
+
+    float travelTimeHours = (rec.valueDateTime("destination_time_sim").toSecsSinceEpoch() -
+                             rec.valueDateTime("departure_time_sim").toSecsSinceEpoch()) / 3600.f;
+
+    if(travelTimeHours > 0.01)
+    {
+      html.row2(tr("Travel time:"), formatter::formatMinutesHoursLong(travelTimeHours));
+      if(info)
+      {
+        html.row2(tr("Average ground speed:"), Unit::speedKts(rec.valueFloat("distance_flown") / travelTimeHours));
+        html.row2(tr("Fuel flow:"), Unit::ffLbs(rec.valueFloat("used_fuel") / travelTimeHours));
+      }
+    }
+
+    if(info)
+    {
+      html.tableEnd();
+
+      // Departure =======================================================
+      html.p(tr("Departure"), atools::util::html::BOLD);
+      html.table();
+
+      QDateTime departTime = rec.valueDateTime("departure_time");
+      QString departTimeZone = departTime.timeZoneAbbreviation();
+      html.row2If(tr("Runway:"), rec.valueStr("departure_runway"));
+      html.row2If(tr("Real time:"),
+                  tr("%1 %2").arg(locale.toString(departTime, QLocale::ShortFormat)).arg(departTimeZone));
+    }
+    QDateTime departTimeSim = rec.valueDateTime("departure_time_sim");
+    QString departTimeZoneSim = departTimeSim.timeZoneAbbreviation();
+    html.row2If(info ? tr("Simulator time:") : tr("Departure time:"),
+                tr("%1 %2").arg(locale.toString(departTimeSim, QLocale::ShortFormat)).arg(departTimeZoneSim));
+    if(info)
+    {
+      html.row2(tr("Gross Weight:"), Unit::fuelLbsGallon(rec.valueFloat("grossweight")));
+      addCoordinates(Pos(rec.valueFloat("departure_lonx"),
+                         rec.valueFloat("departure_laty"),
+                         rec.valueFloat("departure_alt", 0.f)), html);
+      html.tableEnd();
+
+      // Destination =======================================================
+      html.p(tr("Destination"), atools::util::html::BOLD);
+      html.table();
+
+      html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
+      QDateTime destTime = rec.valueDateTime("destination_time");
+      QString destTimeZone = destTime.timeZoneAbbreviation();
+      html.row2If(tr("Real time:"),
+                  tr("%1 %2").arg(locale.toString(destTime, QLocale::ShortFormat)).arg(destTimeZone));
+
+      QDateTime destTimeSim = rec.valueDateTime("destination_time_sim");
+      QString destTimeZoneSim = destTimeSim.timeZoneAbbreviation();
+      html.row2If(tr("Simulator time:"),
+                  tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat)).arg(destTimeZoneSim));
+      addCoordinates(Pos(rec.valueFloat("destination_lonx"),
+                         rec.valueFloat("destination_laty"),
+                         rec.valueFloat("destination_alt", 0.f)), html);
+      html.tableEnd();
+
+      using atools::geo::fromLbsToGal;
+      // Fuel =======================================================
+      html.p(tr("Fuel"), atools::util::html::BOLD);
+      html.table();
+      bool jetfuel = rec.valueBool("is_jetfuel");
+      atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
+      html.row2(tr("Type:"), jetfuel ? tr("Jetfuel") : tr("Avgas"));
+      html.row2(tr("Trip:"), Unit::fuelLbsAndGal(rec.valueFloat("trip_fuel"),
+                                                 fromLbsToGal(jetfuel, rec.valueFloat("trip_fuel"))), flags);
+      html.row2(tr("Block:"), Unit::fuelLbsAndGal(rec.valueFloat("block_fuel"),
+                                                  fromLbsToGal(jetfuel, rec.valueFloat("block_fuel"))), flags);
+      html.row2(tr("Used:"), Unit::fuelLbsAndGal(rec.valueFloat("used_fuel"),
+                                                 fromLbsToGal(jetfuel, rec.valueFloat("used_fuel"))), flags);
+      html.tableEnd();
+
+      // Files =======================================================
+      html.p(tr("Files"), atools::util::html::BOLD);
+      html.table();
+      html.row2(tr("Flight plan:"), filepathTextShow(rec.valueStr("flightplan_file")),
+                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+      html.row2(tr("Aircraft performance:"), filepathTextShow(rec.valueStr("performance_file")),
+                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+      html.tableEnd();
+
+      // Description =======================================================
+      QString description = logEntry.description;
+      if(!description.isEmpty())
+      {
+        html.p().b(tr("Description")).pEnd();
+        html.table();
+        html.row2(QString(), atools::elideTextLinesShort(description, info ? 40 : 4),
+                  (info ? atools::util::html::AUTOLINK : atools::util::html::NONE));
+      }
+    } // if(info)
+    html.tableEnd();
+
+#ifdef DEBUG_INFORMATION
+    html.p().small(QString("Database: logbook_id = %1").arg(logEntry.id)).pEnd();
+#endif
+  }
+}
+
 void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) const
 {
   if(ap.isValid())
@@ -2207,14 +2389,14 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     html.row2(tr("Flight Number:"), aircraft.getAirplaneFlightnumber());
 
   if(!aircraft.getAirplaneModel().isEmpty())
-    html.row2(tr("Model:"), aircraft.getAirplaneModel());
+    html.row2(tr("Type:"), aircraft.getAirplaneModel());
 
   if(!aircraft.getAirplaneRegistration().isEmpty())
     html.row2(tr("Registration:"), aircraft.getAirplaneRegistration());
 
   QString type = airplaneType(aircraft);
   if(!type.isEmpty())
-    html.row2(tr("Type:"), type);
+    html.row2(tr("Model:"), type);
 
   if(aircraft.getCategory() == atools::fs::sc::BOAT)
   {
@@ -2724,29 +2906,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(info && userAircaft != nullptr)
       head(html, tr("Flight Plan"));
 
-    if(!aircraft.getFromIdent().isEmpty())
-    {
-      html.p();
-      html.b(tr("Departure: "));
-      if(info)
-        html.a(aircraft.getFromIdent(), QString("lnm://show?airport=%1").arg(aircraft.getFromIdent()),
-               atools::util::html::LINK_NO_UL);
-      else
-        html.text(aircraft.getFromIdent());
-      html.text(tr(". "));
-    }
-
-    if(!aircraft.getToIdent().isEmpty())
-    {
-      html.b(tr("Destination: "));
-      if(info)
-        html.a(aircraft.getToIdent(), QString("lnm://show?airport=%1").arg(aircraft.getToIdent()),
-               atools::util::html::LINK_NO_UL);
-      else
-        html.text(aircraft.getToIdent());
-      html.text(tr("."));
-      html.pEnd();
-    }
+    html.table();
+    html.row2(tr("Departure:"), airportLink(html, aircraft.getFromIdent()), atools::util::html::NO_ENTITIES);
+    html.row2(tr("Destination:"), airportLink(html, aircraft.getToIdent()), atools::util::html::NO_ENTITIES);
+    html.tableEnd();
+    html.br();
   }
 
   if(info && userAircaft != nullptr)
@@ -3001,6 +3165,30 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 #endif
     html.tableEnd();
   }
+}
+
+QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ident, const QString& name) const
+{
+  HtmlBuilder builder = html.cleared();
+  if(!ident.isEmpty())
+  {
+    if(info)
+    {
+      if(name.isEmpty())
+        // Ident only
+        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), atools::util::html::LINK_NO_UL);
+      else
+      {
+        // Name and ident
+        builder.text(tr("%1 (").arg(name));
+        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), atools::util::html::LINK_NO_UL);
+        builder.text(tr(")"));
+      }
+    }
+    else
+      builder.text(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident));
+  }
+  return builder.getHtml();
 }
 
 void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html,

@@ -248,6 +248,12 @@ public:
   /* Add custom procedure and probably set new destination airport */
   void showProceduresCustom(map::MapAirport airport);
 
+  /* Name of currently loaded flight plan file */
+  const QString& getRouteFilepath() const
+  {
+    return routeFilename;
+  }
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -414,7 +420,7 @@ private:
   Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
-  QString routeFilename, fileDeparture, fileDestination;
+  QString routeFilename, fileDepartureIdent, fileDestinationIdent;
 
   /* Current loaded or saved format since the plans in the undo stack have different values */
   atools::fs::pln::FileFormat routeFileFormat = atools::fs::pln::PLN_FSX;

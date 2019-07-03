@@ -21,6 +21,7 @@
 #include "sql/sqlrecord.h"
 #include "geo/pos.h"
 #include "atools.h"
+#include "userdata/dialogrecordhelper.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "gui/mainwindow.h"
@@ -321,49 +322,26 @@ void UserdataDialog::dialogToRecord()
     }
   }
 
+  DialogRecordHelper helper(record, editMode == ud::EDIT_MULTIPLE);
+
   // If multiple set the values into all fields that have their checkbox checked
+
   if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataType->isChecked())
     record->setValue("type", ui->comboBoxUserdataType->currentText());
   else if(editMode == ud::EDIT_MULTIPLE)
     // No checked in batch mode - remove
     record->remove("type");
 
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataName->isChecked())
-    record->setValue("name", ui->lineEditUserdataName->text());
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("name");
-
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataIdent->isChecked())
-    record->setValue("ident", ui->lineEditUserdataIdent->text());
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("ident");
-
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataRegion->isChecked())
-    record->setValue("region", ui->lineEditUserdataRegion->text());
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("region");
-
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataDescription->isChecked())
-    record->setValue("description", ui->textEditUserdataDescription->toPlainText());
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("description");
-
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataTags->isChecked())
-    record->setValue("tags", ui->lineEditUserdataTags->text());
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("tags");
+  helper.dialogToRecordStr(ui->lineEditUserdataName, "name", ui->checkBoxUserdataName);
+  helper.dialogToRecordStr(ui->lineEditUserdataIdent, "ident", ui->checkBoxUserdataIdent);
+  helper.dialogToRecordStr(ui->lineEditUserdataRegion, "region", ui->checkBoxUserdataRegion);
+  helper.dialogToRecordStr(ui->textEditUserdataDescription, "description", ui->checkBoxUserdataDescription);
+  helper.dialogToRecordStr(ui->lineEditUserdataTags, "tags", ui->checkBoxUserdataTags);
 
   record->setValue("last_edit_timestamp", QDateTime::currentDateTime());
 
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataVisible->isChecked())
-    record->setValue("visible_from", atools::roundToInt(Unit::rev(ui->spinBoxUserdataVisible->value(), Unit::distNmF)));
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("visible_from");
-
-  if(editMode != ud::EDIT_MULTIPLE || ui->checkBoxUserdataAltitude->isChecked())
-    record->setValue("altitude", Unit::rev(ui->spinBoxUserdataAltitude->value(), Unit::altFeetF));
-  else if(editMode == ud::EDIT_MULTIPLE)
-    record->remove("altitude");
+  helper.dialogToRecordInt(ui->spinBoxUserdataVisible, "visible_from", ui->checkBoxUserdataVisible);
+  helper.dialogToRecordInt(ui->spinBoxUserdataAltitude, "altitude", ui->checkBoxUserdataAltitude);
 
   if(editMode != ud::EDIT_MULTIPLE)
   {

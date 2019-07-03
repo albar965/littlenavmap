@@ -181,6 +181,10 @@ public:
   void deleteAircraftTrack();
 
 signals:
+  /* Fuel flow started or stopped */
+  void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
   /* State isFlying between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
@@ -211,6 +215,8 @@ signals:
   void addUserpointFromMap(map::MapSearchResult result, const atools::geo::Pos& pos);
   void editUserpointFromMap(map::MapSearchResult result);
   void deleteUserpointFromMap(int id);
+
+  void editLogEntryFromMap(int id);
 
   /* Passed point with updated coordinates */
   void moveUserpointFromMap(const map::MapUserpoint& point);
@@ -249,6 +255,12 @@ private:
 
   /* Timer for takeoff and landing recognition fired */
   void takeoffLandingTimeout();
+  void fuelOnOffTimeout();
+
+  void simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                 const atools::fs::sc::SimConnectUserAircraft& last);
+  void simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                            const atools::fs::sc::SimConnectUserAircraft& last);
 
   /* Center aircraft again after scrolling or zooming */
   void jumpBackToAircraftTimeout(const QVariantList& values);
@@ -349,7 +361,7 @@ private:
   QTimer elevationDisplayTimer;
 
   /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
-  QTimer takeoffLandingTimer;
+  QTimer takeoffLandingTimer, fuelOnOffTimer;
 
   /* Simulator zulu time timestamp of takeoff event */
   qint64 takeoffTimeMs = 0L;

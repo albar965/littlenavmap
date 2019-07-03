@@ -152,6 +152,21 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
+  // Logbook entries ===========================================================================
+  for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.hr();
+
+    html.p();
+    info.logEntryText(entry, html);
+    html.pEnd();
+    numEntries++;
+  }
+
   // Navaids ===========================================================================
   if(opts & opts::TOOLTIP_NAVAID)
   {

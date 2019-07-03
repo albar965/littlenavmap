@@ -71,7 +71,6 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
                                                     ui->actionAircraftPerformanceClearMenu);
 
   connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected,
-
           this, &AircraftPerfController::loadFile);
   connect(ui->textBrowserAircraftPerformanceReport, &QTextBrowser::anchorClicked,
           this, &AircraftPerfController::anchorClicked);

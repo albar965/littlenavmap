@@ -107,6 +107,13 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
   }
 }
 
+map::MapAirport AirportQuery::getAirportByIdent(const QString& ident)
+{
+  map::MapAirport airport;
+  getAirportByIdent(airport, ident);
+  return airport;
+}
+
 void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& ident)
 {
   map::MapAirport *ap = airportIdentCache.object(ident);

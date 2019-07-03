@@ -75,6 +75,8 @@
 #include "mapgui/imageexportdialog.h"
 #include "web/webcontroller.h"
 #include "weather/windreporter.h"
+#include "userdata/logdatacontroller.h"
+#include "search/logdatasearch.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -255,6 +257,7 @@ MainWindow::MainWindow()
     searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
 
     searchController->createUserdataSearch(ui->tableViewUserdata);
+    searchController->createLogdataSearch(ui->tableViewLogdata);
 
     searchController->createOnlineClientSearch(ui->tableViewOnlineClientSearch);
     searchController->createOnlineCenterSearch(ui->tableViewOnlineCenterSearch);
@@ -929,6 +932,13 @@ void MainWindow::connectAllSlots()
   connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
 
+  // Logbook search ===================================================================================
+  LogdataSearch *logSearch = searchController->getLogdataSearch();
+  connect(logSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
+  connect(logSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(logSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
+  connect(logSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
   connect(ui->actionUserdataClearDatabase, &QAction::triggered, userdataController, &UserdataController::clearDatabase);
@@ -955,8 +965,24 @@ void MainWindow::connectAllSlots()
   connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
 
-  connect(mapWidget, &MapWidget::aircraftTakeoff, userdataController, &UserdataController::aircraftTakeoff);
-  connect(mapWidget, &MapWidget::aircraftLanding, userdataController, &UserdataController::aircraftLanding);
+  // Logbook ===================================================================================
+  LogdataController *logdataController = NavApp::getLogdataController();
+  connect(logdataController, &LogdataController::refreshLogSearch, logSearch, &LogdataSearch::refreshData);
+  connect(logdataController, &LogdataController::logDataChanged, this, &MainWindow::updateMapObjectsShown);
+  connect(logdataController, &LogdataController::logDataChanged, infoController,
+          &InfoController::updateAllInformation);
+
+  connect(mapWidget, &MapWidget::aircraftTakeoff, logdataController, &LogdataController::aircraftTakeoff);
+  connect(mapWidget, &MapWidget::aircraftLanding, logdataController, &LogdataController::aircraftLanding);
+
+  connect(ui->actionLogdataShowSearch, &QAction::triggered, logdataController, &LogdataController::showSearch);
+  connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
+  connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
+  connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
+
+  connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile, this, &MainWindow::routeOpenFile);
+  connect(searchController->getLogdataSearch(), &SearchBaseTable::loadPerfFile,
+          NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
 
   // Online search ===================================================================================
   OnlineClientSearch *clientSearch = searchController->getOnlineClientSearch();
@@ -1151,6 +1177,9 @@ void MainWindow::connectAllSlots()
           NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);
   connect(mapWidget, &MapWidget::moveUserpointFromMap,
           NavApp::getUserdataController(), &UserdataController::moveUserpointFromMap);
+
+  connect(mapWidget, &MapWidget::editLogEntryFromMap,
+          NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -1383,6 +1412,8 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::actionShortcutNavaidSearchTriggered);
   connect(ui->actionShortcutUserpointSearch, &QAction::triggered,
           this, &MainWindow::actionShortcutUserpointSearchTriggered);
+  connect(ui->actionShortcutLogbookSearch, &QAction::triggered,
+          this, &MainWindow::actionShortcutLogbookSearchTriggered);
   connect(ui->actionShortcutFlightPlan, &QAction::triggered,
           this, &MainWindow::actionShortcutFlightPlanTriggered);
   connect(ui->actionShortcutAircraftPerformance, &QAction::triggered,
@@ -1448,6 +1479,16 @@ void MainWindow::actionShortcutUserpointSearchTriggered()
   ui->dockWidgetSearch->raise();
   ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
   ui->lineEditUserdataIdent->setFocus();
+}
+
+void MainWindow::actionShortcutLogbookSearchTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->dockWidgetSearch->show();
+  ui->dockWidgetSearch->activateWindow();
+  ui->dockWidgetSearch->raise();
+  ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_LOG);
+  ui->lineEditLogdataDeparture->setFocus();
 }
 
 void MainWindow::actionShortcutFlightPlanTriggered()
@@ -2702,6 +2743,12 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
     ui->labelUserdata->setText(selectionLabelText.
                                arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
+  else if(source->getTabIndex() == si::SEARCH_LOG)
+  {
+    type = tr("Logbook Entries");
+    ui->labelLogdata->setText(selectionLabelText.
+                              arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
   else if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT)
   {
     type = tr("Clients");
@@ -3361,6 +3408,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "searchController";
   searchController->restoreState();
 
+  qDebug() << "logdataController";
+  NavApp::getLogdataController()->restoreState();
+
   qDebug() << "userdataController";
   NavApp::getUserdataController()->restoreState();
 
@@ -3409,7 +3459,7 @@ void MainWindow::restoreStateMain()
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
                        ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline, ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                       ui->actionUserdataCreateLogbook,
+                       ui->actionLogdataCreateLogbook,
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
                        ui->actionRunWebserver});
   widgetState.setBlockSignals(false);
@@ -3500,6 +3550,10 @@ void MainWindow::saveStateMain()
   qDebug() << "userDataController";
   if(NavApp::getUserdataController() != nullptr)
     NavApp::getUserdataController()->saveState();
+
+  qDebug() << "logdataController";
+  if(NavApp::getLogdataController() != nullptr)
+    NavApp::getLogdataController()->saveState();
 
   qDebug() << "windReporter";
   if(NavApp::getWindReporter() != nullptr)
@@ -3609,7 +3663,7 @@ void MainWindow::saveActionStates()
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
-                    ui->actionUserdataCreateLogbook, ui->actionRunWebserver});
+                    ui->actionLogdataCreateLogbook, ui->actionRunWebserver});
   Settings::instance().syncSettings();
 }
 

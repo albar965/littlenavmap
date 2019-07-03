@@ -157,6 +157,7 @@ const QColor textBoxColor = QColor(Qt::white);
 
 /* Text background color for flight plan waypoints */
 const QColor routeTextBoxColor = QColor(255, 255, 150);
+const QColor logTextBoxColor = QColor(150, 240, 255);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);
 
@@ -183,6 +184,9 @@ const QColor routeOutlineColor = QColor(Qt::black);
 const QColor routeAlternateOutlineColor = QColor(Qt::darkGray);
 
 const QColor routeProcedureOutlineColor = QColor(Qt::black);
+
+const QColor routeLogEntryColor = QColor(50, 100, 255);
+const QColor routeLogEntryOutlineColor = QColor(Qt::black);
 
 const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);

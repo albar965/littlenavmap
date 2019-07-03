@@ -33,6 +33,7 @@
 #include "fs/common/morareader.h"
 #include "common/updatehandler.h"
 #include "userdata/userdatacontroller.h"
+#include "userdata/logdatacontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
 #include "common/vehicleicons.h"
@@ -69,6 +70,7 @@ atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
+LogdataController *NavApp::logdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
 AircraftPerfController *NavApp::aircraftPerfController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
@@ -111,6 +113,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases();
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
+  logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
 
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
@@ -188,6 +191,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete userdataController";
   delete userdataController;
   userdataController = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete logdataController";
+  delete logdataController;
+  logdataController = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete onlinedataController";
   delete onlinedataController;
@@ -473,6 +480,11 @@ QString NavApp::getCurrentSimulatorShortName()
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());
 }
 
+QString NavApp::getCurrentSimulatorName()
+{
+  return atools::fs::FsPaths::typeToName(getCurrentSimulatorDb());
+}
+
 bool NavApp::hasSidStarInDatabase()
 {
   return databaseMetaNav->hasSidStar();
@@ -513,9 +525,24 @@ UserdataSearch *NavApp::getUserdataSearch()
   return mainWindow->getSearchController()->getUserdataSearch();
 }
 
+LogdataSearch *NavApp::getLogdataSearch()
+{
+  return mainWindow->getSearchController()->getLogdataSearch();
+}
+
+atools::fs::userdata::LogdataManager *NavApp::getLogdataManager()
+{
+  return databaseManager->getLogdataManager();
+}
+
 UserdataController *NavApp::getUserdataController()
 {
   return userdataController;
+}
+
+LogdataController *NavApp::getLogdataController()
+{
+  return logdataController;
 }
 
 OnlinedataController *NavApp::getOnlinedataController()
@@ -571,6 +598,11 @@ atools::fs::common::MoraReader *NavApp::getMoraReader()
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()
 {
   return databaseManager->getDatabaseUser();
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseLogbook()
+{
+  return databaseManager->getDatabaseLogbook();
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseOnline()

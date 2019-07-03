@@ -938,7 +938,7 @@
    <item row="5" column="0">
     <widget class="QLabel" name="labelName">
      <property name="text">
-      <string>&amp;Name:</string>
+      <string>Aircraft &amp;model:</string>
      </property>
      <property name="buddy">
       <cstring>comboBoxName</cstring>
@@ -980,7 +980,7 @@
    <item row="6" column="0">
     <widget class="QLabel" name="labelType">
      <property name="text">
-      <string>&amp;Aircraft type:</string>
+      <string>Aircraft &amp;type:</string>
      </property>
      <property name="buddy">
       <cstring>comboBoxType</cstring>

@@ -154,7 +154,7 @@ public:
   void setDataCallback(const SqlModel::DataFunctionType& value, const QSet<Qt::ItemDataRole>& roles);
 
   /* Get position for the row at the given index. The query needs to have a lonx and laty column */
-  atools::geo::Pos getGeoPos(const QModelIndex& index);
+  atools::geo::Pos getGeoPos(const QModelIndex& index, const QString& lonxCol, const QString& latyCol);
 
   /* Get SQL model */
   SqlModel *getSqlModel() const

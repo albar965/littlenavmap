@@ -324,6 +324,7 @@ SOURCES += \
   src/search/airportsearch.cpp \
   src/search/column.cpp \
   src/search/columnlist.cpp \
+  src/search/logdatasearch.cpp \
   src/search/navicondelegate.cpp \
   src/search/navsearch.cpp \
   src/search/onlinecentersearch.cpp \
@@ -337,6 +338,9 @@ SOURCES += \
   src/search/sqlproxymodel.cpp \
   src/search/userdatasearch.cpp \
   src/search/usericondelegate.cpp \
+  src/userdata/dialogrecordhelper.cpp \
+  src/userdata/logdatacontroller.cpp \
+  src/userdata/logdatadialog.cpp \
   src/userdata/userdatacontroller.cpp \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataexportdialog.cpp \
@@ -458,6 +462,7 @@ HEADERS  += \
   src/search/airportsearch.h \
   src/search/column.h \
   src/search/columnlist.h \
+  src/search/logdatasearch.h \
   src/search/navicondelegate.h \
   src/search/navsearch.h \
   src/search/onlinecentersearch.h \
@@ -471,6 +476,9 @@ HEADERS  += \
   src/search/sqlproxymodel.h \
   src/search/userdatasearch.h \
   src/search/usericondelegate.h \
+  src/userdata/dialogrecordhelper.h \
+  src/userdata/logdatacontroller.h \
+  src/userdata/logdatadialog.h \
   src/userdata/userdatacontroller.h \
   src/userdata/userdatadialog.h \
   src/userdata/userdataexportdialog.h \
@@ -502,6 +510,7 @@ FORMS += \
   src/route/routeexportdialog.ui \
   src/route/routestringdialog.ui \
   src/route/userwaypointdialog.ui \
+  src/userdata/logdatadialog.ui \
   src/userdata/userdatadialog.ui \
   src/userdata/userdataexportdialog.ui
 

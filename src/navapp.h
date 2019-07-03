@@ -44,8 +44,10 @@ class AircraftTrack;
 class QSplashScreen;
 class UpdateHandler;
 class UserdataController;
+class LogdataController;
 class OnlinedataController;
 class UserdataIcons;
+class LogdataSearch;
 class UserdataSearch;
 class VehicleIcons;
 class StyleHandler;
@@ -75,6 +77,7 @@ class SimConnectAircraft;
 
 namespace userdata {
 class UserdataManager;
+class LogdataManager;
 }
 
 namespace common {
@@ -181,6 +184,7 @@ public:
 
   /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
   static QString getCurrentSimulatorShortName();
+  static QString getCurrentSimulatorName();
   static bool hasSidStarInDatabase();
   static bool hasDataInDatabase();
 
@@ -197,7 +201,11 @@ public:
   static UserdataIcons *getUserdataIcons();
   static UserdataSearch *getUserdataSearch();
 
+  static atools::fs::userdata::LogdataManager *getLogdataManager();
+  static LogdataSearch *getLogdataSearch();
+
   static atools::sql::SqlDatabase *getDatabaseUser();
+  static atools::sql::SqlDatabase *getDatabaseLogbook();
   static atools::sql::SqlDatabase *getDatabaseOnline();
 
   static ElevationProvider *getElevationProvider();
@@ -256,6 +264,7 @@ public:
   static UpdateHandler *getUpdateHandler();
 
   static UserdataController *getUserdataController();
+  static LogdataController *getLogdataController();
   static OnlinedataController *getOnlinedataController();
   static AircraftPerfController *getAircraftPerfController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
@@ -301,6 +310,7 @@ private:
   /* minimum off route altitude from nav database */
   static atools::fs::common::MoraReader *moraReader;
   static UserdataController *userdataController;
+  static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
   static AircraftPerfController *aircraftPerfController;
 

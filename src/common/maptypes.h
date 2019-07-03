@@ -525,6 +525,43 @@ struct MapUserpoint
 
 };
 
+/* Logbook entry */
+struct MapLogbookEntry
+{
+  QString departureName, departureIdent, departureRunway,
+          destinationName, destinationIdent, destinationRunway,
+          description, simulator, aircraftType,
+          aircraftRegistration, routeFile, perfFile;
+  int id;
+  float distance, distanceGc;
+  atools::geo::Pos departurePos, destinationPos;
+
+  map::MapAirport departure, destination;
+
+  bool isValid() const
+  {
+    return departurePos.isValid();
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+  atools::geo::Rect bounding() const
+  {
+    atools::geo::Rect rect(departurePos);
+    rect.extend(destinationPos);
+    return rect;
+  }
+
+  bool isDestAndDepartPosValid() const
+  {
+    return departurePos.isValid() && destinationPos.isValid();
+  }
+
+};
+
 /* Airway type */
 enum MapAirwayType
 {
@@ -695,6 +732,9 @@ struct MapSearchResult
   /* User defined waypoints */
   QList<MapUserpoint> userpoints;
   QSet<int> userpointIds; /* Ids used to deduplicate */
+
+  /* Logbook entries */
+  QList<MapLogbookEntry> logbookEntries;
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
@@ -949,6 +989,7 @@ QString ndbText(const map::MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
 QString userpointRouteText(const map::MapUserpointRoute& userpoint);
 QString userpointText(const MapUserpoint& userpoint);
+QString logEntryText(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 
 /* Altitude text for airways */
@@ -987,6 +1028,7 @@ Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapSearchResult, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
 
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker);

@@ -72,6 +72,7 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
   ui->textBrowserAirspaceInfo->setSearchPaths(paths);
+  ui->textBrowserLogbookInfo->setSearchPaths(paths);
   ui->textBrowserCenterInfo->setSearchPaths(paths);
   ui->textBrowserClientInfo->setSearchPaths(paths);
 
@@ -87,6 +88,7 @@ InfoController::InfoController(MainWindow *parent)
   connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserAirspaceInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserLogbookInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(ui->textBrowserCenterInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserClientInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -153,6 +155,7 @@ void InfoController::currentInfoTabChanged(int index)
     case ic::INFO_APPROACHES:
     case ic::INFO_WEATHER:
     case ic::INFO_AIRSPACE:
+    case ic::INFO_LOGBOOK:
     case ic::INFO_ONLINE_CLIENT:
     case ic::INFO_ONLINE_CENTER:
       break;
@@ -198,15 +201,24 @@ void InfoController::anchorClicked(const QUrl& url)
     }
     else if(url.host() == "show")
     {
-      if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
+      if(query.hasQueryItem("west") && query.hasQueryItem("north") &&
+         query.hasQueryItem("east") && query.hasQueryItem("south"))
+      {
+        // Zoom to rect =========================================
+        emit showRect(atools::geo::Rect(query.queryItemValue("west").toFloat(),
+                                        query.queryItemValue("north").toFloat(),
+                                        query.queryItemValue("east").toFloat(),
+                                        query.queryItemValue("south").toFloat()), false /* doubleClick */);
+      }
+      else if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
       {
         // Zoom to position =========================================
         float distanceKm = 0.f;
         if(query.hasQueryItem("distance"))
           distanceKm = query.queryItemValue("distance").toFloat();
 
-        emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
-                                      query.queryItemValue("laty").toFloat()), distanceKm, false);
+        emit showPos(atools::geo::Pos(query.queryItemValue("lonx"), query.queryItemValue("laty")), distanceKm,
+                     false /* doubleClick */);
       }
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
@@ -280,6 +292,9 @@ void InfoController::saveState()
   for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
     refs.append({userpoint.id, map::USERPOINT});
 
+  for(const map::MapLogbookEntry& logEntry : currentSearchResult.logbookEntries)
+    refs.append({logEntry.id, map::LOGBOOK});
+
   for(const map::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, map::AIRWAY});
 
@@ -294,6 +309,7 @@ void InfoController::saveState()
   QStringList refList;
   for(const map::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
+
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
   settings.setValue(lnm::INFOWINDOW_MORE_LESS_PROGRESS, lessAircraftProgress);
 }
@@ -406,6 +422,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserApproachInfo->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
+  ui->textBrowserLogbookInfo->clear();
   ui->textBrowserAirspaceInfo->clear();
 
   ui->textBrowserClientInfo->clear();
@@ -453,9 +470,10 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Clear all except preferred - used by context menu "Show information for ..." to update only one topic
     result.clear(~preferredType);
 
-  bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundUserAircraftShadow = false,
+  bool foundAirport = false, foundNavaid = false /* also userpoints */,
+       foundUserAircraft = false, foundUserAircraftShadow = false,
        foundAiAircraft = false, foundOnlineClient = false,
-       foundAirspace = false, foundOnlineCenter = false;
+       foundAirspace = false, foundLogbookEntry = false, foundOnlineCenter = false;
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -630,6 +648,29 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
                                         false /* scroll to top*/, true /* keep selection */);
   }
 
+  // Logbook Entries ================================================================
+  if(!result.logbookEntries.isEmpty())
+  {
+    html.clear();
+
+    currentSearchResult.logbookEntries.clear();
+
+    for(const map::MapLogbookEntry& logEntry : result.logbookEntries)
+    {
+      qDebug() << "Found log entry" << logEntry.id;
+
+      currentSearchResult.logbookEntries.append(logEntry);
+      infoBuilder->logEntryText(logEntry, html);
+      html.br();
+      foundLogbookEntry = true;
+    }
+
+    if(foundLogbookEntry)
+      // Update and keep scroll position
+      atools::gui::util::updateTextEdit(ui->textBrowserLogbookInfo, html.getHtml(),
+                                        false /* scroll to top*/, true /* keep selection */);
+  }
+
   // Navaids ================================================================
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty() ||
      !result.userpoints.isEmpty())
@@ -641,7 +682,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   // Show dock windows if needed
   if(showWindows)
   {
-    if(foundNavaid || foundAirport || foundAirspace || foundOnlineCenter || foundOnlineClient ||
+    if(foundNavaid || foundAirport || foundAirspace || foundLogbookEntry || foundOnlineCenter || foundOnlineClient ||
        foundUserAircraftShadow)
     {
       NavApp::getMainUi()->dockWidgetInformation->show();
@@ -681,6 +722,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
         newIdx = ic::INFO_ONLINE_CLIENT;
       else if(preferredType & map::AIRSPACE)
         newIdx = ic::INFO_AIRSPACE;
+      else if(preferredType & map::LOGBOOK)
+        newIdx = ic::INFO_LOGBOOK;
     }
     else
     {
@@ -701,6 +744,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
           // Show airport tab if no airport related tab was active
           newIdx = ic::INFO_AIRPORT;
       }
+      else if(foundLogbookEntry)
+        newIdx = ic::INFO_LOGBOOK;
       else if(onlineClient)
         // Only online client found
         newIdx = ic::INFO_ONLINE_CLIENT;
@@ -723,6 +768,9 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
         break;
       case ic::INFO_AIRSPACE:
         mainWindow->setStatusMessage(tr("Showing information for airspace."));
+        break;
+      case ic::INFO_LOGBOOK:
+        mainWindow->setStatusMessage(tr("Showing information for logbook entry."));
         break;
       case ic::INFO_ONLINE_CLIENT:
         mainWindow->setStatusMessage(tr("Showing information for online clients."));
@@ -1061,6 +1109,7 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAirspaceInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserLogbookInfo, infoFontPtSize, sizePercent);
 
   setTextEditFontSize(ui->textBrowserCenterInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserClientInfo, infoFontPtSize, sizePercent);

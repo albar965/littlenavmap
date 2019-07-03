@@ -21,6 +21,7 @@
 #include "common/proctypes.h"
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
+#include "userdata/logdatacontroller.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapfunctions.h"
 #include "mapgui/mapwidget.h"
@@ -74,6 +75,7 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   trafficPatterns = other.trafficPatterns;
   routeLines = other.routeLines;
   airwayLines = other.airwayLines;
+  logEntryLines = other.logEntryLines;
   airspacePolygons = other.airspacePolygons;
   airspacePolygonsOnline = other.airspacePolygonsOnline;
   routePoints = other.routePoints;
@@ -159,11 +161,27 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     updateAirspaceScreenGeometry(airspacePolygonsOnline, airspaceQueryOnline, curBox);
 }
 
+void MapScreenIndex::updateLogEnryScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
+{
+  logEntryLines.clear();
+
+  const MapScale *scale = paintLayer->getMapScale();
+
+  if(scale->isValid())
+  {
+    CoordinateConverter conv(mapPaintWidget->viewport());
+    for(map::MapLogbookEntry& entry : searchHighlights.logbookEntries)
+    {
+      if(entry.isDestAndDepartPosValid())
+        updateLineScreenGeometry(logEntryLines, entry.id, Line(entry.departurePos, entry.destinationPos), curBox, conv);
+    }
+  }
+}
+
 void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
   airwayLines.clear();
 
-  CoordinateConverter conv(mapPaintWidget->viewport());
   const MapScale *scale = paintLayer->getMapScale();
   bool showJet = paintLayer->getShownMapObjects().testFlag(map::AIRWAYJ);
   bool showVictor = paintLayer->getShownMapObjects().testFlag(map::AIRWAYV);
@@ -172,43 +190,53 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& 
   {
     // Airways are visible on map - get them from the cache/database
     const QList<MapAirway> *airways = mapQuery->getAirways(curBox, paintLayer->getMapLayer(), false);
-    const QRect& mapGeo = mapPaintWidget->rect();
+    CoordinateConverter conv(mapPaintWidget->viewport());
 
     for(int i = 0; i < airways->size(); i++)
     {
       const MapAirway& airway = airways->at(i);
       if((airway.type == map::VICTOR && !showVictor) || (airway.type == map::JET && !showJet))
         continue;
+      updateLineScreenGeometry(airwayLines, airway.id, Line(airway.from, airway.to), curBox, conv);
+    }
+  }
+}
 
-      const Rect& bnd = airway.bounding;
-      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(),
-                                         Marble::GeoDataCoordinates::Degree);
+void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index,
+                                              int id, const atools::geo::Line& line,
+                                              const Marble::GeoDataLatLonBox& curBox,
+                                              const CoordinateConverter& conv)
+{
+  atools::geo::Rect bounding = line.boundingRect();
 
-      if(airwaybox.intersects(curBox))
-      {
-        // Airway segment intersects with view rectangle
-        float distanceMeter = airway.from.distanceMeterTo(airway.to);
-        // Approximate the needed number of line segments
-        float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 40.f, 2.f), 72.f);
-        float step = 1.f / numSegments;
+  Marble::GeoDataLatLonBox airwaybox(bounding.getNorth(), bounding.getSouth(), bounding.getEast(), bounding.getWest(),
+                                     Marble::GeoDataCoordinates::Degree);
+  const QRect& mapGeo = mapPaintWidget->rect();
+  const MapScale *scale = paintLayer->getMapScale();
 
-        // Split the segments into smaller lines and add them only if visible
-        for(int j = 0; j < numSegments; j++)
-        {
-          float cur = step * static_cast<float>(j);
-          int xs1, ys1, xs2, ys2;
-          conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur), xs1, ys1);
-          conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur + step), xs2, ys2);
+  if(airwaybox.intersects(curBox))
+  {
+    // Airway segment intersects with view rectangle
+    float distanceMeter = line.lengthMeter();
+    // Approximate the needed number of line segments
+    float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 40.f, 2.f), 72.f);
+    float step = 1.f / numSegments;
 
-          QRect rect(QPoint(xs1, ys1), QPoint(xs2, ys2));
-          rect = rect.normalized();
-          // Avoid points or flat rectangles (lines)
-          rect.adjust(-1, -1, 1, 1);
+    // Split the segments into smaller lines and add them only if visible
+    for(int j = 0; j < numSegments; j++)
+    {
+      float cur = step * static_cast<float>(j);
+      int xs1, ys1, xs2, ys2;
+      conv.wToS(line.getPos1().interpolate(line.getPos2(), distanceMeter, cur), xs1, ys1);
+      conv.wToS(line.getPos1().interpolate(line.getPos2(), distanceMeter, cur + step), xs2, ys2);
 
-          if(mapGeo.intersects(rect))
-            airwayLines.append(std::make_pair(airway.id, QLine(xs1, ys1, xs2, ys2)));
-        }
-      }
+      QRect rect(QPoint(xs1, ys1), QPoint(xs2, ys2));
+      rect = rect.normalized();
+      // Avoid points or flat rectangles (lines)
+      rect.adjust(-1, -1, 1, 1);
+
+      if(mapGeo.intersects(rect))
+        index.append(std::make_pair(id, QLine(xs1, ys1, xs2, ys2)));
     }
   }
 }
@@ -405,6 +433,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   }
 
   // Airways use a screen coordinate buffer
+  getNearestLogEntries(xs, ys, maxDistance, result);
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
 
@@ -424,7 +453,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               shown &
                               (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT |
-                               map::MARKER | map::AIRWAYJ | map::AIRWAYV | map::USERPOINT),
+                               map::MARKER | map::AIRWAYJ | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),
                               xs, ys, maxDistance, result);
 
   // Update all incomplete objects, especially from search
@@ -559,6 +588,7 @@ void MapScreenIndex::updateAllGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
   updateRouteScreenGeometry(curBox);
   updateAirwayScreenGeometry(curBox);
+  updateLogEnryScreenGeometry(curBox);
   updateAirspaceScreenGeometry(curBox);
 }
 
@@ -594,6 +624,29 @@ void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapSearchResult& r
   }
 }
 
+QVector<int> MapScreenIndex::nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys,
+                                            int maxDistance) const
+{
+  QVector<int> ids;
+  for(int i = 0; i < lineList.size(); i++)
+  {
+    const std::pair<int, QLine>& linePair = lineList.at(i);
+    const QLine& line = linePair.second;
+
+    if(atools::geo::distanceToLine(xs, ys, line.x1(), line.y1(), line.x2(), line.y2(),
+                                   true /* no dist to points */) < maxDistance)
+      ids.append(linePair.first);
+  }
+  return ids;
+}
+
+/* Get all airways near cursor position */
+void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
+{
+  for(int id : nearestLineIds(logEntryLines, xs, ys, maxDistance))
+    result.logbookEntries.append(NavApp::getLogdataController()->getLogEntryById(id));
+}
+
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const
 {
@@ -601,20 +654,8 @@ void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::Map
      !paintLayer->getShownMapObjects().testFlag(map::AIRWAYV))
     return;
 
-  for(int i = 0; i < airwayLines.size(); i++)
-  {
-    const std::pair<int, QLine>& linePair = airwayLines.at(i);
-
-    const QLine& line = linePair.second;
-
-    if(atools::geo::distanceToLine(xs, ys, line.x1(), line.y1(), line.x2(), line.y2(),
-                                   true /* no dist to points */) < maxDistance)
-    {
-      map::MapAirway airway;
-      mapQuery->getAirwayById(airway, linePair.first);
-      result.airways.append(airway);
-    }
-  }
+  for(int id : nearestLineIds(airwayLines, xs, ys, maxDistance))
+    result.airways.append(mapQuery->getAirwayById(id));
 }
 
 int MapScreenIndex::getNearestRouteLegIndex(int xs, int ys, int maxDistance) const

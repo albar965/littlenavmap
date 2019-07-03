@@ -20,6 +20,8 @@
 
 #include "options/optiondata.h"
 
+#include "common/mapflags.h"
+
 #include <QColor>
 #include <QIcon>
 #include <QApplication>
@@ -54,46 +56,6 @@ struct MapMarker;
 
 struct MapAirspace;
 
-}
-
-namespace textflags {
-/* Flags that determine what information is added to an icon */
-enum TextFlag
-{
-  NONE = 0x0000,
-  IDENT = 0x0001, /* Draw airport or navaid ICAO ident */
-  TYPE = 0x0002, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
-  FREQ = 0x0004, /* Draw navaid frequency */
-  NAME = 0x0008,
-  MORSE = 0x0010, /* Draw navaid morse code */
-  INFO = 0x0020, /* Additional airport information like tower frequency, etc. */
-  ROUTE_TEXT = 0x0040, /* Object is part of route */
-  ABS_POS = 0x0080, /* Use absolute text positioning */
-  NO_BACKGROUND = 0x0100, /* No background */
-  ALL = 0x00ff
-};
-
-Q_DECLARE_FLAGS(TextFlags, TextFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
-}
-
-namespace textatt {
-/* Low level text attributes for custom text boxes */
-enum TextAttribute
-{
-  NONE = 0x00,
-  BOLD = 0x01,
-  ITALIC = 0x02,
-  UNDERLINE = 0x04,
-  OVERLINE = 0x08,
-  RIGHT = 0x10,
-  LEFT = 0x20,
-  CENTER = 0x40,
-  ROUTE_BG_COLOR = 0x80 /* Use light yellow background for route objects */
-};
-
-Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
-Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
 }
 
 /*

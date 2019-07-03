@@ -31,6 +31,7 @@ class NavDatabaseProgress;
 
 namespace userdata {
 class UserdataManager;
+class LogdataManager;
 }
 
 namespace online {
@@ -99,6 +100,7 @@ public:
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
   void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
                              bool backup);
+  void closeLogDatabase();
   void closeUserDatabase();
   void closeOnlineDatabase();
 
@@ -154,6 +156,11 @@ public:
     return userdataManager;
   }
 
+  atools::fs::userdata::LogdataManager *getLogdataManager() const
+  {
+    return logdataManager;
+  }
+
   atools::fs::online::OnlinedataManager *getOnlinedataManager() const
   {
     return onlinedataManager;
@@ -162,6 +169,11 @@ public:
   atools::sql::SqlDatabase *getDatabaseUser() const
   {
     return databaseUser;
+  }
+
+  atools::sql::SqlDatabase *getDatabaseLogbook() const
+  {
+    return databaseLogbook;
   }
 
   atools::sql::SqlDatabase *getDatabaseOnline() const;
@@ -240,6 +252,9 @@ private:
   /* Userpoint database */
   const QString DATABASE_NAME_USER = "LNMDBUSER";
 
+  /* Logbook database */
+  const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
+
   /* Network online player data */
   const QString DATABASE_NAME_ONLINE = "LNMDBONLINE";
 
@@ -256,6 +271,7 @@ private:
                            *databaseNav = nullptr /* Database for third party navigation data */,
                            *databaseMora = nullptr /* Database for MORA data - always nav */,
                            *databaseUser = nullptr /* Database for user data */,
+                           *databaseLogbook = nullptr /* Database for logbook */,
                            *databaseOnline = nullptr /* Database for network online data */;
 
   MainWindow *mainWindow = nullptr;
@@ -288,6 +304,7 @@ private:
 
   /* Also keep the database-close manager classes here */
   atools::fs::userdata::UserdataManager *userdataManager = nullptr;
+  atools::fs::userdata::LogdataManager *logdataManager = nullptr;
   atools::fs::online::OnlinedataManager *onlinedataManager = nullptr;
 
 };

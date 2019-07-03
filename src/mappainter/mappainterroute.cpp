@@ -1336,19 +1336,8 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
                                        const map::MapAirport& obj)
 {
   int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
-  textflags::TextFlags flags = textflags::IDENT;
-
-  if(drawAsRoute)
-    flags |= textflags::ROUTE_TEXT;
-
-  // Use more more detailed text for flight plan
-  if(context->mapLayer->isAirportRouteInfo())
-    flags |= textflags::NAME | textflags::INFO;
-
-  if(!(context->flags2 & opts::MAP_ROUTE_TEXT_BACKGROUND))
-    flags |= textflags::NO_BACKGROUND;
-
-  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts, flags, size,
+  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts,
+                                 context->airportTextFlagsRoute(drawAsRoute, false /* draw as log */), size,
                                  context->mapLayerEffective->isAirportDiagram(),
                                  context->mapLayer->getMaxTextLengthAirport());
 }

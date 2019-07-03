@@ -25,6 +25,7 @@
 #include "gui/mainwindow.h"
 #include "common/maptools.h"
 #include "common/mapcolors.h"
+#include "common/tabindexes.h"
 #include "userdata/userdataicons.h"
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
@@ -89,7 +90,8 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
 // Delay recognition to avoid detection of bumps
-const int TAKEOFF_LANDING_TIMEOUT = 5000;
+const int TAKEOFF_LANDING_TIMEOUT = 4000;
+const int FUEL_ON_OFF_TIMEOUT = 1000;
 
 /* Update rate on tooltip for bearing display */
 const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
@@ -138,6 +140,9 @@ MapWidget::MapWidget(MainWindow *parent)
   takeoffLandingTimer.setSingleShot(true);
   connect(&takeoffLandingTimer, &QTimer::timeout, this, &MapWidget::takeoffLandingTimeout);
 
+  fuelOnOffTimer.setSingleShot(true);
+  connect(&fuelOnOffTimer, &QTimer::timeout, this, &MapWidget::fuelOnOffTimeout);
+
   // Fill overlay / action map ============================
   // "Compass" id "compass"
   // "License" id "license"
@@ -156,6 +161,7 @@ MapWidget::~MapWidget()
 {
   elevationDisplayTimer.stop();
   takeoffLandingTimer.stop();
+  fuelOnOffTimer.stop();
 
   qDebug() << Q_FUNC_INFO << "removeEventFilter";
   removeEventFilter(this);
@@ -245,6 +251,22 @@ void MapWidget::handleInfoClick(QPoint pos)
     result.airspaces.clear();
 
   emit showInformation(result, map::NONE);
+}
+
+void MapWidget::fuelOnOffTimeout()
+{
+  const atools::fs::sc::SimConnectUserAircraft aircraft = getScreenIndexConst()->getLastUserAircraft();
+
+  if(aircraft.hasFuelFlow())
+  {
+    qDebug() << Q_FUNC_INFO << "Engine start detected" << aircraft.getZuluTime();
+    emit aircraftEngineStarted(aircraft);
+  }
+  else
+  {
+    qDebug() << Q_FUNC_INFO << "Engine stop detected" << aircraft.getZuluTime();
+    emit aircraftEngineStopped(aircraft);
+  }
 }
 
 void MapWidget::takeoffLandingTimeout()
@@ -1267,7 +1289,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
-                                          ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
+                                          ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
+                                          ui->actionMapTrafficPattern});
   Q_UNUSED(textSaver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -1280,7 +1303,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                             ui->actionRouteAirportDest, ui->actionRouteAirportAlternate,
                                             ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                             ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
-                                            ui->actionMapUserdataMove, ui->actionMapTrafficPattern});
+                                            ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
+                                            ui->actionMapTrafficPattern});
   Q_UNUSED(textSaver);
 
   // ===================================================================================
@@ -1320,6 +1344,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapUserdataEdit);
   menu.addAction(ui->actionMapUserdataMove);
   menu.addAction(ui->actionMapUserdataDelete);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionMapLogdataEdit);
   menu.addSeparator();
 
   menu.addAction(ui->actionShowInSearch);
@@ -1362,6 +1389,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapUserdataDelete->setEnabled(false);
   ui->actionMapUserdataMove->setEnabled(false);
 
+  ui->actionMapLogdataEdit->setEnabled(false);
+
   ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
   ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
@@ -1398,6 +1427,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapHelipad *helipad = nullptr;
   map::MapAirspace *airspace = nullptr, *onlineCenter = nullptr;
   map::MapUserpoint *userpoint = nullptr;
+  map::MapLogbookEntry *logEntry = nullptr;
 
   bool airportDestination = false, airportDeparture = false, routeVisible = getShownMapFeatures() & map::FLIGHTPLAN;
   // ===================================================================================
@@ -1444,6 +1474,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(!result.userpoints.isEmpty())
     userpoint = &result.userpoints.first();
+
+  if(!result.logbookEntries.isEmpty())
+    logEntry = &result.logbookEntries.first();
 
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
@@ -1494,6 +1527,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Userpoints are drawn on top of all features
   if(userpoint != nullptr)
     editUserpointText = informationText = addRouteText = searchText = map::userpointText(*userpoint);
+
+  if(logEntry != nullptr)
+    informationText = searchText = map::logEntryText(*logEntry);
 
   // Override airport if part of route and visible
   if((airportDeparture || airportDestination) && airport != nullptr && routeVisible)
@@ -1639,7 +1675,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // ===================================================================================
   // Update "show information" for airports, navaids, airways and airspaces
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
-     airway != nullptr || airspace != nullptr || userpoint != nullptr)
+     airway != nullptr || airspace != nullptr || userpoint != nullptr || logEntry != nullptr)
   {
     ui->actionMapShowInformation->setEnabled(true);
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(informationText));
@@ -1678,6 +1714,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapUserdataMove->setText(ui->actionMapUserdataMove->text().arg(QString()));
   }
 
+  if(logEntry != nullptr)
+  {
+    ui->actionMapLogdataEdit->setEnabled(true);
+    ui->actionMapLogdataEdit->setText(ui->actionMapLogdataEdit->text().arg(map::logEntryText(*logEntry)));
+  }
+  else
+    ui->actionMapLogdataEdit->setText(ui->actionMapLogdataEdit->text().arg(QString()));
+
   // ===================================================================================
   // Update "show in search" and "add to route" only for airports an navaids
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
@@ -1695,7 +1739,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
-     userpoint != nullptr || onlineAircraft != nullptr || onlineCenter != nullptr)
+     userpoint != nullptr || logEntry != nullptr || onlineAircraft != nullptr || onlineCenter != nullptr)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
@@ -1750,7 +1794,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                                  arg(procedureText));
   }
   else
+  {
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()).arg(QString()));
+    ui->actionMapShowApproachesCustom->setText(ui->actionMapShowApproachesCustom->text().arg(QString()));
+  }
 
   if(airport != nullptr && !airport->noRunways())
   {
@@ -1840,9 +1887,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       // This works only with line edit fields
       ui->dockWidgetSearch->raise();
       ui->dockWidgetSearch->show();
-      if(userpoint != nullptr && !isAircraft)
+      if(logEntry != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(3);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_LOG);
+        emit showInSearch(map::LOGBOOK, SqlRecord().
+                          appendFieldAndValue("departure_ident", logEntry->departureIdent).
+                          appendFieldAndValue("destination_ident", logEntry->destinationIdent).
+                          appendFieldAndValue("simulator", logEntry->simulator).
+                          appendFieldAndValue("aircraft_type", logEntry->aircraftType).
+                          appendFieldAndValue("aircraft_registration", logEntry->aircraftRegistration));
+      }
+      else if(userpoint != nullptr && !isAircraft)
+      {
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
         SqlRecord rec;
         if(!userpoint->ident.isEmpty())
           rec.appendFieldAndValue("ident", userpoint->ident);
@@ -1859,12 +1916,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else if(airport != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(0);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
         emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident));
       }
       else if(vor != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(1);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", vor->ident);
         if(!vor->region.isEmpty())
@@ -1874,7 +1931,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else if(ndb != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(1);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", ndb->ident);
         if(!ndb->region.isEmpty())
@@ -1884,7 +1941,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else if(waypoint != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(1);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", waypoint->ident);
         if(!waypoint->region.isEmpty())
@@ -1894,7 +1951,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else if(onlineAircraft != nullptr)
       {
-        ui->tabWidgetSearch->setCurrentIndex(4);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CLIENT);
         SqlRecord rec;
         rec.appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration());
 
@@ -1902,7 +1959,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
       else if(onlineCenter != nullptr)
       {
-        ui->tabWidgetSearch->setCurrentIndex(5);
+        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CENTER);
         SqlRecord rec;
         rec.appendFieldAndValue("callsign", onlineCenter->name);
 
@@ -1940,7 +1997,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       map::MapObjectTypes type = map::NONE;
 
       int id = -1;
-      if(userpoint != nullptr)
+      if(logEntry != nullptr)
+      {
+        id = logEntry->id;
+        type = map::LOGBOOK;
+      }
+      else if(userpoint != nullptr)
       {
         id = userpoint->id;
         type = map::USERPOINT;
@@ -2104,6 +2166,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         setContextMenuPolicy(Qt::PreventContextMenu);
       }
     }
+    else if(action == ui->actionMapLogdataEdit)
+      emit editLogEntryFromMap(logEntry->id);
   }
 }
 
@@ -2272,19 +2336,24 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapObjectTypes& type, con
   return false;
 }
 
-void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+void MapWidget::simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                     const atools::fs::sc::SimConnectUserAircraft& last)
 {
-  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
-  if(databaseLoadStatus || !aircraft.isValid())
-    return;
+  // Engine start and shutdown events ===================================
+  if(last.isValid() && aircraft.isValid() &&
+     !aircraft.isSimPaused() && !aircraft.isSimReplay() &&
+     !last.isSimPaused() && !last.isSimReplay())
+  {
+    // start timer to emit takeoff/landing signal
+    if(last.hasFuelFlow() != aircraft.hasFuelFlow())
+      fuelOnOffTimer.start(FUEL_ON_OFF_TIMEOUT);
+  }
+}
 
-  if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
-    // Update sun shade on globe with simulator time
-    setSunShadingDateTime(aircraft.getZuluTime());
-
-  getScreenIndex()->updateSimData(simulatorData);
-  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
-
+void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                          const atools::fs::sc::SimConnectUserAircraft& last)
+{
+  // ========================================================
   // Calculate travel distance since last takeoff event ===================================
   if(!takeoffLandingLastAircraft.isValid())
     // Set for the first time
@@ -2331,6 +2400,23 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(last.isFlying() != aircraft.isFlying())
       takeoffLandingTimer.start(TAKEOFF_LANDING_TIMEOUT);
   }
+}
+
+void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+{
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+  if(databaseLoadStatus || !aircraft.isValid())
+    return;
+
+  if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
+    // Update sun shade on globe with simulator time
+    setSunShadingDateTime(aircraft.getZuluTime());
+
+  getScreenIndex()->updateSimData(simulatorData);
+  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
+
+  simDataCalcTakeoffLanding(aircraft, last);
+  simDataCalcFuelOnOff(aircraft, last);
 
   // map::MapRunwayEnd runwayEnd;
   // map::MapAirport airport;
@@ -3445,12 +3531,12 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
 
       bool ground = false;
-      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f;
+      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = 1000.f;
 
       if(!route.isEmpty())
       {
         float distanceFromStart = route.getDistanceFromStart(pos);
-        ground = distanceFromStart<1.f || distanceFromStart> route.getTotalDistance() - 1.f;
+        ground = distanceFromStart<0.5f || distanceFromStart> route.getTotalDistance() - 0.5f;
 
         if(!ground)
         {
@@ -3479,7 +3565,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         {
           tas = 20.f;
           fuelflow = 20.f;
-          if(distanceFromStart < 0.5f || distanceFromStart > route.getTotalDistance() - 0.5f)
+          if(distanceFromStart < 0.2f || distanceFromStart > route.getTotalDistance() - 0.2f)
             fuelflow = 0.f;
         }
       }
@@ -3488,7 +3574,8 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         alt = route.getCruisingAltitudeFeet();
       pos.setAltitude(alt);
 
-      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow);
+      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow,
+                                                                  totalFuel);
       data.setPacketId(packetId++);
 
       emit NavApp::getConnectClient()->dataPacketReceived(data);
