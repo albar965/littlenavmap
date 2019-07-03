@@ -245,6 +245,7 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       // Shown in airport tab
       airportSearch->resetSearch();
       airportSearch->filterByRecord(record);
+      airportSearch->selectAll();
       break;
 
     case map::NDB:
@@ -253,24 +254,30 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       // Shown in navaid tab
       navSearch->resetSearch();
       navSearch->filterByRecord(record);
+      navSearch->selectAll();
       break;
 
     case map::USERPOINT:
       // Shown in user search tab
       userdataSearch->resetSearch();
       userdataSearch->filterByRecord(record);
+      userdataSearch->selectAll();
+      break;
+
       break;
 
     case map::AIRCRAFT_ONLINE:
       // Shown in user search tab
       onlineClientSearch->resetSearch();
       onlineClientSearch->filterByRecord(record);
+      onlineClientSearch->selectAll();
       break;
 
     case map::AIRSPACE_ONLINE:
       // Shown in user search tab
       onlineCenterSearch->resetSearch();
       onlineCenterSearch->filterByRecord(record);
+      onlineCenterSearch->selectAll();
       break;
 
     case map::ILS:

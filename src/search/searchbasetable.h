@@ -132,6 +132,8 @@ public:
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
 
+  void selectAll();
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

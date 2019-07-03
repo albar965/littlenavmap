@@ -1336,3 +1336,8 @@ QString SearchBaseTable::formatModelData(const Column *col, const QVariant& disp
 
   return displayRoleValue.toString();
 }
+
+void SearchBaseTable::selectAll()
+{
+  view->selectAll();
+}
