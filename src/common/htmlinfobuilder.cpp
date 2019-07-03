@@ -2190,11 +2190,9 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
     if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
       html.p(tr("No %2 shown on map.").arg(typeText), atools::util::html::BOLD);
-    html.p(aircraftText, atools::util::html::BOLD);
   }
 
-  if(!info)
-    head(html, aircraftText);
+  head(html, aircraftText);
 
   html.table();
   if(!aircraft.getAirplaneTitle().isEmpty())
@@ -3206,7 +3204,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
 void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text) const
 {
   if(info)
-    html.text(text, atools::util::html::BOLD | atools::util::html::BIG | atools::util::html::UNDERLINE);
+    html.text(text, atools::util::html::BOLD | atools::util::html::BIG);
   else
     html.b(text);
 }
