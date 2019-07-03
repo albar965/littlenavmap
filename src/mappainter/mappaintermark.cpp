@@ -147,6 +147,17 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   for(const atools::fs::sc::SimConnectAircraft& aircraft: highlightResultsSearch.onlineAircraft)
     positions.append(aircraft.getPosition());
 
+  // Draw boundary for selected online network airspaces ------------------------------------------
+  for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
+    paintAirspace(context, airspace, size);
+
+  // Draw boundary for airspaces higlighted in the information window ------------------------------------------
+  for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
+    paintAirspace(context, airspace, size);
+
+  // Selected logbook entries ------------------------------------------
+  paintLogEntries(context, highlightResultsSearch.logbookEntries);
+
   GeoPainter *painter = context->painter;
   if(context->mapLayerEffective->isAirport())
     size = context->sz(context->symbolSizeAirport,
@@ -173,18 +184,8 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     }
   }
 
-  // Draw boundary for selected online network airspaces ------------------------------------------
-  for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
-    paintAirspace(context, airspace, size);
-
-  // Draw boundary for airspaces higlighted in the information window ------------------------------------------
-  for(const MapAirspace& airspace: mapPaintWidget->getAirspaceHighlights())
-    paintAirspace(context, airspace, size);
-
   // Draw hightlights from the approach selection ------------------------------------------
   const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
-
-  positions.clear();
 
   if(leg.recFixPos.isValid())
   {
