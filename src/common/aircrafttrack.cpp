@@ -58,10 +58,7 @@ void AircraftTrack::saveState()
   if(trackFile.open(QIODevice::WriteOnly))
   {
     QDataStream out(&trackFile);
-    out.setVersion(QDataStream::Qt_5_5);
-    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
-    out << FILE_MAGIC_NUMBER << FILE_VERSION << *this;
+    saveToStream(out);
     trackFile.close();
   }
   else
@@ -77,29 +74,48 @@ void AircraftTrack::restoreState()
   {
     if(trackFile.open(QIODevice::ReadOnly))
     {
-      quint32 magic;
-      quint16 version;
       QDataStream in(&trackFile);
-      in.setVersion(QDataStream::Qt_5_5);
-      in.setFloatingPointPrecision(QDataStream::SinglePrecision);
-      in >> magic;
-
-      if(magic == FILE_MAGIC_NUMBER)
-      {
-        in >> version;
-        if(version == FILE_VERSION)
-          in >> *this;
-        else
-          qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid version number:" << version;
-      }
-      else
-        qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid magic number:" << magic;
-
+      readFromStream(in);
       trackFile.close();
     }
     else
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
+}
+
+void AircraftTrack::saveToStream(QDataStream& out)
+{
+  out.setVersion(QDataStream::Qt_5_5);
+  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+  out << FILE_MAGIC_NUMBER << FILE_VERSION << *this;
+}
+
+bool AircraftTrack::readFromStream(QDataStream& in)
+{
+  bool retval = false;
+  clear();
+
+  quint32 magic;
+  quint16 version;
+  in.setVersion(QDataStream::Qt_5_5);
+  in.setFloatingPointPrecision(QDataStream::SinglePrecision);
+  in >> magic;
+
+  if(magic == FILE_MAGIC_NUMBER)
+  {
+    in >> version;
+    if(version == FILE_VERSION)
+    {
+      in >> *this;
+      retval = true;
+    }
+    else
+      qWarning() << "Cannot read track. Invalid version number:" << version;
+  }
+  else
+    qWarning() << "Cannot read track. Invalid magic number:" << magic;
+
+  return retval;
 }
 
 bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, const QDateTime& timestamp, bool onGround)
