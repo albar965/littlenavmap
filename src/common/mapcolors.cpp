@@ -40,7 +40,7 @@ QColor taxiwayNameColor(Qt::black);
 QColor taxiwayNameBackgroundColor(255, 255, 120);
 
 QColor airportDetailBackColor(255, 255, 255);
-QColor airportEmptyColor(110, 110, 110);
+QColor airportEmptyColor(130, 130, 130);
 QColor toweredAirportColor(15, 70, 130);
 QColor unToweredAirportColor(126, 58, 91);
 QColor vorSymbolColor(Qt::darkBlue);
