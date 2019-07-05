@@ -15,11 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "userdata/logdatadialog.h"
+#include "logbook/logdatadialog.h"
 #include "ui_logdatadialog.h"
 
 #include "common/constants.h"
-#include "userdata/dialogrecordhelper.h"
+#include "common/dialogrecordhelper.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
 #include "common/unitstringtool.h"

@@ -21,7 +21,7 @@
 #include "sql/sqlrecord.h"
 #include "geo/pos.h"
 #include "atools.h"
-#include "userdata/dialogrecordhelper.h"
+#include "common/dialogrecordhelper.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "gui/mainwindow.h"

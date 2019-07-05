@@ -20,7 +20,7 @@
 #include "navapp.h"
 #include "common/constants.h"
 #include "search/sqlcontroller.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "gui/widgetutil.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"

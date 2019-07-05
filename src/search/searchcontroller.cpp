@@ -32,7 +32,7 @@
 #include "search/proceduresearch.h"
 #include "options/optiondata.h"
 #include "userdata/userdatacontroller.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"

@@ -33,7 +33,7 @@
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "fs/userdata/userdatamanager.h"
 #include "common/symbolpainter.h"

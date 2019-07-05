@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "userdata/dialogrecordhelper.h"
+#include "common/dialogrecordhelper.h"
 
 #include "sql/sqlrecord.h"
 #include "common/unit.h"

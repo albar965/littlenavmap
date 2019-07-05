@@ -75,7 +75,7 @@
 #include "mapgui/imageexportdialog.h"
 #include "web/webcontroller.h"
 #include "weather/windreporter.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "search/logdatasearch.h"
 
 #include <marble/LegendWidget.h>

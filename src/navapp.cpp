@@ -33,7 +33,7 @@
 #include "fs/common/morareader.h"
 #include "common/updatehandler.h"
 #include "userdata/userdatacontroller.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "search/searchcontroller.h"
 #include "common/vehicleicons.h"

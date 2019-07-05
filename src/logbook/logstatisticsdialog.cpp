@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "userdata/logstatisticsdialog.h"
+#include "logbook/logstatisticsdialog.h"
 #include "ui_logstatisticsdialog.h"
 
 #include "logdatacontroller.h"
@@ -386,7 +386,7 @@ void LogStatisticsDialog::initQueries()
        tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
       {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft, Qt::AlignLeft,
        Qt::AlignLeft, Qt::AlignLeft},
-      "select cast(distance * %1 as double), departure_ident, departure_name, destination_ident, destination_name, "
+      "select cast(distance * %1 as int), departure_ident, departure_name, destination_ident, destination_name, "
       "simulator, aircraft_name, aircraft_type, aircraft_registration "
       "from logbook order by distance desc limit 250"
     },

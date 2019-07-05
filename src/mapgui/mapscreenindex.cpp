@@ -21,7 +21,7 @@
 #include "common/proctypes.h"
 #include "route/routecontroller.h"
 #include "online/onlinedatacontroller.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapfunctions.h"
 #include "mapgui/mapwidget.h"

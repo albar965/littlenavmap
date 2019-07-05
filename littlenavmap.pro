@@ -220,6 +220,7 @@ SOURCES += \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
   src/common/coordinateconverter.cpp \
+  src/common/dialogrecordhelper.cpp \
   src/common/elevationprovider.cpp \
   src/common/formatter.cpp \
   src/common/htmlinfobuilder.cpp \
@@ -255,6 +256,9 @@ SOURCES += \
   src/gui/trafficpatterndialog.cpp \
   src/gui/updatedialog.cpp \
   src/info/infocontroller.cpp \
+  src/logbook/logdatacontroller.cpp \
+  src/logbook/logdatadialog.cpp \
+  src/logbook/logstatisticsdialog.cpp \
   src/main.cpp\
   src/mapgui/aprongeometrycache.cpp \
   src/mapgui/imageexportdialog.cpp \
@@ -338,10 +342,6 @@ SOURCES += \
   src/search/sqlproxymodel.cpp \
   src/search/userdatasearch.cpp \
   src/search/usericondelegate.cpp \
-  src/userdata/dialogrecordhelper.cpp \
-  src/userdata/logdatacontroller.cpp \
-  src/userdata/logdatadialog.cpp \
-  src/userdata/logstatisticsdialog.cpp \
   src/userdata/userdatacontroller.cpp \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataexportdialog.cpp \
@@ -360,6 +360,7 @@ HEADERS  += \
   src/common/airportfiles.h \
   src/common/constants.h \
   src/common/coordinateconverter.h \
+  src/common/dialogrecordhelper.h \
   src/common/elevationprovider.h \
   src/common/formatter.h \
   src/common/htmlinfobuilder.h \
@@ -395,6 +396,9 @@ HEADERS  += \
   src/gui/trafficpatterndialog.h \
   src/gui/updatedialog.h \
   src/info/infocontroller.h \
+  src/logbook/logdatacontroller.h \
+  src/logbook/logdatadialog.h \
+  src/logbook/logstatisticsdialog.h \
   src/mapgui/aprongeometrycache.h \
   src/mapgui/imageexportdialog.h \
   src/mapgui/mapfunctions.h \
@@ -477,10 +481,6 @@ HEADERS  += \
   src/search/sqlproxymodel.h \
   src/search/userdatasearch.h \
   src/search/usericondelegate.h \
-  src/userdata/dialogrecordhelper.h \
-  src/userdata/logdatacontroller.h \
-  src/userdata/logdatadialog.h \
-  src/userdata/logstatisticsdialog.h \
   src/userdata/userdatacontroller.h \
   src/userdata/userdatadialog.h \
   src/userdata/userdataexportdialog.h \

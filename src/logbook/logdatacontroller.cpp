@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 
 #include "fs/userdata/logdatamanager.h"
 #include "common/constants.h"
@@ -28,14 +28,14 @@
 #include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "query/airportquery.h"
-#include "userdata/logdatadialog.h"
+#include "logbook/logdatadialog.h"
 #include "search/logdatasearch.h"
 #include "settings/settings.h"
 #include "common/maptypes.h"
 #include "sql/sqltransaction.h"
 #include "gui/errorhandler.h"
 #include "exception.h"
-#include "userdata/logstatisticsdialog.h"
+#include "logbook/logstatisticsdialog.h"
 #include "common/maptypesfactory.h"
 
 #include <QDebug>

@@ -22,7 +22,7 @@
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
 #include "online/onlinedatacontroller.h"
-#include "userdata/logdatacontroller.h"
+#include "logbook/logdatacontroller.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "query/airportquery.h"
