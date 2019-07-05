@@ -195,6 +195,7 @@ const QLatin1Literal USERDATA_EDIT_ADD_DIALOG("UserdataDialog/Widget");
 const QLatin1Literal FLIGHTPLAN_ONLINE_EXPORT("Route/FlightplanOnlineExport");
 
 const QLatin1Literal LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
+const QLatin1Literal LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
 
 /* Options dialog */
 const QLatin1Literal OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");

@@ -844,6 +844,8 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getLogdataController(), &LogdataController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
@@ -979,6 +981,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
   connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
   connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
+  connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::showStatistics);
 
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile, this, &MainWindow::routeOpenFile);
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadPerfFile,

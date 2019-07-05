@@ -341,6 +341,7 @@ SOURCES += \
   src/userdata/dialogrecordhelper.cpp \
   src/userdata/logdatacontroller.cpp \
   src/userdata/logdatadialog.cpp \
+  src/userdata/logstatisticsdialog.cpp \
   src/userdata/userdatacontroller.cpp \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataexportdialog.cpp \
@@ -479,6 +480,7 @@ HEADERS  += \
   src/userdata/dialogrecordhelper.h \
   src/userdata/logdatacontroller.h \
   src/userdata/logdatadialog.h \
+  src/userdata/logstatisticsdialog.h \
   src/userdata/userdatacontroller.h \
   src/userdata/userdatadialog.h \
   src/userdata/userdataexportdialog.h \
@@ -511,6 +513,7 @@ FORMS += \
   src/route/routestringdialog.ui \
   src/route/userwaypointdialog.ui \
   src/userdata/logdatadialog.ui \
+  src/userdata/logstatisticsdialog.ui \
   src/userdata/userdatadialog.ui \
   src/userdata/userdataexportdialog.ui
 

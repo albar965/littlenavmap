@@ -35,6 +35,7 @@
 #include "sql/sqltransaction.h"
 #include "gui/errorhandler.h"
 #include "exception.h"
+#include "userdata/logstatisticsdialog.h"
 #include "common/maptypesfactory.h"
 
 #include <QDebug>
@@ -48,10 +49,14 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   : manager(logdataManager), mainWindow(parent)
 {
   dialog = new atools::gui::Dialog(mainWindow);
+  statsDialog = new LogStatisticsDialog(mainWindow, this);
+
+  connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);
 }
 
 LogdataController::~LogdataController()
 {
+  delete statsDialog;
   delete aircraftAtTakeoff;
   delete dialog;
 }
@@ -72,6 +77,11 @@ void LogdataController::restoreState()
 {
 }
 
+void LogdataController::optionsChanged()
+{
+  statsDialog->optionsChanged();
+}
+
 void LogdataController::deleteLogEntryFromMap(int id)
 {
   deleteLogEntries({id});
@@ -87,6 +97,48 @@ map::MapLogbookEntry LogdataController::getLogEntryById(int id)
 atools::sql::SqlRecord LogdataController::getLogEntryRecordById(int id)
 {
   return manager->getRecord(id);
+}
+
+void LogdataController::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim,
+                                           QDateTime& latestSim)
+{
+  manager->getFlightStatsTime(earliest, latest, earliestSim, latestSim);
+}
+
+void LogdataController::getFlightStatsDistance(float& distTotal, float& distMax, float& distAverage)
+{
+  manager->getFlightStatsDistance(distTotal, distMax, distAverage);
+}
+
+void LogdataController::getFlightStatsAirports(int& numDepartAirports, int& numDestAirports)
+{
+  manager->getFlightStatsAirports(numDepartAirports, numDestAirports);
+}
+
+void LogdataController::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,
+                                               float& timeAverageSim)
+{
+  manager->getFlightStatsTripTime(timeMaximum, timeAverage, timeMaximumSim, timeAverageSim);
+}
+
+void LogdataController::getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators)
+{
+  manager->getFlightStatsAircraft(numTypes, numRegistrations, numNames, numSimulators);
+}
+
+void LogdataController::getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators)
+{
+  manager->getFlightStatsSimulator(numSimulators);
+}
+
+void LogdataController::showStatistics()
+{
+  statsDialog->show();
+}
+
+atools::sql::SqlDatabase *LogdataController::getDatabase() const
+{
+  return manager->getDatabase();
 }
 
 void LogdataController::aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft)

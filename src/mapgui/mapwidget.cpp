@@ -90,7 +90,8 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 const int ALTITUDE_UPDATE_TIMEOUT = 200;
 
 // Delay recognition to avoid detection of bumps
-const int TAKEOFF_LANDING_TIMEOUT = 4000;
+const int LANDING_TIMEOUT = 4000;
+const int TAKEOFF_TIMEOUT = 2000;
 const int FUEL_ON_OFF_TIMEOUT = 1000;
 
 /* Update rate on tooltip for bearing display */
@@ -2398,7 +2399,7 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
   {
     // start timer to emit takeoff/landing signal
     if(last.isFlying() != aircraft.isFlying())
-      takeoffLandingTimer.start(TAKEOFF_LANDING_TIMEOUT);
+      takeoffLandingTimer.start(aircraft.isFlying() ? TAKEOFF_TIMEOUT : LANDING_TIMEOUT);
   }
 }
 

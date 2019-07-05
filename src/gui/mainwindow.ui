@@ -436,6 +436,7 @@
      <string>&amp;Logbook</string>
     </property>
     <addaction name="actionLogdataShowSearch"/>
+    <addaction name="actionLogdataShowStatistics"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataImportCSV"/>
     <addaction name="actionLogdataExportCSV"/>
@@ -10478,6 +10479,14 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Edit Log Entry</string>
+   </property>
+  </action>
+  <action name="actionLogdataShowStatistics">
+   <property name="text">
+    <string>S&amp;how Statistics</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Statistics</string>
    </property>
   </action>
  </widget>

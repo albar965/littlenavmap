@@ -24,6 +24,7 @@
 namespace atools {
 namespace sql {
 class SqlRecord;
+class SqlDatabase;
 }
 
 namespace geo {
@@ -54,6 +55,7 @@ struct MapLogbookEntry;
 }
 
 class MainWindow;
+class LogStatisticsDialog;
 class QAction;
 
 /*
@@ -101,6 +103,31 @@ public:
   map::MapLogbookEntry getLogEntryById(int id);
   atools::sql::SqlRecord getLogEntryRecordById(int id);
 
+  /* Get various statistical information for departure times */
+  void getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim, QDateTime& latestSim);
+
+  /* Flight plant distances in NM for logbook entries */
+  void getFlightStatsDistance(float& distTotal, float& distMax, float& distAverage);
+
+  /* Trip Time in hours */
+  void getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim, float& timeAverageSim);
+
+  /* Various numbers */
+  void getFlightStatsAirports(int& numDepartAirports, int& numDestAirports);
+  void getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators);
+
+  /* Simulator to number of logbook entries */
+  void getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators);
+
+  /* Make the non-modal statistics dialog visible */
+  void showStatistics();
+
+  /* Log database */
+  atools::sql::SqlDatabase *getDatabase() const;
+
+  /* Update units */
+  void optionsChanged();
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection);
@@ -119,6 +146,8 @@ private:
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
   int logEntryId = -1;
+
+  LogStatisticsDialog *statsDialog = nullptr;
 
   atools::fs::userdata::LogdataManager *manager;
   atools::gui::Dialog *dialog;

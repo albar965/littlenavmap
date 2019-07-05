@@ -34,7 +34,7 @@ class AirportIconDelegate :
 
 public:
   AirportIconDelegate(const ColumnList *columns);
-  virtual ~AirportIconDelegate();
+  virtual ~AirportIconDelegate() override;
 
 private:
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
