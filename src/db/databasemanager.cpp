@@ -17,7 +17,7 @@
 
 #include "db/databasemanager.h"
 
-#include "db/databaseerrordialog.h"
+#include "gui/textdialog.h"
 #include "gui/application.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
@@ -1386,8 +1386,8 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
       numScenery++;
     }
 
-    DatabaseErrorDialog errorDialog(progressDialog);
-    errorDialog.setErrorMessages(errorTexts);
+    TextDialog errorDialog(progressDialog, QApplication::applicationName() + tr(" - Load Scenery Library Errors"));
+    errorDialog.setHtmlMessage(errorTexts);
     errorDialog.exec();
   }
 

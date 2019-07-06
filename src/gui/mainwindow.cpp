@@ -2926,6 +2926,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
   s.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   s.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
   s.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);

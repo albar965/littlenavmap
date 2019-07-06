@@ -15,32 +15,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "db/databaseerrordialog.h"
-#include "ui_databaseerrordialog.h"
+#ifndef LITTLENAVMAP_TEXTDIALOG_H
+#define LITTLENAVMAP_TEXTDIALOG_H
 
-#include "gui/helphandler.h"
+#include <QDialog>
 
-DatabaseErrorDialog::DatabaseErrorDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::DatabaseErrorDialog)
-{
-  ui->setupUi(this);
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-  setWindowModality(Qt::ApplicationModal);
-
-  connect(ui->textBrowserDatabaseErrors, &QTextBrowser::anchorClicked, this, &DatabaseErrorDialog::anchorClicked);
+namespace Ui {
+class TextDialog;
 }
 
-DatabaseErrorDialog::~DatabaseErrorDialog()
-{
-  delete ui;
-}
+class QAbstractButton;
 
-void DatabaseErrorDialog::setErrorMessages(const QString& messages)
+/*
+ * Simple and general text dialog that shows a text browser with error messages for example.
+ */
+class TextDialog :
+  public QDialog
 {
-  ui->textBrowserDatabaseErrors->setHtml(messages);
-}
+  Q_OBJECT
 
-void DatabaseErrorDialog::anchorClicked(const QUrl& url)
-{
-  atools::gui::HelpHandler::openUrl(this, url);
-}
+public:
+  explicit TextDialog(QWidget *parent, const QString& title);
+  virtual ~TextDialog() override;
+
+  /* Set HTML text message to show */
+  void setHtmlMessage(const QString& messages);
+
+private:
+  void buttonBoxClicked(QAbstractButton *button);
+  void anchorClicked(const QUrl& url);
+
+  Ui::TextDialog *ui;
+
+};
+
+#endif // LITTLENAVMAP_TEXTDIALOG_H
