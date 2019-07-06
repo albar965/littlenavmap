@@ -18,14 +18,15 @@
 #include "gui/textdialog.h"
 #include "ui_textdialog.h"
 
+#include "common/constants.h"
 #include "gui/helphandler.h"
 
 #include <QMimeData>
 #include <QPushButton>
 #include <QClipboard>
 
-TextDialog::TextDialog(QWidget *parent, const QString& title) :
-  QDialog(parent), ui(new Ui::TextDialog)
+TextDialog::TextDialog(QWidget *parent, const QString& title, const QString& helpBaseUrlParam)
+  : QDialog(parent), ui(new Ui::TextDialog), helpBaseUrl(helpBaseUrlParam)
 {
   ui->setupUi(this);
   setWindowTitle(title);
@@ -35,6 +36,9 @@ TextDialog::TextDialog(QWidget *parent, const QString& title) :
   // Copy to clipboard button in button bar ============================
   QPushButton *button = ui->buttonBox->addButton(tr("&Copy to Clipboard"), QDialogButtonBox::NoRole);
   button->setToolTip(tr("Copies message as formatted text to the clipboard"));
+
+  if(helpBaseUrl.isEmpty())
+    ui->buttonBox->removeButton(ui->buttonBox->button(QDialogButtonBox::Help));
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TextDialog::buttonBoxClicked);
   connect(ui->textBrowser, &QTextBrowser::anchorClicked, this, &TextDialog::anchorClicked);
@@ -51,6 +55,11 @@ void TextDialog::buttonBoxClicked(QAbstractButton *button)
 
   if(buttonType == QDialogButtonBox::Ok)
     accept();
+  else if(buttonType == QDialogButtonBox::Help)
+  {
+    if(!helpBaseUrl.isEmpty())
+      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + helpBaseUrl, lnm::helpLanguageOnline());
+  }
   else if(buttonType == QDialogButtonBox::NoButton)
   {
     // Only non-standard button is copy to clipboard

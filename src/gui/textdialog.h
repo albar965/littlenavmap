@@ -35,7 +35,7 @@ class TextDialog :
   Q_OBJECT
 
 public:
-  explicit TextDialog(QWidget *parent, const QString& title);
+  explicit TextDialog(QWidget *parent, const QString& title, const QString& helpBaseUrlParam = QString());
   virtual ~TextDialog() override;
 
   /* Set HTML text message to show */
@@ -46,6 +46,7 @@ private:
   void anchorClicked(const QUrl& url);
 
   Ui::TextDialog *ui;
+  QString helpBaseUrl;
 
 };
 
