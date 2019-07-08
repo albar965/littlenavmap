@@ -156,13 +156,14 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
 
   qDebug() << Q_FUNC_INFO << buttonType;
 
-  if(buttonType == QDialogButtonBox::Close)
+  if(buttonType == QDialogButtonBox::Ok)
   {
     saveState();
     accept();
   }
   else if(buttonType == QDialogButtonBox::NoButton)
   {
+    // Only non-standard button is copy to clipboard
     if(ui->tabWidget->currentIndex() == 0)
     {
       // Copy formatted and plain text from text browser to clipboard

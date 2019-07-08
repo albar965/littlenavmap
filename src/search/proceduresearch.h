@@ -102,7 +102,7 @@ signals:
   void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
 private:
   friend class TreeEventFilter;

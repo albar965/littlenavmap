@@ -1690,11 +1690,13 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
     html.table();
     html.row2(tr("From:"),
               airportLink(html, logEntry.departureIdent, logEntry.departureName) +
-              tr(", %1").arg(Unit::altFeet(rec.valueFloat("departure_alt"))),
+              (logEntry.departureIdent.isEmpty() ? QString() :
+               tr(", %1").arg(Unit::altFeet(rec.valueFloat("departure_alt")))),
               atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
     html.row2(tr("To:"),
               airportLink(html, logEntry.destinationIdent, logEntry.destinationName) +
-              tr(", %1").arg(Unit::altFeet(rec.valueFloat("destination_alt"))),
+              (logEntry.destinationIdent.isEmpty() ? QString() :
+               tr(", %1").arg(Unit::altFeet(rec.valueFloat("destination_alt")))),
               atools::util::html::NO_ENTITIES | atools::util::html::BOLD);
 
     if(info)
@@ -1706,7 +1708,9 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       html.table();
     }
     if(rec.valueStr("aircraft_name").isEmpty())
-      html.row2If(tr("Aircraft model:"), rec.valueStr("aircraft_type"));
+      html.row2If(tr("Aircraft type:"), rec.valueStr("aircraft_type"));
+    else if(rec.valueStr("aircraft_type").isEmpty())
+      html.row2If(tr("Aircraft model:"), rec.valueStr("aircraft_name"));
     else
       html.row2If(tr("Aircraft model and type:"), tr("%1, %2").
                   arg(rec.valueStr("aircraft_name")).arg(rec.valueStr("aircraft_type")));
@@ -1747,8 +1751,11 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       html.row2(tr("Travel time:"), formatter::formatMinutesHoursLong(travelTimeHours));
       if(info)
       {
-        html.row2(tr("Average ground speed:"), Unit::speedKts(rec.valueFloat("distance_flown") / travelTimeHours));
-        html.row2(tr("Fuel flow:"), Unit::ffLbs(rec.valueFloat("used_fuel") / travelTimeHours));
+        if(rec.valueFloat("distance_flown") > 0.f)
+          html.row2(tr("Average ground speed:"), Unit::speedKts(rec.valueFloat("distance_flown") / travelTimeHours));
+
+        if(rec.valueFloat("used_fuel") > 0.f)
+          html.row2(tr("Fuel flow:"), Unit::ffLbs(rec.valueFloat("used_fuel") / travelTimeHours));
       }
     }
 
@@ -1761,18 +1768,25 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       html.table();
 
       QDateTime departTime = rec.valueDateTime("departure_time");
-      QString departTimeZone = departTime.timeZoneAbbreviation();
-      html.row2If(tr("Runway:"), rec.valueStr("departure_runway"));
-      html.row2If(tr("Real time:"),
-                  tr("%1 %2").arg(locale.toString(departTime, QLocale::ShortFormat)).arg(departTimeZone));
+      if(departTime.isValid())
+      {
+        QString departTimeZone = departTime.timeZoneAbbreviation();
+        html.row2If(tr("Runway:"), rec.valueStr("departure_runway"));
+        html.row2If(tr("Real time:"),
+                    tr("%1 %2").arg(locale.toString(departTime, QLocale::ShortFormat)).arg(departTimeZone));
+      }
     }
     QDateTime departTimeSim = rec.valueDateTime("departure_time_sim");
-    QString departTimeZoneSim = departTimeSim.timeZoneAbbreviation();
-    html.row2If(info ? tr("Simulator time:") : tr("Departure time:"),
-                tr("%1 %2").arg(locale.toString(departTimeSim, QLocale::ShortFormat)).arg(departTimeZoneSim));
+    if(departTimeSim.isValid())
+    {
+      QString departTimeZoneSim = departTimeSim.timeZoneAbbreviation();
+      html.row2If(info ? tr("Simulator time:") : tr("Departure time:"),
+                  tr("%1 %2").arg(locale.toString(departTimeSim, QLocale::ShortFormat)).arg(departTimeZoneSim));
+    }
     if(info)
     {
-      html.row2(tr("Gross Weight:"), Unit::fuelLbsGallon(rec.valueFloat("grossweight")));
+      if(rec.valueFloat("grossweight") > 0.f)
+        html.row2(tr("Gross Weight:"), Unit::fuelLbsGallon(rec.valueFloat("grossweight")));
       addCoordinates(Pos(rec.valueFloat("departure_lonx"),
                          rec.valueFloat("departure_laty"),
                          rec.valueFloat("departure_alt", 0.f)), html);
@@ -1784,14 +1798,21 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
 
       html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
       QDateTime destTime = rec.valueDateTime("destination_time");
-      QString destTimeZone = destTime.timeZoneAbbreviation();
-      html.row2If(tr("Real time:"),
-                  tr("%1 %2").arg(locale.toString(destTime, QLocale::ShortFormat)).arg(destTimeZone));
+      if(destTime.isValid())
+      {
+        QString destTimeZone = destTime.timeZoneAbbreviation();
+        html.row2If(tr("Real time:"),
+                    tr("%1 %2").arg(locale.toString(destTime, QLocale::ShortFormat)).arg(destTimeZone));
+      }
 
       QDateTime destTimeSim = rec.valueDateTime("destination_time_sim");
-      QString destTimeZoneSim = destTimeSim.timeZoneAbbreviation();
-      html.row2If(tr("Simulator time:"),
-                  tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat)).arg(destTimeZoneSim));
+      if(destTimeSim.isValid())
+      {
+        QString destTimeZoneSim = destTimeSim.timeZoneAbbreviation();
+        html.row2If(tr("Simulator time:"),
+                    tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat)).arg(destTimeZoneSim));
+      }
+
       addCoordinates(Pos(rec.valueFloat("destination_lonx"),
                          rec.valueFloat("destination_laty"),
                          rec.valueFloat("destination_alt", 0.f)), html);
@@ -1799,27 +1820,33 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
 
       using atools::geo::fromLbsToGal;
       // Fuel =======================================================
-      html.p(tr("Fuel"), atools::util::html::BOLD);
-      html.table();
-      bool jetfuel = rec.valueBool("is_jetfuel");
-      atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
-      html.row2(tr("Type:"), jetfuel ? tr("Jetfuel") : tr("Avgas"));
-      html.row2(tr("Trip:"), Unit::fuelLbsAndGal(rec.valueFloat("trip_fuel"),
-                                                 fromLbsToGal(jetfuel, rec.valueFloat("trip_fuel"))), flags);
-      html.row2(tr("Block:"), Unit::fuelLbsAndGal(rec.valueFloat("block_fuel"),
-                                                  fromLbsToGal(jetfuel, rec.valueFloat("block_fuel"))), flags);
-      html.row2(tr("Used:"), Unit::fuelLbsAndGal(rec.valueFloat("used_fuel"),
-                                                 fromLbsToGal(jetfuel, rec.valueFloat("used_fuel"))), flags);
-      html.tableEnd();
+      if(rec.valueFloat("trip_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f || rec.valueFloat("block_fuel") > 0.f)
+      {
+        html.p(tr("Fuel"), atools::util::html::BOLD);
+        html.table();
+        bool jetfuel = rec.valueBool("is_jetfuel");
+        atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
+        html.row2(tr("Type:"), jetfuel ? tr("Jetfuel") : tr("Avgas"));
+        html.row2(tr("Trip:"), Unit::fuelLbsAndGal(rec.valueFloat("trip_fuel"),
+                                                   fromLbsToGal(jetfuel, rec.valueFloat("trip_fuel"))), flags);
+        html.row2(tr("Block:"), Unit::fuelLbsAndGal(rec.valueFloat("block_fuel"),
+                                                    fromLbsToGal(jetfuel, rec.valueFloat("block_fuel"))), flags);
+        html.row2(tr("Used:"), Unit::fuelLbsAndGal(rec.valueFloat("used_fuel"),
+                                                   fromLbsToGal(jetfuel, rec.valueFloat("block_fuel"))), flags);
+        html.tableEnd();
+      }
 
       // Files =======================================================
-      html.p(tr("Files"), atools::util::html::BOLD);
-      html.table();
-      html.row2(tr("Flight plan:"), filepathTextShow(rec.valueStr("flightplan_file")),
-                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-      html.row2(tr("Aircraft performance:"), filepathTextShow(rec.valueStr("performance_file")),
-                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-      html.tableEnd();
+      if(!rec.valueStr("flightplan_file").isEmpty() || !rec.valueStr("performance_file").isEmpty())
+      {
+        html.p(tr("Files"), atools::util::html::BOLD);
+        html.table();
+        html.row2(tr("Flight plan:"), filepathTextShow(rec.valueStr("flightplan_file")),
+                  atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+        html.row2(tr("Aircraft performance:"), filepathTextShow(rec.valueStr("performance_file")),
+                  atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+        html.tableEnd();
+      }
 
       // Description =======================================================
       QString description = logEntry.description;
@@ -1827,7 +1854,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
       {
         html.p().b(tr("Description")).pEnd();
         html.table();
-        html.row2(QString(), atools::elideTextLinesShort(description, info ? 40 : 4),
+        html.row2(QString(), atools::elideTextLinesShort(description, info ? 200 : 4),
                   (info ? atools::util::html::AUTOLINK : atools::util::html::NONE));
       }
     } // if(info)

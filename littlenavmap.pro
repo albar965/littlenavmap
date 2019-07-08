@@ -257,6 +257,7 @@ SOURCES += \
   src/gui/updatedialog.cpp \
   src/info/infocontroller.cpp \
   src/logbook/logdatacontroller.cpp \
+  src/logbook/logdataconverter.cpp \
   src/logbook/logdatadialog.cpp \
   src/logbook/logstatisticsdialog.cpp \
   src/main.cpp\
@@ -397,6 +398,7 @@ HEADERS  += \
   src/gui/updatedialog.h \
   src/info/infocontroller.h \
   src/logbook/logdatacontroller.h \
+  src/logbook/logdataconverter.h \
   src/logbook/logdatadialog.h \
   src/logbook/logstatisticsdialog.h \
   src/mapgui/aprongeometrycache.h \
@@ -502,6 +504,8 @@ FORMS += \
   src/gui/timedialog.ui \
   src/gui/trafficpatterndialog.ui \
   src/gui/updatedialog.ui \
+  src/logbook/logdatadialog.ui \
+  src/logbook/logstatisticsdialog.ui \
   src/mapgui/imageexportdialog.ui \
   src/options/options.ui \
   src/perf/aircraftperfdialog.ui \
@@ -512,8 +516,6 @@ FORMS += \
   src/route/routeexportdialog.ui \
   src/route/routestringdialog.ui \
   src/route/userwaypointdialog.ui \
-  src/userdata/logdatadialog.ui \
-  src/userdata/logstatisticsdialog.ui \
   src/userdata/userdatadialog.ui \
   src/userdata/userdataexportdialog.ui
 

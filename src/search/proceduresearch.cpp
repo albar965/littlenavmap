@@ -978,7 +978,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
     ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
-    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident));
+    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airportSim.ident), true /* select */);
   }
   // Done by the actions themselves
   // else if(action == ui->actionSearchProcedureInformation)

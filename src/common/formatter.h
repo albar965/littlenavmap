@@ -20,9 +20,16 @@
 
 #include <QString>
 
+class QDateTime;
+
 class QElapsedTimer;
 
 namespace formatter {
+
+void initTranslateableTexts();
+
+/* try to read a date time string using local and English locale and yyyy/yy variants */
+QDateTime readDateTime(QString str);
 
 /* Checks if the lat long coordinate string is valid and returns an error message or a message for validity checking*/
 bool checkCoordinates(QString& message, const QString& text);

@@ -206,7 +206,7 @@ signals:
   void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int oldIndex);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Show information about objects from single click or context menu */
   void showInformation(map::MapSearchResult result, map::MapObjectTypes preferredType = map::NONE);

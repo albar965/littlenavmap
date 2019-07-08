@@ -25,6 +25,7 @@
 #include "gui/mapposhistory.h"
 #include "common/maptypes.h"
 #include "gui/application.h"
+#include "common/formatter.h"
 #include "exception.h"
 #include "navapp.h"
 #include "atools.h"
@@ -319,6 +320,7 @@ int main(int argc, char *argv[])
     map::initTranslateableTexts();
     proc::initTranslateableTexts();
     atools::fs::weather::initTranslateableTexts();
+    formatter::initTranslateableTexts();
 
 #if defined(Q_OS_MACOS)
     // Check for minimum macOS version 10.10

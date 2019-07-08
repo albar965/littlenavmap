@@ -540,7 +540,7 @@ struct MapLogbookEntry
 
   bool isValid() const
   {
-    return departurePos.isValid();
+    return departurePos.isValid() || destinationPos.isValid();
   }
 
   int getId() const

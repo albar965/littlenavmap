@@ -2686,12 +2686,14 @@ Dies kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="467"/>
-        <source>This will convert all userpoints of type &amp;quot;Logbook&amp;quot; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &amp;quot;Description&amp;quot; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;&lt;big&gt;*Converted from userdata*&lt;/big&gt;&lt;/code&gt;&lt;br/&gt;in the description field.&lt;br/&gt;&lt;br/&gt;Continue?</source>
+        <source>This will convert all userpoints of type &lt;code&gt;Logbook&lt;/code&gt; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &lt;code&gt;Description&lt;/code&gt; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;*Converted from userdata*&lt;/code&gt;&lt;br/&gt;in the description field.&lt;br/&gt;&lt;br/&gt;Continue?</source>
+        <oldsource>This will convert all userpoints of type &amp;quot;Logbook&amp;quot; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &amp;quot;Description&amp;quot; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;&lt;big&gt;*Converted from userdata*&lt;/big&gt;&lt;/code&gt;&lt;br/&gt;in the description field.&lt;br/&gt;&lt;br/&gt;Continue?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="523"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="528"/>
         <source>*Converted from userdata*</source>
+        <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataConverter::convertFromUserdata</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2700,27 +2702,27 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="488"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="490"/>
         <source>Created %1 log entries.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="494"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="497"/>
         <source>Logbook Conversion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="498"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="501"/>
         <source>Conversion Errors/Warnings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="499"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="502"/>
         <source>Some warnings might appear because of terminated flights, repeated langings and/or takeoffs. These can be ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="506"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="509"/>
         <source> - Conversion Errors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2812,45 +2814,46 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         <translation type="vanished">Ankunft</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="90"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="94"/>
         <source>&lt;i&gt;Ident &amp;quot;%1&amp;quot;, name &amp;quot;%2&amp;quot;, region &amp;quot;%3&amp;quot;, tags &amp;quot;%4&amp;quot;, userdata_id %5&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="94"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="98"/>
         <source>&lt;i&gt;Ident &amp;quot;%1&amp;quot;, name &amp;quot;%2&amp;quot;, region &amp;quot;%3&amp;quot;, tags &amp;quot;%4&amp;quot;&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="108"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="116"/>
         <source>Entry has both departure and destination tag: %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="117"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="125"/>
         <source>Entry has neither departure nor destination tag: %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="124"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="132"/>
         <source>Additional departure found: %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="131"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="139"/>
         <source>Additional destination found: %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="160"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="174"/>
         <source>Converted from userdata
 
 ==== Original departure description:
 </source>
+        <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataController::convertUserdata</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="163"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="177"/>
         <source>
 
 ==== Original arrival description:
@@ -2858,22 +2861,22 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="329"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="394"/>
         <source>Invalid altitude unit &quot;%1&quot; for %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="348"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="414"/>
         <source>Invalid distance unit &quot;%1&quot; for %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="376"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="443"/>
         <source>Invalid number &quot;%1&quot; for %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="393"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="458"/>
         <source>Invalid date and time &quot;%1&quot; for %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21639,13 +21642,15 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>Nutzerpunkt verschoben.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="99"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="106"/>
         <source>Departure</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Abflug</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="103"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="111"/>
         <source>Arrival</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Ankunft</translation>
     </message>
     <message>
@@ -21657,28 +21662,32 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation type="vanished">%1 bei %2%3</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="234"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="251"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="256"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="293"/>
         <source>Simulator Date and Time: %1 %2, %3 %4</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Simulator-Datum und Zeit: %1 %2, %3 %4</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="243"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="259"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="278"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="314"/>
         <source>Registration: %1</source>
         <oldsource>Date and Time: %1</oldsource>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation type="unfinished">Datum und Zeit: %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="238"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="254"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="263"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="299"/>
         <source>Flight Plan:</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Flugplan:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="239"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="255"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="266"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="302"/>
         <source>Aircraft Performance:</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Flugzeugleistung:</translation>
     </message>
     <message>
@@ -21686,9 +21695,10 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation type="vanished">Von: %2 nach %3</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="240"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="256"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="269"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="305"/>
         <source>Cruising altitude: %1</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Reiseflughöhe: %1</translation>
     </message>
     <message>
@@ -21704,21 +21714,24 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation type="vanished">Luftfahrtgesellschaft: %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="241"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="257"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="272"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="308"/>
         <source>Flight Number: %1</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Flugnummer: %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="242"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="258"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="275"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="311"/>
         <source>Model: %1</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Modell: %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="244"/>
-        <location filename="src/logbook/logdataconverter.cpp" line="260"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="281"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="317"/>
         <source>Type: %1</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Typ: %1</translation>
     </message>
     <message>
@@ -21730,13 +21743,15 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation type="vanished">Zeit: %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="262"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="320"/>
         <source>Flight Plan Distance: %1</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Flugplandistanz: %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdataconverter.cpp" line="263"/>
+        <location filename="src/logbook/logdataconverter.cpp" line="323"/>
         <source>Flown Distance: %1</source>
+        <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
         <translation>Geflogene Distanz: %1</translation>
     </message>
     <message>

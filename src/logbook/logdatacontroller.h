@@ -18,6 +18,8 @@
 #ifndef LNM_LOGDATACONTROLLER_H
 #define LNM_LOGDATACONTROLLER_H
 
+#include "common/maptypes.h"
+
 #include <QObject>
 #include <QVector>
 
@@ -128,12 +130,18 @@ public:
   /* Update units */
   void optionsChanged();
 
+  /* Convert legacy logbook entries from userdata to the new logbook */
+  void convertUserdata();
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection);
 
   /* Issue a redraw of the map */
   void logDataChanged();
+
+  /* Show search after converting or importing entries */
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
 private:
   /* Create a logbook entry on takeoff and update it on landing */

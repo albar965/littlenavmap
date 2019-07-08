@@ -1886,21 +1886,18 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     {
       // Create records and send show in search signal
       // This works only with line edit fields
-      ui->dockWidgetSearch->raise();
-      ui->dockWidgetSearch->show();
       if(logEntry != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_LOG);
         emit showInSearch(map::LOGBOOK, SqlRecord().
                           appendFieldAndValue("departure_ident", logEntry->departureIdent).
                           appendFieldAndValue("destination_ident", logEntry->destinationIdent).
                           appendFieldAndValue("simulator", logEntry->simulator).
                           appendFieldAndValue("aircraft_type", logEntry->aircraftType).
-                          appendFieldAndValue("aircraft_registration", logEntry->aircraftRegistration));
+                          appendFieldAndValue("aircraft_registration", logEntry->aircraftRegistration),
+                          true /* select */);
       }
       else if(userpoint != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
         SqlRecord rec;
         if(!userpoint->ident.isEmpty())
           rec.appendFieldAndValue("ident", userpoint->ident);
@@ -1913,59 +1910,44 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         if(!userpoint->tags.isEmpty())
           rec.appendFieldAndValue("tags", userpoint->tags);
 
-        emit showInSearch(map::USERPOINT, rec);
+        emit showInSearch(map::USERPOINT, rec, true /* select */);
       }
       else if(airport != nullptr && !isAircraft)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
-        emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident));
-      }
+        emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", airport->ident), true /* select */);
       else if(vor != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", vor->ident);
         if(!vor->region.isEmpty())
           rec.appendFieldAndValue("region", vor->region);
 
-        emit showInSearch(map::VOR, rec);
+        emit showInSearch(map::VOR, rec, true /* select */);
       }
       else if(ndb != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", ndb->ident);
         if(!ndb->region.isEmpty())
           rec.appendFieldAndValue("region", ndb->region);
 
-        emit showInSearch(map::NDB, rec);
+        emit showInSearch(map::NDB, rec, true /* select */);
       }
       else if(waypoint != nullptr && !isAircraft)
       {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
         SqlRecord rec;
         rec.appendFieldAndValue("ident", waypoint->ident);
         if(!waypoint->region.isEmpty())
           rec.appendFieldAndValue("region", waypoint->region);
 
-        emit showInSearch(map::WAYPOINT, rec);
+        emit showInSearch(map::WAYPOINT, rec, true /* select */);
       }
       else if(onlineAircraft != nullptr)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CLIENT);
-        SqlRecord rec;
-        rec.appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration());
-
-        emit showInSearch(map::AIRCRAFT_ONLINE, rec);
-      }
+        emit showInSearch(map::AIRCRAFT_ONLINE,
+                          SqlRecord().appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration()),
+                          true /* select */);
       else if(onlineCenter != nullptr)
-      {
-        ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CENTER);
-        SqlRecord rec;
-        rec.appendFieldAndValue("callsign", onlineCenter->name);
-
-        emit showInSearch(map::AIRSPACE_ONLINE, rec);
-      }
+        emit showInSearch(map::AIRSPACE_ONLINE,
+                          SqlRecord().appendFieldAndValue("callsign", onlineCenter->name), true /* select */);
     }
     else if(action == ui->actionMapNavaidRange)
     {

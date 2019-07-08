@@ -17,26 +17,30 @@
 
 #include "logbook/logdatacontroller.h"
 
-#include "fs/userdata/logdatamanager.h"
-#include "common/constants.h"
-#include "sql/sqlrecord.h"
-#include "navapp.h"
-#include "route/routealtitude.h"
-#include "route/route.h"
 #include "atools.h"
+#include "common/constants.h"
+#include "common/maptypes.h"
+#include "common/maptypesfactory.h"
+#include "exception.h"
+#include "fs/userdata/logdatamanager.h"
 #include "gui/dialog.h"
+#include "gui/errorhandler.h"
+#include "gui/helphandler.h"
 #include "gui/mainwindow.h"
-#include "ui_mainwindow.h"
-#include "query/airportquery.h"
+#include "gui/textdialog.h"
+#include "logbook/logdataconverter.h"
 #include "logbook/logdatadialog.h"
+#include "logbook/logstatisticsdialog.h"
+#include "navapp.h"
+#include "query/airportquery.h"
+#include "route/route.h"
+#include "route/routealtitude.h"
 #include "search/logdatasearch.h"
 #include "settings/settings.h"
-#include "common/maptypes.h"
+#include "sql/sqlrecord.h"
 #include "sql/sqltransaction.h"
-#include "gui/errorhandler.h"
-#include "exception.h"
-#include "logbook/logstatisticsdialog.h"
-#include "common/maptypesfactory.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -380,6 +384,13 @@ void LogdataController::importXplane()
       mainWindow->setStatusMessage(tr("Imported %1 %2 X-Plane logbook.").arg(numImported).
                                    arg(numImported == 1 ? tr("entry") : tr("entries")));
       emit refreshLogSearch(false /* load all */, false /* keep selection */);
+      emit logDataChanged();
+
+      /*: The text "Imported from X-Plane logbook" has to match the one in atools::fs::userdata::LogdataManager::importXplane */
+      emit showInSearch(map::LOGBOOK,
+                        atools::sql::SqlRecord().appendFieldAndValue("description",
+                                                                     tr("*Imported from X-Plane logbook*")),
+                        false /* select */);
     }
   }
   catch(atools::Exception& e)
@@ -446,6 +457,80 @@ void LogdataController::exportCsv()
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
+}
+
+void LogdataController::convertUserdata()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION,
+                                          tr("This will convert all userpoints of type "
+                                             "<code>Logbook</code> to logbook entries.<br/><br/>"
+                                             "This works best if you did not modify the field "
+                                             "<code>Description</code> in the userpoints and if "
+                                             "you did not insert entries manually.<br/><br/>"
+                                             "Note that not all fields can be converted automatically.<br/><br/>"
+                                             "The created log entries can be found by searching"
+                                             "for<br/><code>*Converted from userdata*</code><br/>"
+                                             "in the description field.<br/><br/>"
+                                             "Continue?"),
+                                          tr("Do not &show this dialog again and run the conversion in the future."),
+                                          QMessageBox::Yes | QMessageBox::No | QMessageBox::Help,
+                                          QMessageBox::No, QMessageBox::Yes);
+
+  if(result == QMessageBox::Yes)
+  {
+    LogdataConverter converter(NavApp::getDatabaseUser(), manager, NavApp::getAirportQuerySim());
+
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // Do the conversion ===================================
+    int numCreated = converter.convertFromUserdata();
+
+    QString resultText = tr("Created %1 log entries.").arg(numCreated);
+
+    if(!converter.getErrors().isEmpty())
+    {
+      // Show errors and warnings ======================
+      atools::util::HtmlBuilder html(true);
+
+      html.p(tr("Logbook Conversion"), atools::util::html::BOLD | atools::util::html::BIG);
+
+      html.p(resultText);
+
+      html.p(tr("Conversion Errors/Warnings"), atools::util::html::BOLD | atools::util::html::BIG);
+      html.p(tr("Some warnings might appear because of terminated flights, "
+                "repeated langings and/or takeoffs. These can be ignored."));
+      html.ol();
+      for(const QString& err : converter.getErrors())
+        html.li(err, atools::util::html::NO_ENTITIES);
+      html.olEnd();
+
+      TextDialog error(mainWindow, QApplication::applicationName() + tr(" - Conversion Errors"),
+                       "LOGBOOK.html#convert-errors");
+      error.setHtmlMessage(html.getHtml());
+      QGuiApplication::restoreOverrideCursor();
+
+      error.exec();
+    }
+    else
+    {
+      // No errors ======================
+      QGuiApplication::restoreOverrideCursor();
+      QMessageBox::information(mainWindow, QApplication::applicationName(), resultText);
+    }
+
+    emit refreshLogSearch(false /* load all */, false /* keep selection */);
+    emit logDataChanged();
+
+    /*: The text "Converted from userdata" has to match the one in LogdataConverter::convertFromUserdata */
+    emit showInSearch(map::LOGBOOK,
+                      atools::sql::SqlRecord().appendFieldAndValue("description", tr("*Converted from userdata*")),
+                      false /* select */);
+  }
+  else if(result == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOGBOOK.html#convert",
+                                             lnm::helpLanguageOnline());
 }
 
 void LogdataController::fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent)

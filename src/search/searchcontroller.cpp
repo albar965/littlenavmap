@@ -266,9 +266,14 @@ bool SearchController::hasSelection()
   return selection;
 }
 
-void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record)
+void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select)
 {
   qDebug() << Q_FUNC_INFO << record;
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  ui->dockWidgetSearch->raise();
+  ui->dockWidgetSearch->show();
 
   switch(type)
   {
@@ -276,7 +281,9 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       // Shown in airport tab
       airportSearch->resetSearch();
       airportSearch->filterByRecord(record);
-      airportSearch->selectAll();
+      if(select)
+        airportSearch->selectAll();
+      ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_AIRPORT);
       break;
 
     case map::NDB:
@@ -285,35 +292,45 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       // Shown in navaid tab
       navSearch->resetSearch();
       navSearch->filterByRecord(record);
-      navSearch->selectAll();
+      if(select)
+        navSearch->selectAll();
+      ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_NAV);
       break;
 
     case map::USERPOINT:
       // Shown in user search tab
       userdataSearch->resetSearch();
       userdataSearch->filterByRecord(record);
-      userdataSearch->selectAll();
+      if(select)
+        userdataSearch->selectAll();
+      ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_USER);
       break;
 
     case map::LOGBOOK:
       // Shown in user search tab
       logdataSearch->resetSearch();
       logdataSearch->filterByRecord(record);
-      logdataSearch->selectAll();
+      if(select)
+        logdataSearch->selectAll();
+      ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_LOG);
       break;
 
     case map::AIRCRAFT_ONLINE:
       // Shown in user search tab
       onlineClientSearch->resetSearch();
       onlineClientSearch->filterByRecord(record);
-      onlineClientSearch->selectAll();
+      if(select)
+        onlineClientSearch->selectAll();
+      ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CLIENT);
       break;
 
     case map::AIRSPACE_ONLINE:
       // Shown in user search tab
       onlineCenterSearch->resetSearch();
       onlineCenterSearch->filterByRecord(record);
-      onlineCenterSearch->selectAll();
+      if(select)
+        onlineCenterSearch->selectAll();
+      ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CENTER);
       break;
 
     case map::ILS:

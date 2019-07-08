@@ -32,6 +32,8 @@
 
 namespace formatter {
 
+static QStringList dateTimeFormats;
+
 QString formatMinutesHours(double time)
 {
   int hours = static_cast<int>(time);
@@ -175,6 +177,81 @@ bool checkCoordinates(QString& message, const QString& text)
     // Show red warning
     message = atools::util::HtmlBuilder::errorMessage(QObject::tr("Coordinates are not valid."));
   return false;
+}
+
+QString yearVariant(QString dateTimeFormat)
+{
+  if(dateTimeFormat.contains("yyyy"))
+    return dateTimeFormat.replace("yyyy", "yy");
+  else if(dateTimeFormat.contains(QRegularExpression("\\byy\\b")))
+    return dateTimeFormat.replace("yy", "yyyy");
+
+  return dateTimeFormat;
+}
+
+void initTranslateableTexts()
+{
+  // Create a list of date time formats for system and English locales with all formats,
+  // long short year variants and with time zone or not
+
+  // System locale ==================================
+  // This is independent from locale overridden in the options dialog
+  QLocale locale = QLocale::system();
+  dateTimeFormats.clear();
+  dateTimeFormats.append(locale.dateTimeFormat(QLocale::ShortFormat));
+  dateTimeFormats.append(locale.dateTimeFormat(QLocale::LongFormat));
+  dateTimeFormats.append(locale.dateTimeFormat(QLocale::NarrowFormat));
+
+  // Replace yyyy with yy and vice versa
+  dateTimeFormats.append(yearVariant(locale.dateTimeFormat(QLocale::ShortFormat)));
+  dateTimeFormats.append(yearVariant(locale.dateTimeFormat(QLocale::LongFormat)));
+  dateTimeFormats.append(yearVariant(locale.dateTimeFormat(QLocale::NarrowFormat)));
+
+  // English locale ==================================
+  QLocale localeEn = QLocale::English;
+  dateTimeFormats.append(localeEn.dateTimeFormat(QLocale::ShortFormat));
+  dateTimeFormats.append(localeEn.dateTimeFormat(QLocale::LongFormat));
+  dateTimeFormats.append(localeEn.dateTimeFormat(QLocale::NarrowFormat));
+
+  // Replace yyyy with yy and vice versa
+  dateTimeFormats.append(yearVariant(localeEn.dateTimeFormat(QLocale::ShortFormat)));
+  dateTimeFormats.append(yearVariant(localeEn.dateTimeFormat(QLocale::LongFormat)));
+  dateTimeFormats.append(yearVariant(localeEn.dateTimeFormat(QLocale::NarrowFormat)));
+
+  // Add variants with time zone ===========================
+  QStringList temp(dateTimeFormats);
+  for(const QString& t : temp)
+  {
+    if(!t.endsWith("t"))
+    {
+      dateTimeFormats.append(t + " t");
+      dateTimeFormats.append(t + "t");
+    }
+  }
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << dateTimeFormats;
+#endif
+}
+
+QDateTime readDateTime(QString str)
+{
+  QDateTime retval;
+
+  // This is independent from locale overridden in the options dialog
+  QLocale locale = QLocale::system();
+
+  // if(str.endsWith("UTC"))
+  // str.chop(3);
+
+  str = str.simplified();
+
+  for(const QString& format : dateTimeFormats)
+  {
+    retval = locale.toDateTime(str, format);
+    if(retval.isValid())
+      break;
+  }
+  return retval;
 }
 
 } // namespace formatter

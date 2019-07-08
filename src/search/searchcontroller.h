@@ -130,7 +130,7 @@ public:
 
   /* Reset search and show the given type in the search result. Search widgets are populated with the
    * given parameters. Types can be airport, VOR, NDB or waypoint */
-  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record);
+  void showInSearch(map::MapObjectTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Get all selected airports or navaids from the active search tab */
   void getSelectedMapObjects(map::MapSearchResult& result) const;

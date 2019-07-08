@@ -977,11 +977,15 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::aircraftTakeoff, logdataController, &LogdataController::aircraftTakeoff);
   connect(mapWidget, &MapWidget::aircraftLanding, logdataController, &LogdataController::aircraftLanding);
 
+  connect(logdataController, &LogdataController::showInSearch, searchController, &SearchController::showInSearch);
+
   connect(ui->actionLogdataShowSearch, &QAction::triggered, logdataController, &LogdataController::showSearch);
+  connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::showStatistics);
   connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
   connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
   connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
-  connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::showStatistics);
+  connect(ui->actionLogdataConvertUserdata, &QAction::triggered,
+          logdataController, &LogdataController::convertUserdata);
 
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile, this, &MainWindow::routeOpenFile);
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadPerfFile,
@@ -2933,6 +2937,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
   s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
   s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
+  s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
