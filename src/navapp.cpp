@@ -458,6 +458,11 @@ float NavApp::getRouteCruiseAltFt()
   return getRoute().getCruisingAltitudeFeet();
 }
 
+float NavApp::getRouteCruiseAltFtWidget()
+{
+  return getRouteController()->getCruiseAltitudeWidget();
+}
+
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
 {
   return getDatabaseManager()->getCurrentSimulator();

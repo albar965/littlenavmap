@@ -133,6 +133,9 @@ public:
     return route.getTotalDistance();
   }
 
+  /* get altitude in feet as set in the widget */
+  float getCruiseAltitudeWidget() const;
+
   bool  doesFilenameMatchRoute(atools::fs::pln::FileFormat format);
 
   /* Clear routing network cache and disconnect all queries */

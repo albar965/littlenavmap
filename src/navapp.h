@@ -167,6 +167,7 @@ public:
 
   static float getRouteCruiseSpeedKts();
   static float getRouteCruiseAltFt();
+  static float getRouteCruiseAltFtWidget();
 
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();

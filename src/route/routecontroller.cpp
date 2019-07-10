@@ -2320,6 +2320,11 @@ bool RouteController::hasChanged() const
   return undoIndexClean == -1 || undoIndexClean != undoIndex;
 }
 
+float RouteController::getCruiseAltitudeWidget() const
+{
+  return Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteAlt->value()), Unit::altFeetF);
+}
+
 bool RouteController::doesFilenameMatchRoute(atools::fs::pln::FileFormat format)
 {
   if(!routeFilename.isEmpty())

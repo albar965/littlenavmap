@@ -409,12 +409,22 @@ bool AircraftPerfController::isWindManual() const
   return NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked();
 }
 
+float AircraftPerfController::cruiseAlt()
+{
+  float alt = NavApp::getAltitudeLegs().getCruiseAltitide();
+
+  if(atools::almostEqual(alt, 0.f) || alt > map::INVALID_ALTITUDE_VALUE / 2.f)
+    alt = NavApp::getRouteCruiseAltFtWidget();
+
+  return alt;
+}
+
 void AircraftPerfController::routeChanged(bool geometryChanged, bool newFlightplan)
 {
   qDebug() << Q_FUNC_INFO;
   Q_UNUSED(geometryChanged);
   Q_UNUSED(newFlightplan);
-  perfHandler->setCruiseAltitude(NavApp::getAltitudeLegs().getCruiseAltitide());
+  perfHandler->setCruiseAltitude(cruiseAlt());
   updateReport();
   updateReportCurrent();
   updateActionStates();
@@ -431,7 +441,7 @@ void AircraftPerfController::routeAltitudeChanged(float altitudeFeet)
   qDebug() << Q_FUNC_INFO;
   Q_UNUSED(altitudeFeet);
 
-  perfHandler->setCruiseAltitude(NavApp::getAltitudeLegs().getCruiseAltitide());
+  perfHandler->setCruiseAltitude(cruiseAlt());
   updateReport();
   updateReportCurrent();
   updateActionStates();
@@ -593,14 +603,30 @@ void AircraftPerfController::updateReportCurrent()
 
     QStringList header({curPerf.getName(), curPerf.getAircraftType()});
     header.removeAll(QString());
-    html.text(header.join(tr(" - ")), atools::util::html::BOLD | atools::util::html::BIG);
+
+    if(!header.isEmpty())
+      html.text(header.join(tr(" - ")), atools::util::html::BOLD | atools::util::html::BIG);
+    else
+      html.text(tr("Unknown Aircraft"), atools::util::html::BOLD | atools::util::html::BIG);
+
+    // if(NavApp::getRouteConst().size() < 2)
+    // html.p().warning(tr("No valid flight plan.")).pEnd();
 
     atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
 
     // Display performance collection progress ==========================================================
-    html.p().b(tr("Current flight segment: %1.%2").
-               arg(perfHandler->getCurrentFlightSegmentString()).
-               arg(perfHandler->isFinished() ? tr(" Finished.") : QString())).pEnd();
+    if(segment != atools::fs::perf::NONE)
+    {
+      html.p().b(tr("Aircraft")).pEnd();
+      html.table();
+      html.row2(tr("Current flight segment: "), perfHandler->getCurrentFlightSegmentString() +
+                (perfHandler->isFinished() ? tr(", <b>Finished.</b>") : QString()), atools::util::html::NO_ENTITIES);
+      html.row2If(tr("Aircraft status: "), perfHandler->getAircraftStatusTexts().join(tr(", ")));
+      html.tableEnd();
+      html.pEnd();
+    }
+    else
+      html.p().b(tr("No flight detected.")).pEnd();
 
     if(segment >= atools::fs::perf::DEPARTURE_TAXI)
     {
@@ -748,6 +774,31 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
                                              static_cast<float>(perf->getCruiseSpeed()));
   if(mach > 0.4f)
     html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2), flags);
+
+  // Display runway text if anything deviates from default =======================
+  QStringList runwayTxt;
+  if(perf->getRunwayType() != atools::fs::perf::SOFT || perf->getMinRunwayLength() > 0.f)
+  {
+    switch(perf->getRunwayType())
+    {
+      case atools::fs::perf::SOFT:
+        runwayTxt.append(tr("Hard and soft surface"));
+        break;
+      case atools::fs::perf::HARD:
+        runwayTxt.append(tr("Hard surface"));
+        break;
+      case atools::fs::perf::WATER:
+        runwayTxt.append(tr("Water"));
+        break;
+      case atools::fs::perf::WATER_LAND:
+        runwayTxt.append(tr("Amphibian"));
+        break;
+    }
+
+    if(perf->getMinRunwayLength() > 0.f)
+      runwayTxt.append(Unit::distShortFeet(perf->getMinRunwayLength()));
+    html.row2(tr("Minimum runway:"), runwayTxt.join(tr(", ")), flags);
+  }
 
   // Wind =======================================================
   QStringList windText;
@@ -961,7 +1012,7 @@ void AircraftPerfController::restoreState()
                  ui->spinBoxAircraftPerformanceWindDirection,
                  ui->checkBoxAircraftPerformanceWindMan});
 
-  perfHandler->setCruiseAltitude(NavApp::getAltitudeLegs().getCruiseAltitide());
+  perfHandler->setCruiseAltitude(cruiseAlt());
   perfHandler->start();
 
   optionsChanged();

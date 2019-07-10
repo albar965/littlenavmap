@@ -190,6 +190,9 @@ private:
   /* Dock window or tab visibility changed */
   void visibilityChanged();
 
+  /* Cruise altitude either from flight plan or widget */
+  float cruiseAlt();
+
   MainWindow *mainWindow;
 
   /* Default font size - can be changed in settings */

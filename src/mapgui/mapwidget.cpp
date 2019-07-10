@@ -3513,10 +3513,17 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       if(projectionDistance < map::INVALID_DISTANCE_VALUE)
         alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
 
+      const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
       bool ground = false;
       float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = 1000.f;
 
-      if(!route.isEmpty())
+      if(route.size() <= 2)
+      {
+        alt = NavApp::getRouteController()->getCruiseAltitudeWidget();
+        tas = perf.getCruiseSpeed();
+        fuelflow = perf.getCruiseFuelFlowLbs();
+      }
+      else
       {
         float distanceFromStart = route.getDistanceFromStart(pos);
         ground = distanceFromStart<0.5f || distanceFromStart> route.getTotalDistance() - 0.5f;
@@ -3525,8 +3532,6 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         {
           float tocDist = route.getTopOfClimbDistance();
           float todDist = route.getTopOfDescentDistance();
-
-          const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
 
           tas = perf.getCruiseSpeed();
           fuelflow = perf.getCruiseFuelFlowLbs();
@@ -3555,6 +3560,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
 
       if(!(alt < map::INVALID_ALTITUDE_VALUE))
         alt = route.getCruisingAltitudeFeet();
+
       pos.setAltitude(alt);
 
       SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow,
