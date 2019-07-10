@@ -28,6 +28,7 @@
 #include "fs/navdatabaseprogress.h"
 #include "common/formatter.h"
 #include "fs/fspaths.h"
+#include "fs/xp/scenerypacks.h"
 #include "gui/helphandler.h"
 #include "fs/navdatabase.h"
 #include "sql/sqlutil.h"
@@ -1126,88 +1127,107 @@ bool DatabaseManager::runInternal()
 
     if(retval == QDialog::Accepted)
     {
+      bool configValid = true;
       QString err;
-      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
+      if(!atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err, selectedFsType))
+      {
+        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read base path \"%1\". Reason: %2.").
+                                     arg(databaseDialog->getBasePath()).arg(err));
+        configValid = false;
+      }
+
+      if(selectedFsType == atools::fs::FsPaths::XPLANE11)
+      {
+        QString filepath;
+        if(!readInactive && !atools::fs::xp::SceneryPacks::exists(databaseDialog->getBasePath(), err, filepath))
+        {
+          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.\n\n"
+                                                          "Enable the option \"Read inactive or disabled Scenery Entries\" "
+                                                          "or start X-Plane once to create the file.").
+                                       arg(filepath).arg(err));
+          configValid = false;
+        }
+      }
+      else
       {
         QString sceneryCfgCodec = selectedFsType == atools::fs::FsPaths::P3D_V4 ? "UTF-8" : QString();
-
-        if(selectedFsType == atools::fs::FsPaths::XPLANE11 ||
-           atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
+        if(!atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, err))
         {
-          // Compile into a temporary database file
-          QString selectedFilename = buildDatabaseFileName(selectedFsType);
-          QString tempFilename = buildCompilingDatabaseFileName();
+          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read scenery configuration \"%1\". Reason: %2.").
+                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
+          configValid = false;
+        }
+      }
 
+      if(configValid)
+      {
+        // Compile into a temporary database file
+        QString selectedFilename = buildDatabaseFileName(selectedFsType);
+        QString tempFilename = buildCompilingDatabaseFileName();
+
+        if(QFile::remove(tempFilename))
+          qInfo() << "Removed" << tempFilename;
+        else
+          qWarning() << "Removing" << tempFilename << "failed";
+
+        QFile journal(tempFilename + "-journal");
+        if(journal.exists() && journal.size() == 0)
+        {
+          if(journal.remove())
+            qInfo() << "Removed" << journal.fileName();
+          else
+            qWarning() << "Removing" << journal.fileName() << "failed";
+        }
+
+        SqlDatabase tempDb(DATABASE_NAME_TEMP);
+        openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
+
+        if(loadScenery(&tempDb))
+        {
+          // Successfully loaded
+          reopenDialog = false;
+
+          closeDatabaseFile(&tempDb);
+
+          emit preDatabaseLoad();
+          closeDatabases();
+
+          // Remove old database
+          if(QFile::remove(selectedFilename))
+            qInfo() << "Removed" << selectedFilename;
+          else
+            qWarning() << "Removing" << selectedFilename << "failed";
+
+          // Rename temporary file to new database
+          if(QFile::rename(tempFilename, selectedFilename))
+            qInfo() << "Renamed" << tempFilename << "to" << selectedFilename;
+          else
+            qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
+
+          // Syncronize display with loaded database
+          currentFsType = selectedFsType;
+
+          openAllDatabases();
+          emit postDatabaseLoad(currentFsType);
+        }
+        else
+        {
+          closeDatabaseFile(&tempDb);
           if(QFile::remove(tempFilename))
             qInfo() << "Removed" << tempFilename;
           else
             qWarning() << "Removing" << tempFilename << "failed";
 
-          QFile journal(tempFilename + "-journal");
-          if(journal.exists() && journal.size() == 0)
+          QFile journal2(tempFilename + "-journal");
+          if(journal2.exists() && journal2.size() == 0)
           {
-            if(journal.remove())
-              qInfo() << "Removed" << journal.fileName();
+            if(journal2.remove())
+              qInfo() << "Removed" << journal2.fileName();
             else
-              qWarning() << "Removing" << journal.fileName() << "failed";
-          }
-
-          SqlDatabase tempDb(DATABASE_NAME_TEMP);
-          openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
-
-          if(loadScenery(&tempDb))
-          {
-            // Successfully loaded
-            reopenDialog = false;
-
-            closeDatabaseFile(&tempDb);
-
-            emit preDatabaseLoad();
-            closeDatabases();
-
-            // Remove old database
-            if(QFile::remove(selectedFilename))
-              qInfo() << "Removed" << selectedFilename;
-            else
-              qWarning() << "Removing" << selectedFilename << "failed";
-
-            // Rename temporary file to new database
-            if(QFile::rename(tempFilename, selectedFilename))
-              qInfo() << "Renamed" << tempFilename << "to" << selectedFilename;
-            else
-              qWarning() << "Renaming" << tempFilename << "to" << selectedFilename << "failed";
-
-            // Syncronize display with loaded database
-            currentFsType = selectedFsType;
-
-            openAllDatabases();
-            emit postDatabaseLoad(currentFsType);
-          }
-          else
-          {
-            closeDatabaseFile(&tempDb);
-            if(QFile::remove(tempFilename))
-              qInfo() << "Removed" << tempFilename;
-            else
-              qWarning() << "Removing" << tempFilename << "failed";
-
-            QFile journal2(tempFilename + "-journal");
-            if(journal2.exists() && journal2.size() == 0)
-            {
-              if(journal2.remove())
-                qInfo() << "Removed" << journal2.fileName();
-              else
-                qWarning() << "Removing" << journal2.fileName() << "failed";
-            }
+              qWarning() << "Removing" << journal2.fileName() << "failed";
           }
         }
-        else
-          atools::gui::Dialog::warning(databaseDialog, tr("Cannot read \"%1\". Reason: %2.").
-                                       arg(databaseDialog->getSceneryConfigFile()).arg(err));
       }
-      else
-        atools::gui::Dialog::warning(databaseDialog, tr("Cannot read \"%1\". Reason: %2.").
-                                     arg(databaseDialog->getBasePath()).arg(err));
     }
     else
       // User hit close
