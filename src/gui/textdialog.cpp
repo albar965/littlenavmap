@@ -24,6 +24,8 @@
 #include <QMimeData>
 #include <QPushButton>
 #include <QClipboard>
+#include <QDebug>
+#include <QTextDocumentFragment>
 
 TextDialog::TextDialog(QWidget *parent, const QString& title, const QString& helpBaseUrlParam)
   : QDialog(parent), ui(new Ui::TextDialog), helpBaseUrl(helpBaseUrlParam)
@@ -71,9 +73,12 @@ void TextDialog::buttonBoxClicked(QAbstractButton *button)
   }
 }
 
-void TextDialog::setHtmlMessage(const QString& messages)
+void TextDialog::setHtmlMessage(const QString& messages, bool printToLog)
 {
   ui->textBrowser->setHtml(messages);
+
+  if(printToLog)
+    qInfo().noquote().nospace() << QTextDocumentFragment::fromHtml(messages).toPlainText();
 }
 
 void TextDialog::anchorClicked(const QUrl& url)

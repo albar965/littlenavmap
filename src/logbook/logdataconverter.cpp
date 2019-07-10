@@ -84,6 +84,7 @@ int LogdataConverter::convertFromUserdata()
   Type lasttype = NONE;
   while(query.next())
   {
+    int id = query.valueInt("userdata_id");
     QString ident = query.valueStr("ident");
     QString name = query.valueStr("name");
     QString region = query.valueStr("region");
@@ -167,14 +168,23 @@ int LogdataConverter::convertFromUserdata()
     convertFromDescription(query, rec, type == DEPARTURE);
 
     // Add new description =================
-    QString description = query.valueStr("description");
+    QString descriptionSrc = query.valueStr("description");
+    QString descriptionTo = rec.valueStr("description");
     if(type == DEPARTURE)
       /*: The text "Converted from userdata" has to match the one in LogdataController::convertUserdata */
-      rec.setValue("description",
-                   tr("Converted from userdata\n\n==== Original departure description:\n") + description);
+      rec.setValue("description", tr("Converted from userdata\n\n"
+                                     "==== Original departure description:\n") + descriptionSrc);
     else
-      rec.setValue("description", rec.valueStr("description") +
-                   tr("\n\n==== Original arrival description:\n") + description);
+      rec.setValue("description", descriptionTo + tr("\n\n==== Original arrival description:\n") + descriptionSrc);
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << rec;
+
+    if(type == DEPARTURE)
+      rec.setValue("description", QString("DEPARTURE userdata_id=%1\n").arg(id) + rec.valueStr("description"));
+    else
+      rec.setValue("description", QString("DESTINATION userdata_id=%1\n").arg(id) + rec.valueStr("description"));
+#endif
 
     lasttype = type;
 

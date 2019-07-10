@@ -335,22 +335,29 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
                        Qt::RoundJoin);
 
   // Draw connecting lines ==========================================================================
-  painter->setPen(routeOutlinePen);
+  QVector<const MapLogbookEntry *> visibleLogEntries;
   for(const MapLogbookEntry& entry : entries)
-    drawLine(context, Line(entry.departurePos, entry.destinationPos));
+  {
+    if(context->viewportRect.overlaps(entry.bounding()))
+      visibleLogEntries.append(&entry);
+  }
+
+  painter->setPen(routeOutlinePen);
+  for(const MapLogbookEntry *entry : visibleLogEntries)
+    drawLine(context, Line(entry->departurePos, entry->destinationPos));
 
   painter->setPen(routePen);
-  for(const MapLogbookEntry& entry : entries)
-    drawLine(context, Line(entry.departurePos, entry.destinationPos));
+  for(const MapLogbookEntry *entry : visibleLogEntries)
+    drawLine(context, Line(entry->departurePos, entry->destinationPos));
 
   // Draw line text ==========================================================================
   context->szFont(context->textSizeRangeDistance);
   painter->setBackground(mapcolors::routeTextBackgroundColor);
   painter->setPen(mapcolors::routeTextColor);
-  for(const MapLogbookEntry& entry : entries)
+  for(const MapLogbookEntry *entry : visibleLogEntries)
   {
     // Text for one line
-    LineString positions(entry.departurePos, entry.destinationPos);
+    LineString positions(entry->departurePos, entry->destinationPos);
 
     TextPlacement textPlacement(context->painter, this);
     textPlacement.setDrawFast(context->drawFast);
@@ -358,14 +365,14 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
     textPlacement.calculateTextPositions(positions);
 
     QStringList text;
-    text.append(tr("%1 to %2").arg(entry.departureIdent).arg(entry.destinationIdent));
-    // text.append(atools::elideTextShort(entry.aircraftType, 5));
-    // text.append(atools::elideTextShort(entry.aircraftRegistration, 7));
-    if(entry.distanceGc > 0.f)
-      text.append(Unit::distNm(entry.distanceGc, true /* unit */, 20, true /* narrow */));
+    text.append(tr("%1 to %2").arg(entry->departureIdent).arg(entry->destinationIdent));
+    // text.append(atools::elideTextShort(entry->aircraftType, 5));
+    // text.append(atools::elideTextShort(entry->aircraftRegistration, 7));
+    if(entry->distanceGc > 0.f)
+      text.append(Unit::distNm(entry->distanceGc, true /* unit */, 20, true /* narrow */));
     text.removeAll(QString());
 
-    textPlacement.calculateTextAlongLines({Line(entry.departurePos, entry.destinationPos)}, {text.join(tr(","))});
+    textPlacement.calculateTextAlongLines({Line(entry->departurePos, entry->destinationPos)}, {text.join(tr(","))});
     textPlacement.drawTextAlongLines();
   }
 
@@ -375,24 +382,24 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
   textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
 
   QSet<int> airportIds;
-  for(const MapLogbookEntry& entry : entries)
+  for(const MapLogbookEntry *entry : visibleLogEntries)
   {
-    if(!airportIds.contains(entry.departure.id) && wToS(entry.departure.position, x, y))
+    if(!airportIds.contains(entry->departure.id) && wToS(entry->departure.position, x, y))
     {
-      symbolPainter->drawAirportSymbol(context->painter, entry.departure, x, y, size, false, context->drawFast);
-      symbolPainter->drawAirportText(context->painter, entry.departure, x, y, context->dispOpts, flags, size,
+      symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast);
+      symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOpts, flags, size,
                                      context->mapLayerEffective->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
-      airportIds.insert(entry.departure.id);
+      airportIds.insert(entry->departure.id);
     }
 
-    if(!airportIds.contains(entry.destination.id) && wToS(entry.destination.position, x, y))
+    if(!airportIds.contains(entry->destination.id) && wToS(entry->destination.position, x, y))
     {
-      symbolPainter->drawAirportSymbol(context->painter, entry.destination, x, y, size, false, context->drawFast);
-      symbolPainter->drawAirportText(context->painter, entry.destination, x, y, context->dispOpts, flags, size,
+      symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast);
+      symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOpts, flags, size,
                                      context->mapLayerEffective->isAirportDiagram(),
                                      context->mapLayer->getMaxTextLengthAirport());
-      airportIds.insert(entry.destination.id);
+      airportIds.insert(entry->destination.id);
     }
   }
 }
