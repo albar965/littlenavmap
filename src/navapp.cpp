@@ -42,6 +42,8 @@
 #include "fs/weather/metar.h"
 #include "perf/aircraftperfcontroller.h"
 #include "web/webcontroller.h"
+#include "exception.h"
+#include "gui/errorhandler.h"
 
 #include "ui_mainwindow.h"
 
@@ -119,8 +121,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
   magDecReader = new atools::fs::common::MagDecReader();
-  magDecReader->readFromTable(*databaseManager->getDatabaseSim());
-  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() << magDecReader->getWmmVersion();
+  readMagDecFromDatabase();
 
   moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseMora());
   moraReader->readFromTable();
@@ -303,6 +304,24 @@ void NavApp::preDatabaseLoad()
   databaseMetaNav = nullptr;
 }
 
+void NavApp::readMagDecFromDatabase()
+{
+  try
+  {
+    magDecReader->readFromTable(*getDatabaseSim());
+    qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() << magDecReader->getWmmVersion();
+  }
+  catch(atools::Exception& e)
+  {
+    // Show dialog if something went wrong but do not exit
+    atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException(tr("While reading magnetic declination from database:"));
+  }
+}
+
 void NavApp::postDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
@@ -310,8 +329,7 @@ void NavApp::postDatabaseLoad()
   databaseMeta = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
 
-  magDecReader->readFromTable(*getDatabaseSim());
-  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() << magDecReader->getWmmVersion();
+  readMagDecFromDatabase();
 
   moraReader->readFromTable(*getDatabaseMora());
 

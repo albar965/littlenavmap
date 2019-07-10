@@ -293,6 +293,7 @@ public:
 
 private:
   static void initApplication();
+  static void readMagDecFromDatabase();
 
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
