@@ -956,18 +956,29 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
 
 bool RouteController::loadFlightplan(const QString& filename)
 {
-  Flightplan newFlightplan;
+  Flightplan fp;
   try
   {
     qDebug() << Q_FUNC_INFO << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
-    flightplanIO->load(newFlightplan, filename);
+    flightplanIO->load(fp, filename);
     // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
 
-    // Convert altitude to local unit
-    newFlightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
+    if(fp.getEntries().size() <= 2 &&
+       (fp.getFileFormat() == atools::fs::pln::FMS3 || fp.getFileFormat() == atools::fs::pln::FMS11))
+    {
+      NavApp::deleteSplashScreen();
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN,
+                                                     tr("FMS flight plan has no intermediate waypoints.<br/><br/>"
+                                                        "Can therefore not determine the cruising altitude.<br/>"
+                                                        "Adjust it manually."),
+                                                     tr("Do not &show this dialog again."));
+    }
 
-    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/);
+    // Convert altitude to local unit
+    fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
+
+    loadFlightplan(fp, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/);
   }
   catch(atools::Exception& e)
   {

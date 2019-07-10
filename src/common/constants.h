@@ -66,6 +66,7 @@ void loadHelpUrls();
 /* State of "do not show again" dialog buttons */
 const QLatin1Literal ACTIONS_SHOW_DISCONNECT_INFO("Actions/ShowDisconnectInfo");
 const QLatin1Literal ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
+const QLatin1Literal ACTIONS_SHOW_LOAD_FMS_ALT_WARN("Actions/ShowLoadFmsAltitudeWarn");
 const QLatin1Literal ACTIONS_SHOW_QUIT("Actions/ShowQuit");
 const QLatin1Literal ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
 const QLatin1Literal ACTIONS_SHOW_RESET_VIEW("Actions/ShowResetView");

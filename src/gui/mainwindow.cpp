@@ -2920,6 +2920,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
   s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
 
+  s.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
   s.setValue(lnm::ACTIONS_SHOW_FS9_FSC_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FLP_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOW_FMS3_WARNING, true);
