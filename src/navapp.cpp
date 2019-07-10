@@ -306,20 +306,33 @@ void NavApp::preDatabaseLoad()
 
 void NavApp::readMagDecFromDatabase()
 {
-  try
+  if(hasDataInDatabase())
   {
-    magDecReader->readFromTable(*getDatabaseSim());
-    qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() << magDecReader->getWmmVersion();
+    try
+    {
+      magDecReader->readFromTable(*getDatabaseSim());
+    }
+    catch(atools::Exception& e)
+    {
+      deleteSplashScreen();
+      // Show dialog if something went wrong but do not exit
+      atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
+    }
+    catch(...)
+    {
+      deleteSplashScreen();
+      atools::gui::ErrorHandler(mainWindow).
+      handleUnknownException(tr("While reading magnetic declination from database:"));
+    }
   }
-  catch(atools::Exception& e)
+  else
   {
-    // Show dialog if something went wrong but do not exit
-    atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
+    qWarning() << Q_FUNC_INFO << "Empty database falling back to WMM";
+    magDecReader->readFromWmm();
   }
-  catch(...)
-  {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException(tr("While reading magnetic declination from database:"));
-  }
+
+  qDebug() << Q_FUNC_INFO << "Mag decl ref date" << magDecReader->getReferenceDate() <<
+    magDecReader->getWmmVersion();
 }
 
 void NavApp::postDatabaseLoad()
