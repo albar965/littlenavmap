@@ -468,12 +468,12 @@ void LogdataController::convertUserdata()
                                              "<code>Logbook</code> to logbook entries.<br/><br/>"
                                              "This works best if you did not modify the field "
                                              "<code>Description</code> in the userpoints and if "
-                                             "you did not insert entries manually.<br/><br/>"
-                                             "Note that not all fields can be converted automatically.<br/><br/>"
-                                             "The created log entries can be found by searching"
-                                             "for<br/><code>*Converted from userdata*</code><br/>"
-                                             "in the description field.<br/><br/>"
-                                             "Continue?"),
+                                               "you did not insert entries manually.<br/><br/>"
+                                               "Note that not all fields can be converted automatically.<br/><br/>"
+                                               "The created log entries can be found by searching"
+                                               "for<br/><code>*Converted from userdata*</code><br/>"
+                                               "in the description field.<br/><br/>"
+                                               "Continue?"),
                                           tr("Do not &show this dialog again and run the conversion in the future."),
                                           QMessageBox::Yes | QMessageBox::No | QMessageBox::Help,
                                           QMessageBox::No, QMessageBox::Yes);
@@ -503,7 +503,7 @@ void LogdataController::convertUserdata()
                 "repeated langings and/or takeoffs. These can be ignored."));
       html.ol();
       for(const QString& err : converter.getErrors())
-        html.li(err, atools::util::html::NO_ENTITIES);
+        html.li(err);
       html.olEnd();
 
       TextDialog error(mainWindow, QApplication::applicationName() + tr(" - Conversion Errors"),

@@ -53,7 +53,7 @@ public:
    * and store new entries in table "logbook" */
   int convertFromUserdata();
 
-  /* Get a list of collected errors in HTML format */
+  /* Get a list of collected errors not in HTML. */
   const QStringList& getErrors() const
   {
     return errors;
