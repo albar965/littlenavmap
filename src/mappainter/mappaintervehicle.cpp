@@ -258,7 +258,8 @@ void MapPainterVehicle::paintTextLabelAi(const PaintContext *context, float x, f
         if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
           heading = aircraft.getHeadingDegMag();
         else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-          heading = aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition());
+          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() -
+                                                 NavApp::getMagVar(aircraft.getPosition()));
 
         if(heading < atools::fs::sc::SC_INVALID_FLOAT)
           texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
