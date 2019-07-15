@@ -246,5 +246,6 @@
         <file>resources/icons/logdata_edit.svg</file>
         <file>resources/icons/logdata_add.svg</file>
         <file>resources/icons/logbook.svg</file>
+        <file>resources/icons/databaseairspace.svg</file>
     </qresource>
 </RCC>

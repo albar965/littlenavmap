@@ -49,7 +49,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos
                                                   bool resolveWaypoints)
 {
   map::MapSearchResult result;
-  mapQuery->getMapObjectById(result, type, id, false /* airport from nav database */);
+  mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 

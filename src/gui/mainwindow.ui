@@ -253,7 +253,8 @@
      <string>&amp;Scenery Library</string>
     </property>
     <addaction name="actionDatabaseFiles"/>
-    <addaction name="actionReloadSceneryCopyAirspaces"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoadAirspaces"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <widget class="QMenu" name="menuUserdata">
@@ -290,7 +291,6 @@
       <string>&amp;Airspaces</string>
      </property>
      <addaction name="actionShowAirspaces"/>
-     <addaction name="actionShowAirspacesOnline"/>
     </widget>
     <widget class="QMenu" name="menuViewProjection">
      <property name="title">
@@ -374,6 +374,15 @@
       <string>Wind levels</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuViewAirspaceSource">
+     <property name="title">
+      <string>Airspace &amp;source</string>
+     </property>
+     <addaction name="actionViewAirspaceSrcSimulator"/>
+     <addaction name="actionViewAirspaceSrcNavigraph"/>
+     <addaction name="actionViewAirspaceSrcUser"/>
+     <addaction name="actionViewAirspaceSrcOnline"/>
+    </widget>
     <addaction name="actionMapResetSettings"/>
     <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
@@ -381,6 +390,8 @@
     <addaction name="menuViewNavaids"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
+    <addaction name="menuViewAirspaceSource"/>
+    <addaction name="separator"/>
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
@@ -5824,7 +5835,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowAirspaces"/>
-   <addaction name="actionShowAirspacesOnline"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -8578,24 +8588,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <enum>QAction::NoRole</enum>
    </property>
   </action>
-  <action name="actionReloadSceneryCopyAirspaces">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspacecopy.svg</normaloff>:/littlenavmap/resources/icons/airspacecopy.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Copy Airspaces to X-Plane database ...</string>
-   </property>
-   <property name="iconText">
-    <string>Load Scenery Library</string>
-   </property>
-   <property name="toolTip">
-    <string>Copy airspaces from the currently selected database to the X-Plane database</string>
-   </property>
-   <property name="statusTip">
-    <string>Copy airspaces from the currently selected database to the X-Plane database</string>
-   </property>
-  </action>
   <action name="actionRouteSaveAsTxt">
    <property name="text">
     <string>Export Flight Plan as &amp;TXT ...</string>
@@ -9086,30 +9078,6 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Centers the selected center on the map</string>
-   </property>
-  </action>
-  <action name="actionShowAirspacesOnline">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</normaloff>:/littlenavmap/resources/icons/airspaceonline.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Online Network Airspaces</string>
-   </property>
-   <property name="toolTip">
-    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
-   </property>
-   <property name="statusTip">
-    <string>Show or hide airspaces from online networks like VATSIM or IVAO</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+O</string>
    </property>
   </action>
   <action name="actionRouteSaveAsIFly">
@@ -10500,6 +10468,89 @@ Wind speed will be interpolated for climb and descent phases.</string>
    </property>
    <property name="statusTip">
     <string>Convert legacy logbook entries from userdata to the new logbook</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcSimulator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Simulator</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from the simulator scenery library</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from the simulator scenery library</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcNavigraph">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Navigraph</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from the Navigraph database</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from the Navigraph database</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcUser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;User</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from user database</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from user database</string>
+   </property>
+  </action>
+  <action name="actionViewAirspaceSrcOnline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Online</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airspaces from the online data (circles only)</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airspaces from the online data (circles only)</string>
+   </property>
+  </action>
+  <action name="actionLoadAirspaces">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</normaloff>:/littlenavmap/resources/icons/databaseairspace.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Load Airspaces ...</string>
+   </property>
+   <property name="iconText">
+    <string>Load Airspaces</string>
+   </property>
+   <property name="toolTip">
+    <string>Load airspaces into user database</string>
+   </property>
+   <property name="statusTip">
+    <string>Load airspaces into user database</string>
    </property>
   </action>
  </widget>

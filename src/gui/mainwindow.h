@@ -45,7 +45,6 @@ class QActionGroup;
 class PrintSupport;
 class ProcedureSearch;
 class Route;
-class AirspaceToolBarHandler;
 class RouteExport;
 
 namespace Marble {
@@ -180,6 +179,11 @@ public:
   const InfoController *getInfoController() const
   {
     return infoController;
+  }
+
+  OptionsDialog *getOptionsDialog() const
+  {
+    return optionsDialog;
   }
 
 signals:
@@ -379,7 +383,6 @@ private:
   WeatherReporter *weatherReporter = nullptr;
   WindReporter *windReporter = nullptr;
   InfoController *infoController = nullptr;
-  AirspaceToolBarHandler *airspaceHandler = nullptr;
   RouteExport *routeExport = nullptr;
 
   /* Action  groups for main menu */

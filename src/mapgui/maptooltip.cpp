@@ -23,7 +23,7 @@
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "route/route.h"
-#include "query/airspacequery.h"
+#include "airspace/airspacecontroller.h"
 #include "options/optiondata.h"
 #include "sql/sqlrecord.h"
 #include "weather/windreporter.h"
@@ -336,7 +336,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
   // Airspaces ===========================================================================
   if(opts & opts::TOOLTIP_AIRSPACE)
   {
-    for(const MapAirspace& airspace : mapSearchResult.airspaces)
+    // Put all online airspace on top of the list to have consistent ordering with menus and info windows
+    MapSearchResult res = mapSearchResult.moveOnlineAirspacesToFront();
+
+    for(const MapAirspace& airspace : res.airspaces)
     {
       if(checkText(html, numEntries))
         return html.getHtml();
@@ -345,8 +348,8 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         html.hr();
 
       atools::sql::SqlRecord onlineRec;
-      if(airspace.online)
-        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+      if(airspace.isOnline())
+        onlineRec = NavApp::getAirspaceController()->getOnlineAirspaceRecordById(airspace.id);
 
       html.p();
       info.airspaceText(airspace, onlineRec, html);

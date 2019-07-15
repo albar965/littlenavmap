@@ -19,6 +19,7 @@
 
 #include "mapgui/maplayer.h"
 #include "mappainter/mappaintlayer.h"
+#include "airspace/airspacecontroller.h"
 #include "navapp.h"
 #include "util/htmlbuilder.h"
 #include "gui/mainwindow.h"
@@ -48,7 +49,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
   else
   {
     const MapLayer *layer = paintLayer->getMapLayer();
-    bool onlineNetworkActive = NavApp::isOnlineNetworkActive();
 
     if(layer != nullptr)
     {
@@ -203,8 +203,8 @@ void MapVisible::updateVisibleObjectsStatusBar()
         navaidsTooltip.append(tr("Victor Airways (VA)"));
       }
 
-      QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip;
-      if(shown & map::AIRSPACE || (shown & map::AIRSPACE_ONLINE && onlineNetworkActive))
+      QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip, airspaceSrcTooltip;
+      if(shown & map::AIRSPACE)
       {
         map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
         // Collect airspace information ==========================================================
@@ -245,6 +245,8 @@ void MapVisible::updateVisibleObjectsStatusBar()
           airspaceGroupLabel.append(tr("OTR"));
           airspaceGroupTooltip.append(tr("Centers and others (OTR)"));
         }
+
+        airspaceSrcTooltip = NavApp::getAirspaceController()->getAirspaceSourcesStr();
       }
 
       if(!navaidsTooltip.isEmpty())
@@ -252,25 +254,17 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No navaids")).trEnd();
 
-      QString asText, asGroupText;
-      if(shown & map::AIRSPACE_ONLINE && onlineNetworkActive && shown & map::AIRSPACE)
-      {
-        asText = tr("Airspaces and Online Centers: ");
-        asGroupText = tr("Airspace and Online Center Groups: ");
-      }
-      else if(shown & map::AIRSPACE_ONLINE && onlineNetworkActive)
-      {
-        asText = tr("Online Centers: ");
-        asGroupText = tr("Online Center Groups: ");
-      }
-      else if(shown & map::AIRSPACE)
+      QString asText, asGroupText, asSrcText;
+      if(shown & map::AIRSPACE)
       {
         asText = tr("Airspaces: ");
         asGroupText = tr("Airspace Groups: ");
+        asSrcText = tr("Airspace Sources: ");
       }
 
       if(!airspacesTooltip.isEmpty())
       {
+        tooltip.tr().td().b(asSrcText).text(airspaceSrcTooltip.join(", ")).tdEnd().trEnd();
         tooltip.tr().td().b(asGroupText).text(airspaceGroupTooltip.join(", ")).tdEnd().trEnd();
         tooltip.tr().td().b(asText).text(airspacesTooltip.join(", ")).tdEnd().trEnd();
       }

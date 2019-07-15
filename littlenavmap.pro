@@ -216,6 +216,8 @@ message(-----------------------------------)
 # Files
 
 SOURCES += \
+  src/airspace/airspacecontroller.cpp \
+  src/airspace/airspacetoolbarhandler.cpp \
   src/common/aircrafttrack.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
@@ -247,7 +249,6 @@ SOURCES += \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
   src/export/htmlexporter.cpp \
-  src/gui/airspacetoolbarhandler.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
   src/gui/stylehandler.cpp \
@@ -357,6 +358,8 @@ SOURCES += \
     src/web/webapp.cpp
 
 HEADERS  += \
+  src/airspace/airspacecontroller.h \
+  src/airspace/airspacetoolbarhandler.h \
   src/common/aircrafttrack.h \
   src/common/airportfiles.h \
   src/common/constants.h \
@@ -388,7 +391,6 @@ HEADERS  += \
   src/export/csvexporter.h \
   src/export/exporter.h \
   src/export/htmlexporter.h \
-  src/gui/airspacetoolbarhandler.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
   src/gui/stylehandler.h \

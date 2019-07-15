@@ -60,14 +60,12 @@
 #include "fs/pln/flightplanio.h"
 #include "query/procedurequery.h"
 #include "search/proceduresearch.h"
-#include "gui/airspacetoolbarhandler.h"
 #include "userdata/userdatacontroller.h"
 #include "online/onlinedatacontroller.h"
 #include "search/onlineclientsearch.h"
 #include "search/onlinecentersearch.h"
 #include "search/onlineserversearch.h"
 #include "route/routeexport.h"
-#include "query/airspacequery.h"
 #include "gui/timedialog.h"
 #include "util/version.h"
 #include "perf/aircraftperfcontroller.h"
@@ -77,6 +75,7 @@
 #include "weather/windreporter.h"
 #include "logbook/logdatacontroller.h"
 #include "search/logdatasearch.h"
+#include "airspace/airspacecontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -266,10 +265,6 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Creating InfoController";
     infoController = new InfoController(this);
 
-    qDebug() << Q_FUNC_INFO << "Creating InfoController";
-    airspaceHandler = new AirspaceToolBarHandler(this);
-    airspaceHandler->createToolButtons();
-
     qDebug() << Q_FUNC_INFO << "Creating PrintSupport";
     printSupport = new PrintSupport(this);
 
@@ -287,7 +282,7 @@ MainWindow::MainWindow()
     updateMarkActionStates();
     updateHighlightActionStates();
 
-    airspaceHandler->updateButtonsAndActions();
+    NavApp::getAirspaceController()->updateButtonsAndActions();
     updateOnlineActionStates();
 
     qDebug() << Q_FUNC_INFO << "Setting theme";
@@ -375,8 +370,6 @@ MainWindow::~MainWindow()
   delete infoController;
   qDebug() << Q_FUNC_INFO << "delete printSupport";
   delete printSupport;
-  qDebug() << Q_FUNC_INFO << "delete airspaceHandler";
-  delete airspaceHandler;
   qDebug() << Q_FUNC_INFO << "delete routeFileHistory";
   delete routeFileHistory;
   qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
@@ -830,6 +823,9 @@ void MainWindow::connectAllSlots()
   // Reset weather context first
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearWeatherContext);
 
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          NavApp::getAirspaceController(), &AirspaceController::optionsChanged);
+
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);
@@ -1025,7 +1021,7 @@ void MainWindow::connectAllSlots()
 
   // Clear cache and update map widget
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          NavApp::getAirspaceQueryOnline(), &AirspaceQuery::clearCache);
+          NavApp::getAirspaceController(), &AirspaceController::onlineClientAndAtcUpdated);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
@@ -1038,9 +1034,9 @@ void MainWindow::connectAllSlots()
           infoController, &InfoController::onlineNetworkChanged);
 
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          airspaceHandler, &AirspaceToolBarHandler::updateButtonsAndActions);
+          NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          airspaceHandler, &AirspaceToolBarHandler::updateButtonsAndActions);
+          NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
 
   connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
@@ -1065,9 +1061,10 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
 
+  // Scenery library menu ============================================================
+  connect(ui->actionLoadAirspaces, &QAction::triggered,
+          NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
-  connect(ui->actionReloadSceneryCopyAirspaces, &QAction::triggered,
-          NavApp::getDatabaseManager(), &DatabaseManager::copyAirspaces);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
@@ -1255,8 +1252,18 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionShowAirspacesOnline, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
+
+  AirspaceController *airspaceController = NavApp::getAirspaceController();
+  connect(airspaceController, &AirspaceController::updateAirspaceSources,
+          this, &MainWindow::updateMapObjectsShown);
+  connect(airspaceController, &AirspaceController::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
+
+  // Connect airspace manger signals to database manager signals
+  connect(airspaceController, &AirspaceController::preDatabaseLoadAirspaces,
+          NavApp::getDatabaseManager(), &DatabaseManager::preDatabaseLoad);
+  connect(airspaceController, &AirspaceController::postDatabaseLoadAirspaces,
+          NavApp::getDatabaseManager(), &DatabaseManager::postDatabaseLoad);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
@@ -1399,8 +1406,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
-
-  connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
 
   // Webserver
   connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
@@ -2876,7 +2881,7 @@ void MainWindow::resetMapObjectsShown()
   NavApp::getUserdataController()->resetSettingsToDefault();
 
   mapWidget->updateMapObjectsShown();
-  airspaceHandler->updateButtonsAndActions();
+  NavApp::getAirspaceController()->updateButtonsAndActions();
   profileWidget->update();
   setStatusMessage(tr("Map settings changed."));
 }
@@ -2939,6 +2944,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
   s.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
   s.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
+  s.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
@@ -3152,7 +3158,7 @@ void MainWindow::updateOnlineActionStates()
   if(NavApp::isOnlineNetworkActive())
   {
     // Show action in menu and toolbar
-    ui->actionShowAirspacesOnline->setVisible(true);
+    ui->actionViewAirspaceSrcOnline->setVisible(true);
 
     // Add tabs in search widget
     if(ui->tabWidgetSearch->indexOf(ui->tabOnlineClientSearch) == -1)
@@ -3174,7 +3180,7 @@ void MainWindow::updateOnlineActionStates()
   else
   {
     // Hide action in menu and toolbar
-    ui->actionShowAirspacesOnline->setVisible(false);
+    ui->actionViewAirspaceSrcOnline->setVisible(false);
 
     // Remove the tabs in search from last to first. Order is important - the search objects remain
     ui->tabWidgetSearch->removeTab(si::SEARCH_ONLINE_SERVER);
@@ -3319,11 +3325,6 @@ void MainWindow::updateActionStates()
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
-
-  // Allow to copy airspaces to X-Plane if the currently selected is FSX/P3D and the X-Plane path is set
-  ui->actionReloadSceneryCopyAirspaces->setEnabled(
-    NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE11 &&
-    !NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11).isEmpty());
 }
 
 void MainWindow::resetWindowLayout()
@@ -3427,6 +3428,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "windReporter";
   NavApp::getWindReporter()->restoreState();
 
+  qDebug() << "airspaceController";
+  NavApp::getAirspaceController()->restoreState();
+
   qDebug() << "aircraftPerfController";
   NavApp::getAircraftPerfController()->restoreState();
 
@@ -3455,7 +3459,7 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                         ui->actionShowAirspaces, ui->actionShowAirspacesOnline,
+                         ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                          ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
@@ -3573,6 +3577,10 @@ void MainWindow::saveStateMain()
   if(NavApp::getAircraftPerfController() != nullptr)
     NavApp::getAircraftPerfController()->saveState();
 
+  qDebug() << "airspaceController";
+  if(NavApp::getAirspaceController() != nullptr)
+    NavApp::getAirspaceController()->saveState();
+
   qDebug() << "routeController";
   if(routeController != nullptr)
     routeController->saveState();
@@ -3662,7 +3670,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAddonAirports,
                     ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                    ui->actionShowAirspaces, ui->actionShowAirspacesOnline,
+                    ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                     ui->actionMapAircraftCenter,
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
@@ -3777,7 +3785,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   // Update toolbar buttons
   updateActionStates();
 
-  airspaceHandler->updateButtonsAndActions();
+  NavApp::getAirspaceController()->updateButtonsAndActions();
 }
 
 /* Update the current weather context for the information window. Returns true if any

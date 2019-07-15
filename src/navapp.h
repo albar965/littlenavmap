@@ -23,37 +23,39 @@
 #include "common/mapflags.h"
 #include "fs/fspaths.h"
 
+class AircraftPerfController;
+class AircraftTrack;
 class AirportQuery;
-class MapQuery;
+class AirspaceController;
 class AirspaceQuery;
-class InfoQuery;
-class ProcedureQuery;
-class Route;
-class RouteAltitude;
-class MainWindow;
 class ConnectClient;
 class DatabaseManager;
-class QMainWindow;
-class RouteController;
-class MapWidget;
-class MapPaintWidget;
-class WeatherReporter;
-class WindReporter;
 class ElevationProvider;
-class AircraftTrack;
+class InfoController;
+class InfoQuery;
+class LogdataController;
+class LogdataSearch;
+class MainWindow;
+class MapPaintWidget;
+class MapQuery;
+class MapWidget;
+class OnlinedataController;
+class OptionsDialog;
+class ProcedureQuery;
+class QMainWindow;
 class QSplashScreen;
+class Route;
+class RouteAltitude;
+class RouteController;
+class StyleHandler;
 class UpdateHandler;
 class UserdataController;
-class LogdataController;
-class OnlinedataController;
 class UserdataIcons;
-class LogdataSearch;
 class UserdataSearch;
 class VehicleIcons;
-class StyleHandler;
-class AircraftPerfController;
+class WeatherReporter;
 class WebController;
-class InfoController;
+class WindReporter;
 
 namespace atools {
 
@@ -151,12 +153,6 @@ public:
 
   static atools::geo::Pos getAirportPos(const QString& ident);
 
-  /* Nav data as source */
-  static AirspaceQuery *getAirspaceQuery();
-
-  /* Online network data as source */
-  static AirspaceQuery *getAirspaceQueryOnline();
-
   static InfoQuery *getInfoQuery();
   static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
@@ -178,6 +174,8 @@ public:
   static bool isNavdataAll();
   static bool isNavdataMixed();
   static bool isNavdataOff();
+
+  static OptionsDialog *getOptionsDialog();
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
    * etc. Returns the documents path if FS files cannot be found. */
@@ -206,6 +204,7 @@ public:
   static LogdataSearch *getLogdataSearch();
 
   static atools::sql::SqlDatabase *getDatabaseUser();
+  static atools::sql::SqlDatabase *getDatabaseUserAirspace();
   static atools::sql::SqlDatabase *getDatabaseLogbook();
   static atools::sql::SqlDatabase *getDatabaseOnline();
 
@@ -234,6 +233,7 @@ public:
 
   static ConnectClient *getConnectClient();
 
+  /* Can be null while compiling database */
   static const atools::fs::db::DatabaseMeta *getDatabaseMetaSim();
   static const atools::fs::db::DatabaseMeta *getDatabaseMetaNav();
 
@@ -270,6 +270,8 @@ public:
   static AircraftPerfController *getAircraftPerfController();
   static const atools::fs::perf::AircraftPerf& getAircraftPerformance();
 
+  static AirspaceController *getAirspaceController();
+
   static atools::fs::common::MagDecReader *getMagDecReader();
 
   static atools::fs::common::MoraReader *getMoraReader();
@@ -299,7 +301,6 @@ private:
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
   static MapQuery *mapQuery;
-  static AirspaceQuery *airspaceQuery, *airspaceQueryOnline;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
@@ -315,11 +316,12 @@ private:
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
   static AircraftPerfController *aircraftPerfController;
+  static AirspaceController *airspaceController;
 
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
 
-  static atools::fs::db::DatabaseMeta *databaseMeta;
+  static atools::fs::db::DatabaseMeta *databaseMetaSim;
   static atools::fs::db::DatabaseMeta *databaseMetaNav;
   static QSplashScreen *splashScreen;
 

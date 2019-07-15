@@ -34,6 +34,7 @@
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
 #include "logbook/logdatacontroller.h"
+#include "airspace/airspacecontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "fs/userdata/userdatamanager.h"
 #include "common/symbolpainter.h"
@@ -1999,7 +2000,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   html.nbsp().nbsp();
 
   QString suffix;
-  if(airspace.online)
+  if(airspace.isOnline())
   {
     if(!NavApp::getOnlineNetworkTranslated().isEmpty())
       suffix = tr(" (%1)").arg(NavApp::getOnlineNetworkTranslated());
@@ -2010,16 +2011,16 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   else
   {
     // Do not capitalize online network center names
-    QString name = airspace.online ? airspace.name : formatter::capNavString(airspace.name);
+    QString name = airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name);
     if(!info)
       name = atools::elideTextShort(name, 40);
 
     if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && !airspace.multipleCode.trimmed().isEmpty() &&
-       !airspace.online)
+       !airspace.isOnline())
       // Add multiple code as suffix to indicate overlapping duplicates
       suffix = tr(" (%1)").arg(airspace.multipleCode);
 
-    navaidTitle(html, ((info && !airspace.online) ? tr("Airspace: ") : QString()) + name + suffix);
+    navaidTitle(html, ((info && !airspace.isOnline()) ? tr("Airspace: ") : QString()) + name + suffix);
   }
 
   if(info)
@@ -2027,9 +2028,10 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"),
-           QString("lnm://show?id=%1&type=%2").
+           QString("lnm://show?id=%1&type=%2&source=%3").
            arg(airspace.id).
-           arg(airspace.online ? map::AIRSPACE_ONLINE : map::AIRSPACE),
+           arg(map::AIRSPACE).
+           arg(airspace.src),
            atools::util::html::LINK_NO_UL);
   }
 
@@ -2041,7 +2043,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     if(!remark.isEmpty())
       header.append(remark);
 
-    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && airspace.timeCode != 'U' && !airspace.online)
+    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && airspace.timeCode != 'U' && !airspace.isOnline())
     {
       // Add comment about active times if navdata airspace
       QString msg;
@@ -2073,7 +2075,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   html.row2(tr("Type:"), map::airspaceTypeToString(airspace.type));
 
-  if(!airspace.online)
+  if(!airspace.isOnline())
   {
     if(airspace.minAltitudeType.isEmpty())
       html.row2(tr("Min altitude:"), tr("Unknown"));
@@ -2146,16 +2148,17 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   }
   html.tableEnd();
 
-  if(info && !airspace.online)
+  if(info && !airspace.isOnline())
   {
-    const atools::sql::SqlRecord *rec = infoQuery->getAirspaceInformation(airspace.id);
+    atools::sql::SqlRecord rec = NavApp::getAirspaceController()->getAirspaceInfoRecordById(airspace.combinedId());
 
-    if(rec != nullptr)
-      addScenery(rec, html);
+    if(!rec.isEmpty())
+      addScenery(&rec, html);
   }
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: online = %1, boundary_id = %2").arg(airspace.online).arg(airspace.getId())).pEnd();
+  html.p().small(QString("Database: source = %1, boundary_id = %2").
+                 arg(map::airspaceSourceText(airspace.src)).arg(airspace.getId())).pEnd();
 #endif
 
 }

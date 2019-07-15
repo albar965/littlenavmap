@@ -23,12 +23,13 @@
 #include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
 #include "common/formatter.h"
-#include "query/airspacequery.h"
 #include "geo/calculations.h"
 #include "util/roundedpolygon.h"
 #include "common/symbolpainter.h"
 #include "geo/rect.h"
 #include "atools.h"
+#include "navapp.h"
+#include "airspace/airspacecontroller.h"
 #include "common/constants.h"
 #include "common/unit.h"
 #include "route/routeleg.h"
@@ -406,11 +407,7 @@ void MapPainterMark::paintLogEntries(PaintContext *context, const QList<map::Map
 
 void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace& airspace, int size)
 {
-  const LineString *airspaceGeometry = nullptr;
-  if(airspace.online)
-    airspaceGeometry = airspaceQueryOnline->getAirspaceGeometry(airspace.id);
-  else
-    airspaceGeometry = airspaceQuery->getAirspaceGeometry(airspace.id);
+  const LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
 
   QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
@@ -449,7 +446,7 @@ void MapPainterMark::paintAirspace(PaintContext *context, const map::MapAirspace
       if(wToS(center, x, y))
       {
         QStringList texts;
-        texts << (airspace.online ? airspace.name : formatter::capNavString(airspace.name))
+        texts << (airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name))
               << map::airspaceTypeToString(airspace.type);
         if(!airspace.restrictiveDesignation.isEmpty())
           texts << (airspace.restrictiveType + "-" + airspace.restrictiveDesignation);

@@ -1414,6 +1414,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Get objects near position =============================================================
   map::MapSearchResult result;
   getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, result);
+  result.moveOnlineAirspacesToFront();
 
   map::MapAirport *airport = nullptr;
   SimConnectAircraft *aiAircraft = nullptr;
@@ -1482,8 +1483,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.airways.isEmpty())
     airway = &result.airways.first();
 
-  if(!result.airspaces.isEmpty())
-    airspace = &result.airspaces.first();
+  airspace = result.firstSimNavUserAirspace();
+  onlineCenter = result.firstOnlineAirspace();
 
   // ===================================================================================
   // Collect information from the search result - build text only for one object for several menu items
@@ -1491,16 +1492,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
           destinationText, addRouteText, searchText, editUserpointText, patternText;
 
-  if(airspace != nullptr)
+  if(onlineCenter != nullptr)
   {
-    if(airspace->online)
-    {
-      onlineCenter = airspace;
-      searchText = informationText = tr("Online Center %1").arg(onlineCenter->name);
-    }
-    else
-      informationText = result.airspaces.size() > 1 ? tr("Airspaces") : tr("Airspace");
+    informationText = result.numOnlineAirspaces() > 1 ? tr("Online Centers") : tr("Online Center");
+    searchText = tr("Online Center %1").arg(onlineCenter->name);
   }
+  else if(airspace != nullptr)
+    informationText = result.numSimNavUserAirspaces() > 1 ? tr("Airspaces") : tr("Airspace");
 
   // Fill texts in reverse order of priority
   if(airway != nullptr)
@@ -1676,7 +1674,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // ===================================================================================
   // Update "show information" for airports, navaids, airways and airspaces
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
-     airway != nullptr || airspace != nullptr || userpoint != nullptr || logEntry != nullptr)
+     airway != nullptr || airspace != nullptr || onlineCenter != nullptr || userpoint != nullptr || logEntry != nullptr)
   {
     ui->actionMapShowInformation->setEnabled(true);
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(informationText));
@@ -1946,7 +1944,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                           SqlRecord().appendFieldAndValue("callsign", onlineAircraft->getAirplaneRegistration()),
                           true /* select */);
       else if(onlineCenter != nullptr)
-        emit showInSearch(map::AIRSPACE_ONLINE,
+        emit showInSearch(map::AIRSPACE,
                           SqlRecord().appendFieldAndValue("callsign", onlineCenter->name), true /* select */);
     }
     else if(action == ui->actionMapNavaidRange)
@@ -2035,15 +2033,15 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         id = airway->id;
         type = map::AIRWAY;
       }
+      else if(onlineCenter != nullptr)
+      {
+        id = onlineCenter->id;
+        type = map::AIRSPACE;
+      }
       else if(airspace != nullptr)
       {
         id = airspace->id;
         type = map::AIRSPACE;
-      }
-      else if(onlineCenter != nullptr)
-      {
-        id = onlineCenter->id;
-        type = map::AIRSPACE_ONLINE;
       }
       else
       {
@@ -2114,7 +2112,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           }
         }
         else
-          // Display only one map object as shown in the menu item
+          // Display only one map object as shown in the menu item except airspaces
           result.clearAllButFirst(static_cast<map::MapObjectTypes>(~map::AIRSPACE));
 
         emit showInformation(result, type);
@@ -3030,9 +3028,6 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionShowAirspaces->blockSignals(true);
   ui->actionShowAirspaces->setChecked(true);
   ui->actionShowAirspaces->blockSignals(false);
-  ui->actionShowAirspacesOnline->blockSignals(true);
-  ui->actionShowAirspacesOnline->setChecked(true);
-  ui->actionShowAirspacesOnline->blockSignals(false);
   ui->actionMapShowRoute->blockSignals(true);
   ui->actionMapShowRoute->setChecked(true);
   ui->actionMapShowRoute->blockSignals(false);
@@ -3169,8 +3164,6 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
                      ui->actionShowAirspaces->isChecked());
-  setShowMapFeatures(map::AIRSPACE_ONLINE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
-                     ui->actionShowAirspacesOnline->isChecked());
 
   setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());

@@ -21,16 +21,17 @@
 #include "navapp.h"
 #include "common/constants.h"
 #include "common/maptools.h"
+#include "common/maptypes.h"
 #include "common/htmlinfobuilder.h"
 #include "common/tabindexes.h"
 #include "online/onlinedatacontroller.h"
+#include "airspace/airspacecontroller.h"
 #include "gui/tools.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
 #include "query/mapquery.h"
-#include "query/airspacequery.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "common/mapcolors.h"
@@ -52,9 +53,9 @@ InfoController::InfoController(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   mapQuery = NavApp::getMapQuery();
-  airspaceQuery = NavApp::getAirspaceQuery();
-  airspaceQueryOnline = NavApp::getAirspaceQueryOnline();
   airportQuery = NavApp::getAirportQuerySim();
+
+  airspaceController = NavApp::getAirspaceController();
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
@@ -230,23 +231,26 @@ void InfoController::anchorClicked(const QUrl& url)
           emit showRect(airportQuery->getAirportById(id).bounding, false);
         else if(type == map::AIRSPACE)
         {
+          map::MapAirspaceSources src(query.queryItemValue("source").toInt());
+
           // Append airspace to current highlight list if not already present
-          map::MapAirspace airspace = airspaceQuery->getAirspaceById(id);
-          QList<map::MapAirspace> airspaceHighlights = mapWidget->getAirspaceHighlights();
-          if(!maptools::containsId(airspaceHighlights, airspace.id))
-            airspaceHighlights.append(airspace);
-          mapWidget->changeAirspaceHighlights(airspaceHighlights);
-          mainWindow->updateHighlightActionStates();
-          emit showRect(airspace.bounding, false);
-        }
-        else if(type == map::AIRSPACE_ONLINE)
-        {
-          // Append online center to current highlight list if not already present
-          map::MapAirspace airspace = airspaceQueryOnline->getAirspaceById(id);
-          map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
-          if(!maptools::containsId(searchHighlights.airspaces, airspace.id))
-            searchHighlights.airspaces.append(airspace);
-          mapWidget->changeSearchHighlights(searchHighlights);
+          map::MapAirspace airspace = airspaceController->getAirspaceById({id, src});
+
+          if(src & map::AIRSPACE_SRC_ONLINE)
+          {
+            // Append online center to current highlight list if not already present
+            map::MapSearchResult searchHighlights = mapWidget->getSearchHighlights();
+            if(!maptools::containsId(searchHighlights.airspaces, airspace.id))
+              searchHighlights.airspaces.append(airspace);
+            mapWidget->changeSearchHighlights(searchHighlights);
+          }
+          else
+          {
+            QList<map::MapAirspace> airspaceHighlights = mapWidget->getAirspaceHighlights();
+            if(!maptools::containsId(airspaceHighlights, airspace.id))
+              airspaceHighlights.append(airspace);
+            mapWidget->changeAirspaceHighlights(airspaceHighlights);
+          }
           mainWindow->updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
         }
@@ -298,19 +302,25 @@ void InfoController::saveState()
   for(const map::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, map::AIRWAY});
 
-  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
-  {
-    // Do not save online airspace ids since they will change on next startup
-    if(!airspace.online)
-      refs.append({airspace.id, map::AIRSPACE});
-  }
-
+  // Save list =====================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
   for(const map::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
-
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
+
+  // Save airspaces =====================================================
+  QVector<map::MapAirspaceId> airspaces;
+  refList.clear();
+  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
+  {
+    // Do not save online airspace ids since they will change on next startup
+    if(!airspace.isOnline())
+      refList.append(QString("%1;%2").arg(airspace.id).arg(airspace.src));
+  }
+  settings.setValue(lnm::INFOWINDOW_CURRENTAIRSPACES, refList.join(";"));
+
+  // More / less state ===================================
   settings.setValue(lnm::INFOWINDOW_MORE_LESS_PROGRESS, lessAircraftProgress);
 }
 
@@ -321,15 +331,26 @@ void InfoController::restoreState()
     lessAircraftProgress =
       atools::settings::Settings::instance().valueBool(lnm::INFOWINDOW_MORE_LESS_PROGRESS, false);
 
-    QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
-    QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
-
     // Go through the string and collect all objects in the MapSearchResult
     map::MapSearchResult res;
+
+    // All objects =================================
+    QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
+    QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
-      mapQuery->getMapObjectById(res,
-                                 map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
-                                 refsStrList.at(i).toInt(), false /* airport from nav database */);
+      mapQuery->getMapObjectById(res, map::MapObjectTypes(refsStrList.value(i + 1).toInt()), map::AIRSPACE_SRC_NONE,
+                                 refsStrList.value(i).toInt(), false /* airport from nav database */);
+
+    // Airspaces =================================
+    refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTAIRSPACES);
+    refsStrList = refsStr.split(";", QString::SkipEmptyParts);
+    for(int i = 0; i < refsStrList.size(); i += 2)
+    {
+      map::MapAirspaceId id;
+      id.id = refsStrList.value(i).toInt();
+      id.src = static_cast<map::MapAirspaceSources>(refsStrList.value(i + 1).toInt());
+      res.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(id));
+    }
 
     showInformationInternal(res, map::NONE, false /* show windows */, false /* scroll to top */);
 
@@ -447,7 +468,7 @@ void InfoController::onlineNetworkChanged()
   // Remove all online network airspaces from current result
   QList<map::MapAirspace> airspaces;
   for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
-    if(!airspace.online)
+    if(!airspace.isOnline())
       airspaces.append(airspace);
   currentSearchResult.airspaces = airspaces;
 
@@ -572,7 +593,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   {
     atools::sql::SqlRecord onlineRec;
 
-    if(result.hasNavdataAirspaces())
+    if(result.hasSimNavUserAirspaces())
       currentSearchResult.clearNavdataAirspaces();
 
     html.clear();
@@ -587,7 +608,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     html.b().a(tr("Remove Highlights from Map"), QString("lnm://do?hideairspaces"),
                atools::util::html::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
-    for(const map::MapAirspace& airspace : result.getNavdataAirspaces())
+    for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
     {
       qDebug() << "Found airspace" << airspace.id;
 
@@ -611,9 +632,9 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
     // Delete all airspaces that were removed from the database inbetween
     QList<map::MapAirspace> onlineAirspaces = result.getOnlineAirspaces();
     QList<map::MapAirspace>::iterator it = std::remove_if(onlineAirspaces.begin(), onlineAirspaces.end(),
-                                                          [](const map::MapAirspace& airspace) -> bool
+                                                          [ = ](const map::MapAirspace& airspace) -> bool
     {
-      return !NavApp::getAirspaceQueryOnline()->hasAirspaceById(airspace.id);
+      return !airspaceController->hasAirspaceById({airspace.id, map::AIRSPACE_SRC_ONLINE});
     });
     if(it != onlineAirspaces.end())
       onlineAirspaces.erase(it, onlineAirspaces.end());
@@ -634,8 +655,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       currentSearchResult.airspaces.append(airspace);
 
       // Get extra information for online network ATC
-      if(airspace.online)
-        onlineRec = NavApp::getAirspaceQueryOnline()->getAirspaceRecordById(airspace.id);
+      if(airspace.isOnline())
+        onlineRec = airspaceController->getOnlineAirspaceRecordById(airspace.id);
 
       infoBuilder->airspaceText(airspace, onlineRec, html);
       html.br();
@@ -716,7 +737,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
       }
       else if(preferredType & map::NAV_ALL || preferredType & map::USERPOINT || preferredType & map::AIRWAY)
         newIdx = ic::INFO_NAVAID;
-      else if(preferredType & map::AIRSPACE_ONLINE)
+      else if(preferredType & map::AIRSPACE && foundOnlineCenter)
         newIdx = ic::INFO_ONLINE_CENTER;
       else if(preferredType & map::AIRCRAFT_ONLINE)
         newIdx = ic::INFO_ONLINE_CLIENT;

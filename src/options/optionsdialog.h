@@ -63,6 +63,8 @@ public:
   static bool isOverrideLanguage();
   static bool isOverrideLocale();
 
+  QString selectCacheUserAirspace();
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
@@ -138,7 +140,9 @@ private:
 
   void updateButtonColors();
   void updateCacheElevationStates();
+  void updateCacheUserAirspaceStates();
   void offlineDataSelectClicked();
+  void userAirspacePathSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
   void updateOnlineWidgetStatus();

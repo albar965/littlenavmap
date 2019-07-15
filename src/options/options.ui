@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>785</width>
-    <height>551</height>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -4470,6 +4470,91 @@ Download from the link &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/
              </property>
              <property name="openExternalLinks">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QGroupBox" name="groupBox_15">
+          <property name="title">
+           <string>User Airspaces</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_30">
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelCacheUserAirspacePath">
+             <property name="text">
+              <string>&amp;User Airspace Base Directory:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditCacheUserAirspacePath</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="pushButtonCacheUserAirspacePathSelect">
+             <property name="text">
+              <string>&amp;Select ...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="labelCacheUserAirspacePathStatus">
+             <property name="text">
+              <string>Valid</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEditCacheUserAirspacePath">
+             <property name="toolTip">
+              <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+             </property>
+             <property name="placeholderText">
+              <string>No directory for user airspaces selected.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditCacheUserAirspaceExtensions">
+             <property name="toolTip">
+              <string>Space separated list of file extension to read as airspace files.</string>
+             </property>
+             <property name="text">
+              <string>*.txt</string>
+             </property>
+             <property name="placeholderText">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelCacheUserAirspaceExtensions">
+             <property name="toolTip">
+              <string>Files with these extensions will be loaded as airspaces. 
+Currently only OpenAir is supported (*.txt). </string>
+             </property>
+             <property name="text">
+              <string>File &amp;extensions:</string>
+             </property>
+             <property name="buddy">
+              <cstring>lineEditCacheUserAirspaceExtensions</cstring>
              </property>
             </widget>
            </item>

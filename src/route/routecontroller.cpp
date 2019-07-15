@@ -1696,7 +1696,8 @@ void RouteController::doubleClick(const QModelIndex& index)
       emit showPos(mo.getPosition(), 0.f, true);
 
     map::MapSearchResult result;
-    mapQuery->getMapObjectById(result, mo.getMapObjectType(), mo.getId(), false /* airport from nav database */);
+    mapQuery->getMapObjectById(result, mo.getMapObjectType(), map::AIRSPACE_SRC_NONE, mo.getId(),
+                               false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -1769,7 +1770,7 @@ void RouteController::showInformationMenu()
   {
     const RouteLeg& routeLeg = route.at(index.row());
     map::MapSearchResult result;
-    mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), routeLeg.getId(),
+    mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
                                false /* airport from nav database */);
     emit showInformation(result);
   }

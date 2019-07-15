@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_MAPFLAGS_H
 #define LITTLENAVMAP_MAPFLAGS_H
 
+#include <QVector>
 #include <QObject>
 
 /*
@@ -74,7 +75,7 @@ enum MapObjectType
   COMPASS_ROSE = 1 << 26, /* Compass rose */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
 
-  AIRSPACE_ONLINE = 1 << 28, /* Online network center */
+  // AIRSPACE_ONLINE = 1 << 28, /* Online network center - not used in display map flags */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
 
   LOGBOOK = 1 << 30, /* Logbook entry */
@@ -167,6 +168,29 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
 
 Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 27;
 
+/* Source database for airspace */
+enum MapAirspaceSource
+{
+  AIRSPACE_SRC_NONE = 0,
+  AIRSPACE_SRC_SIM = 1 << 0,
+  AIRSPACE_SRC_NAV = 1 << 1,
+  AIRSPACE_SRC_ONLINE = 1 << 2,
+  AIRSPACE_SRC_USER = 1 << 3,
+
+  AIRSPACE_SRC_ALL = 0xff,
+
+  AIRSPACE_SRC_NOT_ONLINE = AIRSPACE_SRC_SIM | AIRSPACE_SRC_NAV | AIRSPACE_SRC_USER
+};
+
+Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
+
+static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
+{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
+
+static const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
+{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+
 /* Airspace filter flags */
 enum MapAirspaceFlag
 {
@@ -199,6 +223,13 @@ struct MapAirspaceFilter
 
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& obj);
+
+/* Combines id and source database (online, user, etc.) */
+struct MapAirspaceId
+{
+  int id;
+  MapAirspaceSources src;
+};
 
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag

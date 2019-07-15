@@ -879,6 +879,16 @@ public:
     return weatherNoaaWindBaseUrl;
   }
 
+  const QString& getCacheUserAirspacePath() const
+  {
+    return cacheUserAirspacePath;
+  }
+
+  const QString& getCacheUserAirspaceExtensions() const
+  {
+    return cacheUserAirspaceExtensions;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -929,7 +939,7 @@ private:
           weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=%1",
           weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
 
-  QString cacheOfflineElevationPath;
+  QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions;
 
   // ui->listWidgetOptionsDatabaseAddon
   QStringList databaseAddonExclude;

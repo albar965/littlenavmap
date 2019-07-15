@@ -30,6 +30,7 @@ class AirspaceQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
+class AirspaceController;
 
 namespace atools {
 namespace util {
@@ -136,9 +137,8 @@ private:
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
-  AirspaceQuery *airspaceQuery = nullptr;
-  AirspaceQuery *airspaceQueryOnline = nullptr;
   AirportQuery *airportQuery = nullptr;
+  AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;

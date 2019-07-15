@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/airspacetoolbarhandler.h"
+#include "airspace/airspacetoolbarhandler.h"
 
 #include "navapp.h"
 #include "ui_mainwindow.h"
@@ -29,8 +29,6 @@ AirspaceToolBarHandler::AirspaceToolBarHandler(MainWindow *parent)
   : mainWindow(parent)
 {
   connect(NavApp::getMainUi()->actionShowAirspaces, &QAction::toggled,
-          this, &AirspaceToolBarHandler::allAirspacesToggled);
-  connect(NavApp::getMainUi()->actionShowAirspacesOnline, &QAction::toggled,
           this, &AirspaceToolBarHandler::allAirspacesToggled);
 }
 
@@ -53,10 +51,6 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
   bool hasAirspaces = NavApp::hasDatabaseAirspaces();
   airspaceAction->setEnabled(hasAirspaces);
 
-  QAction *airspaceActionOnline = NavApp::getMainUi()->actionShowAirspacesOnline;
-  bool hasAirspacesOnline = NavApp::hasOnlineData();
-  airspaceActionOnline->setEnabled(hasAirspacesOnline);
-
   // Enable or disable all tool buttons
   for(int i = 0; i < airspaceToolButtons.size(); i++)
   {
@@ -69,8 +63,7 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
       airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().first()->isChecked());
 
     // Enable button if any airspace type is enabled
-    airspaceToolButtons.at(i)->setEnabled((airspaceAction->isChecked() && hasAirspaces) ||
-                                          (airspaceActionOnline->isChecked() && hasAirspacesOnline));
+    airspaceToolButtons.at(i)->setEnabled((airspaceAction->isChecked() && hasAirspaces));
   }
 }
 
@@ -92,9 +85,7 @@ void AirspaceToolBarHandler::updateAirspaceToolActions()
   }
 
   for(QAction *action : airspaceActions)
-    action->setEnabled(
-      NavApp::getMainUi()->actionShowAirspaces->isChecked() ||
-      NavApp::getMainUi()->actionShowAirspacesOnline->isChecked());
+    action->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
 }
 
 void AirspaceToolBarHandler::updateButtonsAndActions()

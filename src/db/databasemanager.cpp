@@ -195,9 +195,11 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_LOGBOOK);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER_AIRSPACE);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
     databaseUser = new SqlDatabase(DATABASE_NAME_USER);
     databaseLogbook = new SqlDatabase(DATABASE_NAME_LOGBOOK);
+    databaseUserAirspace = new SqlDatabase(DATABASE_NAME_USER_AIRSPACE);
     databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
 
     // Open user point database =================================
@@ -215,6 +217,16 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
       logdataManager->createSchema();
     else
       logdataManager->updateSchema();
+
+    // Open user airspace database =================================
+    openWriteableDatabase(databaseUserAirspace, "userairspace", "userairspace", false /* backup */);
+    if(!SqlUtil(databaseUserAirspace).hasTable("boundary"))
+    {
+      SqlTransaction transaction(databaseUserAirspace);
+      // Create schema on demand
+      createEmptySchema(databaseUserAirspace, true /* boundary only */);
+      transaction.commit();
+    }
 
     // Open online network database ==============================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -241,6 +253,7 @@ DatabaseManager::~DatabaseManager()
   closeDatabases();
   closeUserDatabase();
   closeLogDatabase();
+  closeUserAirspaceDatabase();
   closeOnlineDatabase();
 
   delete databaseSim;
@@ -248,6 +261,7 @@ DatabaseManager::~DatabaseManager()
   delete databaseMora;
   delete databaseUser;
   delete databaseLogbook;
+  delete databaseUserAirspace;
   delete databaseOnline;
 
   SqlDatabase::removeDatabase(DATABASE_NAME);
@@ -255,6 +269,7 @@ DatabaseManager::~DatabaseManager()
   SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
+  SqlDatabase::removeDatabase(DATABASE_NAME_USER_AIRSPACE);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
 }
@@ -837,6 +852,11 @@ void DatabaseManager::closeUserDatabase()
   closeDatabaseFile(databaseUser);
 }
 
+void DatabaseManager::closeUserAirspaceDatabase()
+{
+  closeDatabaseFile(databaseUserAirspace);
+}
+
 void DatabaseManager::closeLogDatabase()
 {
   closeDatabaseFile(databaseLogbook);
@@ -1021,87 +1041,6 @@ void DatabaseManager::run()
   insertSimSwitchActions();
 
   saveState();
-}
-
-void DatabaseManager::copyAirspaces()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  try
-  {
-    // The current database is read only so we cannot use the attach command
-    SqlUtil fromUtil(databaseSim);
-    if(fromUtil.hasTable("boundary"))
-    {
-      // We have a boundary table
-      QString targetFile = buildDatabaseFileName(atools::fs::FsPaths::XPLANE11);
-
-      if(QFile::exists(targetFile))
-      {
-        // X-Plane database file exists
-        SqlDatabase xpDb(DATABASE_NAME_TEMP);
-        xpDb.setDatabaseName(targetFile);
-        xpDb.open();
-
-        SqlUtil xpUtil(xpDb);
-
-        if(xpUtil.hasTable("boundary"))
-        {
-          // X-Plane database file has a boundary table
-          QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-          SqlTransaction transaction(xpDb);
-
-          // Delete
-          xpDb.exec("delete from boundary");
-          transaction.commit();
-
-          // Build statements
-          SqlQuery fromQuery(fromUtil.buildSelectStatement("boundary"), databaseSim);
-
-          // Use named bindings to overcome different column order
-          // Let SQLite generate the ID automatically
-          SqlQuery xpQuery(xpDb);
-          xpQuery.prepare(xpUtil.buildInsertStatement("boundary", QString(), {"boundary_id"},
-                                                      true /* named bindings */));
-
-          // Copy from one database to another
-          std::function<bool(SqlQuery&, SqlQuery&)> func =
-            [](SqlQuery&, SqlQuery& to) -> bool
-            {
-              // use an invalid value for file_id to avoid display in information window
-              to.bindValue(":file_id", 0);
-              return true;
-            };
-          int copied = SqlUtil::copyResultValues(fromQuery, xpQuery, func);
-          transaction.commit();
-
-          QGuiApplication::restoreOverrideCursor();
-          QMessageBox::information(mainWindow, QApplication::applicationName(),
-                                   tr("Copied %1 airspaces to the X-Plane scenery database.").
-                                   arg(copied));
-        }
-        else
-          atools::gui::Dialog::warning(mainWindow,
-                                       tr("X-Plane database has no airspace boundary table.").arg(targetFile));
-        xpDb.close();
-      }
-      else
-        atools::gui::Dialog::warning(mainWindow,
-                                     tr("X-Plane database \"%1\" does not exist.").arg(targetFile));
-    }
-    else
-      atools::gui::Dialog::warning(mainWindow,
-                                   tr("Airspace boundary table not found in currently selected database"));
-  }
-  catch(atools::Exception& e)
-  {
-    ATOOLS_HANDLE_EXCEPTION(e);
-  }
-  catch(...)
-  {
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
-  }
 }
 
 /* Shows scenery database loading dialog.
@@ -1575,14 +1514,19 @@ bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db)
   }
 }
 
-/* Create an empty database schema. */
-void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db)
+void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db, bool boundary)
 {
   try
   {
     NavDatabaseOptions opts;
-    NavDatabase(&opts, db, nullptr, GIT_REVISION).createSchema();
-    DatabaseMeta(db).updateVersion();
+    if(boundary)
+      // Does not use a transaction
+      NavDatabase(&opts, db, nullptr, GIT_REVISION).createAirspaceSchema();
+    else
+    {
+      NavDatabase(&opts, db, nullptr, GIT_REVISION).createSchema();
+      DatabaseMeta(db).updateVersion();
+    }
   }
   catch(atools::Exception& e)
   {

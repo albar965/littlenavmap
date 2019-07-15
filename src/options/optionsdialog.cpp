@@ -273,6 +273,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->radioButtonCacheUseOffineElevation,
      ui->radioButtonCacheUseOnlineElevation,
      ui->lineEditCacheOfflineDataPath,
+     ui->lineEditCacheUserAirspacePath,
+     ui->lineEditCacheUserAirspaceExtensions,
 
      ui->spinBoxOptionsGuiInfoText,
      ui->spinBoxOptionsGuiAircraftPerf,
@@ -465,6 +467,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonCacheOfflineDataSelect, &QPushButton::clicked,
           this, &OptionsDialog::offlineDataSelectClicked);
 
+  connect(ui->pushButtonCacheUserAirspacePathSelect, &QPushButton::clicked,
+          this, &OptionsDialog::userAirspacePathSelectClicked);
+  connect(ui->lineEditCacheUserAirspacePath, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateCacheUserAirspaceStates);
+
   connect(ui->pushButtonOptionsStartupCheckUpdate, &QPushButton::clicked,
           this, &OptionsDialog::checkUpdateClicked);
 
@@ -532,6 +539,7 @@ int OptionsDialog::exec()
   optionDataToWidgets();
   updateWeatherButtonState();
   updateCacheElevationStates();
+  updateCacheUserAirspaceStates();
   updateWidgetUnits();
   updateDatabaseButtonState();
   updateOnlineWidgetStatus();
@@ -584,9 +592,11 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
                                tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                arg(result.mid(0, 6).join("<br/>")));
     else
-      atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
-                                              "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
-                                                "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+      atools::gui::Dialog::warning(this,
+                                   tr(
+                                     "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                       "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                         "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                    arg(result.mid(0, 6).join("<br/>")));
   }
   else
@@ -660,6 +670,12 @@ bool OptionsDialog::isOverrideLanguage()
 bool OptionsDialog::isOverrideLocale()
 {
   return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LOCALE, false);
+}
+
+QString OptionsDialog::selectCacheUserAirspace()
+{
+  userAirspacePathSelectClicked();
+  return ui->lineEditCacheUserAirspacePath->text();
 }
 
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
@@ -1228,6 +1244,8 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts::ROUTE_CENTER_ACTIVE_LEG);
 
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
+  data.cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
+  data.cacheUserAirspaceExtensions = ui->lineEditCacheUserAirspaceExtensions->text();
 
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_AIRPORT, ui->checkBoxOptionsMapTooltipAirport->isChecked());
   data.displayTooltipOptions.setFlag(opts::TOOLTIP_NAVAID, ui->checkBoxOptionsMapTooltipNavaid->isChecked());
@@ -1436,6 +1454,8 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags2(ui->checkBoxOptionsSimCenterLegTable, opts::ROUTE_CENTER_ACTIVE_LEG);
 
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
+  ui->lineEditCacheUserAirspacePath->setText(data.cacheUserAirspacePath);
+  ui->lineEditCacheUserAirspaceExtensions->setText(data.cacheUserAirspaceExtensions);
 
   ui->checkBoxOptionsMapTooltipAirport->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_AIRPORT));
   ui->checkBoxOptionsMapTooltipNavaid->setChecked(data.displayTooltipOptions.testFlag(opts::TOOLTIP_NAVAID));
@@ -1653,6 +1673,44 @@ void OptionsDialog::offlineDataSelectClicked()
     ui->lineEditCacheOfflineDataPath->setText(QDir::toNativeSeparators(path));
 
   updateCacheElevationStates();
+}
+
+void OptionsDialog::userAirspacePathSelectClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString defaultPath = ui->lineEditCacheUserAirspacePath->text();
+
+  if(defaultPath.isEmpty())
+    defaultPath = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+
+  QString path = atools::gui::Dialog(mainWindow).openDirectoryDialog(
+    tr("Select Direcory for User Airspaces"), lnm::DATABASE_USER_AIRSPACE_PATH, defaultPath);
+
+  if(!path.isEmpty())
+  {
+    ui->lineEditCacheUserAirspacePath->setText(QDir::toNativeSeparators(path));
+    OptionData::instanceInternal().cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
+  }
+
+  updateCacheUserAirspaceStates();
+}
+
+void OptionsDialog::updateCacheUserAirspaceStates()
+{
+  const QString& path = ui->lineEditCacheUserAirspacePath->text();
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelCacheUserAirspacePathStatus->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
+    else if(!fileinfo.isDir())
+      ui->labelCacheUserAirspacePathStatus->setText(HtmlBuilder::errorMessage(tr(("Is not a directory."))));
+    else
+      ui->labelCacheUserAirspacePathStatus->setText(tr("Directory is valid."));
+  }
+  else
+    ui->labelCacheUserAirspacePathStatus->setText(tr("No directory selected."));
 }
 
 void OptionsDialog::updateCacheElevationStates()

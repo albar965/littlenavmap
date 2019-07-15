@@ -87,6 +87,7 @@ const QLatin1Literal ACTIONS_SHOW_RESET_PERF("Actions/ResetPerformanceColl");
 const QLatin1Literal ACTIONS_SHOW_SEARCH_CENTER_NULL("Actions/SearchCenterNull");
 const QLatin1Literal ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL("Actions/DownloadFailed");
 const QLatin1Literal ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
+const QLatin1Literal ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
 
 const QLatin1Literal ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1Literal ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
@@ -106,9 +107,11 @@ const QLatin1Literal DATABASE_SCENERYCONFIG("Database/SceneryConfig");
 const QLatin1Literal DATABASE_SIMULATOR("Database/Simulator");
 const QLatin1Literal DATABASE_LOAD_INACTIVE("Database/LoadInactive");
 const QLatin1Literal DATABASE_LOAD_ADDONXML("Database/LoadAddOnXml");
+const QLatin1Literal DATABASE_USER_AIRSPACE_PATH("Database/UserAirspacePath");
 
 const QLatin1Literal EXPORT_FILEDIALOG("Export/FileDialog");
 const QLatin1Literal INFOWINDOW_CURRENTMAPOBJECTS("InfoWindow/CurrentMapObjects");
+const QLatin1Literal INFOWINDOW_CURRENTAIRSPACES("InfoWindow/CurrentMapAirspaces");
 const QLatin1Literal INFOWINDOW_WIDGET("InfoWindow/Widget");
 const QLatin1Literal INFOWINDOW_MORE_LESS_PROGRESS("InfoWindow/MoreLessProgress");
 const QLatin1Literal MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicationStart");
@@ -176,6 +179,8 @@ const QLatin1Literal AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
 const QLatin1Literal AIRCRAFT_PERF_FILENAMESRECENT("AircraftPerformance/FilenamesRecent");
 const QLatin1Literal AIRCRAFT_PERF_EDIT_DIALOG("AircraftPerformance/EditDialog");
 const QLatin1Literal AIRCRAFT_PERF_MERGE_DIALOG("AircraftPerformance/MergeDialog");
+
+const QLatin1Literal AIRSPACE_CONTROLLER_WIDGETS("AirspaceController/Widget");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1Literal SETTINGS_INFOQUERY("Settings/InfoQuery");

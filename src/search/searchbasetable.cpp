@@ -778,9 +778,10 @@ void SearchBaseTable::showRow(int row)
 
   // Show on information panel
   map::MapObjectTypes navType = map::NONE;
+  map::MapAirspaceSources airspaceSource = map::AIRSPACE_SRC_NONE;
   int id = -1;
   // get airport, VOR, NDB or waypoint id from model row
-  getNavTypeAndId(row, navType, id);
+  getNavTypeAndId(row, navType, airspaceSource, id);
 
   if(id > 0 && navType != map::NONE)
   {
@@ -1224,11 +1225,12 @@ void SearchBaseTable::showInformationTriggered()
     if(index.isValid())
     {
       map::MapObjectTypes navType = map::NONE;
+      map::MapAirspaceSources airspaceSource = map::AIRSPACE_SRC_NONE;
       int id = -1;
-      getNavTypeAndId(index.row(), navType, id);
+      getNavTypeAndId(index.row(), navType, airspaceSource, id);
 
       map::MapSearchResult result;
-      mapQuery->getMapObjectById(result, navType, id, false /* airport from nav database */);
+      mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
       emit showInformation(result);
     }
   }
@@ -1276,11 +1278,12 @@ void SearchBaseTable::showOnMapTriggered()
     if(index.isValid())
     {
       map::MapObjectTypes navType = map::NONE;
+      map::MapAirspaceSources airspaceSource = map::AIRSPACE_SRC_NONE;
       int id = -1;
-      getNavTypeAndId(index.row(), navType, id);
+      getNavTypeAndId(index.row(), navType, airspaceSource, id);
 
       map::MapSearchResult result;
-      mapQuery->getMapObjectById(result, navType, id, false /* airport from nav database */);
+      mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
 
       if(!result.airports.isEmpty())
       {
@@ -1326,11 +1329,19 @@ void SearchBaseTable::showOnMapTriggered()
   }
 }
 
-/* Fetch nav type and database id from a model row */
 void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id)
+{
+  map::MapAirspaceSources airspaceSource;
+  getNavTypeAndId(row, navType, airspaceSource, id);
+}
+
+/* Fetch nav type and database id from a model row */
+void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, map::MapAirspaceSources& airspaceSource,
+                                      int& id)
 {
   navType = map::NONE;
   id = -1;
+  airspaceSource = map::AIRSPACE_SRC_NONE;
 
   if(tabIndex == si::SEARCH_AIRPORT)
   {
@@ -1369,7 +1380,8 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int
   }
   else if(tabIndex == si::SEARCH_ONLINE_CENTER)
   {
-    navType = map::AIRSPACE_ONLINE;
+    navType = map::AIRSPACE;
+    airspaceSource = map::AIRSPACE_SRC_ONLINE;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else if(tabIndex == si::SEARCH_ONLINE_SERVER)

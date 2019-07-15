@@ -43,7 +43,7 @@ class MapLayer;
  * if they have to be kept between event loop calls.
  * All ids are database ids.
  *
- * Two instance are used in LNM. One for normal airspaces and one for online ATC.
+ * Several instances for different databases might be used depending on MapAirspaceSources src value.
  */
 class AirspaceQuery
   : public QObject
@@ -51,24 +51,24 @@ class AirspaceQuery
   Q_OBJECT
 
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  AirspaceQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool onlineSchema);
-  ~AirspaceQuery();
+  AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
+  virtual ~AirspaceQuery() override;
 
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   map::MapAirspace getAirspaceById(int airspaceId);
   bool hasAirspaceById(int airspaceId);
 
-  /* Get record with all rows from atc table */
-  atools::sql::SqlRecord getAirspaceRecordById(int airspaceId);
+  /* Get record with all rows from atc table - only online airspaces */
+  atools::sql::SqlRecord getOnlineAirspaceRecordById(int airspaceId);
 
+  /* Only for not online databases - includes values from metadata tables */
+  atools::sql::SqlRecord getAirspaceInfoRecordById(int airspaceId);
+
+  /* Get airspaces for map display */
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy);
-  const atools::geo::LineString *getAirspaceGeometry(int boundaryId);
+  const atools::geo::LineString *getAirspaceGeometry(int airspaceId);
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -94,9 +94,10 @@ private:
   /* Database queries */
   atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectBelowAltQuery = nullptr,
                         *airspaceByRectAboveAltQuery = nullptr, *airspaceByRectAtAltQuery = nullptr,
-                        *airspaceLinesByIdQuery = nullptr, *airspaceByIdQuery = nullptr;
+                        *airspaceLinesByIdQuery = nullptr, *airspaceByIdQuery = nullptr, *airspaceInfoQuery = nullptr;
 
-  bool online;
+  /* Source database definition */
+  map::MapAirspaceSources source;
 };
 
 #endif // LITTLENAVMAP_AIRSPACEQUERY_H

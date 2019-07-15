@@ -47,7 +47,6 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
   startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "StartCache", 100).toInt());
   approachCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ApproachCache", 100).toInt());
   transitionCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "TransitionCache", 100).toInt());
-  airspaceCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirspaceCache", 100).toInt());
   airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache",
                                                            100).toInt());
 }
@@ -153,11 +152,6 @@ const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& id
 const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 {
   return cachedRecord(ndbCache, ndbQuery, ndbId);
-}
-
-const atools::sql::SqlRecord *InfoQuery::getAirspaceInformation(int airspaceId)
-{
-  return cachedRecord(airspaceCache, airspaceQuery, airspaceId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getWaypointInformation(int waypointId)
@@ -288,12 +282,6 @@ void InfoQuery::initQueries()
                          "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                          "where waypoint_id = :id");
 
-  airspaceQuery = new SqlQuery(dbNav);
-  airspaceQuery->prepare("select * from boundary "
-                         "join bgl_file on boundary.file_id = bgl_file.bgl_file_id "
-                         "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                         "where boundary_id = :id");
-
   airwayQuery = new SqlQuery(dbNav);
   airwayQuery->prepare("select * from airway where airway_id = :id");
 
@@ -350,7 +338,6 @@ void InfoQuery::deInitQueries()
   airportCache.clear();
   vorCache.clear();
   ndbCache.clear();
-  airspaceCache.clear();
   waypointCache.clear();
   airwayCache.clear();
   runwayEndCache.clear();
@@ -379,9 +366,6 @@ void InfoQuery::deInitQueries()
 
   delete ndbQuery;
   ndbQuery = nullptr;
-
-  delete airspaceQuery;
-  airspaceQuery = nullptr;
 
   delete waypointQuery;
   waypointQuery = nullptr;

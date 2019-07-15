@@ -43,8 +43,8 @@ using map::MapHelipad;
 const static float MAX_HEADING_RUNWAY_DEVIATION = 20.f;
 const static float MAX_RUNWAY_DISTANCE_FT = 5000.f;
 
-AirportQuery::AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool nav)
-  : QObject(parent), navdata(nav), db(sqlDb)
+AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
+  : navdata(nav), db(sqlDb)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();

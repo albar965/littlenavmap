@@ -1371,9 +1371,6 @@ void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
   if(types & map::AIRWAY)
     clearAllButFirst(airways);
 
-  if(types & map::AIRSPACE)
-    clearAllButFirst(airspaces);
-
   if(types & map::RUNWAYEND)
     clearAllButFirst(runwayEnds);
 
@@ -1405,11 +1402,34 @@ void MapSearchResult::clearAllButFirst(const MapObjectTypes& types)
   }
 }
 
-bool MapSearchResult::hasNavdataAirspaces() const
+void MapSearchResult::moveOnlineAirspacesToFront()
+{
+  QList<MapAirspace> list;
+  for(const MapAirspace& a: airspaces)
+  {
+    if(a.isOnline())
+      list.append(a);
+  }
+  for(const MapAirspace& a: airspaces)
+  {
+    if(!a.isOnline())
+      list.append(a);
+  }
+  airspaces = list;
+}
+
+MapSearchResult MapSearchResult::moveOnlineAirspacesToFront() const
+{
+  MapSearchResult retval(*this);
+  retval.moveOnlineAirspacesToFront();
+  return retval;
+}
+
+bool MapSearchResult::hasSimNavUserAirspaces() const
 {
   for(const map::MapAirspace& airspace : airspaces)
   {
-    if(!airspace.online)
+    if(!airspace.isOnline())
       return true;
   }
   return false;
@@ -1419,18 +1439,62 @@ bool MapSearchResult::hasOnlineAirspaces() const
 {
   for(const map::MapAirspace& airspace : airspaces)
   {
-    if(airspace.online)
+    if(airspace.isOnline())
       return true;
   }
   return false;
 }
 
-QList<map::MapAirspace> MapSearchResult::getNavdataAirspaces() const
+map::MapAirspace *MapSearchResult::firstSimNavUserAirspace()
+{
+  QList<map::MapAirspace>::iterator it =
+    std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
+    {
+      return !a.isOnline();
+    });
+
+  if(it != airspaces.end())
+    return &(*it);
+
+  return nullptr;
+}
+
+map::MapAirspace *MapSearchResult::firstOnlineAirspace()
+{
+  QList<map::MapAirspace>::iterator it =
+    std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
+    {
+      return a.isOnline();
+    });
+
+  if(it != airspaces.end())
+    return &(*it);
+
+  return nullptr;
+}
+
+int MapSearchResult::numSimNavUserAirspaces() const
+{
+  int num = 0;
+  for(const map::MapAirspace& airspace : airspaces)
+    num += !airspace.isOnline();
+  return num;
+}
+
+int MapSearchResult::numOnlineAirspaces() const
+{
+  int num = 0;
+  for(const map::MapAirspace& airspace : airspaces)
+    num += airspace.isOnline();
+  return num;
+}
+
+QList<map::MapAirspace> MapSearchResult::getSimNavUserAirspaces() const
 {
   QList<map::MapAirspace> retval;
   for(const map::MapAirspace& airspace : airspaces)
   {
-    if(!airspace.online)
+    if(!airspace.isOnline())
       retval.append(airspace);
   }
   return retval;
@@ -1441,7 +1505,7 @@ QList<map::MapAirspace> MapSearchResult::getOnlineAirspaces() const
   QList<map::MapAirspace> retval;
   for(const map::MapAirspace& airspace : airspaces)
   {
-    if(airspace.online)
+    if(airspace.isOnline())
       retval.append(airspace);
   }
   return retval;
@@ -1452,7 +1516,7 @@ void MapSearchResult::clearNavdataAirspaces()
   QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
                                                         [](const map::MapAirspace& airspace) -> bool
     {
-      return !airspace.online;
+      return !airspace.isOnline();
     });
   if(it != airspaces.end())
     airspaces.erase(it, airspaces.end());
@@ -1463,7 +1527,7 @@ void MapSearchResult::clearOnlineAirspaces()
   QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
                                                         [](const map::MapAirspace& airspace) -> bool
     {
-      return airspace.online;
+      return airspace.isOnline();
     });
   if(it != airspaces.end())
     airspaces.erase(it, airspaces.end());
@@ -1670,6 +1734,31 @@ const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
 {
   Q_ASSERT(!airspaceTypeToDatabaseMap.isEmpty());
   return airspaceTypeToDatabaseMap[type];
+}
+
+QString airspaceSourceText(MapAirspaceSources src)
+{
+  QStringList retval;
+  if(src == AIRSPACE_SRC_NONE)
+    retval.append(QObject::tr("None"));
+  else if(src == AIRSPACE_SRC_ALL)
+    retval.append(QObject::tr("All"));
+  else
+  {
+    if(src & AIRSPACE_SRC_SIM)
+      retval.append(QObject::tr("Simulator"));
+
+    if(src & AIRSPACE_SRC_NAV)
+      retval.append(QObject::tr("Navigraph"));
+
+    if(src & AIRSPACE_SRC_ONLINE)
+      retval.append(QObject::tr("Online"));
+
+    if(src & AIRSPACE_SRC_USER)
+      retval.append(QObject::tr("User"));
+  }
+
+  return retval.join(QObject::tr(", "));
 }
 
 bool runwayAlmostEqual(const QString& name1, const QString& name2)

@@ -79,9 +79,6 @@ public:
   /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();
 
-  /* Copy the boundary table from the currently selected FSX/P3D database to the X-Plane database */
-  void copyAirspaces();
-
   /* Save and restore all paths and current simulator settings */
   void saveState();
 
@@ -102,6 +99,7 @@ public:
                              bool backup);
   void closeLogDatabase();
   void closeUserDatabase();
+  void closeUserAirspaceDatabase();
   void closeOnlineDatabase();
 
   /* Close all simulator databases - not the user database.
@@ -176,7 +174,15 @@ public:
     return databaseLogbook;
   }
 
+  atools::sql::SqlDatabase *getDatabaseUserAirspace() const
+  {
+    return databaseUserAirspace;
+  }
+
   atools::sql::SqlDatabase *getDatabaseOnline() const;
+
+  /* Create an empty database schema. Boundary option does not use transaction. */
+  void createEmptySchema(atools::sql::SqlDatabase *db, bool boundary = false);
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -201,7 +207,6 @@ private:
 
   void restoreState();
 
-  void createEmptySchema(atools::sql::SqlDatabase *db);
   bool isDatabaseCompatible(atools::sql::SqlDatabase *db);
   bool hasSchema(atools::sql::SqlDatabase *db);
   bool hasData(atools::sql::SqlDatabase *db);
@@ -255,6 +260,9 @@ private:
   /* Logbook database */
   const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
 
+  /* User airspace database */
+  const QString DATABASE_NAME_USER_AIRSPACE = "LNMDBUSERAS";
+
   /* Network online player data */
   const QString DATABASE_NAME_ONLINE = "LNMDBONLINE";
 
@@ -272,6 +280,7 @@ private:
                            *databaseMora = nullptr /* Database for MORA data - always nav */,
                            *databaseUser = nullptr /* Database for user data */,
                            *databaseLogbook = nullptr /* Database for logbook */,
+                           *databaseUserAirspace = nullptr /* Database for user airspaces */,
                            *databaseOnline = nullptr /* Database for network online data */;
 
   MainWindow *mainWindow = nullptr;

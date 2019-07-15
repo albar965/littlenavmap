@@ -301,7 +301,7 @@ void MapPaintWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
   if(type & map::AIRWAYV || type & map::AIRWAYJ)
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type & map::AIRSPACE || type & map::AIRSPACE_ONLINE)
+  if(type & map::AIRSPACE)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 }
 

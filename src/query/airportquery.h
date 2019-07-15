@@ -49,16 +49,13 @@ class MapLayer;
  * All ids are database ids.
  */
 class AirportQuery
-  : public QObject
 {
-  Q_OBJECT
-
 public:
   /*
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  AirportQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, bool nav);
+  AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav);
   ~AirportQuery();
 
   void getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country);

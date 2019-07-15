@@ -248,7 +248,7 @@ void OnlineCenterSearch::getSelectedMapObjects(map::MapSearchResult& result) con
         // qDebug() << Q_FUNC_INFO << rec;
 
         map::MapAirspace obj;
-        MapTypesFactory().fillAirspace(rec, obj, true /* online */);
+        MapTypesFactory().fillAirspace(rec, obj, map::AIRSPACE_SRC_ONLINE);
         result.airspaces.append(obj);
       }
     }

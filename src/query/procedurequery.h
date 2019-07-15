@@ -52,7 +52,7 @@ public:
    * @param sqlDbNav for updated navaids
    */
   ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
-  virtual ~ProcedureQuery();
+  virtual ~ProcedureQuery() override;
 
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);

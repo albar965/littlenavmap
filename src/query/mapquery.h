@@ -53,7 +53,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
+  MapQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
            atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
@@ -124,7 +124,8 @@ public:
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param id database id
    */
-  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id, bool airportFromNavDatabase);
+  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src, int id,
+                        bool airportFromNavDatabase);
 
   /*
    * Get objects near a screen coordinate from the cache which will cover all visible objects.

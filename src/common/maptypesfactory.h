@@ -103,7 +103,7 @@ public:
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
-  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, bool online);
+  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src);
 
   void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
 

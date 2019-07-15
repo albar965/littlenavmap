@@ -324,7 +324,7 @@ void SearchController::showInSearch(map::MapObjectTypes type, const atools::sql:
       ui->tabWidgetSearch->setCurrentIndex(si::SEARCH_ONLINE_CLIENT);
       break;
 
-    case map::AIRSPACE_ONLINE:
+    case map::AIRSPACE:
       // Shown in user search tab
       onlineCenterSearch->resetSearch();
       onlineCenterSearch->filterByRecord(record);

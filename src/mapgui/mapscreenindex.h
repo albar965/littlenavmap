@@ -33,7 +33,6 @@ class GeoDataLatLonBox;
 
 class MapPaintWidget;
 class AirportQuery;
-class AirspaceQuery;
 class MapPaintLayer;
 
 /*
@@ -226,11 +225,15 @@ private:
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
                                      QList<proc::MapProcedurePoint> *procPoints) const;
-  void updateAirspaceScreenGeometry(QList<std::pair<int, QPolygon> >& polygons, AirspaceQuery *query,
+  void updateAirspaceScreenGeometry(QList<std::pair<map::MapAirspaceId, QPolygon> >& polygons,
+                                    map::MapAirspaceSources source,
                                     const Marble::GeoDataLatLonBox& curBox);
 
-  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line, const Marble::GeoDataLatLonBox& curBox,
+  void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
+                                const Marble::GeoDataLatLonBox& curBox,
                                 const CoordinateConverter& conv);
+
+  QVector<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance) const;
 
   template<typename TYPE>
   int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;
@@ -238,8 +241,6 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapPaintWidget *mapPaintWidget;
   MapQuery *mapQuery;
-  AirspaceQuery *airspaceQuery;
-  AirspaceQuery *airspaceQueryOnline;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 
@@ -269,10 +270,7 @@ private:
   /* Geometry objects that are cached in screen coordinate system for faster access */
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QLine> > logEntryLines;
-  QList<std::pair<int, QPolygon> > airspacePolygons;
-  QList<std::pair<int, QPolygon> > airspacePolygonsOnline;
-
-  QVector<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance) const;
+  QList<std::pair<map::MapAirspaceId, QPolygon> > airspaceGeo;
 
 };
 

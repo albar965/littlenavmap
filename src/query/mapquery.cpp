@@ -22,11 +22,11 @@
 #include "common/maptools.h"
 #include "fs/common/binarygeometry.h"
 #include "online/onlinedatacontroller.h"
+#include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "query/airportquery.h"
-#include "query/airspacequery.h"
 #include "navapp.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
@@ -53,8 +53,8 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int MapQuery::queryMaxRows = 5000;
 
-MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
-  : QObject(parent), dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
+MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
+  : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -201,7 +201,7 @@ void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypo
     // Add from waypoint
     map::MapSearchResult result;
     int fromId = rec.valueInt("from_waypoint_id");
-    getMapObjectById(result, map::WAYPOINT, fromId, false /* airport from nav database */);
+    getMapObjectById(result, map::WAYPOINT, map::AIRSPACE_SRC_NONE, fromId, false /* airport from nav database */);
     if(!result.waypoints.isEmpty())
       aw.waypoint = result.waypoints.first();
     else
@@ -213,7 +213,7 @@ void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypo
       // Add to waypoint if this is the last one or if the fragment is about to change
       result.waypoints.clear();
       int toId = rec.valueInt("to_waypoint_id");
-      getMapObjectById(result, map::WAYPOINT, toId, false /* airport from nav database */);
+      getMapObjectById(result, map::WAYPOINT, map::AIRSPACE_SRC_NONE, toId, false /* airport from nav database */);
       if(!result.waypoints.isEmpty())
         aw.waypoint = result.waypoints.first();
       else
@@ -372,8 +372,8 @@ void MapQuery::mapObjectByIdentInternal(map::MapSearchResult& result, map::MapOb
   }
 }
 
-void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id,
-                                bool airportFromNavDatabase)
+void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, map::MapAirspaceSources src,
+                                int id, bool airportFromNavDatabase)
 {
   if(type == map::AIRPORT)
   {
@@ -429,13 +429,7 @@ void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectType
   }
   else if(type == map::AIRSPACE)
   {
-    map::MapAirspace airspace = NavApp::getAirspaceQuery()->getAirspaceById(id);
-    if(airspace.isValid())
-      result.airspaces.append(airspace);
-  }
-  else if(type == map::AIRSPACE_ONLINE)
-  {
-    map::MapAirspace airspace = NavApp::getAirspaceQueryOnline()->getAirspaceById(id);
+    map::MapAirspace airspace = NavApp::getAirspaceController()->getAirspaceById({id, src});
     if(airspace.isValid())
       result.airspaces.append(airspace);
   }

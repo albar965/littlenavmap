@@ -679,7 +679,32 @@ struct MapAirspace
 
   QVector<int> comFrequencies;
   map::MapAirspaceTypes type;
-  bool online = false;
+  map::MapAirspaceSources src;
+
+  map::MapAirspaceId combinedId() const
+  {
+    return {id, src};
+  }
+
+  bool isOnline() const
+  {
+    return src & map::AIRSPACE_SRC_ONLINE;
+  }
+
+  bool isSim() const
+  {
+    return src & map::AIRSPACE_SRC_SIM;
+  }
+
+  bool isNav() const
+  {
+    return src & map::AIRSPACE_SRC_NAV;
+  }
+
+  bool isUser() const
+  {
+    return src & map::AIRSPACE_SRC_USER;
+  }
 
   atools::geo::Rect bounding;
 
@@ -759,6 +784,10 @@ struct MapSearchResult
 
   void clearAllButFirst(const MapObjectTypes& types = map::ALL);
 
+  /* Give online airspaces/centers priority */
+  void moveOnlineAirspacesToFront();
+  map::MapSearchResult moveOnlineAirspacesToFront() const;
+
   bool hasAirports() const
   {
     return !airports.isEmpty();
@@ -805,12 +834,16 @@ struct MapSearchResult
   }
 
   /* Special methods for the online and navdata airspaces which are stored mixed */
-  bool hasNavdataAirspaces() const;
+  bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;
   void clearNavdataAirspaces();
   void clearOnlineAirspaces();
+  MapAirspace *firstSimNavUserAirspace();
+  MapAirspace *firstOnlineAirspace();
+  int numSimNavUserAirspaces() const;
+  int numOnlineAirspaces() const;
 
-  QList<MapAirspace> getNavdataAirspaces() const;
+  QList<MapAirspace> getSimNavUserAirspaces() const;
 
   QList<MapAirspace> getOnlineAirspaces() const;
 
@@ -970,6 +1003,7 @@ const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type);
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
+QString airspaceSourceText(map::MapAirspaceSources src);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);

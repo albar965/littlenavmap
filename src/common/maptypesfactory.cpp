@@ -523,17 +523,17 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
 }
 
-void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, bool online)
+void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)
 {
   if(record.contains("boundary_id"))
     airspace.id = record.valueInt("boundary_id");
   else if(record.contains("atc_id"))
     airspace.id = record.valueInt("atc_id");
 
-  airspace.online = online;
+  airspace.src = src;
 
   airspace.type = map::airspaceTypeFromDatabase(record.valueStr("type"));
-  airspace.name = record.valueStr(online ? "callsign" : "name");
+  airspace.name = record.valueStr(airspace.isOnline() ? "callsign" : "name");
   airspace.comType = record.valueStr("com_type");
 
   for(const QString& str : record.valueStr("com_frequency", QString()).split("&"))
