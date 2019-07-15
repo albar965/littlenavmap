@@ -624,17 +624,7 @@ void SearchBaseTable::tableSelectionChanged()
      sm->isSelected(sm->currentIndex()) &&
      followModeAction() != nullptr &&
      followModeAction()->isChecked())
-  {
-    if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
-      emit showPos(controller->getGeoPos(sm->currentIndex(), "lonx", "laty"), map::INVALID_DISTANCE_VALUE, false);
-    else if(controller->hasColumn("departure_lonx") && controller->hasColumn("departure_laty") &&
-            controller->hasColumn("destination_lonx") && controller->hasColumn("destination_laty"))
-    {
-      emit showRect(atools::geo::boundingRect(
-                      {controller->getGeoPos(sm->currentIndex(), "departure_lonx", "departure_laty"),
-                       controller->getGeoPos(sm->currentIndex(), "destination_lonx", "destination_laty")}), false);
-    }
-  }
+    showRow(sm->currentIndex().row(), false /* show info */);
 }
 
 void SearchBaseTable::preDatabaseLoad()
@@ -747,7 +737,7 @@ void SearchBaseTable::loadAllRowsIntoView()
 
 void SearchBaseTable::showFirstEntry()
 {
-  showRow(0);
+  showRow(0, true /* show info */);
 }
 
 void SearchBaseTable::showSelectedEntry()
@@ -755,7 +745,7 @@ void SearchBaseTable::showSelectedEntry()
   QModelIndex idx = view->currentIndex();
 
   if(idx.isValid())
-    showRow(idx.row());
+    showRow(idx.row(), true /* show info */);
 }
 
 void SearchBaseTable::activateView()
@@ -769,10 +759,10 @@ void SearchBaseTable::activateView()
 void SearchBaseTable::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
-    showRow(index.row());
+    showRow(index.row(), true /* show info */);
 }
 
-void SearchBaseTable::showRow(int row)
+void SearchBaseTable::showRow(int row, bool showInfo)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -825,10 +815,13 @@ void SearchBaseTable::showRow(int row)
         emit showPos(p, 0.f, true);
     }
 
-    map::MapSearchResult result;
-    mapQuery->getMapObjectById(result, navType, id, false /* airport from nav database */);
+    if(showInfo)
+    {
+      map::MapSearchResult result;
+      mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
 
-    emit showInformation(result);
+      emit showInformation(result);
+    }
   }
 }
 

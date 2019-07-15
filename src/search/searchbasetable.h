@@ -209,6 +209,7 @@ private:
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void reconnectSelectionModel();
   void getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id);
+  void getNavTypeAndId(int row, map::MapObjectTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
   void editTimeout();
 
   void loadAllRowsIntoView();
@@ -224,7 +225,7 @@ private:
   void updateFromSpinBox(int value, const Column *col);
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
-  void showRow(int row);
+  void showRow(int row, bool showInfo);
   void fontChanged();
 
   /* CSV export to clipboard */
