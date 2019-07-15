@@ -475,7 +475,11 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
         html.tr(QColor());
         html.td(map::comTypeName(rec.valueStr("type")));
         // Round frequencies to nearest valid value to workaround for a compiler rounding bug
-        html.td(locale.toString(roundComFrequency(rec.valueInt("frequency")), 'f', 3) + tr(" MHz"));
+        html.td(locale.toString(roundComFrequency(rec.valueInt("frequency")), 'f', 3) + tr(" MHz")
+#ifdef DEBUG_INFORMATION
+                + " [" + QString::number(rec.valueInt("frequency")) + "]"
+#endif
+                );
         if(rec.valueStr("type") != tr("ATIS"))
           html.td(capString(rec.valueStr("name")));
         else
@@ -2102,9 +2106,15 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     for(int freq : airspace.comFrequencies)
     {
       // Round frequencies to nearest valid value to workaround for a compiler rounding bug
-      freqTxt.append(locale.toString(roundComFrequency(freq), 'f', 3));
+
+      if(airspace.isOnline())
+        // Use online freqencies as is
+        freqTxt.append(locale.toString(freq / 1000.f, 'f', 3));
+      else
+        freqTxt.append(locale.toString(roundComFrequency(freq), 'f', 3));
+
 #ifdef DEBUG_INFORMATION
-      freqTxt.append(QString("[%1]").arg(freq));
+      freqTxt.last().append(QString(" [%1]").arg(freq));
 #endif
     }
 
@@ -2119,7 +2129,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.row2If(tr("Server:"), onlineRec.valueStr("server"));
     html.row2If(tr("Facility Type:"), atools::fs::online::facilityTypeText(onlineRec.valueInt("facility_type")));
     html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
-    html.row2If(tr("ATIS:"), onlineRec.valueStr("atis"));
+    html.row2If(tr("ATIS:"), onlineRec.valueStr("atis").replace("^\\A7", "\n"));
     html.row2If(tr("ATIS Time:"), locale.toString(onlineRec.valueDateTime("atis_time")));
 
     float qnh = onlineRec.valueFloat("qnh_mb");
