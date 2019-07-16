@@ -144,8 +144,9 @@ void NavApp::init(MainWindow *mainWindowParam)
                           databaseManager->getDatabaseUser());
   mapQuery->initQueries();
 
-  airspaceController = new AirspaceController(mainWindow, databaseManager->getDatabaseSim(),
-                                              databaseManager->getDatabaseNav(),
+  airspaceController = new AirspaceController(mainWindow,
+                                              databaseManager->getDatabaseSimAirspace(),
+                                              databaseManager->getDatabaseNavAirspace(),
                                               databaseManager->getDatabaseUserAirspace(),
                                               databaseManager->getDatabaseOnline());
 

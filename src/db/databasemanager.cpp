@@ -152,7 +152,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
-  QString name = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString name = buildDatabaseFileName(FsPaths::NAVIGRAPH);
   if(name.isEmpty() && !QFile::exists(name))
     // Set to off if not database found
     navDatabaseStatus = dm::NAVDATABASE_OFF;
@@ -180,13 +180,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     connect(databaseDialog, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChangedFromComboBox);
   }
 
-  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_SIM);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_MORA);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
 
-  databaseSim = new SqlDatabase(DATABASE_NAME);
+  databaseSim = new SqlDatabase(DATABASE_NAME_SIM);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
   databaseMora = new SqlDatabase(DATABASE_NAME_MORA);
 
@@ -195,12 +195,24 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_LOGBOOK);
-    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER_AIRSPACE);
     SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_ONLINE);
+
+    // Airspace databases
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_USER_AIRSPACE);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_SIM_AIRSPACE);
+    SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV_AIRSPACE);
+
+    // Variable databases (user can edit or program downloads data)
     databaseUser = new SqlDatabase(DATABASE_NAME_USER);
     databaseLogbook = new SqlDatabase(DATABASE_NAME_LOGBOOK);
-    databaseUserAirspace = new SqlDatabase(DATABASE_NAME_USER_AIRSPACE);
     databaseOnline = new SqlDatabase(DATABASE_NAME_ONLINE);
+
+    // Airspace databases
+    databaseUserAirspace = new SqlDatabase(DATABASE_NAME_USER_AIRSPACE);
+
+    // ... as duplicate connections to sim and nav databases but independent of nav switch
+    databaseSimAirspace = new SqlDatabase(DATABASE_NAME_SIM_AIRSPACE);
+    databaseNavAirspace = new SqlDatabase(DATABASE_NAME_NAV_AIRSPACE);
 
     // Open user point database =================================
     openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
@@ -250,7 +262,7 @@ DatabaseManager::~DatabaseManager()
   delete logdataManager;
   delete onlinedataManager;
 
-  closeDatabases();
+  closeAllDatabases();
   closeUserDatabase();
   closeLogDatabase();
   closeUserAirspaceDatabase();
@@ -261,17 +273,21 @@ DatabaseManager::~DatabaseManager()
   delete databaseMora;
   delete databaseUser;
   delete databaseLogbook;
-  delete databaseUserAirspace;
   delete databaseOnline;
+  delete databaseUserAirspace;
+  delete databaseSimAirspace;
+  delete databaseNavAirspace;
 
-  SqlDatabase::removeDatabase(DATABASE_NAME);
+  SqlDatabase::removeDatabase(DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
   SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
-  SqlDatabase::removeDatabase(DATABASE_NAME_USER_AIRSPACE);
   SqlDatabase::removeDatabase(DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::removeDatabase(DATABASE_NAME_TEMP);
+  SqlDatabase::removeDatabase(DATABASE_NAME_USER_AIRSPACE);
+  SqlDatabase::removeDatabase(DATABASE_NAME_SIM_AIRSPACE);
+  SqlDatabase::removeDatabase(DATABASE_NAME_NAV_AIRSPACE);
 }
 
 bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
@@ -613,7 +629,7 @@ void DatabaseManager::insertSimSwitchActions()
     // Noting to select if there is only one option
     actions.first()->setDisabled(true);
 
-  QString file = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString file = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
   if(!file.isEmpty())
   {
@@ -719,7 +735,7 @@ void DatabaseManager::switchNavFromMainMenu()
   // Disconnect all queries
   emit preDatabaseLoad();
 
-  closeDatabases();
+  closeAllDatabases();
 
   QString text;
   if(navDbActionAll->isChecked())
@@ -764,7 +780,7 @@ void DatabaseManager::switchSimFromMainMenu()
     // Disconnect all queries
     emit preDatabaseLoad();
 
-    closeDatabases();
+    closeAllDatabases();
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
@@ -870,8 +886,12 @@ void DatabaseManager::closeOnlineDatabase()
 void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
-  QString navDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
-  QString moraDbFile = buildDatabaseFileNameAppDirOrSettings(FsPaths::NAVIGRAPH);
+  QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  QString moraDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+
+  // Airspace databases are independent of switch
+  QString simAirspaceDbFile = simDbFile;
+  QString navAirspaceDbFile = navDbFile;
 
   if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     simDbFile = navDbFile;
@@ -882,6 +902,9 @@ void DatabaseManager::openAllDatabases()
   openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseMora, moraDbFile, true /* readonly */, true /* createSchema */);
+
+  openDatabaseFile(databaseSimAirspace, simAirspaceDbFile, true /* readonly */, true /* createSchema */);
+  openDatabaseFile(databaseNavAirspace, navAirspaceDbFile, true /* readonly */, true /* createSchema */);
 }
 
 void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
@@ -977,11 +1000,13 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
                     << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
 }
 
-void DatabaseManager::closeDatabases()
+void DatabaseManager::closeAllDatabases()
 {
   closeDatabaseFile(databaseSim);
   closeDatabaseFile(databaseNav);
   closeDatabaseFile(databaseMora);
+  closeDatabaseFile(databaseSimAirspace);
+  closeDatabaseFile(databaseNavAirspace);
 }
 
 void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
@@ -1017,6 +1042,16 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabaseNav()
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseMora()
 {
   return databaseMora;
+}
+
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseSimAirspace()
+{
+  return databaseSimAirspace;
+}
+
+atools::sql::SqlDatabase *DatabaseManager::getDatabaseNavAirspace()
+{
+  return databaseNavAirspace;
 }
 
 void DatabaseManager::run()
@@ -1129,7 +1164,7 @@ bool DatabaseManager::runInternal()
           closeDatabaseFile(&tempDb);
 
           emit preDatabaseLoad();
-          closeDatabases();
+          closeAllDatabases();
 
           // Remove old database
           if(QFile::remove(selectedFilename))
@@ -1649,20 +1684,6 @@ QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::Simula
          QDir::separator() + lnm::DATABASE_DIR +
          QDir::separator() + lnm::DATABASE_PREFIX +
          atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
-}
-
-/* Create database name including simulator short name */
-QString DatabaseManager::buildDatabaseFileNameAppDirOrSettings(atools::fs::FsPaths::SimulatorType type)
-{
-  QString ngDbFile = buildDatabaseFileName(type);
-  QString ngDbFileApp = buildDatabaseFileNameAppDir(type);
-
-  QString file;
-  if(QFile::exists(ngDbFile))
-    file = ngDbFile;
-  else if(QFile::exists(ngDbFileApp))
-    file = ngDbFileApp;
-  return file;
 }
 
 QString DatabaseManager::buildCompilingDatabaseFileName()
