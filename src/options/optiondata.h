@@ -201,8 +201,13 @@ enum Flag2
   MAP_ALLOW_UNDOCK = 1 << 14,
 
   /* checkBoxOptionsGuiHighDpi */
-  HIGH_DPI_DISPLAY_SUPPORT = 1 << 15
+  HIGH_DPI_DISPLAY_SUPPORT = 1 << 15,
 
+  /* checkBoxDisplayOnlineNameLookup */
+  ONLINE_AIRSPACE_BY_NAME = 1 << 16,
+
+  /* checkBoxDisplayOnlineFilenameLookup */
+  ONLINE_AIRSPACE_BY_FILE = 1 << 17
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -928,7 +933,8 @@ private:
 
   opts::Flags2 flags2 = opts::MAP_AIRPORT_TEXT_BACKGROUND | opts::MAP_ROUTE_TEXT_BACKGROUND |
                         opts::MAP_ROUTE_DIM_PASSED | opts::MAP_AIRPORT_BOUNDARY | opts::MAP_AIRPORT_DIAGRAM |
-                        opts::MAP_ALLOW_UNDOCK | opts::MAP_AVOID_BLURRED_MAP;
+                        opts::MAP_ALLOW_UNDOCK | opts::MAP_AVOID_BLURRED_MAP | opts::ONLINE_AIRSPACE_BY_FILE |
+                        opts::ONLINE_AIRSPACE_BY_NAME;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});

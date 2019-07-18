@@ -18,6 +18,7 @@
 #include "online/onlinedatacontroller.h"
 
 #include "fs/online/onlinedatamanager.h"
+#include "airspace/airspacecontroller.h"
 #include "util/httpdownloader.h"
 #include "gui/mainwindow.h"
 #include "common/constants.h"
@@ -51,6 +52,7 @@ static const int MIN_DISTANCE_DUPLICATE_M = atools::geo::nmToMeter(30);
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
+using atools::geo::LineString;
 using atools::geo::Pos;
 
 atools::fs::online::Format convertFormat(opts::OnlineFormat format)
@@ -84,6 +86,9 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   // Recurring downloads
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
 
+  using namespace std::placeholders;
+  manager->setGeometryCallback(std::bind(&OnlinedataController::geometryCallback, this, _1, _2));
+
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloader->enableCache(60);
 #endif
@@ -91,6 +96,8 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
 OnlinedataController::~OnlinedataController()
 {
+  manager->setGeometryCallback(atools::fs::online::GeoCallbackType(nullptr));
+
   deInitQueries();
 
   delete downloader;
@@ -352,6 +359,27 @@ void OnlinedataController::showMessageDialog()
                            tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
+LineString *OnlinedataController::geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
+{
+  opts::Flags2 flags2 = OptionData::instance().getFlags2();
+
+  LineString *lineString = nullptr;
+
+  // Try to get airspace boundary by name vs. callsign if set in options
+  if(flags2 & opts::ONLINE_AIRSPACE_BY_NAME)
+    lineString = NavApp::getAirspaceController()->
+                 getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
+
+  // Try to get airspace boundary by file name vs. callsign if set in options
+  if(flags2 & opts::ONLINE_AIRSPACE_BY_FILE)
+  {
+    if(lineString == nullptr)
+      lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByFile(callsign);
+  }
+
+  return lineString;
+}
+
 void OnlinedataController::optionsChanged()
 {
   qDebug() << Q_FUNC_INFO;
@@ -378,6 +406,11 @@ void OnlinedataController::optionsChanged()
   lastServerDownload = QDateTime::fromSecsSinceEpoch(0);
 
   startDownloadInternal();
+}
+
+void OnlinedataController::userAirspacesUpdated()
+{
+  optionsChanged();
 }
 
 bool OnlinedataController::hasData() const

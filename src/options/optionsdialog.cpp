@@ -213,6 +213,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiOverrideLanguage,
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi,
+     ui->checkBoxDisplayOnlineNameLookup,
+     ui->checkBoxDisplayOnlineFileLookup,
      ui->checkBoxOptionsMapEmptyAirports,
      ui->checkBoxOptionsMapEmptyAirports3D,
      ui->checkBoxOptionsRouteShortName,
@@ -1243,6 +1245,9 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts::ROUTE_AUTOZOOM);
   toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts::ROUTE_CENTER_ACTIVE_LEG);
 
+  toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts::ONLINE_AIRSPACE_BY_NAME);
+  toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts::ONLINE_AIRSPACE_BY_FILE);
+
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
   data.cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
   data.cacheUserAirspaceExtensions = ui->lineEditCacheUserAirspaceExtensions->text();
@@ -1452,6 +1457,9 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(ui->checkBoxOptionsSimCenterLeg, opts::ROUTE_AUTOZOOM);
   fromFlags2(ui->checkBoxOptionsSimCenterLegTable, opts::ROUTE_CENTER_ACTIVE_LEG);
+
+  fromFlags2(ui->checkBoxDisplayOnlineNameLookup, opts::ONLINE_AIRSPACE_BY_NAME);
+  fromFlags2(ui->checkBoxDisplayOnlineFileLookup, opts::ONLINE_AIRSPACE_BY_FILE);
 
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
   ui->lineEditCacheUserAirspacePath->setText(data.cacheUserAirspacePath);

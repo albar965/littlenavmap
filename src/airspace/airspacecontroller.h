@@ -108,6 +108,12 @@ public:
   /* Opens folder selection dialog if base is not set and loads all airspaces */
   void loadAirspaces();
 
+  /* Tries to fetch online airspace geometry by name and facility. */
+  atools::geo::LineString *getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
+
+  /* Tries to fetch online airspace geometry by file name. */
+  atools::geo::LineString *getOnlineAirspaceGeoByFile(const QString& callsign);
+
 signals:
   /* Filter in drop down buttons have changed */
   void updateAirspaceTypes(map::MapAirspaceFilter types);
@@ -118,6 +124,9 @@ signals:
   /* Re-routed to database manager signals for re-emitting */
   void preDatabaseLoadAirspaces();
   void postDatabaseLoadAirspaces(atools::fs::FsPaths::SimulatorType type);
+
+  /* Airspaces reloaded - update online centers */
+  void userAirspacesUpdated();
 
 private:
   /* One of the source database actions was changed */

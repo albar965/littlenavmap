@@ -1258,6 +1258,8 @@ void MainWindow::connectAllSlots()
   connect(airspaceController, &AirspaceController::updateAirspaceSources,
           this, &MainWindow::updateMapObjectsShown);
   connect(airspaceController, &AirspaceController::updateAirspaceTypes, this, &MainWindow::updateAirspaceTypes);
+  connect(airspaceController, &AirspaceController::userAirspacesUpdated,
+          NavApp::getOnlinedataController(), &OnlinedataController::userAirspacesUpdated);
 
   // Connect airspace manger signals to database manager signals
   connect(airspaceController, &AirspaceController::preDatabaseLoadAirspaces,

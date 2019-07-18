@@ -68,7 +68,13 @@ public:
   /* Get airspaces for map display */
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy);
-  const atools::geo::LineString *getAirspaceGeometry(int airspaceId);
+  const atools::geo::LineString *getAirspaceGeometryByName(int airspaceId);
+
+  /* Query raw geometry blob by online callsign (name) and facility type */
+  atools::geo::LineString *getAirspaceGeometryByName(const QString& callsign, const QString& facilityType);
+
+  /* Tries to fetch online airspace geometry by  file name. */
+  atools::geo::LineString *getAirspaceGeometryByFile(QString callsign);
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -88,13 +94,15 @@ private:
 
   /* ID/object caches */
   QCache<int, atools::geo::LineString> airspaceLineCache;
+  QCache<QString, atools::geo::LineString> onlineCenterGeoCache, onlineCenterGeoFileCache;
 
   static int queryMaxRows;
 
   /* Database queries */
   atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectBelowAltQuery = nullptr,
                         *airspaceByRectAboveAltQuery = nullptr, *airspaceByRectAtAltQuery = nullptr,
-                        *airspaceLinesByIdQuery = nullptr, *airspaceByIdQuery = nullptr, *airspaceInfoQuery = nullptr;
+                        *airspaceLinesByIdQuery = nullptr, *airspaceGeoByNameQuery = nullptr,
+                        *airspaceGeoByFileQuery = nullptr, *airspaceByIdQuery = nullptr, *airspaceInfoQuery = nullptr;
 
   /* Source database definition */
   map::MapAirspaceSources source;

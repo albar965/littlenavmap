@@ -214,7 +214,7 @@ const atools::geo::LineString *AirspaceController::getAirspaceGeometry(map::MapA
 
   AirspaceQuery *query = queries.value(id.src);
   if(query != nullptr)
-    return query->getAirspaceGeometry(id.id);
+    return query->getAirspaceGeometryByName(id.id);
 
   return nullptr;
 }
@@ -241,7 +241,12 @@ void AirspaceController::saveState()
 
 void AirspaceController::optionsChanged()
 {
-
+  if(!loadingUserAirspaces)
+  {
+    for(AirspaceQuery *q:queries.values())
+      // Also calls deinit before and clears caches
+      q->initQueries();
+  }
 }
 
 void AirspaceController::preDatabaseLoad()
@@ -432,11 +437,38 @@ void AirspaceController::loadAirspaces()
       else
         // No errors ======================
         QMessageBox::information(mainWindow, QApplication::applicationName(), message);
+
+      // Let online controller update airspace shapes
+      emit userAirspacesUpdated();
     }
 
     // Re-initialize queries again
     postLoadAirpaces();
   }
+}
+
+atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QString& callsign)
+{
+  // Avoid deadlock while loading user airspaces
+  if(!loadingUserAirspaces)
+  {
+    AirspaceQuery *query = queries.value(map::AIRSPACE_SRC_USER);
+    if(query != nullptr)
+      return query->getAirspaceGeometryByFile(callsign);
+  }
+  return nullptr;
+}
+
+atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(const QString& callsign,
+                                                                        const QString& facilityType)
+{
+  if(!loadingUserAirspaces)
+  {
+    AirspaceQuery *query = queries.value(map::AIRSPACE_SRC_USER);
+    if(query != nullptr)
+      return query->getAirspaceGeometryByName(callsign, facilityType);
+  }
+  return nullptr;
 }
 
 void AirspaceController::preLoadAirpaces()

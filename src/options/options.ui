@@ -2156,19 +2156,6 @@ distance measurement:</string>
       <widget class="QWidget" name="stackedWidgetOptionsPage5">
        <layout class="QGridLayout" name="gridLayout_27">
         <item row="1" column="0">
-         <spacer name="verticalSpacer_10">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0">
          <widget class="QGroupBox" name="groupBoxDisplayOnline">
           <property name="title">
            <string>Display Size for Online Airspaces / Centers</string>
@@ -2503,7 +2490,20 @@ distance measurement:</string>
           </layout>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="2" column="0">
+         <spacer name="verticalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1">
          <spacer name="horizontalSpacer_5">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -2515,6 +2515,43 @@ distance measurement:</string>
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox_16">
+          <property name="title">
+           <string>Online Center Boundary Lookup in User Airspaces</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="checkBoxDisplayOnlineFileLookup">
+             <property name="toolTip">
+              <string>Look in the user airspaces for a boundary where the
+user airspace name has to match the callsign of the center.</string>
+             </property>
+             <property name="text">
+              <string>By airspace &amp;name vs. callsign</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxDisplayOnlineNameLookup">
+             <property name="toolTip">
+              <string>Look in the user airspaces for a boundary where the
+user airspace filename has to match the callsign of the center.</string>
+             </property>
+             <property name="text">
+              <string>By airspace &amp;file name vs. callsign</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
