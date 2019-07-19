@@ -1082,6 +1082,38 @@ QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
   return dataStream;
 }
 
+QDataStream& operator>>(QDataStream& dataStream, Hold& obj)
+{
+  dataStream
+  >> obj.navIdent
+  >> obj.navType
+  >> obj.color
+  >> obj.turnLeft
+  >> obj.minutes
+  >> obj.speedKts
+  >> obj.courseTrue
+  >> obj.magvar
+  >> obj.position;
+
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const Hold& obj)
+{
+  dataStream
+    << obj.navIdent
+    << obj.navType
+    << obj.color
+    << obj.turnLeft
+    << obj.minutes
+    << obj.speedKts
+    << obj.courseTrue
+    << obj.magvar
+    << obj.position;
+
+  return dataStream;
+}
+
 QString vorType(const MapVor& vor)
 {
   if(vor.vortac)
@@ -1997,6 +2029,11 @@ QString ilsText(const MapIls& ils)
     text += QObject::tr(" / DME");
 
   return text;
+}
+
+float Hold::magHeading() const
+{
+  return atools::geo::normalizeCourse(courseTrue - magvar);
 }
 
 } // namespace types

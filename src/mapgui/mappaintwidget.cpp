@@ -939,6 +939,16 @@ QList<map::TrafficPattern>& MapPaintWidget::getTrafficPatterns()
   return screenIndex->getTrafficPatterns();
 }
 
+const QList<map::Hold>& MapPaintWidget::getHolds() const
+{
+  return screenIndex->getHolds();
+}
+
+QList<map::Hold>& MapPaintWidget::getHolds()
+{
+  return screenIndex->getHolds();
+}
+
 const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() const
 {
   return screenIndex->getUserAircraft();

@@ -48,6 +48,7 @@ namespace map {
 /* Initialize all text that are translateable after loading the translation files */
 void initTranslateableTexts();
 
+// =====================================================================
 struct PosCourse
 {
   PosCourse()
@@ -75,6 +76,7 @@ struct PosCourse
 
 };
 
+// =====================================================================
 /* Primitive id type combo that is hashable */
 struct MapObjectRef
 {
@@ -100,6 +102,7 @@ bool isHardSurface(const QString& surface);
 bool isWaterSurface(const QString& surface);
 bool isSoftSurface(const QString& surface);
 
+// =====================================================================
 /* Airport type not including runways (have to queried separately) */
 struct MapAirport
 {
@@ -174,6 +177,7 @@ struct MapAirport
 
 };
 
+// =====================================================================
 /* Airport runway. All dimensions are feet */
 struct MapRunway
 {
@@ -227,6 +231,7 @@ struct MapRunway
 
 };
 
+// =====================================================================
 /* Airport runway end. All dimensions are feet */
 struct MapRunwayEnd
 {
@@ -254,6 +259,7 @@ struct MapRunwayEnd
 
 };
 
+// =====================================================================
 /* Apron including full geometry */
 struct MapApron
 {
@@ -279,6 +285,7 @@ struct MapApron
 
 };
 
+// =====================================================================
 /* Taxiway segment */
 struct MapTaxiPath
 {
@@ -299,6 +306,7 @@ struct MapTaxiPath
 
 };
 
+// =====================================================================
 /* Gate, GA ramp, cargo ramps, etc. */
 struct MapParking
 {
@@ -326,6 +334,7 @@ struct MapParking
 
 };
 
+// =====================================================================
 /* Start position (runway, helipad or parking */
 struct MapStart
 {
@@ -351,6 +360,7 @@ struct MapStart
 
 };
 
+// =====================================================================
 /* Airport helipad */
 struct MapHelipad
 {
@@ -376,6 +386,7 @@ struct MapHelipad
 
 };
 
+// =====================================================================
 /* VOR station */
 struct MapVor
 {
@@ -413,6 +424,7 @@ struct MapVor
 
 };
 
+// =====================================================================
 /* NDB station */
 struct MapNdb
 {
@@ -440,6 +452,7 @@ struct MapNdb
 
 };
 
+// =====================================================================
 struct MapWaypoint
 {
   int id; /* database waypoint.waypoint_id */
@@ -474,6 +487,7 @@ struct MapAirwayWaypoint
   int airwayId, airwayFragmentId, seqNum;
 };
 
+// =====================================================================
 /* User defined waypoint of a flight plan */
 struct MapUserpointRoute
 {
@@ -500,6 +514,7 @@ struct MapUserpointRoute
 
 };
 
+// =====================================================================
 /* User defined waypoint from the user database */
 struct MapUserpoint
 {
@@ -525,6 +540,7 @@ struct MapUserpoint
 
 };
 
+// =====================================================================
 /* Logbook entry */
 struct MapLogbookEntry
 {
@@ -562,6 +578,7 @@ struct MapLogbookEntry
 
 };
 
+// Airways =====================================================================
 /* Airway type */
 enum MapAirwayType
 {
@@ -609,6 +626,7 @@ struct MapAirway
 
 };
 
+// =====================================================================
 /* Marker beacon */
 struct MapMarker
 {
@@ -634,6 +652,7 @@ struct MapMarker
 
 };
 
+// =====================================================================
 /* ILS */
 struct MapIls
 {
@@ -662,6 +681,7 @@ struct MapIls
 
 };
 
+// =====================================================================
 /* Airspace boundary */
 struct MapAirspace
 {
@@ -725,6 +745,7 @@ struct MapAirspace
 
 };
 
+// =====================================================================
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
 struct MapSearchResult
 {
@@ -855,6 +876,7 @@ private:
 
 QDebug operator<<(QDebug out, const map::MapSearchResult& record);
 
+// =====================================================================
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
 {
@@ -878,6 +900,7 @@ struct RangeMarker
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 
+// =====================================================================
 /* Distance measurement line. Can be converted to QVariant */
 struct DistanceMarker
 {
@@ -903,6 +926,7 @@ struct DistanceMarker
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
+// =====================================================================
 /* All information for complete traffic pattern structure */
 struct TrafficPattern
 {
@@ -934,6 +958,45 @@ struct TrafficPattern
 QDataStream& operator>>(QDataStream& dataStream, map::TrafficPattern& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj);
 
+// =====================================================================
+/* All information for a hold */
+struct Hold
+{
+  QString navIdent; /* Only for display purposes */
+  map::MapObjectTypes navType;
+  QColor color;
+
+  bool turnLeft; /* Standard is right */
+  float minutes, speedKts; /* Used to calculate segment length - speed in knots */
+
+  float courseTrue; /* degree true inbound course to fix */
+  float magvar; /* Taken from environment or navaid */
+
+  atools::geo::Pos position; /* Hold reference position and altitude */
+
+  float magHeading() const;
+
+  float distance() const
+  {
+    return speedKts * minutes / 60.f;
+  }
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::Hold& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::Hold& obj);
+
+// =====================================================================
 /* Stores last METARs to avoid unneeded updates in widget */
 struct WeatherContext
 {
@@ -1070,5 +1133,7 @@ Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker);
 Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::TrafficPattern);
+Q_DECLARE_TYPEINFO(map::Hold, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::Hold);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

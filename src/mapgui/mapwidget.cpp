@@ -42,6 +42,7 @@
 #include "gui/widgetutil.h"
 #include "sql/sqlrecord.h"
 #include "gui/trafficpatterndialog.h"
+#include "gui/holddialog.h"
 #include "gui/actionstatesaver.h"
 #include "common/jumpback.h"
 #include "route/routealtitude.h"
@@ -1151,7 +1152,11 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
         cursorShape = Qt::CrossCursor;
       else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
                                                                    screenSearchDistance) != -1)
-        // Change cursor at the end of an marker
+        // Change cursor at the active position
+        cursorShape = Qt::PointingHandCursor;
+      else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(),
+                                                         screenSearchDistance) != -1)
+        // Change cursor at the active position
         cursorShape = Qt::PointingHandCursor;
       else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
                                                               screenSearchDistance) != -1)
@@ -1291,7 +1296,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                           ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                           ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
-                                          ui->actionMapTrafficPattern});
+                                          ui->actionMapTrafficPattern, ui->actionMapHold});
   Q_UNUSED(textSaver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -1305,7 +1310,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                             ui->actionMapEditUserWaypoint, ui->actionMapUserdataAdd,
                                             ui->actionMapUserdataEdit, ui->actionMapUserdataDelete,
                                             ui->actionMapUserdataMove, ui->actionMapLogdataEdit,
-                                            ui->actionMapTrafficPattern});
+                                            ui->actionMapTrafficPattern, ui->actionMapHold});
   Q_UNUSED(textSaver);
 
   // ===================================================================================
@@ -1328,6 +1333,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addAction(ui->actionMapTrafficPattern);
   menu.addAction(ui->actionMapHideTrafficPattern);
+  menu.addAction(ui->actionMapHold);
+  menu.addAction(ui->actionMapHideHold);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteAirportStart);
@@ -1358,6 +1365,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   int distMarkerIndex = -1;
   int trafficPatternIndex = -1;
+  int holdIndex = -1;
   int rangeMarkerIndex = -1;
   bool visibleOnMap = false;
   Pos pos;
@@ -1375,6 +1383,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       rangeMarkerIndex = getScreenIndexConst()->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
       trafficPatternIndex = getScreenIndexConst()->getNearestTrafficPatternIndex(point.x(),
                                                                                  point.y(), screenSearchDistance);
+      holdIndex = getScreenIndexConst()->getNearestHoldIndex(point.x(), point.y(), screenSearchDistance);
     }
   }
 
@@ -1395,11 +1404,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
   ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
+  ui->actionMapHideHold->setEnabled(visibleOnMap && holdIndex != -1);
 
   ui->actionMapShowInformation->setEnabled(false);
   ui->actionMapShowApproaches->setEnabled(false);
   ui->actionMapShowApproachesCustom->setEnabled(false);
   ui->actionMapTrafficPattern->setEnabled(false);
+  ui->actionMapHold->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
   ui->actionRouteAddPos->setEnabled(visibleOnMap);
@@ -1490,7 +1501,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Collect information from the search result - build text only for one object for several menu items
   bool isAircraft = false;
   QString informationText, procedureText, measureText, rangeRingText, departureText, departureParkingText,
-          destinationText, addRouteText, searchText, editUserpointText, patternText;
+          destinationText, addRouteText, searchText, editUserpointText, patternText, holdText;
 
   if(onlineCenter != nullptr)
   {
@@ -1509,19 +1520,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText.clear();
 
   if(waypoint != nullptr)
-    informationText = measureText = addRouteText = searchText = map::waypointText(*waypoint);
+    informationText = measureText = addRouteText = searchText = holdText = map::waypointText(*waypoint);
 
   if(ndb != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = map::ndbText(*ndb);
+    informationText = measureText = rangeRingText = addRouteText = searchText = holdText = map::ndbText(*ndb);
 
   if(vor != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = map::vorText(*vor);
+    informationText = measureText = rangeRingText = addRouteText = searchText = holdText = map::vorText(*vor);
 
   if(airport != nullptr)
     procedureText = informationText =
       measureText = departureText =
         destinationText = addRouteText =
-          searchText = patternText = map::airportText(*airport, 20);
+          searchText = patternText = holdText = map::airportText(*airport, 20);
 
   // Userpoints are drawn on top of all features
   if(userpoint != nullptr)
@@ -1798,6 +1809,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapShowApproachesCustom->setText(ui->actionMapShowApproachesCustom->text().arg(QString()));
   }
 
+  // Traffic pattern ========================================
   if(airport != nullptr && !airport->noRunways())
   {
     ui->actionMapTrafficPattern->setEnabled(true);
@@ -1805,6 +1817,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(QString()));
+
+  // Hold ========================================
+  ui->actionMapHold->setEnabled(true);
+  if(!holdText.isEmpty())
+    ui->actionMapHold->setText(ui->actionMapHold->text().arg(holdText));
+  else
+    ui->actionMapHold->setText(ui->actionMapHold->text().arg(tr("Position")));
 
   // Update "delete in route"
   if(routeIndex != -1 && NavApp::getRouteConst().canEditPoint(routeIndex))
@@ -1862,6 +1881,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << "destinationText" << destinationText;
   qDebug() << "addRouteText" << addRouteText;
   qDebug() << "searchText" << searchText;
+  qDebug() << "patternText" << patternText;
+  qDebug() << "holdText" << holdText;
 
   atools::gui::util::addMenuShortcuts(&menu);
 
@@ -1964,6 +1985,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       removeDistanceMarker(distMarkerIndex);
     else if(action == ui->actionMapHideTrafficPattern)
       removeTrafficPatterm(trafficPatternIndex);
+    else if(action == ui->actionMapHideHold)
+      removeHold(holdIndex);
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
       addMeasurement(pos, action == ui->actionMapMeasureRhumbDistance, airport, vor, ndb, waypoint);
     else if(action == ui->actionRouteDeleteWaypoint)
@@ -2120,6 +2143,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     }
     else if(action == ui->actionMapTrafficPattern)
       addTrafficPattern(*airport);
+    else if(action == ui->actionMapHold)
+      addHold(result, pos);
     else if(action == ui->actionMapShowApproaches)
       emit showProcedures(*airport);
     else if(action == ui->actionMapShowApproachesCustom)
@@ -3240,10 +3265,41 @@ void MapWidget::addTrafficPattern(const map::MapAirport& airport)
 
 void MapWidget::removeTrafficPatterm(int index)
 {
+  qDebug() << Q_FUNC_INFO;
+
   getScreenIndex()->getTrafficPatterns().removeAt(index);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
+}
+
+void MapWidget::addHold(const map::MapSearchResult& result, const atools::geo::Pos& position)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Order of preference (same as in map context menu): airport, vor, ndb, waypoint, pos
+  HoldDialog dialog(mainWindow, result, position);
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    map::Hold hold;
+    dialog.fillHold(hold);
+
+    getHolds().append(hold);
+
+    mainWindow->updateMarkActionStates();
+    update();
+    mainWindow->setStatusMessage(tr("Added hold."));
+  }
+}
+
+void MapWidget::removeHold(int index)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  getScreenIndex()->getHolds().removeAt(index);
+  mainWindow->updateMarkActionStates();
+  update();
+  mainWindow->setStatusMessage(QString(tr("Hold removed from map.")));
 }
 
 void MapWidget::resetSettingsToDefault()
@@ -3457,6 +3513,7 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
   getScreenIndex()->getRangeMarks().clear();
   getScreenIndex()->getDistanceMarks().clear();
   getScreenIndex()->getTrafficPatterns().clear();
+  getScreenIndex()->getHolds().clear();
   currentDistanceMarkerIndex = -1;
 
   update();

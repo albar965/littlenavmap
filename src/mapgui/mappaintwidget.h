@@ -129,8 +129,10 @@ public:
   const QList<map::DistanceMarker>& getDistanceMarkers() const;
 
   const QList<map::TrafficPattern>& getTrafficPatterns() const;
-
   QList<map::TrafficPattern>& getTrafficPatterns();
+
+  const QList<map::Hold>& getHolds() const;
+  QList<map::Hold>& getHolds();
 
   const atools::geo::Pos& getProfileHighlight() const;
 

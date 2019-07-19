@@ -238,6 +238,7 @@ void MapScreenIndex::saveState() const
   s.setValueVar(lnm::MAP_DISTANCEMARKERS, QVariant::fromValue<QList<map::DistanceMarker> >(distanceMarks));
   s.setValueVar(lnm::MAP_RANGEMARKERS, QVariant::fromValue<QList<map::RangeMarker> >(rangeMarks));
   s.setValueVar(lnm::MAP_TRAFFICPATTERNS, QVariant::fromValue<QList<map::TrafficPattern> >(trafficPatterns));
+  s.setValueVar(lnm::MAP_HOLDS, QVariant::fromValue<QList<map::Hold> >(holds));
 }
 
 void MapScreenIndex::restoreState()
@@ -246,6 +247,7 @@ void MapScreenIndex::restoreState()
   distanceMarks = s.valueVar(lnm::MAP_DISTANCEMARKERS).value<QList<map::DistanceMarker> >();
   rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
   trafficPatterns = s.valueVar(lnm::MAP_TRAFFICPATTERNS).value<QList<map::TrafficPattern> >();
+  holds = s.valueVar(lnm::MAP_HOLDS).value<QList<map::Hold> >();
 }
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
@@ -525,6 +527,11 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
 int MapScreenIndex::getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const
 {
   return getNearestIndex(xs, ys, maxDistance, trafficPatterns);
+}
+
+int MapScreenIndex::getNearestHoldIndex(int xs, int ys, int maxDistance) const
+{
+  return getNearestIndex(xs, ys, maxDistance, holds);
 }
 
 int MapScreenIndex::getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const

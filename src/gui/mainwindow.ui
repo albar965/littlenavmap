@@ -10553,6 +10553,36 @@ Wind speed will be interpolated for climb and descent phases.</string>
     <string>Load airspaces into user database</string>
    </property>
   </action>
+  <action name="actionMapHold">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Display Hold at %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Display hold at this position or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Display hold at this position or navaid</string>
+   </property>
+  </action>
+  <action name="actionMapHideHold">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/holdoff.svg</normaloff>:/littlenavmap/resources/icons/holdoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove Hold</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove this hold</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove this hold</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

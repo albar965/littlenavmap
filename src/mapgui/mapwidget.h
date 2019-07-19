@@ -130,11 +130,17 @@ public:
   /* Update the shown map object types depending on action status (toolbar or menu) */
   virtual void updateMapObjectsShown() override;
 
+  /* Opens a dialog for configuration of a traffic pattern display object */
+  void addTrafficPattern(const map::MapAirport& airport);
+
   /* Remove pattern at index and update the map */
   void removeTrafficPatterm(int index);
 
-  /* Opens a dialog for configuration */
-  void addTrafficPattern(const map::MapAirport& airport);
+  /* Opens a dialog for configuration and adds a hold */
+  void addHold(const map::MapSearchResult& result, const atools::geo::Pos& position);
+
+  /* Remove hold at index and update the map */
+  void removeHold(int index);
 
   /* Jump to the search center mark using default zoom */
   void showSearchMark();

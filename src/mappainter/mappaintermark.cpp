@@ -69,6 +69,7 @@ void MapPainterMark::render(PaintContext *context)
   paintMark(context);
   paintHome(context);
   paintTrafficPatterns(context);
+  paintHolds(context);
   paintRangeRings(context);
   paintDistanceMarkers(context);
   paintCompassRose(context);
@@ -946,6 +947,60 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   }
 }
 
+void MapPainterMark::paintHolds(const PaintContext *context)
+{
+  if(!context->mapLayer->isApproach())
+    return;
+
+  atools::util::PainterContextSaver saver(context->painter);
+  GeoPainter *painter = context->painter;
+  const QList<Hold>& holds = mapPaintWidget->getHolds();
+  float lineWidth = context->szF(context->thicknessRangeDistance, 3);
+  context->szFont(context->textSizeRangeDistance);
+
+  const static QVector<float> inboundArrows({0.80f}), outboundArrows({0.80f});
+
+  for(const Hold& hold : holds)
+  {
+    bool visible, hidden;
+    QPointF pt = wToS(hold.getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
+    if(hidden)
+      continue;
+
+    // Calculcate approximate rectangle
+    float dist = hold.distance();
+    Rect rect(hold.position, atools::geo::nmToMeter(dist) * 2.f);
+
+    if(context->viewportRect.overlaps(rect))
+    {
+      painter->setPen(QPen(hold.color, context->szF(context->thicknessRangeDistance, 3), Qt::SolidLine));
+
+      // Text for inbound leg =======================================
+      QString inboundText = tr("%1°M, %2min").
+                            arg(QLocale().toString(hold.magHeading(), 'f', 0)).
+                            arg(QString::number(hold.minutes, 'g', 2));
+
+      if(!hold.navIdent.isEmpty())
+        inboundText += tr(", %1").arg(hold.navIdent);
+
+      // Text for outbound leg =======================================
+      QString outboundText = tr("%1°M, %2, %3").
+                             arg(QLocale().toString(opposedCourseDeg(hold.magHeading()), 'f', 0)).
+                             arg(Unit::speedKts(hold.speedKts, true, true)).
+                             arg(Unit::altFeet(hold.position.getAltitude(), true, true));
+
+      paintHoldWithText(context->painter, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
+                        hold.courseTrue, dist, 0.f, hold.turnLeft,
+                        inboundText, outboundText, hold.color, QColor(Qt::white), inboundArrows, outboundArrows);
+
+      // Draw ellipse at hold fix
+      painter->setPen(QPen(hold.color, painter->pen().widthF() * 0.66));
+      painter->setBrush(Qt::white);
+      painter->drawEllipse(pt, lineWidth * 2.f, lineWidth * 2.f);
+    }
+  }
+}
+
 void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
 {
   if(!context->mapLayer->isApproach())
@@ -1073,7 +1128,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         // Text for downwind leg =======================================
         QLineF final (baseFinalPoint, originPoint);
         QPointF center = downwind.center();
-        QString text = QString("%1/%2°M").
+        QString text = tr("%1/%2°M").
                        arg(Unit::altFeet(pattern.position.getAltitude(), true, true)).
                        arg(QLocale().toString(
                              opposedCourseDeg(normalizeCourse(pattern.heading - pattern.magvar)), 'f', 0));
@@ -1083,16 +1138,17 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
                                            true /* both visible */);
 
         // Text for final leg =======================================
-        text = QString("RW%1/%2°M").
+        text = tr("RW%1/%2°M").
                arg(pattern.runwayName).
                arg(QLocale().toString(normalizeCourse(pattern.heading - pattern.magvar), 'f', 0));
         textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
                                            true /* both visible */);
 
         // Draw arrows on legs =======================================
-        // Set a lighter fill color for arros
-        painter->setBrush(pattern.color.lighter(190));
-        painter->setPen(QPen(pattern.color, context->szF(context->thicknessRangeDistance, 2)));
+        // Set a lighter fill color for arrows
+
+        painter->setBrush(pattern.color.lighter(300));
+        painter->setPen(QPen(pattern.color, painter->pen().widthF() * 0.66));
 
         // Two arrows on downwind leg
         paintArrowAlongLine(painter, downwind, arrow, 0.75f);
@@ -1111,6 +1167,7 @@ void MapPainterMark::paintTrafficPatterns(const PaintContext *context)
         paintArrowAlongLine(painter, QLineF(upwindCrosswindPoint, crosswindDownwindPoint), arrow);
 
         // Draw ellipse at touchdown point
+        painter->setBrush(Qt::white);
         painter->drawEllipse(originPoint, lineWidth * 2.f, lineWidth * 2.f);
       }
     }

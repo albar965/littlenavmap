@@ -250,9 +250,9 @@ float Unit::distShortFeetF(float value)
   return distShortMeterF(atools::geo::feetToMeter(value));
 }
 
-QString Unit::speedKts(float value, bool addUnit)
+QString Unit::speedKts(float value, bool addUnit, bool narrow)
 {
-  return u(speedKtsF(value), unitSpeedStr, addUnit);
+  return u(speedKtsF(value), unitSpeedStr, addUnit, narrow);
 }
 
 float Unit::speedKtsF(float value)
@@ -271,9 +271,9 @@ float Unit::speedKtsF(float value)
   return 0.f;
 }
 
-QString Unit::speedMeterPerSec(float value, bool addUnit)
+QString Unit::speedMeterPerSec(float value, bool addUnit, bool narrow)
 {
-  return u(speedMeterPerSecF(value), unitSpeedStr, addUnit);
+  return u(speedMeterPerSecF(value), unitSpeedStr, addUnit, narrow);
 }
 
 float Unit::speedMeterPerSecF(float value)

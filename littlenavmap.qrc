@@ -247,5 +247,7 @@
         <file>resources/icons/logdata_add.svg</file>
         <file>resources/icons/logbook.svg</file>
         <file>resources/icons/databaseairspace.svg</file>
+        <file>resources/icons/hold.svg</file>
+        <file>resources/icons/holdoff.svg</file>
     </qresource>
 </RCC>

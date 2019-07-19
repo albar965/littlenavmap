@@ -220,14 +220,16 @@ protected:
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
                          const QString& text, const QString& text2,
-                         const QColor& textColor, const QColor& textColorBackground);
+                         const QColor& textColor, const QColor& textColorBackground,
+                         QVector<float> inboundArrows = QVector<float>(),
+                         QVector<float> outboundArrows = QVector<float>());
 
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground);
 
-  /* Arrow pointing upwards */
-  QPolygonF buildArrow(float size);
+  /* Arrow pointing upwards or downwards */
+  QPolygonF buildArrow(float size, bool downwards = false);
 
   /* Draw arrow at line postion. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);

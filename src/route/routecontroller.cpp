@@ -1855,7 +1855,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint,
                                       ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
-                                      ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern});
+                                      ui->actionRouteDeleteLeg, ui->actionRouteInsert, ui->actionMapTrafficPattern,
+                                      ui->actionMapHold});
   Q_UNUSED(saver);
 
   // Re-enable actions on exit to allow keystrokes
@@ -1865,8 +1866,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteLegUp, ui->actionRouteLegDown,
     ui->actionRouteDeleteLeg, ui->actionMapEditUserWaypoint, ui->actionRouteCalcRadionavSelected,
     ui->actionRouteCalcHighAltSelected, ui->actionRouteCalcLowAltSelected, ui->actionRouteCalcSetAltSelected,
-    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapNavaidRange, ui->actionRouteTableCopy,
-    ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll, ui->actionRouteResetView, ui->actionRouteSetMark,
+    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapNavaidRange,
+    ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
+    ui->actionRouteResetView, ui->actionRouteSetMark,
     ui->actionRouteInsert, ui->actionRouteTableAppend});
   Q_UNUSED(stateSaver);
 
@@ -2009,6 +2011,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapTrafficPattern->setEnabled(false);
   ui->actionMapTrafficPattern->setText(tr("Display Airport Traffic Pattern"));
 
+  ui->actionMapHold->setEnabled(routeLeg != nullptr);
+  ui->actionMapHold->setText(tr("Display Hold"));
+
   // Get selected rows in ascending order
   QList<int> rows;
   selectedRows(rows, false);
@@ -2085,6 +2090,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionMapNavaidRange);
   menu.addSeparator();
   menu.addAction(ui->actionMapTrafficPattern);
+  menu.addAction(ui->actionMapHold);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteTableCopy);
@@ -2123,6 +2129,17 @@ void RouteController::tableContextMenu(const QPoint& pos)
       NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
       NavApp::getMapWidget()->addTrafficPattern(routeLeg->getAirport());
+    else if(action == ui->actionMapHold && routeLeg != nullptr)
+    {
+      map::MapSearchResult result;
+      mapQuery->getMapObjectById(result, routeLeg->getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg->getId(),
+                                 false /* airport from nav*/);
+
+      if(!result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
+        NavApp::getMapWidget()->addHold(result, atools::geo::EMPTY_POS);
+      else
+        NavApp::getMapWidget()->addHold(result, routeLeg->getPosition());
+    }
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids

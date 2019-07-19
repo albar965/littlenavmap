@@ -3200,7 +3200,8 @@ void MainWindow::updateMarkActionStates()
 {
   ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
                                           !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
-                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty());
+                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty() ||
+                                          !NavApp::getMapWidget()->getHolds().isEmpty());
 }
 
 /* Enable or disable actions */

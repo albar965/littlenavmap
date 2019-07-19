@@ -52,7 +52,10 @@ private:
   void paintHighlights(PaintContext *context);
   void paintRangeRings(const PaintContext *context);
   void paintDistanceMarkers(const PaintContext *context);
+
   void paintTrafficPatterns(const PaintContext *context);
+  void paintHolds(const PaintContext *context);
+
   void paintRouteDrag(const PaintContext *context);
   void paintCompassRose(const PaintContext *context);
   void paintUserpointDrag(const PaintContext *context);

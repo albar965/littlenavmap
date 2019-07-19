@@ -66,8 +66,8 @@ public:
   /* Get nearest range rings index (only the centerpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getRangeMarks */
   int getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const;
-
   int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const;
+  int getNearestHoldIndex(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
@@ -155,6 +155,17 @@ public:
   const QList<map::TrafficPattern>& getTrafficPatterns() const
   {
     return trafficPatterns;
+  }
+
+  /* Airfield traffic patterns. */
+  QList<map::Hold>& getHolds()
+  {
+    return holds;
+  }
+
+  const QList<map::Hold>& getHolds() const
+  {
+    return holds;
   }
 
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
@@ -262,6 +273,7 @@ private:
   QList<map::RangeMarker> rangeMarks;
   QList<map::DistanceMarker> distanceMarks;
   QList<map::TrafficPattern> trafficPatterns;
+  QList<map::Hold> holds;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

@@ -249,6 +249,7 @@ SOURCES += \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
   src/export/htmlexporter.cpp \
+  src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
   src/gui/stylehandler.cpp \
@@ -391,6 +392,7 @@ HEADERS  += \
   src/export/csvexporter.h \
   src/export/exporter.h \
   src/export/htmlexporter.h \
+  src/gui/holddialog.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
   src/gui/stylehandler.h \
@@ -501,6 +503,7 @@ HEADERS  += \
 FORMS += \
   src/connect/connectdialog.ui \
   src/db/databasedialog.ui \
+  src/gui/holddialog.ui \
   src/gui/mainwindow.ui \
   src/gui/textdialog.ui \
   src/gui/timedialog.ui \

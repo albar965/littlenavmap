@@ -79,9 +79,9 @@ public:
   static float distShortFeetF(float value);
 
   /* Speed: Returns either kts, km/h or m/h */
-  static QString speedKts(float value, bool addUnit = true);
+  static QString speedKts(float value, bool addUnit = true, bool narrow = false);
   static float speedKtsF(float value);
-  static QString speedMeterPerSec(float value, bool addUnit = true);
+  static QString speedMeterPerSec(float value, bool addUnit = true, bool narrow = false);
   static float speedMeterPerSecF(float value = true);
 
   static QString speedVertFpm(float value, bool addUnit = true);
