@@ -144,7 +144,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     rating = rec->valueInt("rating");
 
   airportTitle(airport, html, rating);
-  html.br();
 
   QString city, state, country;
   airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
@@ -451,7 +450,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     addAirportFolder(airport, html);
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: airport_id = %1").arg(airport.getId())).pEnd();
+  html.small(QString("Database: airport_id = %1").arg(airport.getId())).br();
 #endif
 }
 
@@ -583,7 +582,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         html.tableEnd();
 
 #ifdef DEBUG_INFORMATION
-        html.p().small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).pEnd();
+        html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
 #endif
 
         if(details)
@@ -593,14 +592,14 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 
           runwayEndText(html, airport, recPrim, hdgPrim, rec.valueFloat("length"));
 #ifdef DEBUG_INFORMATION
-          html.p().small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).pEnd();
+          html.small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).br();
 #endif
           if(print)
             html.tdEnd().td();
 
           runwayEndText(html, airport, recSec, hdgSec, rec.valueFloat("length"));
 #ifdef DEBUG_INFORMATION
-          html.p().small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).pEnd();
+          html.small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).br();
 #endif
 
           if(print)
@@ -980,7 +979,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         }
         html.tableEnd();
 #ifdef DEBUG_INFORMATION
-        html.p().small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).pEnd();
+        html.small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).br();
 #endif
 
         const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
@@ -1042,7 +1041,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
             addRadionavFixType(html, recTrans);
             html.tableEnd();
 #ifdef DEBUG_INFORMATION
-            html.p().small(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).pEnd();
+            html.small(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).br();
 #endif
           }
         }
@@ -1462,7 +1461,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().text(parsed.getUnusedData()).pEnd();
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(tr("Source: %1").arg(metar.getMetar())).pEnd();
+  html.p().small(tr("Source: %1").arg(metar.getMetar())).br();
 #endif
 }
 
@@ -1485,7 +1484,6 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(vor.position.getLonX()).arg(vor.position.getLatY()), atools::util::html::LINK_NO_UL);
-    html.br();
   }
 
   html.table();
@@ -1533,7 +1531,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     addScenery(rec, html);
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: vor_id = %1").arg(vor.getId())).pEnd();
+  html.small(QString("Database: vor_id = %1").arg(vor.getId())).br();
 #endif
 }
 
@@ -1555,7 +1553,6 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), atools::util::html::LINK_NO_UL);
-    html.br();
   }
 
   html.table();
@@ -1586,7 +1583,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     addScenery(rec, html);
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: ndb_id = %1").arg(ndb.getId())).pEnd();
+  html.small(QString("Database: ndb_id = %1").arg(ndb.getId())).br();
 #endif
 }
 
@@ -1612,7 +1609,6 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
              arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), atools::util::html::LINK_NO_UL);
-      html.br();
     }
 
     html.table();
@@ -1657,7 +1653,7 @@ void HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     }
 
 #ifdef DEBUG_INFORMATION
-    html.p().small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).pEnd();
+    html.small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).br();
 #endif
   }
   else
@@ -1688,8 +1684,6 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
     // }
     // else
     // html.text(tr("Map"));
-
-    html.br();
 
     // From/to ================================================================
     html.table();
@@ -1866,7 +1860,7 @@ void HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, atools::util::HtmlB
     html.tableEnd();
 
 #ifdef DEBUG_INFORMATION
-    html.p().small(QString("Database: logbook_id = %1").arg(logEntry.id)).pEnd();
+    html.small(QString("Database: logbook_id = %1").arg(logEntry.id)).br();
 #endif
   }
 }
@@ -1904,7 +1898,6 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), atools::util::html::LINK_NO_UL);
-    html.br();
   }
 
   html.table();
@@ -1975,7 +1968,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     addScenery(rec, html);
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).pEnd();
+  html.small(QString("Database: waypoint_id = %1").arg(waypoint.getId())).br();
 #endif
 }
 
@@ -2167,8 +2160,8 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   }
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: source = %1, boundary_id = %2").
-                 arg(map::airspaceSourceText(airspace.src)).arg(airspace.getId())).pEnd();
+  html.small(QString("Database: source = %1, boundary_id = %2").
+             arg(map::airspaceSourceText(airspace.src)).arg(airspace.getId())).br();
 #endif
 
 }
@@ -2246,7 +2239,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Database: airway_id = %1").arg(airway.getId())).pEnd();
+  html.small(QString("Database: airway_id = %1").arg(airway.getId())).br();
 #endif
 }
 
@@ -2448,7 +2441,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION
-  html.p().small(QString("Object ID: %1").arg(aircraft.getId())).pEnd();
+  html.small(QString("Object ID: %1").arg(aircraft.getId())).br();
   QStringList flags;
   if(aircraft.isUser())
     flags << "User";
@@ -2462,7 +2455,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     flags << "Pause";
   if(aircraft.isSimReplay())
     flags << "Replay";
-  html.p().small(QString("Flags: %1").arg(flags.join(","))).pEnd();
+  html.small(QString("Flags: %1").arg(flags.join(","))).br();
 #endif
 }
 
@@ -3319,7 +3312,6 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
 {
   head(html, tr("Scenery"));
   html.table();
-
   html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")),
             atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
   html.tableEnd();

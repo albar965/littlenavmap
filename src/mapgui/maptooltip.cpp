@@ -69,13 +69,12 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(10);
 
-    html.p();
     info.aircraftText(mapSearchResult.userAircraft, html);
     info.aircraftProgressText(mapSearchResult.userAircraft, html, route,
                               false /* show more/less switch */, false /* true if less info mode */);
-    html.pEnd();
+
     numEntries++;
   }
 
@@ -86,13 +85,12 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(10);
 
-    html.p();
     info.aircraftText(aircraft, html);
     info.aircraftProgressText(aircraft, html, Route(),
                               false /* show more/less switch */, false /* true if less info mode */);
-    html.pEnd();
+
     numEntries++;
   }
 
@@ -103,13 +101,12 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(10);
 
-    html.p();
     info.aircraftText(aircraft, html);
     info.aircraftProgressText(aircraft, html, Route(),
                               false /* show more/less switch */, false /* true if less info mode */);
-    html.pEnd();
+
     numEntries++;
   }
 
@@ -122,11 +119,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.procedurePointText(ap, html, &route);
-      html.pEnd();
+
       numEntries++;
     }
   }
@@ -140,14 +136,13 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
       map::WeatherContext currentWeatherContext;
 
-      html.p();
       mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
       info.airportText(airport, currentWeatherContext, html, &route);
-      html.pEnd();
+
       numEntries++;
     }
   }
@@ -159,11 +154,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       return html.getHtml();
 
     if(!html.isEmpty())
-      html.hr();
+      html.textBar(10);
 
-    html.p();
     info.logEntryText(entry, html);
-    html.pEnd();
+
     numEntries++;
   }
 
@@ -176,11 +170,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.userpointText(up, html);
-      html.pEnd();
+
       numEntries++;
     }
 
@@ -190,11 +183,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.vorText(vor, html);
-      html.pEnd();
+
       numEntries++;
     }
 
@@ -204,11 +196,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.ndbText(ndb, html);
-      html.pEnd();
+
       numEntries++;
     }
 
@@ -218,11 +209,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.waypointText(wp, html);
-      html.pEnd();
+
       numEntries++;
     }
 
@@ -232,11 +222,13 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.markerText(m, html);
-      html.pEnd();
+
+      numEntries++;
+    }
+
       numEntries++;
     }
   }
@@ -250,11 +242,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.towerText(ap, html);
-      html.pEnd();
+
       numEntries++;
     }
     for(const MapParking& p : mapSearchResult.parkings)
@@ -263,11 +254,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.parkingText(p, html);
-      html.pEnd();
+
       numEntries++;
     }
     for(const MapHelipad& p : mapSearchResult.helipads)
@@ -276,11 +266,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.helipadText(p, html);
-      html.pEnd();
+
       numEntries++;
     }
   }
@@ -293,11 +282,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.userpointTextRoute(up, html);
-      html.pEnd();
+
       numEntries++;
     }
 
@@ -307,11 +295,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
-      html.p();
       info.airwayText(airway, html);
-      html.pEnd();
+
       numEntries++;
     }
   }
@@ -326,9 +313,10 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
+
       info.windText(winds, html, NavApp::getWindReporter()->getAltitude());
-      html.pEnd();
+
       numEntries++;
     }
   }
@@ -345,15 +333,14 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
         return html.getHtml();
 
       if(!html.isEmpty())
-        html.hr();
+        html.textBar(10);
 
       atools::sql::SqlRecord onlineRec;
       if(airspace.isOnline())
         onlineRec = NavApp::getAirspaceController()->getOnlineAirspaceRecordById(airspace.id);
 
-      html.p();
       info.airspaceText(airspace, onlineRec, html);
-      html.pEnd();
+
       numEntries++;
     }
   }
@@ -366,7 +353,7 @@ bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
 {
   if(numEntries >= MAX_ENTRIES)
   {
-    html.hr().b(tr("More ..."));
+    html.textBar(10).b(tr("More ..."));
     return true;
   }
 

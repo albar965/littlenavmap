@@ -826,7 +826,7 @@ void MapPaintWidget::changeAirspaceHighlights(const QList<map::MapAirspace>& air
 void MapPaintWidget::changeSearchHighlights(const map::MapSearchResult& newHighlights)
 {
   screenIndex->changeSearchHighlights(newHighlights);
-  screenIndex->updateLogEnryScreenGeometry(getCurrentViewBoundingBox());
+  screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 

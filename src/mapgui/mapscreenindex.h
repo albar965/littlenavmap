@@ -80,7 +80,7 @@ public:
   void updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
-  void updateLogEnryScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
+  void updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
 
   /* Clear internal caches */
   void resetAirspaceOnlineScreenGeometry();

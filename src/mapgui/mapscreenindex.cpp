@@ -586,7 +586,7 @@ void MapScreenIndex::updateAllGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
   updateRouteScreenGeometry(curBox);
   updateAirwayScreenGeometry(curBox);
-  updateLogEnryScreenGeometry(curBox);
+  updateLogEntryScreenGeometry(curBox);
   updateAirspaceScreenGeometry(curBox);
 }
 
