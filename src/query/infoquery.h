@@ -78,6 +78,8 @@ public:
 
   /* Get record for table ils for an runway end */
   const atools::sql::SqlRecord *getIlsInformationSim(int runwayEndId);
+  atools::sql::SqlRecord getIlsInformationSimById(int ilsId);
+  atools::sql::SqlRecord getIlsInformationNavById(int ilsId);
 
   /* Get record for table ils for an runway end */
   const atools::sql::SqlRecord *getIlsInformationNav(int runwayEndId);
@@ -119,7 +121,7 @@ private:
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
-  atools::sql::SqlDatabase *db, *dbNav;
+  atools::sql::SqlDatabase *dbSim, *dbNav;
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr,
@@ -127,7 +129,7 @@ private:
                         *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
                         *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr,
                         *startQuery = nullptr, *ilsQuerySim = nullptr, *ilsQueryNav = nullptr,
-                        *ilsQuerySimByName = nullptr,
+                        *ilsQuerySimByName = nullptr, *ilsQueryNavById = nullptr, *ilsQuerySimById = nullptr,
                         *airwayWaypointQuery = nullptr, *vorIdentRegionQuery = nullptr, *approachQuery = nullptr,
                         *transitionQuery = nullptr;
 

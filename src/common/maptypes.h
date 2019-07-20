@@ -679,6 +679,8 @@ struct MapIls
     return id;
   }
 
+  atools::geo::LineString boundary() const;
+
 };
 
 // =====================================================================
@@ -1023,6 +1025,8 @@ const QString& navTypeNameNdb(const QString& type);
 const QString& navTypeNameWaypoint(const QString& type);
 
 QString ilsText(const map::MapIls& ils);
+QString ilsTextShort(map::MapIls& ils);
+QString ilsTextShort(QString ident, QString name, bool gs, bool dme);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);

@@ -229,6 +229,16 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
       numEntries++;
     }
 
+    for(const MapIls& ils : mapSearchResult.ils)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.textBar(10);
+
+      info.ilsText(ils, html);
+
       numEntries++;
     }
   }
@@ -345,7 +355,18 @@ QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
     }
   }
 
-  return html.getHtml();
+  QString str = html.getHtml();
+  if(str.endsWith("<br/>"))
+    str.chop(5);
+
+#ifdef DEBUG_INFORMATION_TOOLTIP
+
+  qDebug().noquote().nospace() << Q_FUNC_INFO << html.getHtml();
+
+#endif
+
+  return str;
+
 }
 
 /* Check if the result HTML has more than the allowed number of lines and add a "more" text */

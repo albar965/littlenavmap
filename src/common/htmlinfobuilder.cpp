@@ -765,30 +765,77 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   if(ilsRec != nullptr)
   {
     for(const atools::sql::SqlRecord& irec : *ilsRec)
-      ilsText(&irec, html, false);
+      ilsText(&irec, html, false /* approach */, false /* standalone */);
   }
 }
 
-void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder& html, bool approach) const
+void HtmlInfoBuilder::ilsText(const map::MapIls& ils, HtmlBuilder& html) const
+{
+  atools::sql::SqlRecord ilsRec = infoQuery->getIlsInformationSimById(ils.id);
+  ilsText(&ilsRec, html, false /* approach */, true /* standalone */);
+}
+
+void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder& html, bool approach,
+                              bool standalone) const
 {
   // Add ILS information
   bool dme = !ilsRec->isNull("dme_altitude");
   bool gs = !ilsRec->isNull("gs_altitude");
   float magvar = ilsRec->valueFloat("mag_var");
+  QString ident = ilsRec->valueStr("ident");
+  QString name = ilsRec->valueStr("name");
 
-  QString name = tr("%1 (%2) - ILS %3%4").arg(ilsRec->valueStr("name")).arg(ilsRec->valueStr("ident")).
-                 arg(gs ? tr(", GS") : "").arg(dme ? tr(", DME") : "");
-
+  // Prefix for procedure information
   QString prefix;
-  if(!approach)
+
+  QString text = map::ilsTextShort(ident, name, gs, dme);
+
+  if(gs)
+    prefix = approach ? tr("ILS ") : QString();
+  else if(!name.startsWith(QObject::tr("LOC")))
+    prefix = approach ? tr("LOC ") : QString();
+
+  if(standalone)
   {
-    html.br().h4(name);
+    html.img(QIcon(":/littlenavmap/resources/icons/ils.svg"), QString(), QString(), symbolSizeTitle);
+    html.nbsp().nbsp();
+
+    navaidTitle(html, text);
+
+    if(info)
+    {
+      // Add map link if not tooltip
+      html.nbsp().nbsp();
+      html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
+             arg(ilsRec->valueFloat("lonx")).arg(ilsRec->valueFloat("laty")), atools::util::html::LINK_NO_UL);
+    }
     html.table();
   }
   else
   {
-    prefix = tr("ILS ");
-    html.row2(tr("ILS:"), name);
+    if(approach)
+      html.row2(prefix + tr(":"), name);
+    else
+    {
+      html.br().h4(text);
+      html.table();
+    }
+  }
+
+  if(standalone)
+  {
+    // Add bearing/distance to table
+    bearingText(atools::geo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")),
+                ilsRec->valueFloat("mag_var"), html);
+
+    html.row2If(tr("Airport:"), ilsRec->valueStr("loc_airport_ident"), atools::util::html::BOLD);
+    html.row2If(tr("Runway:"), ilsRec->valueStr("loc_runway_name"), atools::util::html::BOLD);
+
+    if(info)
+    {
+      html.row2If(tr("Region:"), ilsRec->valueStr("region"));
+      html.row2(tr("Elevation:"), Unit::altFeet(ilsRec->valueFloat("altitude")));
+    }
   }
 
   html.row2(prefix + tr("Frequency:"),
@@ -816,6 +863,10 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
   if(!approach)
     html.tableEnd();
+
+#ifdef DEBUG_INFORMATION
+  html.small(QString("Database: ils_id = %1").arg(ilsRec->valueInt("ils_id"))).br();
+#endif
 }
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
@@ -933,7 +984,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           if(ilsRec != nullptr && !ilsRec->isEmpty())
           {
             for(const atools::sql::SqlRecord& irec : *ilsRec)
-              ilsText(&irec, html, true);
+              ilsText(&irec, html, true /* approach */, false /* standalone */);
           }
           else
             html.row2(tr("ILS data not found"));
@@ -968,7 +1019,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
               if(ilsRec != nullptr && !ilsRec->isEmpty())
               {
                 for(const atools::sql::SqlRecord& irec : *ilsRec)
-                  ilsText(&irec, html, true);
+                  ilsText(&irec, html, true /* approach */, false /* standalone */);
               }
               else
                 html.row2(tr("ILS data not found"));

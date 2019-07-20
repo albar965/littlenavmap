@@ -293,6 +293,9 @@ void InfoController::saveState()
   for(const map::MapWaypoint& waypoint : currentSearchResult.waypoints)
     refs.append({waypoint.id, map::WAYPOINT});
 
+  for(const map::MapIls& ils : currentSearchResult.ils)
+    refs.append({ils.id, map::ILS});
+
   for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
     refs.append({userpoint.id, map::USERPOINT});
 
@@ -693,8 +696,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, map::M
   }
 
   // Navaids ================================================================
-  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.airways.isEmpty() ||
-     !result.userpoints.isEmpty())
+  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() || !result.ils.isEmpty() ||
+     !result.airways.isEmpty() || !result.userpoints.isEmpty())
     // if any navaids are to be shown clear search result before
     currentSearchResult.clear(map::NAV_ALL | map::USERPOINT | map::ILS | map::AIRWAY | map::RUNWAYEND);
 
@@ -871,6 +874,19 @@ bool InfoController::updateNavaidInternal(const map::MapSearchResult& result, bo
     if(!bearingChanged)
       currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapIls& ils: result.ils)
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << "Found ils" << ils.ident;
+#endif
+
+    if(!bearingChanged)
+      currentSearchResult.ils.append(ils);
+    infoBuilder->ilsText(ils, html);
     html.br();
     foundNavaid = true;
   }

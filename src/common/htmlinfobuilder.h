@@ -41,6 +41,7 @@ struct MapNdb;
 struct MapWaypoint;
 struct MapAirway;
 struct MapAirspace;
+struct MapIls;
 struct MapMarker;
 struct MapAirport;
 struct MapParking;
@@ -274,6 +275,8 @@ public:
     symbolSizeTitle = value;
   }
 
+  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
@@ -330,7 +333,7 @@ private:
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
-  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
+  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach, bool standalone) const;
 
   QString filepathTextShow(const QString& filepath) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;

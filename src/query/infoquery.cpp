@@ -29,7 +29,7 @@ using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 
 InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav)
-  : db(sqlDb), dbNav(sqlDbNav)
+  : dbSim(sqlDb), dbNav(sqlDbNav)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
@@ -106,6 +106,32 @@ const atools::sql::SqlRecord *InfoQuery::getIlsInformationSim(int runwayEndId)
   return cachedRecord(ilsCacheSim, ilsQuerySim, runwayEndId);
 }
 
+atools::sql::SqlRecord InfoQuery::getIlsInformationSimById(int ilsId)
+{
+  ilsQuerySimById->bindValue(":id", ilsId);
+  ilsQuerySimById->exec();
+  atools::sql::SqlRecord rec;
+
+  if(ilsQuerySimById->next())
+    rec = ilsQuerySimById->record();
+
+  ilsQuerySimById->finish();
+  return rec;
+}
+
+atools::sql::SqlRecord InfoQuery::getIlsInformationNavById(int ilsId)
+{
+  ilsQueryNavById->bindValue(":id", ilsId);
+  ilsQueryNavById->exec();
+  atools::sql::SqlRecord rec;
+
+  if(ilsQueryNavById->next())
+    rec = ilsQueryNavById->record();
+
+  ilsQueryNavById->finish();
+  return rec;
+}
+
 const atools::sql::SqlRecord *InfoQuery::getIlsInformationNav(int runwayEndId)
 {
   return cachedRecord(ilsCacheNav, ilsQueryNav, runwayEndId);
@@ -142,11 +168,13 @@ const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& id
   vorIdentRegionQuery->bindValue(":ident", ident);
   vorIdentRegionQuery->bindValue(":region", region);
   vorIdentRegionQuery->exec();
+  atools::sql::SqlRecord rec;
 
   if(vorIdentRegionQuery->next())
-    return vorIdentRegionQuery->record();
-  else
-    return atools::sql::SqlRecord();
+    rec = vorIdentRegionQuery->record();
+
+  vorIdentRegionQuery->finish();
+  return rec;
 }
 
 const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
@@ -249,19 +277,19 @@ void InfoQuery::initQueries()
   deInitQueries();
 
   // TODO limit number of columns - remove star query
-  airportQuery = new SqlQuery(db);
+  airportQuery = new SqlQuery(dbSim);
   airportQuery->prepare("select * from airport "
                         "join bgl_file on airport.file_id = bgl_file.bgl_file_id "
                         "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                         "where airport_id = :id");
 
-  airportSceneryQuery = new SqlQuery(db);
+  airportSceneryQuery = new SqlQuery(dbSim);
   airportSceneryQuery->prepare("select * from airport_file f "
                                "join bgl_file b on f.file_id = b.bgl_file_id  "
                                "join scenery_area s on b.scenery_area_id = s.scenery_area_id "
                                "where f.ident = :id order by f.airport_file_id");
 
-  comQuery = new SqlQuery(db);
+  comQuery = new SqlQuery(dbSim);
   comQuery->prepare("select * from com where airport_id = :id order by type, frequency");
 
   vorQuery = new SqlQuery(dbNav);
@@ -285,27 +313,33 @@ void InfoQuery::initQueries()
   airwayQuery = new SqlQuery(dbNav);
   airwayQuery->prepare("select * from airway where airway_id = :id");
 
-  runwayQuery = new SqlQuery(db);
+  runwayQuery = new SqlQuery(dbSim);
   runwayQuery->prepare("select * from runway where airport_id = :id order by heading");
 
-  runwayEndQuery = new SqlQuery(db);
+  runwayEndQuery = new SqlQuery(dbSim);
   runwayEndQuery->prepare("select * from runway_end where runway_end_id = :id");
 
-  helipadQuery = new SqlQuery(db);
+  helipadQuery = new SqlQuery(dbSim);
   helipadQuery->prepare("select h.*, s.number as start_number, s.runway_name from helipad h "
                         " left outer join start s on s.start_id= h.start_id "
                         " where h.airport_id = :id order by s.runway_name");
 
-  startQuery = new SqlQuery(db);
+  startQuery = new SqlQuery(dbSim);
   startQuery->prepare("select * from start where airport_id = :id order by type asc, runway_name");
 
-  ilsQuerySim = new SqlQuery(db);
+  ilsQuerySimById = new SqlQuery(dbSim);
+  ilsQuerySimById->prepare("select * from ils where ils_id = :id");
+
+  ilsQueryNavById = new SqlQuery(dbSim);
+  ilsQueryNavById->prepare("select * from ils where ils_id = :id");
+
+  ilsQuerySim = new SqlQuery(dbSim);
   ilsQuerySim->prepare("select * from ils where loc_runway_end_id = :id");
 
   ilsQueryNav = new SqlQuery(dbNav);
   ilsQueryNav->prepare("select * from ils where loc_runway_end_id = :id");
 
-  ilsQuerySimByName = new SqlQuery(db);
+  ilsQuerySimByName = new SqlQuery(dbSim);
   ilsQuerySimByName->prepare("select * from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
 
   airwayWaypointQuery = new SqlQuery(dbNav);
@@ -393,6 +427,12 @@ void InfoQuery::deInitQueries()
 
   delete ilsQuerySimByName;
   ilsQuerySimByName = nullptr;
+
+  delete ilsQuerySimById;
+  ilsQuerySimById = nullptr;
+
+  delete ilsQueryNavById;
+  ilsQueryNavById = nullptr;
 
   delete airwayWaypointQuery;
   airwayWaypointQuery = nullptr;

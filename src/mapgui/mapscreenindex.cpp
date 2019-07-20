@@ -75,6 +75,7 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   airwayLines = other.airwayLines;
   logEntryLines = other.logEntryLines;
   airspaceGeo = other.airspaceGeo;
+  ilsGeo = other.ilsGeo;
   routePoints = other.routePoints;
 }
 
@@ -82,12 +83,12 @@ void MapScreenIndex::updateAirspaceScreenGeometry(QList<std::pair<map::MapAirspa
                                                   map::MapAirspaceSources source,
                                                   const Marble::GeoDataLatLonBox& curBox)
 {
-  CoordinateConverter conv(mapPaintWidget->viewport());
   const MapScale *scale = paintLayer->getMapScale();
   AirspaceController *controller = NavApp::getAirspaceController();
 
   if(scale->isValid())
   {
+    CoordinateConverter conv(mapPaintWidget->viewport());
     AirspaceVector airspaces;
     controller->getAirspaces(airspaces,
                              curBox, paintLayer->getMapLayer(), mapPaintWidget->getShownAirspaceTypesByLayer(),
@@ -134,6 +135,11 @@ void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
   NavApp::getAirspaceController()->resetAirspaceOnlineScreenGeometry();
 }
 
+void MapScreenIndex::resetIlsOnlineScreenGeometry()
+{
+  ilsGeo.clear();
+}
+
 void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
   airspaceGeo.clear();
@@ -152,7 +158,54 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     updateAirspaceScreenGeometry(airspaceGeo, NavApp::getAirspaceController()->getAirspaceSources(), curBox);
 }
 
-void MapScreenIndex::updateLogEnryScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
+void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
+{
+  ilsGeo.clear();
+
+  if(!paintLayer->getMapLayer()->isIls() || !paintLayer->getShownMapObjects().testFlag(map::ILS))
+    return;
+
+  // Do not put into index if nothing is drawn
+  if(mapPaintWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
+    return;
+
+  if(paintLayer->getShownMapObjects().testFlag(map::ILS))
+  {
+    const MapScale *scale = paintLayer->getMapScale();
+
+    if(scale->isValid())
+    {
+      const QList<map::MapIls> *ilsList = mapQuery->getIls(curBox, paintLayer->getMapLayer(), false);
+
+      if(ilsList != nullptr)
+      {
+        CoordinateConverter conv(mapPaintWidget->viewport());
+        for(const map::MapIls& ils : *ilsList)
+        {
+          Marble::GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
+                                          ils.bounding.getEast(), ils.bounding.getWest(),
+                                          Marble::GeoDataCoordinates::Degree);
+
+          if(ilsbox.intersects(curBox))
+          {
+            QPolygon polygon;
+
+            for(const Pos& pos : ils.boundary())
+            {
+              int x, y;
+              conv.wToS(pos, x, y /*, QSize(2000, 2000)*/);
+              polygon.append(QPoint(x, y));
+            }
+            polygon = polygon.intersected(QPolygon(mapPaintWidget->rect()));
+            ilsGeo.append(std::make_pair(ils.id, polygon));
+          }
+        }
+      }
+    }
+  }
+}
+
+void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
   logEntryLines.clear();
 
@@ -429,6 +482,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapSear
   getNearestLogEntries(xs, ys, maxDistance, result);
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
+  getNearestIls(xs, ys, result);
 
   if(shown.testFlag(map::FLIGHTPLAN))
   {
@@ -588,6 +642,7 @@ void MapScreenIndex::updateAllGeometry(const Marble::GeoDataLatLonBox& curBox)
   updateAirwayScreenGeometry(curBox);
   updateLogEntryScreenGeometry(curBox);
   updateAirspaceScreenGeometry(curBox);
+  updateIlsScreenGeometry(curBox);
 }
 
 /* Get all airways near cursor position */
@@ -630,6 +685,23 @@ void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::
 {
   for(int id : nearestLineIds(logEntryLines, xs, ys, maxDistance))
     result.logbookEntries.append(NavApp::getLogdataController()->getLogEntryById(id));
+}
+
+void MapScreenIndex::getNearestIls(int xs, int ys, map::MapSearchResult& result) const
+{
+  if(!paintLayer->getShownMapObjects().testFlag(map::ILS))
+    return;
+
+  for(int i = 0; i < ilsGeo.size(); i++)
+  {
+    const std::pair<int, QPolygon>& polyPair = ilsGeo.at(i);
+
+    if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
+    {
+      map::MapIls ils = mapQuery->getIlsById(polyPair.first);
+      result.ils.append(ils);
+    }
+  }
 }
 
 /* Get all airways near cursor position */

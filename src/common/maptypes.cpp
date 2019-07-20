@@ -2031,9 +2031,52 @@ QString ilsText(const MapIls& ils)
   return text;
 }
 
+QString ilsTextShort(map::MapIls& ils)
+{
+  return ilsTextShort(ils.ident, ils.name, ils.slope > 0.f, ils.hasDme);
+}
+
+QString ilsTextShort(QString ident, QString name, bool gs, bool dme)
+{
+  QString text;
+
+  if(gs)
+  {
+    // Is real ILS with glideslooe
+    if(!name.isEmpty() && !name.startsWith(QObject::tr("ILS")))
+      name.prepend(QObject::tr("ILS "));
+  }
+  else if(!name.startsWith(QObject::tr("LOC")))
+  {
+    // Is localizer only
+    if(!name.isEmpty())
+      name.prepend(QObject::tr("LOC "));
+  }
+
+  if(name.isEmpty())
+    text.append(ident);
+  else
+    text.append(QObject::tr("%1 (%2)").arg(name).arg(ident));
+
+  if(gs)
+    text += QObject::tr(", GS ");
+  if(dme)
+    text += QObject::tr(", DME");
+
+  return text;
+}
+
 float Hold::magHeading() const
 {
   return atools::geo::normalizeCourse(courseTrue - magvar);
+}
+
+atools::geo::LineString MapIls::boundary() const
+{
+  if(slope > 0.f)
+    return atools::geo::LineString({position, pos1, pos2, position});
+  else
+    return atools::geo::LineString({position, pos1, posmid, pos2, position});
 }
 
 } // namespace types

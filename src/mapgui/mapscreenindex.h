@@ -79,11 +79,14 @@ public:
   void updateAllGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
+
   void updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
+  void updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
   void updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox& curBox);
 
   /* Clear internal caches */
   void resetAirspaceOnlineScreenGeometry();
+  void resetIlsOnlineScreenGeometry();
 
   /* Save and restore distance markers and range rings */
   void saveState() const;
@@ -232,6 +235,7 @@ private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
 
+  void getNearestIls(int xs, int ys, map::MapSearchResult& result) const;
   void getNearestAirspaces(int xs, int ys, map::MapSearchResult& result) const;
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
@@ -279,10 +283,11 @@ private:
   QList<std::pair<int, QLine> > routeLines;
   QList<std::pair<int, QPoint> > routePoints;
 
-  /* Geometry objects that are cached in screen coordinate system for faster access */
+  /* Geometry objects that are cached in screen coordinate system for faster access to tooltips etc. */
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QLine> > logEntryLines;
   QList<std::pair<map::MapAirspaceId, QPolygon> > airspaceGeo;
+  QList<std::pair<int, QPolygon> > ilsGeo;
 
 };
 

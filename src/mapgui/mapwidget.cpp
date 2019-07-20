@@ -245,6 +245,7 @@ void MapWidget::handleInfoClick(QPoint pos)
     result.ndbIds.clear();
     result.waypoints.clear();
     result.waypointIds.clear();
+    result.ils.clear();
     result.airways.clear();
     result.userpoints.clear();
   }
@@ -1434,6 +1435,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   map::MapVor *vor = nullptr;
   map::MapNdb *ndb = nullptr;
   map::MapWaypoint *waypoint = nullptr;
+  map::MapIls *ils = nullptr;
   map::MapUserpointRoute *userpointRoute = nullptr;
   map::MapAirway *airway = nullptr;
   map::MapParking *parking = nullptr;
@@ -1482,6 +1484,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(!result.waypoints.isEmpty())
     waypoint = &result.waypoints.first();
 
+  if(!result.ils.isEmpty())
+    ils = &result.ils.first();
+
   if(!result.userPointsRoute.isEmpty())
     userpointRoute = &result.userPointsRoute.first();
 
@@ -1510,6 +1515,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else if(airspace != nullptr)
     informationText = result.numSimNavUserAirspaces() > 1 ? tr("Airspaces") : tr("Airspace");
+
+  if(ils != nullptr)
+    informationText = map::ilsTextShort(*ils);
 
   // Fill texts in reverse order of priority
   if(airway != nullptr)
@@ -1684,7 +1692,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // ===================================================================================
   // Update "show information" for airports, navaids, airways and airspaces
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr ||
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || ils != nullptr || airport != nullptr ||
      airway != nullptr || airspace != nullptr || onlineCenter != nullptr || userpoint != nullptr || logEntry != nullptr)
   {
     ui->actionMapShowInformation->setEnabled(true);
@@ -1870,6 +1878,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << "vor " << vor;
   qDebug() << "ndb " << ndb;
   qDebug() << "waypoint " << waypoint;
+  qDebug() << "ils " << ils;
   qDebug() << "parking " << parking;
   qDebug() << "helipad " << helipad;
   qDebug() << "routeIndex " << routeIndex;
@@ -2055,6 +2064,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = airway->id;
         type = map::AIRWAY;
+      }
+      else if(ils != nullptr)
+      {
+        id = ils->id;
+        type = map::ILS;
       }
       else if(onlineCenter != nullptr)
       {
@@ -2461,8 +2475,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   {
     lastSimUpdateTooltipMs = now;
     if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
-        mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasUserpoints()) &&
-       NavApp::isConnectedAndAircraft())
+        mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
+        mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
     {
       updateTooltip();
     }
