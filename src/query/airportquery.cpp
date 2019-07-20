@@ -258,6 +258,11 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
       aprons->append(ap);
     }
+
+    // Revert apron drawing order for X-Plane - draw last in file first
+    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      std::reverse(aprons->begin(), aprons->end());
+
     apronCache.insert(airportId, aprons);
     return aprons;
   }
