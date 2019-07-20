@@ -974,23 +974,29 @@ void MapPainterMark::paintHolds(const PaintContext *context)
     {
       painter->setPen(QPen(hold.color, context->szF(context->thicknessRangeDistance, 3), Qt::SolidLine));
 
-      // Text for inbound leg =======================================
-      QString inboundText = tr("%1°M, %2min").
-                            arg(QLocale().toString(hold.magHeading(), 'f', 0)).
-                            arg(QString::number(hold.minutes, 'g', 2));
+      QString inboundText, outboundText;
+      if(detail)
+      {
+        // Text for inbound leg =======================================
+        inboundText = tr("%1°M/%2min").
+                      arg(QLocale().toString(hold.magHeading(), 'f', 0)).
+                      arg(QString::number(hold.minutes, 'g', 2));
 
-      if(!hold.navIdent.isEmpty())
-        inboundText += tr(", %1").arg(hold.navIdent);
+        if(!hold.navIdent.isEmpty())
+          inboundText += tr("/%1").arg(hold.navIdent);
 
-      // Text for outbound leg =======================================
-      QString outboundText = tr("%1°M, %2, %3").
-                             arg(QLocale().toString(opposedCourseDeg(hold.magHeading()), 'f', 0)).
-                             arg(Unit::speedKts(hold.speedKts, true, true)).
-                             arg(Unit::altFeet(hold.position.getAltitude(), true, true));
+        // Text for outbound leg =======================================
+        outboundText = tr("%1°M/%2/%3").
+                       arg(QLocale().toString(opposedCourseDeg(hold.magHeading()), 'f', 0)).
+                       arg(Unit::speedKts(hold.speedKts, true, true)).
+                       arg(Unit::altFeet(hold.position.getAltitude(), true, true));
+      }
 
       paintHoldWithText(context->painter, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
                         hold.courseTrue, dist, 0.f, hold.turnLeft,
-                        inboundText, outboundText, hold.color, QColor(Qt::white), inboundArrows, outboundArrows);
+                        inboundText, outboundText, hold.color, QColor(Qt::white),
+                        detail ? QVector<float>({0.80f}) : QVector<float>() /* inbound arrows */,
+                        detail ? QVector<float>({0.80f}) : QVector<float>() /* outbound arrows */);
 
       // Draw ellipse at hold fix
       painter->setPen(QPen(hold.color, painter->pen().widthF() * 0.66));
