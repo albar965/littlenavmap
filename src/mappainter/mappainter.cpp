@@ -373,6 +373,8 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
 
     painter->save();
     painter->setPen(textColor);
+    painter->setBrush(textColorBackground);
+    painter->setBackgroundMode(Qt::OpaqueMode);
     painter->setBackground(textColorBackground);
 
     QFontMetrics metrics = painter->fontMetrics();

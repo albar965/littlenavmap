@@ -957,8 +957,7 @@ void MapPainterMark::paintHolds(const PaintContext *context)
   const QList<Hold>& holds = mapPaintWidget->getHolds();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   context->szFont(context->textSizeRangeDistance);
-
-  const static QVector<float> inboundArrows({0.80f}), outboundArrows({0.80f});
+  bool detail = context->mapLayer->isApproachTextAndDetail();
 
   for(const Hold& hold : holds)
   {
