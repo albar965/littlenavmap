@@ -64,6 +64,11 @@ QString formatFloatUnit(float value, const QString& unit = QString(), int precis
 /* Format elapsed time to minutes and seconds */
 QString formatElapsed(const QElapsedTimer& timer);
 
+/* Format wind as string with pointer */
+QString windInformation(float headWind, float crossWind);
+QString windInformationCross(float crossWind);
+QString windInformationHead(float headWind);
+
 } // namespace formatter
 
 #endif // LITTLENAVMAP_FORMATTER_H

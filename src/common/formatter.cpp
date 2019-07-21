@@ -254,4 +254,43 @@ QDateTime readDateTime(QString str)
   return retval;
 }
 
+QString windInformationHead(float headWind)
+{
+  QString windPtr;
+  if(std::abs(headWind) >= 1.0f)
+  {
+    windPtr += Unit::speedKts(std::abs(headWind));
+
+    if(headWind <= -1.f)
+      windPtr += QObject::tr(" ▲"); // Tailwind
+    else
+      windPtr += QObject::tr(" ▼"); // Headwind
+  }
+  return windPtr;
+}
+
+QString windInformationCross(float crossWind)
+{
+  QString windPtr;
+  if(std::abs(crossWind) >= 1.0f)
+  {
+    windPtr += Unit::speedKts(std::abs(crossWind));
+
+    if(crossWind >= 1.f)
+      windPtr += QObject::tr(" ◄");
+    else if(crossWind <= -1.f)
+      windPtr += QObject::tr(" ►");
+  }
+  return windPtr;
+}
+
+QString windInformation(float headWind, float crossWind)
+{
+  QStringList windTxt;
+  windTxt.append(windInformationHead(headWind));
+  windTxt.append(windInformationCross(crossWind));
+  windTxt.removeAll(QString());
+  return windTxt.join(QObject::tr(", "));
+}
+
 } // namespace formatter

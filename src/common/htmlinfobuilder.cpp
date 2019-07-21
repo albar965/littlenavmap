@@ -20,6 +20,7 @@
 #include "options/optiondata.h"
 #include "navapp.h"
 #include "atools.h"
+#include "common/maptools.h"
 #include "common/airportfiles.h"
 #include "fs/online/onlinetypes.h"
 #include "common/formatter.h"
@@ -319,37 +320,37 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     {
       // Simulator weather =====================================================
       QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
-      addMetarLine(html, tr("%1Station").arg(sim), fsMetar.metarForStation,
+      addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.metarForStation,
                    fsMetar.requestIdent, fsMetar.timestamp, true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-      addMetarLine(html, tr("%1Nearest").arg(sim),
+      addMetarLine(html, tr("%1Nearest").arg(sim), airport,
                    fsMetar.metarForNearest, fsMetar.requestIdent, fsMetar.timestamp,
                    true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-      addMetarLine(html, tr("%1Interpolated").arg(sim),
+      addMetarLine(html, tr("%1Interpolated").arg(sim), airport,
                    fsMetar.metarForInterpolated, fsMetar.requestIdent, fsMetar.timestamp,
                    true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
     }
 
     // Active Sky weather =====================================================
-    addMetarLine(html, weatherContext.asType, weatherContext.asMetar, QString(), QDateTime(),
+    addMetarLine(html, weatherContext.asType, airport, weatherContext.asMetar, QString(), QDateTime(),
                  false /* fs */, src == WEATHER_SOURCE_ACTIVE_SKY);
 
     // NOAA weather =====================================================
-    addMetarLine(html, tr("NOAA Station"), weatherContext.noaaMetar.metarForStation,
+    addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.metarForStation,
                  weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
                  false /* fs */, src == WEATHER_SOURCE_NOAA);
-    addMetarLine(html, tr("NOAA Nearest"), weatherContext.noaaMetar.metarForNearest,
+    addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.metarForNearest,
                  weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
                  false /* fs */, src == WEATHER_SOURCE_NOAA);
 
     // VATSIM weather =====================================================
-    addMetarLine(html, tr("VATSIM"), weatherContext.vatsimMetar, QString(), QDateTime(),
+    addMetarLine(html, tr("VATSIM"), airport, weatherContext.vatsimMetar, QString(), QDateTime(),
                  false /* fs */, src == WEATHER_SOURCE_VATSIM);
 
     // IVAO weather =====================================================
-    addMetarLine(html, tr("IVAO Station"), weatherContext.ivaoMetar.metarForStation,
+    addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.metarForStation,
                  weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
                  false /* fs */, src == WEATHER_SOURCE_IVAO);
-    addMetarLine(html, tr("IVAO Nearest"), weatherContext.ivaoMetar.metarForNearest,
+    addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.metarForNearest,
                  weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
                  false /* fs */, src == WEATHER_SOURCE_IVAO);
     html.tableEnd();
@@ -493,12 +494,88 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
   }
 }
 
+void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& html, float windSpeed,
+                                      float windDirectionDeg, int max, bool details) const
+{
+  if(!(windSpeed < atools::fs::weather::INVALID_METAR_VALUE))
+    return;
+
+  const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
+  if(recVector != nullptr)
+  {
+    maptools::RwVector ends(windSpeed, windDirectionDeg);
+
+    // Collect runway ends and wind conditions =======================================
+    for(const SqlRecord& rec : *recVector)
+    {
+      int length = rec.valueInt("length");
+      QString surface = rec.valueStr("surface");
+      const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
+      if(!recPrim->valueBool("has_closed_markings"))
+        ends.appendRwEnd(recPrim->valueStr("name"), surface, length, recPrim->valueFloat("heading"));
+
+      const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
+      if(!recSec->valueBool("has_closed_markings"))
+        ends.appendRwEnd(recSec->valueStr("name"), surface, length, recSec->valueFloat("heading"));
+    }
+
+    if(!ends.isEmpty())
+    {
+      // Sort by headwind =======================================
+      ends.sortRunwayEnds();
+
+      max = std::min(ends.size(), max);
+      QString rwTxt = ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways");
+
+      if(details)
+      {
+        // Table header for detailed view
+        head(html, tr("Best %1 for wind").arg(rwTxt));
+        html.table();
+        html.tr(QColor()).th(rwTxt).th(tr("Surface")).th(tr("Length")).th(tr("Wind")).th(QString()).trEnd();
+      }
+
+      // Create runway table for details =====================================
+
+      // List for not detailed view
+      QStringList runways;
+      int num = 0;
+      for(const maptools::RwEnd& end : ends)
+      {
+        // Stop at maximum number or tailwind
+        if((end.head < .0f && num > 1) || num > max)
+          break;
+
+        if(details)
+        {
+          // Table entry ==================
+          html.tr(QColor()).
+          td(end.names.join(tr(", ")), atools::util::html::BOLD).
+          td(end.soft ? tr("Soft") : tr("Hard")).
+          td(Unit::distShortFeet(end.length)).
+          td(formatter::windInformationHead(end.head)).
+          td(formatter::windInformationCross(end.cross)).
+          trEnd();
+        }
+        else
+          runways.append(end.names);
+        num++;
+      }
+      if(details)
+        html.tableEnd();
+      else
+        html.br().b(tr(" Prefers %1: ").arg(rwTxt)).text(runways.mid(0, 4).join(tr(", ")));
+    }
+  }
+}
+
 void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, bool details, bool soft) const
 {
   if(info && infoQuery != nullptr)
   {
     if(!print)
       airportTitle(airport, html, -1);
+    html.br();
 
     const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -515,9 +592,9 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         bool closedPrim = recPrim->valueBool("has_closed_markings");
         bool closedSec = recSec->valueBool("has_closed_markings");
 
-        html.h3(tr("Runway ") + recPrim->valueStr("name") + ", " + recSec->valueStr("name"),
-                (closedPrim & closedSec ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
-                | atools::util::html::UNDERLINE);
+        html.br().text(tr("Runway ") + recPrim->valueStr("name") + ", " + recSec->valueStr("name"),
+                       (closedPrim & closedSec ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
+                       | atools::util::html::UNDERLINE | atools::util::html::BIG | atools::util::html::BOLD);
         html.table();
 
         html.row2(tr("Size:"), Unit::distShortFeet(rec.valueFloat("length"), false) +
@@ -581,30 +658,25 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 
         html.tableEnd();
 
-#ifdef DEBUG_INFORMATION
-        html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
-#endif
-
         if(details)
         {
           if(print)
             html.table().tr().td();
 
           runwayEndText(html, airport, recPrim, hdgPrim, rec.valueFloat("length"));
-#ifdef DEBUG_INFORMATION
-          html.small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).br();
-#endif
           if(print)
             html.tdEnd().td();
 
           runwayEndText(html, airport, recSec, hdgSec, rec.valueFloat("length"));
-#ifdef DEBUG_INFORMATION
-          html.small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).br();
-#endif
 
           if(print)
             html.tdEnd().trEnd().tableEnd();
         }
+#ifdef DEBUG_INFORMATION
+        html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
+        html.small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).br();
+        html.small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).br();
+#endif
       }
     }
     else
@@ -700,7 +772,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 {
   bool closed = rec->valueBool("has_closed_markings");
 
-  html.h3(rec->valueStr("name"), closed ? (atools::util::html::STRIKEOUT) : atools::util::html::NONE);
+  html.br().br().text(rec->valueStr("name"), (closed ? (atools::util::html::STRIKEOUT) : atools::util::html::NONE) |
+                      atools::util::html::BOLD | atools::util::html::BIG);
   html.table();
   if(closed)
     html.row2(tr("Closed"), QString());
@@ -817,7 +890,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
       html.row2(prefix + tr(":"), name);
     else
     {
-      html.br().h4(text);
+      html.br().br().text(text, atools::util::html::BOLD | atools::util::html::BIG);
       html.table();
     }
   }
@@ -1395,7 +1468,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     else if(parsed.getWindDir() == -1)
       windDir = tr("Variable, ");
 
-    if(windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
+    if(windSpeedKts < INVALID_METAR_VALUE)
     {
       QString windSpeedStr;
       if(windSpeedKts < INVALID_METAR_VALUE)
@@ -1510,6 +1583,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   if(!parsed.getUnusedData().isEmpty())
     html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().text(parsed.getUnusedData()).pEnd();
+
+  bestRunwaysText(airport, html, windSpeedKts, parsed.getWindDir(), 8 /* max entries */, true /* details */);
 
 #ifdef DEBUG_INFORMATION
   html.p().small(tr("Source: %1").arg(metar.getMetar())).br();
@@ -3161,29 +3236,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     if(!less)
     {
-      QString windPtr;
-      if(std::abs(headWind) >= 1.0f)
-      {
-        windPtr += Unit::speedKts(std::abs(headWind));
-
-        if(headWind <= -1.f)
-          windPtr += tr("▲"); // Tailwind
-        else
-          windPtr += tr("▼"); // Headwind
-      }
-
-      if(std::abs(crossWind) >= 1.0f)
-      {
-        if(!windPtr.isEmpty())
-          windPtr += tr(", ");
-
-        windPtr += Unit::speedKts(std::abs(crossWind));
-
-        if(crossWind >= 1.f)
-          windPtr += tr("◄");
-        else if(crossWind <= -1.f)
-          windPtr += tr("►");
-      }
+      QString windPtr = formatter::windInformation(headWind, crossWind);
 
       // if(!value.isEmpty())
       // Keep an empty line to avoid flickering
@@ -3535,8 +3588,8 @@ void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, cons
   }
 }
 
-void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& heading,
-                                   const QString& metar, const QString& station,
+void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& header,
+                                   const map::MapAirport& airport, const QString& metar, const QString& station,
                                    const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const
 {
   if(!metar.isEmpty())
@@ -3564,7 +3617,9 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
       whtml.smallEnd();
 
     // Add METAR suffix for tooltip
-    html.row2(heading + (info ? tr(":") : tr(" METAR:")), whtml);
+    bestRunwaysText(airport, whtml, pm.getWindSpeedKts(), pm.getWindDir(), 4 /* max entries */, false /* details */);
+    html.row2(header + (info ? tr(":") : tr(" METAR:")), whtml);
+
   }
 }
 

@@ -320,7 +320,8 @@ private:
 
   void dateAndTime(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                    atools::util::HtmlBuilder& html) const;
-  void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
+  void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
+                    const QString& metar,
                     const QString& station,
                     const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
@@ -333,7 +334,8 @@ private:
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
-  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach, bool standalone) const;
+  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach,
+               bool standalone) const;
 
   QString filepathTextShow(const QString& filepath) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
@@ -347,6 +349,10 @@ private:
   /* Insert airport link using ident and/or name */
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
                       const QString& name = QString()) const;
+
+  /* Adds text for preferred runways */
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, float windSpeed,
+                       float windDirectionDeg, int max, bool details) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

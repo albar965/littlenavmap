@@ -218,6 +218,48 @@ void removeById(QList<TYPE>& list, int id)
     list.erase(it, list.end());
 }
 
+// ==============================================================================
+/* Runway sorting tools. Allows to sort runways by headwind and crosswind */
+struct RwEnd
+{
+  RwEnd(const QString& name, const QString& surf, int lengthParam, float headWind, float crossWind);
+  RwEnd()
+  {
+
+  }
+
+  QStringList names;
+  bool soft;
+  int cross, head, length;
+};
+
+/* List of runway ends */
+class RwVector
+  : public QVector<maptools::RwEnd>
+{
+public:
+  RwVector(float windSpeed, float windDirectionDeg)
+    : speed(windSpeed), direction(windDirectionDeg)
+  {
+
+  }
+
+  /* Add runway to the list - will be omitted if wind is too low */
+  void appendRwEnd(const QString& name, const QString& surface, int length, float heading);
+
+  /* Sort runway ends by headwind and crosswind and combine ends with the same wind. */
+  void sortRunwayEnds();
+
+  int getTotalNumber() const
+  {
+    return totalNumber;
+  }
+
+private:
+  float speed, direction;
+  int totalNumber = 0;
+};
+
 } // namespace maptools
 
 #endif // LITTLENAVMAP_MAPTOOLS_H
